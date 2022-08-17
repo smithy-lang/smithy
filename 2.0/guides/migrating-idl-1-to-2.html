@@ -277,7 +277,7 @@
         </a>
         <div class="content-icon-container">
           <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/guides/migrating-idl-1-to-2.rst" title="Edit this page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-2.0/guides/migrating-idl-1-to-2.rst" title="Edit this page">
     <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
@@ -374,6 +374,32 @@ shape as well as add the <a class="reference internal" href="../spec/type-refine
 </pre></div>
 </div>
 </div>
+<div class="section" id="convert-set-shapes-to-list-shapes">
+<h2>Convert set shapes to list shapes<a class="headerlink" href="#convert-set-shapes-to-list-shapes" title="Permalink to this headline">#</a></h2>
+<p>The set shape was deprecated for IDL 2.0. Each set shape must be replaced by a
+list shape with the <a class="reference internal" href="../spec/constraint-traits.html#uniqueitems-trait"><span class="std std-ref">uniqueItems trait</span></a>.</p>
+<p>For example, the following set:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nl">$version</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="w"></span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="kd">set </span><span class="nc">StringSet</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>Needs to be updated to:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nl">$version</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="nt">@uniqueItems</span><span class="w"></span>
+<span class="kd">list </span><span class="nc">StringSet</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="add-the-default-trait-to-streaming-blobs">
 <h2>Add the default trait to streaming blobs<a class="headerlink" href="#add-the-default-trait-to-streaming-blobs" title="Permalink to this headline">#</a></h2>
 <p>Members that target a blob shape with the <a class="reference internal" href="../spec/streaming.html#streaming-trait"><span class="std std-ref">streaming trait</span></a> have always
@@ -457,19 +483,19 @@ needed to model an operation. For example, the following model:</p>
 </pre></div>
 </div>
 <p>can be updated to:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$version: &quot;2&quot;
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
 
-namespace smithy.example
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
 
-operation PutUser {
-    input := {
-        email: String
-        id: String
-        username: String
-        description: String
-    },
-    output := {}
-}
+<span class="kd">operation </span><span class="nc">PutUser</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">email</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">        </span><span class="py">username</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{}<span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <div class="admonition seealso">
@@ -619,7 +645,7 @@ and shape properties. For example, the following model:</p>
 </pre></div>
 </div>
 <p>can be updated to:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
 
 <span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
 
@@ -643,29 +669,29 @@ of using the enum shapes is that each enum value is now a <a class="reference in
 means they can be individually targeted by traits, without having to have
 special handling inside of Smithy itself. Their definitions in the IDL are now
 also much more concise and readable. For example, the following model:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$version: &quot;1.0&quot;
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="w"></span>
 
-namespace smithy.example
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
 
-@enum([
-    {
-        name: &quot;DIAMOND&quot;,
-        value: &quot;diamond&quot;
-    },
-    {
-        name: &quot;CLUB&quot;,
-        value: &quot;club&quot;
-    },
-    {
-        name: &quot;HEART&quot;,
-        value: &quot;heart&quot;
-    },
-    {
-        name: &quot;SPADE&quot;,
-        value: &quot;spade&quot;
-    }
-])
-string Suit
+<span class="nt">@enum</span>([<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DIAMOND&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;diamond&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CLUB&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;club&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;HEART&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;heart&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SPADE&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;spade&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+])<span class="w"></span>
+<span class="kd">string </span><span class="nc">Suit</span><span class="w"></span>
 </pre></div>
 </div>
 <p>can be updated to:</p>
@@ -751,6 +777,7 @@ string Suit
 <li><a class="reference internal" href="#update-the-model-file-version">Update the model file version</a></li>
 <li><a class="reference internal" href="#remove-the-box-trait">Remove the box trait</a></li>
 <li><a class="reference internal" href="#replace-primitive-prelude-shape-targets">Replace Primitive prelude shape targets</a></li>
+<li><a class="reference internal" href="#convert-set-shapes-to-list-shapes">Convert set shapes to list shapes</a></li>
 <li><a class="reference internal" href="#add-the-default-trait-to-streaming-blobs">Add the default trait to streaming blobs</a></li>
 <li><a class="reference internal" href="#optional-migration-steps">Optional migration steps</a><ul>
 <li><a class="reference internal" href="#move-operation-inputs-and-outputs-inline">Move operation inputs and outputs inline</a></li>

@@ -277,7 +277,7 @@
         </a>
         <div class="content-icon-container">
           <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/spec/aggregate-types.rst" title="Edit this page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-2.0/spec/aggregate-types.rst" title="Edit this page">
     <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
@@ -572,21 +572,21 @@ member of a structure marked with the <code class="docutils literal notranslate"
 trait does not need to be added in its place.</p>
 <p>The special &quot;:=&quot; syntax for the operation input property automatically applies
 the <code class="docutils literal notranslate"><span class="pre">input</span></code> trait:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">operation</span> <span class="n">PutTimeSpan</span> <span class="p">{</span>
-    <span class="nb">input</span> <span class="o">:=</span> <span class="p">{</span>
-        <span class="nd">@required</span>
-        <span class="n">years</span><span class="p">:</span> <span class="n">String</span>
-    <span class="p">}</span>
-<span class="p">}</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">PutTimeSpan</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="nt">@required</span><span class="w"></span>
+<span class="w">        </span><span class="py">years</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <p>Because of the <code class="docutils literal notranslate"><span class="pre">input</span></code> trait, the operation can be updated to remove the
 <code class="docutils literal notranslate"><span class="pre">required</span></code> trait without breaking things like previously generated clients:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">operation</span> <span class="n">PutTimeSpan</span> <span class="p">{</span>
-    <span class="nb">input</span> <span class="o">:=</span> <span class="p">{</span>
-        <span class="n">years</span><span class="p">:</span> <span class="n">String</span>
-    <span class="p">}</span>
-<span class="p">}</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">PutTimeSpan</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">years</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 </div>

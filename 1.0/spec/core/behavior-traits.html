@@ -278,7 +278,7 @@ Version 2.0 is available at <a href="https://awslabs.github.io/smithy/2.0/">http
         </a>
         <div class="content-icon-container">
           <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/spec/core/behavior-traits.rst" title="Edit this page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-1.0/spec/core/behavior-traits.rst" title="Edit this page">
     <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
@@ -325,15 +325,15 @@ due to networking issues or internal server errors. The service uses the
 provided request token to identify and discard duplicate requests.</p>
 <p>Client implementations MAY automatically provide a value for a request token
 member if and only if the member is not explicitly provided.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">operation</span> <span class="n">AllocateWidget</span> <span class="p">{</span>
-    <span class="nb">input</span><span class="p">:</span> <span class="n">AllocateWidgetInput</span>
-<span class="p">}</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">AllocateWidget</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">AllocateWidgetInput</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nd">@input</span>
-<span class="n">structure</span> <span class="n">AllocateWidgetInput</span> <span class="p">{</span>
-    <span class="nd">@idempotencyToken</span>
-    <span class="n">clientToken</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span>
-<span class="p">}</span>
+<span class="nt">@input</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">AllocateWidgetInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nt">@idempotencyToken</span><span class="w"></span>
+<span class="w">    </span><span class="py">clientToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 </div>

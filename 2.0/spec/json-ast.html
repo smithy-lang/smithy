@@ -277,7 +277,7 @@
         </a>
         <div class="content-icon-container">
           <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/spec/json-ast.rst" title="Edit this page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-2.0/spec/json-ast.rst" title="Edit this page">
     <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
@@ -760,43 +760,48 @@ shapes defined in JSON support the same properties as the Smithy IDL.</p>
 <td>Map&lt;String, <a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a>&gt;</td>
 <td>Defines identifier names and shape IDs used to identify the resource.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="service-types.html#create-lifecycle"><span class="std std-ref">create</span></a></td>
+<tr class="row-even"><td><a class="reference internal" href="service-types.html#resource-properties"><span class="std std-ref">properties</span></a></td>
+<td><a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a></td>
+<td>Defines a map of property string names to shape IDs that
+enumerate the properties of the resource.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="service-types.html#create-lifecycle"><span class="std std-ref">create</span></a></td>
 <td><a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a></td>
 <td>Defines the lifecycle operation used to create a resource using one
 or more identifiers created by the service.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="service-types.html#put-lifecycle"><span class="std std-ref">put</span></a></td>
+<tr class="row-even"><td><a class="reference internal" href="service-types.html#put-lifecycle"><span class="std std-ref">put</span></a></td>
 <td><a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a></td>
 <td>Defines an idempotent lifecycle operation used to create a resource
 using identifiers provided by the client.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="service-types.html#read-lifecycle"><span class="std std-ref">read</span></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="service-types.html#read-lifecycle"><span class="std std-ref">read</span></a></td>
 <td><a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a></td>
 <td>Defines the lifecycle operation used to retrieve the resource.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="service-types.html#update-lifecycle"><span class="std std-ref">update</span></a></td>
+<tr class="row-even"><td><a class="reference internal" href="service-types.html#update-lifecycle"><span class="std std-ref">update</span></a></td>
 <td><a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a></td>
 <td>Defines the lifecycle operation used to update the resource.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="service-types.html#delete-lifecycle"><span class="std std-ref">delete</span></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="service-types.html#delete-lifecycle"><span class="std std-ref">delete</span></a></td>
 <td><a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a></td>
 <td>Defines the lifecycle operation used to delete the resource.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="service-types.html#list-lifecycle"><span class="std std-ref">list</span></a></td>
+<tr class="row-even"><td><a class="reference internal" href="service-types.html#list-lifecycle"><span class="std std-ref">list</span></a></td>
 <td><a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a></td>
 <td>Defines the lifecycle operation used to list resources of this type.</td>
 </tr>
-<tr class="row-even"><td>operations</td>
+<tr class="row-odd"><td>operations</td>
 <td>[<a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a>]</td>
 <td>Binds a list of non-lifecycle instance operations to the resource.
 Each reference MUST target an operation.</td>
 </tr>
-<tr class="row-odd"><td>collectionOperations</td>
+<tr class="row-even"><td>collectionOperations</td>
 <td>[<a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a>]</td>
 <td>Binds a list of non-lifecycle collection operations to the resource.
 Each reference MUST target an operation.</td>
 </tr>
-<tr class="row-even"><td>resources</td>
+<tr class="row-odd"><td>resources</td>
 <td>[<a class="reference internal" href="#ast-shape-reference"><span class="std std-ref">AST shape reference</span></a>]</td>
 <td>Binds a list of resources to this resource as a child resource,
 forming a containment relationship. The resources MUST NOT have a
@@ -804,7 +809,7 @@ cyclical containment hierarchy, and a resource can not be bound more
 than once in the entire closure of a resource or service.
 Each reference MUST target a resource.</td>
 </tr>
-<tr class="row-odd"><td>traits</td>
+<tr class="row-even"><td>traits</td>
 <td>Map&lt;<a class="reference internal" href="model.html#shape-id"><span class="std std-ref">shape ID</span></a>, trait value&gt;</td>
 <td>Traits to apply to the resource.</td>
 </tr>
