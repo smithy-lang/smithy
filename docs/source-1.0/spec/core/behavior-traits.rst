@@ -325,7 +325,7 @@ member in the previously referenced structure. Paths MUST adhere to the
 following ABNF.
 
 .. productionlist:: smithy
-    path    :`identifier` *("." `identifier`)
+    path    :`Identifier` *("." `Identifier`)
 
 The following example defines a paginated operation which uses a result
 wrapper where the output token and items are referenced by paths.

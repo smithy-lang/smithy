@@ -133,7 +133,7 @@ The following example defines a service that requires the use of
 
 .. |quoted shape name| replace:: ``awsJson1_1``
 .. |protocol content type| replace:: ``application/x-amz-json-1.1``
-.. |protocol error type contents| replace:: :token:`shape name <smithy:identifier>`
+.. |protocol error type contents| replace:: :token:`shape name <smithy:Identifier>`
 .. |protocol test link| replace:: https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/awsJson1_1
 .. include:: aws-json.rst.template
 
