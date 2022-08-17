@@ -517,7 +517,7 @@ The ``smithy-build.json`` should have the following contents:
 .. code-block:: json
 
     {
-        "version": "2.0"
+        "version": "1.0"
     }
 
 The ``build.gradle.kts`` should have the following contents:
