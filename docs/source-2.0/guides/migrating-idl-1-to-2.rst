@@ -123,7 +123,7 @@ For example, the following set:
 
 .. code-block:: smithy
 
-    $version "1.0"
+    $version: "1.0"
 
     namespace smithy.example
 
@@ -135,7 +135,7 @@ Needs to be updated to:
 
 .. code-block:: smithy
 
-    $version "2"
+    $version: "2"
 
     namespace smithy.example
 
