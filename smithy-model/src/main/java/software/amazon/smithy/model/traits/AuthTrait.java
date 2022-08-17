@@ -15,14 +15,12 @@
 
 package software.amazon.smithy.model.traits;
 
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SetUtils;
@@ -78,10 +76,8 @@ public final class AuthTrait extends AbstractTrait {
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            Set<ShapeId> values = new LinkedHashSet<>();
-            for (StringNode node : value.expectArrayNode().getElementsAs(StringNode.class)) {
-                values.add(node.expectShapeId());
-            }
+            ArrayNode arrayNode = value.expectArrayNode();
+            List<ShapeId> values = arrayNode.getElementsAs(ShapeId::fromNode);
             AuthTrait trait = new AuthTrait(values, value.getSourceLocation());
             trait.setNodeCache(value);
             return trait;

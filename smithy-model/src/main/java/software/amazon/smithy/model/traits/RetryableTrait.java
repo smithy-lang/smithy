@@ -26,7 +26,6 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  */
 public final class RetryableTrait extends AbstractTrait implements ToSmithyBuilder<RetryableTrait> {
     public static final ShapeId ID = ShapeId.from("smithy.api#retryable");
-    private static final String THROTTLING = "throttling";
 
     private final boolean throttling;
 
@@ -60,7 +59,7 @@ public final class RetryableTrait extends AbstractTrait implements ToSmithyBuild
     protected Node createNode() {
         ObjectNode.Builder nodeBuilder = Node.objectNodeBuilder().sourceLocation(getSourceLocation());
         if (throttling) {
-            nodeBuilder.withMember(THROTTLING, true);
+            nodeBuilder.withMember("throttling", true);
         }
         return nodeBuilder.build();
     }
@@ -91,9 +90,9 @@ public final class RetryableTrait extends AbstractTrait implements ToSmithyBuild
 
         @Override
         public RetryableTrait createTrait(ShapeId target, Node value) {
-            ObjectNode node = value.expectObjectNode();
             Builder builder = builder().sourceLocation(value.getSourceLocation());
-            RetryableTrait result = builder.throttling(node.getBooleanMemberOrDefault(THROTTLING)).build();
+            value.expectObjectNode().getBooleanMember("throttling", builder::throttling);
+            RetryableTrait result = builder.build();
             result.setNodeCache(value);
             return result;
         }

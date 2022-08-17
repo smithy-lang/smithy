@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import software.amazon.smithy.model.loader.ParserUtils;
 import software.amazon.smithy.model.loader.Prelude;
+import software.amazon.smithy.model.node.Node;
 
 /**
  * Immutable identifier for each shape in a model.
@@ -76,6 +77,10 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
      */
     public static ShapeId from(String id) {
         return FACTORY.create(id);
+    }
+
+    public static ShapeId fromNode(Node node) {
+        return node.expectStringNode().expectShapeId();
     }
 
     /**

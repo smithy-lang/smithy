@@ -29,8 +29,6 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class ProtocolDefinitionTrait extends AbstractTrait implements ToSmithyBuilder<ProtocolDefinitionTrait> {
 
     public static final ShapeId ID = ShapeId.from("smithy.api#protocolDefinition");
-    private static final String NO_INLINE_DOCUMENT_SUPPORT = "noInlineDocumentSupport";
-    private static final String TRAITS = "traits";
 
     private final List<ShapeId> traits;
     private final boolean noInlineDocumentSupport;
@@ -73,10 +71,10 @@ public final class ProtocolDefinitionTrait extends AbstractTrait implements ToSm
                     .map(ShapeId::toString)
                     .map(Node::from)
                     .collect(ArrayNode.collect());
-            builder.withMember(TRAITS, ids);
+            builder.withMember("traits", ids);
 
             if (noInlineDocumentSupport) {
-                builder.withMember(NO_INLINE_DOCUMENT_SUPPORT, true);
+                builder.withMember("noInlineDocumentSupport", true);
             }
         }
         return builder.build();
@@ -98,13 +96,9 @@ public final class ProtocolDefinitionTrait extends AbstractTrait implements ToSm
         @Override
         public ProtocolDefinitionTrait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
-            ObjectNode objectNode = value.expectObjectNode();
-            objectNode.getArrayMember(TRAITS).ifPresent(traits -> {
-                for (String string : Node.loadArrayOfString(TRAITS, traits)) {
-                    builder.addTrait(ShapeId.from(string));
-                }
-            });
-            builder.noInlineDocumentSupport(objectNode.getBooleanMemberOrDefault(NO_INLINE_DOCUMENT_SUPPORT));
+            value.expectObjectNode()
+                    .getArrayMember("traits", ShapeId::fromNode, builder::traits)
+                    .getBooleanMember("noInlineDocumentSupport", builder::noInlineDocumentSupport);
             ProtocolDefinitionTrait result = builder.build();
             result.setNodeCache(value);
             return result;

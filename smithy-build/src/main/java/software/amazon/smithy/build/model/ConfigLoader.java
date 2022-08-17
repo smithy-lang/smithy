@@ -28,7 +28,6 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.loader.ModelSyntaxException;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.NodeVisitor;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
@@ -60,8 +59,7 @@ final class ConfigLoader {
     }
 
     private static SmithyBuildConfig load(Path baseImportPath, ObjectNode node) {
-        NodeMapper mapper = new NodeMapper();
-        return resolveImports(baseImportPath, mapper.deserialize(node, SmithyBuildConfig.class));
+        return resolveImports(baseImportPath, SmithyBuildConfig.fromNode(node));
     }
 
     private static SmithyBuildConfig resolveImports(Path baseImportPath, SmithyBuildConfig config) {
