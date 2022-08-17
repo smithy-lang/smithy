@@ -19,6 +19,7 @@ structure HttpResponseCodeOutput {
     Status: Integer
 }
 
+@readonly
 @http(method: "GET", uri: "/responseCodeRequired", code: 200)
 operation ResponseCodeRequired {
     output: ResponseCodeRequiredOutput,
@@ -31,6 +32,7 @@ structure ResponseCodeRequiredOutput {
     responseCode: Integer,
 }
 
+@readonly
 @http(method: "GET", uri: "/responseCodeHttpFallback", code: 201)
 operation ResponseCodeHttpFallback {
     input: ResponseCodeHttpFallbackInputOutput,
