@@ -8,13 +8,13 @@ import software.amazon.smithy.model.validation.testrunner.SmithyTestCase;
 import software.amazon.smithy.model.validation.testrunner.SmithyTestSuite;
 
 public class TestRunnerTest {
+    public static Stream<?> source() {
+        return SmithyTestSuite.defaultParameterizedTestSource(TestRunnerTest.class);
+    }
+
     @ParameterizedTest(name = "{0}")
     @MethodSource("source")
     public void testRunner(String filename, Callable<SmithyTestCase.Result> callable) throws Exception {
         callable.call();
-    }
-
-    public static Stream<?> source() {
-        return SmithyTestSuite.defaultParameterizedTestSource(TestRunnerTest.class);
     }
 }

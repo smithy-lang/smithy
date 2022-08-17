@@ -1,0 +1,89 @@
+// when parsing endpoint ruleset
+// while parsing rule
+//   at invalid-rules/get-attr-must-be-static.json5:26
+//   at invalid-rules/get-attr-must-be-static.json5:67
+// Expected an object with possible properties of `headers`, `properties`, `url`, but found additional properties: `authParams`, `authSchemes`
+{
+  "version": "1.2",
+  "parameters": {
+    "Region": {
+      "type": "string",
+      "builtIn": "AWS::Region",
+      "required": true
+    },
+    "PropertyOne": {
+      "type": "boolean"
+    },
+    "PropertyTwo": {
+      "type": "string"
+    },
+    "PropertyThree": {
+      "type": "boolean"
+    }
+  },
+  "rules": [
+    {
+      "documentation": "base rule",
+      "conditions": [
+        {
+          "fn": "aws.partition",
+          "argv": [
+            {
+              "ref": "Region"
+            }
+          ],
+          "assign": "PartResult"
+        }
+      ],
+      "rules": [
+        {
+          "conditions": [
+            {
+              "fn": "stringEquals",
+              "argv": [
+                "aws",
+                {
+                  "fn": "getAttr",
+                  "argv": [
+                    {
+                      "ref": "PartResult"
+                    },
+                    "{Region}"
+                  ]
+                }
+              ]
+            },
+            {
+              "fn": "isSet",
+              "argv": [
+                {
+                  "ref": "PropertyTwo"
+                }
+              ],
+              "assign": "PropertyTwo"
+            }
+          ],
+          "endpoint": {
+            "url": "{PropertyTwo}.special.service.{Region}.amazonaws.com",
+            "authSchemes": [
+              "v4"
+            ],
+            "authParams": {
+              "v4": {
+                "signingName": "serviceName",
+                "signingScope": "{PropertyTwo}"
+              }
+            }
+          },
+          "type": "endpoint"
+        },
+        {
+          "conditions": [],
+          "error": "error description",
+          "type": "error"
+        }
+      ],
+      "type": "tree"
+    }
+  ]
+}

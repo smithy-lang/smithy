@@ -1,0 +1,41 @@
+// while typechecking
+//   at invalid-rules/unknown-field.json5:24
+// while typechecking the endpoint
+//   at invalid-rules/unknown-field.json5:36
+// while checking the URL
+// while typechecking "{dyn partitionResult#nme}.amazonaws.com"
+// while typechecking the template `"{dyn partitionResult#nme}.amazonaws.com"`
+//   at invalid-rules/unknown-field.json5:37
+// while checking {dyn partitionResult#nme}
+// while typechecking partitionResult.nme
+// while resolving nme in {name=String, dnsSuffix=String, dualStackDnsSuffix=String, supportsDualStack=Bool, supportsFIPS=Bool}
+// {name=String, dnsSuffix=String, dualStackDnsSuffix=String, supportsDualStack=Bool, supportsFIPS=Bool} does not contain field nme
+{
+  "version": "1.2",
+  "parameters": {
+    "region": {
+      "type": "string",
+      "builtIn": "AWS::Region",
+      "required": true
+    }
+  },
+  "rules": [
+    {
+      "conditions": [
+        {
+          "fn": "aws.partition",
+          "argv": [
+            {
+              "ref": "region"
+            }
+          ],
+          "assign": "partitionResult"
+        }
+      ],
+      "endpoint": {
+        "url": "{partitionResult#nme}.amazonaws.com"
+      },
+      "type": "endpoint"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+// when parsing endpoint ruleset
+// while parsing rule
+//   at invalid-rules/missing-isset.json5:17
+//   at invalid-rules/missing-isset.json5:20
+// Expected an object with possible properties of `headers`, `properties`, `url`, but found additional properties: `authParams`, `authSchemes`
+{
+  "version": "1.2",
+  "parameters": {
+    "Region": {
+      "type": "string",
+      "builtIn": "AWS::Region",
+      "required": false
+    }
+  },
+  "rules": [
+    {
+      "documentation": "base rule",
+      "conditions": [],
+      "endpoint": {
+        "url": "{Region}.amazonaws.com",
+        "authSchemes": [
+          "v4"
+        ],
+        "authParams": {
+          "v4": {
+            "signingName": "serviceName",
+            "signingScope": "{Region}"
+          }
+        }
+      },
+      "type": "endpoint"
+    }
+  ]
+}

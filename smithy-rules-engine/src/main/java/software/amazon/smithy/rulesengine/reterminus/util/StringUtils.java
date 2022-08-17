@@ -1,0 +1,41 @@
+/*
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+package software.amazon.smithy.rulesengine.reterminus.util;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public final class StringUtils {
+    private StringUtils() {
+    }
+
+    public static String indent(String s, int spaces) {
+        StringBuilder sb = new StringBuilder(spaces);
+        for (int i = 0; i < spaces; ++i) {
+            sb.append(" ");
+        }
+        String whitespace = sb.toString();
+        return Stream.of(s.split("\n"))
+                .map(ss -> whitespace + ss + "\n")
+                .collect(Collectors.joining());
+    }
+
+    public static Stream<String> lines(String s) {
+        String[] lines = s.split("\n");
+        return Arrays.stream(lines);
+    }
+}
