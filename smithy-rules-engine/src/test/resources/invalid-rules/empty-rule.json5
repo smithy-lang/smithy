@@ -1,0 +1,17 @@
+// when parsing endpoint ruleset
+// while parsing rule
+//   at invalid-rules/empty-rule.json5:16
+// Missing expected member `conditions`.
+{
+  "version": "1.2",
+  "parameters": {
+    "RegionName": {
+      "type": "string",
+      "required": true,
+      "builtIn": "AWS::Region"
+    }
+  },
+  "rules": [
+    {}
+  ]
+}
