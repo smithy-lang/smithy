@@ -523,7 +523,6 @@ operation PostUnionWithJsonName {
 
 @input
 structure PostUnionWithJsonNameInput {
-    @required
     value: UnionWithJsonName
 }
 
