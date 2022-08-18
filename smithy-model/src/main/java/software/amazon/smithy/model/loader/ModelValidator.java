@@ -24,7 +24,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
@@ -194,15 +193,19 @@ final class ModelValidator {
                 return coreEvents;
             }
 
-            Stream<ValidationEvent> eventStream = Stream.concat(
-                    includeEvents.stream(),
-                    modelValidators.parallelStream().flatMap(validator -> validator.validate(model).stream()));
-            List<ValidationEvent> result = eventStream
+            List<ValidationEvent> result = modelValidators.parallelStream()
+                    .flatMap(validator -> validator.validate(model).stream())
                     .filter(ModelValidator::filterPrelude)
                     .map(event -> suppressEvent(model, event, modelSuppressions))
                     // Emit events as they occur during validation.
                     .peek(eventListener)
                     .collect(Collectors.toList());
+
+            for (ValidationEvent event : includeEvents) {
+                if (ModelValidator.filterPrelude(event)) {
+                    result.add(suppressEvent(model, event, modelSuppressions));
+                }
+            }
 
             // Add in events encountered while building up validators and suppressions.
             result.addAll(coreEvents);
