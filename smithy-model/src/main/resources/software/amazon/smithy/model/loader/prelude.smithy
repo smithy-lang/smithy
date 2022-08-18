@@ -855,7 +855,7 @@ integer httpError
 /// status code. The value MAY differ from the HTTP status code provided
 /// on the response.
 @trait(
-    selector: "structure > member :test(> integer)",
+    selector: "structure :not([trait|input]) > member :test(> integer)",
     structurallyExclusive: "member",
     conflicts: [httpLabel, httpQuery, httpHeader, httpPrefixHeaders, httpPayload, httpQueryParams],
     breakingChanges: [{change: "any"}]
