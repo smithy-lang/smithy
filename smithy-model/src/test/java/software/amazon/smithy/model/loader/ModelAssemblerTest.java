@@ -932,4 +932,20 @@ public class ModelAssemblerTest {
                             ShapeId.from("smithy.example#Error5"),
                             ShapeId.from("smithy.example#Error6")));
     }
+
+    @Test
+    public void doesNotEmitWarningsTwice() {
+        List<ValidationEvent> events = new ArrayList<>();
+        Model.assembler()
+                .addUnparsedModel("foo.smithy", "$version: \"1.0\"\n")
+                .validationEventListener(e -> {
+                    if (e.getId().equals(Validator.MODEL_DEPRECATION)) {
+                        events.add(e);
+                    }
+                })
+                .assemble()
+                .unwrap();
+
+        assertThat(events, hasSize(1));
+    }
 }
