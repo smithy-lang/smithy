@@ -1,5 +1,33 @@
 # Smithy Changelog
 
+## 1.23.1 (2022-08-18)
+
+### Features
+
+* Added new methods to help deserializing object nodes
+  ([#1350](https://github.com/awslabs/smithy/pull/1350))
+* Added several (unstable) traits for endpoint resolution in the new
+  `smithy-rules-engine` package
+  ([#1248](https://github.com/awslabs/smithy/pull/1248))
+
+### Bug fixes
+
+* Fixed an issue where validation events were emitted twice ([#1362](https://github.com/awslabs/smithy/pull/1362))
+* Fixed a bug that was causing errors loading 1.0 models with `@enum` traits ([#1358](https://github.com/awslabs/smithy/pull/1358))
+* Fixed `PostUnionWithJsonName` and `MalformedAcceptWithGenericString` protocol test. ([#1361](https://github.com/awslabs/smithy/pull/1361),  [#1360](https://github.com/awslabs/smithy/pull/1360))
+* Added missing readonly traits on HTTP GET tests ([#1354](https://github.com/awslabs/smithy/pull/1354))
+
+### Documentation
+
+* Fixed several documentation issues
+  ([#1355](https://github.com/awslabs/smithy/pull/1355),
+  [#1353](https://github.com/awslabs/smithy/pull/1353),
+  [#1349](https://github.com/awslabs/smithy/pull/1349),
+  [#1347](https://github.com/awslabs/smithy/pull/1347),
+  [#1346](https://github.com/awslabs/smithy/pull/1346),
+  [#1345](https://github.com/awslabs/smithy/pull/1345))
+
+
 ## 1.23.0 (2022-08-10)
 
 ### Features
