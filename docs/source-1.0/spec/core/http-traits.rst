@@ -1137,10 +1137,11 @@ Summary
 Trait selector
     .. code-block:: none
 
-        structure > member :test(> integer)
+        structure :not([trait|input]) > member :test(> integer)
 
     The ``httpResponseCode`` trait can be applied to ``structure`` members
-    that target an ``integer``.
+    that target an ``integer`` within any ``structure`` that has no ``input``
+    trait applied.
 Value type
     Annotation trait.
 Conflicts with
@@ -1157,12 +1158,12 @@ to the `code` set by the :ref:`http-trait`.
 
 .. rubric:: ``httpResponseCode`` is only used on output
 
-``httpResponseCode`` is ignored when resolving the HTTP bindings of an
-operation's input structure. This means that if a structure that contains
-members marked with the ``httpResponseCode`` trait is used as the top-level
-input structure of an operation, then those members are sent as part of the
-:ref:`protocol-specific document <http-protocol-document-payloads>` sent in
-the body of the request.
+``httpResponseCode`` is ignored when resolving the HTTP bindings of any
+structure except an operation's output structure. This means that if a
+structure that contains members marked with the ``httpResponseCode`` trait
+is not used as an output structure of an operation, then those members are
+sent as part of the :ref:`protocol-specific document <http-protocol-document-payloads>`
+sent in the body of the request.
 
 
 .. smithy-trait:: smithy.api#cors
