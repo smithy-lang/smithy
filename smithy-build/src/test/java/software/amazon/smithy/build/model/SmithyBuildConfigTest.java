@@ -16,6 +16,7 @@
 package software.amazon.smithy.build.model;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
@@ -25,6 +26,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,6 +37,7 @@ import software.amazon.smithy.build.SmithyBuild;
 import software.amazon.smithy.build.SmithyBuildException;
 import software.amazon.smithy.build.SmithyBuildTest;
 import software.amazon.smithy.model.SourceException;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.ListUtils;
@@ -178,5 +181,33 @@ public class SmithyBuildConfigTest {
 
         assertThat(a.toBuilder().merge(b).build().isIgnoreMissingPlugins(), equalTo(true));
         assertThat(b.toBuilder().merge(a).build().isIgnoreMissingPlugins(), equalTo(true));
+    }
+
+    @Test
+    public void loadsFromNode() throws IOException {
+        Path root = Paths.get("/");
+        ObjectNode value = Node.parse(getClass().getResource("loads-from-node.json").openStream())
+                .expectObjectNode()
+                .toBuilder()
+                .sourceLocation(new SourceLocation(
+                        root.resolve("hello").resolve("smithy-build.json").toString(), 1, 1))
+                .build();
+        SmithyBuildConfig config = SmithyBuildConfig.fromNode(value);
+
+        assertThat(config.getImports(), contains(root.resolve("hello").resolve("foo.json").toString()));
+        assertThat(config.getProjections().get("a").getImports(),
+                   contains(root.resolve("hello").resolve("baz.json").toString()));
+    }
+
+    @Test
+    public void loadsFromNodeIgnoringBadSourceLocations() throws IOException {
+        ObjectNode value = Node.parse(getClass().getResource("loads-from-node.json").openStream())
+                .expectObjectNode();
+        SmithyBuildConfig config = SmithyBuildConfig.fromNode(value);
+
+        Path cwd = Paths.get(".");
+
+        assertThat(config.getImports(), contains(cwd.resolve("foo.json").toString()));
+        assertThat(config.getProjections().get("a").getImports(), contains(cwd.resolve("baz.json").toString()));
     }
 }

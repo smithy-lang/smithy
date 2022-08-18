@@ -74,7 +74,12 @@ public final class ProjectionResult {
      * @return Returns true if the projected model is broken.
      */
     public boolean isBroken() {
-        return events.stream().anyMatch(e -> e.getSeverity() == Severity.ERROR || e.getSeverity() == Severity.DANGER);
+        for (ValidationEvent e : events) {
+            if (e.getSeverity() == Severity.ERROR || e.getSeverity() == Severity.DANGER) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

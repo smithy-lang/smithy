@@ -34,6 +34,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -325,12 +326,12 @@ public class SmithyBuildTest {
 
     @Test
     public void appliesSerialPlugins() throws Exception {
-        Map<String, SmithyBuildPlugin> plugins = MapUtils.of(
-                "test1Serial", new Test1SerialPlugin(),
-                "test2Serial", new Test2SerialPlugin(),
-                "test1Parallel", new Test1ParallelPlugin(),
-                "test2Parallel", new Test2ParallelPlugin()
-        );
+        Map<String, SmithyBuildPlugin> plugins = new LinkedHashMap<>();
+        plugins.put("test1Serial", new Test1SerialPlugin());
+        plugins.put("test2Serial", new Test2SerialPlugin());
+        plugins.put("test1Parallel", new Test1ParallelPlugin());
+        plugins.put("test2Parallel", new Test2ParallelPlugin());
+
         Function<String, Optional<SmithyBuildPlugin>> factory = SmithyBuildPlugin.createServiceFactory();
         Function<String, Optional<SmithyBuildPlugin>> composed = name -> OptionalUtils.or(
                 Optional.ofNullable(plugins.get(name)), () -> factory.apply(name));
@@ -352,8 +353,9 @@ public class SmithyBuildTest {
         assertPluginPresent("test1Parallel", "hello1Parallel", source, b);
         assertPluginPresent("test2Parallel", "hello2Parallel", source);
 
-        // Both the "a" and "source" projections have serial plugins, so they are run in serial, in alphabetical order.
-        assertTrue(getPluginFileContents(a, "test1Serial") < getPluginFileContents(source, "test1Serial"));
+        // "source" contains serial and parallel plugins, so it runs serially and in insetion order.
+        // This test will need to be changed in the future if we ever optimize how plugins are run in the future.
+        assertTrue(getPluginFileContents(source, "test1Parallel") < getPluginFileContents(source, "test1Serial"));
         // The "b" projection has only parallel plugins, so it's a parallel projection. Parallel projections are run
         // after all the serial projections.
         assertTrue(getPluginFileContents(source, "test1Serial") < getPluginFileContents(b, "test1Parallel"));

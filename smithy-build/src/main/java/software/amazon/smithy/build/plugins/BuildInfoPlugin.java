@@ -15,8 +15,10 @@
 
 package software.amazon.smithy.build.plugins;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
 import software.amazon.smithy.model.Model;
@@ -66,10 +68,7 @@ public final class BuildInfoPlugin implements SmithyBuildPlugin {
         info.setProjection(context.getProjection().orElse(null));
         info.setValidationEvents(context.getEvents());
         info.setTraitNames(findTraitNames(context.getModel()));
-        info.setTraitDefNames(context.getModel().getShapesWithTrait(TraitDefinition.class).stream()
-                .map(Shape::getId)
-                .sorted()
-                .collect(Collectors.toList()));
+        info.setTraitDefNames(getTraitShapeIds(context.getModel()));
         info.setServiceShapeIds(findShapeIds(context.getModel(), ServiceShape.class));
         info.setOperationShapeIds(findShapeIds(context.getModel(), OperationShape.class));
         info.setResourceShapeIds(findShapeIds(context.getModel(), ResourceShape.class));
@@ -78,18 +77,29 @@ public final class BuildInfoPlugin implements SmithyBuildPlugin {
         return mapper.serialize(info);
     }
 
+    private static List<ShapeId> getTraitShapeIds(Model model) {
+        Set<Shape> traits = model.getShapesWithTrait(TraitDefinition.class);
+        List<ShapeId> result = new ArrayList<>(traits.size());
+        for (Shape traitShape : traits) {
+            result.add(traitShape.getId());
+        }
+        Collections.sort(result);
+        return result;
+    }
+
     private static List<ShapeId> findTraitNames(Model model) {
-        return model.shapes()
-                .flatMap(shape -> shape.getAllTraits().keySet().stream())
-                .distinct()
-                .sorted()
-                .collect(Collectors.toList());
+        List<ShapeId> applied = new ArrayList<>(model.getAppliedTraits());
+        Collections.sort(applied);
+        return applied;
     }
 
     private static <T extends Shape> List<ShapeId> findShapeIds(Model model, Class<T> clazz) {
-        return model.shapes(clazz)
-                .map(Shape::getId)
-                .sorted()
-                .collect(Collectors.toList());
+        Set<T> shapes = model.toSet(clazz);
+        List<ShapeId> result = new ArrayList<>(shapes.size());
+        for (Shape s : shapes) {
+            result.add(s.getId());
+        }
+        Collections.sort(result);
+        return result;
     }
 }

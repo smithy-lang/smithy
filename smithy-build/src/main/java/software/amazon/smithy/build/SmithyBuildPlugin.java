@@ -82,9 +82,14 @@ public interface SmithyBuildPlugin {
         // caching a ServiceLoader using a Thread's context ClassLoader VM-wide.
         List<SmithyBuildPlugin> pluginList = new ArrayList<>();
         plugins.forEach(pluginList::add);
-        return name -> pluginList.stream()
-                .filter(plugin -> plugin.getName().equals(name))
-                .findFirst();
+        return name -> {
+            for (SmithyBuildPlugin plugin : pluginList) {
+                if (plugin.getName().equals(name)) {
+                    return Optional.of(plugin);
+                }
+            }
+            return Optional.empty();
+        };
     }
 
     /**
