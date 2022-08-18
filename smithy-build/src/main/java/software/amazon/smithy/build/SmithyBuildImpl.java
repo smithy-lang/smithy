@@ -27,11 +27,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.Future;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -163,8 +158,7 @@ final class SmithyBuildImpl {
         // The projections are being split up here because we need to be able
         // to break out non-parallelizeable plugins. Right now the only
         // parallelization that occurs is at the projection level.
-        List<Callable<Void>> parallelProjections = new ArrayList<>();
-        List<String> parallelProjectionNameOrder = new ArrayList<>();
+        List<Runnable> parallelProjections = new ArrayList<>();
 
         for (Map.Entry<String, ProjectionConfig> entry : config.getProjections().entrySet()) {
             String name = entry.getKey();
@@ -184,28 +178,19 @@ final class SmithyBuildImpl {
                 executeSerialProjection(resolvedModel, name, config,
                                         projectionResultConsumer, projectionExceptionConsumer);
             } else {
-                parallelProjectionNameOrder.add(name);
                 parallelProjections.add(() -> {
                     executeSerialProjection(resolvedModel, name, config,
                                             projectionResultConsumer, projectionExceptionConsumer);
-                    return null;
                 });
             }
         }
 
-        // Common case of only executing a single plugin per/projection.
-        if (parallelProjections.size() == 1) {
-            try {
-                parallelProjections.get(0).call();
-            } catch (Throwable e) {
-                if (e instanceof RuntimeException) {
-                    throw (RuntimeException) e;
-                } else {
-                    throw new RuntimeException(e);
-                }
+        if (!parallelProjections.isEmpty()) {
+            if (parallelProjections.size() == 1) {
+                parallelProjections.get(0).run();
+            } else {
+                parallelProjections.parallelStream().forEach(Runnable::run);
             }
-        } else if (!parallelProjections.isEmpty()) {
-            executeParallelProjections(parallelProjections, parallelProjectionNameOrder, projectionExceptionConsumer);
         }
     }
 
@@ -228,31 +213,6 @@ final class SmithyBuildImpl {
 
         if (result != null) {
             projectionResultConsumer.accept(result);
-        }
-    }
-
-    private void executeParallelProjections(
-            List<Callable<Void>> parallelProjections,
-            List<String> parallelProjectionNameOrder,
-            BiConsumer<String, Throwable> projectionExceptionConsumer
-    ) {
-        ExecutorService executor = ForkJoinPool.commonPool();
-
-        try {
-            List<Future<Void>> futures = executor.invokeAll(parallelProjections);
-            // Futures are returned in the same order they were added, so
-            // use the list of ordered names to know which projections failed.
-            for (int i = 0; i < futures.size(); i++) {
-                try {
-                    futures.get(i).get();
-                } catch (ExecutionException e) {
-                    Throwable cause = e.getCause() != null ? e.getCause() : e;
-                    String failedProjectionName = parallelProjectionNameOrder.get(i);
-                    projectionExceptionConsumer.accept(failedProjectionName, cause);
-                }
-            }
-        } catch (InterruptedException e) {
-            throw new SmithyBuildException(e.getMessage(), e);
         }
     }
 

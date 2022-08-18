@@ -15,13 +15,13 @@
 
 package software.amazon.smithy.build.model;
 
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import software.amazon.smithy.build.SmithyBuildException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -60,10 +60,15 @@ public final class ProjectionConfig implements ToSmithyBuilder<ProjectionConfig>
     }
 
     public static ProjectionConfig fromNode(Node node) {
+        return fromNode(node, SmithyBuildUtils.getBasePathFromSourceLocation(node));
+    }
+
+    static ProjectionConfig fromNode(Node node, Path basePath) {
         Builder builder = ProjectionConfig.builder();
         node.expectObjectNode()
                 .getBooleanMember("abstract", builder::setAbstract)
-                .getArrayMember("imports", StringNode::getValue, builder::imports)
+                .getArrayMember("imports", s -> SmithyBuildUtils.resolveImportPath(basePath, s),
+                                builder::imports)
                 .getArrayMember("transforms", TransformConfig::fromNode, builder::transforms)
                 .getObjectMember("plugins", plugins -> {
                     for (Map.Entry<String, Node> entry : plugins.getStringMap().entrySet()) {
@@ -102,8 +107,6 @@ public final class ProjectionConfig implements ToSmithyBuilder<ProjectionConfig>
     public List<String> getImports() {
         return imports;
     }
-
-
 
     /**
      * Builds a {@link ProjectionConfig}.

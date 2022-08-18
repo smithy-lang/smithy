@@ -18,11 +18,10 @@ package software.amazon.smithy.build;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -52,7 +51,12 @@ public final class SmithyBuildResult {
      * @return Returns true if any are broken.
      */
     public boolean anyBroken() {
-        return results.stream().anyMatch(ProjectionResult::isBroken);
+        for (ProjectionResult result : results) {
+            if (result.isBroken()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -80,7 +84,12 @@ public final class SmithyBuildResult {
      * @return Returns the optionally found result.
      */
     public Optional<ProjectionResult> getProjectionResult(String projectionName) {
-        return results.stream().filter(result -> result.getProjectionName().equals(projectionName)).findFirst();
+        for (ProjectionResult result : results) {
+            if (result.getProjectionName().equals(projectionName)) {
+                return Optional.of(result);
+            }
+        }
+        return Optional.empty();
     }
 
     /**
@@ -99,7 +108,11 @@ public final class SmithyBuildResult {
      * @return Returns the projection results as a map.
      */
     public Map<String, ProjectionResult> getProjectionResultsMap() {
-        return results.stream().collect(Collectors.toMap(ProjectionResult::getProjectionName, Function.identity()));
+        Map<String, ProjectionResult> resultMap = new HashMap<>();
+        for (ProjectionResult result : results) {
+            resultMap.put(result.getProjectionName(), result);
+        }
+        return Collections.unmodifiableMap(resultMap);
     }
 
     /**

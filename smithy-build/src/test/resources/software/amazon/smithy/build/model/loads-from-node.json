@@ -1,0 +1,9 @@
+{
+    "version": "1.0",
+    "imports": ["foo.json"],
+    "projections": {
+        "a": {
+            "imports": ["baz.json"]
+        }
+    }
+}

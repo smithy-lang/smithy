@@ -13,6 +13,6 @@ public class Test1ParallelPlugin implements SmithyBuildPlugin {
 
     @Override
     public void execute(PluginContext context) {
-        context.getFileManifest().writeFile("hello1Parallel", String.format("%s", System.currentTimeMillis()));
+        context.getFileManifest().writeFile("hello1Parallel", String.format("%s", System.nanoTime()));
     }
 }

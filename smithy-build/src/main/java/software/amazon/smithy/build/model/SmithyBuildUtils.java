@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -17,71 +17,57 @@ package software.amazon.smithy.build.model;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import software.amazon.smithy.build.SmithyBuildException;
+import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.loader.ModelSyntaxException;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeVisitor;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
-import software.amazon.smithy.utils.IoUtils;
-import software.amazon.smithy.utils.Pair;
 
-/**
- * Loads a {@link SmithyBuildConfig} from disk.
- */
-final class ConfigLoader {
+final class SmithyBuildUtils {
 
-    private ConfigLoader() {}
+    private SmithyBuildUtils() {}
 
-    static SmithyBuildConfig load(Path path) {
-        try {
-            String content = IoUtils.readUtf8File(path);
-            Path baseImportPath = path.getParent();
-            if (baseImportPath == null) {
-                baseImportPath = Paths.get(".");
-            }
-            return load(baseImportPath, loadWithJson(path, content).expectObjectNode());
-        } catch (ModelSyntaxException e) {
-            throw new SmithyBuildException(e);
+    static String resolveImportPath(Path basePath, Node node) {
+        String value = node.expectStringNode().getValue();
+        return basePath == null ? value : basePath.resolve(value).toString();
+    }
+
+    static ObjectNode loadAndExpandJson(String path, String contents) {
+        Node result = Node.parseJsonWithComments(contents, path);
+
+        // No need to expand variables if they aren't used.
+        if (contents.contains("${")) {
+            result = result.accept(new VariableExpander());
         }
+
+        return result.expectObjectNode();
     }
 
-    private static Node loadWithJson(Path path, String contents) {
-        return Node.parseJsonWithComments(contents, path.toString()).accept(new VariableExpander());
+    static Path getBasePathFromSourceLocation(FromSourceLocation fromSourceLocation) {
+        SourceLocation sourceLocation = fromSourceLocation.getSourceLocation();
+        // Attempt to resolve a path based on the given Node.
+        Path path = null;
+        if (sourceLocation != SourceLocation.NONE) {
+            path = Paths.get(sourceLocation.getFilename()).getParent();
+        }
+        if (path == null) {
+            path = Paths.get(".");
+        }
+        return path;
     }
 
-    private static SmithyBuildConfig load(Path baseImportPath, ObjectNode node) {
-        return resolveImports(baseImportPath, SmithyBuildConfig.fromNode(node));
-    }
-
-    private static SmithyBuildConfig resolveImports(Path baseImportPath, SmithyBuildConfig config) {
-        List<String> imports = config.getImports().stream()
-                .map(importPath -> baseImportPath.resolve(importPath).toString())
-                .collect(Collectors.toList());
-
-        Map<String, ProjectionConfig> projections = config.getProjections().entrySet().stream()
-                .map(entry -> Pair.of(entry.getKey(), resolveProjectionImports(baseImportPath, entry.getValue())))
-                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
-
-        return config.toBuilder()
-                .imports(imports)
-                .projections(projections)
-                .build();
-    }
-
-    private static ProjectionConfig resolveProjectionImports(Path baseImportPath, ProjectionConfig config) {
-        List<String> imports = config.getImports().stream()
-                .map(importPath -> baseImportPath.resolve(importPath).toString())
-                .collect(Collectors.toList());
-        return config.toBuilder().imports(imports).build();
+    static ObjectNode expandNode(Node node) {
+        return node.accept(new VariableExpander()).expectObjectNode();
     }
 
     /**
@@ -100,18 +86,25 @@ final class ConfigLoader {
 
         @Override
         public Node arrayNode(ArrayNode node) {
-            return node.getElements().stream().map(element -> element.accept(this)).collect(ArrayNode.collect());
+            List<Node> result = new ArrayList<>(node.size());
+            for (Node element : node.getElements()) {
+                result.add(element.accept(this));
+            }
+            return new ArrayNode(result, node.getSourceLocation());
         }
 
         @Override
         public Node objectNode(ObjectNode node) {
-            return node.getMembers().entrySet().stream()
-                    .map(entry -> Pair.of(entry.getKey().accept(this), entry.getValue().accept(this)))
-                    .collect(ObjectNode.collect(pair -> pair.getLeft().expectStringNode(), Pair::getRight));
+            Map<StringNode, Node> result = new LinkedHashMap<>(node.size());
+            for (Map.Entry<StringNode, Node> entry : node.getMembers().entrySet()) {
+                result.put(entry.getKey().accept(this).expectStringNode(), entry.getValue().accept(this));
+            }
+            return new ObjectNode(result, node.getSourceLocation());
         }
 
         @Override
         public Node stringNode(StringNode node) {
+            // TODO: Update this to make a single pass over the string rather than use multiple regular expressions.
             Matcher matcher = INLINE.matcher(node.getValue());
             StringBuffer builder = new StringBuffer();
 

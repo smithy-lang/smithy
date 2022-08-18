@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -16,16 +16,19 @@
 package software.amazon.smithy.build.model;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import software.amazon.smithy.build.SmithyBuildException;
+import software.amazon.smithy.model.loader.ModelSyntaxException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.utils.BuilderRef;
+import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -55,23 +58,10 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
     }
 
     public static SmithyBuildConfig fromNode(Node node) {
-        Builder builder = builder();
-        node.expectObjectNode()
-                .expectStringMember("version", builder::version)
-                .getStringMember("outputDirectory", builder::outputDirectory)
-                .getArrayMember("imports", StringNode::getValue, builder::imports)
-                .getObjectMember("projections", v -> {
-                    for (Map.Entry<String, Node> entry : v.getStringMap().entrySet()) {
-                        builder.projections.get().put(entry.getKey(), ProjectionConfig.fromNode(entry.getValue()));
-                    }
-                })
-                .getObjectMember("plugins", v -> {
-                    for (Map.Entry<String, Node> entry : v.getStringMap().entrySet()) {
-                        builder.plugins.get().put(entry.getKey(), entry.getValue().expectObjectNode());
-                    }
-                })
-                .getBooleanMember("ignoreMissingPlugins", builder::ignoreMissingPlugins);
-        return builder.build();
+        Path path = SmithyBuildUtils.getBasePathFromSourceLocation(node);
+        // Expand variables before deserializing the node into the builder.
+        ObjectNode expanded = SmithyBuildUtils.expandNode(node);
+        return builder().loadNode(path, expanded).build();
     }
 
     /**
@@ -85,7 +75,6 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
      * Loads a SmithyBuildConfig from a JSON file on disk.
      *
      * <p>The file is expected to contain the following structure:
-     *
      * <code>
      * {
      *     "version": "1.0",
@@ -232,7 +221,38 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
          * @return Returns the updated builder.
          */
         public Builder load(Path config) {
-            return merge(ConfigLoader.load(config));
+            try {
+                String content = IoUtils.readUtf8File(config);
+                Path basePath = config.getParent();
+                if (basePath == null) {
+                    basePath = Paths.get(".");
+                }
+                Node loadedAndExpanded = SmithyBuildUtils.loadAndExpandJson(config.toString(), content);
+                return loadNode(basePath, loadedAndExpanded);
+            } catch (ModelSyntaxException e) {
+                throw new SmithyBuildException(e);
+            }
+        }
+
+        private Builder loadNode(Path basePath, Node node) {
+            node.expectObjectNode()
+                    .expectStringMember("version", this::version)
+                    .getStringMember("outputDirectory", this::outputDirectory)
+                    .getArrayMember("imports", s -> SmithyBuildUtils.resolveImportPath(basePath, s),
+                                    values -> imports.get().addAll(values))
+                    .getObjectMember("projections", v -> {
+                        for (Map.Entry<String, Node> entry : v.getStringMap().entrySet()) {
+                            projections.get().put(entry.getKey(), ProjectionConfig
+                                    .fromNode(entry.getValue(), basePath));
+                        }
+                    })
+                    .getObjectMember("plugins", v -> {
+                        for (Map.Entry<String, Node> entry : v.getStringMap().entrySet()) {
+                            plugins.get().put(entry.getKey(), entry.getValue().expectObjectNode());
+                        }
+                    })
+                    .getBooleanMember("ignoreMissingPlugins", this::ignoreMissingPlugins);
+            return this;
         }
 
         /**
