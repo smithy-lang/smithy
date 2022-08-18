@@ -120,6 +120,63 @@ Example:
         {name: "CamelCase"}
     ]
 
+.. _MissingSensitiveTrait:
+
+MissingSensitiveTrait
+=====================
+
+This validator scans shape or member names and identifies ones that look like they could contain
+sensitive information but are not marked with the ``@sensitive`` trait. This does not apply to
+shapes where the ``@sensitive`` trait would be invalid. Users may also configure this validator
+with custom lists of words or phrases, and choose to ignore the built-in defaults.
+
+Rationale
+    Sensitive information often incurs legal requirements regarding the handling and logging
+    of it. Mistakenly not marking sensitive data accordingly carries a large risk, and it is
+    helpful to have an automated validator to catch instances of this rather than rely on best efforts.
+
+Default severity
+    ``WARNING``
+
+Configuration
+    .. list-table::
+       :header-rows: 1
+       :widths: 20 20 60
+
+       * - Property
+         - Type
+         - Description
+       * - words
+         - [ ``string`` ]
+         - A list of words to either be added to or replace the default
+           words. These are matched to without regards to casing.
+           This property defaults to an empty list.
+       * - phrases
+         - [ ``string`` ]
+         - A list of phrases to either be added to or replace the default
+           phrases. These are matched to without regards to casing or word boundaries.
+           Use this property when trying to match word fragments or multi-words.
+           This property defaults to an empty list.
+       * - excludeDefaults
+         - ``boolean``
+         - A flag indicating whether or not to disregard the default set
+           of words and phrases. This property is not required and defaults to false.
+           If set to true, either ``words`` or ``phrases`` must be provided.
+
+Example:
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    metadata validators = [{
+        name: "MissingSensitiveTrait"
+        configuration: {
+            excludeDefaults: false,
+            words: ["confidential"],
+            phrases: ["MyPrivateInfo"]
+        }
+    }]
 
 .. _NoninclusiveTerms:
 

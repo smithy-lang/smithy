@@ -6,9 +6,12 @@ metadata validators = [{
     configuration: {
         excludeDefaults: true,
         phrases: [
+            "caBANKle",
+        ],
+        words: [
             "foo",
-            "cabankle",
-            "string"
+            "string",
+            "secondMember"
         ]
     }
 }]

@@ -1,4 +1,4 @@
-[WARNING] smithy.example#FooOperationRequest: Detected that this shape possibly contains sensitive data but is not marked with the 'sensitive' trait | DefaultMissingSensitiveTrait
-[WARNING] smithy.example#FooOperationResponse: Detected that this shape possibly contains sensitive data but is not marked with the 'sensitive' trait | DefaultMissingSensitiveTrait
-[WARNING] smithy.example#CabAnkle: Detected that this shape possibly contains sensitive data but is not marked with the 'sensitive' trait | DefaultMissingSensitiveTrait
-[WARNING] smithy.example#MyString: Detected that this shape possibly contains sensitive data but is not marked with the 'sensitive' trait | DefaultMissingSensitiveTrait
+[WARNING] smithy.example#FooOperationRequest: Detected that this shape possibly contains sensitive data (based on presence of 'foo') but is not marked with the sensitive trait | DefaultMissingSensitiveTrait
+[WARNING] smithy.example#FooOperationResponse: Detected that this shape possibly contains sensitive data (based on presence of 'foo') but is not marked with the sensitive trait | DefaultMissingSensitiveTrait
+[WARNING] smithy.example#CabAnkle: Detected that this shape possibly contains sensitive data (based on presence of 'cabankle') but is not marked with the sensitive trait | DefaultMissingSensitiveTrait
+[WARNING] smithy.example#MyString: Detected that this shape possibly contains sensitive data (based on presence of 'string') but is not marked with the sensitive trait | DefaultMissingSensitiveTrait
