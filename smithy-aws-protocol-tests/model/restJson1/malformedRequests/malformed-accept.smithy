@@ -100,10 +100,10 @@ structure MalformedAcceptWithPayloadOutput {
 @suppress(["UnstableTrait"])
 @http(method: "POST", uri: "/MalformedAcceptWithGenericString")
 operation MalformedAcceptWithGenericString {
-    input: MalformedAcceptWithGenericStringInput
+    output: MalformedAcceptWithGenericStringOutput
 }
 
-structure MalformedAcceptWithGenericStringInput {
+structure MalformedAcceptWithGenericStringOutput {
     @httpPayload
     payload: String
 }
