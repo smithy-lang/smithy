@@ -138,15 +138,22 @@ final class LoaderShapeMap {
                 operation.addModifier(new ApplyMixin(mixin));
             }
             builder.clearMixins();
-            // Remove traits from the shape and members and send them through the merging logic of loader.
-            shape.getIntroducedTraits().values()
-                    .forEach(trait -> processor.accept(LoadOperation.ApplyTrait.from(shape.getId(), trait)));
+            // Remove traits from the shape and members and send them through the merging logic of loader
+            // filtering out the synthetic ones to avoid attempting to reparse them.
+            for (Trait trait : shape.getIntroducedTraits().values()) {
+                if (!trait.isSynthetic()) {
+                    processor.accept(LoadOperation.ApplyTrait.from(shape.getId(), trait));
+                }
+            }
             builder.clearTraits();
             // Clear out member mixins and traits, and register the newly created builders.
             for (MemberShape member : shape.members()) {
                 MemberShape.Builder memberBuilder = member.toBuilder();
-                member.getIntroducedTraits().values()
-                        .forEach(trait -> processor.accept(LoadOperation.ApplyTrait.from(member.getId(), trait)));
+                for (Trait trait : member.getIntroducedTraits().values()) {
+                    if (!trait.isSynthetic()) {
+                        processor.accept(LoadOperation.ApplyTrait.from(member.getId(), trait));
+                    }
+                }
                 memberBuilder.clearTraits().clearMixins();
                 operation.addMember(memberBuilder);
             }

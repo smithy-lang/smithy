@@ -694,6 +694,24 @@ public class ModelAssemblerTest {
                    equalTo(originalId));
     }
 
+    // Synthetic traits should not be parsed again. That will cause a
+    // failure, for instance, if we import a 1.0 model that has @enum
+    // traits. If we try to reparse them this will fail with an error
+    // Unable to resolve trait `smithy.synthetic#enum`
+    @Test
+    public void doesNotReParsesSyntheticTraits() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("does-not-reparses-synthetic-traits.smithy"))
+                .assemble()
+                .unwrap();
+
+        Model.assembler()
+                .addModel(model)
+                .addUnparsedModel("foo.smithy", "namespace smithy.example\napply Foo @sensitive\n")
+                .assemble()
+                .unwrap();
+    }
+
     @Test
     public void resetDoesNotBarf() {
         ModelAssembler assembler = new ModelAssembler();
