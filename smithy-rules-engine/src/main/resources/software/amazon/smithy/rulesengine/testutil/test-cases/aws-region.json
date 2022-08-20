@@ -1,5 +1,4 @@
 {
-  "service": "aws-region",
   "testCases": [
     {
       "documentation": "basic region templating",
@@ -12,8 +11,8 @@
           "properties": {
             "authSchemes": [
               {
-                "name": "v4",
-                "signingScope": "us-east-1",
+                "name": "sigv4",
+                "signingRegion": "us-east-1",
                 "signingName": "serviceName"
               }
             ]

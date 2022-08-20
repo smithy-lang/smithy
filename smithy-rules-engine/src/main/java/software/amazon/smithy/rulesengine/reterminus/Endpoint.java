@@ -38,6 +38,7 @@ import software.amazon.smithy.rulesengine.reterminus.lang.expr.Expr;
 import software.amazon.smithy.rulesengine.reterminus.lang.expr.Literal;
 import software.amazon.smithy.rulesengine.reterminus.util.StringUtils;
 import software.amazon.smithy.utils.BuilderRef;
+import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -49,6 +50,9 @@ public final class Endpoint implements ToSmithyBuilder<Endpoint>, FromSourceLoca
     private static final String URL = "url";
     private static final String PROPERTIES = "properties";
     private static final String HEADERS = "headers";
+    private static final String SIGV_4 = "sigv4";
+    private static final String SIG_V4A = "sigv4a";
+    private static final String SIGNING_REGION = "signingRegion";
 
     private final Expr url;
     private final Map<String, List<Expr>> headers;
@@ -228,6 +232,9 @@ public final class Endpoint implements ToSmithyBuilder<Endpoint>, FromSourceLoca
      * Builder for {@link Endpoint}.
      */
     public static class Builder extends SourceAwareBuilder<Builder, Endpoint> {
+        private static final String SIGNING_NAME = "signingName";
+        private static final String SIGNING_REGION_SET = "signingRegionSet";
+
         private final BuilderRef<Map<String, List<Expr>>> headers = BuilderRef.forOrderedMap();
         private final BuilderRef<Map<Identifier, Literal>> properties = BuilderRef.forOrderedMap();
         private final BuilderRef<List<Pair<Identifier, Map<Identifier, Literal>>>> authSchemes = BuilderRef.forList();
@@ -264,6 +271,15 @@ public final class Endpoint implements ToSmithyBuilder<Endpoint>, FromSourceLoca
                     parameters.entrySet().stream()
                             .collect(Collectors.toMap(k -> Identifier.of(k.getKey()), Map.Entry::getValue))));
             return this;
+        }
+
+        public Builder sigv4(Literal signingRegion, Literal signingService) {
+            return addAuthScheme(SIGV_4, MapUtils.of(SIGNING_REGION, signingRegion, SIGNING_NAME, signingService));
+        }
+
+        public Builder sigv4a(List<Literal> signingRegionSet, Literal signingService) {
+            return addAuthScheme(SIG_V4A, MapUtils.of(SIGNING_REGION_SET, Literal.tuple(signingRegionSet),
+                    SIGNING_NAME, signingService));
         }
 
         public Builder headers(Map<String, List<Expr>> headers) {

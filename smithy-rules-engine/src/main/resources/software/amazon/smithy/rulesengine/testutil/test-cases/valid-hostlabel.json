@@ -1,5 +1,4 @@
 {
-  "service": "valid-hostlabel",
   "testCases": [
     {
       "documentation": "standard region is a valid hostlabel",

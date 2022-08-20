@@ -46,7 +46,8 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 @SmithyUnstableApi
 public class RuleSynthesizer {
     public static final Identifier SIGNING_NAME = Identifier.of("signingName");
-    public static final Identifier SIGNING_SCOPE = Identifier.of("signingScope");
+    public static final Identifier SIGNING_REGION = Identifier.of("signingRegion");
+    public static final Identifier NAME = Identifier.of("name");
     public static final String NO_DUALSTACK_SUPPORT =
             "DualStack is enabled but this partition does not support DualStack";
     public static final String NO_FIPS =
@@ -300,18 +301,26 @@ public class RuleSynthesizer {
         Map<Identifier, Map<Identifier, Literal>> authParams = new HashMap<>();
 
         view.authSchemes().forEach(e -> {
-            Map<Identifier, Literal> exprValues = new HashMap<>();
-            authParams.put(Identifier.of(e), authParamsForScheme(e));
+            authParams.put(authSchemeName(e), authParamsForScheme(e));
         });
 
         List<Identifier> authSchemes = view.authSchemes().stream()
-                .map(Identifier::of)
+                .map(this::authSchemeName)
                 .collect(Collectors.toList());
 
         return Endpoint.builder()
                 .url(Expr.of("https://" + hostname))
                 .authSchemes(authSchemes, authParams)
                 .build();
+    }
+
+    private Identifier authSchemeName(String oldName) {
+        switch (oldName) {
+            case "v4":
+                return Identifier.of("sigv4");
+            default:
+                return Identifier.of(oldName);
+        }
     }
 
     private Rule fipsDualStackEndpointRule() {
@@ -347,8 +356,9 @@ public class RuleSynthesizer {
             case "s3v4":
             case "v4":
                 return MapUtils.of(
+                        NAME, Literal.of("sigv4"),
                         SIGNING_NAME, Literal.of(signingName),
-                        SIGNING_SCOPE, Literal.of("{" + Builtins.REGION.getName().asString() + "}")
+                        SIGNING_REGION, Literal.of(Builtins.REGION.expr().template())
                 );
             default:
                 throw new RuntimeException("Unknown auth scheme: " + scheme);

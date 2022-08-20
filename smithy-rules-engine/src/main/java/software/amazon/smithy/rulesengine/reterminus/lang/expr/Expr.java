@@ -17,6 +17,7 @@ package software.amazon.smithy.rulesengine.reterminus.lang.expr;
 
 import static software.amazon.smithy.rulesengine.reterminus.error.RuleError.ctx;
 
+import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceException;
@@ -44,8 +45,13 @@ import software.amazon.smithy.rulesengine.reterminus.lang.fn.Substring;
 import software.amazon.smithy.rulesengine.reterminus.visit.ExprVisitor;
 
 public abstract class Expr implements FromSourceLocation, Typecheck, Eval, ToNode {
+    private final SourceLocation sourceLocation;
 
     private Type cachedType;
+
+    public Expr(SourceLocation sourceLocation) {
+        this.sourceLocation = Objects.requireNonNull(sourceLocation);
+    }
 
     public static Expr of(boolean value) {
         return Literal.bool(value);
@@ -72,8 +78,6 @@ public abstract class Expr implements FromSourceLocation, Typecheck, Eval, ToNod
                 return ref(Identifier.of(ref.get().expectStringNode("ref must be a string")), ref.get());
             }
             return ctx("while parsing fn", node, () -> FnNode.fromNode(on).validate());
-        } else if (node.asStringNode().isPresent()) {
-            return literal(node.asStringNode().get());
         } else {
             return Literal.fromNode(node);
         }
@@ -108,7 +112,9 @@ public abstract class Expr implements FromSourceLocation, Typecheck, Eval, ToNod
         return Literal.str(new Template(node));
     }
 
-    public abstract SourceLocation getSourceLocation();
+    public SourceLocation getSourceLocation() {
+        return this.sourceLocation;
+    }
 
     public abstract <R> R accept(ExprVisitor<R> visitor);
 

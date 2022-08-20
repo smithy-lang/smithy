@@ -13,18 +13,21 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.rulesengine.validators;
+package software.amazon.smithy.rulesengine.traits;
 
-public enum ValidationErrorType {
-    INCONSISTENT_PARAMETER_TYPE,
-    UNSUPPORTED_PARAMETER_TYPE,
-    PARAMETER_MISMATCH,
-    PARAMETER_TYPE_MISMATCH,
-    SERVICE_ID_MISMATCH,
-    REQUIRED_PARAMETER_MISSING,
-    PARAMETER_IS_NOT_USED,
-    PARAMETER_IS_NOT_DEFINED,
-    INVALID_URI,
-    INVALID_BUILTIN,
-    INVALID_AUTH_SCHEMES
+import java.util.List;
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.validation.AbstractValidator;
+import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.SmithyUnstableApi;
+
+/**
+ * Validates the {@link EndpointTestsTrait}.
+ */
+@SmithyUnstableApi
+public final class EndpointTestsTraitValidator extends AbstractValidator {
+    @Override
+    public List<ValidationEvent> validate(Model model) {
+        return null;
+    }
 }

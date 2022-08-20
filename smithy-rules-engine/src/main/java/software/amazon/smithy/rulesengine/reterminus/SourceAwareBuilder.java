@@ -36,7 +36,7 @@ public abstract class SourceAwareBuilder<B extends SourceAwareBuilder<?, ?>, T>
         for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
             if (isStackTraceRelevant(e)) {
                 if (e.getFileName() == null) {
-                    System.out.println(e);
+                    return SourceLocation.none();
                 }
                 return new SourceLocation(e.getFileName(), e.getLineNumber(), 0);
             }

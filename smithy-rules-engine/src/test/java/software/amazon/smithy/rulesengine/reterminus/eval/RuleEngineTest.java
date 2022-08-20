@@ -45,8 +45,8 @@ class RuleEngineTest {
                 .url("https://us-east-1.amazonaws.com")
                 .addProperty("authSchemes", Value.array(Collections.singletonList(
                         Value.record(MapUtils.of(
-                                Identifier.of("name"), Value.str("v4"),
-                                Identifier.of("signingScope"), Value.str("us-east-1"),
+                                Identifier.of("name"), Value.str("sigv4"),
+                                Identifier.of("signingRegion"), Value.str("us-east-1"),
                                 Identifier.of("signingName"), Value.str("serviceName")
                         ))
                 )))

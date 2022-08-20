@@ -33,6 +33,7 @@ public abstract class Fn extends Expr implements Into<Condition> {
     protected FnNode fnNode;
 
     public Fn(FnNode fnNode) {
+        super(fnNode.getSourceLocation());
         this.fnNode = fnNode;
     }
 

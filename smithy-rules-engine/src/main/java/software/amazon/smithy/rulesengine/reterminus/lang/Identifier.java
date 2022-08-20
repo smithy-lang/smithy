@@ -21,6 +21,7 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.rulesengine.reterminus.SourceAwareBuilder;
 
 public final class Identifier implements FromSourceLocation, ToNode {
     private final StringNode name;
@@ -30,7 +31,7 @@ public final class Identifier implements FromSourceLocation, ToNode {
     }
 
     public static Identifier of(String name) {
-        return new Identifier(StringNode.from(name));
+        return new Identifier(new StringNode(name, SourceAwareBuilder.javaLocation()));
     }
 
     public static Identifier of(StringNode name) {

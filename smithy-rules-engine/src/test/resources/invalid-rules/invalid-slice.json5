@@ -3,9 +3,9 @@
 // while typechecking the endpoint
 //   at invalid-rules/invalid-slice.json5:41
 // while checking the URL
+//   at invalid-rules/invalid-slice.json5:42
 // while typechecking "{dyn bucketArn#accountId}.{dyn bucketArn#resourceId[2]}.{dyn bucketArn#region}"
 // while typechecking the template `"{dyn bucketArn#accountId}.{dyn bucketArn#resourceId[2]}.{dyn bucketArn#region}"`
-//   at invalid-rules/invalid-slice.json5:42
 // while checking {dyn bucketArn#resourceId[2]}
 // Expected string but found Option<String>. hint: use `assign` in a condition or `isSet` to prove that this value is non-null
 {
