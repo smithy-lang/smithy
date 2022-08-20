@@ -1,5 +1,4 @@
 {
-  "service": "com.amazonaws#EventBridge",
   "testCases": [
     {
       "documentation": "simple region endpoint",
@@ -24,9 +23,9 @@
           "properties": {
             "authSchemes": [
               {
-                "name": "v4a",
-                "signingScope": "events",
-                "signingRegions": "*"
+                "name": "sigv4a",
+                "signingName": "events",
+                "signingRegionSet": ["*"]
               }
             ]
           }

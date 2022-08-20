@@ -54,7 +54,7 @@ public class Parameters implements FromSourceLocation, ToNode, ToSmithyBuilder<P
         for (Map.Entry<StringNode, Node> kv : node.getMembers().entrySet()) {
             builder.addParameter(
                     Parameter.fromNode(
-                            kv.getKey().getValue(),
+                            kv.getKey(),
                             ctx("when parsing parameter", () -> kv.getValue().expectObjectNode())));
         }
         return builder.build();

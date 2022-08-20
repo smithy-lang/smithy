@@ -18,8 +18,10 @@ package software.amazon.smithy.rulesengine.reterminus.eval;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.reterminus.error.InnerParseError;
@@ -90,6 +92,18 @@ public class Scope<T> {
             }
         }
         throw new InnerParseError(String.format("No field named %s", name));
+    }
+
+    public Optional<Map.Entry<Identifier, T>> getDeclaration(Identifier name) {
+        for (ScopeLayer<T> layer : scope) {
+            if (layer.getTypes().containsKey(name)) {
+                return Optional.of(layer.getTypes().entrySet().stream()
+                        .filter(e -> e.getKey().equals(name))
+                        .collect(Collectors.toList()).get(0));
+            }
+        }
+        return Optional.empty();
+
     }
 
     public Optional<T> getValue(Identifier name) {

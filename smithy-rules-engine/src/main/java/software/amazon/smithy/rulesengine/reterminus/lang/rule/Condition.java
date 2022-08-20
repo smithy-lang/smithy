@@ -17,10 +17,10 @@ package software.amazon.smithy.rulesengine.reterminus.lang.rule;
 
 import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
+import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.IntoSelf;
 import software.amazon.smithy.rulesengine.reterminus.SourceAwareBuilder;
@@ -48,7 +48,7 @@ public final class Condition implements Typecheck, Eval, FromSourceLocation, ToN
     public static Condition fromNode(Node node) {
         ObjectNode on = node.expectObjectNode("condition must be an object node");
         Fn fn = FnNode.fromNode(on).validate();
-        Optional<String> result = on.getStringMember(ASSIGN).map(StringNode::getValue);
+        Optional<Identifier> result = on.getStringMember(ASSIGN).map(Identifier::of);
         Builder builder = new Builder();
         result.ifPresent(builder::result);
         builder.fn(fn);
@@ -72,7 +72,13 @@ public final class Condition implements Typecheck, Eval, FromSourceLocation, ToN
     public Type typecheck(Scope<Type> scope) {
         Type conditionType = fn.typecheck(scope);
         // If the condition is validated, then the expression must be a truthy type
-        getResult().ifPresent(resultName -> scope.insert(resultName, conditionType.provenTruthy()));
+        getResult().ifPresent(resultName -> {
+            scope.getDeclaration(resultName).ifPresent(entry -> {
+                throw new SourceException(String.format("Invalid shadowing of `%s` (first declared on line %s)",
+                        resultName, entry.getKey().getSourceLocation().getLine()), resultName);
+            });
+            scope.insert(resultName, conditionType.provenTruthy());
+        });
         return conditionType;
     }
 
@@ -123,6 +129,11 @@ public final class Condition implements Typecheck, Eval, FromSourceLocation, ToN
 
         public Builder result(String result) {
             this.result = Identifier.of(result);
+            return this;
+        }
+
+        public Builder result(Identifier result) {
+            this.result = result;
             return this;
         }
 

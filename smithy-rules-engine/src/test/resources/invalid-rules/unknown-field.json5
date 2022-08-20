@@ -3,9 +3,9 @@
 // while typechecking the endpoint
 //   at invalid-rules/unknown-field.json5:36
 // while checking the URL
+//   at invalid-rules/unknown-field.json5:37
 // while typechecking "{dyn partitionResult#nme}.amazonaws.com"
 // while typechecking the template `"{dyn partitionResult#nme}.amazonaws.com"`
-//   at invalid-rules/unknown-field.json5:37
 // while checking {dyn partitionResult#nme}
 // while typechecking partitionResult.nme
 // while resolving nme in {name=String, dnsSuffix=String, dualStackDnsSuffix=String, supportsDualStack=Bool, supportsFIPS=Bool}

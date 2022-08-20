@@ -51,8 +51,8 @@ class EndpointRulesetTest {
                 .url("https://us-east-1.amazonaws.com")
                 .addProperty("authSchemes", Value.array(Collections.singletonList(
                         Value.record(MapUtils.of(
-                                Identifier.of("name"), Value.str("v4"),
-                                Identifier.of("signingScope"), Value.str("us-east-1"),
+                                Identifier.of("name"), Value.str("sigv4"),
+                                Identifier.of("signingRegion"), Value.str("us-east-1"),
                                 Identifier.of("signingName"), Value.str("serviceName")
                         ))
                 )))
@@ -82,8 +82,8 @@ class EndpointRulesetTest {
                         .endpoint(Endpoint
                                 .builder(SourceLocation.none())
                                 .url(Literal.of("https://{Region}.amazonaws.com"))
-                                .addAuthScheme(Identifier.of("v4"), MapUtils.of(
-                                        Identifier.of("signingScope"), Literal.of("{Region}"),
+                                .addAuthScheme(Identifier.of("sigv4"), MapUtils.of(
+                                        Identifier.of("signingRegion"), Literal.of("{Region}"),
                                         Identifier.of("signingName"), Literal.of("serviceName")))
                                 .build()))
                 .build(), actual
@@ -114,8 +114,8 @@ class EndpointRulesetTest {
                                    "                    \"authSchemes\": [\n" +
                                    "                        {\n" +
                                    "                            \"signingName\": \"serviceName\",\n" +
-                                   "                            \"signingScope\": \"{Region}\",\n" +
-                                   "                            \"name\": \"v4\"\n" +
+                                   "                            \"signingRegion\": \"{Region}\",\n" +
+                                   "                            \"name\": \"sigv4\"\n" +
                                    "                        }\n" +
                                    "                    ]\n" +
                                    "                },\n" +

@@ -19,7 +19,6 @@ import static software.amazon.smithy.rulesengine.reterminus.error.RuleError.ctx;
 
 import java.util.Objects;
 import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.reterminus.eval.Scope;
@@ -32,17 +31,11 @@ import software.amazon.smithy.rulesengine.reterminus.visit.ExprVisitor;
  * A reference to a field.
  */
 public class Ref extends Expr {
-    private final SourceLocation sourceLocation;
     private final Identifier name;
 
     public Ref(Identifier name, FromSourceLocation sourceLocation) {
+        super(sourceLocation.getSourceLocation());
         this.name = name;
-        this.sourceLocation = sourceLocation.getSourceLocation();
-    }
-
-    @Override
-    public SourceLocation getSourceLocation() {
-        return sourceLocation;
     }
 
     @Override

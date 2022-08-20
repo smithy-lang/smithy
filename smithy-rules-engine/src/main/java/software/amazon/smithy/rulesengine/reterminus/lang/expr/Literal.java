@@ -20,7 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -31,6 +33,7 @@ import software.amazon.smithy.model.node.NullNode;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.rulesengine.reterminus.SourceAwareBuilder;
 import software.amazon.smithy.rulesengine.reterminus.error.RuleError;
 import software.amazon.smithy.rulesengine.reterminus.eval.Scope;
 import software.amazon.smithy.rulesengine.reterminus.eval.Type;
@@ -42,28 +45,29 @@ public final class Literal extends Expr {
 
     private final Lit source;
 
-    private Literal(Lit source) {
+    private Literal(Lit source, FromSourceLocation sourceLocation) {
+        super(sourceLocation.getSourceLocation());
         this.source = source;
     }
 
     public static Literal tuple(List<Literal> authSchemes) {
-        return new Literal(new Tuple(authSchemes));
+        return new Literal(new Tuple(authSchemes), SourceAwareBuilder.javaLocation());
     }
 
     public static Literal record(Map<Identifier, Literal> record) {
-        return new Literal(new Obj(record));
+        return new Literal(new Obj(record), SourceAwareBuilder.javaLocation());
     }
 
     public static Literal str(Template value) {
-        return new Literal(new Str(value));
+        return new Literal(new Str(value), SourceAwareBuilder.javaLocation());
     }
 
     public static Literal integer(int value) {
-        return new Literal(new Int(Node.from(value)));
+        return new Literal(new Int(Node.from(value)), SourceAwareBuilder.javaLocation());
     }
 
     public static Literal bool(boolean value) {
-        return new Literal(new Bool(Node.from(value)));
+        return new Literal(new Bool(Node.from(value)), SourceAwareBuilder.javaLocation());
     }
 
     public static Literal fromNode(Node node) {
@@ -71,7 +75,7 @@ public final class Literal extends Expr {
             @Override
             public Lit arrayNode(ArrayNode arrayNode) {
                 return new Tuple(arrayNode.getElements().stream()
-                        .map(el -> new Literal(el.accept(this)))
+                        .map(el -> new Literal(el.accept(this), el))
                         .collect(Collectors.toList()));
             }
 
@@ -94,7 +98,7 @@ public final class Literal extends Expr {
             public Lit objectNode(ObjectNode objectNode) {
                 Map<Identifier, Literal> obj = new HashMap<>();
                 objectNode.getMembers().forEach((k, v) -> {
-                    obj.put(Identifier.of(k), new Literal(v.accept(this)));
+                    obj.put(Identifier.of(k), new Literal(v.accept(this), v));
                 });
                 return new Obj(obj);
             }
@@ -104,7 +108,7 @@ public final class Literal extends Expr {
                 return new Str(new Template(stringNode));
             }
         });
-        return new Literal(lit);
+        return new Literal(lit, node.getSourceLocation());
     }
 
     public String expectLiteralString() {
@@ -115,6 +119,26 @@ public final class Literal extends Expr {
         } else {
             throw new RuleError(new SourceException("Expected a literal string, got " + source, this));
         }
+    }
+
+    public Optional<Boolean> asBool() {
+        return source.asBool();
+    }
+
+    public Optional<Template> asString() {
+        return source.asString();
+    }
+
+    public Optional<Map<Identifier, Literal>> asObject() {
+        return source.asObject();
+    }
+
+    public Optional<List<Literal>> asTuple() {
+        return source.asTuple();
+    }
+
+    public Optional<Integer> asInt() {
+        return source.asInt();
     }
 
     public <T> T accept(Vistor<T> visitor) {
@@ -281,6 +305,26 @@ public final class Literal extends Expr {
 
     private interface Lit {
         <T> T accept(Vistor<T> visitor);
+
+        default Optional<Boolean> asBool() {
+            return Optional.empty();
+        }
+
+        default Optional<Template> asString() {
+            return Optional.empty();
+        }
+
+        default Optional<Map<Identifier, Literal>> asObject() {
+            return Optional.empty();
+        }
+
+        default Optional<List<Literal>> asTuple() {
+            return Optional.empty();
+        }
+
+        default Optional<Integer> asInt() {
+            return Optional.empty();
+        }
     }
 
     static final class Int implements Lit {
@@ -296,6 +340,11 @@ public final class Literal extends Expr {
         @Override
         public <T> T accept(Vistor<T> visitor) {
             return visitor.visitInt(value.getValue().intValue());
+        }
+
+        @Override
+        public Optional<Integer> asInt() {
+            return Optional.of(this.value.getValue().intValue());
         }
 
         @Override
@@ -328,13 +377,18 @@ public final class Literal extends Expr {
             this.members = members;
         }
 
+        public List<Literal> members() {
+            return members;
+        }
+
         @Override
         public <T> T accept(Vistor<T> visitor) {
             return visitor.visitTuple(members);
         }
 
-        public List<Literal> members() {
-            return members;
+        @Override
+        public Optional<List<Literal>> asTuple() {
+            return Optional.of(members);
         }
 
         @Override
@@ -368,13 +422,18 @@ public final class Literal extends Expr {
             this.members = members;
         }
 
+        public Map<Identifier, Literal> members() {
+            return members;
+        }
+
         @Override
         public <T> T accept(Vistor<T> visitor) {
             return visitor.visitObject(members);
         }
 
-        public Map<Identifier, Literal> members() {
-            return members;
+        @Override
+        public Optional<Map<Identifier, Literal>> asObject() {
+            return Optional.of(members);
         }
 
         @Override
@@ -408,13 +467,18 @@ public final class Literal extends Expr {
             this.value = value;
         }
 
+        public BooleanNode value() {
+            return value;
+        }
+
         @Override
         public <T> T accept(Vistor<T> visitor) {
             return visitor.visitBool(value.getValue());
         }
 
-        public BooleanNode value() {
-            return value;
+        @Override
+        public Optional<Boolean> asBool() {
+            return Optional.of(value.getValue());
         }
 
         @Override
@@ -448,13 +512,18 @@ public final class Literal extends Expr {
             this.value = value;
         }
 
+        public Template value() {
+            return value;
+        }
+
         @Override
         public <T> T accept(Vistor<T> visitor) {
             return visitor.visitStr(value);
         }
 
-        public Template value() {
-            return value;
+        @Override
+        public Optional<Template> asString() {
+            return Optional.of(value);
         }
 
         @Override

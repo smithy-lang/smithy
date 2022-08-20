@@ -1,5 +1,4 @@
 {
-  "service": "substring",
   "testCases": [
     {
       "documentation": "substring when string is long enough",

@@ -26,10 +26,11 @@ public final class StandaloneRulesetValidator {
     }
 
     public static Stream<ValidationError> validate(EndpointRuleset ruleset, EndpointTestSuite testSuite) {
-        Stream<ValidationError> base = Stream.concat(
+        Stream<ValidationError> base = Stream.of(
                 BuiltInsValidator.validateBuiltIns(ruleset),
-                new ValidateUriScheme().visitRuleset(ruleset)
-        );
+                new ValidateUriScheme().visitRuleset(ruleset),
+                AuthSchemesValidator.validateRuleset(ruleset)
+        ).flatMap(i -> i);
         if (testSuite != null) {
             base = Stream.concat(base, BuiltInsValidator.validateBuiltIns(testSuite));
         }

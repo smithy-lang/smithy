@@ -17,6 +17,7 @@ package software.amazon.smithy.rulesengine.reterminus.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 class ArnTest {
@@ -24,8 +25,7 @@ class ArnTest {
     void arnsEndingInColon_1() {
         // If the resource is empty, the resource will be a [""]
         String arn = "arn:aws:s3:us-east-2:012345678:";
-        Arn parsed = Arn.parse(arn).get();
-        assertEquals(parsed.resource().get(0), "");
+        assertEquals(Arn.parse(arn), Optional.empty());
     }
 
     // This test is a description of current behavior more than it is a test of what the behavior _should_ be.

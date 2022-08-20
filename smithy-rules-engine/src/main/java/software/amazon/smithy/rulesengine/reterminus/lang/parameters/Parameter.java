@@ -78,7 +78,7 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, ToParameterR
         this.defaultValue = builder.defaultValue;
     }
 
-    public static Parameter fromNode(String name, ObjectNode node) throws RuleError {
+    public static Parameter fromNode(StringNode name, ObjectNode node) throws RuleError {
         // TODO: support documentation from JSON
         return RuleError.ctx("while parsing the parameter `" + name + "`", node, () -> {
             node.expectNoAdditionalProperties(Arrays.asList(BUILT_IN, REQUIRED, TYPE, DEPRECATED, DOCUMENTATION,
@@ -94,7 +94,7 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, ToParameterR
             node.getMember(DEFAULT).map(Value::fromNode).ifPresent(builder::defaultValue);
 
             boolean required = node.getBooleanMemberOrDefault(REQUIRED, false);
-            return builder.name(name).builtIn(builtIn).type(parameterType).required(required).build();
+            return builder.name(Identifier.of(name)).builtIn(builtIn).type(parameterType).required(required).build();
         });
     }
 
