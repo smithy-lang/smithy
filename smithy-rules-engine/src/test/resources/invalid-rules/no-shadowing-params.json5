@@ -1,7 +1,5 @@
-// while typechecking booleanEquals(true, true)
-//   at invalid-rules/no-shadowing-params.json5:19
-//   at invalid-rules/no-shadowing-params.json5:25
-// Invalid shadowing of `Region` (first declared on line 9)
+//   at invalid-rules/no-shadowing-params.json5:22
+// Invalid shadowing of `Region` (first declared on line 6)
 {
   "version": "1.2",
   "parameters": {

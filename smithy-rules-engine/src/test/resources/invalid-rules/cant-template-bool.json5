@@ -1,12 +1,11 @@
 // while typechecking
-//   at invalid-rules/cant-template-bool.json5:21
+//   at invalid-rules/cant-template-bool.json5:19
 // while typechecking the endpoint
-//   at invalid-rules/cant-template-bool.json5:23
+//   at invalid-rules/cant-template-bool.json5:21
 // while checking the URL
-//   at invalid-rules/cant-template-bool.json5:24
 // while typechecking "{dyn enabled}.amazonaws.com"
 // while typechecking the template `"{dyn enabled}.amazonaws.com"`
-// while checking {dyn enabled}
+//   at invalid-rules/cant-template-bool.json5:22
 // Expected string but found Bool
 {
   "version": "1.2",

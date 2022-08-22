@@ -28,9 +28,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.rulesengine.reterminus.EndpointRuleset;
-import software.amazon.smithy.rulesengine.reterminus.EndpointTest;
-import software.amazon.smithy.rulesengine.reterminus.EndpointTestSuite;
+import software.amazon.smithy.rulesengine.language.EndpointRuleset;
+import software.amazon.smithy.rulesengine.language.EndpointTest;
+import software.amazon.smithy.rulesengine.language.EndpointTestSuite;
 import software.amazon.smithy.utils.IoUtils;
 
 public class TestDiscovery {

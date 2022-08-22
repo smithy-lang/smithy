@@ -1,5 +1,4 @@
-// while typechecking RegionName
-//   at invalid-rules/wrong-default-type.json5:8
+//   at invalid-rules/wrong-default-type.json5:6
 // Invalid type for field "default": Type must match parameter type. Expected String, found Bool.
 {
   "version": "1.2",

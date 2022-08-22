@@ -1,6 +1,5 @@
 // when parsing endpoint ruleset
-// while parsing rule
-//   at invalid-rules/empty-rule.json5:16
+//   at invalid-rules/empty-rule.json5:14
 // Missing expected member `conditions`.
 {
   "version": "1.2",

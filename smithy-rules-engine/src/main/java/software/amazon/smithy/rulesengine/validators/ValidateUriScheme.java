@@ -18,11 +18,11 @@ package software.amazon.smithy.rulesengine.validators;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
-import software.amazon.smithy.rulesengine.reterminus.Endpoint;
-import software.amazon.smithy.rulesengine.reterminus.lang.Identifier;
-import software.amazon.smithy.rulesengine.reterminus.lang.expr.Literal;
-import software.amazon.smithy.rulesengine.reterminus.lang.expr.Template;
-import software.amazon.smithy.rulesengine.reterminus.visit.TraversingVisitor;
+import software.amazon.smithy.rulesengine.language.Endpoint;
+import software.amazon.smithy.rulesengine.language.lang.Identifier;
+import software.amazon.smithy.rulesengine.language.lang.expr.Literal;
+import software.amazon.smithy.rulesengine.language.lang.expr.Template;
+import software.amazon.smithy.rulesengine.language.visit.TraversingVisitor;
 
 /**
  * Validate that URIs start with a scheme.
