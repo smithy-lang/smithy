@@ -16,7 +16,7 @@
 package software.amazon.smithy.rulesengine.validators;
 
 import java.util.stream.Stream;
-import software.amazon.smithy.rulesengine.reterminus.EndpointRuleset;
+import software.amazon.smithy.rulesengine.language.EndpointRuleset;
 
 
 /**

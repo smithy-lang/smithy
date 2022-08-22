@@ -1,15 +1,14 @@
 // while typechecking
-//   at invalid-rules/field-in-wrong-tree.json5:42
+//   at invalid-rules/field-in-wrong-tree.json5:40
 // while typechecking the endpoint
-//   at invalid-rules/field-in-wrong-tree.json5:44
+//   at invalid-rules/field-in-wrong-tree.json5:42
 // while checking the URL
-//   at invalid-rules/field-in-wrong-tree.json5:45
 // while typechecking "{dyn partitionResult#name}.amazonaws.com"
 // while typechecking the template `"{dyn partitionResult#name}.amazonaws.com"`
+//   at invalid-rules/field-in-wrong-tree.json5:43
 // while checking {dyn partitionResult#name}
 // while typechecking partitionResult.name
 // while typechecking partitionResult
-// while resolving the type of reference partitionResult
 // No field named partitionResult
 {
   "version": "1.2",

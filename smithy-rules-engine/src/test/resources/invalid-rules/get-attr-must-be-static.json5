@@ -1,7 +1,5 @@
 // when parsing endpoint ruleset
-// while parsing rule
-//   at invalid-rules/get-attr-must-be-static.json5:26
-//   at invalid-rules/get-attr-must-be-static.json5:67
+//   at invalid-rules/get-attr-must-be-static.json5:64
 // Expected an object with possible properties of `headers`, `properties`, `url`, but found additional properties: `authParams`, `authSchemes`
 {
   "version": "1.2",

@@ -22,11 +22,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.rulesengine.reterminus.Endpoint;
-import software.amazon.smithy.rulesengine.reterminus.EndpointRuleset;
-import software.amazon.smithy.rulesengine.reterminus.lang.Identifier;
-import software.amazon.smithy.rulesengine.reterminus.lang.expr.Literal;
-import software.amazon.smithy.rulesengine.reterminus.visit.TraversingVisitor;
+import software.amazon.smithy.rulesengine.language.Endpoint;
+import software.amazon.smithy.rulesengine.language.EndpointRuleset;
+import software.amazon.smithy.rulesengine.language.lang.Identifier;
+import software.amazon.smithy.rulesengine.language.lang.expr.Literal;
+import software.amazon.smithy.rulesengine.language.visit.TraversingVisitor;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 

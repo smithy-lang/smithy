@@ -20,10 +20,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.rulesengine.reterminus.util.ResourceUtil;
+import software.amazon.smithy.rulesengine.language.util.ResourceUtil;
 
 public final class V1ModelUtils {
-    private static final String V1_ENDPOINTS_JSON = "/software/amazon/smithy/rulesengine/reterminus/endpoints.json";
+    private static final String V1_ENDPOINTS_JSON = "/software/amazon/smithy/rulesengine/language/endpoints.json";
 
     private static final String PARTITIONS = "partitions";
 

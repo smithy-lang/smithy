@@ -18,8 +18,8 @@ package software.amazon.smithy.rulesengine.validators;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import software.amazon.smithy.rulesengine.reterminus.EndpointRuleset;
-import software.amazon.smithy.rulesengine.reterminus.EndpointTestSuite;
+import software.amazon.smithy.rulesengine.language.EndpointRuleset;
+import software.amazon.smithy.rulesengine.language.EndpointTestSuite;
 
 public final class StandaloneRulesetValidator {
     private StandaloneRulesetValidator() {
