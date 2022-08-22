@@ -92,10 +92,25 @@ public class IntegrationTest {
         ruleset.typecheck(new Scope<>());
     }
 
+    @ParameterizedTest
+    @MethodSource("validTestcases")
+    void rulesRoundTripViaJson(ValidationTestCase validationTestCase) {
+        EndpointRuleset ruleset = EndpointRuleset.fromNode(validationTestCase.contents());
+        Node serialized = ruleset.toNode();
+        EndpointRuleset deserialized = EndpointRuleset.fromNode(serialized);
+        if (!deserialized.equals(ruleset)) {
+            assertEquals(ruleset.toString(), deserialized.toString());
+            assertEquals(ruleset, deserialized);
+        }
+
+    }
+
+    @ParameterizedTest
+    @MethodSource("checkableTestCases")
     void checkTestSuites(TestDiscovery.RulesTestcase testcase) {
         new TestDiscovery().testSuites().forEach(rulesTestSuite -> {
             assertEquals(Collections.emptyList(), StandaloneRulesetValidator.validate(rulesTestSuite.ruleset(),
-                    rulesTestSuite.testSuite()));
+                    rulesTestSuite.testSuite()).collect(Collectors.toList()));
         });
     }
 

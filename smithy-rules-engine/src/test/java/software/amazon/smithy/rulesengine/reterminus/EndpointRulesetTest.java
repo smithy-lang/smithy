@@ -89,41 +89,4 @@ class EndpointRulesetTest {
                 .build(), actual
         );
     }
-
-    @Test
-    void testRuleToNode() {
-        EndpointRuleset actual = parse(
-                "software/amazon/smithy/rulesengine/testutil/valid-rules/minimal-ruleset.json");
-        System.out.println(Node.prettyPrintJson(actual.toNode()));
-        Node expected = Node.parse("{\n" +
-                                   "    \"version\": \"1.3\",\n" +
-                                   "    \"parameters\": {\n" +
-                                   "        \"Region\": {\n" +
-                                   "            \"builtIn\": \"AWS::Region\",\n" +
-                                   "            \"required\": true,\n" +
-                                   "            \"type\": \"String\"\n" +
-                                   "        }\n" +
-                                   "    },\n" +
-                                   "    \"rules\": [\n" +
-                                   "        {\n" +
-                                   "            \"conditions\": [],\n" +
-                                   "            \"type\": \"endpoint\"," +
-                                   "            \"endpoint\": {\n" +
-                                   "                \"url\": \"https://{Region}.amazonaws.com\",\n" +
-                                   "                \"properties\": {\n" +
-                                   "                    \"authSchemes\": [\n" +
-                                   "                        {\n" +
-                                   "                            \"signingName\": \"serviceName\",\n" +
-                                   "                            \"signingRegion\": \"{Region}\",\n" +
-                                   "                            \"name\": \"sigv4\"\n" +
-                                   "                        }\n" +
-                                   "                    ]\n" +
-                                   "                },\n" +
-                                   "                \"headers\": {}\n" +
-                                   "            }\n" +
-                                   "        }\n" +
-                                   "    ]\n" +
-                                   "}");
-        assertEquals(Collections.emptyList(), Node.diff(actual, expected));
-    }
 }

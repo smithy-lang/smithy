@@ -21,6 +21,7 @@ import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
@@ -207,6 +208,7 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, ToParameterR
                 .type(getType())
                 .name(getName())
                 .builtIn(builtIn)
+                .documentation(documentation)
                 .value(value);
     }
 
@@ -233,6 +235,9 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, ToParameterR
         }
         if (deprecated != null) {
             node.withMember(DEPRECATED, deprecated);
+        }
+        if (documentation != null) {
+            node.withMember(DOCUMENTATION, documentation);
         }
         node.withMember(TYPE, type.toString());
         return node.build();
@@ -282,14 +287,16 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, ToParameterR
 
         @Override
         public Node toNode() {
-            return ObjectNode.builder().withMember(MESSAGE, message).withMember(SINCE, since).build();
+            NodeMapper mapper = new NodeMapper();
+            mapper.disableToNodeForClass(Deprecated.class);
+            return mapper.serialize(this);
         }
 
-        public String message() {
+        public String getMessage() {
             return message;
         }
 
-        public String since() {
+        public String getSince() {
             return since;
         }
 

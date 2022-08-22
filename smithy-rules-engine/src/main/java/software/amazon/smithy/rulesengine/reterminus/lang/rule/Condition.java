@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.rulesengine.reterminus.lang.rule;
 
+import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceException;
@@ -53,6 +54,23 @@ public final class Condition implements Typecheck, Eval, FromSourceLocation, ToN
         result.ifPresent(builder::result);
         builder.fn(fn);
         return builder.build();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Condition condition = (Condition) o;
+        return Objects.equals(fn, condition.fn) && Objects.equals(result, condition.result);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fn, result);
     }
 
     public Expr getFn() {
