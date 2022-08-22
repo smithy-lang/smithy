@@ -135,7 +135,10 @@ public abstract class Rule implements Typecheck, ToNode, FromSourceLocation {
     public Node toNode() {
         ObjectNode.Builder ruleNode = ObjectNode.builder();
         ArrayNode conditionsNode = conditions.stream().map(ToNode::toNode).collect(ArrayNode.collect());
-        ruleNode.withMember("conditions", conditionsNode);
+        ruleNode.withMember(CONDITIONS, conditionsNode);
+        if (documentation != null) {
+            ruleNode.withMember(DOCUMENTATION, documentation);
+        }
         withValueNode(ruleNode);
         return ruleNode.build();
     }

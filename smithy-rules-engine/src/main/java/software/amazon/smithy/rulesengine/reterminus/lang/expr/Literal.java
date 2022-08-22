@@ -361,7 +361,7 @@ public final class Literal extends Expr {
                 return false;
             }
             Int anInt = (Int) o;
-            return value == anInt.value;
+            return value.equals(anInt.value);
         }
 
         @Override
