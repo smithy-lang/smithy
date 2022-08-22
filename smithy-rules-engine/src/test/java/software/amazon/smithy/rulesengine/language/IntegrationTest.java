@@ -75,9 +75,7 @@ public class IntegrationTest {
     }
 
     private Stream<ValidationTestCase> invalidTestCases() {
-        URL url = Thread.currentThread()
-                .getContextClassLoader()
-                .getResource("invalid-rules");
+        URL url = getClass().getResource("invalid-rules");
         assert url != null;
         return Arrays.stream(Objects.requireNonNull(new File(url.getPath()).listFiles()))
                 .map(path -> new ValidationTestCase(path.toPath(), null));

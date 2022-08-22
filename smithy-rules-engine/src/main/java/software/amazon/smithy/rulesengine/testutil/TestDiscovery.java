@@ -43,13 +43,13 @@ public class TestDiscovery {
         List<Node> filenames = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(
-                Objects.requireNonNull(this.getClass().getResourceAsStream(manifest)), StandardCharsets.UTF_8))) {
+                Objects.requireNonNull(getClass().getResourceAsStream(manifest)), StandardCharsets.UTF_8))) {
             String resource;
 
             while ((resource = br.readLine()) != null) {
                 String path = Paths.get(base, resource)
                         .toString();
-                filenames.add(Node.parse(IoUtils.toUtf8String(Objects.requireNonNull(this.getClass()
+                filenames.add(Node.parse(IoUtils.toUtf8String(Objects.requireNonNull(getClass()
                         .getResourceAsStream(path))), path));
             }
         } catch (IOException e) {

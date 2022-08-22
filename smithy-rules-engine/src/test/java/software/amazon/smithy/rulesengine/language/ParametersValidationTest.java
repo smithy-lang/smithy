@@ -38,14 +38,14 @@ import software.amazon.smithy.utils.MapUtils;
 
 class ParametersValidationTest {
     private EndpointRuleset parseRuleset(String resource) {
-        InputStream is = getClass().getClassLoader().getResourceAsStream(resource);
+        InputStream is = getClass().getResourceAsStream(resource);
         assert is != null;
         Node node = ObjectNode.parse(is);
         return EndpointRuleset.fromNode(node);
     }
 
     private EndpointTestSuite parseTestSuite(String resource) {
-        InputStream is = getClass().getClassLoader().getResourceAsStream(resource);
+        InputStream is = getClass().getResourceAsStream(resource);
         assert is != null;
         Node node = ObjectNode.parse(is);
         return EndpointTestSuite.fromNode(node);
@@ -116,7 +116,7 @@ class ParametersValidationTest {
 
         Model model = Model.assembler()
                 .discoverModels()
-                .addImport(Objects.requireNonNull(getClass().getClassLoader().getResource("params-validation/model.smithy")))
+                .addImport(Objects.requireNonNull(getClass().getResource("params-validation/model.smithy")))
                 .assemble()
                 .unwrap();
 
@@ -136,7 +136,7 @@ class ParametersValidationTest {
 
         Model model = Model.assembler()
                 .discoverModels()
-                .addImport(Objects.requireNonNull(getClass().getClassLoader().getResource("params-validation/inconsistent-params-types.smithy")))
+                .addImport(Objects.requireNonNull(getClass().getResource("params-validation/inconsistent-params-types.smithy")))
                 .assemble()
                 .unwrap();
 
@@ -154,7 +154,7 @@ class ParametersValidationTest {
 
         Model model = Model.assembler()
                 .discoverModels()
-                .addImport(Objects.requireNonNull(getClass().getClassLoader().getResource("params-validation/inconsistent-param-types.smithy")))
+                .addImport(Objects.requireNonNull(getClass().getResource("params-validation/inconsistent-param-types.smithy")))
                 .assemble()
                 .unwrap();
 
@@ -172,7 +172,7 @@ class ParametersValidationTest {
 
         Model model = Model.assembler()
                 .discoverModels()
-                .addImport(Objects.requireNonNull(getClass().getClassLoader().getResource("params-validation/invalid-member-type.smithy")))
+                .addImport(Objects.requireNonNull(getClass().getResource("params-validation/invalid-member-type.smithy")))
                 .assemble()
                 .unwrap();
 
@@ -190,7 +190,7 @@ class ParametersValidationTest {
 
         Model model = Model.assembler()
                 .discoverModels()
-                .addImport(Objects.requireNonNull(getClass().getClassLoader().getResource("params-validation/duplicate-param.smithy")))
+                .addImport(Objects.requireNonNull(getClass().getResource("params-validation/duplicate-param.smithy")))
                 .assemble()
                 .unwrap();
 
@@ -204,7 +204,7 @@ class ParametersValidationTest {
 
         Model model = Model.assembler()
                 .discoverModels()
-                .addImport(Objects.requireNonNull(getClass().getClassLoader().getResource("params-validation/valid-model.smithy")))
+                .addImport(Objects.requireNonNull(getClass().getResource("params-validation/valid-model.smithy")))
                 .assemble()
                 .unwrap();
 

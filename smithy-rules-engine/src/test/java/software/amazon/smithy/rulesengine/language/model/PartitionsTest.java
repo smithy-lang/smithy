@@ -26,8 +26,7 @@ public class PartitionsTest {
 
     @Test
     public void fromNode_propertiesDeserializedCorrectly() {
-        Node json = Node.parse(ResourceUtil.resourceAsStream(
-                "/software/amazon/smithy/rulesengine/language/model/complete-partitions.json"));
+        Node json = Node.parse(PartitionsTest.class.getResourceAsStream("complete-partitions.json"));
 
         Partitions parsed = Partitions.fromNode(json);
 
