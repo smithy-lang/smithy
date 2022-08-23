@@ -124,6 +124,8 @@ public final class Builtins {
                     .type(ParameterType.BOOLEAN)
                     .name("UseGlobalEndpoint")
                     .builtIn("AWS::S3::UseGlobalEndpoint")
+                    .required(true)
+                    .defaultValue(Value.bool(false))
                     .documentation("Whether the global endpoint should be used, rather then "
                             + "the regional endpoint for us-east-1.")
                     .build();
@@ -136,6 +138,8 @@ public final class Builtins {
                     .type(ParameterType.BOOLEAN)
                     .name("UseGlobalEndpoint")
                     .builtIn("AWS::STS::UseGlobalEndpoint")
+                    .required(true)
+                    .defaultValue(Value.bool(false))
                     .documentation("Whether the global endpoint should be used, rather then "
                             + "the regional endpoint for us-east-1.")
                     .build();
