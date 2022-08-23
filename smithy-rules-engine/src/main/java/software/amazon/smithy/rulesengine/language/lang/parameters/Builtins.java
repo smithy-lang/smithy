@@ -116,8 +116,33 @@ public final class Builtins {
                             + " of the client's configured region.")
                     .build();
 
+    /**
+     * This MUST only be used by the S3 rules.
+     */
+    public static final Parameter S3_USE_GLOBAL_ENDPOINT =
+            Parameter.builder()
+                    .type(ParameterType.BOOLEAN)
+                    .name("UseGlobalEndpoint")
+                    .builtIn("AWS::S3::UseGlobalEndpoint")
+                    .documentation("Whether the global endpoint should be used, rather then "
+                            + "the regional endpoint for us-east-1.")
+                    .build();
+
+    /**
+     * This MUST only be used by the STS rules.
+     */
+    public static final Parameter STS_USE_GLOBAL_ENDPOINT =
+            Parameter.builder()
+                    .type(ParameterType.BOOLEAN)
+                    .name("UseGlobalEndpoint")
+                    .builtIn("AWS::STS::UseGlobalEndpoint")
+                    .documentation("Whether the global endpoint should be used, rather then "
+                            + "the regional endpoint for us-east-1.")
+                    .build();
+
     public static final List<Parameter> ALL_BUILTINS = ListUtils.of(
-            SDK_ENDPOINT, REGION, FIPS, DUALSTACK, S3_ACCELERATE, S3_FORCE_PATH_STYLE, S3_USE_ARN_REGION);
+            SDK_ENDPOINT, REGION, FIPS, DUALSTACK, S3_ACCELERATE, S3_FORCE_PATH_STYLE, S3_USE_ARN_REGION,
+            S3_USE_GLOBAL_ENDPOINT, STS_USE_GLOBAL_ENDPOINT);
 
     private Builtins() {
     }
