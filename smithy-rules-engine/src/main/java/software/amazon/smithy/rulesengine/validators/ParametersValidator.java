@@ -29,15 +29,17 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.rulesengine.reterminus.EndpointRuleset;
-import software.amazon.smithy.rulesengine.reterminus.EndpointTestSuite;
-import software.amazon.smithy.rulesengine.reterminus.lang.parameters.Parameter;
-import software.amazon.smithy.rulesengine.reterminus.lang.parameters.ParameterType;
+import software.amazon.smithy.rulesengine.language.EndpointRuleset;
+import software.amazon.smithy.rulesengine.language.EndpointTestSuite;
+import software.amazon.smithy.rulesengine.language.lang.parameters.Parameter;
+import software.amazon.smithy.rulesengine.language.lang.parameters.ParameterType;
 import software.amazon.smithy.rulesengine.traits.ClientContextParamsTrait;
 import software.amazon.smithy.rulesengine.traits.ContextParamTrait;
 import software.amazon.smithy.rulesengine.traits.StaticContextParamDefinition;
 import software.amazon.smithy.rulesengine.traits.StaticContextParamsTrait;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public final class ParametersValidator {
 
     private ParametersValidator() {

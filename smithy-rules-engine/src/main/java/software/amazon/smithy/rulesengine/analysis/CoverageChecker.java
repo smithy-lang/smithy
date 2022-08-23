@@ -24,21 +24,23 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import software.amazon.smithy.rulesengine.reterminus.EndpointRuleset;
-import software.amazon.smithy.rulesengine.reterminus.EndpointTest;
-import software.amazon.smithy.rulesengine.reterminus.eval.RuleEvaluator;
-import software.amazon.smithy.rulesengine.reterminus.eval.Value;
-import software.amazon.smithy.rulesengine.reterminus.lang.Identifier;
-import software.amazon.smithy.rulesengine.reterminus.lang.rule.Condition;
-import software.amazon.smithy.rulesengine.reterminus.lang.rule.Rule;
-import software.amazon.smithy.rulesengine.reterminus.util.PathFinder;
-import software.amazon.smithy.rulesengine.reterminus.util.StringUtils;
-import software.amazon.smithy.rulesengine.reterminus.visit.TraversingVisitor;
+import software.amazon.smithy.rulesengine.language.EndpointRuleset;
+import software.amazon.smithy.rulesengine.language.EndpointTest;
+import software.amazon.smithy.rulesengine.language.eval.RuleEvaluator;
+import software.amazon.smithy.rulesengine.language.eval.Value;
+import software.amazon.smithy.rulesengine.language.lang.Identifier;
+import software.amazon.smithy.rulesengine.language.lang.rule.Condition;
+import software.amazon.smithy.rulesengine.language.lang.rule.Rule;
+import software.amazon.smithy.rulesengine.language.util.PathFinder;
+import software.amazon.smithy.rulesengine.language.util.StringUtils;
+import software.amazon.smithy.rulesengine.language.visit.TraversingVisitor;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Analysis utility to determine test coverage of a ruleset for a given set of inputs.
  */
-public class CoverageChecker {
+@SmithyUnstableApi
+public final class CoverageChecker {
     private final CoverageCheckerCore checkerCore;
     private final EndpointRuleset ruleset;
 

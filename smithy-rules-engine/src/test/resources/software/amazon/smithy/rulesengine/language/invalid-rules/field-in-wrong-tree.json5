@@ -1,0 +1,48 @@
+// while typechecking
+//   at invalid-rules/field-in-wrong-tree.json5:40
+// while typechecking the endpoint
+//   at invalid-rules/field-in-wrong-tree.json5:42
+// while checking the URL
+// while typechecking "{dyn partitionResult#name}.amazonaws.com"
+// while typechecking the template `"{dyn partitionResult#name}.amazonaws.com"`
+//   at invalid-rules/field-in-wrong-tree.json5:43
+// while checking {dyn partitionResult#name}
+// while typechecking partitionResult.name
+// while typechecking partitionResult
+// No field named partitionResult
+{
+  "version": "1.2",
+  "parameters": {
+    "region": {
+      "type": "string",
+      "builtIn": "AWS::Region",
+      "required": true
+    }
+  },
+  "rules": [
+    {
+      "conditions": [
+        {
+          "fn": "aws.partition",
+          "argv": [
+            {
+              "ref": "region"
+            }
+          ],
+          "assign": "partitionResult"
+        }
+      ],
+      "endpoint": {
+        "url": "{partitionResult#name}.amazonaws.com"
+      },
+      "type": "endpoint"
+    },
+    {
+      "conditions": [],
+      "endpoint": {
+        "url": "{partitionResult#name}.amazonaws.com"
+      },
+      "type": "endpoint"
+    }
+  ]
+}

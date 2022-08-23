@@ -1,0 +1,15 @@
+// when parsing endpoint ruleset
+//   at invalid-rules/default-must-be-required.json5:7
+// When a default value is set, the field must also be marked as required
+{
+  "version": "1.2",
+  "parameters": {
+    "RegionName": {
+      "type": "string",
+      "builtIn": "AWS::Region",
+      "default": "default-region"
+    }
+  },
+  "rules": [
+  ]
+}

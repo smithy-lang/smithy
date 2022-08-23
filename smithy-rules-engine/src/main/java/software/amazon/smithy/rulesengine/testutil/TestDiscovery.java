@@ -28,12 +28,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.rulesengine.reterminus.EndpointRuleset;
-import software.amazon.smithy.rulesengine.reterminus.EndpointTest;
-import software.amazon.smithy.rulesengine.reterminus.EndpointTestSuite;
+import software.amazon.smithy.rulesengine.language.EndpointRuleset;
+import software.amazon.smithy.rulesengine.language.EndpointTest;
+import software.amazon.smithy.rulesengine.language.EndpointTestSuite;
 import software.amazon.smithy.utils.IoUtils;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
-public class TestDiscovery {
+@SmithyUnstableApi
+public final class TestDiscovery {
     private static String prettyPath(Path path) {
         return path.subpath(path.getNameCount() - 2, path.getNameCount())
                 .toString();
@@ -43,13 +45,13 @@ public class TestDiscovery {
         List<Node> filenames = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(
-                Objects.requireNonNull(this.getClass().getResourceAsStream(manifest)), StandardCharsets.UTF_8))) {
+                Objects.requireNonNull(getClass().getResourceAsStream(manifest)), StandardCharsets.UTF_8))) {
             String resource;
 
             while ((resource = br.readLine()) != null) {
                 String path = Paths.get(base, resource)
                         .toString();
-                filenames.add(Node.parse(IoUtils.toUtf8String(Objects.requireNonNull(this.getClass()
+                filenames.add(Node.parse(IoUtils.toUtf8String(Objects.requireNonNull(getClass()
                         .getResourceAsStream(path))), path));
             }
         } catch (IOException e) {
