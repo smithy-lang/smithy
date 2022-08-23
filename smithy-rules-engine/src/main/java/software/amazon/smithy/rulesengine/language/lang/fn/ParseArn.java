@@ -28,7 +28,7 @@ import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
-public class ParseArn extends SingleArgFn<Type.Str> {
+public final class ParseArn extends SingleArgFn<Type.Str> {
     public static final String ID = "aws.parseArn";
     public static final Identifier PARTITION = Identifier.of("partition");
     public static final Identifier SERVICE = Identifier.of("service");

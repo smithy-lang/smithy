@@ -16,7 +16,9 @@
 package software.amazon.smithy.rulesengine.language.util;
 
 import java.util.function.Supplier;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public final class LazyValue<T> {
     private final Supplier<T> initializer;
     private T value;

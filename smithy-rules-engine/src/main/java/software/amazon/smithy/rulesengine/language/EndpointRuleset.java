@@ -36,10 +36,12 @@ import software.amazon.smithy.rulesengine.language.lang.rule.EndpointRule;
 import software.amazon.smithy.rulesengine.language.lang.rule.Rule;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * A set of EndpointRules. Endpoint Rules describe the endpoint resolution behavior for a service.
  */
+@SmithyUnstableApi
 public final class EndpointRuleset implements FromSourceLocation, Typecheck, ToNode {
     private static final String LATEST_VERSION = "1.3";
     private static final String VERSION = "version";

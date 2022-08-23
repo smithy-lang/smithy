@@ -19,7 +19,9 @@ import java.util.HashMap;
 import java.util.Map;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public final class ServiceV1 {
     public static final String DEFAULTS = "defaults";
     public static final String ENDPOINTS = "endpoints";

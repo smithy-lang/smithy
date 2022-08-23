@@ -27,7 +27,7 @@ import software.amazon.smithy.rulesengine.language.visit.FnVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
-public class Substring extends VarargFn {
+public final class Substring extends VarargFn {
     public static final String ID = "substring";
     public static final Identifier SUBSTRING = Identifier.of("substring");
     private static final int EXPECTED_NUMBER_ARGS = 4;

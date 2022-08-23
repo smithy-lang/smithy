@@ -41,8 +41,10 @@ import software.amazon.smithy.rulesengine.language.lang.parameters.ParameterType
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
-public class EndpointTest implements FromSourceLocation, ToNode {
+@SmithyUnstableApi
+public final class EndpointTest implements FromSourceLocation, ToNode {
     public static final String EXPECT = "expect";
     public static final String PARAMS = "params";
     public static final String DOCUMENTATION = "documentation";

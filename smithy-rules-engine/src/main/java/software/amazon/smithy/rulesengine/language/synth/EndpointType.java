@@ -18,7 +18,9 @@ package software.amazon.smithy.rulesengine.language.synth;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public enum EndpointType {
     DEFAULT,
     FIPS,

@@ -39,7 +39,7 @@ import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
-public class PartitionFn extends SingleArgFn<Type.Str> {
+public final class PartitionFn extends SingleArgFn<Type.Str> {
     public static final String ID = "aws.partition";
 
     public static final Identifier NAME = Identifier.of("name");

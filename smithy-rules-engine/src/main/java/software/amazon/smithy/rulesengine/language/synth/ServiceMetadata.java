@@ -16,7 +16,9 @@
 package software.amazon.smithy.rulesengine.language.synth;
 
 import java.util.Optional;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public final class ServiceMetadata {
     private final String serviceId;
     private final String endpointPrefix;

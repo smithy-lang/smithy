@@ -35,6 +35,7 @@ import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Typecheck;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.visit.TemplateVisitor;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Template represents a "Template Literal". This is a literal string within the rules language. A template
@@ -45,7 +46,8 @@ import software.amazon.smithy.rulesengine.language.visit.TemplateVisitor;
  * |                   |
  * Dynamic            getAttr short form
  */
-public class Template implements FromSourceLocation, ToNode {
+@SmithyUnstableApi
+public final class Template implements FromSourceLocation, ToNode {
 
     private final List<Part> parts;
     private final SourceLocation sourceLocation;

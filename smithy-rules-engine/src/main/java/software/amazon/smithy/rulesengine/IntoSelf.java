@@ -15,6 +15,9 @@
 
 package software.amazon.smithy.rulesengine;
 
+import software.amazon.smithy.utils.SmithyUnstableApi;
+
+@SmithyUnstableApi
 public interface IntoSelf<T extends IntoSelf<T>> extends Into<T> {
     @Override
     default T into() {

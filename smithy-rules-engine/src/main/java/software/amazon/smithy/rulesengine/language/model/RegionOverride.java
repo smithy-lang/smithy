@@ -20,8 +20,10 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.rulesengine.language.SourceAwareBuilder;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
+@SmithyUnstableApi
 public final class RegionOverride implements ToSmithyBuilder<RegionOverride>, FromSourceLocation {
     private final SourceLocation sourceLocation;
 

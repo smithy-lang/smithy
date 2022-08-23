@@ -20,7 +20,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.rulesengine.language.EndpointRuleset;
 import software.amazon.smithy.rulesengine.language.EndpointTestSuite;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public final class StandaloneRulesetValidator {
     private StandaloneRulesetValidator() {
     }

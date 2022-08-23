@@ -21,10 +21,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.rulesengine.v1.PartitionV1;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Contains preprocessed endpoint information for a single service and partition.
  */
+@SmithyUnstableApi
 public final class IntermediateModel {
     private final String serviceId;
     private final PartitionV1 partition;

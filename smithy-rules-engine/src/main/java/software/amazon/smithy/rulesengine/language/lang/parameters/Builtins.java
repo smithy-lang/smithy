@@ -18,10 +18,12 @@ package software.amazon.smithy.rulesengine.language.lang.parameters;
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Built-in parameters for EndpointRules.
  */
+@SmithyUnstableApi
 public final class Builtins {
     /**
      * Built-in parameter representing Region eg. `us-east-1`.

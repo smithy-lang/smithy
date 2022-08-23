@@ -34,11 +34,13 @@ import software.amazon.smithy.rulesengine.language.lang.rule.Rule;
 import software.amazon.smithy.rulesengine.language.util.PathFinder;
 import software.amazon.smithy.rulesengine.language.util.StringUtils;
 import software.amazon.smithy.rulesengine.language.visit.TraversingVisitor;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Analysis utility to determine test coverage of a ruleset for a given set of inputs.
  */
-public class CoverageChecker {
+@SmithyUnstableApi
+public final class CoverageChecker {
     private final CoverageCheckerCore checkerCore;
     private final EndpointRuleset ruleset;
 

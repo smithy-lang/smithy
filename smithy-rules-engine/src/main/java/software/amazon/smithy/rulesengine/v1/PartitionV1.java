@@ -21,12 +21,14 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 //    "dnsSuffix" : "amazonaws.com",
 //    "partition" : "aws",
 //    "partitionName" : "AWS Standard",
 //    "regionRegex" : "^(us|eu|ap|sa|ca|me|af)\\-\\w+\\-\\d+$"
-public class PartitionV1 {
+@SmithyUnstableApi
+public final class PartitionV1 {
     private static final String DEFAULTS = "defaults";
     private static final String DNS_SUFFIX = "dnsSuffix";
     private static final String PARTITION = "partition";

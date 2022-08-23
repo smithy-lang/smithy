@@ -21,7 +21,9 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.rulesengine.language.util.ResourceUtil;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public final class V1ModelUtils {
     private static final String V1_ENDPOINTS_JSON = "/software/amazon/smithy/rulesengine/language/endpoints.json";
 

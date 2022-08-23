@@ -25,8 +25,10 @@ import software.amazon.smithy.rulesengine.v1.DefaultsV1;
 import software.amazon.smithy.rulesengine.v1.PartitionV1;
 import software.amazon.smithy.rulesengine.v1.ServiceV1;
 import software.amazon.smithy.rulesengine.v1.VariantV1;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
-public class Preprocessor {
+@SmithyUnstableApi
+public final class Preprocessor {
     private final PartitionV1 partition;
     private final String endpointPrefix;
     private final ServiceV1 service;

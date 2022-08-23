@@ -38,7 +38,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * Parsed but not validated function contents containing the `fn` name and `argv`.
  */
 @SmithyUnstableApi
-public class FnNode implements FromSourceLocation, ToNode {
+public final class FnNode implements FromSourceLocation, ToNode {
     private static final String ARGV = "argv";
     private static final String FN = "fn";
     private final StringNode fn;

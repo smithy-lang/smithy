@@ -25,7 +25,9 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.utils.BuilderRef;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public final class EndpointTestSuite implements ToNode, FromSourceLocation {
     public static final String TEST_CASES = "testCases";
 

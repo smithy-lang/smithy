@@ -22,8 +22,10 @@ import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.lang.expr.Expr;
 import software.amazon.smithy.rulesengine.language.visit.FnVisitor;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
-public class IsValidHostLabel extends VarargFn {
+@SmithyUnstableApi
+public final class IsValidHostLabel extends VarargFn {
     public static final String ID = "isValidHostLabel";
 
     public IsValidHostLabel(FnNode fnNode) {

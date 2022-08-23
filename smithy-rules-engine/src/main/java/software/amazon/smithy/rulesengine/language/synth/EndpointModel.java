@@ -19,7 +19,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public final class EndpointModel {
     private final String endpointPrefix;
     private final String dnsSuffix;

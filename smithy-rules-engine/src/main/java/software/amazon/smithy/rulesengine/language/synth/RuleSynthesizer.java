@@ -44,7 +44,7 @@ import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
-public class RuleSynthesizer {
+public final class RuleSynthesizer {
     public static final Identifier SIGNING_NAME = Identifier.of("signingName");
     public static final Identifier SIGNING_REGION = Identifier.of("signingRegion");
     public static final Identifier NAME = Identifier.of("name");

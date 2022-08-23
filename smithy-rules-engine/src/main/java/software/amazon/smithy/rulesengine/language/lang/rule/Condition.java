@@ -35,7 +35,9 @@ import software.amazon.smithy.rulesengine.language.lang.expr.Expr;
 import software.amazon.smithy.rulesengine.language.lang.fn.Fn;
 import software.amazon.smithy.rulesengine.language.lang.fn.FnNode;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public final class Condition implements Typecheck, Eval, FromSourceLocation, ToNode, IntoSelf<Condition> {
     public static final String ASSIGN = "assign";
     private final Expr fn;

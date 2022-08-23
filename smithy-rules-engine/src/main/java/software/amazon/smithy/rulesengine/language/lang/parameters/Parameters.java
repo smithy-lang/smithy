@@ -34,9 +34,11 @@ import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.lang.Identifier;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
-public class Parameters implements FromSourceLocation, ToNode, ToSmithyBuilder<Parameters> {
+@SmithyUnstableApi
+public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBuilder<Parameters> {
     private final List<Parameter> parameters;
     private final SourceLocation sourceLocation;
 

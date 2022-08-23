@@ -24,8 +24,10 @@ import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.lang.expr.Expr;
 import software.amazon.smithy.rulesengine.language.util.StringUtils;
 import software.amazon.smithy.rulesengine.language.visit.RuleValueVisitor;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
-public class ErrorRule extends Rule {
+@SmithyUnstableApi
+public final class ErrorRule extends Rule {
     private final Expr error;
 
     public ErrorRule(Rule.Builder builder, Expr error) {

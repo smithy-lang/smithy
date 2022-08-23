@@ -17,6 +17,7 @@ package software.amazon.smithy.rulesengine.validators;
 
 import java.util.stream.Stream;
 import software.amazon.smithy.rulesengine.language.EndpointRuleset;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 
 /**
@@ -24,6 +25,7 @@ import software.amazon.smithy.rulesengine.language.EndpointRuleset;
  *
  * Note: this validator is not included in the default set of validators and must be enabled conditionally
  */
+@SmithyUnstableApi
 public final class ParamsHaveDocs {
     private ParamsHaveDocs() {
     }

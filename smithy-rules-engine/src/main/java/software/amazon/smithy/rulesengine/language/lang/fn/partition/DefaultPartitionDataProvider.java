@@ -19,8 +19,10 @@ import java.io.InputStream;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.rulesengine.language.model.Partitions;
 import software.amazon.smithy.rulesengine.language.util.ResourceUtil;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
-public class DefaultPartitionDataProvider implements PartitionDataProvider {
+@SmithyUnstableApi
+public final class DefaultPartitionDataProvider implements PartitionDataProvider {
     private static final String DEFAULT_PARTITIONS_DATA =
             "/software/amazon/smithy/rulesengine/language/partitions.json";
 

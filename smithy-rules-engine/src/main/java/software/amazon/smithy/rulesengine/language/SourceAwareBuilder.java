@@ -18,7 +18,9 @@ package software.amazon.smithy.rulesengine.language;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public abstract class SourceAwareBuilder<B extends SourceAwareBuilder<?, ?>, T>
         implements SmithyBuilder<T>, FromSourceLocation {
 

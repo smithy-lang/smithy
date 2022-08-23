@@ -25,7 +25,7 @@ import software.amazon.smithy.rulesengine.language.visit.FnVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
-public class IsSet extends SingleArgFn<Type.Option> {
+public final class IsSet extends SingleArgFn<Type.Option> {
     public static final String ID = "isSet";
 
 

@@ -23,8 +23,10 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.language.SourceAwareBuilder;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
+@SmithyUnstableApi
 public final class Outputs implements ToSmithyBuilder<Outputs>, FromSourceLocation {
     private static final String DNS_SUFFIX = "dnsSuffix";
     private static final String DUAL_STACK_DNS_SUFFIX = "dualStackDnsSuffix";

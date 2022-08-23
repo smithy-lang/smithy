@@ -26,11 +26,13 @@ import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.lang.Identifier;
 import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * A reference to a field.
  */
-public class Ref extends Expr {
+@SmithyUnstableApi
+public final class Ref extends Expr {
     private final Identifier name;
 
     public Ref(Identifier name, FromSourceLocation sourceLocation) {

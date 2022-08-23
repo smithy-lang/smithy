@@ -26,8 +26,10 @@ import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.util.StringUtils;
 import software.amazon.smithy.rulesengine.language.visit.RuleValueVisitor;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
-public class TreeRule extends Rule {
+@SmithyUnstableApi
+public final class TreeRule extends Rule {
     private final List<Rule> rules;
 
     protected TreeRule(Builder builder, List<Rule> rules) {

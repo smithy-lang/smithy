@@ -15,6 +15,9 @@
 
 package software.amazon.smithy.rulesengine;
 
+import software.amazon.smithy.utils.SmithyUnstableApi;
+
+@SmithyUnstableApi
 public interface Into<T> {
     T into();
 }

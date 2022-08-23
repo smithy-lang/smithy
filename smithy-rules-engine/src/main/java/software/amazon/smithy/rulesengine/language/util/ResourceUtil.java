@@ -16,7 +16,9 @@
 package software.amazon.smithy.rulesengine.language.util;
 
 import java.io.InputStream;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public final class ResourceUtil {
     private ResourceUtil() {
     }
