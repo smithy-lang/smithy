@@ -27,8 +27,10 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
 import software.amazon.smithy.rulesengine.language.lang.Identifier;
 import software.amazon.smithy.rulesengine.language.lang.expr.Ref;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
-public class Scope<T> {
+@SmithyUnstableApi
+public final class Scope<T> {
     private final Deque<ScopeLayer<T>> scope;
 
     public Scope() {

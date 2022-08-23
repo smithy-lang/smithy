@@ -23,7 +23,9 @@ import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.rulesengine.language.EndpointRuleset;
 import software.amazon.smithy.rulesengine.language.EndpointTestSuite;
 import software.amazon.smithy.rulesengine.language.lang.parameters.Builtins;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public final class BuiltInsValidator {
     private BuiltInsValidator() {
     }

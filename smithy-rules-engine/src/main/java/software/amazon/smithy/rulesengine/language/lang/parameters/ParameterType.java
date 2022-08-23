@@ -18,7 +18,9 @@ package software.amazon.smithy.rulesengine.language.lang.parameters;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public enum ParameterType {
     STRING, BOOLEAN;
 

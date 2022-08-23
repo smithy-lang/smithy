@@ -19,12 +19,14 @@ import java.util.List;
 import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.lang.expr.Expr;
 import software.amazon.smithy.rulesengine.language.lang.rule.Rule;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Visitor for the right-hand side of rules (tree, error, endpoint).
  *
  * @param <R> The return type of the visitor
  */
+@SmithyUnstableApi
 public interface RuleValueVisitor<R> {
     R visitTreeRule(List<Rule> rules);
 

@@ -40,7 +40,9 @@ import software.amazon.smithy.rulesengine.language.lang.rule.Rule;
 import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
 import software.amazon.smithy.rulesengine.language.visit.FnVisitor;
 import software.amazon.smithy.rulesengine.language.visit.RuleValueVisitor;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public class RuleEvaluator implements FnVisitor<Value>, ExprVisitor<Value> {
     private final Scope<Value> scope = new Scope<>();
 

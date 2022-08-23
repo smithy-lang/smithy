@@ -20,12 +20,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Represents a variation for a service endpoint. A variation can be at all level, i.e. it can appear at the
  * partition level, service, and a specific service for a region.
  */
+@SmithyUnstableApi
 public final class VariantModel implements ToSmithyBuilder<VariantModel> {
     private final String dnsSuffix;
     private final List<String> hostname;

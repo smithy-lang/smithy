@@ -18,7 +18,9 @@ package software.amazon.smithy.rulesengine.language.eval;
 import java.util.Map;
 import software.amazon.smithy.rulesengine.language.EndpointRuleset;
 import software.amazon.smithy.rulesengine.language.lang.Identifier;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public final class RuleEngine {
     private RuleEngine() {
     }

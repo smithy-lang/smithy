@@ -25,12 +25,14 @@ import software.amazon.smithy.rulesengine.language.EndpointRuleset;
 import software.amazon.smithy.rulesengine.language.lang.rule.Condition;
 import software.amazon.smithy.rulesengine.language.lang.rule.Rule;
 import software.amazon.smithy.rulesengine.language.visit.DefaultVisitor;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Utility to determine with path of conditions that must be matched to reach a condition in a RuleSet.
  * <p>
  * See `PathFinder.findPath`
  */
+@SmithyUnstableApi
 public final class PathFinder {
     private PathFinder() {
     }

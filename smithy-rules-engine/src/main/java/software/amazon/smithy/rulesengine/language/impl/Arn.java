@@ -23,11 +23,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * An AWS Arn.
  */
+@SmithyUnstableApi
 public final class Arn implements ToSmithyBuilder<Arn> {
     private final String partition;
     private final String service;

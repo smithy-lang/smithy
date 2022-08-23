@@ -22,7 +22,9 @@ import java.util.Objects;
 import java.util.Set;
 import software.amazon.smithy.rulesengine.language.lang.Identifier;
 import software.amazon.smithy.rulesengine.language.lang.expr.Ref;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 final class ScopeLayer<T> {
     private final Map<Identifier, T> types;
     private final Set<Ref> nonNullRefs;

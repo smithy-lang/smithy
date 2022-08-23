@@ -41,7 +41,9 @@ import software.amazon.smithy.rulesengine.language.eval.Typecheck;
 import software.amazon.smithy.rulesengine.language.lang.expr.Expr;
 import software.amazon.smithy.rulesengine.language.lang.expr.Literal;
 import software.amazon.smithy.rulesengine.language.visit.RuleValueVisitor;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public abstract class Rule implements Typecheck, ToNode, FromSourceLocation {
     public static final String DOCUMENTATION = "documentation";
     public static final String ENDPOINT = "endpoint";

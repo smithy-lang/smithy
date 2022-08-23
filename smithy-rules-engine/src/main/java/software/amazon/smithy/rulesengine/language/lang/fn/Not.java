@@ -22,8 +22,10 @@ import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.lang.expr.Expr;
 import software.amazon.smithy.rulesengine.language.visit.FnVisitor;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
-public class Not extends SingleArgFn<Type.Bool> {
+@SmithyUnstableApi
+public final class Not extends SingleArgFn<Type.Bool> {
 
     public static final String ID = "not";
 

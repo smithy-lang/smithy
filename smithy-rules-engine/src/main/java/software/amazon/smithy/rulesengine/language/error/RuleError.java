@@ -21,8 +21,10 @@ import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.utils.Pair;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
-public class RuleError extends RuntimeException {
+@SmithyUnstableApi
+public final class RuleError extends RuntimeException {
     private final List<Pair<String, SourceLocation>> context = new ArrayList<>();
     private final SourceException root;
 

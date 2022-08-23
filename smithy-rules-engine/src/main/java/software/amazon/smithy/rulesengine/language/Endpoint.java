@@ -41,11 +41,13 @@ import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * An Endpoint as returned by EndpointRules.
  */
+@SmithyUnstableApi
 public final class Endpoint implements ToSmithyBuilder<Endpoint>, FromSourceLocation, Typecheck, ToNode {
     private static final String URL = "url";
     private static final String PROPERTIES = "properties";

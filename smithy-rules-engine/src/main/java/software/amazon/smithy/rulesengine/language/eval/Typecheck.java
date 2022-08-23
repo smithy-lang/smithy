@@ -15,6 +15,9 @@
 
 package software.amazon.smithy.rulesengine.language.eval;
 
+import software.amazon.smithy.utils.SmithyUnstableApi;
+
+@SmithyUnstableApi
 public interface Typecheck {
     Type typecheck(Scope<Type> scope);
 }

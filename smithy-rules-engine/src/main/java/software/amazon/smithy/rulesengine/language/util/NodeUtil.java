@@ -21,7 +21,9 @@ import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public final class NodeUtil {
     private NodeUtil() {
     }

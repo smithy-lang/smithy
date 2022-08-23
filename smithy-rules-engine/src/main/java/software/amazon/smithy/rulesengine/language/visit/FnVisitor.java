@@ -26,7 +26,9 @@ import software.amazon.smithy.rulesengine.language.lang.fn.PartitionFn;
 import software.amazon.smithy.rulesengine.language.lang.fn.StringEquals;
 import software.amazon.smithy.rulesengine.language.lang.fn.Substring;
 import software.amazon.smithy.rulesengine.language.lang.fn.UriEncode;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public interface FnVisitor<R> {
     R visitPartition(PartitionFn fn);
 

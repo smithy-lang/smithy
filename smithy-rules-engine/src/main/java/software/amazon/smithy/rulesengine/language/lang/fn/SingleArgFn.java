@@ -22,7 +22,9 @@ import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.lang.expr.Expr;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public abstract class SingleArgFn<T extends Type> extends Fn {
     T expectedType;
 

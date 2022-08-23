@@ -17,7 +17,9 @@ package software.amazon.smithy.rulesengine.language.synth;
 
 import java.util.ArrayList;
 import java.util.List;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public final class StringUtils {
     private StringUtils() {
     }

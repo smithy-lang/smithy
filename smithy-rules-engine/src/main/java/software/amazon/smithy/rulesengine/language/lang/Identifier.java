@@ -22,7 +22,9 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.SourceAwareBuilder;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public final class Identifier implements FromSourceLocation, ToNode {
     private final StringNode name;
 

@@ -26,7 +26,7 @@ import software.amazon.smithy.rulesengine.language.visit.FnVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
-public class UriEncode extends SingleArgFn<Type.Str> {
+public final class UriEncode extends SingleArgFn<Type.Str> {
 
     public static final String ID = "uriEncode";
     private static final String[] ENCODED_CHARACTERS = new String[]{"+", "*", "%7E"};

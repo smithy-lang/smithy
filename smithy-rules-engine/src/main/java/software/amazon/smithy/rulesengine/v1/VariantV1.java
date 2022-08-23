@@ -21,7 +21,9 @@ import java.util.List;
 import java.util.Set;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public final class VariantV1 {
     public static final String DNS_SUFFIX = "dnsSuffix";
     public static final String HOSTNAME = "hostname";

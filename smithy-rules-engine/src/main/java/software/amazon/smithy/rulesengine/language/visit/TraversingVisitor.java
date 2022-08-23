@@ -23,7 +23,9 @@ import software.amazon.smithy.rulesengine.language.lang.expr.Expr;
 import software.amazon.smithy.rulesengine.language.lang.fn.Fn;
 import software.amazon.smithy.rulesengine.language.lang.rule.Condition;
 import software.amazon.smithy.rulesengine.language.lang.rule.Rule;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public abstract class TraversingVisitor<R> extends DefaultVisitor<Stream<R>> {
     public Stream<R> visitRuleset(EndpointRuleset ruleset) {
         return ruleset.getRules()

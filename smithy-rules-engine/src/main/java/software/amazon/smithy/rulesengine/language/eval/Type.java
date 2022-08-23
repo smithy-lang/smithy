@@ -21,7 +21,9 @@ import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
 import software.amazon.smithy.rulesengine.language.lang.Identifier;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public interface Type {
 
     static Str str() {

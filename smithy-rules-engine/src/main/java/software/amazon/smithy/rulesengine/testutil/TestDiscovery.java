@@ -32,8 +32,10 @@ import software.amazon.smithy.rulesengine.language.EndpointRuleset;
 import software.amazon.smithy.rulesengine.language.EndpointTest;
 import software.amazon.smithy.rulesengine.language.EndpointTestSuite;
 import software.amazon.smithy.utils.IoUtils;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
-public class TestDiscovery {
+@SmithyUnstableApi
+public final class TestDiscovery {
     private static String prettyPath(Path path) {
         return path.subpath(path.getNameCount() - 2, path.getNameCount())
                 .toString();

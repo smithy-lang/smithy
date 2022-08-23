@@ -16,6 +16,7 @@
 package software.amazon.smithy.rulesengine.language.visit;
 
 import software.amazon.smithy.rulesengine.language.lang.expr.Expr;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * For code generating from a template, use a `TemplateVisitor`. Template visitor is written to enable optimized
@@ -23,6 +24,7 @@ import software.amazon.smithy.rulesengine.language.lang.expr.Expr;
  *
  * @param <T> The return type of this visitor
  */
+@SmithyUnstableApi
 public interface TemplateVisitor<T> {
     /**
      * The template contains a single static string, eg. {@literal "https://mystaticendpoing.com"}

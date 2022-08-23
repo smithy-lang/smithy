@@ -33,7 +33,9 @@ import software.amazon.smithy.rulesengine.language.lang.fn.StringEquals;
 import software.amazon.smithy.rulesengine.language.lang.fn.Substring;
 import software.amazon.smithy.rulesengine.language.lang.fn.UriEncode;
 import software.amazon.smithy.rulesengine.language.lang.rule.Rule;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public abstract class DefaultVisitor<R> implements RuleValueVisitor<R>, ExprVisitor<R>, FnVisitor<R> {
     public abstract R getDefault();
 

@@ -34,8 +34,10 @@ import software.amazon.smithy.rulesengine.language.lang.expr.Expr;
 import software.amazon.smithy.rulesengine.language.lang.expr.Literal;
 import software.amazon.smithy.rulesengine.language.lang.expr.Ref;
 import software.amazon.smithy.rulesengine.language.visit.FnVisitor;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
-public class GetAttr extends Fn {
+@SmithyUnstableApi
+public final class GetAttr extends Fn {
     public static final String ID = "getAttr";
 
     public GetAttr(FnNode node) {

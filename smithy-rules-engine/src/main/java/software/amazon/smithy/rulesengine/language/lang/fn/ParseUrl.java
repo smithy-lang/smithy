@@ -25,11 +25,13 @@ import software.amazon.smithy.rulesengine.language.lang.Identifier;
 import software.amazon.smithy.rulesengine.language.lang.expr.Expr;
 import software.amazon.smithy.rulesengine.language.visit.FnVisitor;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Function to parse a URI from a string.
  */
+@SmithyUnstableApi
 public class ParseUrl extends SingleArgFn<Type.Str> {
     public static final String ID = "parseURL";
     public static final Identifier SCHEME = Identifier.of("scheme");

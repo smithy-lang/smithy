@@ -15,7 +15,10 @@
 
 package software.amazon.smithy.rulesengine.language.error;
 
-public class InnerParseError extends Exception {
+import software.amazon.smithy.utils.SmithyUnstableApi;
+
+@SmithyUnstableApi
+public final class InnerParseError extends Exception {
     public InnerParseError(String message) {
         super(message);
     }

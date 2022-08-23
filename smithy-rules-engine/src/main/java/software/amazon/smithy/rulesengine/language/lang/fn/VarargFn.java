@@ -20,7 +20,9 @@ import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.lang.expr.Expr;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 abstract class VarargFn extends Fn {
     VarargFn(FnNode fnNode) {
         super(fnNode);

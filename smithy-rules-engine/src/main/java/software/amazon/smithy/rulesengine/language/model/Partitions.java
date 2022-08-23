@@ -25,8 +25,10 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.language.SourceAwareBuilder;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
+@SmithyUnstableApi
 public final class Partitions implements ToSmithyBuilder<Partitions>, FromSourceLocation {
     private static final String VERSION = "version";
     private static final String PARTITIONS = "partitions";

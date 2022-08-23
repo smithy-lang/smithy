@@ -16,7 +16,9 @@
 package software.amazon.smithy.rulesengine.language.model;
 
 import java.util.List;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public final class TemplatedString {
     private final List<Part> parts;
 

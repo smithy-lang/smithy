@@ -28,7 +28,9 @@ import software.amazon.smithy.rulesengine.language.lang.rule.Condition;
 import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
 import software.amazon.smithy.rulesengine.language.visit.FnVisitor;
 import software.amazon.smithy.utils.Pair;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public abstract class Fn extends Expr implements Into<Condition> {
     protected FnNode fnNode;
 

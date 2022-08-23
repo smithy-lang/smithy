@@ -26,7 +26,7 @@ import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
-public class StringEquals extends Fn {
+public final class StringEquals extends Fn {
     public static final String ID = "stringEquals";
 
     public StringEquals(FnNode fnNode) {

@@ -19,7 +19,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public final class EndpointView {
     private final String endpointPrefix;
     private final String dnsSuffix;

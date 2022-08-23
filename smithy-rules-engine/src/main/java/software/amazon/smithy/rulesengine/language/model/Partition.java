@@ -25,8 +25,10 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.language.SourceAwareBuilder;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
+@SmithyUnstableApi
 public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLocation {
     private static final String ID = "id";
     private static final String REGION_REGEX = "regionRegex";

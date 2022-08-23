@@ -37,7 +37,9 @@ import software.amazon.smithy.rulesengine.traits.ClientContextParamsTrait;
 import software.amazon.smithy.rulesengine.traits.ContextParamTrait;
 import software.amazon.smithy.rulesengine.traits.StaticContextParamDefinition;
 import software.amazon.smithy.rulesengine.traits.StaticContextParamsTrait;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public final class ParametersValidator {
 
     private ParametersValidator() {

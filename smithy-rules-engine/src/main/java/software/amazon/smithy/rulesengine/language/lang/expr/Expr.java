@@ -43,7 +43,9 @@ import software.amazon.smithy.rulesengine.language.lang.fn.ParseUrl;
 import software.amazon.smithy.rulesengine.language.lang.fn.StringEquals;
 import software.amazon.smithy.rulesengine.language.lang.fn.Substring;
 import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public abstract class Expr implements FromSourceLocation, Typecheck, Eval, ToNode {
     private final SourceLocation sourceLocation;
 

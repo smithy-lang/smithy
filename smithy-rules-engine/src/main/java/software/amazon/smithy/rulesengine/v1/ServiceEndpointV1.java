@@ -19,7 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public final class ServiceEndpointV1 {
     public static final String HOSTNAME = "hostname";
     public static final String VARIANTS = "variants";

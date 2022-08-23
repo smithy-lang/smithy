@@ -16,7 +16,9 @@
 package software.amazon.smithy.rulesengine.language.lang.fn.partition;
 
 import software.amazon.smithy.rulesengine.language.model.Partitions;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public interface PartitionDataProvider {
     Partitions loadPartitions();
 }
