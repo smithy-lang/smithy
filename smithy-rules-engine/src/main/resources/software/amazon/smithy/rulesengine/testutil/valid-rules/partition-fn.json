@@ -31,6 +31,7 @@
       ],
       "rules": [
         {
+          "documentation": "the AWS partition",
           "conditions": [
             {
               "fn": "stringEquals",
@@ -46,33 +47,50 @@
                   ]
                 }
               ]
-            },
-            {
-              "fn": "isSet",
-              "argv": [
-                {
-                  "ref": "PropertyTwo"
-                }
-              ]
             }
           ],
           "endpoint": {
-            "url": "https://{PropertyTwo}.special.service.{Region}.amazonaws.com",
+            "url": "https://aws-partition.{Region}.{PartResult#dnsSuffix}",
             "properties": {
               "authSchemes": [
                 {
                   "name": "sigv4",
                   "signingName": "serviceName",
-                  "signingRegion": "{PropertyTwo}"
+                  "signingRegion": "{Region}"
                 }
-              ]
+              ],
+              "meta": {
+                "baseSuffix": "{PartResult#dnsSuffix}",
+                "dualStackSuffix": "{PartResult#dualStackDnsSuffix}"
+              }
+            }
+          },
+          "type": "endpoint"
+        },
+        {
+          "documentation": "the other partitions",
+          "conditions": [],
+          "endpoint": {
+            "url": "https://{PartResult#name}.{Region}.{PartResult#dnsSuffix}",
+            "properties": {
+              "authSchemes": [
+                {
+                  "name": "sigv4",
+                  "signingName": "serviceName",
+                  "signingRegion": "{Region}"
+                }
+              ],
+              "meta": {
+                "baseSuffix": "{PartResult#dnsSuffix}",
+                "dualStackSuffix": "{PartResult#dualStackDnsSuffix}"
+              }
             }
           },
           "type": "endpoint"
         },
         {
           "conditions": [],
-          "error": "error description",
+          "error": "no rules matched",
           "type": "error"
         }
       ],
