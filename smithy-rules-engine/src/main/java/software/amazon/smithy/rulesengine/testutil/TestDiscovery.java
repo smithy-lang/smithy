@@ -104,7 +104,6 @@ public final class TestDiscovery {
                     } else {
                         suite = EndpointTestSuite.builder().build();
                     }
-                    ruleset.typecheck();
                     return new RulesTestSuite(ruleset, suite);
                 });
     }
