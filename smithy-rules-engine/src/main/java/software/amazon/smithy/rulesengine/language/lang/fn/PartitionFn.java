@@ -94,7 +94,7 @@ public final class PartitionFn extends SingleArgFn<Type.Str> {
         }
 
         if (matchedPartition == null) {
-            return new Value.None();
+            matchedPartition = data.partitions.stream().filter(p -> p.id().equals("aws")).findFirst().get();
         }
 
         Outputs matchedOutputs = matchedPartition.outputs();
