@@ -16,6 +16,7 @@
 package software.amazon.smithy.rulesengine.language.lang.parameters;
 
 import java.util.List;
+
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -45,7 +46,7 @@ public final class Builtins {
                     .builtIn("AWS::UseDualStack")
                     .documentation(
                             "When true, use the dual-stack endpoint. If the configured endpoint does not support "
-                            + "dual-stack, dispatching the request MAY return an error.")
+                                    + "dual-stack, dispatching the request MAY return an error.")
                     .required(true)
                     .defaultValue(Value.bool(false))
                     .build();
@@ -59,8 +60,8 @@ public final class Builtins {
                     .type(ParameterType.BOOLEAN)
                     .builtIn("AWS::UseFIPS")
                     .documentation("When true, send this request to the FIPS-compliant regional endpoint. If the "
-                                   + "configured endpoint does not have a FIPS compliant endpoint, dispatching "
-                                   + "the request will return an error.")
+                            + "configured endpoint does not have a FIPS compliant endpoint, dispatching "
+                            + "the request will return an error.")
                     .required(true)
                     .defaultValue(Value.bool(false))
                     .build();
@@ -86,7 +87,7 @@ public final class Builtins {
                     .builtIn("AWS::S3::ForcePathStyle")
                     .documentation(
                             "When true, force a path-style endpoint to be used where the bucket name is part of the "
-                            + "path.")
+                                    + "path.")
                     .build();
     /**
      * This MUST only be used by the S3 rules.
@@ -112,8 +113,8 @@ public final class Builtins {
                     .builtIn("AWS::S3::UseArnRegion")
                     .documentation(
                             "When an Access Point ARN is provided and this flag is enabled, the SDK MUST"
-                            + " use the ARN's region when constructing the endpoint instead"
-                            + " of the client's configured region.")
+                                    + " use the ARN's region when constructing the endpoint instead"
+                                    + " of the client's configured region.")
                     .build();
 
     /**
@@ -128,6 +129,19 @@ public final class Builtins {
                     .defaultValue(Value.bool(false))
                     .documentation("Whether the global endpoint should be used, rather then "
                             + "the regional endpoint for us-east-1.")
+                    .build();
+
+    /**
+     * This MUST only be used by the S3 rules.
+     */
+    public static final Parameter S3_DISABLE_MRAP =
+            Parameter.builder()
+                    .type(ParameterType.BOOLEAN)
+                    .name("DisableMultiRegionAccessPoints")
+                    .builtIn("AWS::S3::DisableMultiRegionAccessPoints")
+                    .required(true)
+                    .defaultValue(Value.bool(false))
+                    .documentation("Whether multi-region access points (MRAP) should be disabled.")
                     .build();
 
     /**
@@ -146,7 +160,7 @@ public final class Builtins {
 
     public static final List<Parameter> ALL_BUILTINS = ListUtils.of(
             SDK_ENDPOINT, REGION, FIPS, DUALSTACK, S3_ACCELERATE, S3_FORCE_PATH_STYLE, S3_USE_ARN_REGION,
-            S3_USE_GLOBAL_ENDPOINT, STS_USE_GLOBAL_ENDPOINT);
+            S3_USE_GLOBAL_ENDPOINT, STS_USE_GLOBAL_ENDPOINT, S3_DISABLE_MRAP);
 
     private Builtins() {
     }
