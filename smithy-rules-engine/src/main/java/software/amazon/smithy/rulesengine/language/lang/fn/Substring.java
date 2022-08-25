@@ -71,6 +71,10 @@ public final class Substring extends VarargFn {
         int stopIndex = args.get(2).eval(scope).expectInt();
         boolean reverse = args.get(3).eval(scope).expectBool();
 
+        if (!str.chars().allMatch(ch -> ch >= 0 && ch <= 127)) {
+            return Value.none();
+        }
+
         if (startIndex >= stopIndex || str.length() < stopIndex) {
             return new Value.None();
         }
