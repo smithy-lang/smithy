@@ -61,7 +61,7 @@
       }
     },
     {
-      "documentation": "unicode characters always return `None`",
+      "documentation": "non-ascii cause substring to always return `None`",
       "params": {
         "TestCaseId": "1",
         "Input": "abcdef\u0080"
