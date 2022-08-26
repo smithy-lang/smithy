@@ -101,9 +101,9 @@ public final class EndpointTestOperationInput implements FromSourceLocation,
     public static final class Builder implements SmithyBuilder<EndpointTestOperationInput> {
         private SourceLocation sourceLocation = SourceLocation.none();
         private String operationName;
-        private ObjectNode operationParams;
-        private ObjectNode builtInParams;
-        private ObjectNode clientParams;
+        private ObjectNode operationParams = ObjectNode.objectNode();
+        private ObjectNode builtInParams = ObjectNode.objectNode();
+        private ObjectNode clientParams = ObjectNode.objectNode();
 
         public Builder sourceLocation(FromSourceLocation fromSourceLocation) {
             this.sourceLocation = fromSourceLocation.getSourceLocation();
