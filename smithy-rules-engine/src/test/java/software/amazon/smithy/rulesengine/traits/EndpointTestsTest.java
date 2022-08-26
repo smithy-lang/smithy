@@ -98,11 +98,13 @@ public final class EndpointTestsTest {
     @Test
     public void roundTrips() {
         Node expectedNode = Node.parse(
-                "{\"testCases\":[{\"documentation\":\"foo bar\",\"params\":"
-                + "{\"foo\":\"bar\",\"bar\":\"foo\"},\"expect\":{\"endpoint\":{\"url\":\"example.com\",\"headers\""
-                + ":{\"single\":[\"one\"],\"multi\":[\"one\",\"two\"]},\"properties\":{\"foo\":{\"bar\":\"thing\","
-                + "\"baz\":false}}}}},{\"documentation\":\"bar foo\",\"params\":{\"foo\":\"foo\"},\"expect\":"
-                + "{\"error\":\"error string\"}}]}");
+                "{\"version\":\"1.0\",\"testCases\":[{\"documentation\":\"foo bar\",\"params\":{\"foo\":\"bar\""
+                + ",\"bar\":\"foo\"},\"operationInputs\":[{\"operationName\":\"GetThing\",\"clientParams\":"
+                + "{\"stringFoo\":\"client value\"},\"operationParams\":{\"buzz\":\"a buzz value\"},\"builtInParams\":"
+                + "{\"SDK::Endpoint\":\"https://custom.example.com\"}}],\"expect\":{\"endpoint\":{\"url\":"
+                + "\"example.com\",\"headers\":{\"single\":[\"one\"],\"multi\":[\"one\",\"two\"]},\"properties\":"
+                + "{\"foo\":{\"bar\":\"thing\",\"baz\":false}}}}},{\"documentation\":\"bar foo\",\"params\":{\"foo\":"
+                + "\"foo\"},\"expect\":{\"error\":\"error string\"}}]}");
 
         TraitFactory traitFactory = TraitFactory.createServiceFactory();
         EndpointTestsTrait expectedTrait = (EndpointTestsTrait) traitFactory.createTrait(EndpointTestsTrait.ID,
@@ -111,6 +113,6 @@ public final class EndpointTestsTest {
         EndpointTestsTrait actualTrait = expectedTrait.toBuilder().build();
         assertThat(expectedTrait, equalTo(actualTrait));
 
-        assertThat(expectedNode, equalTo(expectedTrait.toNode()));
+        assertThat(expectedNode, equalTo(actualTrait.toNode()));
     }
 }

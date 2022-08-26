@@ -33,6 +33,13 @@ public final class RuleError extends RuntimeException {
         this.root = root;
     }
 
+    public static <T> T ctx(String message, Runnable f) throws RuleError {
+        return RuleError.ctx(message, SourceLocation.none(), () -> {
+            f.run();
+            return null;
+        });
+    }
+
     public static <T> T ctx(String message, Evaluator<T> f) throws RuleError {
         return RuleError.ctx(message, SourceLocation.none(), f);
     }

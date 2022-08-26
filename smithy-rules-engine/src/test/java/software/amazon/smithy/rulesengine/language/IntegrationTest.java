@@ -66,12 +66,12 @@ public class IntegrationTest {
                         .toString(), path.getName())));
     }
 
-    private Stream<TestDiscovery.RulesTestcase> checkableTestCases() {
+    private Stream<TestDiscovery.RulesTestCase> checkableTestCases() {
         return new TestDiscovery().testSuites()
                 .flatMap(
                         suite -> suite.testSuite().getTestCases()
                                 .stream()
-                                .map(tc -> new TestDiscovery.RulesTestcase(suite.ruleset(), tc)));
+                                .map(tc -> new TestDiscovery.RulesTestCase(suite.ruleset(), tc)));
     }
 
     private Stream<ValidationTestCase> invalidTestCases() {
@@ -105,7 +105,7 @@ public class IntegrationTest {
 
     @ParameterizedTest
     @MethodSource("checkableTestCases")
-    void checkTestSuites(TestDiscovery.RulesTestcase testcase) {
+    void checkTestSuites(TestDiscovery.RulesTestCase testcase) {
         new TestDiscovery().testSuites().forEach(rulesTestSuite -> {
             assertEquals(Collections.emptyList(), StandaloneRulesetValidator.validate(rulesTestSuite.ruleset(),
                     rulesTestSuite.testSuite()).collect(Collectors.toList()));
@@ -114,8 +114,8 @@ public class IntegrationTest {
 
     @ParameterizedTest
     @MethodSource("checkableTestCases")
-    void executeTestSuite(TestDiscovery.RulesTestcase testcase) {
-        testcase.testcase().execute(testcase.ruleset());
+    void executeTestSuite(TestDiscovery.RulesTestCase testcase) {
+        testcase.execute();
     }
 
     @ParameterizedTest

@@ -30,11 +30,12 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.rulesengine.language.EndpointRuleset;
-import software.amazon.smithy.rulesengine.language.EndpointTestSuite;
+import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.lang.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.lang.parameters.ParameterType;
 import software.amazon.smithy.rulesengine.traits.ClientContextParamsTrait;
 import software.amazon.smithy.rulesengine.traits.ContextParamTrait;
+import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
 import software.amazon.smithy.rulesengine.traits.StaticContextParamDefinition;
 import software.amazon.smithy.rulesengine.traits.StaticContextParamsTrait;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -53,7 +54,7 @@ public final class ParametersValidator {
         ArrayList<ValidationError> errors = new ArrayList<>();
         HashSet<String> matchedParams = new HashSet<>();
 
-        for (Map.Entry<String, Parameter> entry: rulesetParams.entrySet()) {
+        for (Map.Entry<String, Parameter> entry : rulesetParams.entrySet()) {
             String name = entry.getKey();
             Parameter modelParam = modelParams.getOrDefault(name, null);
             if (modelParam == null) {
@@ -212,7 +213,7 @@ public final class ParametersValidator {
      * @param ruleset the rule set to be tested
      * @return set of validation errors if present.
      */
-    public static List<ValidationError> validateTestsParameters(EndpointTestSuite tests, EndpointRuleset ruleset) {
+    public static List<ValidationError> validateTestsParameters(EndpointTestsTrait tests, EndpointRuleset ruleset) {
 
         ArrayList<ValidationError> errors = new ArrayList<ValidationError>();
 
@@ -273,12 +274,26 @@ public final class ParametersValidator {
      * @param tests the endpoint test suite
      * @return the list of validation errors if present
      */
-    public static Map<String, List<Parameter>> extractTestSuiteParameters(EndpointTestSuite tests) {
-
-        HashMap<String, List<Parameter>> params = new HashMap<String, List<Parameter>>();
+    public static Map<String, List<Parameter>> extractTestSuiteParameters(EndpointTestsTrait tests) {
+        HashMap<String, List<Parameter>> params = new HashMap<>();
 
         tests.getTestCases().forEach(tc -> {
-            List<Parameter> testParams = tc.getParameters();
+            List<Parameter> testParams = tc.getParams().getStringMap().entrySet()
+                    .stream()
+                    .map(entry -> {
+                        Value value = Value.fromNode(entry.getValue());
+                        Parameter.Builder builder = Parameter.builder()
+                                .sourceLocation(value.getSourceLocation())
+                                .name(entry.getKey())
+                                .value(value);
+                        if (value instanceof Value.Str) {
+                            builder.type(ParameterType.STRING);
+                        } else if (value instanceof Value.Bool) {
+                            builder.type(ParameterType.BOOLEAN);
+                        }
+                        return builder.build();
+                    })
+                    .collect(Collectors.toList());
             testParams.forEach(p -> {
                 String name = p.getName().asString();
                 List<Parameter> existingParams = params.getOrDefault(name, null);

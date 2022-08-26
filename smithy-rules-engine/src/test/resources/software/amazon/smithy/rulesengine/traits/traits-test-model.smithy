@@ -32,6 +32,7 @@ apply ExampleService @endpointRuleSet({
 })
 
 apply ExampleService @endpointTests({
+    "version": "1.0",
     "testCases": [
         {
             "documentation": "a documentation string",

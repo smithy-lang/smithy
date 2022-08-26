@@ -25,7 +25,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.rulesengine.language.EndpointRuleset;
-import software.amazon.smithy.rulesengine.language.EndpointTest;
 import software.amazon.smithy.rulesengine.language.eval.RuleEvaluator;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.lang.Identifier;
@@ -34,6 +33,7 @@ import software.amazon.smithy.rulesengine.language.lang.rule.Rule;
 import software.amazon.smithy.rulesengine.language.util.PathFinder;
 import software.amazon.smithy.rulesengine.language.util.StringUtils;
 import software.amazon.smithy.rulesengine.language.visit.TraversingVisitor;
+import software.amazon.smithy.rulesengine.traits.EndpointTestCase;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -53,9 +53,9 @@ public final class CoverageChecker {
         this.checkerCore.evaluateRuleset(ruleset, input);
     }
 
-    public void evaluateTestCase(EndpointTest testCase) {
+    public void evaluateTestCase(EndpointTestCase testCase) {
         HashMap<Identifier, Value> map = new HashMap<>();
-        testCase.getParams().forEach(p -> map.put(p.left, p.right));
+        testCase.getParams().getStringMap().forEach((s, node) -> map.put(Identifier.of(s), Value.fromNode(node)));
         this.checkerCore.evaluateRuleset(ruleset, map);
     }
 
