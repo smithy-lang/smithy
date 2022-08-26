@@ -106,6 +106,7 @@ structure EndpointTest {
     operationInputs: OperationInputs,
 
     /// The expected outcome of the test case.
+    @required
     expect: EndpointTestExpectation
 }
 

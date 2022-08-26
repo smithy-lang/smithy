@@ -42,7 +42,7 @@ public final class EndpointTestCase implements FromSourceLocation, ToSmithyBuild
         this.documentation = builder.documentation;
         this.params = builder.params;
         this.operationInputs = builder.operationInputs.copy();
-        this.expect = builder.expect;
+        this.expect = SmithyBuilder.requiredState("expect", builder.expect);
     }
 
     public static Builder builder() {
@@ -104,7 +104,7 @@ public final class EndpointTestCase implements FromSourceLocation, ToSmithyBuild
         private final BuilderRef<List<EndpointTestOperationInput>> operationInputs = BuilderRef.forList();
         private SourceLocation sourceLocation = SourceLocation.none();
         private String documentation;
-        private ObjectNode params;
+        private ObjectNode params = ObjectNode.objectNode();
         private EndpointTestExpectation expect;
 
         private Builder() {
