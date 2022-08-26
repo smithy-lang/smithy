@@ -18,6 +18,7 @@ package software.amazon.smithy.codegen.core.directed;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,8 @@ public class CodegenDirectorTest {
 
     private static final class TestDirected implements DirectedCodegen<TestContext, TestSettings, TestIntegration> {
         public final List<ShapeId> generatedShapes = new ArrayList<>();
+        public final List<ShapeId> generatedEnumTypeEnums = new ArrayList<>();
+        public final List<ShapeId> generatedStringTypeEnums = new ArrayList<>();
 
         @Override
         public SymbolProvider createSymbolProvider(CreateSymbolProviderDirective<TestSettings> directive) {
@@ -86,10 +89,15 @@ public class CodegenDirectorTest {
         public void generateEnumShape(GenerateEnumDirective<TestContext, TestSettings> directive) {
             generatedShapes.add(directive.shape().getId());
             GenerateEnumDirective.EnumType type = directive.getEnumType();
-            if (type == GenerateEnumDirective.EnumType.ENUM) {
-                directive.expectEnumShape();
-            } else {
-                throw new RuntimeException("Expected enum type to be enum shape");
+            switch (type) {
+                case ENUM:
+                    generatedEnumTypeEnums.add(directive.expectEnumShape().getId());
+                    break;
+                case STRING:
+                    generatedStringTypeEnums.add(directive.shape().asStringShape().get().getId());
+                    break;
+                default:
+                    throw new IllegalStateException("Only ENUM and STRING types exist.");
             }
         }
 
@@ -164,6 +172,51 @@ public class CodegenDirectorTest {
                 ShapeId.from("smithy.example#Instruction"),
                 ShapeId.from("smithy.api#Unit")
         ));
+
+        assertThat(testDirected.generatedStringTypeEnums, containsInAnyOrder(
+                ShapeId.from("smithy.example#Status")
+        ));
+        assertThat(testDirected.generatedEnumTypeEnums, empty());
+    }
+
+    @Test
+    public void performsCodegenWithStringEnumsChangedToEnumShapes() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner
+                = new CodegenDirector<>();
+        FileManifest manifest = new MockManifest();
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("directed-model.smithy"))
+                .assemble()
+                .unwrap();
+
+        runner.settings(new TestSettings());
+        runner.directedCodegen(testDirected);
+        runner.fileManifest(manifest);
+        runner.service(ShapeId.from("smithy.example#Foo"));
+        runner.model(model);
+        runner.integrationClass(TestIntegration.class);
+        runner.performDefaultCodegenTransforms();
+        runner.changeStringEnumsToEnumShapes(true);
+        runner.createDedicatedInputsAndOutputs();
+        runner.sortMembers();
+        runner.run();
+
+        // asserts that mixin smithy.example#Paginated is not generated
+        assertThat(testDirected.generatedShapes, containsInAnyOrder(
+                ShapeId.from("smithy.example#Foo"),
+                ShapeId.from("smithy.example#TheFoo"),
+                ShapeId.from("smithy.example#ListFooInput"),
+                ShapeId.from("smithy.example#ListFooOutput"),
+                ShapeId.from("smithy.example#Status"),
+                ShapeId.from("smithy.example#Instruction"),
+                ShapeId.from("smithy.api#Unit")
+        ));
+
+        assertThat(testDirected.generatedEnumTypeEnums, containsInAnyOrder(
+                ShapeId.from("smithy.example#Status")
+        ));
+        assertThat(testDirected.generatedStringTypeEnums, empty());
     }
 
     @Test
