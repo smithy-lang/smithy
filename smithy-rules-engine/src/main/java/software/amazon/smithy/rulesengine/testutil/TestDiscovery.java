@@ -29,8 +29,9 @@ import java.util.stream.Stream;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.rulesengine.language.EndpointRuleset;
-import software.amazon.smithy.rulesengine.language.EndpointTest;
-import software.amazon.smithy.rulesengine.language.EndpointTestSuite;
+import software.amazon.smithy.rulesengine.language.eval.TestEvaluator;
+import software.amazon.smithy.rulesengine.traits.EndpointTestCase;
+import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -83,8 +84,8 @@ public final class TestDiscovery {
                     .collect(Collectors.toList())));
         }
 
-        List<EndpointTestSuite> testSuites = testSuiteFiles.stream()
-                .map(EndpointTestSuite::fromNode)
+        List<EndpointTestsTrait> testSuites = testSuiteFiles.stream()
+                .map(EndpointTestsTrait::fromNode)
                 .collect(Collectors.toList());
         testSuites.stream()
                 .filter(testSuite -> !rulesetIds.contains(serviceId(testSuite)))
@@ -93,16 +94,16 @@ public final class TestDiscovery {
                 });
         return rulesets.stream()
                 .map(ruleset -> {
-                    List<EndpointTestSuite> matchingTestSuites = testSuites.stream()
+                    List<EndpointTestsTrait> matchingTestSuites = testSuites.stream()
                             .filter(test -> serviceId(test).equals(serviceId(ruleset)))
                             .collect(Collectors.toList());
-                    EndpointTestSuite suite;
+                    EndpointTestsTrait  suite;
                     if (matchingTestSuites.size() > 1) {
                         throw new RuntimeException("found duplicate test suites...");
                     } else if (matchingTestSuites.size() == 1) {
                         suite = matchingTestSuites.get(0);
                     } else {
-                        suite = EndpointTestSuite.builder().build();
+                        suite = EndpointTestsTrait.builder().version("1.0").build();
                     }
                     return new RulesTestSuite(ruleset, suite);
                 });
@@ -117,16 +118,16 @@ public final class TestDiscovery {
                 .getResourceAsStream(String.format("valid-rules/%s", name))), name));
     }
 
-    private EndpointTestSuite testSuiteFromPath(String name) {
-        return EndpointTestSuite.fromNode(Node.parse(Objects.requireNonNull(this.getClass()
+    private EndpointTestsTrait testSuiteFromPath(String name) {
+        return EndpointTestsTrait.fromNode(Node.parse(Objects.requireNonNull(this.getClass()
                 .getResourceAsStream(String.format("test-cases/%s", name))), name));
     }
 
-    public static final class RulesTestcase {
+    public static final class RulesTestCase {
         private final EndpointRuleset ruleset;
-        private final EndpointTest testcase;
+        private final EndpointTestCase testcase;
 
-        public RulesTestcase(EndpointRuleset ruleset, EndpointTest testcase) {
+        public RulesTestCase(EndpointRuleset ruleset, EndpointTestCase testcase) {
             this.ruleset = ruleset;
             this.testcase = testcase;
         }
@@ -135,8 +136,12 @@ public final class TestDiscovery {
             return ruleset;
         }
 
-        public EndpointTest testcase() {
+        public EndpointTestCase testcase() {
             return testcase;
+        }
+
+        public void execute() {
+            TestEvaluator.evaluate(ruleset, testcase);
         }
 
         @Override
@@ -152,26 +157,24 @@ public final class TestDiscovery {
             if (obj == null || obj.getClass() != this.getClass()) {
                 return false;
             }
-            RulesTestcase that = (RulesTestcase) obj;
+            RulesTestCase that = (RulesTestCase) obj;
             return Objects.equals(this.ruleset, that.ruleset)
                    && Objects.equals(this.testcase, that.testcase);
         }
 
         @Override
         public String toString() {
-            return String.format("%s (%s:%s)", testcase.getDocumentation().orElse(""), testcase
-                    .getSourceLocation()
-                    .getFilename(), testcase.getSourceLocation()
-                    .getLine());
+            return String.format("%s (%s:%s)", testcase.getDocumentation().orElse(""),
+                    testcase.getSourceLocation().getFilename(), testcase.getSourceLocation().getLine());
         }
 
     }
 
     public static final class RulesTestSuite {
         private final EndpointRuleset ruleset;
-        private final EndpointTestSuite testSuite;
+        private final EndpointTestsTrait testSuite;
 
-        public RulesTestSuite(EndpointRuleset ruleset, EndpointTestSuite testSuite) {
+        public RulesTestSuite(EndpointRuleset ruleset, EndpointTestsTrait testSuite) {
             this.ruleset = ruleset;
             this.testSuite = testSuite;
         }
@@ -180,7 +183,7 @@ public final class TestDiscovery {
             return ruleset;
         }
 
-        public EndpointTestSuite testSuite() {
+        public EndpointTestsTrait testSuite() {
             return testSuite;
         }
 

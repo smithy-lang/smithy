@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.rulesengine.language.EndpointRuleset;
-import software.amazon.smithy.rulesengine.language.EndpointTestSuite;
 import software.amazon.smithy.rulesengine.language.lang.parameters.Builtins;
+import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
@@ -53,10 +53,10 @@ public final class BuiltInsValidator {
      * @param testSuite The testSuite to check
      * @return validation errors
      */
-    public static Stream<ValidationError> validateBuiltIns(EndpointTestSuite testSuite) {
+    public static Stream<ValidationError> validateBuiltIns(EndpointTestsTrait testSuite) {
         return testSuite.getTestCases().stream().flatMap(test -> test.getOperationInputs().stream())
-                .flatMap(operationInput -> operationInput.getBuiltinParameters().keySet().stream())
-                .flatMap(builtIn -> validateBuiltIn(builtIn.asString(), builtIn));
+                .flatMap(operationInput -> operationInput.getBuiltInParams().getMembers().keySet().stream())
+                .flatMap(builtIn -> validateBuiltIn(builtIn.getValue(), builtIn.getSourceLocation()));
     }
 
     private static Stream<ValidationError> validateBuiltIn(String builtInName, FromSourceLocation source) {

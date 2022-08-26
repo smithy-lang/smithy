@@ -31,6 +31,7 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.rulesengine.language.lang.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.lang.parameters.ParameterType;
+import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
 import software.amazon.smithy.rulesengine.validators.ParametersValidator;
 import software.amazon.smithy.rulesengine.validators.ValidationError;
 import software.amazon.smithy.rulesengine.validators.ValidationErrorType;
@@ -44,11 +45,11 @@ class ParametersValidationTest {
         return EndpointRuleset.fromNode(node);
     }
 
-    private EndpointTestSuite parseTestSuite(String resource) {
+    private EndpointTestsTrait parseTestSuite(String resource) {
         InputStream is = getClass().getResourceAsStream(resource);
         assert is != null;
         Node node = ObjectNode.parse(is);
-        return EndpointTestSuite.fromNode(node);
+        return EndpointTestsTrait.fromNode(node);
     }
 
     @Test
@@ -219,7 +220,7 @@ class ParametersValidationTest {
 
         EndpointRuleset ruleset = parseRuleset("params-validation/eventbridge-rules.json");
 
-        EndpointTestSuite tests = parseTestSuite("params-validation/eventbridge-tests.json");
+        EndpointTestsTrait tests = parseTestSuite("params-validation/eventbridge-tests.json");
 
         List<ValidationError> errors = ParametersValidator.validateTestsParameters(tests, ruleset);
 
@@ -231,7 +232,7 @@ class ParametersValidationTest {
 
         EndpointRuleset ruleset = parseRuleset("params-validation/eventbridge-rules.json");
 
-        EndpointTestSuite tests = parseTestSuite("params-validation/eventbridge-tests-req-params-missing.json");
+        EndpointTestsTrait tests = parseTestSuite("params-validation/eventbridge-tests-req-params-missing.json");
 
         List<ValidationError> errors = ParametersValidator.validateTestsParameters(tests, ruleset);
 
@@ -244,7 +245,7 @@ class ParametersValidationTest {
 
         EndpointRuleset ruleset = parseRuleset("params-validation/eventbridge-rules.json");
 
-        EndpointTestSuite tests = parseTestSuite("params-validation/eventbridge-tests-param-type-mismatch.json");
+        EndpointTestsTrait tests = parseTestSuite("params-validation/eventbridge-tests-param-type-mismatch.json");
 
         List<ValidationError> errors = ParametersValidator.validateTestsParameters(tests, ruleset);
 
@@ -257,7 +258,7 @@ class ParametersValidationTest {
 
         EndpointRuleset ruleset = parseRuleset("params-validation/eventbridge-rules-extra-param.json");
 
-        EndpointTestSuite tests = parseTestSuite("params-validation/eventbridge-tests.json");
+        EndpointTestsTrait tests = parseTestSuite("params-validation/eventbridge-tests.json");
 
         List<ValidationError> errors = ParametersValidator.validateTestsParameters(tests, ruleset);
 
@@ -270,7 +271,7 @@ class ParametersValidationTest {
 
         EndpointRuleset ruleset = parseRuleset("params-validation/eventbridge-rules.json");
 
-        EndpointTestSuite tests = parseTestSuite("params-validation/eventbridge-tests-param-not-defined.json");
+        EndpointTestsTrait tests = parseTestSuite("params-validation/eventbridge-tests-param-not-defined.json");
 
         List<ValidationError> errors = ParametersValidator.validateTestsParameters(tests, ruleset);
 

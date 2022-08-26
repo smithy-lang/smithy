@@ -33,11 +33,12 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 @SmithyUnstableApi
 public final class EndpointTestsTrait extends AbstractTrait implements ToSmithyBuilder<EndpointTestsTrait> {
     public static final ShapeId ID = ShapeId.from("smithy.rules#endpointTests");
-
+    private final String version;
     private final List<EndpointTestCase> testCases;
 
     private EndpointTestsTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
+        this.version = SmithyBuilder.requiredState("version", builder.version);
         this.testCases = builder.testCases.copy();
     }
 
@@ -51,6 +52,10 @@ public final class EndpointTestsTrait extends AbstractTrait implements ToSmithyB
         EndpointTestsTrait trait = mapper.deserialize(node, EndpointTestsTrait.class);
         trait.setNodeCache(node);
         return trait;
+    }
+
+    public String getVersion() {
+        return version;
     }
 
     public List<EndpointTestCase> getTestCases() {
@@ -69,6 +74,7 @@ public final class EndpointTestsTrait extends AbstractTrait implements ToSmithyB
     public SmithyBuilder<EndpointTestsTrait> toBuilder() {
         return builder()
                 .sourceLocation(getSourceLocation())
+                .version(version)
                 .testCases(testCases);
     }
 
@@ -85,8 +91,14 @@ public final class EndpointTestsTrait extends AbstractTrait implements ToSmithyB
 
     public static final class Builder extends AbstractTraitBuilder<EndpointTestsTrait, Builder> {
         private final BuilderRef<List<EndpointTestCase>> testCases = BuilderRef.forList();
+        private String version;
 
         private Builder() {
+        }
+
+        public Builder version(String version) {
+            this.version = version;
+            return this;
         }
 
         public Builder testCases(List<EndpointTestCase> testCases) {
