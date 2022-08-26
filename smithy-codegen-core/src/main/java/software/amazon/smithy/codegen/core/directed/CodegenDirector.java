@@ -97,7 +97,6 @@ public final class CodegenDirector<
         ServiceShape serviceShape = model.expectShape(service, ServiceShape.class);
         model = transformer.copyServiceErrorsToOperations(model, serviceShape);
         model = transformer.flattenAndRemoveMixins(model);
-        model = transformer.changeStringEnumsToEnumShapes(model, true);
         return model;
     }
 
@@ -235,6 +234,19 @@ public final class CodegenDirector<
         transforms.add((model, transformer) -> {
             LOGGER.finest("Creating dedicated input and output shapes for directed codegen");
             return transformer.createDedicatedInputAndOutput(model, inputSuffix, outputSuffix);
+        });
+    }
+
+    /**
+     * Changes each compatible string shape with the enum trait to an enum shape.
+     *
+     * @param synthesizeEnumNames Whether enums without names should have names synthesized if possible.
+     * @see ModelTransformer#changeStringEnumsToEnumShapes(Model, boolean)
+     */
+    public void changeStringEnumsToEnumShapes(boolean synthesizeEnumNames) {
+        transforms.add((model, transformer) -> {
+            LOGGER.finest("Creating dedicated input and output shapes for directed codegen");
+            return transformer.changeStringEnumsToEnumShapes(model, synthesizeEnumNames);
         });
     }
 
