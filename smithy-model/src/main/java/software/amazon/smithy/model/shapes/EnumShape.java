@@ -173,13 +173,13 @@ public final class EnumShape extends StringShape {
         }
 
         EnumTrait trait = shape.expectTrait(EnumTrait.class);
-        if (!synthesizeEnumNames && trait.getValues().iterator().next().getName().isPresent()) {
+        if (!trait.hasNames() && !synthesizeEnumNames) {
             LOGGER.info(String.format(
                     "Unable to convert string shape `%s` to enum shape because it doesn't define names. The "
                             + "`synthesizeNames` option may be able to synthesize the names for you.",
                     shape.getId()
             ));
-            return true;
+            return false;
         }
 
         for (EnumDefinition definition : trait.getValues()) {

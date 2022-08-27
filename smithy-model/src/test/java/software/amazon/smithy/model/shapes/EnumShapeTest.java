@@ -445,4 +445,50 @@ public class EnumShapeTest {
         Map<String, String> expected = MapUtils.of("BAR", "bar");
         assertEquals(expected, shape.getEnumValues());
     }
+
+    @Test
+    public void canConvertToEnumWithNamedEnumTrait() {
+        EnumTrait trait = EnumTrait.builder()
+                .addEnum(EnumDefinition.builder()
+                        .value("foo&bar") // even if this value has invalid characters for a synthesized name
+                        .name("BAR")
+                        .build())
+                .build();
+        StringShape string = StringShape.builder()
+                .id("ns.foo#bar")
+                .addTrait(trait)
+                .build();
+        assertTrue(EnumShape.canConvertToEnum(string, false));
+        assertTrue(EnumShape.canConvertToEnum(string, true));
+    }
+
+    @Test
+    public void canConvertToEnumWithNamelessEnumTrait() {
+        EnumTrait trait = EnumTrait.builder()
+                .addEnum(EnumDefinition.builder()
+                        .value("bar")
+                        .build())
+                .build();
+        StringShape string = StringShape.builder()
+                .id("ns.foo#bar")
+                .addTrait(trait)
+                .build();
+        assertFalse(EnumShape.canConvertToEnum(string, false));
+        assertTrue(EnumShape.canConvertToEnum(string, true));
+    }
+
+    @Test
+    public void canConvertToEnumWithNonConvertableNamelessEnumTrait() {
+        EnumTrait trait = EnumTrait.builder()
+                .addEnum(EnumDefinition.builder()
+                        .value("foo&bar")
+                        .build())
+                .build();
+        StringShape string = StringShape.builder()
+                .id("ns.foo#bar")
+                .addTrait(trait)
+                .build();
+        assertFalse(EnumShape.canConvertToEnum(string, false));
+        assertFalse(EnumShape.canConvertToEnum(string, true));
+    }
 }
