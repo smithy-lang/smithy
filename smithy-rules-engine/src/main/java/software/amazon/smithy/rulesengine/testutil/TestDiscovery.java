@@ -16,6 +16,7 @@
 package software.amazon.smithy.rulesengine.testutil;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -37,6 +38,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
 public final class TestDiscovery {
+
     private static String prettyPath(Path path) {
         return path.subpath(path.getNameCount() - 2, path.getNameCount())
                 .toString();
@@ -63,7 +65,11 @@ public final class TestDiscovery {
     }
 
     private String serviceId(FromSourceLocation source) {
-        return source.getSourceLocation().getFilename().split("/")[1];
+        return source.getSourceLocation().getFilename().split(getRegexSafeFileSeparator())[1];
+    }
+
+    private static String getRegexSafeFileSeparator() {
+        return File.separatorChar == '\\' ? "\\\\" : File.separator;
     }
 
     public Stream<RulesTestSuite> testSuites() {
@@ -97,7 +103,7 @@ public final class TestDiscovery {
                     List<EndpointTestsTrait> matchingTestSuites = testSuites.stream()
                             .filter(test -> serviceId(test).equals(serviceId(ruleset)))
                             .collect(Collectors.toList());
-                    EndpointTestsTrait  suite;
+                    EndpointTestsTrait suite;
                     if (matchingTestSuites.size() > 1) {
                         throw new RuntimeException("found duplicate test suites...");
                     } else if (matchingTestSuites.size() == 1) {
