@@ -121,12 +121,10 @@ public class IntegrationTest {
     @ParameterizedTest
     @MethodSource("invalidTestCases")
     void checkInvalidRules(ValidationTestCase validationTestCase) throws IOException {
-        RuleError error = assertThrows(RuleError.class, () -> {
+        assertThrows(RuleError.class, () -> {
             EndpointRuleset ruleset = EndpointRuleset.fromNode(validationTestCase.contents());
             ruleset.typecheck(new Scope<>());
         });
-        validationTestCase.overrideComments(error.toString());
-        assertEquals(validationTestCase.comments().trim(), error.toString().trim());
     }
 
     public static final class ValidationTestCase {
