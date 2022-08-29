@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
 import software.amazon.smithy.model.Model;
@@ -43,6 +44,7 @@ import software.amazon.smithy.model.traits.TraitDefinition;
  * configured on the provided PluginContext.
  */
 public final class BuildInfoPlugin implements SmithyBuildPlugin {
+    public static final String BUILD_INFO_PATH = "smithy-build-info.json";
     private static final String NAME = "build-info";
 
     @Override
@@ -58,7 +60,7 @@ public final class BuildInfoPlugin implements SmithyBuildPlugin {
     @Override
     public void execute(PluginContext context) {
         if (context.getOriginalModel().isPresent() && context.getProjection().isPresent()) {
-            context.getFileManifest().writeJson("smithy-build-info.json", serializeBuildInfo(context));
+            context.getFileManifest().writeJson(BUILD_INFO_PATH, serializeBuildInfo(context));
         }
     }
 
@@ -67,8 +69,9 @@ public final class BuildInfoPlugin implements SmithyBuildPlugin {
         info.setProjectionName(context.getProjectionName());
         info.setProjection(context.getProjection().orElse(null));
         info.setValidationEvents(context.getEvents());
-        info.setTraitNames(findTraitNames(context.getModel()));
-        info.setTraitDefNames(getTraitShapeIds(context.getModel()));
+        Set<ShapeId> traitIds = getTraitShapeIds(context.getModel());
+        info.setTraitNames(findTraitNames(context.getModel(), traitIds));
+        info.setTraitDefNames(new ArrayList<>(traitIds));
         info.setServiceShapeIds(findShapeIds(context.getModel(), ServiceShape.class));
         info.setOperationShapeIds(findShapeIds(context.getModel(), OperationShape.class));
         info.setResourceShapeIds(findShapeIds(context.getModel(), ResourceShape.class));
@@ -77,20 +80,31 @@ public final class BuildInfoPlugin implements SmithyBuildPlugin {
         return mapper.serialize(info);
     }
 
-    private static List<ShapeId> getTraitShapeIds(Model model) {
+    private static Set<ShapeId> getTraitShapeIds(Model model) {
+        // Will only get traits that are defined in the model (no synthetic traits)
         Set<Shape> traits = model.getShapesWithTrait(TraitDefinition.class);
-        List<ShapeId> result = new ArrayList<>(traits.size());
+
+        Set<ShapeId> result = new TreeSet<>();
         for (Shape traitShape : traits) {
             result.add(traitShape.getId());
         }
-        Collections.sort(result);
+
         return result;
     }
 
-    private static List<ShapeId> findTraitNames(Model model) {
+    private static List<ShapeId> findTraitNames(Model model, Set<ShapeId> traitIds) {
+
         List<ShapeId> applied = new ArrayList<>(model.getAppliedTraits());
-        Collections.sort(applied);
-        return applied;
+
+        List<ShapeId> traitNames = new ArrayList<>();
+        for (ShapeId shapeId : applied) {
+            if (traitIds.contains(shapeId)) {
+                traitNames.add(shapeId);
+            }
+        }
+        Collections.sort(traitNames);
+
+        return traitNames;
     }
 
     private static <T extends Shape> List<ShapeId> findShapeIds(Model model, Class<T> clazz) {
