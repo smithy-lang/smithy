@@ -1,5 +1,22 @@
 # Smithy Changelog
 
+## 1.24.0 (2022-08-30)
+
+### Features
+
+* Made string enum to enum shape transform opt-in in CodegenDirector. ([#1370](https://github.com/awslabs/smithy/pull/1370))
+* Updated `@httpResponseCode` to not be applicable to `@input` structures. ([#1359](https://github.com/awslabs/smithy/pull/1359))
+* Made some improvements in smithy-build. ([#1366](https://github.com/awslabs/smithy/pull/1366))
+
+### Bug fixes
+
+* Filtered out synthetic traits from build info. ([#1374](https://github.com/awslabs/smithy/pull/1374))
+* Fixed a log message when unable to convert string enum to enum shape. ([#1372](https://github.com/awslabs/smithy/pull/1372))
+
+### Documentation
+
+* Updated Smithy IDL ABNF Docs. ([#1357](https://github.com/awslabs/smithy/pull/1357))
+
 ## 1.23.1 (2022-08-18)
 
 ### Features
