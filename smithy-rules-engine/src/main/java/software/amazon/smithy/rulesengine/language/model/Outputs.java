@@ -32,6 +32,7 @@ public final class Outputs implements ToSmithyBuilder<Outputs>, FromSourceLocati
     private static final String DUAL_STACK_DNS_SUFFIX = "dualStackDnsSuffix";
     private static final String SUPPORTS_FIPS = "supportsFIPS";
     private static final String SUPPORTS_DUAL_STACK = "supportsDualStack";
+    private static final String NAME = "name";
 
     private final String dnsSuffix;
     private final String dualStackDnsSuffix;
@@ -56,7 +57,7 @@ public final class Outputs implements ToSmithyBuilder<Outputs>, FromSourceLocati
         ObjectNode objNode = node.expectObjectNode();
 
         objNode.expectNoAdditionalProperties(Arrays.asList(
-                DNS_SUFFIX, DUAL_STACK_DNS_SUFFIX, SUPPORTS_FIPS, SUPPORTS_DUAL_STACK));
+                NAME, DNS_SUFFIX, DUAL_STACK_DNS_SUFFIX, SUPPORTS_FIPS, SUPPORTS_DUAL_STACK));
 
         Builder b = new Builder(node);
 
