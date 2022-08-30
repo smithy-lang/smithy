@@ -50,7 +50,7 @@ The following example defines a model file with each section:
     .. code-block:: smithy
 
         {
-            "smithy": "2.0",
+            "smithy": "2",
             "metadata": {
                 "foo": "bar"
             },
@@ -193,13 +193,13 @@ string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
     ValueAssignment         :*`SP` "=" *`SP` `NodeValue` `BR`
     ListStatement           :%s"list" `SP` `Identifier` [`Mixins`] *`WS` `ListMembers`
     ListMembers             :"{" *`WS` `ListMember` *`WS` "}"
-    ListMember              :[TraitStatements] (`ElidedListMember` / `ExplicitListMember`)
+    ListMember              :`TraitStatements` (`ElidedListMember` / `ExplicitListMember`)
     ElidedListMember        :%s"$member"
     ExplicitListMember      :%s"member" *`SP` ":" *`SP` `ShapeId`
     MapStatement            :%s"map" `SP` `Identifier` [`Mixins`] *`WS` `MapMembers`
     MapMembers              :"{" *`WS` `MapKey` `BR` `MapValue` *`WS` "}"
-    MapKey                  :[TraitStatements] (`ElidedMapKey` / `ExplicitMapKey`)
-    MapValue                :[TraitStatements] (`ElidedMapValue` / `ExplicitMapValue`)
+    MapKey                  :`TraitStatements` (`ElidedMapKey` / `ExplicitMapKey`)
+    MapValue                :`TraitStatements` (`ElidedMapValue` / `ExplicitMapValue`)
     ElidedMapKey            :%s"$key"
     ExplicitMapKey          :%s"key" *`SP` ":" *`SP` `ShapeId`
     ElidedMapValue          :%s"$value"
@@ -282,8 +282,9 @@ The :token:`control section <smithy:ControlSection>` of a model contains
 :token:`control statements <smithy:ControlStatement>` that apply parser directives
 to a *specific IDL file*. Because control statements influence parsing, they
 MUST appear at the beginning of a file before any other statements and have
-no effect on the :ref:`semantic model <semantic-model>` The following control
-statements are currently supported:
+no effect on the :ref:`semantic model <semantic-model>`.
+
+The following control statements are currently supported:
 
 .. list-table::
     :header-rows: 1
@@ -315,7 +316,7 @@ Version statement
 
 The Smithy specification is versioned using a ``major`` . ``minor``
 versioning scheme. A version requirement is specified for a model file using
-the ``$version`` control statement. When no version Number is specified in
+the ``$version`` control statement. When no version number is specified in
 the IDL, an implementation SHOULD assume that the model can be loaded.
 Because this can lead to unexpected parsing errors, models SHOULD always
 include a version.
@@ -345,21 +346,21 @@ support a version greater than or equal to ``2.0`` and less than ``3.0``:
 
 A minor version SHOULD be provided when a model depends on a feature released
 in a minor update of the specification. The following example sets the
-version requirement of a file to ``2.0``, meaning that tooling MUST support a
-version greater than or equal to ``2.0`` and less than ``3.0``:
+version requirement of a file to ``2.1``, meaning that tooling MUST support a
+version greater than or equal to ``2.1`` and less than ``3.0``:
 
 .. tab:: Smithy
 
     .. code-block:: smithy
 
-        $version: "2.0"
+        $version: "2.1"
 
 .. tab:: JSON
 
     .. code-block:: json
 
         {
-            "smithy": "2.0"
+            "smithy": "2.1"
         }
 
 .. rubric:: Version compatibility
@@ -395,7 +396,7 @@ The following example defines metadata in the model:
     .. code-block:: json
 
         {
-            "smithy": "2.0",
+            "smithy": "2",
             "metadata": {
                 "greeting": "hello",
                 "stringList": ["a", "b", "c"]
@@ -437,7 +438,7 @@ The following example defines a string shape named ``MyString`` in the
     .. code-block:: json
 
         {
-            "smithy": "2.0",
+            "smithy": "2",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "string"
@@ -589,7 +590,7 @@ The above model is equivalent to the following JSON AST model:
 .. code-block:: json
 
     {
-        "smithy": "2.0",
+        "smithy": "2",
         "shapes": {
             "smithy.example#MyList": {
                 "type": "list",
@@ -623,7 +624,7 @@ The above example is equivalent to the following incorrect JSON AST:
 .. code-block:: json
 
     {
-        "smithy": "2.0",
+        "smithy": "2",
         "shapes": {
             "smithy.example#Error": {
                 "type": "structure",
@@ -656,7 +657,7 @@ The above example is equivalent to the following JSON AST:
 .. code-block:: json
 
     {
-        "smithy": "2.0",
+        "smithy": "2",
         "metadata": {
             "String": "smithy.api#String"
         }
@@ -712,7 +713,7 @@ The following example defines a ``string`` shape:
     .. code-block:: json
 
         {
-            "smithy": "2.0",
+            "smithy": "2",
             "shapes": {
                 "smithy.example#String": {
                     "type": "string"
@@ -737,7 +738,7 @@ The following example defines an ``integer`` shape with a :ref:`range-trait`:
     .. code-block:: json
 
         {
-            "smithy": "2.0",
+            "smithy": "2",
             "shapes": {
                 "smithy.example#MaxResults": {
                     "type": "integer",
@@ -889,7 +890,7 @@ The following example defines a list with a string member from the
     .. code-block:: json
 
         {
-            "smithy": "2.0",
+            "smithy": "2",
             "shapes": {
                 "smithy.example#MyList": {
                     "type": "list",
@@ -920,7 +921,7 @@ Traits can be applied to the list shape and its member:
     .. code-block:: json
 
         {
-            "smithy": "2.0",
+            "smithy": "2",
             "shapes": {
                 "smithy.example#MyList": {
                     "type": "list",
@@ -970,7 +971,7 @@ The following example defines a map of strings to integers:
     .. code-block:: json
 
         {
-            "smithy": "2.0",
+            "smithy": "2",
             "shapes": {
                 "type": "map",
                 "smithy.example#IntegerMap": {
@@ -1007,7 +1008,7 @@ Traits can be applied to the map shape and its members:
     .. code-block:: json
 
         {
-            "smithy": "2.0",
+            "smithy": "2",
             "shapes": {
                 "smithy.example#IntegerMap": {
                     "type": "map",
@@ -1067,7 +1068,7 @@ The following example defines a structure with two members:
     .. code-block:: json
 
         {
-            "smithy": "2.0",
+            "smithy": "2",
             "shapes": {
                 "smithy.example#MyStructure": {
                     "type": "structure",
@@ -1108,7 +1109,7 @@ Traits can be applied to structure members:
     .. code-block:: json
 
         {
-            "smithy": "2.0",
+            "smithy": "2",
             "shapes": {
                 "smithy.example#MyStructure": {
                     "type": "structure",
@@ -1184,7 +1185,7 @@ The following example defines a union shape with several members:
     .. code-block:: json
 
         {
-            "smithy": "2.0",
+            "smithy": "2",
             "shapes": {
                 "smithy.example#MyUnion": {
                     "type": "union",
@@ -1238,7 +1239,7 @@ a resource named ``Model`` and an operation named ``PingService``:
     .. code-block:: json
 
         {
-            "smithy": "2.0",
+            "smithy": "2",
             "shapes": {
                 "smithy.example#ModelRepository": {
                     "type": "service",
@@ -1288,7 +1289,7 @@ can potentially return the ``Unavailable`` or ``BadRequest``
     .. code-block:: json
 
         {
-            "smithy": "2.0",
+            "smithy": "2",
             "shapes": {
                 "smithy.example#PingService": {
                     "type": "operation",
@@ -1445,7 +1446,7 @@ and defines a :ref:`read <read-lifecycle>` operation:
     .. code-block:: json
 
         {
-            "smithy": "2.0",
+            "smithy": "2",
             "shapes": {
                 "smithy.example#Sprocket": {
                     "type": "resource",
@@ -1633,7 +1634,7 @@ is equivalent to the following JSON AST model:
 .. code-block:: json
 
     {
-        "smithy": "2.0",
+        "smithy": "2",
         "shapes": {
             "smithy.example#MyString": {
                 "type": "string",
@@ -1714,7 +1715,7 @@ The following example applies the :ref:`length-trait` and
     .. code-block:: json
 
         {
-            "smithy": "2.0",
+            "smithy": "2",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "string",
@@ -1803,7 +1804,7 @@ The following applications of the ``foo`` trait are equivalent:
     .. code-block:: json
 
         {
-            "smithy": "2.0",
+            "smithy": "2",
             "shapes": {
                 "smithy.example#foo": {
                     "type": "structure",
@@ -1876,7 +1877,7 @@ The following example applies the :ref:`documentation-trait` to the
     .. code-block:: json
 
         {
-            "smithy": "2.0",
+            "smithy": "2",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "apply",
@@ -1908,7 +1909,7 @@ and :ref:`length-trait` to the ``smithy.example#MyString`` shape:
     .. code-block:: json
 
         {
-            "smithy": "2.0",
+            "smithy": "2",
             "shapes": {
                 "smithy.example#MyString": {
                     "type": "apply",
@@ -2005,7 +2006,7 @@ The following examples define objects with zero, one, and two key value pairs:
 .. rubric:: Number node
 
 A node :token:`smithy:Number` contains numeric data. It is defined like a JSON
-Number. The following examples define several ``Number`` values:
+number. The following examples define several ``Number`` values:
 
 * ``0``
 * ``0.0``
@@ -2184,7 +2185,7 @@ incidental whitespace using the following algorithm:
        ["    Foo", "        Baz", "", "  ", "    Bar", "    "]
 
 2. Compute the *common whitespace prefix* by iterating over each line,
-   counting the Number of leading spaces (" ") and taking the minimum count.
+   counting the number of leading spaces (" ") and taking the minimum count.
    Except for the last line of content, lines that are empty or consist wholly
    of whitespace are not considered. If the last line of content (that is, the
    line that contains the closing delimiter) appears on its own line, then

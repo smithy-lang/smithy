@@ -1079,12 +1079,12 @@ or member.</dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:is(structure,</span> <span class="pre">union,</span> <span class="pre">member)</span></code></p>
 <p><em>A structure, union, or member</em></p>
 </dd>
-<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">string</span></code> value that MUST adhere to the <a class="reference internal" href="#grammar-token-smithy-xml_name"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:xml_name</span></code></a> ABNF production:</p>
+<dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">string</span></code> value that MUST adhere to the <a class="reference internal" href="#grammar-token-smithy-XmlName"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:XmlName</span></code></a> ABNF production:</p>
 <pre class="productionlist highlight">
-<strong id="grammar-token-smithy-xml_name"><span id="grammar-token-xml-name"></span>xml_name</strong> =
-    xml_identifier / (xml_identifier &quot;:&quot; xml_identifier)
+<strong id="grammar-token-smithy-XmlName"><span id="grammar-token-xmlname"></span>XmlName</strong> =
+    <a class="reference internal" href="#grammar-token-smithy-XmlIdentifier"><code class="xref docutils literal notranslate"><span class="pre">XmlIdentifier</span></code></a> / (<a class="reference internal" href="#grammar-token-smithy-XmlIdentifier"><code class="xref docutils literal notranslate"><span class="pre">XmlIdentifier</span></code></a>` &quot;:&quot; <a class="reference internal" href="#grammar-token-smithy-XmlIdentifier"><code class="xref docutils literal notranslate"><span class="pre">XmlIdentifier</span></code></a>`)
 
-<strong id="grammar-token-smithy-xml_identifier"><span id="grammar-token-xml-identifier"></span>xml_identifier</strong> =
+<strong id="grammar-token-smithy-XmlIdentifier"><span id="grammar-token-xmlidentifier"></span>XmlIdentifier</strong> =
     (ALPHA / &quot;_&quot;) *(ALPHA / DIGIT / &quot;-&quot; / &quot;_&quot;)
 </pre>
 </dd>
@@ -1154,7 +1154,7 @@ following</p>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code> value</td>
 <td>The <a class="reference external" href="https://www.w3.org/TR/REC-xml-names/#NT-Prefix">namespace prefix</a> for elements from this namespace. Values
 provides for <code class="docutils literal notranslate"><span class="pre">prefix</span></code> property MUST adhere to the
-<a class="reference internal" href="#grammar-token-smithy-xml_identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:xml_identifier</span></code></a> production.</td>
+<a class="reference internal" href="#grammar-token-smithy-XmlIdentifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:XmlIdentifier</span></code></a> production.</td>
 </tr>
 </tbody>
 </table>

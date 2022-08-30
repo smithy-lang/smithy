@@ -147,9 +147,9 @@ resolved using the following process:
        * - Member location
          - Default value
        * - ``structure`` member
-         - The :token:`member name <smithy:shape_id_member>` capitalized
+         - The :token:`member name <smithy:ShapeIdMember>` capitalized
        * - ``union`` member
-         - The :token:`member name <smithy:shape_id_member>` capitalized
+         - The :token:`member name <smithy:ShapeIdMember>` capitalized
 
 
 ----------------
@@ -351,7 +351,7 @@ of the ``Errors`` tag is an ``Error`` tag which contains the serialized error
 structure members.
 
 Serialized error shapes MUST also contain an additional child element ``Code``
-that contains only the :token:`shape name <smithy:identifier>` of the error's
+that contains only the :token:`shape name <smithy:Identifier>` of the error's
 :ref:`shape-id`. This can be used to distinguish which specific error has been
 serialized in the response.
 
@@ -368,7 +368,7 @@ serialized in the response.
         <RequestId>foo-id</RequestId>
     </Response>
 
-* ``Code``: The :token:`shape name <smithy:identifier>` of the error's
+* ``Code``: The :token:`shape name <smithy:Identifier>` of the error's
   :ref:`shape-id`.
 * ``RequestId``: Contains a unique identifier for the associated request.
 

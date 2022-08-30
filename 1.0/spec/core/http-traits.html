@@ -1410,11 +1410,12 @@ given the following model:</p>
 <dt>Summary</dt><dd>Binds a structure member to the HTTP response status code so that an
 HTTP response status code can be set dynamically at runtime to something
 other than <code class="docutils literal notranslate"><span class="pre">code</span></code> of the <a class="reference internal" href="#http-trait"><span class="std std-ref">http trait</span></a>.</dd>
-<dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; member :test(&gt; integer)
+<dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>structure :not([trait|input]) &gt; member :test(&gt; integer)
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait can be applied to <code class="docutils literal notranslate"><span class="pre">structure</span></code> members
-that target an <code class="docutils literal notranslate"><span class="pre">integer</span></code>.</p>
+that target an <code class="docutils literal notranslate"><span class="pre">integer</span></code> within any <code class="docutils literal notranslate"><span class="pre">structure</span></code> that has no <code class="docutils literal notranslate"><span class="pre">input</span></code>
+trait applied.</p>
 </dd>
 <dt>Value type</dt><dd>Annotation trait.</dd>
 <dt>Conflicts with</dt><dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>, <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>,
@@ -1427,12 +1428,12 @@ different response codes for an operation, like a 200 or 201 for a PUT
 operation. If this member isn't provided, server implementations MUST default
 to the <cite>code</cite> set by the <a class="reference internal" href="#http-trait"><span class="std std-ref">http trait</span></a>.</p>
 <p class="rubric"><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> is only used on output</p>
-<p><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> is ignored when resolving the HTTP bindings of an
-operation's input structure. This means that if a structure that contains
-members marked with the <code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait is used as the top-level
-input structure of an operation, then those members are sent as part of the
-<a class="reference internal" href="#http-protocol-document-payloads"><span class="std std-ref">protocol-specific document</span></a> sent in
-the body of the request.</p>
+<p><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> is ignored when resolving the HTTP bindings of any
+structure except an operation's output structure. This means that if a
+structure that contains members marked with the <code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait
+is not used as an output structure of an operation, then those members are
+sent as part of the <a class="reference internal" href="#http-protocol-document-payloads"><span class="std std-ref">protocol-specific document</span></a>
+sent in the body of the request.</p>
 </div>
 <div class="section" id="cors-trait">
 <span id="smithy-api-cors-trait"></span><span id="id11"></span><h2><span class="section-number">11.10. </span><code class="docutils literal notranslate"><span class="pre">cors</span></code> trait<a class="headerlink" href="#cors-trait" title="Permalink to this headline">#</a></h2>

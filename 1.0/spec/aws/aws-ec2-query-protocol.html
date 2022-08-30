@@ -424,10 +424,10 @@ member with the first letter capitalized, if present.</p>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">structure</span></code> member</td>
-<td>The <a class="reference internal" href="../core/model.html#grammar-token-smithy-shape_id_member"><code class="xref std std-token docutils literal notranslate"><span class="pre">member</span> <span class="pre">name</span></code></a> capitalized</td>
+<td>The <a class="reference internal" href="../core/model.html#grammar-token-smithy-ShapeIdMember"><code class="xref std std-token docutils literal notranslate"><span class="pre">member</span> <span class="pre">name</span></code></a> capitalized</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">union</span></code> member</td>
-<td>The <a class="reference internal" href="../core/model.html#grammar-token-smithy-shape_id_member"><code class="xref std std-token docutils literal notranslate"><span class="pre">member</span> <span class="pre">name</span></code></a> capitalized</td>
+<td>The <a class="reference internal" href="../core/model.html#grammar-token-smithy-ShapeIdMember"><code class="xref std std-token docutils literal notranslate"><span class="pre">member</span> <span class="pre">name</span></code></a> capitalized</td>
 </tr>
 </tbody>
 </table>
@@ -520,7 +520,7 @@ Transfer-Encoding.</p>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">Action</span></code></td>
-<td>The <a class="reference internal" href="../core/model.html#grammar-token-smithy-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the operation's <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>.</td>
+<td>The <a class="reference internal" href="../core/model.html#grammar-token-smithy-Identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the operation's <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>.</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">Version</span></code></td>
 <td>The value of the <a class="reference internal" href="../core/model.html#service"><span class="std std-ref">&quot;version&quot; property of the service</span></a>.</td>
@@ -860,7 +860,7 @@ the actual error, and a <code class="docutils literal notranslate"><span class="
 of the <code class="docutils literal notranslate"><span class="pre">Errors</span></code> tag is an <code class="docutils literal notranslate"><span class="pre">Error</span></code> tag which contains the serialized error
 structure members.</p>
 <p>Serialized error shapes MUST also contain an additional child element <code class="docutils literal notranslate"><span class="pre">Code</span></code>
-that contains only the <a class="reference internal" href="../core/model.html#grammar-token-smithy-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
+that contains only the <a class="reference internal" href="../core/model.html#grammar-token-smithy-Identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
 <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>. This can be used to distinguish which specific error has been
 serialized in the response.</p>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;Response&gt;</span>
@@ -876,7 +876,7 @@ serialized in the response.</p>
 </pre></div>
 </div>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">Code</span></code>: The <a class="reference internal" href="../core/model.html#grammar-token-smithy-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
+<li><code class="docutils literal notranslate"><span class="pre">Code</span></code>: The <a class="reference internal" href="../core/model.html#grammar-token-smithy-Identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
 <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>.</li>
 <li><code class="docutils literal notranslate"><span class="pre">RequestId</span></code>: Contains a unique identifier for the associated request.</li>
 </ul>

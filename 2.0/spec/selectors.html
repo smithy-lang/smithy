@@ -1755,7 +1755,7 @@ changing the semantics of a selector.</p>
     &quot;-[&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorDirectedRelationships"><code class="xref docutils literal notranslate"><span class="pre">SelectorDirectedRelationships</span></code></a> &quot;]-&gt;&quot;
 
 <strong id="grammar-token-selectors-SelectorReverseDirectedNeighbor"><span id="grammar-token-selectorreversedirectedneighbor"></span>SelectorReverseDirectedNeighbor</strong> =
-    &quot;&lt;-[&quot; SelectorDirectedRelationships &quot;]-&quot;
+    &quot;&lt;-[&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorDirectedRelationships"><code class="xref docutils literal notranslate"><span class="pre">SelectorDirectedRelationships</span></code></a> &quot;]-&quot;
 
 <strong id="grammar-token-selectors-SelectorDirectedRelationships"><span id="grammar-token-selectordirectedrelationships"></span>SelectorDirectedRelationships</strong> =
     <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a> *(&quot;,&quot; <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a>)
@@ -1764,7 +1764,7 @@ changing the semantics of a selector.</p>
     &quot;~&gt;&quot;
 
 <strong id="grammar-token-selectors-SelectorAttr"><span id="grammar-token-selectorattr"></span>SelectorAttr</strong> =
-    &quot;[&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorKey"><code class="xref docutils literal notranslate"><span class="pre">SelectorKey</span></code></a> [SelectorAttrComparison] &quot;]&quot;
+    &quot;[&quot; <a class="reference internal" href="#grammar-token-selectors-SelectorKey"><code class="xref docutils literal notranslate"><span class="pre">SelectorKey</span></code></a> [<a class="reference internal" href="#grammar-token-selectors-SelectorAttrComparison"><code class="xref docutils literal notranslate"><span class="pre">SelectorAttrComparison</span></code></a>] &quot;]&quot;
 
 <strong id="grammar-token-selectors-SelectorAttrComparison"><span id="grammar-token-selectorattrcomparison"></span>SelectorAttrComparison</strong> =
     <a class="reference internal" href="#grammar-token-selectors-SelectorComparator"><code class="xref docutils literal notranslate"><span class="pre">SelectorComparator</span></code></a> <a class="reference internal" href="#grammar-token-selectors-SelectorAttrValues"><code class="xref docutils literal notranslate"><span class="pre">SelectorAttrValues</span></code></a> [&quot;i&quot;]
@@ -1844,7 +1844,7 @@ changing the semantics of a selector.</p>
     %x20-21 / %x23-5B / %x5D-10FFFF ; Excludes (&quot;)
 
 <strong id="grammar-token-selectors-SelectorVariableSet"><span id="grammar-token-selectorvariableset"></span>SelectorVariableSet</strong> =
-    &quot;$&quot; <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a> &quot;(&quot; selector &quot;)&quot;
+    &quot;$&quot; <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a> &quot;(&quot; <a class="reference internal" href="#grammar-token-selectors-Selector"><code class="xref docutils literal notranslate"><span class="pre">Selector</span></code></a> &quot;)&quot;
 
 <strong id="grammar-token-selectors-SelectorVariableGet"><span id="grammar-token-selectorvariableget"></span>SelectorVariableGet</strong> =
     &quot;${&quot; <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a> &quot;}&quot;

@@ -339,7 +339,7 @@ or traits to refer to shapes in other namespaces using a shorter name.</li>
 </div>
 <input class="tab-input" id="tab-set--0-input--2" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--2">JSON</label><div class="tab-content docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="s2">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="s2">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="s2">&quot;metadata&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">        </span><span class="s2">&quot;foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;bar&quot;</span><span class="w"></span>
 <span class="w">    </span>}<span class="p">,</span><span class="w"></span>
@@ -578,7 +578,7 @@ string support defined in <a class="reference external" href="https://www.rfc-ed
     &quot;{&quot; *<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a> <a class="reference internal" href="#grammar-token-smithy-ListMember"><code class="xref docutils literal notranslate"><span class="pre">ListMember</span></code></a> *<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a> &quot;}&quot;
 
 <strong id="grammar-token-smithy-ListMember"><span id="grammar-token-listmember"></span>ListMember</strong> =
-    [TraitStatements] (<a class="reference internal" href="#grammar-token-smithy-ElidedListMember"><code class="xref docutils literal notranslate"><span class="pre">ElidedListMember</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-ExplicitListMember"><code class="xref docutils literal notranslate"><span class="pre">ExplicitListMember</span></code></a>)
+    <a class="reference internal" href="#grammar-token-smithy-TraitStatements"><code class="xref docutils literal notranslate"><span class="pre">TraitStatements</span></code></a> (<a class="reference internal" href="#grammar-token-smithy-ElidedListMember"><code class="xref docutils literal notranslate"><span class="pre">ElidedListMember</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-ExplicitListMember"><code class="xref docutils literal notranslate"><span class="pre">ExplicitListMember</span></code></a>)
 
 <strong id="grammar-token-smithy-ElidedListMember"><span id="grammar-token-elidedlistmember"></span>ElidedListMember</strong> =
     %s&quot;$member&quot;
@@ -593,10 +593,10 @@ string support defined in <a class="reference external" href="https://www.rfc-ed
     &quot;{&quot; *<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a> <a class="reference internal" href="#grammar-token-smithy-MapKey"><code class="xref docutils literal notranslate"><span class="pre">MapKey</span></code></a> <a class="reference internal" href="#grammar-token-smithy-BR"><code class="xref docutils literal notranslate"><span class="pre">BR</span></code></a> <a class="reference internal" href="#grammar-token-smithy-MapValue"><code class="xref docutils literal notranslate"><span class="pre">MapValue</span></code></a> *<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a> &quot;}&quot;
 
 <strong id="grammar-token-smithy-MapKey"><span id="grammar-token-mapkey"></span>MapKey</strong> =
-    [TraitStatements] (<a class="reference internal" href="#grammar-token-smithy-ElidedMapKey"><code class="xref docutils literal notranslate"><span class="pre">ElidedMapKey</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-ExplicitMapKey"><code class="xref docutils literal notranslate"><span class="pre">ExplicitMapKey</span></code></a>)
+    <a class="reference internal" href="#grammar-token-smithy-TraitStatements"><code class="xref docutils literal notranslate"><span class="pre">TraitStatements</span></code></a> (<a class="reference internal" href="#grammar-token-smithy-ElidedMapKey"><code class="xref docutils literal notranslate"><span class="pre">ElidedMapKey</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-ExplicitMapKey"><code class="xref docutils literal notranslate"><span class="pre">ExplicitMapKey</span></code></a>)
 
 <strong id="grammar-token-smithy-MapValue"><span id="grammar-token-mapvalue"></span>MapValue</strong> =
-    [TraitStatements] (<a class="reference internal" href="#grammar-token-smithy-ElidedMapValue"><code class="xref docutils literal notranslate"><span class="pre">ElidedMapValue</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-ExplicitMapValue"><code class="xref docutils literal notranslate"><span class="pre">ExplicitMapValue</span></code></a>)
+    <a class="reference internal" href="#grammar-token-smithy-TraitStatements"><code class="xref docutils literal notranslate"><span class="pre">TraitStatements</span></code></a> (<a class="reference internal" href="#grammar-token-smithy-ElidedMapValue"><code class="xref docutils literal notranslate"><span class="pre">ElidedMapValue</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-ExplicitMapValue"><code class="xref docutils literal notranslate"><span class="pre">ExplicitMapValue</span></code></a>)
 
 <strong id="grammar-token-smithy-ElidedMapKey"><span id="grammar-token-elidedmapkey"></span>ElidedMapKey</strong> =
     %s&quot;$key&quot;
@@ -726,8 +726,8 @@ using a special <a class="reference internal" href="#documentation-comment"><spa
 <a class="reference internal" href="#grammar-token-smithy-ControlStatement"><code class="xref std std-token docutils literal notranslate"><span class="pre">control</span> <span class="pre">statements</span></code></a> that apply parser directives
 to a <em>specific IDL file</em>. Because control statements influence parsing, they
 MUST appear at the beginning of a file before any other statements and have
-no effect on the <a class="reference internal" href="model.html#semantic-model"><span class="std std-ref">semantic model</span></a> The following control
-statements are currently supported:</p>
+no effect on the <a class="reference internal" href="model.html#semantic-model"><span class="std std-ref">semantic model</span></a>.</p>
+<p>The following control statements are currently supported:</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
@@ -765,7 +765,7 @@ the model file.</td>
 <span id="smithy-version"></span><h3><span class="section-number">18.5.1. </span>Version statement<a class="headerlink" href="#version-statement" title="Permalink to this headline">#</a></h3>
 <p>The Smithy specification is versioned using a <code class="docutils literal notranslate"><span class="pre">major</span></code> . <code class="docutils literal notranslate"><span class="pre">minor</span></code>
 versioning scheme. A version requirement is specified for a model file using
-the <code class="docutils literal notranslate"><span class="pre">$version</span></code> control statement. When no version Number is specified in
+the <code class="docutils literal notranslate"><span class="pre">$version</span></code> control statement. When no version number is specified in
 the IDL, an implementation SHOULD assume that the model can be loaded.
 Because this can lead to unexpected parsing errors, models SHOULD always
 include a version.</p>
@@ -793,17 +793,17 @@ support a version greater than or equal to <code class="docutils literal notrans
 </div>
 <p>A minor version SHOULD be provided when a model depends on a feature released
 in a minor update of the specification. The following example sets the
-version requirement of a file to <code class="docutils literal notranslate"><span class="pre">2.0</span></code>, meaning that tooling MUST support a
-version greater than or equal to <code class="docutils literal notranslate"><span class="pre">2.0</span></code> and less than <code class="docutils literal notranslate"><span class="pre">3.0</span></code>:</p>
+version requirement of a file to <code class="docutils literal notranslate"><span class="pre">2.1</span></code>, meaning that tooling MUST support a
+version greater than or equal to <code class="docutils literal notranslate"><span class="pre">2.1</span></code> and less than <code class="docutils literal notranslate"><span class="pre">3.0</span></code>:</p>
 <div class="tab-set docutils container">
 <input checked="True" class="tab-input" id="tab-set--2-input--1" name="tab-set--2" type="radio"><label class="tab-label" for="tab-set--2-input--1">Smithy</label><div class="tab-content docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2.1&quot;</span><span class="w"></span>
 </pre></div>
 </div>
 </div>
 <input class="tab-input" id="tab-set--2-input--2" name="tab-set--2" type="radio"><label class="tab-label" for="tab-set--2-input--2">JSON</label><div class="tab-content docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.1&quot;</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
@@ -832,7 +832,7 @@ consists of the metadata key to set, followed by <code class="docutils literal n
 </div>
 <input class="tab-input" id="tab-set--3-input--2" name="tab-set--3" type="radio"><label class="tab-label" for="tab-set--3-input--2">JSON</label><div class="tab-content docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;greeting&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hello&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;stringList&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;c&quot;</span><span class="p">]</span><span class="w"></span>
@@ -865,7 +865,7 @@ one namespace can appear per file.</p>
 </div>
 <input class="tab-input" id="tab-set--4-input--2" name="tab-set--4" type="radio"><label class="tab-label" for="tab-set--4-input--2">JSON</label><div class="tab-content docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#MyString&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="w"></span>
@@ -997,7 +997,7 @@ in another namespace.</p>
 </div>
 <p>The above model is equivalent to the following JSON AST model:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#MyList&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;list&quot;</span><span class="p">,</span><span class="w"></span>
@@ -1026,7 +1026,7 @@ it resolves the value of the <a class="reference internal" href="type-refinement
 </div>
 <p>The above example is equivalent to the following incorrect JSON AST:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#Error&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure&quot;</span><span class="p">,</span><span class="w"></span>
@@ -1054,7 +1054,7 @@ a shape ID and resolves to the string literal <code class="docutils literal notr
 </div>
 <p>The above example is equivalent to the following JSON AST:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;String&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
@@ -1097,7 +1097,7 @@ reference can be ignored.</p>
 </div>
 <input class="tab-input" id="tab-set--5-input--2" name="tab-set--5" type="radio"><label class="tab-label" for="tab-set--5-input--2">JSON</label><div class="tab-content docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#String&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="w"></span>
@@ -1121,7 +1121,7 @@ reference can be ignored.</p>
 </div>
 <input class="tab-input" id="tab-set--6-input--2" name="tab-set--6" type="radio"><label class="tab-label" for="tab-set--6-input--2">JSON</label><div class="tab-content docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#MaxResults&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span><span class="p">,</span><span class="w"></span>
@@ -1251,7 +1251,7 @@ member. The following example defines an <a class="reference internal" href="sim
 </div>
 <input class="tab-input" id="tab-set--7-input--2" name="tab-set--7" type="radio"><label class="tab-label" for="tab-set--7-input--2">JSON</label><div class="tab-content docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#MyList&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;list&quot;</span><span class="p">,</span><span class="w"></span>
@@ -1281,7 +1281,7 @@ member. The following example defines an <a class="reference internal" href="sim
 </div>
 <input class="tab-input" id="tab-set--8-input--2" name="tab-set--8" type="radio"><label class="tab-label" for="tab-set--8-input--2">JSON</label><div class="tab-content docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#MyList&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;list&quot;</span><span class="p">,</span><span class="w"></span>
@@ -1326,7 +1326,7 @@ member. The following example defines an <a class="reference internal" href="sim
 </div>
 <input class="tab-input" id="tab-set--9-input--2" name="tab-set--9" type="radio"><label class="tab-label" for="tab-set--9-input--2">JSON</label><div class="tab-content docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;map&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#IntegerMap&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -1362,7 +1362,7 @@ member. The following example defines an <a class="reference internal" href="sim
 </div>
 <input class="tab-input" id="tab-set--10-input--2" name="tab-set--10" type="radio"><label class="tab-label" for="tab-set--10-input--2">JSON</label><div class="tab-content docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#IntegerMap&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;map&quot;</span><span class="p">,</span><span class="w"></span>
@@ -1417,7 +1417,7 @@ member. The following example defines an <a class="reference internal" href="sim
 </div>
 <input class="tab-input" id="tab-set--11-input--2" name="tab-set--11" type="radio"><label class="tab-label" for="tab-set--11-input--2">JSON</label><div class="tab-content docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#MyStructure&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure&quot;</span><span class="p">,</span><span class="w"></span>
@@ -1457,7 +1457,7 @@ member. The following example defines an <a class="reference internal" href="sim
 </div>
 <input class="tab-input" id="tab-set--12-input--2" name="tab-set--12" type="radio"><label class="tab-label" for="tab-set--12-input--2">JSON</label><div class="tab-content docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#MyStructure&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure&quot;</span><span class="p">,</span><span class="w"></span>
@@ -1524,7 +1524,7 @@ member. The following example:</p>
 </div>
 <input class="tab-input" id="tab-set--13-input--2" name="tab-set--13" type="radio"><label class="tab-label" for="tab-set--13-input--2">JSON</label><div class="tab-content docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#MyUnion&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;union&quot;</span><span class="p">,</span><span class="w"></span>
@@ -1573,7 +1573,7 @@ a resource named <code class="docutils literal notranslate"><span class="pre">Mo
 </div>
 <input class="tab-input" id="tab-set--14-input--2" name="tab-set--14" type="radio"><label class="tab-label" for="tab-set--14-input--2">JSON</label><div class="tab-content docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#ModelRepository&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span><span class="w"></span>
@@ -1618,7 +1618,7 @@ can potentially return the <code class="docutils literal notranslate"><span clas
 </div>
 <input class="tab-input" id="tab-set--15-input--2" name="tab-set--15" type="radio"><label class="tab-label" for="tab-set--15-input--2">JSON</label><div class="tab-content docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#PingService&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span><span class="p">,</span><span class="w"></span>
@@ -1756,7 +1756,7 @@ and defines a <a class="reference internal" href="service-types.html#read-lifecy
 </div>
 <input class="tab-input" id="tab-set--16-input--2" name="tab-set--16" type="radio"><label class="tab-label" for="tab-set--16-input--2">JSON</label><div class="tab-content docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#Sprocket&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;resource&quot;</span><span class="p">,</span><span class="w"></span>
@@ -1920,7 +1920,7 @@ Successive documentation comments are combined together using a newline
 </div>
 <p>is equivalent to the following JSON AST model:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#MyString&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w"></span>
@@ -1986,7 +1986,7 @@ and the current namespace in exactly the same way as
 </div>
 <input class="tab-input" id="tab-set--17-input--2" name="tab-set--17" type="radio"><label class="tab-label" for="tab-set--17-input--2">JSON</label><div class="tab-content docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#MyString&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w"></span>
@@ -2062,7 +2062,7 @@ The following applications of the <code class="docutils literal notranslate"><sp
 </div>
 <input class="tab-input" id="tab-set--18-input--2" name="tab-set--18" type="radio"><label class="tab-label" for="tab-set--18-input--2">JSON</label><div class="tab-content docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure&quot;</span><span class="p">,</span><span class="w"></span>
@@ -2123,7 +2123,7 @@ in <a class="reference internal" href="model.html#trait-node-values"><span class
 </div>
 <input class="tab-input" id="tab-set--19-input--2" name="tab-set--19" type="radio"><label class="tab-label" for="tab-set--19-input--2">JSON</label><div class="tab-content docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#MyString&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;apply&quot;</span><span class="p">,</span><span class="w"></span>
@@ -2154,7 +2154,7 @@ and <a class="reference internal" href="constraint-traits.html#length-trait"><sp
 </div>
 <input class="tab-input" id="tab-set--20-input--2" name="tab-set--20" type="radio"><label class="tab-label" for="tab-set--20-input--2">JSON</label><div class="tab-content docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;smithy.example#MyString&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;apply&quot;</span><span class="p">,</span><span class="w"></span>
@@ -2242,7 +2242,7 @@ in a <code class="docutils literal notranslate"><span class="pre">NodeObject</sp
 </ul>
 <p class="rubric">Number node</p>
 <p>A node <a class="reference internal" href="#grammar-token-smithy-Number"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:Number</span></code></a> contains numeric data. It is defined like a JSON
-Number. The following examples define several <code class="docutils literal notranslate"><span class="pre">Number</span></code> values:</p>
+number. The following examples define several <code class="docutils literal notranslate"><span class="pre">Number</span></code> values:</p>
 <ul class="simple">
 <li><code class="docutils literal notranslate"><span class="pre">0</span></code></li>
 <li><code class="docutils literal notranslate"><span class="pre">0.0</span></code></li>
@@ -2405,7 +2405,7 @@ The opening LF of the text block is not considered.</p>
 </div>
 </li>
 <li><p class="first">Compute the <em>common whitespace prefix</em> by iterating over each line,
-counting the Number of leading spaces (&quot; &quot;) and taking the minimum count.
+counting the number of leading spaces (&quot; &quot;) and taking the minimum count.
 Except for the last line of content, lines that are empty or consist wholly
 of whitespace are not considered. If the last line of content (that is, the
 line that contains the closing delimiter) appears on its own line, then

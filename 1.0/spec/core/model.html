@@ -485,13 +485,13 @@ conflicts. A semantic model MAY contain shapes defined across multiple
 namespaces. The IDL representation supports zero or one namespace per
 model file, while the JSON AST representation supports zero or more
 namespaces per model file.</dd>
-<dt>Absolute shape ID</dt><dd>An <em class="dfn">absolute shape ID</em> starts with a <a class="reference internal" href="#grammar-token-smithy-namespace"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:namespace</span></code></a> name,
+<dt>Absolute shape ID</dt><dd>An <em class="dfn">absolute shape ID</em> starts with a <a class="reference internal" href="#grammar-token-smithy-Namespace"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:Namespace</span></code></a> name,
 followed by &quot;<code class="docutils literal notranslate"><span class="pre">#</span></code>&quot;, followed by a <em>relative shape ID</em>. All shape
 IDs in the semantic model MUST be absolute.
 For example, <code class="docutils literal notranslate"><span class="pre">smithy.example#Foo</span></code> and <code class="docutils literal notranslate"><span class="pre">smithy.example#Foo$bar</span></code>
 are absolute shape IDs.</dd>
-<dt>Relative shape ID</dt><dd>A <em class="dfn">relative shape ID</em> contains a <a class="reference internal" href="#grammar-token-smithy-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a>
-and an optional <a class="reference internal" href="#grammar-token-smithy-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">member</span> <span class="pre">name</span></code></a>. The shape name and
+<dt>Relative shape ID</dt><dd>A <em class="dfn">relative shape ID</em> contains a <a class="reference internal" href="#grammar-token-smithy-Identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a>
+and an optional <a class="reference internal" href="#grammar-token-smithy-Identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">member</span> <span class="pre">name</span></code></a>. The shape name and
 member name are separated by the &quot;<code class="docutils literal notranslate"><span class="pre">$</span></code>&quot; symbol if a member name is
 present. For example, <code class="docutils literal notranslate"><span class="pre">Foo</span></code> and <code class="docutils literal notranslate"><span class="pre">Foo$bar</span></code> are relative shape IDs.</dd>
 <dt>Root shape ID</dt><dd>A <em class="dfn">root shape ID</em> is a shape ID that does not contain a member.
@@ -500,29 +500,29 @@ For example, <code class="docutils literal notranslate"><span class="pre">smithy
 <p class="rubric">Shape ID ABNF</p>
 <p>Shape IDs are formally defined by the following ABNF:</p>
 <pre class="productionlist highlight">
-<strong id="grammar-token-smithy-shape_id"><span id="grammar-token-shape-id"></span>shape_id</strong> =
-    <a class="reference internal" href="#grammar-token-smithy-root_shape_id"><code class="xref docutils literal notranslate"><span class="pre">root_shape_id</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-shape_id_member"><code class="xref docutils literal notranslate"><span class="pre">shape_id_member</span></code></a>]
+<strong id="grammar-token-smithy-ShapeId"><span id="grammar-token-shapeid"></span>ShapeId</strong> =
+    <a class="reference internal" href="#grammar-token-smithy-RootShapeId"><code class="xref docutils literal notranslate"><span class="pre">RootShapeId</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-ShapeIdMember"><code class="xref docutils literal notranslate"><span class="pre">ShapeIdMember</span></code></a>]
 
-<strong id="grammar-token-smithy-root_shape_id"><span id="grammar-token-root-shape-id"></span>root_shape_id</strong> =
-    <a class="reference internal" href="#grammar-token-smithy-absolute_root_shape_id"><code class="xref docutils literal notranslate"><span class="pre">absolute_root_shape_id</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>
+<strong id="grammar-token-smithy-RootShapeId"><span id="grammar-token-rootshapeid"></span>RootShapeId</strong> =
+    <a class="reference internal" href="#grammar-token-smithy-AbsoluteRootShapeId"><code class="xref docutils literal notranslate"><span class="pre">AbsoluteRootShapeId</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a>
 
-<strong id="grammar-token-smithy-absolute_root_shape_id"><span id="grammar-token-absolute-root-shape-id"></span>absolute_root_shape_id</strong> =
-    <a class="reference internal" href="#grammar-token-smithy-namespace"><code class="xref docutils literal notranslate"><span class="pre">namespace</span></code></a> &quot;#&quot; <a class="reference internal" href="#grammar-token-smithy-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>
+<strong id="grammar-token-smithy-AbsoluteRootShapeId"><span id="grammar-token-absoluterootshapeid"></span>AbsoluteRootShapeId</strong> =
+    <a class="reference internal" href="#grammar-token-smithy-Namespace"><code class="xref docutils literal notranslate"><span class="pre">Namespace</span></code></a> &quot;#&quot; <a class="reference internal" href="#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a>
 
-<strong id="grammar-token-smithy-namespace"><span id="grammar-token-namespace"></span>namespace</strong> =
-    <a class="reference internal" href="#grammar-token-smithy-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> *(&quot;.&quot; <a class="reference internal" href="#grammar-token-smithy-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>)
+<strong id="grammar-token-smithy-Namespace"><span id="grammar-token-namespace"></span>Namespace</strong> =
+    <a class="reference internal" href="#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a> *(&quot;.&quot; <a class="reference internal" href="#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a>)
 
-<strong id="grammar-token-smithy-identifier"><span id="grammar-token-identifier"></span>identifier</strong> =
-    identifier_start *identifier_chars
+<strong id="grammar-token-smithy-Identifier"><span id="grammar-token-identifier"></span>Identifier</strong> =
+    <a class="reference internal" href="#grammar-token-smithy-IdentifierStart"><code class="xref docutils literal notranslate"><span class="pre">IdentifierStart</span></code></a> *<a class="reference internal" href="#grammar-token-smithy-IdentifierChars"><code class="xref docutils literal notranslate"><span class="pre">IdentifierChars</span></code></a>
 
-<strong id="grammar-token-smithy-identifier_start"><span id="grammar-token-identifier-start"></span>identifier_start</strong> =
+<strong id="grammar-token-smithy-IdentifierStart"><span id="grammar-token-identifierstart"></span>IdentifierStart</strong> =
     *&quot;_&quot; ALPHA
 
-<strong id="grammar-token-smithy-identifier_chars"><span id="grammar-token-identifier-chars"></span>identifier_chars</strong> =
+<strong id="grammar-token-smithy-IdentifierChars"><span id="grammar-token-identifierchars"></span>IdentifierChars</strong> =
     ALPHA / DIGIT / &quot;_&quot;
 
-<strong id="grammar-token-smithy-shape_id_member"><span id="grammar-token-shape-id-member"></span>shape_id_member</strong> =
-    &quot;$&quot; <a class="reference internal" href="#grammar-token-smithy-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>
+<strong id="grammar-token-smithy-ShapeIdMember"><span id="grammar-token-shapeidmember"></span>ShapeIdMember</strong> =
+    &quot;$&quot; <a class="reference internal" href="#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a>
 </pre>
 <p class="rubric">Best practices for defining shape names</p>
 <ol class="arabic">
@@ -1365,7 +1365,7 @@ a <a class="reference internal" href="#structure"><span class="std std-ref">stru
 contained in the service, and map values are the disambiguated shape
 names to use in the context of the service. Each given shape ID MUST
 reference a shape contained in the closure of the service. Each given
-map value MUST match the <a class="reference internal" href="#grammar-token-smithy-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:identifier</span></code></a> production used for
+map value MUST match the <a class="reference internal" href="#grammar-token-smithy-Identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a> production used for
 shape IDs. Renaming a shape <em>does not</em> give the shape a new shape ID.</p>
 <ul class="last simple">
 <li>No renamed shape name can case-insensitively match any other renamed
@@ -2341,7 +2341,7 @@ structure and layout of an API, while traits provide refinement and style.</p>
 <p>An instance of a trait applied to a shape is called an <em>applied trait</em>. Only
 a single instance of a trait can be applied to a shape. The way in which a
 trait is applied to a shape depends on the model file representation.</p>
-<p>Traits are applied to shapes in the IDL using <a class="reference internal" href="idl.html#grammar-token-smithy-trait_statements"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:trait_statements</span></code></a> that
+<p>Traits are applied to shapes in the IDL using <a class="reference internal" href="idl.html#grammar-token-smithy-TraitStatements"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:TraitStatements</span></code></a> that
 immediately precede a shape. The following example applies the
 <a class="reference internal" href="constraint-traits.html#length-trait"><span class="std std-ref">length trait</span></a> and <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a> to <code class="docutils literal notranslate"><span class="pre">MyString</span></code>:</p>
 <div class="sphinx-tabs docutils container">
@@ -2385,7 +2385,7 @@ member and do not inherently conflict.</p>
 <span id="apply-statements"></span><h4><span class="section-number">1.7.1.1. </span>Applying traits externally<a class="headerlink" href="#applying-traits-externally" title="Permalink to this headline">#</a></h4>
 <p>Both the IDL and JSON AST model representations allow traits to be applied
 to shapes outside of a shape's definition. This is done using an
-<a class="reference internal" href="idl.html#grammar-token-smithy-apply_statement"><code class="xref std std-token docutils literal notranslate"><span class="pre">apply</span></code></a> statement in the IDL, or the
+<a class="reference internal" href="idl.html#grammar-token-smithy-ApplyStatement"><code class="xref std std-token docutils literal notranslate"><span class="pre">apply</span></code></a> statement in the IDL, or the
 <a class="reference internal" href="json-ast.html#ast-apply"><span class="std std-ref">apply</span></a> type in the JSON AST. For example, this can be
 useful to allow different teams within the same organization to independently
 own different facets of a model; a service team could own the model that
@@ -2478,7 +2478,7 @@ duplicated on the <code class="docutils literal notranslate"><span class="pre">M
 <p>The value provided for a trait MUST be compatible with the <code class="docutils literal notranslate"><span class="pre">shape</span></code> of the
 trait. The following table defines each shape type that is available to
 target from traits and how their values are defined in
-<a class="reference internal" href="idl.html#grammar-token-smithy-node_value"><code class="xref std std-token docutils literal notranslate"><span class="pre">node</span></code></a> values.</p>
+<a class="reference internal" href="idl.html#grammar-token-smithy-NodeValue"><code class="xref std std-token docutils literal notranslate"><span class="pre">node</span></code></a> values.</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>

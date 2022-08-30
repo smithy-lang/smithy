@@ -701,7 +701,7 @@ node named <code class="docutils literal notranslate"><span class="pre">ErrorRes
 contains the serialized error structure members, unless bound to another
 location with HTTP protocol bindings.</p>
 <p>Serialized error shapes MUST also contain an additional child element <code class="docutils literal notranslate"><span class="pre">Code</span></code>
-that contains only the <a class="reference internal" href="../core/model.html#grammar-token-smithy-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
+that contains only the <a class="reference internal" href="../core/model.html#grammar-token-smithy-Identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
 <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>. This can be used to distinguish which specific error has been
 serialized in the response.</p>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;ErrorResponse&gt;</span>
@@ -731,7 +731,7 @@ using this additional nested XML element as the root node.</p>
 <li><code class="docutils literal notranslate"><span class="pre">Error</span></code>: A container for the encountered error.</li>
 <li><code class="docutils literal notranslate"><span class="pre">Type</span></code>: One of &quot;Sender&quot; or &quot;Receiver&quot;; whomever is at fault from the
 service perspective.</li>
-<li><code class="docutils literal notranslate"><span class="pre">Code</span></code>: The <a class="reference internal" href="../core/model.html#grammar-token-smithy-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
+<li><code class="docutils literal notranslate"><span class="pre">Code</span></code>: The <a class="reference internal" href="../core/model.html#grammar-token-smithy-Identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
 <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>.</li>
 <li><code class="docutils literal notranslate"><span class="pre">RequestId</span></code>: Contains a unique identifier for the associated request.</li>
 </ul>
