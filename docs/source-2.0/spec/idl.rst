@@ -224,7 +224,8 @@ string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
     OperationInput          :%s"input" *WS (`InlineStructure` / (":" *`WS` `ShapeId`)) `WS`
     OperationOutput         :%s"output" *WS (`InlineStructure` / (":" *`WS` `ShapeId`)) `WS`
     OperationErrors         :%s"errors" *WS ":" *WS "[" *(*`WS` `Identifier`) *`WS` "]" `WS`
-    InlineStructure         :":=" *`WS` `TraitStatements` [`Mixins`] *`WS` `StructureMembers`
+    InlineStructure         :":=" *`WS` `TraitStatements` [`StructureResource`]
+                            :        [`Mixins`] *`WS` `StructureMembers`
 
 .. rubric:: Traits
 
