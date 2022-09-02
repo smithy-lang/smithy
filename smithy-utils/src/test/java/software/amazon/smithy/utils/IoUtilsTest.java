@@ -18,6 +18,7 @@ package software.amazon.smithy.utils;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -25,6 +26,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Random;
 import org.junit.jupiter.api.Assertions;
@@ -109,5 +113,39 @@ public class IoUtilsTest {
 
         assertThat(code, not(0));
         assertThat(sb.toString(), not(emptyString()));
+    }
+
+    @Test
+    public void deletesDirectories() throws IOException {
+        Path path = Files.createTempDirectory("delete_empty_dir");
+        Files.write(path.resolve("foo"), "hello".getBytes(StandardCharsets.UTF_8));
+        Path nested = path.resolve("a").resolve("b");
+        Files.createDirectories(nested);
+        Files.write(nested.resolve("baz"), "hello".getBytes(StandardCharsets.UTF_8));
+
+        assertThat(Files.exists(path), is(true));
+        assertThat(Files.exists(nested), is(true));
+
+        IoUtils.rmdir(path);
+
+        assertThat(Files.exists(path), is(false));
+        assertThat(Files.exists(nested), is(false));
+    }
+
+    @Test
+    public void rmDirIgnoresIfNotExists() throws IOException {
+        Path path = Files.createTempDirectory("delete_empty_dir");
+        Files.delete(path);
+
+        assertThat(IoUtils.rmdir(path), is(false));
+    }
+
+    @Test
+    public void rmDirFailsWhenNotDir() throws IOException {
+        Path path = Files.createTempFile("foo", ".baz");
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> IoUtils.rmdir(path));
+
+        Files.delete(path);
     }
 }

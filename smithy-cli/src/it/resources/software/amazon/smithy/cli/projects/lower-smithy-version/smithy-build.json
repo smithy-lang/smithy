@@ -1,0 +1,11 @@
+// Smithy CLI will ignore the older version of Smithy in this file and use the
+// version shipped with the CLI.
+{
+    "version": "1.0",
+    "maven": {
+        "dependencies": [
+            "software.amazon.smithy.typescript:smithy-typescript-codegen:0.12.0",
+            "software.amazon.smithy.typescript:smithy-aws-typescript-codegen:0.12.0"
+        ]
+    }
+}

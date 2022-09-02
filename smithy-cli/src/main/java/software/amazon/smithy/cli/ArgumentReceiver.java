@@ -16,7 +16,6 @@
 package software.amazon.smithy.cli;
 
 import java.util.function.Consumer;
-import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * A command line argument receiver.
@@ -24,10 +23,9 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * <p>All non-positional arguments of a {@link Command} need a
  * corresponding receiver to accept it through either
  * {@link #testOption(String)} or {@link #testParameter(String)}.
- * If a non-positional argument is not accepted by any receiver,
- * the CLI will exit with an error.
+ * If any receiver rejects a non-positional argument, the CLI will
+ * exit with an error.
  */
-@SmithyUnstableApi
 public interface ArgumentReceiver {
     /**
      * Test if the given value-less option is accepted by the receiver.
@@ -52,7 +50,7 @@ public interface ArgumentReceiver {
      * processing.
      *
      * @param name Name of the parameter to test.
-     * @return Returns a consumer if accepted or null if not accepted.
+     * @return Returns a consumer if accepted or null if rejected.
      */
     default Consumer<String> testParameter(String name) {
         return null;

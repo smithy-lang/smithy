@@ -15,12 +15,9 @@
 
 package software.amazon.smithy.cli;
 
-import software.amazon.smithy.utils.SmithyUnstableApi;
-
 /**
  * Represents a CLI command.
  */
-@SmithyUnstableApi
 public interface Command {
     /**
      * Gets the name of the command.
@@ -32,6 +29,15 @@ public interface Command {
     String getName();
 
     /**
+     * Return true to hide this command from help output.
+     *
+     * @return Return true if this is a hidden command.
+     */
+    default boolean isHidden() {
+        return false;
+    }
+
+    /**
      * Gets a short summary of the command that's shown in the main help.
      *
      * @return Returns the short help description.
@@ -41,8 +47,7 @@ public interface Command {
     /**
      * Gets the long description of the command.
      *
-     * @param printer CliPrinter used in case formatting is needed via
-     *                {@link CliPrinter#style(String, Style...)}.
+     * @param printer Printer used to style strings.
      * @return Returns the long description.
      */
     default String getDocumentation(CliPrinter printer) {
@@ -81,25 +86,20 @@ public interface Command {
             this.classLoader = classLoader;
         }
 
-        /**
-         * @return Returns the configured printer for stdout.
-         */
         public CliPrinter stdout() {
             return stdout;
         }
 
-        /**
-         * @return Returns the configured printer for stderr.
-         */
         public CliPrinter stderr() {
             return stderr;
         }
 
-        /**
-         * @return Returns the configured class loader to use to load additional classes/resources.
-         */
         public ClassLoader classLoader() {
-            return classLoader;
+            return classLoader == null ? getClass().getClassLoader() : classLoader;
+        }
+
+        public Env withClassLoader(ClassLoader classLoader) {
+            return classLoader == this.classLoader ? this : new Env(stdout, stderr, classLoader);
         }
     }
 }
