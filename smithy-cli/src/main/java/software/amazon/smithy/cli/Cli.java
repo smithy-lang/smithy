@@ -17,10 +17,9 @@ package software.amazon.smithy.cli;
 
 import java.util.Arrays;
 import java.util.logging.Logger;
-import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
- * This class provides a very basic CLI abstraction.
+ * This class provides a basic CLI abstraction.
  *
  * <p>Why are we not using a library for this? Because parsing command line
  * options isn't difficult, we don't need to take a dependency, this code
@@ -28,11 +27,9 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * CLI features are supported in case we want to migrate to a library or
  * event a different language.
  */
-@SmithyUnstableApi
 public final class Cli {
 
     private static final Logger LOGGER = Logger.getLogger(Cli.class.getName());
-    private static final boolean ANSI_SUPPORTED = isAnsiColorSupported();
 
     // Delegate to the stdout consumer by default since this can change.
     private CliPrinter stdoutPrinter = new CliPrinter.ConsumerPrinter(str -> System.out.print(str));
@@ -67,8 +64,8 @@ public final class Cli {
         arguments.addReceiver(standardOptions);
 
         // Use or disable ANSI escapes in the printers.
-        CliPrinter out = ansiPrinter(stdoutPrinter, standardOptions);
-        CliPrinter err = ansiPrinter(stdErrPrinter, standardOptions);
+        CliPrinter out = new CliPrinter.ColorPrinter(stdoutPrinter, standardOptions);
+        CliPrinter err = new CliPrinter.ColorPrinter(stdErrPrinter, standardOptions);
 
         // Setup logging after parsing all arguments.
         arguments.onComplete((opts, positional) -> {
@@ -79,7 +76,7 @@ public final class Cli {
         try {
             return command.execute(arguments, new Command.Env(out, err, classLoader));
         } catch (Exception e) {
-            printException(standardOptions.stackTrace(), err, e);
+            err.printException(e, standardOptions.stackTrace());
             throw CliError.wrap(e);
         } finally {
             try {
@@ -87,7 +84,7 @@ public final class Cli {
             } catch (RuntimeException e) {
                 // Show the error, but don't fail the CLI since most invocations are one-time use.
                 err.println(err.style("Unable to restore logging to previous settings", Style.RED));
-                printException(true, err, e);
+                err.printException(e, standardOptions.stackTrace());
             }
         }
     }
@@ -98,58 +95,5 @@ public final class Cli {
 
     public void stderr(CliPrinter printer) {
         stdErrPrinter = printer;
-    }
-
-    /**
-     * Does a really simple check to see if ANSI colors are supported.
-     *
-     * @return Returns true if ANSI probably works.
-     */
-    private static boolean isAnsiColorSupported() {
-        return System.console() != null && System.getenv().get("TERM") != null;
-    }
-
-    private void printException(boolean stacktrace, CliPrinter printer, Throwable throwable) {
-        if (throwable instanceof NullPointerException) {
-            printer.println(stdErrPrinter.style(
-                    "A null pointer exception occurred while running the Smithy CLI. The --stacktrace argument can be "
-                    + "used to get more information. Please open an issue with the Smithy team on GitHub so this can "
-                    + "be investigated: https://github.com/awslabs/smithy/issues", Style.RED));
-        }
-
-        printer.println(printer.style(throwable.getMessage(), Style.RED, Style.BOLD));
-
-        if (stacktrace) {
-            printer.println(printer.style(throwable.getClass().getCanonicalName() + ":", Style.RED, Style.UNDERLINE));
-            for (StackTraceElement element : throwable.getStackTrace()) {
-                printer.println("\tat " + element.toString());
-            }
-        }
-    }
-
-    /**
-     * Creates a CliPrinter that inspects provided options to determine whether
-     * to use ANSI.
-     *
-     * @param delegate Printer to delegate write and formatting to.
-     * @param options Options to query when it's parsed.
-     * @return Returns the created printer.
-     */
-    private static CliPrinter ansiPrinter(CliPrinter delegate, StandardOptions options) {
-        return new CliPrinter() {
-            @Override
-            public void println(String text) {
-                delegate.println(text);
-            }
-
-            @Override
-            public String style(String text, Style... styles) {
-                if (options.forceColor() || (!options.noColor() && ANSI_SUPPORTED)) {
-                    return delegate.style(text, styles);
-                } else {
-                    return text;
-                }
-            }
-        };
     }
 }

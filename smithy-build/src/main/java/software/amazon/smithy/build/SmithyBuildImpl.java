@@ -92,7 +92,7 @@ final class SmithyBuildImpl {
             outputDirectory = Paths.get(config.getOutputDirectory().get());
         } else {
             // Default the output directory to the current working directory + "./build/smithy"
-            outputDirectory = Paths.get(".").toAbsolutePath().normalize().resolve("build").resolve("smithy");
+            outputDirectory = SmithyBuild.getDefaultOutputDirectory();
         }
 
         // Create the transformers for each projection.

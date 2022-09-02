@@ -17,31 +17,39 @@ package software.amazon.smithy.cli.commands;
 
 import java.util.function.Consumer;
 import software.amazon.smithy.cli.ArgumentReceiver;
+import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.HelpPrinter;
-import software.amazon.smithy.utils.SmithyInternalApi;
+import software.amazon.smithy.cli.StandardOptions;
+import software.amazon.smithy.model.validation.Severity;
 
 /**
  * Arguments available to commands that load and build models.
  */
-@SmithyInternalApi
-public final class BuildOptions implements ArgumentReceiver {
+final class BuildOptions implements ArgumentReceiver {
 
-    public static final String ALLOW_UNKNOWN_TRAITS = "--allow-unknown-traits";
-    public static final String DISCOVER = "--discover";
-    public static final String DISCOVER_SHORT = "-d";
-    public static final String DISCOVER_CLASSPATH = "--discover-classpath";
-    public static final String MODELS = "<MODELS>";
+    static final String SEVERITY = "--severity";
+    static final String ALLOW_UNKNOWN_TRAITS = "--allow-unknown-traits";
+    static final String MODELS = "<MODELS>";
 
+    private Severity severity;
     private String discoverClasspath;
     private boolean allowUnknownTraits;
     private boolean discover;
+    private String output;
 
     @Override
     public void registerHelp(HelpPrinter printer) {
-        printer.option(ALLOW_UNKNOWN_TRAITS, null, "Ignores unknown traits when validating models");
-        printer.option(DISCOVER, "-d", "Enables model discovery, merging in models found inside of jars");
+        printer.param(SEVERITY, null, "SEVERITY", "Set the minimum reported validation severity (one of NOTE, "
+                                                  + "WARNING [default setting], DANGER, ERROR).");
+        printer.option(ALLOW_UNKNOWN_TRAITS, null, "Ignore unknown traits when validating models");
+        /*
+        Hide these for now until we figure out a plan forward for these.
+        printer.option(DISCOVER, "-d", "Enable model discovery, merging in models found inside of jars");
         printer.param(DISCOVER_CLASSPATH, null, "CLASSPATH",
-                            "Enables model discovery using a custom classpath for models");
+                            "Enable model discovery using a custom classpath for models");
+        */
+        printer.param("--output", null, "OUTPUT_PATH",
+                      "Where to write Smithy artifacts, caches, and other files (defaults to './build/smithy').");
         printer.positional(MODELS, "Model files and directories to load");
     }
 
@@ -51,8 +59,8 @@ public final class BuildOptions implements ArgumentReceiver {
             case ALLOW_UNKNOWN_TRAITS:
                 allowUnknownTraits = true;
                 return true;
-            case DISCOVER:
-            case DISCOVER_SHORT:
+            case "--discover":
+            case "-d":
                 discover = true;
                 return true;
             default:
@@ -62,22 +70,51 @@ public final class BuildOptions implements ArgumentReceiver {
 
     @Override
     public Consumer<String> testParameter(String name) {
-        if (DISCOVER_CLASSPATH.equals(name)) {
-            return value -> discoverClasspath = value;
+        switch (name) {
+            case "--output":
+                return value -> output = value;
+            case "--discover-classpath":
+                return value -> discoverClasspath = value;
+            case SEVERITY:
+                return value -> {
+                    severity = Severity.fromString(value).orElseThrow(() -> {
+                        return new CliError("Invalid severity level: " + value);
+                    });
+                };
+            default:
+                return null;
         }
-
-        return null;
     }
 
-    public String discoverClasspath() {
+    String discoverClasspath() {
         return discoverClasspath;
     }
 
-    public boolean allowUnknownTraits() {
+    boolean allowUnknownTraits() {
         return allowUnknownTraits;
     }
 
-    public boolean discover() {
+    boolean discover() {
         return discover;
+    }
+
+    String output() {
+        return output;
+    }
+
+    /**
+     * Get the severity level, taking into account standard options that affect the default.
+     *
+     * @param options Standard options to query if no severity is explicitly set.
+     * @return Returns the resolved severity option.
+     */
+    Severity severity(StandardOptions options) {
+        if (severity != null) {
+            return severity;
+        } else if (options.quiet()) {
+            return Severity.DANGER;
+        } else {
+            return Severity.WARNING;
+        }
     }
 }
