@@ -17,13 +17,16 @@ package software.amazon.smithy.cli;
 
 import java.util.List;
 import software.amazon.smithy.cli.commands.SmithyCommand;
+import software.amazon.smithy.cli.dependencies.DependencyResolver;
+import software.amazon.smithy.utils.IoUtils;
 
 /**
  * Entry point of the Smithy CLI.
  */
 public final class SmithyCli {
 
-    private ClassLoader classLoader = getClass().getClassLoader();
+    private ClassLoader classLoader;
+    private DependencyResolver.Factory dependencyResolverFactory;
 
     private SmithyCli() {}
 
@@ -67,6 +70,20 @@ public final class SmithyCli {
     }
 
     /**
+     * Sets a custom dependency resolver factory to use when resolving dependencies.
+     *
+     * <p>Note that the CLI will automatically handle caching the resolved classpath and ensuring that
+     * resolved dependencies are consistent with the versions of JARs used by the CLI.
+     *
+     * @param dependencyResolverFactory Factory to use when resolving dependencies.
+     * @return Returns the CLI.
+     */
+    public SmithyCli dependencyResolverFactory(DependencyResolver.Factory dependencyResolverFactory) {
+        this.dependencyResolverFactory = dependencyResolverFactory;
+        return this;
+    }
+
+    /**
      * Runs the CLI using a list of arguments.
      *
      * @param args Arguments to parse and execute.
@@ -92,6 +109,15 @@ public final class SmithyCli {
      * @return Returns the created CLI.
      */
     public Cli createCli() {
-        return new Cli(new SmithyCommand(), classLoader);
+        return new Cli(new SmithyCommand(dependencyResolverFactory), classLoader);
+    }
+
+    /**
+     * Get the Smithy CLI version of the running CLI.
+     *
+     * @return Returns the CLI version (e.g., "1.26.0").
+     */
+    public static String getVersion() {
+        return IoUtils.readUtf8Resource(SmithyCli.class, "cli-version").trim();
     }
 }

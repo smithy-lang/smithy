@@ -28,6 +28,7 @@ public final class StandardOptions implements ArgumentReceiver {
 
     public static final String HELP_SHORT = "-h";
     public static final String HELP = "--help";
+    public static final String VERSION = "--version";
     public static final String DEBUG = "--debug";
     public static final String QUIET = "--quiet";
     public static final String STACKTRACE = "--stacktrace";
@@ -37,6 +38,7 @@ public final class StandardOptions implements ArgumentReceiver {
     public static final String SEVERITY = "--severity";
 
     private boolean help;
+    private boolean version;
     private Severity severity = Severity.WARNING;
     private Level logging = Level.WARNING;
     private boolean quiet;
@@ -67,6 +69,9 @@ public final class StandardOptions implements ArgumentReceiver {
             case HELP:
             case HELP_SHORT:
                 help = true;
+                return true;
+            case VERSION:
+                version = true;
                 return true;
             case DEBUG:
                 debug = true;
@@ -122,6 +127,10 @@ public final class StandardOptions implements ArgumentReceiver {
 
     public boolean help() {
         return help;
+    }
+
+    public boolean version() {
+        return version;
     }
 
     public Severity severity() {

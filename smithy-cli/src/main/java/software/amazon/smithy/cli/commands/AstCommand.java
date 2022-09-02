@@ -15,20 +15,20 @@
 
 package software.amazon.smithy.cli.commands;
 
-import java.util.Collections;
 import java.util.List;
-import software.amazon.smithy.cli.ArgumentReceiver;
+import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.Arguments;
+import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ModelSerializer;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
-public final class AstCommand extends SimpleCommand {
+public final class AstCommand extends ClasspathCommand {
 
-    public AstCommand(String parentCommandName) {
-        super(parentCommandName);
+    public AstCommand(String parentCommandName, DependencyResolver.Factory dependencyResolverFactory) {
+        super(parentCommandName, dependencyResolverFactory);
     }
 
     @Override
@@ -42,13 +42,8 @@ public final class AstCommand extends SimpleCommand {
     }
 
     @Override
-    protected List<ArgumentReceiver> createArgumentReceivers() {
-        return Collections.singletonList(new BuildOptions());
-    }
-
-    @Override
-    protected int run(Arguments arguments, Env env, List<String> models) {
-        Model model = CommandUtils.buildModel(arguments, models, env, env.stderr(), true);
+    int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env, List<String> models) {
+        Model model = CommandUtils.buildModel(arguments, models, env, env.stderr(), true, config);
         ModelSerializer serializer = ModelSerializer.builder().build();
         env.stdout().println(Node.prettyPrintJson(serializer.serialize(model)));
         return 0;

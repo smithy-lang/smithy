@@ -15,8 +15,13 @@
 
 package software.amazon.smithy.cli.commands;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
+import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.ArgumentReceiver;
+import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.HelpPrinter;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
@@ -30,11 +35,26 @@ public final class BuildOptions implements ArgumentReceiver {
     public static final String DISCOVER = "--discover";
     public static final String DISCOVER_SHORT = "-d";
     public static final String DISCOVER_CLASSPATH = "--discover-classpath";
+    public static final String DEPENDENCY_MODE = "--dependency-mode";
     public static final String MODELS = "<MODELS>";
 
     private String discoverClasspath;
     private boolean allowUnknownTraits;
     private boolean discover;
+    private DependencyMode dependencyMode = DependencyMode.STANDARD;
+    private String output;
+
+    /** Dependency resolution mode of the CLI. */
+    public enum DependencyMode {
+        /** Standard dependency resolution mode, resolving dependencies using Maven. */
+        STANDARD,
+
+        /** Disables dependency resolution by ignoring dependencies. */
+        IGNORE,
+
+        /** Forbids dependency resolution. If dependencies are declared, the CLI will fail to run. */
+        FORBID
+    }
 
     @Override
     public void registerHelp(HelpPrinter printer) {
@@ -42,6 +62,11 @@ public final class BuildOptions implements ArgumentReceiver {
         printer.option(DISCOVER, "-d", "Enables model discovery, merging in models found inside of jars");
         printer.param(DISCOVER_CLASSPATH, null, "CLASSPATH",
                             "Enables model discovery using a custom classpath for models");
+        printer.option(DEPENDENCY_MODE, null, "(ignore|forbid|standard) Allows dependencies to be ignored or forbidden "
+                                              + "by setting to 'ignore' or 'forbid'. Defaults to 'standard', allowing "
+                                              + "dependencies to be declared and resolved using Maven.");
+        printer.param("--output", null, "OUTPUT_PATH",
+                      "Where to write Smithy artifacts, caches, and other files (defaults to './build/smithy').");
         printer.positional(MODELS, "Model files and directories to load");
     }
 
@@ -62,11 +87,24 @@ public final class BuildOptions implements ArgumentReceiver {
 
     @Override
     public Consumer<String> testParameter(String name) {
-        if (DISCOVER_CLASSPATH.equals(name)) {
-            return value -> discoverClasspath = value;
+        switch (name) {
+            case "--output":
+                return value -> output = value;
+            case DISCOVER_CLASSPATH:
+                return value -> discoverClasspath = value;
+            case DEPENDENCY_MODE:
+                return value -> {
+                    try {
+                        dependencyMode = DependencyMode.valueOf(value.toUpperCase(Locale.ENGLISH));
+                    } catch (IllegalArgumentException e) {
+                        List<DependencyMode> expected = Arrays.asList(DependencyMode.values());
+                        throw new CliError(String.format("Invalid %s parameter: '%s'. Expected one of: %s",
+                                                         DEPENDENCY_MODE, value, expected));
+                    }
+                };
+            default:
+                return null;
         }
-
-        return null;
     }
 
     public String discoverClasspath() {
@@ -79,5 +117,17 @@ public final class BuildOptions implements ArgumentReceiver {
 
     public boolean discover() {
         return discover;
+    }
+
+    public DependencyMode dependencyMode() {
+        return dependencyMode;
+    }
+
+    public String output() {
+        return output;
+    }
+
+    public boolean useModelDiscovery(SmithyBuildConfig config) {
+        return discover() || (config.getMaven().isPresent() && dependencyMode == DependencyMode.STANDARD);
     }
 }

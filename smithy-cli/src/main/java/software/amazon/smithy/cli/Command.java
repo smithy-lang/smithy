@@ -32,6 +32,15 @@ public interface Command {
     String getName();
 
     /**
+     * Return true to hide this command from help output.
+     *
+     * @return Return true if this is a hidden command.
+     */
+    default boolean isHidden() {
+        return false;
+    }
+
+    /**
      * Gets a short summary of the command that's shown in the main help.
      *
      * @return Returns the short help description.
@@ -81,25 +90,24 @@ public interface Command {
             this.classLoader = classLoader;
         }
 
-        /**
-         * @return Returns the configured printer for stdout.
-         */
         public CliPrinter stdout() {
             return stdout;
         }
 
-        /**
-         * @return Returns the configured printer for stderr.
-         */
         public CliPrinter stderr() {
             return stderr;
         }
 
-        /**
-         * @return Returns the configured class loader to use to load additional classes/resources.
-         */
         public ClassLoader classLoader() {
-            return classLoader;
+            return classLoader == null ? getClass().getClassLoader() : classLoader;
+        }
+
+        public boolean hasClassLoader() {
+            return classLoader != null;
+        }
+
+        public Env withClassLoader(ClassLoader classLoader) {
+            return classLoader == this.classLoader ? this : new Env(stdout, stderr, classLoader);
         }
     }
 }

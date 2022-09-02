@@ -24,10 +24,17 @@ import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Utilities for IO operations.
@@ -170,7 +177,7 @@ public final class IoUtils {
 
         if (exitValue != 0) {
             throw new RuntimeException(String.format(
-                    "Command `%s` failed with exit code %d and output:%n%n%s", command, exitValue, sb.toString()));
+                    "Command `%s` failed with exit code %d and output:%n%n%s", command, exitValue, sb));
         }
 
         return sb.toString();
@@ -191,16 +198,57 @@ public final class IoUtils {
      * @return Returns the exit code of the process.
      */
     public static int runCommand(String command, Path directory, Appendable output) {
-        String[] finalizedCommand;
-        if (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).startsWith("windows")) {
-            finalizedCommand = new String[]{"cmd.exe", "/c", command};
-        } else {
-            finalizedCommand = new String[]{"sh", "-c", command};
-        }
+        return runCommand(command, directory, output, Collections.emptyMap());
+    }
 
-        ProcessBuilder processBuilder = new ProcessBuilder(finalizedCommand)
+    /**
+     * Runs a process using the given {@code command} relative to the given
+     * {@code directory} and writes stdout and stderr to {@code output}.
+     *
+     * <p>stderr is redirected to stdout when writing to {@code output}.
+     * This method <em>does not</em> throw when a non-zero exit code is
+     * encountered. For any more complex use cases, use {@link ProcessBuilder}
+     * directly.
+     *
+     * @param command Process command to execute.
+     * @param directory Directory to use as the working directory.
+     * @param output Where stdout and stderr is written.
+     * @param env Environment variables to set.
+     * @return Returns the exit code of the process.
+     */
+    public static int runCommand(String command, Path directory, Appendable output, Map<String, String> env) {
+        List<String> finalizedCommand;
+        if (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).startsWith("windows")) {
+            finalizedCommand = Arrays.asList("cmd.exe", "/c", command);
+        } else {
+            finalizedCommand = Arrays.asList("sh", "-c", command);
+        }
+        return runCommand(finalizedCommand, directory, output, env);
+    }
+
+    /**
+     * Runs a process using the given {@code command} relative to the given
+     * {@code directory} and writes stdout and stderr to {@code output}.
+     *
+     * <p>stderr is redirected to stdout when writing to {@code output}.
+     * This method <em>does not</em> throw when a non-zero exit code is
+     * encountered. For any more complex use cases, use {@link ProcessBuilder}
+     * directly.
+     *
+     * @param args Array of arguments.
+     * @param directory Directory to use as the working directory.
+     * @param output Where stdout and stderr is written.
+     * @param env Environment variables to set.
+     * @return Returns the exit code of the process.
+     */
+    public static int runCommand(List<String> args, Path directory, Appendable output, Map<String, String> env) {
+        ProcessBuilder processBuilder = new ProcessBuilder(args)
                 .directory(directory.toFile())
                 .redirectErrorStream(true);
+
+        if (!env.isEmpty()) {
+            processBuilder.environment().putAll(env);
+        }
 
         try {
             Process process = processBuilder.start();
@@ -217,5 +265,56 @@ public final class IoUtils {
         } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Delete a directory and all files within.
+     *
+     * <p>Any found symlink is deleted, but the contents of a symlink are not deleted.
+     *
+     * @param dir Directory to delete.
+     * @return Returns true if the directory was deleted, or false if the directory does not exist.
+     * @throws IllegalArgumentException if the given path is not a directory.
+     * @throws RuntimeException if unable to delete a file or directory.
+     */
+    public static boolean rmdir(Path dir) {
+        if (!Files.exists(dir)) {
+            return false;
+        }
+
+        if (!Files.isDirectory(dir)) {
+            throw new IllegalArgumentException(dir + " is not a directory");
+        }
+
+        try {
+            Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                    return Files.isSymbolicLink(dir)
+                           // Don't delete symlink files, just delete the symlink.
+                           ? FileVisitResult.SKIP_SUBTREE
+                           : FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException e) throws IOException {
+                    if (e != null) {
+                        throw e;
+                    }
+                    Files.delete(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException("Error deleting directory: " + dir + ": " + e.getMessage());
+        }
+
+        return true;
     }
 }

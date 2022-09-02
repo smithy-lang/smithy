@@ -15,9 +15,12 @@
 
 import org.apache.tools.ant.taskdefs.condition.Os
 
+import java.nio.file.Paths
+
 plugins {
     id "application"
     id "org.beryx.runtime" version "1.12.7"
+    id 'com.github.johnrengelman.shadow' version "7.1.2"
 }
 
 description = "This module implements the Smithy command line interface."
@@ -27,25 +30,111 @@ ext {
     moduleName = "software.amazon.smithy.cli"
     imageJreVersion = "17"
     correttoRoot = "https://corretto.aws/downloads/latest/amazon-corretto-${imageJreVersion}"
+    generatedResourcesDir = file("$buildDir/generated-resources")
+}
+
+dependencies {
+    // Keeps these as exported transitive dependencies.
+    implementation project(":smithy-model")
+    implementation project(":smithy-build")
+    implementation project(":smithy-diff")
+
+    // This is needed to ensure the above dependencies are added to the runtime image.
+    shadow project(":smithy-model")
+    shadow project(":smithy-build")
+    shadow project(":smithy-diff")
+
+    // These maven resolver dependencies are shaded into the smithy-cli JAR.
+    implementation 'org.apache.maven:maven-resolver-provider:3.8.6'
+    implementation "org.apache.maven.resolver:maven-resolver-api:1.8.2"
+    implementation "org.apache.maven.resolver:maven-resolver-spi:1.8.2"
+    implementation "org.apache.maven.resolver:maven-resolver-util:1.8.2"
+    implementation "org.apache.maven.resolver:maven-resolver-impl:1.8.2"
+    implementation "org.apache.maven.resolver:maven-resolver-connector-basic:1.8.2"
+    implementation "org.apache.maven.resolver:maven-resolver-transport-file:1.8.2"
+    implementation "org.apache.maven.resolver:maven-resolver-transport-http:1.8.2"
+    implementation 'org.slf4j:slf4j-jdk14:1.7.36' // Route slf4j used by Maven through JUL like the rest of Smithy.
+}
+
+// ------ Shade Maven dependency resolvers into the JAR. -------
+
+publishing {
+    publications {
+        shadow(MavenPublication) { publication ->
+            project.shadow.component(publication)
+        }
+    }
+}
+
+shadowJar {
+    // Replace the normal JAR with the shaded JAR.
+    archiveClassifier.set('')
+
+    mergeServiceFiles()
+
+    // Shade dependencies to prevent conflicts with other dependencies.
+    relocate('org.slf4j', 'software.amazon.smithy.cli.shaded.slf4j')
+    relocate('org.eclipse', 'software.amazon.smithy.cli.shaded.eclipse')
+    relocate('org.apache', 'software.amazon.smithy.cli.shaded.apache')
+    relocate('org.sonatype', 'software.amazon.smithy.cli.shaded.sonatype')
+    relocate('org.codehaus', 'software.amazon.smithy.cli.shaded.codehaus')
+
+    // If other javax packages are ever pulled in, we'll need to update this list. This is more deliberate about
+    // what's shaded to ensure that things like javax.net.ssl.SSLSocketFactory are not inadvertently shaded.
+    relocate('javax.annotation', 'software.amazon.smithy.cli.shaded.javax.annotation')
+    relocate('javax.inject', 'software.amazon.smithy.cli.shaded.javax.inject')
+
+    // Don't shade Smithy dependencies into the CLI. These are normal dependencies that we want our consumers
+    // to resolve.
+    dependencies {
+        exclude(project(':smithy-utils'))
+        exclude(project(':smithy-model'))
+        exclude(project(':smithy-build'))
+        exclude(project(':smithy-diff'))
+    }
+}
+
+tasks['jar'].finalizedBy(tasks['shadowJar'])
+
+// ------ Generate a file that contains the Smithy CLI version number. -------
+
+task generateVersionFile {
+    ext.versionFile = file("$generatedResourcesDir/software/amazon/smithy/cli/cli-version")
+    outputs.file(versionFile)
+    doLast {
+        versionFile.text = "${project.version}"
+    }
+}
+
+sourceSets.main.output.dir generatedResourcesDir, builtBy: generateVersionFile
+
+// ------ Setup CLI binary -------
+
+// This setting is needed by the Shadow plugin for some reason to define a main application class.
+mainClassName = "software.amazon.smithy.cli.SmithyCli"
+
+application {
+    mainClass = "${mainClassName}"
+    applicationName = "smithy"
 }
 
 // Detect which OS and arch is running to create an application class data sharing
-// archive for the current platform.
+// archive for the current platform. This is not how we'll ultimately build and release images.
 if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-    ext.set("imageOs", "win64")
+    ext.set("imageOs", "windows-x64")
 } else if (Os.isFamily(Os.FAMILY_MAC)) {
     if (Os.isArch("aarch64")) {
-        ext.set("imageOs", "osx-aarch_64")
-    } else if (Os.isArch("x86_64")) {
-        ext.set("imageOs", "osx-x86_64")
+        ext.set("imageOs", "darwin-aarch64")
+    } else if (Os.isArch("x86_64") || Os.isArch("amd64")) {
+        ext.set("imageOs", "darwin-x86_64")
     } else {
         println("No JDK for ${System.getProperty("os.arch")}")
         ext.set("imageOs", "")
     }
 } else if (Os.isFamily(Os.FAMILY_UNIX)) {
     if (Os.isArch("aarch")) {
-        ext.set("imageOs", "linux-aarch_64")
-    } else if (Os.isArch("x86_64")) {
+        ext.set("imageOs", "linux-aarch64")
+    } else if (Os.isArch("x86_64") || Os.isArch("amd64")) {
         ext.set("imageOs", "linux-x86_64")
     } else {
         println("No JDK for ${System.getProperty("os.arch")}")
@@ -56,24 +145,31 @@ if (Os.isFamily(Os.FAMILY_WINDOWS)) {
     ext.set("imageOs", "")
 }
 
-dependencies {
-    implementation project(":smithy-model")
-    implementation project(":smithy-build")
-    implementation project(":smithy-linters")
-    implementation project(":smithy-diff")
+// This is needed in order for integration tests to find the build jlink CLI.
+if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+    ext.set("smithyBinary", Paths.get(
+            "${project.buildDir}", "image", "smithy-cli-${imageOs}", "bin", "smithy.bat").toString())
+} else {
+    ext.set("smithyBinary", Paths.get(
+            "${project.buildDir}", "image", "smithy-cli-${imageOs}", "bin", "smithy").toString())
 }
-
-application {
-    mainClass = "software.amazon.smithy.cli.SmithyCli"
-    applicationName = "smithy"
-}
+System.setProperty("SMITHY_BINARY", "${smithyBinary}")
 
 runtime {
-    addOptions("--compress", "0", "--strip-debug", "--no-header-files", "--no-man-pages")
-    addModules("java.logging", "java.xml")
+    addOptions("--compress", "2", "--strip-debug", "--no-header-files", "--no-man-pages")
+    addModules("java.logging", "java.xml", "java.naming")
 
     launcher {
+        // This script is a combination of the default startup script used by the badass runtime
+        // plugin, and the upstream source it's based on:
+        // https://raw.githubusercontent.com/gradle/gradle/master/subprojects/plugins/src/main/resources/org/gradle/api/internal/plugins/unixStartScript.txt
+        // Using the Gradle wrapper script as-is results in a huge startup penalty, so I instead updated parts of the
+        // script that didn't affect performance, and kept others that did. Namely, the set and eval code of the Gradle
+        // startup script is significantly slower than what was used by the plugin.
+        unixScriptTemplate = file('config/unixStartScript.txt')
         jvmArgs = [
+            // Disable this when attempting to profile the CLI. In 99% of use cases this isn't not necessary.
+            '-XX:-UsePerfData',
             '-Xshare:auto',
             '-XX:SharedArchiveFile={{BIN_DIR}}/../lib/smithy.jsa'
         ]
@@ -83,38 +179,70 @@ runtime {
         jdkHome = jdkDownload("${correttoRoot}-x64-linux-jdk.tar.gz")
     }
 
-    targetPlatform("linux-aarch_64") {
+    targetPlatform("linux-aarch64") {
         jdkHome = jdkDownload("${correttoRoot}-aarch64-linux-jdk.tar.gz")
     }
 
-    targetPlatform("osx-x86_64") {
+    targetPlatform("darwin-x86_64") {
         jdkHome = jdkDownload("${correttoRoot}-x64-macos-jdk.tar.gz")
     }
 
-    targetPlatform("osx-aarch_64") {
+    targetPlatform("darwin-aarch64") {
         jdkHome = jdkDownload("${correttoRoot}-aarch64-macos-jdk.tar.gz")
     }
 
-    targetPlatform("win64") {
+    targetPlatform("windows-x64") {
         jdkHome = jdkDownload("${correttoRoot}-x64-windows-jdk.zip")
     }
 }
 
 // First, call validate with no args and create a class list to use application class data sharing.
-tasks.register("createClassList", Exec) {
+tasks.register("_createClassList", Exec) {
     environment("SMITHY_OPTS", "-XX:DumpLoadedClassList=${project.buildDir}/image/smithy-cli-${imageOs}/lib/smithy.lst")
-    commandLine("${project.buildDir}/image/smithy-cli-${imageOs}/bin/smithy", "validate")
+    environment("SMITHY_WARMUP_INTERNAL_ONLY", "true")
+    commandLine("$smithyBinary", "warmup", "--discover")
 }
 
 // Next, actually dump out the archive of the collected classes. This is platform specific,
 // so it can only be done for the current OS+architecture.
-tasks.register("dumpArchive", Exec) {
+tasks.register("_dumpArchive", Exec) {
     environment("SMITHY_OPTS", "-Xshare:dump -XX:SharedArchiveFile=${project.buildDir}/image/smithy-cli-${imageOs}/lib/smithy.jsa -XX:SharedClassListFile=${project.buildDir}/image/smithy-cli-${imageOs}/lib/smithy.lst")
-    commandLine("${project.buildDir}/image/smithy-cli-${imageOs}/bin/smithy", "validate")
+    environment("SMITHY_WARMUP_INTERNAL_ONLY", "true")
+    commandLine("$smithyBinary", "warmup", "--discover")
 }
 
 // Can't do CDS if the OS and architecture is not one of our targets.
 if (!imageOs.isEmpty()) {
-    tasks["dumpArchive"].dependsOn("createClassList")
-    tasks["runtime"].finalizedBy("dumpArchive")
+    tasks["_dumpArchive"].dependsOn("_createClassList")
+    tasks["runtime"].finalizedBy("_dumpArchive")
 }
+
+// Always shadow the JAR and replace the JAR by the shadowed JAR.
+tasks['jar'].finalizedBy("shadowJar")
+
+// Prevent https://docs.gradle.org/7.3.3/userguide/validation_problems.html#implicit_dependency issues between
+// the runtime image and shadowJar tasks.
+tasks['distZip'].dependsOn("shadowJar")
+tasks['distTar'].dependsOn("shadowJar")
+tasks['startScripts'].dependsOn("shadowJar")
+tasks["runtime"].dependsOn("shadowJar")
+
+// ------ Setup integration testing -------
+
+sourceSets {
+    create("it") {
+        compileClasspath += sourceSets["main"].output + configurations["testRuntimeClasspath"]
+        runtimeClasspath += output + compileClasspath + sourceSets["test"].runtimeClasspath
+    }
+}
+
+task integ(type: Test) {
+    useJUnitPlatform()
+    systemProperty "SMITHY_BINARY", "${smithyBinary}"
+    testClassesDirs = sourceSets["it"].output.classesDirs
+    classpath = sourceSets["it"].runtimeClasspath
+    maxParallelForks = Runtime.getRuntime().availableProcessors() / 2
+}
+
+// Runtime images need to be created before integration tests can run.
+tasks["integ"].dependsOn("runtime")

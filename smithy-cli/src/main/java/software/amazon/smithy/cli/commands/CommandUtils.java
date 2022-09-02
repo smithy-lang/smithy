@@ -21,6 +21,7 @@ import java.net.URLClassLoader;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Logger;
+import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
@@ -44,13 +45,14 @@ final class CommandUtils {
             List<String> models,
             Command.Env env,
             CliPrinter printer,
-            boolean quietValidation
+            boolean quietValidation,
+            SmithyBuildConfig config
     ) {
-        ModelAssembler assembler = CommandUtils.createModelAssembler(env.classLoader());
+        ClassLoader classLoader = env.classLoader();
+        ModelAssembler assembler = CommandUtils.createModelAssembler(classLoader);
         ContextualValidationEventFormatter formatter = new ContextualValidationEventFormatter();
         StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
         BuildOptions buildOptions = arguments.getReceiver(BuildOptions.class);
-
         Severity minSeverity = standardOptions.severity();
 
         assembler.validationEventListener(event -> {
@@ -69,9 +71,12 @@ final class CommandUtils {
             }
         });
 
-        CommandUtils.handleModelDiscovery(buildOptions, assembler, env.classLoader());
+        CommandUtils.handleModelDiscovery(buildOptions, assembler, classLoader, config);
         CommandUtils.handleUnknownTraitsOption(buildOptions, assembler);
+        config.getSources().forEach(assembler::addImport);
         models.forEach(assembler::addImport);
+        config.getImports().forEach(assembler::addImport);
+
         ValidatedResult<Model> result = assembler.assemble();
         Validator.validate(quietValidation, env.stderr(), result);
         return result.getResult().orElseThrow(() -> new RuntimeException("Expected Validator to throw"));
@@ -88,10 +93,15 @@ final class CommandUtils {
         }
     }
 
-    private static void handleModelDiscovery(BuildOptions options, ModelAssembler assembler, ClassLoader baseLoader) {
+    private static void handleModelDiscovery(
+            BuildOptions options,
+            ModelAssembler assembler,
+            ClassLoader baseLoader,
+            SmithyBuildConfig config
+    ) {
         if (options.discoverClasspath() != null) {
             discoverModelsWithClasspath(options.discoverClasspath(), assembler);
-        } else if (options.discover()) {
+        } else if (options.useModelDiscovery(config)) {
             assembler.discoverModels(baseLoader);
         }
     }

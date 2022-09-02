@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
+import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.HelpPrinter;
@@ -51,7 +52,15 @@ abstract class SimpleCommand implements Command {
 
         List<String> positionalArguments = arguments.finishParsing();
 
-        if (arguments.getReceiver(StandardOptions.class).help()) {
+        StandardOptions options = arguments.getReceiver(StandardOptions.class);
+
+        // Version is only supported on the root-level command, but the argument has
+        // to be available to all commands to make that work.
+        if (arguments.getReceiver(StandardOptions.class).version()) {
+            throw new CliError("Unexpected CLI argument: --version");
+        }
+
+        if (options.help()) {
             printHelp(arguments, env.stdout());
             return 0;
         }

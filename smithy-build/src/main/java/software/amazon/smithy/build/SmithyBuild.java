@@ -93,6 +93,15 @@ public final class SmithyBuild {
     }
 
     /**
+     * Gets the default directory where smithy-build artifacts are written.
+     *
+     * @return Returns the build output path.
+     */
+    public static Path getDefaultOutputDirectory() {
+        return DefaultPathHolder.DEFAULT_PATH;
+    }
+
+    /**
      * Builds the model and applies all projections.
      *
      * <p>This method loads all projections, projected models, and their
@@ -169,6 +178,9 @@ public final class SmithyBuild {
      */
     public SmithyBuild config(SmithyBuildConfig config) {
         this.config = config;
+        for (String source : config.getSources()) {
+            sources.add(Paths.get(source));
+        }
         return this;
     }
 
@@ -391,5 +403,14 @@ public final class SmithyBuild {
     public SmithyBuild pluginFilter(Predicate<String> pluginFilter) {
         this.pluginFilter = Objects.requireNonNull(pluginFilter);
         return this;
+    }
+
+    // Lazy initialization holder class idiom.
+    private static final class DefaultPathHolder {
+        private static final Path DEFAULT_PATH = resolveDefaultPath();
+
+        private static Path resolveDefaultPath() {
+            return Paths.get(".").toAbsolutePath().normalize().resolve("build").resolve("smithy");
+        }
     }
 }

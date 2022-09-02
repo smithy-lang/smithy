@@ -21,20 +21,41 @@ import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
 import software.amazon.smithy.cli.Command;
+import software.amazon.smithy.cli.EnvironmentVariable;
+import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.cli.Style;
+import software.amazon.smithy.cli.dependencies.DependencyResolver;
+import software.amazon.smithy.cli.dependencies.MavenDependencyResolver;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
 public class SmithyCommand implements Command {
 
-    private final List<Command> commands = Arrays.asList(
-            new ValidateCommand(getName()),
-            new BuildCommand(getName()),
-            new AstCommand(getName()),
-            new SelectCommand(getName()),
-            new DiffCommand(getName()),
-            new Upgrade1to2Command(getName()));
+    private final List<Command> commands;
+
+    public SmithyCommand() {
+        this(null);
+    }
+
+    public SmithyCommand(DependencyResolver.Factory dependencyResolverFactory) {
+        if (dependencyResolverFactory == null) {
+            dependencyResolverFactory = (config, env) -> {
+                return new MavenDependencyResolver(EnvironmentVariable.SMITHY_MAVEN_CACHE.getValue());
+            };
+        }
+
+        commands = Arrays.asList(
+            new ValidateCommand(getName(), dependencyResolverFactory),
+            new BuildCommand(getName(), dependencyResolverFactory),
+            new DiffCommand(getName(), dependencyResolverFactory),
+            new AstCommand(getName(), dependencyResolverFactory),
+            new SelectCommand(getName(), dependencyResolverFactory),
+            new CleanCommand(getName()),
+            new Upgrade1to2Command(getName()),
+            new WarmupCommand(getName(), dependencyResolverFactory)
+        );
+    }
 
     @Override
     public String getName() {
@@ -48,34 +69,47 @@ public class SmithyCommand implements Command {
 
     @Override
     public void printHelp(Arguments arguments, CliPrinter printer) {
-        printer.println(String.format("Usage: %s [-h | --help] <command> [<args>]",
+        printer.println(String.format("Usage: %s [-h | --help] [--version] <command> [<args>]",
                                       printer.style("smithy", Style.BRIGHT_WHITE, Style.UNDERLINE)));
         printer.println("");
         printer.println("Available commands:");
 
         int longestName = 0;
         for (Command command : commands) {
-            if (command.getName().length() + 12 > longestName) {
-                longestName = command.getName().length() + 12;
+            if (!command.isHidden()) {
+                if (command.getName().length() + 12 > longestName) {
+                    longestName = command.getName().length() + 12;
+                }
             }
         }
 
         for (Command command : commands) {
-            printer.println(String.format("    %-" + longestName + "s %s",
-                                          printer.style(command.getName(), Style.YELLOW),
-                                          command.getSummary()));
+            if (!command.isHidden()) {
+                printer.println(String.format("    %-" + longestName + "s %s",
+                                              printer.style(command.getName(), Style.YELLOW),
+                                              command.getSummary()));
+            }
         }
     }
 
     @Override
     public int execute(Arguments arguments, Env env) {
+        // Set the current CLI version as a system property so it can be used in config files.
+        EnvironmentVariable.SMITHY_VERSION.setValue(SmithyCli.getVersion());
+
         String command = arguments.shift();
 
-        // If no command was given, then finish parsing to check if -h or --help was given.
+        // If no command was given, then finish parsing to check if -h, --help, or --version was given.
         if (command == null) {
             arguments.finishParsing();
-            if (arguments.getReceiver(StandardOptions.class).help()) {
+
+            StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
+
+            if (standardOptions.help()) {
                 printHelp(arguments, env.stdout());
+                return 0;
+            } else if (standardOptions.version()) {
+                env.stdout().println(SmithyCli.getVersion());
                 return 0;
             } else {
                 printHelp(arguments, env.stderr());

@@ -25,5 +25,5 @@ ext {
 }
 
 dependencies {
-    implementation project(":smithy-cli")
+    implementation project(path: ":smithy-cli", configuration: "shadow")
 }

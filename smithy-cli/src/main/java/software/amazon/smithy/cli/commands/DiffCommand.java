@@ -16,11 +16,11 @@
 package software.amazon.smithy.cli.commands;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
@@ -28,6 +28,7 @@ import software.amazon.smithy.cli.CliPrinter;
 import software.amazon.smithy.cli.HelpPrinter;
 import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.cli.Style;
+import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.diff.ModelDiff;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
@@ -37,11 +38,11 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
-public final class DiffCommand extends SimpleCommand {
+public final class DiffCommand extends ClasspathCommand {
     private static final Logger LOGGER = Logger.getLogger(DiffCommand.class.getName());
 
-    public DiffCommand(String parentCommandName) {
-        super(parentCommandName);
+    public DiffCommand(String parentCommandName, DependencyResolver.Factory dependencyResolverFactory) {
+        super(parentCommandName, dependencyResolverFactory);
     }
 
     @Override
@@ -88,25 +89,26 @@ public final class DiffCommand extends SimpleCommand {
     }
 
     @Override
-    protected List<ArgumentReceiver> createArgumentReceivers() {
-        return Collections.singletonList(new Options());
+    protected void addAdditionalArgumentReceivers(List<ArgumentReceiver> receivers) {
+        receivers.add(new Options());
     }
 
     @Override
-    protected int run(Arguments arguments, Env env, List<String> positional) {
+    int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env, List<String> positional) {
         StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
         Options options = arguments.getReceiver(Options.class);
+        ClassLoader classLoader = env.classLoader();
 
         List<String> oldModels = options.oldModels;
         List<String> newModels = options.newModels;
         LOGGER.fine(() -> String.format("Setting old models to: %s; new models to: %s", oldModels, newModels));
 
-        ModelAssembler assembler = CommandUtils.createModelAssembler(env.classLoader());
+        ModelAssembler assembler = CommandUtils.createModelAssembler(classLoader);
         Model oldModel = loadModel("old", assembler, oldModels);
         assembler.reset();
         Model newModel = loadModel("new", assembler, newModels);
 
-        List<ValidationEvent> events = ModelDiff.compare(env.classLoader(), oldModel, newModel);
+        List<ValidationEvent> events = ModelDiff.compare(classLoader, oldModel, newModel);
         boolean hasError = events.stream().anyMatch(event -> event.getSeverity() == Severity.ERROR);
         boolean hasDanger = events.stream().anyMatch(event -> event.getSeverity() == Severity.DANGER);
         boolean hasWarning = events.stream().anyMatch(event -> event.getSeverity() == Severity.DANGER);

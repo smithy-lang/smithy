@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.cli;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.function.Consumer;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -46,6 +48,26 @@ public interface CliPrinter {
     }
 
     /**
+     * Print an exception to the printer.
+     *
+     * @param e Exception to print.
+     * @param stacktrace Whether to include a stack trace.
+     */
+    default void printException(Throwable e, boolean stacktrace) {
+        if (!stacktrace) {
+            println(style(e.getMessage(), Style.RED));
+        } else {
+            StringWriter writer = new StringWriter();
+            e.printStackTrace(new PrintWriter(writer));
+            String result = writer.toString();
+            int positionOfName = result.indexOf(':');
+            result = style(result.substring(0, positionOfName), Style.RED, Style.UNDERLINE)
+                     + result.substring(positionOfName);
+            println(result);
+        }
+    }
+
+    /**
      * CliPrinter that calls a Consumer that accepts a CharSequence.
      */
     final class ConsumerPrinter implements CliPrinter {
@@ -58,6 +80,39 @@ public interface CliPrinter {
         @Override
         public void println(String text) {
             consumer.accept(text + System.lineSeparator());
+        }
+    }
+
+    /**
+     * A CliPrinter that prints ANSI colors if able and allowed.
+     */
+    final class ColorPrinter implements CliPrinter {
+        private final CliPrinter delegate;
+        private final StandardOptions options;
+        private final boolean ansiSupported;
+
+        public ColorPrinter(CliPrinter delegate, StandardOptions options) {
+            this.delegate = delegate;
+            this.options = options;
+            this.ansiSupported = isAnsiColorSupported();
+        }
+
+        private static boolean isAnsiColorSupported() {
+            return System.console() != null && System.getenv().get("TERM") != null;
+        }
+
+        @Override
+        public void println(String text) {
+            delegate.println(text);
+        }
+
+        @Override
+        public String style(String text, Style... styles) {
+            if (options.forceColor() || (!options.noColor() && ansiSupported)) {
+                return delegate.style(text, styles);
+            } else {
+                return text;
+            }
         }
     }
 }
