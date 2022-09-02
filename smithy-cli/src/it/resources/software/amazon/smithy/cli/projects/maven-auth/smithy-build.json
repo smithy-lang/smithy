@@ -1,0 +1,14 @@
+{
+    "version": "1.0",
+    "maven": {
+        "repositories": [
+            {
+                "url": "https://localhost:1234/maven/not/there",
+                "httpCredentials": "xxx:yyy"
+            }
+        ],
+        "dependencies": [
+            "software.amazon.smithy:smithy-aws-iam-traits:${SMITHY_VERSION}"
+        ]
+    }
+}

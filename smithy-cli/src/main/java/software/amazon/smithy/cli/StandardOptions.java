@@ -17,27 +17,24 @@ package software.amazon.smithy.cli;
 
 import java.util.function.Consumer;
 import java.util.logging.Level;
-import software.amazon.smithy.model.validation.Severity;
-import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Options available to all commands.
  */
-@SmithyInternalApi
 public final class StandardOptions implements ArgumentReceiver {
 
     public static final String HELP_SHORT = "-h";
     public static final String HELP = "--help";
+    public static final String VERSION = "--version";
     public static final String DEBUG = "--debug";
     public static final String QUIET = "--quiet";
     public static final String STACKTRACE = "--stacktrace";
     public static final String NO_COLOR = "--no-color";
     public static final String FORCE_COLOR = "--force-color";
     public static final String LOGGING = "--logging";
-    public static final String SEVERITY = "--severity";
 
     private boolean help;
-    private Severity severity = Severity.WARNING;
+    private boolean version;
     private Level logging = Level.WARNING;
     private boolean quiet;
     private boolean debug;
@@ -47,18 +44,15 @@ public final class StandardOptions implements ArgumentReceiver {
 
     @Override
     public void registerHelp(HelpPrinter printer) {
-        printer.option(HELP, HELP_SHORT, "Prints this help output");
+        printer.option(HELP, HELP_SHORT, "Print help output");
         printer.option(DEBUG, null, "Display debug information");
-        printer.option(QUIET, null, "Silences all output except errors");
+        printer.option(QUIET, null, "Silence output except errors");
         printer.option(STACKTRACE, null, "Display a stacktrace on error");
-        printer.option(NO_COLOR, null, "Explicitly disable ANSI colors");
-        printer.option(FORCE_COLOR, null, "Explicitly enable ANSI colors");
+        printer.option(NO_COLOR, null, "Disable ANSI colors");
+        printer.option(FORCE_COLOR, null, "Force the use of ANSI colors");
         printer.param(LOGGING, null, "LOG_LEVEL",
-                            "Sets the log level (defaults to WARNING). Set to one of OFF, SEVERE, WARNING, INFO, "
+                            "Set the log level (defaults to WARNING). Set to one of OFF, SEVERE, WARNING, INFO, "
                             + "FINE, ALL.");
-        printer.param(SEVERITY, null, "SEVERITY", "Sets the minimum reported validation severity to "
-                                                      + "report. Set to one of NOTE, WARNING (default), "
-                                                      + "DANGER, ERROR");
     }
 
     @Override
@@ -67,6 +61,9 @@ public final class StandardOptions implements ArgumentReceiver {
             case HELP:
             case HELP_SHORT:
                 help = true;
+                return true;
+            case VERSION:
+                version = true;
                 return true;
             case DEBUG:
                 debug = true;
@@ -79,8 +76,6 @@ public final class StandardOptions implements ArgumentReceiver {
                 debug = false;
                 // Automatically set logging level to SEVERE.
                 logging = Level.SEVERE;
-                // Automatically set severity to DANGER.
-                severity = Severity.DANGER;
                 return true;
             case STACKTRACE:
                 stackTrace = true;
@@ -100,32 +95,24 @@ public final class StandardOptions implements ArgumentReceiver {
 
     @Override
     public Consumer<String> testParameter(String name) {
-        switch (name) {
-            case LOGGING:
-                return value -> {
-                    try {
-                        logging = Level.parse(value);
-                    } catch (IllegalArgumentException e) {
-                        throw new CliError("Invalid logging level: " + value);
-                    }
-                };
-            case SEVERITY:
-                return value -> {
-                    severity = Severity.fromString(value).orElseThrow(() -> {
-                        return new CliError("Invalid severity level: " + value);
-                    });
-                };
-            default:
-                return null;
+        if (LOGGING.equals(name)) {
+            return value -> {
+                try {
+                    logging = Level.parse(value);
+                } catch (IllegalArgumentException e) {
+                    throw new CliError("Invalid logging level: " + value);
+                }
+            };
         }
+        return null;
     }
 
     public boolean help() {
         return help;
     }
 
-    public Severity severity() {
-        return severity;
+    public boolean version() {
+        return version;
     }
 
     public Level logging() {

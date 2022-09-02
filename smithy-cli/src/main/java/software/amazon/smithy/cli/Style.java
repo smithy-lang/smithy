@@ -16,12 +16,10 @@
 package software.amazon.smithy.cli;
 
 import java.util.function.IntConsumer;
-import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Parameters used to change the ANSI public style of text.
  */
-@SmithyUnstableApi
 @FunctionalInterface
 public interface Style {
 

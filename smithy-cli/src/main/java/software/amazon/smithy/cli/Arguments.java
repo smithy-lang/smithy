@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Command line arguments list to evaluate.
@@ -35,7 +34,6 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * subscribers via {@link #onComplete(BiConsumer)}. These subscribers are
  * invoked when all arguments have been parsed.
  */
-@SmithyUnstableApi
 public final class Arguments {
 
     private final String[] args;

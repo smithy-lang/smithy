@@ -15,8 +15,6 @@
 
 package software.amazon.smithy.cli.commands;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -26,7 +24,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.logging.Logger;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.ProjectionResult;
 import software.amazon.smithy.build.SmithyBuild;
@@ -38,17 +35,14 @@ import software.amazon.smithy.cli.CliPrinter;
 import software.amazon.smithy.cli.HelpPrinter;
 import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.cli.Style;
+import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.validation.Severity;
-import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.SmithyInternalApi;
 
-@SmithyInternalApi
-public final class BuildCommand extends SimpleCommand {
-    private static final Logger LOGGER = Logger.getLogger(BuildCommand.class.getName());
+final class BuildCommand extends ClasspathCommand {
 
-    public BuildCommand(String parentCommandName) {
-        super(parentCommandName);
+    BuildCommand(String parentCommandName, DependencyResolver.Factory dependencyResolverFactory) {
+        super(parentCommandName, dependencyResolverFactory);
     }
 
     @Override
@@ -62,8 +56,6 @@ public final class BuildCommand extends SimpleCommand {
     }
 
     private static final class Options implements ArgumentReceiver {
-        private final List<String> config = new ArrayList<>();
-        private String output;
         private String projection;
         private String plugin;
 
@@ -75,11 +67,6 @@ public final class BuildCommand extends SimpleCommand {
         @Override
         public Consumer<String> testParameter(String name) {
             switch (name) {
-                case "--config":
-                case "-c":
-                    return config::add;
-                case "--output":
-                    return value -> output = value;
                 case "--projection":
                     return value -> projection = value;
                 case "--plugin":
@@ -91,57 +78,34 @@ public final class BuildCommand extends SimpleCommand {
 
         @Override
         public void registerHelp(HelpPrinter printer) {
-            printer.param("--config", "-c", "CONFIG_PATH...",
-                          "Path to smithy-build.json configuration (defaults to './smithy-build.json'). This option "
-                          + "can be repeated and each configured will be merged.");
             printer.param("--projection", null, "PROJECTION_NAME", "Only generate artifacts for this projection.");
             printer.param("--plugin", null, "PLUGIN_NAME", "Only generate artifacts for this plugin.");
-            printer.param("--output", null, "OUTPUT_PATH",
-                          "Where to write artifacts (defaults to './build/smithy').");
         }
     }
 
     @Override
-    protected List<ArgumentReceiver> createArgumentReceivers() {
-        return ListUtils.of(new BuildOptions(), new Options());
+    protected void addAdditionalArgumentReceivers(List<ArgumentReceiver> receivers) {
+        receivers.add(new Options());
     }
 
     @Override
-    protected int run(Arguments arguments, Env env, List<String> models) {
+    int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env, List<String> models) {
         Options options = arguments.getReceiver(Options.class);
+        BuildOptions buildOptions = arguments.getReceiver(BuildOptions.class);
         StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
-        String output = options.output;
-
-        LOGGER.fine(() -> String.format("Building Smithy model sources: %s", models));
-        SmithyBuildConfig.Builder configBuilder = SmithyBuildConfig.builder();
-        List<String> config = getConfig(options);
-
-        if (!config.isEmpty()) {
-            LOGGER.fine(() -> String.format("Loading Smithy configs: [%s]", String.join(" ", config)));
-            config.forEach(file -> configBuilder.load(Paths.get(file)));
-        } else {
-            configBuilder.version(SmithyBuild.VERSION);
-        }
-
-        if (output != null) {
-            configBuilder.outputDirectory(output);
-            try {
-                Files.createDirectories(Paths.get(output));
-                LOGGER.info(() -> "Output directory set to: " + output);
-            } catch (IOException e) {
-                throw new CliError("Unable to create Smithy output directory: " + e.getMessage());
-            }
-        }
-
-        SmithyBuildConfig smithyBuildConfig = configBuilder.build();
+        ClassLoader classLoader = env.classLoader();
 
         // Build the model and fail if there are errors. Prints errors to stdout.
         // Configure whether the build is quiet or not based on the --quiet option.
-        Model model = CommandUtils.buildModel(arguments, models, env, env.stderr(), standardOptions.quiet());
+        Model model = CommandUtils.buildModel(arguments, models, env, env.stderr(), standardOptions.quiet(), config);
 
-        SmithyBuild smithyBuild = SmithyBuild.create(env.classLoader())
-                .config(smithyBuildConfig)
+        SmithyBuild smithyBuild = SmithyBuild.create(classLoader)
+                .config(config)
                 .model(model);
+
+        if (buildOptions.output() != null) {
+            smithyBuild.outputDirectory(buildOptions.output());
+        }
 
         if (options.plugin != null) {
             smithyBuild.pluginFilter(name -> name.equals(options.plugin));
@@ -179,14 +143,6 @@ public final class BuildCommand extends SimpleCommand {
         }
 
         return 0;
-    }
-
-    private List<String> getConfig(Options options) {
-        List<String> config = options.config;
-        if (config.isEmpty() && Files.exists(Paths.get("smithy-build.json"))) {
-            config = Collections.singletonList("smithy-build.json");
-        }
-        return config;
     }
 
     private static final class ResultConsumer implements Consumer<ProjectionResult>, BiConsumer<String, Throwable> {

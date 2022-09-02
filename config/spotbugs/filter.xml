@@ -148,4 +148,15 @@
         <Class name="software.amazon.smithy.model.shapes.ShapeId$ShapeIdFactory"/>
         <Bug pattern="RV_RETURN_VALUE_OF_PUTIFABSENT_IGNORED"/>
     </Match>
+
+    <!-- The FileWriter API that specifies a Charset is not available in Java 8 -->
+    <Match>
+        <Class name="software.amazon.smithy.cli.commands.WarmupCommand"/>
+        <Bug pattern="DM_DEFAULT_ENCODING"/>
+    </Match>
+
+    <!-- SecurityManager is deprecated and scheduled for removal, so this isn't a good check. -->
+    <Match>
+        <Bug pattern="DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"/>
+    </Match>
 </FindBugsFilter>

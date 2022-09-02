@@ -18,13 +18,11 @@ package software.amazon.smithy.cli;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Generates and prints structured help output to a {@link CliPrinter}.
  */
-@SmithyUnstableApi
 public final class HelpPrinter {
     private final String name;
     private int maxWidth = 80;
