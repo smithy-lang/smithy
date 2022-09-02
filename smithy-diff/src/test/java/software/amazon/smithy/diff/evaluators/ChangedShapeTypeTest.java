@@ -16,12 +16,15 @@
 package software.amazon.smithy.diff.evaluators;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.diff.ModelDiff;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.shapes.ModelSerializer;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
@@ -39,5 +42,21 @@ public class ChangedShapeTypeTest {
 
         assertThat(TestHelper.findEvents(events, "ChangedShapeType").size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, shapeA1.getId()).size(), equalTo(1));
+    }
+
+    @Test
+    public void ignoresExpectedSetToListMigration() {
+        String rawModel = "$version: \"1.0\"\nnamespace smithy.example\nset Foo { member: String }\n";
+        Model oldModel = Model.assembler().addUnparsedModel("example.smithy", rawModel)
+                .assemble().unwrap();
+        Node serialized = ModelSerializer.builder().build().serialize(oldModel);
+        Model newModel = Model.assembler()
+                .addDocumentNode(serialized)
+                .assemble()
+                .unwrap();
+
+        List<ValidationEvent> events = ModelDiff.compare(oldModel, newModel);
+
+        assertThat(TestHelper.findEvents(events, "ChangedShapeType"), empty());
     }
 }
