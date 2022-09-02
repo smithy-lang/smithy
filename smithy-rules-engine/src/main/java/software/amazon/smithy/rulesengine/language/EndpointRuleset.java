@@ -124,7 +124,7 @@ public final class EndpointRuleset implements FromSourceLocation, Typecheck, ToN
         return builder()
                 .sourceLocation(sourceLocation)
                 .parameters(parameters)
-                .addRules(getRules());
+                .rules(getRules());
     }
 
     private Node rulesNode() {
