@@ -335,7 +335,8 @@ Complete Examples
 =================
 
 For several complete examples, see the `examples directory`_ of the Smithy
-Gradle plugin repository.
+Gradle plugin repository, or check out the :doc:`Quick start guide </quickstart>` for a tutorial on
+creating a Smithy model and building it with the Smithy Gradle plugin.
 
 .. _examples directory: https://github.com/awslabs/smithy-gradle-plugin/tree/main/examples
 .. _Smithy Gradle plugin: https://github.com/awslabs/smithy-gradle-plugin/
