@@ -103,13 +103,27 @@ public final class Builtins {
                     .build();
 
     /**
-     * This MUST only be used by the S3 and S3Control rules.
+     * This MUST only be used by the S3 rules.
      */
     public static final Parameter S3_USE_ARN_REGION =
             Parameter.builder()
                     .type(ParameterType.BOOLEAN)
                     .name("UseArnRegion")
                     .builtIn("AWS::S3::UseArnRegion")
+                    .documentation(
+                            "When an Access Point ARN is provided and this flag is enabled, the SDK MUST"
+                                    + " use the ARN's region when constructing the endpoint instead"
+                                    + " of the client's configured region.")
+                    .build();
+
+    /**
+     * This MUST only be used by the S3Control rules.
+     */
+    public static final Parameter S3_CONTROL_USE_ARN_REGION =
+            Parameter.builder()
+                    .type(ParameterType.BOOLEAN)
+                    .name("UseArnRegion")
+                    .builtIn("AWS::S3Control::UseArnRegion")
                     .documentation(
                             "When an Access Point ARN is provided and this flag is enabled, the SDK MUST"
                                     + " use the ARN's region when constructing the endpoint instead"
@@ -159,7 +173,7 @@ public final class Builtins {
 
     public static final List<Parameter> ALL_BUILTINS = ListUtils.of(
             SDK_ENDPOINT, REGION, FIPS, DUALSTACK, S3_ACCELERATE, S3_FORCE_PATH_STYLE, S3_USE_ARN_REGION,
-            S3_USE_GLOBAL_ENDPOINT, STS_USE_GLOBAL_ENDPOINT, S3_DISABLE_MRAP);
+            S3_USE_GLOBAL_ENDPOINT, S3_CONTROL_USE_ARN_REGION, STS_USE_GLOBAL_ENDPOINT, S3_DISABLE_MRAP);
 
     private Builtins() {
     }

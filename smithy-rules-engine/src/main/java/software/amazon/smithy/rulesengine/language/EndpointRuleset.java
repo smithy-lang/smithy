@@ -18,6 +18,7 @@ package software.amazon.smithy.rulesengine.language;
 import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
 import static software.amazon.smithy.rulesengine.language.util.StringUtils.indent;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import software.amazon.smithy.model.FromSourceLocation;
@@ -119,6 +120,13 @@ public final class EndpointRuleset implements FromSourceLocation, Typecheck, ToN
                 .build();
     }
 
+    public Builder toBuilder() {
+        return builder()
+                .sourceLocation(sourceLocation)
+                .parameters(parameters)
+                .addRules(getRules());
+    }
+
     private Node rulesNode() {
         ArrayNode.Builder node = ArrayNode.builder();
         rules.forEach(node::withValue);
@@ -187,6 +195,29 @@ public final class EndpointRuleset implements FromSourceLocation, Typecheck, ToN
          */
         public Builder addRule(Rule rule) {
             this.rules.get().add(rule);
+            return this;
+        }
+
+        /**
+         * Inserts a rule into the ruleset.
+         *
+         * @param  index the position to add the rule at.
+         * @param rule The {@link Rule} to add
+         * @return the {@link Builder}
+         */
+        public Builder addRule(int index, Rule rule) {
+            this.rules.get().add(index, rule);
+            return this;
+        }
+
+        /**
+         * Add rules to this ruleset. The rules be evaluated if all previous rules do not match.
+         *
+         * @param rules The Collection of {@link Rule} to add
+         * @return the {@link Builder}
+         */
+        public Builder rules(Collection<Rule> rules) {
+            this.rules.get().addAll(rules);
             return this;
         }
 
