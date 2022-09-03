@@ -22,6 +22,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.SourceLocation;
 
@@ -152,5 +156,89 @@ public class NumberNodeTest {
     @Test
     public void convertsToNumberNode() {
         assertTrue(Node.from(10).asNumberNode().isPresent());
+    }
+
+    @Test
+    public void testsForZero() {
+        Map<Number, Boolean> cases = new HashMap<>();
+        cases.put((byte) 0, true);
+        cases.put((short) 0, true);
+        cases.put(0, true);
+        cases.put(0L, true);
+        cases.put(0.0f, true);
+        cases.put(-0.0f, true);
+        cases.put(0.0d, true);
+        cases.put(-0.0d, true);
+        cases.put(new BigInteger("0"), true);
+        cases.put(new BigInteger("+0"), true);
+        cases.put(new BigInteger("-0"), true);
+        cases.put(new BigDecimal("0"), true);
+        cases.put(new BigDecimal("+0"), true);
+        cases.put(new BigDecimal("-0"), true);
+        cases.put(BigInteger.ZERO, true);
+        cases.put(BigDecimal.ZERO, true);
+        cases.put(new Number() {
+            @Override
+            public int intValue() {
+                return 0;
+            }
+
+            @Override
+            public long longValue() {
+                return 0;
+            }
+
+            @Override
+            public float floatValue() {
+                return 0;
+            }
+
+            @Override
+            public double doubleValue() {
+                return 0;
+            }
+        }, true);
+        cases.put(new Number() {
+            @Override
+            public int intValue() {
+                return 0;
+            }
+
+            @Override
+            public long longValue() {
+                return 0;
+            }
+
+            @Override
+            public float floatValue() {
+                return 0;
+            }
+
+            @Override
+            public double doubleValue() {
+                return 0;
+            }
+
+            @Override
+            public String toString() {
+                return "0.0";
+            }
+        }, true);
+
+        cases.put((byte) 1, false);
+        cases.put((short) 1, false);
+        cases.put(1, false);
+        cases.put(1L, false);
+        cases.put(0.01f, false);
+        cases.put(Float.NaN, false);
+        cases.put(0.01d, false);
+        cases.put(Double.NaN, false);
+        cases.put(new BigInteger("1"), false);
+        cases.put(new BigDecimal("0.01"), false);
+
+        cases.forEach((k, v) -> {
+            boolean result = new NumberNode(k, SourceLocation.NONE).isZero();
+            assertEquals(v, result, "Expected " + k + " to be " + v);
+        });
     }
 }
