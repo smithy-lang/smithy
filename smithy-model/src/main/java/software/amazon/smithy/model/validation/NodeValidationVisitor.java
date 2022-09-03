@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.knowledge.NullableIndex;
@@ -52,8 +53,10 @@ import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.validation.node.NodeValidatorPlugin;
 import software.amazon.smithy.model.validation.node.TimestampValidationStrategy;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Validates {@link Node} values provided for {@link Shape} definitions.
@@ -82,7 +85,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
     private NodeValidationVisitor(Builder builder) {
         this.model = SmithyBuilder.requiredState("model", builder.model);
         this.nullableIndex = NullableIndex.of(model);
-        this.validationContext = new NodeValidatorPlugin.Context(model);
+        this.validationContext = new NodeValidatorPlugin.Context(model, builder.features.copy());
         this.timestampValidationStrategy = builder.timestampValidationStrategy;
         this.allowOptionalNull = builder.allowOptionalNull;
         setValue(SmithyBuilder.requiredState("value", builder.value));
@@ -90,6 +93,21 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         setValue(builder.value);
         setEventShapeId(builder.eventShapeId);
         setEventId(builder.eventId);
+    }
+
+    /**
+     * Features to use when validating.
+     */
+    // TODO Move other features here like allowOptionalNull.
+    public enum Feature {
+        /**
+         * Emit a warning when a range trait is incompatible with a default value of 0.
+         *
+         * <p>This was a common pattern in Smithy 1.0 and earlier. It implies that the value is effectively
+         * required. However, chaning the type of the value by un-boxing it or adjusting the range trait would
+         * be a lossy tranformation when migrating a model from 1.0 to 2.0.
+         */
+        RANGE_TRAIT_ZERO_VALUE_WARNING
     }
 
     public static Builder builder() {
@@ -404,13 +422,13 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
     private List<ValidationEvent> applyPlugins(Shape shape) {
         List<ValidationEvent> events = new ArrayList<>();
-        timestampValidationStrategy.apply(shape, value, validationContext, (location, message) -> {
-            events.add(event(message, Severity.ERROR, location.getSourceLocation()));
+        timestampValidationStrategy.apply(shape, value, validationContext, (location, severity, message) -> {
+            events.add(event(message, severity, location.getSourceLocation()));
         });
 
         for (NodeValidatorPlugin plugin : BUILTIN) {
-            plugin.apply(shape, value, validationContext, (location, message) -> {
-                events.add(event(message, Severity.ERROR, location.getSourceLocation()));
+            plugin.apply(shape, value, validationContext, (location, severity, message) -> {
+                events.add(event(message, severity, location.getSourceLocation()));
             });
         }
 
@@ -428,6 +446,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         private Model model;
         private TimestampValidationStrategy timestampValidationStrategy = TimestampValidationStrategy.FORMAT;
         private boolean allowOptionalNull;
+        private final BuilderRef<Set<Feature>> features = BuilderRef.forUnorderedSet();
 
         Builder() {}
 
@@ -519,6 +538,18 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
          */
         public Builder allowOptionalNull(boolean allowOptionalNull) {
             this.allowOptionalNull = allowOptionalNull;
+            return this;
+        }
+
+        /**
+         * Adds a feature flag to the validator.
+         *
+         * @param feature Feature to set.
+         * @return Returns the builder.
+         */
+        @SmithyInternalApi
+        public Builder addFeature(Feature feature) {
+            this.features.get().add(feature);
             return this;
         }
 

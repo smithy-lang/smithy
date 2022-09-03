@@ -1,6 +1,7 @@
 package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
@@ -10,22 +11,32 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.hamcrest.Matcher;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.ShapeMatcher;
+import software.amazon.smithy.model.knowledge.NullableIndex;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ModelSerializer;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
+import software.amazon.smithy.model.traits.RangeTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.Validator;
+import software.amazon.smithy.utils.IoUtils;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.Pair;
 
 public class ModelUpgraderTest {
     @Test
@@ -64,20 +75,6 @@ public class ModelUpgraderTest {
     }
 
     @Test
-    public void emitsErrorWhenPrimitiveShapeUsedInV2() {
-        UpgradeTestCase testCase = UpgradeTestCase.createAndValidate("upgrade/primitives-in-v2");
-        ValidatedResult<Model> result = testCase.actualModel;
-
-        assertThat(ShapeId.from("smithy.example#Bad$boolean"), shapeTargetsDeprecatedPrimitive(result));
-        assertThat(ShapeId.from("smithy.example#Bad$byte"), shapeTargetsDeprecatedPrimitive(result));
-        assertThat(ShapeId.from("smithy.example#Bad$short"), shapeTargetsDeprecatedPrimitive(result));
-        assertThat(ShapeId.from("smithy.example#Bad$integer"), shapeTargetsDeprecatedPrimitive(result));
-        assertThat(ShapeId.from("smithy.example#Bad$long"), shapeTargetsDeprecatedPrimitive(result));
-        assertThat(ShapeId.from("smithy.example#Bad$float"), shapeTargetsDeprecatedPrimitive(result));
-        assertThat(ShapeId.from("smithy.example#Bad$double"), shapeTargetsDeprecatedPrimitive(result));
-    }
-
-    @Test
     public void emitsErrorWhenBoxTraitUsedInV2() {
         UpgradeTestCase testCase = UpgradeTestCase.createAndValidate("upgrade/box-in-v2");
         ValidatedResult<Model> result = testCase.actualModel;
@@ -93,7 +90,12 @@ public class ModelUpgraderTest {
         assertThat(ShapeId.from("smithy.example#Foo$alreadyDefault"), targetsShape(result, "PrimitiveInteger"));
         assertThat(ShapeId.from("smithy.example#Foo$alreadyRequired"), targetsShape(result, "PrimitiveInteger"));
         assertThat(ShapeId.from("smithy.example#Foo$boxedMember"), targetsShape(result, "PrimitiveInteger"));
-        assertThat(ShapeId.from("smithy.example#Foo$boxedMember"), not(addedDefaultTrait(result)));
+
+        Shape shape = result.getResult().get().expectShape(ShapeId.from("smithy.example#Foo$boxedMember"));
+        assertThat(shape.hasTrait(BoxTrait.class), is(true));
+        assertThat(shape.hasTrait(DefaultTrait.class), is(true));
+        assertThat(shape.expectTrait(DefaultTrait.class).toNode().isNullNode(), is(true));
+
         assertThat(ShapeId.from("smithy.example#Foo$previouslyBoxedTarget"), not(addedDefaultTrait(result)));
         assertThat(ShapeId.from("smithy.example#Foo$explicitlyBoxedTarget"), not(addedDefaultTrait(result)));
     }
@@ -172,21 +174,9 @@ public class ModelUpgraderTest {
 
     private static Matcher<ShapeId> addedDefaultTrait(ValidatedResult<Model> result) {
         return ShapeMatcher.builderFor(MemberShape.class, result)
-                .description("member to have a default trait with warning")
+                .description("member to have a default trait")
                 .addAssertion(member -> member.hasTrait(DefaultTrait.class),
                               member -> "no @default trait")
-                .addEventAssertion(Validator.MODEL_DEPRECATION, Severity.WARNING, "@default")
-                .build();
-    }
-
-    private static Matcher<ShapeId> shapeTargetsDeprecatedPrimitive(ValidatedResult<Model> result) {
-        return ShapeMatcher.builderFor(MemberShape.class, result)
-                .description("shape targets a deprecated primitive shape and emits a warning")
-                .addAssertion(member -> member.getTarget().getName().startsWith("Primitive")
-                                        && member.getTarget().getNamespace().equals(Prelude.NAMESPACE),
-                              member -> "member does not target a primitive prelude shape")
-                .addEventAssertion("DeprecatedShape", Severity.WARNING,
-                                   "and add the @default trait to structure members that targets this shape")
                 .build();
     }
 
@@ -198,23 +188,250 @@ public class ModelUpgraderTest {
                 .build();
     }
 
+    // This test ensures that the upgrader properly upgrades 1.0 models to 2.0 models, back patches 2.0 models with
+    // synthetic box traits so they work with 1.0 implementations, and that serializing and deserializing an upgraded
+    // model carries the same nullability results in both 1.0 and 2.0 implementations (it can't be lossy).
     @Test
-    public void addSyntheticBoxTrait() {
+    public void ensuresConsistentNullabilityAcrossVersions() {
+        Pattern splitPattern = Pattern.compile("\r\n|\r|\n");
+        List<Pair<String, String>> cases = ListUtils.of(
+            Pair.of("1-to-2", "nullableBooleanBoxedTarget"),
+            Pair.of("1-to-2", "nullableBooleanBoxedNonPreludeTarget"),
+            Pair.of("1-to-2", "nullableBooleanInV1BoxedTargetRequired"),
+            Pair.of("1-to-2", "nonNullableBooleanUnboxedTarget"),
+            Pair.of("1-to-2", "nullableBooleanBoxedMember"),
+            Pair.of("1-to-2", "nonNullableBooleanUnboxedCustomTarget"),
+            Pair.of("1-to-2", "nullableIntegerBoxedTarget"),
+            Pair.of("1-to-2", "nullableIntegerBoxedNonPreludeTarget"),
+            Pair.of("1-to-2", "nullableIntegerInV1BoxedTargetRequired"),
+            Pair.of("1-to-2", "nonNullableIntegerUnboxedTarget"),
+            Pair.of("1-to-2", "nullableIntegerBoxedMember"),
+            Pair.of("1-to-2", "nonNullableIntegerUnboxedCustomTarget"),
+
+            Pair.of("2-to-1", "booleanDefaultZeroValueToNonNullable"),
+            Pair.of("2-to-1", "booleanDefaultNonZeroValueToNullable"),
+            Pair.of("2-to-1", "booleanRequiredToNullable"),
+            Pair.of("2-to-1", "booleanDefaultWithAddedTraitToNullable"),
+            Pair.of("2-to-1", "booleanDefaultWithClientOptionalTraitToNullable"),
+            Pair.of("2-to-1", "intEnumSetToZeroValueToNonNullable"),
+            Pair.of("2-to-1", "booleanDefaultZeroValueToNonNullablePrelude")
+        );
+
+        cases.forEach(pair -> {
+            String suite = pair.left;
+            String name = pair.right;
+
+            // Load the contents of the model as a string and parse out the expected nullability JSON
+            // from the comment on the first line.
+            String contents = IoUtils.readUtf8Resource(getClass(), "upgrade-box/" + suite + "/" + name + ".smithy");
+            String[] lines = splitPattern.split(contents, 2);
+            String expectedJsonValue = lines[0].replace("// ", "").trim();
+            ObjectNode expectedNode = Node.parse(expectedJsonValue).expectObjectNode();
+            Map<String, Boolean> nullability = new HashMap<>();
+            expectedNode.getStringMap().forEach((k, v) -> nullability.put(k, v.expectBooleanNode().getValue()));
+
+            Model original = Model.assembler()
+                    .addUnparsedModel(name + ".smithy", contents)
+                    .assemble()
+                    .unwrap();
+
+            upgradeAssertions(name, original, nullability, 0);
+
+            // Round trip the model twice just to be certain nothing is getting lost between
+            // serializations.
+            Model updatedModel = original;
+            for (int tripCount = 1; tripCount <= 2; tripCount++) {
+                Node serialized = ModelSerializer.builder().build().serialize(updatedModel);
+                updatedModel = Model.assembler()
+                        .addDocumentNode(serialized)
+                        .assemble()
+                        .unwrap();
+                upgradeAssertions(name, updatedModel, nullability, tripCount);
+            }
+        });
+    }
+
+    private void upgradeAssertions(String name, Model model, Map<String, Boolean> expected, int roundTrip) {
+        NullableIndex index = NullableIndex.of(model);
+        ShapeId shape = ShapeId.from("smithy.example#Foo$" + name);
+        MemberShape member = model.expectShape(shape, MemberShape.class);
+
+        Map<String, Boolean> result = new HashMap<>();
+        boolean isBoxed = member.getMemberTrait(model, BoxTrait.class).isPresent();
+        result.put("v1-box", isBoxed);
+        result.put("v1-client-zero-value",
+                   index.isMemberNullable(member, NullableIndex.CheckMode.CLIENT_ZERO_VALUE_V1));
+        result.put("v2", index.isMemberNullable(model.expectShape(shape, MemberShape.class)));
+
+        String reason = "Expected " + name + " to have nullability of " + expected + " but found "
+                        + result + " (round trip #" + roundTrip + ')';
+
+        assertThat(reason, expected, equalTo(result));
+
+        // Ensure that the deprecated index check using isNullable matches v1-client-zero-value results.
+        boolean isDeprecatedIndexWorking = index.isNullable(member);
+        if (!isDeprecatedIndexWorking == result.get("v1-client-zero-value")) {
+            String reasonBox = "Expected deprecated index checks to be " + result.get("v1") + " for " + name
+                               + "; traits: " + member.getAllTraits() + "; round trip " + roundTrip;
+            Assertions.fail(reasonBox);
+        }
+    }
+
+    // Loading a Smithy 1.0 model and serializing it is lossy if we don't add some way
+    // to indicate that the box trait was present on a root level shape. This test ensures
+    // that box information can be round-tripped when converting a 1.0 model to a 2.0 model.
+    @Test
+    public void boxTraitOnRootShapeIsNotLossyWhenRoundTripped() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("upgrade/does-not-introduce-conflict/main.smithy"))
+                .addUnparsedModel("foo.smithy", "$version: \"1.0\"\n"
+                                                + "namespace smithy.example\n"
+                                                + "@box\n"
+                                                + "integer MyInteger\n"
+                                                + "\n"
+                                                + "integer PrimitiveInteger\n"
+                                                + "\n"
+                                                + "structure Foo {\n"
+                                                + "    @box\n"
+                                                + "    baz: MyInteger\n"
+                                                + "    bam: PrimitiveInteger\n"
+                                                +"}\n")
                 .assemble()
                 .unwrap();
 
-        assertThat(hasBoxTrait(model, "smithy.example#Foo$alreadyDefault"), is(false));
-        assertThat(hasBoxTrait(model, "smithy.example#Foo$alreadyRequired"), is(false));
-        assertThat(hasBoxTrait(model, "smithy.example#Foo$boxedMember"), is(true));
-        assertThat(hasBoxTrait(model, "smithy.example#Foo$explicitlyBoxedTarget"), is(true));
-        assertThat(hasBoxTrait(model, "smithy.example#Foo$previouslyBoxedTarget"), is(true));
-        assertThat(hasBoxTrait(model, "smithy.example#Foo$customPrimitiveLong"), is(false));
+        Node roundTripNode = ModelSerializer.builder().build().serialize(model);
+        Model roundTripModel = Model.assembler().addDocumentNode(roundTripNode).assemble().unwrap();
+
+        // Ensure it works when first loaded, and it works when round-tripped through the serializer and assembler.
+        boxTraitRootAssertionsV1(model, 0);
+        boxTraitRootAssertionsV1(roundTripModel, 1);
     }
 
-    @SuppressWarnings("deprecation")
-    private boolean hasBoxTrait(Model model, String shape) {
-        return model.expectShape(ShapeId.from(shape)).hasTrait(BoxTrait.class);
+    private void boxTraitRootAssertionsV1(Model model, int roundTrip) {
+        ShapeId myInteger = ShapeId.from("smithy.example#MyInteger");
+        ShapeId foo = ShapeId.from("smithy.example#Foo");
+        ShapeId fooBaz = ShapeId.from("smithy.example#Foo$baz");
+
+        ShapeId primitiveInteger = ShapeId.from("smithy.example#PrimitiveInteger");
+        ShapeId fooBam = ShapeId.from("smithy.example#Foo$bam");
+
+        assertThat(model.expectShape(myInteger).hasTrait(BoxTrait.class), is(true));
+        assertThat(model.expectShape(foo).hasTrait(BoxTrait.class), is(false));
+        assertThat(model.expectShape(fooBaz).hasTrait(BoxTrait.class), is(true));
+
+        Node serialized = ModelSerializer.builder().build().serialize(model);
+        String raw = Node.prettyPrintJson(serialized);
+        Model model2 = Model.assembler()
+                .addUnparsedModel("foo.json", raw)
+                .assemble()
+                .unwrap();
+
+        assertThat(model2.expectShape(myInteger).hasTrait(BoxTrait.class), is(true));
+        assertThat(model2.expectShape(myInteger).hasTrait(DefaultTrait.class), is(false));
+        assertThat(model2.expectShape(foo).hasTrait(BoxTrait.class), is(false));
+        assertThat(model2.expectShape(fooBaz).hasTrait(DefaultTrait.class), is(true));
+        assertThat(model2.expectShape(fooBaz).expectTrait(DefaultTrait.class).toNode(), equalTo(Node.nullNode()));
+
+        // This member gets a synthetic box trait because the default value is set to null.
+        assertThat(model2.expectShape(fooBaz).hasTrait(BoxTrait.class), is(true));
+
+        // Primitive integer gets a synthetic default trait and no box trait.
+        assertThat(model2.expectShape(primitiveInteger).hasTrait(DefaultTrait.class), is(true));
+        assertThat(model2.expectShape(primitiveInteger).hasTrait(BoxTrait.class), is(false));
+
+        // The member referring to PrimitiveInteger gets a synthetic default trait and no box trait.
+        assertThat(model2.expectShape(fooBam).hasTrait(DefaultTrait.class), is(true));
+        assertThat(model2.expectShape(fooBam).hasTrait(BoxTrait.class), is(false));
+    }
+
+    @Test
+    public void boxTraitOnlyAddedToRootWhenNotSetToZeroValueDefault() {
+        Model model = Model.assembler()
+                .addUnparsedModel("foo.smithy", "$version: \"2.0\"\n"
+                                                + "namespace smithy.example\n"
+                                                + "\n"
+                                                + "@default(\"\")\n"
+                                                + "string DefaultString\n"
+                                                + "\n"
+                                                + "integer BoxedInteger\n"
+                                                + "\n"
+                                                + "@default(1)\n"
+                                                + "integer BoxedIntegerWithDefault\n"
+                                                + "\n"
+                                                + "@default(0)\n"
+                                                + "integer PrimitiveInteger\n"
+                                                + "\n"
+                                                + "structure Foo {\n"
+                                                + "    DefaultString: DefaultString = \"\"\n"
+                                                + "    BoxedInteger: BoxedInteger\n"
+                                                + "    PrimitiveInteger: PrimitiveInteger = 0\n"
+                                                + "    BoxedIntegerWithDefault: BoxedIntegerWithDefault = 1\n"
+                                                +"}\n")
+                .assemble()
+                .unwrap();
+
+        Node roundTripNode = ModelSerializer.builder().build().serialize(model);
+        Model roundTripModel = Model.assembler().addDocumentNode(roundTripNode).assemble().unwrap();
+
+        // Ensure it works when first loaded, and it works when round-tripped through the serializer and assembler.
+        boxTraitRootAssertionsV2(model, 0);
+        boxTraitRootAssertionsV2(roundTripModel, 1);
+    }
+
+    private void boxTraitRootAssertionsV2(Model model, int roundTrip) {
+        ShapeId defaultString = ShapeId.from("smithy.example#DefaultString");
+        ShapeId fooDefaultString = ShapeId.from("smithy.example#Foo$DefaultString");
+
+        ShapeId boxedInteger = ShapeId.from("smithy.example#BoxedInteger");
+        ShapeId fooBoxedInteger = ShapeId.from("smithy.example#Foo$BoxedInteger");
+
+        ShapeId boxedIntegerWithDefault = ShapeId.from("smithy.example#BoxedIntegerWithDefault");
+        ShapeId fooBoxedIntegerWithDefault = ShapeId.from("smithy.example#BoxedIntegerWithDefault");
+
+        ShapeId primitiveInteger = ShapeId.from("smithy.example#PrimitiveInteger");
+        ShapeId fooPrimitiveInteger = ShapeId.from("smithy.example#Foo$PrimitiveInteger");
+
+        // Do not box strings for v1 compatibility.
+        assertThat(model.expectShape(defaultString).hasTrait(BoxTrait.class), is(false));
+        assertThat(model.expectShape(fooDefaultString).hasTrait(BoxTrait.class), is(false));
+        assertThat(model.expectShape(fooDefaultString).hasTrait(DefaultTrait.class), is(true));
+        assertThat(model.expectShape(defaultString).hasTrait(DefaultTrait.class), is(true));
+
+        // Add box to BoxedInteger because it has no default trait.
+        assertThat(model.expectShape(boxedInteger).hasTrait(BoxTrait.class), is(true));
+        assertThat(model.expectShape(fooBoxedInteger).hasTrait(BoxTrait.class), is(false)); // no need to box member too
+        assertThat(model.expectShape(boxedInteger).hasTrait(DefaultTrait.class), is(false));
+        assertThat(model.expectShape(fooBoxedInteger).hasTrait(DefaultTrait.class), is(false));
+
+        // Add box to BoxedIntegerWithDefault because it has a default that isn't the v1 zero value.
+        assertThat(model.expectShape(boxedIntegerWithDefault).hasTrait(BoxTrait.class), is(true));
+        assertThat(model.expectShape(fooBoxedIntegerWithDefault).hasTrait(BoxTrait.class), is(true)); // no need to box the member too
+        assertThat(model.expectShape(boxedIntegerWithDefault).hasTrait(DefaultTrait.class), is(true));
+        assertThat(model.expectShape(fooBoxedIntegerWithDefault).hasTrait(DefaultTrait.class), is(true));
+
+        // No box trait on PrimitiveInteger because it has a zero value default.
+        assertThat(model.expectShape(primitiveInteger).hasTrait(BoxTrait.class), is(false));
+        assertThat(model.expectShape(fooPrimitiveInteger).hasTrait(BoxTrait.class), is(false));
+        assertThat(model.expectShape(primitiveInteger).hasTrait(DefaultTrait.class), is(true));
+        assertThat(model.expectShape(fooPrimitiveInteger).hasTrait(DefaultTrait.class), is(true));
+    }
+
+    @Test
+    public void doesNotFailWhenUpgradingWhenZeroValueIncompatibleWithRangeTrait() {
+        ValidatedResult<Model> result = Model.assembler()
+                .addImport(getClass().getResource("range-upgrade-1.0.smithy"))
+                .assemble();
+
+        assertThat(result.isBroken(), is(false));
+
+        Model model1 = result.unwrap();
+        ShapeId shapeId1 = ShapeId.from("smithy.example#MyLong1");
+        Shape shape1 = model1.expectShape(shapeId1);
+
+        assertThat(shape1.hasTrait(RangeTrait.class), is(true));
+        // Make sure the range trait wasn't modified.
+        assertThat(shape1.expectTrait(RangeTrait.class).getMin().get().toString(), equalTo("1"));
+        assertThat(result.getValidationEvents().stream()
+                           .anyMatch(event -> event.getMessage().contains("must be greater than or equal to 1")),
+                   is(true));
     }
 }

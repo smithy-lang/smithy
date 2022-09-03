@@ -22,6 +22,7 @@ structure PrimitiveBearer {
     handlesComments: PrimitiveShort, // comment
 
     @required
+    @default(0)
     handlesRequired: PrimitiveLong,
 
     handlesBox: PrimitiveByte,

@@ -99,7 +99,10 @@ public final class ShapeMatcher<S extends Shape> extends TypeSafeMatcher<ShapeId
                 .description("Member is marked with @required or @default trait")
                 .addAssertion(member -> !member.hasTrait(RequiredTrait.class),
                               member -> "Member is marked with the @required trait")
-                .addAssertion(member -> !member.hasTrait(DefaultTrait.class),
+                .addAssertion(member -> {
+                                  DefaultTrait trait = member.getTrait(DefaultTrait.class).orElse(null);
+                                  return trait == null || trait.toNode().isNullNode();
+                              },
                               member -> "Member is marked with the @default trait")
                 .build();
     }

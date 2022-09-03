@@ -75,7 +75,10 @@ public final class SmithyIdlModelSerializer {
      */
     private enum TraitFeature {
         /** Inline documentation traits with other traits as opposed to using /// syntax. */
-        NO_SPECIAL_DOCS_SYNTAX;
+        NO_SPECIAL_DOCS_SYNTAX,
+
+        /** Serializing a member, so special default syntax can be used. */
+        MEMBER;
 
         /**
          * Checks if the current enum value is present in an array of enum values.
@@ -467,7 +470,7 @@ public final class SmithyIdlModelSerializer {
             } else {
                 codeWriter.openBlock("{", "}", () -> {
                     for (MemberShape member : members) {
-                        serializeTraits(member.getAllTraits());
+                        serializeTraits(member.getAllTraits(), TraitFeature.MEMBER);
                         String assignment = "";
                         if (member.hasTrait(DefaultTrait.class)) {
                             assignment = " = " + Node.printJson(member.expectTrait(DefaultTrait.class).toNode());
@@ -522,6 +525,7 @@ public final class SmithyIdlModelSerializer {
 
         private void serializeTraits(Map<ShapeId, Trait> traits, TraitFeature... traitFeatures) {
             boolean noSpecialDocsSyntax = TraitFeature.NO_SPECIAL_DOCS_SYNTAX.hasFeature(traitFeatures);
+            boolean isMember = TraitFeature.MEMBER.hasFeature(traitFeatures);
 
             // The documentation trait always needs to be serialized first since it uses special syntax.
             if (!noSpecialDocsSyntax && traits.containsKey(DocumentationTrait.ID)) {
@@ -534,7 +538,14 @@ public final class SmithyIdlModelSerializer {
             traits.values().stream()
                     .filter(trait -> noSpecialDocsSyntax || !(trait instanceof DocumentationTrait))
                     // The default and enumValue traits are serialized using the assignment syntactic sugar.
-                    .filter(trait -> !(trait instanceof DefaultTrait) && !(trait instanceof EnumValueTrait))
+                    .filter(trait -> {
+                        if (trait instanceof EnumValueTrait) {
+                            return false;
+                        } else {
+                            // Default traits are serialized normally for non-members, but omitted for members.
+                            return !isMember || !(trait instanceof DefaultTrait);
+                        }
+                    })
                     .filter(traitFilter)
                     .sorted(Comparator.comparing(Trait::toShapeId))
                     .forEach(this::serializeTrait);

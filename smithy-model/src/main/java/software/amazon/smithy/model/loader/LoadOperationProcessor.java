@@ -29,9 +29,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.TraitFactory;
-import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.model.validation.Validator;
 
 final class LoadOperationProcessor implements Consumer<LoadOperation> {
 
@@ -98,15 +96,6 @@ final class LoadOperationProcessor implements Consumer<LoadOperation> {
                         && !operation.getSourceLocation().getFilename().isEmpty()) {
                     modelVersions.put(operation.getSourceLocation().getFilename(), operation.version);
                 }
-
-                if (operation.version.isDeprecated()) {
-                    events.add(ValidationEvent.builder()
-                            .id(Validator.MODEL_DEPRECATION)
-                            .severity(Severity.WARNING)
-                            .message("Smithy IDL " + operation.version + " is deprecated. Please upgrade to 2.0.")
-                            .sourceLocation(operation.getSourceLocation())
-                            .build());
-                }
             }
         };
     }
@@ -122,7 +111,8 @@ final class LoadOperationProcessor implements Consumer<LoadOperation> {
 
     Version getShapeVersion(Shape shape) {
         SourceLocation location = shape.getSourceLocation();
-        if (location.equals(SourceLocation.none())) {
+        // Nodes might have no sourcelocation or an empty filename.
+        if (location == SourceLocation.NONE || location.getFilename().isEmpty()) {
             return shapeMap.getShapeVersion(shape.getId());
         } else {
             return modelVersions.getOrDefault(location.getFilename(), Version.UNKNOWN);

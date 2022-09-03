@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.model.transform;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.loader.ModelAssemblerTest;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ListShape;
@@ -38,6 +41,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.MapUtils;
 
 public class RenameShapesTest {
 
@@ -377,5 +381,51 @@ public class RenameShapesTest {
 
         assertTrue(result.getShape(ShapeId.from("com.example#string")).isPresent());
         assertTrue(result.getShape(ShapeId.from("com.example#String")).isPresent());
+    }
+
+    @Test
+    public void transformKeepsSyntheticBoxTraitsV2() {
+        Model model1 = Model.assembler()
+                .addImport(ModelAssemblerTest.class.getResource("needs-downgrade-document-node.json"))
+                .assemble()
+                .unwrap();
+
+        ShapeId originalBoxedId = ShapeId.from("smithy.example#BoxDouble");
+        ShapeId originalPrimitiveId = ShapeId.from("smithy.example#PrimitiveDouble");
+        ShapeId updatedPrimitiveId = ShapeId.from("smithy.example2#PrimitiveDouble");
+
+        Model model2 = ModelTransformer.create().renameShapes(model1, MapUtils.of(
+            ShapeId.from("smithy.example#PrimitiveDouble"),
+            updatedPrimitiveId
+        ));
+
+        assertThat(model2.expectShape(updatedPrimitiveId).getAllTraits(),
+                   equalTo(model1.expectShape(originalPrimitiveId).getAllTraits()));
+
+        assertThat(model2.expectShape(originalBoxedId).getAllTraits(),
+                   equalTo(model1.expectShape(originalBoxedId).getAllTraits()));
+    }
+
+    @Test
+    public void transformKeepsSyntheticBoxTraitsV1() {
+        Model model1 = Model.assembler()
+                .addImport(ModelAssemblerTest.class.getResource("needs-upgrade-document-node.json"))
+                .assemble()
+                .unwrap();
+
+        ShapeId originalBoxedId = ShapeId.from("smithy.example#BoxDouble");
+        ShapeId originalPrimitiveId = ShapeId.from("smithy.example#PrimitiveDouble");
+        ShapeId updatedPrimitiveId = ShapeId.from("smithy.example2#PrimitiveDouble");
+
+        Model model2 = ModelTransformer.create().renameShapes(model1, MapUtils.of(
+            ShapeId.from("smithy.example#PrimitiveDouble"),
+            updatedPrimitiveId
+        ));
+
+        assertThat(model2.expectShape(updatedPrimitiveId).getAllTraits(),
+                   equalTo(model1.expectShape(originalPrimitiveId).getAllTraits()));
+
+        assertThat(model2.expectShape(originalBoxedId).getAllTraits(),
+                   equalTo(model1.expectShape(originalBoxedId).getAllTraits()));
     }
 }

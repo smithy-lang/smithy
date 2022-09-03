@@ -1,10 +1,10 @@
-
 software.amazon.smithy.diff.evaluators.AddedEntityBinding
 software.amazon.smithy.diff.evaluators.AddedMetadata
 software.amazon.smithy.diff.evaluators.AddedOperationError
 software.amazon.smithy.diff.evaluators.AddedServiceError
 software.amazon.smithy.diff.evaluators.AddedShape
 software.amazon.smithy.diff.evaluators.AddedTraitDefinition
+software.amazon.smithy.diff.evaluators.ChangedDefault
 software.amazon.smithy.diff.evaluators.ChangedEnumTrait
 software.amazon.smithy.diff.evaluators.ChangedLengthTrait
 software.amazon.smithy.diff.evaluators.ChangedMemberOrder

@@ -1,0 +1,2 @@
+[ERROR] smithy.example#Foo$bad1: Member defines a default value that differs from the default value of the target shape, smithy.api#PrimitiveInteger. The member has a default of `1`, but the target has a default of `0`. | DefaultTrait
+[ERROR] smithy.example#Foo$bad2: Member targets smithy.api#PrimitiveInteger, which requires that the member defines the same default of `0` | DefaultTrait

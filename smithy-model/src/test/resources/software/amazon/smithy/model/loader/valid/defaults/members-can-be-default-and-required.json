@@ -1,0 +1,17 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#Foo": {
+            "type": "structure",
+            "members": {
+                "bar": {
+                    "target": "smithy.api#Integer",
+                    "traits": {
+                        "smithy.api#default": 0,
+                        "smithy.api#required": {}
+                    }
+                }
+            }
+        }
+    }
+}

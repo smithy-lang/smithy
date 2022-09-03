@@ -15,12 +15,11 @@
 
 package software.amazon.smithy.model.validation.node;
 
-import java.util.function.BiConsumer;
-import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.LengthTrait;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
@@ -34,16 +33,10 @@ final class MapLengthPlugin extends MemberAndShapeTraitPlugin<MapShape, ObjectNo
     }
 
     @Override
-    protected void check(
-            Shape shape,
-            LengthTrait trait,
-            ObjectNode node,
-            Context context,
-            BiConsumer<FromSourceLocation, String> emitter
-    ) {
+    protected void check(Shape shape, LengthTrait trait, ObjectNode node, Context context, Emitter emitter) {
         trait.getMin().ifPresent(min -> {
             if (node.size() < min) {
-                emitter.accept(node, String.format(
+                emitter.accept(node, Severity.ERROR, String.format(
                         "Value provided for `%s` must have at least %d entries, but the provided value only "
                         + "has %d entries", shape.getId(), min, node.size()));
             }
@@ -51,7 +44,7 @@ final class MapLengthPlugin extends MemberAndShapeTraitPlugin<MapShape, ObjectNo
 
         trait.getMax().ifPresent(max -> {
             if (node.size() > max) {
-                emitter.accept(node, String.format(
+                emitter.accept(node, Severity.ERROR, String.format(
                         "Value provided for `%s` must have no more than %d entries, but the provided value "
                         + "has %d entries", shape.getId(), max, node.size()));
             }

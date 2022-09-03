@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
+import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -109,6 +110,22 @@ public final class MemberShape extends Shape implements ToSmithyBuilder<MemberSh
      */
     public boolean isOptional() {
         return !isRequired();
+    }
+
+    /**
+     * @return Returns true if the member has a default set explicitly to null.
+     */
+    public boolean hasNullDefault() {
+        DefaultTrait defaultTrait = getTrait(DefaultTrait.class).orElse(null);
+        return defaultTrait != null && defaultTrait.toNode().isNullNode();
+    }
+
+    /**
+     * @return Returns true if the member has a default not set to null.
+     */
+    public boolean hasNonNullDefault() {
+        DefaultTrait defaultTrait = getTrait(DefaultTrait.class).orElse(null);
+        return defaultTrait != null && !defaultTrait.toNode().isNullNode();
     }
 
     @Override

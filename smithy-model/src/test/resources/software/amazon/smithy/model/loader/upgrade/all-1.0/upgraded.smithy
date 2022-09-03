@@ -8,7 +8,7 @@ structure Bytes {
     @default(0)
     nonNull: PrimitiveByte,
 
-    nullable2: PrimitiveByte,
+    nullable2: PrimitiveByte = null,
 }
 
 structure Shorts {
@@ -17,7 +17,7 @@ structure Shorts {
     @default(0)
     nonNull: PrimitiveShort,
 
-    nullable2: PrimitiveShort,
+    nullable2: PrimitiveShort = null,
 }
 
 structure Integers {
@@ -30,7 +30,7 @@ structure Integers {
     @range(min: 0, max: 1)
     ranged: PrimitiveInteger,
 
-    nullable2: PrimitiveInteger
+    nullable2: PrimitiveInteger = null
 }
 
 structure BlobPayload {

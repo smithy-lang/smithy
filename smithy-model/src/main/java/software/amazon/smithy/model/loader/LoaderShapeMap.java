@@ -29,11 +29,13 @@ import java.util.function.Function;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -141,7 +143,10 @@ final class LoaderShapeMap {
             // Remove traits from the shape and members and send them through the merging logic of loader
             // filtering out the synthetic ones to avoid attempting to reparse them.
             for (Trait trait : shape.getIntroducedTraits().values()) {
-                if (!trait.isSynthetic()) {
+                // Special case round-tripping the box trait since it can be re-loaded and is needed in
+                // order to round-trip models without causing equality issues.
+                boolean notSynthetic = !trait.isSynthetic();
+                if (notSynthetic || trait.toShapeId().equals(BoxTrait.ID)) {
                     processor.accept(LoadOperation.ApplyTrait.from(shape.getId(), trait));
                 }
             }
@@ -311,8 +316,36 @@ final class LoaderShapeMap {
     private boolean validateConflicts(ShapeId id, Shape built, Shape previous) {
         if (previous != null && built != null) {
             if (!previous.equals(built)) {
+                // Create a small diff to make it easier to diagnose conflicts.
+                StringJoiner joiner = new StringJoiner("; ");
+                if (built.getType() != previous.getType()) {
+                    joiner.add("Left is " + built.getType() + ", right is " + previous.getType());
+                }
+                if (!built.getMixins().equals(previous.getMixins())) {
+                    joiner.add("Left mixins: " + built.getMixins() + ", right mixins: " + previous.getMixins());
+                }
+                if (!built.getAllTraits().equals(previous.getAllTraits())) {
+                    built.getAllTraits().forEach((tid, t) -> {
+                        if (!previous.hasTrait(tid)) {
+                            joiner.add("Left has trait " + tid);
+                        } else if (!previous.getAllTraits().get(tid).equals(t)) {
+                            joiner.add("Left trait " + tid + " differs from right trait. "
+                                       + Node.printJson(t.toNode()) + " vs "
+                                       + Node.printJson(previous.getAllTraits().get(tid).toNode()));
+                        }
+                    });
+                    previous.getAllTraits().forEach((tid, t) -> {
+                        if (!built.hasTrait(tid)) {
+                            joiner.add("Right has trait " + tid);
+                        }
+                    });
+                }
+                if (!built.getAllMembers().equals(previous.getAllMembers())) {
+                    joiner.add("Members differ: " + built.getAllMembers().keySet()
+                               + " vs " + previous.getAllMembers().keySet());
+                }
                 events.add(LoaderUtils.onShapeConflict(id, built.getSourceLocation(),
-                                                       previous.getSourceLocation()));
+                                                       previous.getSourceLocation(), joiner.toString()));
                 return false;
             } else if (!LoaderUtils.isSameLocation(built, previous)) {
                 LOGGER.warning(() -> "Ignoring duplicate but equivalent shape definition: " + id
@@ -330,6 +363,8 @@ final class LoaderShapeMap {
     ) {
         try {
             AbstractShapeBuilder<?, ?> builder = defineShape.builder();
+            ModelUpgrader.patchShapeBeforeBuilding(defineShape, builder, events);
+
             for (MemberShape.Builder memberBuilder : defineShape.memberBuilders().values()) {
                 for (ShapeModifier modifier : defineShape.modifiers()) {
                     modifier.modifyMember(builder, memberBuilder, traitClaimer, createdShapeMap);

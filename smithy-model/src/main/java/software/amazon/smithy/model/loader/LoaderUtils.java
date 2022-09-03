@@ -62,15 +62,20 @@ final class LoaderUtils {
      * @param id Shape ID in conflict.
      * @param a The first location of this shape.
      * @param b The second location of this shape.
+     * @param message Message to append.
      * @return Returns the created validation event.
      */
-    static ValidationEvent onShapeConflict(ShapeId id, SourceLocation a, SourceLocation b) {
+    static ValidationEvent onShapeConflict(ShapeId id, SourceLocation a, SourceLocation b, String message) {
+        String formatted = String.format("Conflicting shape definition for `%s` found at `%s` and `%s`", id, a, b);
+        if (message != null) {
+            formatted += ". " + message;
+        }
         return ValidationEvent.builder()
                 .id(Validator.MODEL_ERROR)
                 .severity(Severity.ERROR)
                 .sourceLocation(b)
                 .shapeId(id)
-                .message(String.format("Conflicting shape definition for `%s` found at `%s` and `%s`", id, a, b))
+                .message(formatted)
                 .build();
     }
 

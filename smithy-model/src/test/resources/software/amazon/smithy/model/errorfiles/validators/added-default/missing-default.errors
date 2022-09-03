@@ -1,0 +1,1 @@
+[ERROR] smithy.example#Foo$bar: Trait `addedDefault` cannot be applied to `smithy.example#Foo$bar`. This trait may only be applied to shapes that match the following selector: structure > member [trait|default] | TraitTarget

@@ -1288,46 +1288,25 @@ referenced from within any namespace using a relative shape ID.
     @unitType
     structure Unit {}
 
-    @deprecated(
-        message: "Use Boolean instead, and add the @default trait to structure members that targets this shape",
-        since: "2.0"
-    )
+    @default(false)
     boolean PrimitiveBoolean
 
-    @deprecated(
-        message: "Use Byte instead, and add the @default trait to structure members that targets this shape",
-        since: "2.0"
-    )
+    @default(0)
     byte PrimitiveByte
 
-    @deprecated(
-        message: "Use Short instead, and add the @default trait to structure members that targets this shape",
-        since: "2.0"
-    )
+    @default(0)
     short PrimitiveShort
 
-    @deprecated(
-        message: "Use Integer instead, and add the @default trait to structure members that targets this shape",
-        since: "2.0"
-    )
+    @default(0)
     integer PrimitiveInteger
 
-    @deprecated(
-        message: "Use Long instead, and add the @default trait to structure members that targets this shape",
-        since: "2.0"
-    )
+    @default(0)
     long PrimitiveLong
 
-    @deprecated(
-        message: "Use Float instead, and add the @default trait to structure members that targets this shape",
-        since: "2.0"
-    )
+    @default(0)
     float PrimitiveFloat
 
-    @deprecated(
-        message: "Use Double instead, and add the @default trait to structure members that targets this shape",
-        since: "2.0"
-    )
+    @default(0)
     double PrimitiveDouble
 
 
