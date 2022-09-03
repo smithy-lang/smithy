@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.NullableIndex;
 import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.StringNode;
@@ -29,7 +30,9 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.AddedDefaultTrait;
 import software.amazon.smithy.model.traits.BoxTrait;
+import software.amazon.smithy.model.traits.ClientOptionalTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.RangeTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
@@ -69,15 +72,27 @@ final class ModelUpgrader {
     }
 
     ValidatedResult<Model> transform() {
-        // Upgrade structure members in v1 models to add the default trait if needed. Upgrading unknown versions
-        // can cause things like projections to build a model, feed it back into the assembler, and then lose the
-        // original context of which version the model was built with, causing it to be errantly upgraded.
+        // TODO: can these transforms be more efficiently moved into the loader?
         for (StructureShape struct : model.getStructureShapes()) {
-            if (!Prelude.isPreludeShape(struct) && fileToVersion.apply(struct) == Version.VERSION_1_0) {
-                for (MemberShape member : struct.getAllMembers().values()) {
-                    model.getShape(member.getTarget()).ifPresent(target -> {
-                        upgradeV1Member(member, target);
-                    });
+            if (!Prelude.isPreludeShape(struct)) {
+                if (fileToVersion.apply(struct) == Version.VERSION_1_0) {
+                    // Upgrade structure members in v1 models to add the default trait if needed. Upgrading unknown
+                    // versions can cause things like projections to build a model, feed it back into the assembler,
+                    // and then lose the original context of which version the model was built with, causing it to be
+                    // errantly upgraded.
+                    for (MemberShape member : struct.getAllMembers().values()) {
+                        model.getShape(member.getTarget()).ifPresent(target -> {
+                            upgradeV1Member(member, target);
+                        });
+                    }
+                } else if (fileToVersion.apply(struct) == Version.VERSION_2_0) {
+                    // Path v2 based members with the box trait when necessary in order for v1 based tooling to
+                    // correctly interpret a v2 model.
+                    for (MemberShape member : struct.getAllMembers().values()) {
+                        model.getShape(member.getTarget()).ifPresent(target -> {
+                            patchV2MemberForV1Support(member, target);
+                        });
+                    }
                 }
             }
         }
@@ -140,7 +155,6 @@ final class ModelUpgrader {
         return true;
     }
 
-    @SuppressWarnings("deprecation")
     private boolean shouldV1MemberHaveDefaultTrait(MemberShape member, Shape target) {
         // Only when the targeted shape had a default value by default in v1 or if
         // the member has the http payload trait and targets a streaming blob, which
@@ -148,6 +162,8 @@ final class ModelUpgrader {
         return (HAD_DEFAULT_VALUE_IN_1_0.contains(target.getType()) || isDefaultPayload(member, target))
             // Don't re-add the @default trait
             && !member.hasTrait(DefaultTrait.ID)
+            // Don't add the default trait if the member has clientOptional.
+            && !member.hasTrait(ClientOptionalTrait.class)
             // Don't add a @default trait if the member was explicitly boxed in v1.
             && !member.hasTrait(BoxTrait.ID)
             // Don't add a @default trait if the targeted shape was explicitly boxed in v1.
@@ -162,5 +178,48 @@ final class ModelUpgrader {
         } else {
             return target.hasTrait(StreamingTrait.ID) && target.isBlobShape();
         }
+    }
+
+    private void patchV2MemberForV1Support(MemberShape member, Shape target) {
+        // Only apply box to members where the trait can be applied.
+        if (canBoxTargetThisKindOfShape(target) && memberAndTargetAreNotAlreadyExplicitlyBoxed(member, target)) {
+            if (isMemberInherentlyBoxedInV1(member) || memberDoesNotHaveDefaultZeroValueTrait(member, target)) {
+                // The member should be considered boxed by v1 implementations:
+                // * The member can be boxed.
+                // * The member isn't already boxed based on the member or target shape. v1 implementations will
+                //   already look to the target for the box trait.
+                // * It has no default zero value. It might have a default, but if the default isn't the zero
+                //   value, then it's ignored by v1 implementations.
+                shapeUpgrades.add(member.toBuilder().addTrait(new BoxTrait()).build());
+            }
+        }
+    }
+
+    // Only apply box to members where the trait can be applied. Note that intEnum is treated
+    // like a normal integer in v1 implementations, so it is allowed to be synthetically boxed.
+    private boolean canBoxTargetThisKindOfShape(Shape target) {
+        return HAD_DEFAULT_VALUE_IN_1_0.contains(target.getType()) || target.isIntEnumShape();
+    }
+
+    // Don't upgrade if the member is already boxed somehow (e.g., an in-memory transform already occurred),
+    // and need to add the box trait to the member since it's already on the target.
+    private boolean memberAndTargetAreNotAlreadyExplicitlyBoxed(MemberShape member, Shape target) {
+        return !(member.hasTrait(BoxTrait.ID) || target.hasTrait(BoxTrait.ID));
+    }
+
+    // If the shape has no box trait but does have the addedDefault trait, then v1 Smithy implementations
+    // should consider the member boxed because the default trait was added after initially shipping the
+    // member. The same is true for the clientOptional trait -- it's a requirement for v2 client generators to
+    // make the shape optional, and since v1 generators don't use the updated nullability semantics, this
+    // trait should make all v1 implementations treat the member as nullable.
+    private boolean isMemberInherentlyBoxedInV1(MemberShape member) {
+        return member.hasTrait(AddedDefaultTrait.class) || member.hasTrait(ClientOptionalTrait.class);
+    }
+
+    // If the member has a default trait set to the zero value, then consider the member
+    // "un-boxed". At this point, if the member does not fit into this category, then member is
+    // not considered boxed.
+    private boolean memberDoesNotHaveDefaultZeroValueTrait(MemberShape member, Shape target) {
+        return !NullableIndex.isShapeSetToDefaultZeroValueInV1(member, target);
     }
 }

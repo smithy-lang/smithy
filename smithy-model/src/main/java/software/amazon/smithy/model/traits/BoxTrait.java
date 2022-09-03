@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.model.traits;
 
+import software.amazon.smithy.model.knowledge.NullableIndex;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -22,7 +23,10 @@ import software.amazon.smithy.model.shapes.ShapeId;
 /**
  * Indicates that a shape is boxed, meaning a value may or may not be present.
  *
- * <p>This trait is only used in Smithy IDL 1.0 models.
+ * <p>This trait is only used in Smithy IDL 1.0 models and is not allowed in
+ * 2.0 models.
+ *
+ * @deprecated Use {@link NullableIndex} instead.
  */
 @Deprecated
 public final class BoxTrait extends AnnotationTrait {

@@ -1,6 +1,7 @@
 package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
 import java.io.IOException;
@@ -9,21 +10,29 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.ShapeMatcher;
+import software.amazon.smithy.model.knowledge.NullableIndex;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ModelSerializer;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.Validator;
+import software.amazon.smithy.utils.IoUtils;
+import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.Pair;
 
 public class ModelUpgraderTest {
     @Test
@@ -194,5 +203,89 @@ public class ModelUpgraderTest {
                 .addEventAssertion(Validator.MODEL_ERROR, Severity.ERROR,
                                    "@box is not supported in Smithy IDL 2.0")
                 .build();
+    }
+
+    // This test ensures that the upgrader properly upgrades 1.0 models to 2.0 models, back patches 2.0 models with
+    // synthetic box traits so they work with 1.0 implementations, and that serializing and deserializing an upgraded
+    // model carries the same nullability results in both 1.0 and 2.0 implementations (it can't be lossy).
+    @Test
+    public void ensuresConsistentNullabilityAcrossVersions() {
+        Pattern splitPattern = Pattern.compile("\r\n|\r|\n");
+        List<Pair<String, String>> cases = ListUtils.of(
+            Pair.of("1-to-2", "nullableBooleanBoxedTarget"),
+            Pair.of("1-to-2", "nullableBooleanBoxedNonPreludeTarget"),
+            Pair.of("1-to-2", "nullableBooleanInV1BoxedTargetRequired"),
+            Pair.of("1-to-2", "nonNullableBooleanUnboxedTarget"),
+            Pair.of("1-to-2", "nullableBooleanBoxedMember"),
+            Pair.of("1-to-2", "nonNullableBooleanUnboxedCustomTarget"),
+            Pair.of("1-to-2", "nullableIntegerBoxedTarget"),
+            Pair.of("1-to-2", "nullableIntegerBoxedNonPreludeTarget"),
+            Pair.of("1-to-2", "nullableIntegerInV1BoxedTargetRequired"),
+            Pair.of("1-to-2", "nonNullableIntegerUnboxedTarget"),
+            Pair.of("1-to-2", "nullableIntegerBoxedMember"),
+            Pair.of("1-to-2", "nonNullableIntegerUnboxedCustomTarget"),
+
+            Pair.of("2-to-1", "booleanDefaultZeroValueToNonNullable"),
+            Pair.of("2-to-1", "booleanDefaultNonZeroValueToNullable"),
+            Pair.of("2-to-1", "booleanRequiredToNullable"),
+            Pair.of("2-to-1", "booleanDefaultWithAddedTraitToNullable"),
+            Pair.of("2-to-1", "booleanDefaultWithClientOptionalTraitToNullable"),
+            Pair.of("2-to-1", "intEnumSetToZeroValueToNonNullable")
+
+            // This test is currently broken and needs to be fixed in ModelUpgrade.
+            //, Pair.of("2-to-1", "booleanDefaultZeroValueToNonNullablePrelude")
+        );
+
+        cases.forEach(pair -> {
+            String suite = pair.left;
+            String name = pair.right;
+
+            // Load the contents of the model as a string and parse out the expected nullability JSON
+            // from the comment on the first line.
+            String contents = IoUtils.readUtf8Resource(getClass(), "upgrade-box/" + suite + "/" + name + ".smithy");
+            String[] lines = splitPattern.split(contents, 2);
+            String expectedJsonValue = lines[0].replace("// ", "").trim();
+            ObjectNode expectedNode = Node.parse(expectedJsonValue).expectObjectNode();
+            Map<String, Boolean> nullability = new HashMap<>();
+            expectedNode.getStringMap().forEach((k, v) -> nullability.put(k, v.expectBooleanNode().getValue()));
+
+            Model original = Model.assembler()
+                    .addUnparsedModel(name + ".smithy", contents)
+                    .assemble()
+                    .unwrap();
+
+            upgradeAssertions(name, original, nullability, 0);
+
+            // Round trip the model twice just to be certain nothing is getting lost between
+            // serializations.
+            Model updatedModel = original;
+            for (int tripCount = 1; tripCount <= 2; tripCount++) {
+                Node serialized = ModelSerializer.builder().build().serialize(updatedModel);
+                updatedModel = Model.assembler()
+                        .addDocumentNode(serialized)
+                        .assemble()
+                        .unwrap();
+                upgradeAssertions(name, updatedModel, nullability, tripCount);
+            }
+        });
+    }
+
+    private void upgradeAssertions(String name, Model model, Map<String, Boolean> expected, int roundTrip) {
+        NullableIndex index = NullableIndex.of(model);
+        ShapeId shape = ShapeId.from("smithy.example#Foo$" + name);
+        Map<String, Boolean> result = new HashMap<>();
+        result.put("v1", index.isNullable(shape));
+        result.put("v2", index.isMemberNullable(model.expectShape(shape, MemberShape.class)));
+
+        String reason = "Expected " + name + " to have nullability of " + expected + " but found "
+                        + result + " (round trip #" + roundTrip + ')';
+
+        assertThat(reason, expected, equalTo(result));
+
+        // Check that box-trait style detection works the same as v1 checks in the nullable index. This ensurse that
+        // box style detection even on round-tripped models works as expected.
+        String reasonBox = "Expected box checks to be " + result.get("v1") + " for " + name;
+        assertThat(reasonBox, model.expectShape(shape, MemberShape.class)
+                .getMemberTrait(model, BoxTrait.class).isPresent(), equalTo(result.get("v1")));
     }
 }

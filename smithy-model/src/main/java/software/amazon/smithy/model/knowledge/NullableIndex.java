@@ -198,6 +198,7 @@ public class NullableIndex implements KnowledgeIndex {
             case BYTE:
             case SHORT:
             case INTEGER:
+            case INT_ENUM: // treat INT_ENUM like integer shapes.
             case LONG:
             case FLOAT:
             case DOUBLE:
