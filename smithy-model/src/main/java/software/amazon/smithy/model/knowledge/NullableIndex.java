@@ -19,10 +19,11 @@ import java.lang.ref.WeakReference;
 import java.util.Objects;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.BooleanNode;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.shapes.UnionShape;
@@ -33,6 +34,7 @@ import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.InputTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.SparseTrait;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * An index that checks if a member is nullable.
@@ -104,15 +106,6 @@ public class NullableIndex implements KnowledgeIndex {
                 // assigned a default trait when they are "upgraded".
                 if (member.hasTrait(DefaultTrait.class)) {
                     return false;
-                }
-
-                // Detects Smithy IDL 1.0 shapes that were marked as nullable using the box trait. When a structure
-                // member is loaded from a 1.0 model, the member is "upgraded" from v1 to v2 in the semantic model.
-                // Any member that was implicitly nullable in v1 gets a synthetic box trait on the member. Box traits
-                // are not allowed in 2.0 models, so this check is specifically here to ensure that the intended
-                // nullability semantics of 1.0 models are honored and not to interfere with 2.0 nullability semantics.
-                if (member.hasTrait(BoxTrait.class)) {
-                    return true;
                 }
 
                 // A 2.0 member with the required trait is never nullable.
@@ -237,7 +230,7 @@ public class NullableIndex implements KnowledgeIndex {
                     // Then it's for sure nullable in v1.
                     return true;
                 } else {
-                    return !isShapeSetToDefaultZeroValue(member, target);
+                    return !isShapeSetToDefaultZeroValueInV1(member, target);
                 }
             case MAP:
                 // Map keys can never be null.
@@ -252,25 +245,41 @@ public class NullableIndex implements KnowledgeIndex {
         }
     }
 
-    private boolean isShapeSetToDefaultZeroValue(MemberShape member, Shape target) {
-        DefaultTrait defaultTrait = member.getTrait(DefaultTrait.class).orElse(null);
-        if (defaultTrait == null) {
+    /**
+     * Detects if the given member is configured to use the zero value for the target shape
+     * using Smithy 1.0 semantics (that is, it targets a number shape other than bigInteger
+     * or bigDecimal and set to 0; or it targets a boolean shape and is set to false).
+     *
+     * @param member Member to check.
+     * @param target Shape target to check.
+     * @return Returns true if the member has a default trait set to a v1 zero value.
+     */
+    @SmithyUnstableApi
+    public static boolean isShapeSetToDefaultZeroValueInV1(MemberShape member, Shape target) {
+        if (!member.hasTrait(DefaultTrait.ID)) {
             return false;
-        } else if (target instanceof NumberShape && !(target.isBigDecimalShape() || target.isBigIntegerShape())) {
-            // Number shapes are considered non-nullable in IDL 1.0 only if set to 0.
-            return defaultTrait.toNode()
-                    .asNumberNode()
-                    .map(NumberNode::getValue)
-                    .filter(value -> value.longValue() == 0)
-                    .isPresent();
-        } else if (target.isBooleanShape()) {
-            // Boolean shapes are considered non-nullable in IDL 1.0 only if set to false.
-            return defaultTrait.toNode()
-                    .asBooleanNode()
-                    .map(BooleanNode::getValue)
-                    .filter(value -> !value)
-                    .isPresent();
         }
-        return false;
+
+        ShapeType targetType = target.getType();
+        Node defaultValue = member.getAllTraits().get(DefaultTrait.ID).toNode();
+
+        switch (targetType) {
+            case BOOLEAN:
+                return defaultValue
+                        .asBooleanNode()
+                        .map(BooleanNode::getValue)
+                        .filter(value -> !value)
+                        .isPresent();
+            case BYTE:
+            case SHORT:
+            case INTEGER:
+            case INT_ENUM: // v1 models treat intEnum like a normal enum.
+            case LONG:
+            case FLOAT:
+            case DOUBLE:
+                return defaultValue.asNumberNode().filter(NumberNode::isZero).isPresent();
+            default:
+                return false;
+        }
     }
 }
