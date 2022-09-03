@@ -18,11 +18,15 @@ package software.amazon.smithy.model.knowledge;
 import java.lang.ref.WeakReference;
 import java.util.Objects;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.BooleanNode;
+import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.AddedDefaultTrait;
 import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.ClientOptionalTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
@@ -212,19 +216,28 @@ public class NullableIndex implements KnowledgeIndex {
 
     private boolean isMemberNullableInV1(Model model, MemberShape member) {
         Shape container = model.getShape(member.getContainer()).orElse(null);
+        Shape target = model.getShape(member.getTarget()).orElse(null);
 
         // Ignore broken models in this index. Other validators handle these checks.
-        if (container == null) {
+        if (container == null || target == null) {
             return false;
         }
 
         switch (container.getType()) {
             case STRUCTURE:
-                // Only structure shapes look at the box trait.
                 if (member.hasTrait(BoxTrait.class)) {
+                    // The box trait is still around in memory and the model hasn't been reserialized,
+                    // then the shape is for sure nullable in v1.
+                    return true;
+                } else if (member.hasTrait(AddedDefaultTrait.class)) {
+                    // If the default trait was added to a member post-hoc, then v1 model semantics should ignore it.
+                    return true;
+                } else if (isNullable(member.getTarget())) {
+                    // Does the target shape still have a box trait in memory and the shape hasn't been reserialized?
+                    // Then it's for sure nullable in v1.
                     return true;
                 } else {
-                    return isNullable(member.getTarget());
+                    return !isShapeSetToDefaultZeroValue(member, target);
                 }
             case MAP:
                 // Map keys can never be null.
@@ -237,5 +250,27 @@ public class NullableIndex implements KnowledgeIndex {
             default:
                 return false;
         }
+    }
+
+    private boolean isShapeSetToDefaultZeroValue(MemberShape member, Shape target) {
+        DefaultTrait defaultTrait = member.getTrait(DefaultTrait.class).orElse(null);
+        if (defaultTrait == null) {
+            return false;
+        } else if (target instanceof NumberShape && !(target.isBigDecimalShape() || target.isBigIntegerShape())) {
+            // Number shapes are considered non-nullable in IDL 1.0 only if set to 0.
+            return defaultTrait.toNode()
+                    .asNumberNode()
+                    .map(NumberNode::getValue)
+                    .filter(value -> value.longValue() == 0)
+                    .isPresent();
+        } else if (target.isBooleanShape()) {
+            // Boolean shapes are considered non-nullable in IDL 1.0 only if set to false.
+            return defaultTrait.toNode()
+                    .asBooleanNode()
+                    .map(BooleanNode::getValue)
+                    .filter(value -> !value)
+                    .isPresent();
+        }
+        return false;
     }
 }

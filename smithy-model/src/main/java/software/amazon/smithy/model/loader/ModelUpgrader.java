@@ -32,7 +32,6 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.RangeTrait;
-import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.Severity;
@@ -105,25 +104,7 @@ final class ModelUpgrader {
                 builder.addTrait(new DefaultTrait(new NumberNode(0, builder.getSourceLocation())));
             }
             shapeUpgrades.add(builder.build());
-        } else if (isMemberImplicitlyBoxed(member, target)) {
-            // Add a synthetic box trait to the shape.
-            MemberShape.Builder builder = member.toBuilder();
-            builder.addTrait(new BoxTrait());
-            shapeUpgrades.add(builder.build());
         }
-    }
-
-    // If it's for sure a v1 shape and was implicitly boxed, then add a synthetic box trait to the member
-    // so that tooling that works with both v1 and v2 shapes can know if a shape was considered nullable in 1.0.
-    // This is particularly important if the member is required. A required member in 2.0 semantics is considered
-    // non-nullable, but considered nullable in 1.0 if the member targets a primitive shape. However, once a v1
-    // model is loaded into memory, tooling no longer can differentiate between required in 1.0 or required in
-    // 2.0. With these synthetic box traits, tooling can look for the box trait on a member to detect v1
-    // nullability semantics.
-    private boolean isMemberImplicitlyBoxed(MemberShape member, Shape target) {
-        return !member.hasTrait(DefaultTrait.class) // don't add box if it has a default trait.
-               && !member.hasTrait(BoxTrait.class) // don't add box again
-               && target.hasTrait(BoxTrait.class);
     }
 
     private boolean isZeroValidDefault(MemberShape member) {
@@ -164,18 +145,22 @@ final class ModelUpgrader {
         // Only when the targeted shape had a default value by default in v1 or if
         // the member has the http payload trait and targets a streaming blob, which
         // implies a default in 2.0
-        return (HAD_DEFAULT_VALUE_IN_1_0.contains(target.getType()) || isDefaultPayload(target))
+        return (HAD_DEFAULT_VALUE_IN_1_0.contains(target.getType()) || isDefaultPayload(member, target))
             // Don't re-add the @default trait
             && !member.hasTrait(DefaultTrait.ID)
-            // Don't add a @default trait if it will conflict with the @required trait.
-            && !member.hasTrait(RequiredTrait.ID)
             // Don't add a @default trait if the member was explicitly boxed in v1.
             && !member.hasTrait(BoxTrait.ID)
             // Don't add a @default trait if the targeted shape was explicitly boxed in v1.
             && !target.hasTrait(BoxTrait.ID);
     }
 
-    private boolean isDefaultPayload(Shape target) {
-        return target.hasTrait(StreamingTrait.ID) && target.isBlobShape();
+    private boolean isDefaultPayload(MemberShape member, Shape target) {
+        // httpPayload requires that the member is required or default.
+        // No need to add the default trait if the member is required.
+        if (member.isRequired()) {
+            return false;
+        } else {
+            return target.hasTrait(StreamingTrait.ID) && target.isBlobShape();
+        }
     }
 }

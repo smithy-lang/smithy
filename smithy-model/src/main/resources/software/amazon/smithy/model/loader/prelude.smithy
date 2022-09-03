@@ -290,15 +290,23 @@ structure httpApiKeyAuth {
 /// Provides a structure member with a default value.
 @trait(
     selector: "structure > member :test(> :is(simpleType, list, map))",
-    conflicts: [required],
-    // The default trait can never be removed. It can only be added if the
-    // member is or was previously marked as required.
+    // The default trait can never be removed. It can only be added if the member was previously marked as
+    // required and the @addedDefault trait is added.
     breakingChanges: [
         {change: "remove"},
         {change: "update", severity: "DANGER", message: "Default values should only be changed when absolutely necessary."}
     ]
 )
 document default
+
+/// Indicates that the default trait was added to a member.
+@trait(
+    selector: "structure > member [trait|default]",
+    breakingChanges: [
+        {change: "remove"}
+    ]
+)
+structure addedDefault {}
 
 /// Requires that non-authoritative generators like clients treat a structure member as
 /// nullable regardless of if the member is also marked with the required trait.
@@ -652,10 +660,7 @@ structure range {
 string pattern
 
 /// Marks a structure member as required, meaning a value for the member MUST be present.
-@trait(
-    selector: "structure > member"
-    conflicts: [default]
-)
+@trait(selector: "structure > member")
 structure required {}
 
 /// Configures a structure member's resource property mapping behavior.

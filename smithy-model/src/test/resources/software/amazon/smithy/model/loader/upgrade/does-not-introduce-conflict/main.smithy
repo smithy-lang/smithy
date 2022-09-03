@@ -5,6 +5,7 @@ namespace smithy.example
 structure Foo {
     alreadyDefault: PrimitiveInteger,
 
+    // This shape is both default and required.
     @required
     alreadyRequired: PrimitiveInteger,
 
@@ -17,8 +18,7 @@ structure Foo {
 
     explicitlyBoxedTarget: BoxedInteger,
 
-    // This shape cannot be boxed because it targeted a long that was a primitive.
-    // This shape also cannot be default because it's required.
+    // This shape is both default and required.
     @required
     customPrimitiveLong: MyPrimitiveLong
 }

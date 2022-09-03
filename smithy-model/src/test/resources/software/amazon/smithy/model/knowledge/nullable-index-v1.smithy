@@ -15,11 +15,6 @@ structure Foo {
     nullable5: MyBoolean,
     nullable6: MyStruct,
 
-    // because this was defined in 1.0, it's still nullable because the required trait wasn't
-    // use in 1.0 nullability rules.
-    @required
-    nullable7: MyBoolean,
-
     nonNullable1: PrimitiveInteger,
     nonNullable2: PrimitiveBoolean,
     nonNullable3: MyPrimitiveBoolean
@@ -31,3 +26,11 @@ boolean MyBoolean
 boolean MyPrimitiveBoolean
 
 structure MyStruct {}
+
+structure Baz {
+    @required
+    bar: Integer,
+
+    @required
+    bam: PrimitiveInteger
+}

@@ -32,6 +32,7 @@ import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.ModelSerializer;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -245,14 +246,30 @@ public class NullableIndexTest {
     }
 
     @Test
-    public void worksWithV1NullabilityRulesForInteger() {
-        // In Smithy v1, integer was non-nullable by default.
+    public void worksWithV2NullabilityRulesForInteger() {
+        // 2.0 nullability rules are assumed. Using a model assembler with a 1.0 model will ensure that 1.0
+        // semantics are used in the NullableIndex.
         IntegerShape integer = IntegerShape.builder()
                 .id("smithy.example#Integer")
                 .build();
         StructureShape struct = StructureShape.builder()
                 .id("smithy.example#Struct")
                 .addMember("foo", integer.getId())
+                .build();
+        Model model = Model.builder().addShapes(integer, struct).build();
+        NullableIndex index = NullableIndex.of(model);
+
+        assertThat(index.isNullable(struct.getMember("foo").get()), is(true));
+    }
+
+    @Test
+    public void settingDefaultIsNoticedByNullableIndexToo() {
+        IntegerShape integer = IntegerShape.builder()
+                .id("smithy.example#Integer")
+                .build();
+        StructureShape struct = StructureShape.builder()
+                .id("smithy.example#Struct")
+                .addMember("foo", integer.getId(), b -> b.addTrait(new DefaultTrait(Node.from(0))))
                 .build();
         Model model = Model.builder().addShapes(integer, struct).build();
         NullableIndex index = NullableIndex.of(model);
@@ -418,18 +435,90 @@ public class NullableIndexTest {
                 .assemble()
                 .unwrap();
 
+        // Re-serialize to test with a 2.0 model.
+        Model model2 = Model.assembler()
+                .addDocumentNode(ModelSerializer.builder().build().serialize(model))
+                .assemble()
+                .unwrap();
+
+        correctlyDeterminesNullabilityOfUpgradedV1ModelsAssertions(model);
+        correctlyDeterminesNullabilityOfUpgradedV1ModelsAssertions(model2);
+    }
+
+    private void correctlyDeterminesNullabilityOfUpgradedV1ModelsAssertions(Model model) {
         NullableIndex index = NullableIndex.of(model);
 
         for (MemberShape shape : model.getMemberShapes()) {
-            if (shape.getId().getNamespace().equals("smithy.example")) {
+            if (shape.getId().getNamespace().equals("smithy.example") && shape.getId().getName().equals("Foo")) {
                 if (shape.getMemberName().startsWith("nullable")) {
-                    assertThat(index.isMemberNullable(shape), is(true));
-                    assertThat(index.isNullable(shape), is(true));
+                    assertThat(shape + " is member nullable", index.isMemberNullable(shape), is(true));
+                    assertThat(shape + " is nullable", index.isNullable(shape), is(true));
                 } else if (shape.getMemberName().startsWith("nonNullable")) {
-                    assertThat(index.isMemberNullable(shape), is(false));
-                    assertThat(index.isNullable(shape), is(false));
+                    assertThat(shape + " member not nullable", index.isMemberNullable(shape), is(false));
+                    assertThat(shape + " not nullable", index.isNullable(shape), is(false));
                 }
             }
         }
+    }
+
+    @Test
+    public void requiresIsNotInherentlyNonNullIn1_0() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("nullable-index-v1.smithy"))
+                .assemble()
+                .unwrap();
+
+        // Re-serialize to test with a 2.0 model.
+        Model model2 = Model.assembler()
+                .addDocumentNode(ModelSerializer.builder().build().serialize(model))
+                .assemble()
+                .unwrap();
+
+        requiresIsNotInherentlyNonNullIn1_0_Assertions(model);
+        requiresIsNotInherentlyNonNullIn1_0_Assertions(model2);
+    }
+
+    private void requiresIsNotInherentlyNonNullIn1_0_Assertions(Model model) {
+        NullableIndex index = NullableIndex.of(model);
+
+        // V1 and V2 rules diverge for this member.
+        assertThat(index.isNullable(ShapeId.from("smithy.example#Baz$bar")), is(true));
+        assertThat(index.isNullable(ShapeId.from("smithy.example#Baz$bam")), is(false));
+
+        assertThat(index.isMemberNullable(model.expectShape(ShapeId.from("smithy.example#Baz$bar"), MemberShape.class)),
+                   is(false));
+        assertThat(index.isMemberNullable(model.expectShape(ShapeId.from("smithy.example#Baz$bam"), MemberShape.class)),
+                   is(false));
+    }
+
+    @Test
+    public void addedDefaultMakesMemberNullableInV1NotV2() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("nullable-index-added-default.smithy"))
+                .assemble()
+                .unwrap();
+
+        // Re-serialize to test with a 2.0 model.
+        Model model2 = Model.assembler()
+                .addDocumentNode(ModelSerializer.builder().build().serialize(model))
+                .assemble()
+                .unwrap();
+
+        addedDefaultMakesMemberNullableInV1NotV2Assertions(model);
+        addedDefaultMakesMemberNullableInV1NotV2Assertions(model2);
+    }
+
+    private void addedDefaultMakesMemberNullableInV1NotV2Assertions(Model model) {
+        NullableIndex index = NullableIndex.of(model);
+
+        // In 1.0 based semantics, the required trait is ignored. Because of this, if the
+        // default trait is added to a member that wasn't required before, then v1 tools needs to
+        // know because it needs to not treat the shape as non-null as that would transistion the
+        // shape from nullable to non-nullable.
+        assertThat(index.isNullable(ShapeId.from("smithy.example#Foo$baz")), is(true));
+
+        // In v2 based semantics and tools, the addedDefault trait is ignored.
+        assertThat(index.isMemberNullable(model.expectShape(ShapeId.from("smithy.example#Foo$baz"), MemberShape.class)),
+                   is(false));
     }
 }

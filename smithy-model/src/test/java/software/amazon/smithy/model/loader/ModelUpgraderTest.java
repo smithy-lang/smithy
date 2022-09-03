@@ -1,7 +1,6 @@
 package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 import java.io.IOException;
@@ -21,7 +20,6 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ModelSerializer;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
@@ -196,25 +194,5 @@ public class ModelUpgraderTest {
                 .addEventAssertion(Validator.MODEL_ERROR, Severity.ERROR,
                                    "@box is not supported in Smithy IDL 2.0")
                 .build();
-    }
-
-    @Test
-    public void addSyntheticBoxTrait() {
-        Model model = Model.assembler()
-                .addImport(getClass().getResource("upgrade/does-not-introduce-conflict/main.smithy"))
-                .assemble()
-                .unwrap();
-
-        assertThat(hasBoxTrait(model, "smithy.example#Foo$alreadyDefault"), is(false));
-        assertThat(hasBoxTrait(model, "smithy.example#Foo$alreadyRequired"), is(false));
-        assertThat(hasBoxTrait(model, "smithy.example#Foo$boxedMember"), is(true));
-        assertThat(hasBoxTrait(model, "smithy.example#Foo$explicitlyBoxedTarget"), is(true));
-        assertThat(hasBoxTrait(model, "smithy.example#Foo$previouslyBoxedTarget"), is(true));
-        assertThat(hasBoxTrait(model, "smithy.example#Foo$customPrimitiveLong"), is(false));
-    }
-
-    @SuppressWarnings("deprecation")
-    private boolean hasBoxTrait(Model model, String shape) {
-        return model.expectShape(ShapeId.from(shape)).hasTrait(BoxTrait.class);
     }
 }

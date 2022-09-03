@@ -1,3 +1,4 @@
+software.amazon.smithy.model.traits.AddedDefaultTrait$Provider
 software.amazon.smithy.model.traits.AuthDefinitionTrait$Provider
 software.amazon.smithy.model.traits.AuthTrait$Provider
 software.amazon.smithy.model.traits.BoxTrait$Provider
