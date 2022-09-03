@@ -168,10 +168,9 @@ Structure member optionality
 
 Whether a structure member is optional is determined by evaluating the
 :ref:`required-trait`, :ref:`default-trait`, :ref:`clientOptional-trait`,
-and :ref:`input-trait`. Authoritative model consumers like servers MAY choose
-to determine optionality using more restrictive rules by ignoring the
-``@input`` and ``@clientOptional`` traits.
-
+:ref:`input-trait`, and :ref:`addedDefault-trait`. Authoritative model
+consumers like servers MAY choose to determine optionality using more
+restrictive rules by ignoring the ``@input`` and ``@clientOptional`` traits.
 
 .. list-table::
     :header-rows: 1
@@ -262,19 +261,27 @@ need to be provided without breaking previously generated code.
 .. rubric:: Migrating ``@required`` to ``@default``
 
 If a ``required`` member no longer needs to be be required, the ``required``
-trait MAY be removed and replaced with the :ref:`default-trait`. The member
-is still considered always present to tools like code generators, but instead
-of requiring the value to be provided by an end-user, a default value is
-automatically provided if missing. For example, the previous ``TimeSpan``
-model can be backward compatibly changed to:
+trait MAY be removed and replaced with the :ref:`default-trait`. Alternatively,
+a ``default`` trait MAY be added to a member marked as ``required`` to
+provide a default value for the member but require that it is serialized.
+Either way, the member is still considered always present to tools like code
+generators, but instead of requiring the value to be provided by an end-user,
+a default value is automatically provided if missing. For example, the previous
+``TimeSpan`` model can be backward compatibly changed to:
 
 .. code-block:: smithy
 
     structure TimeSpan {
-        // @required is replaced with @default
+        // @required is replaced with @default and @addedDefault
+        @addedDefault
         years: Integer = 0
         days: Integer = 0
     }
+
+The :ref:`addeddefault-trait` trait SHOULD be used any time a ``default`` trait is
+added to a previously published member. Some tooling does not treat the
+``required`` trait as non-nullable but does treat the ``default`` trait as
+non-nullable.
 
 .. rubric:: Requiring members to be optional
 

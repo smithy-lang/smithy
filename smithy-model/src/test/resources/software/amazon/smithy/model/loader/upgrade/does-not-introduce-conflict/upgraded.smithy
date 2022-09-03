@@ -7,18 +7,21 @@ structure Foo {
     alreadyDefault: PrimitiveInteger,
 
     @required
+    @default(0)
     alreadyRequired: PrimitiveInteger,
 
-    boxedMember: PrimitiveInteger,
+    boxedMember: PrimitiveInteger = null,
 
     previouslyBoxedTarget: Integer,
 
     explicitlyBoxedTarget: BoxedInteger,
 
     @required
+    @default(0)
     customPrimitiveLong: MyPrimitiveLong
 }
 
 integer BoxedInteger
 
+@default(0)
 long MyPrimitiveLong

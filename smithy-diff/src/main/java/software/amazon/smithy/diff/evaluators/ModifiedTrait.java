@@ -33,6 +33,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.Severity;
@@ -100,7 +101,8 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
             changedShape.getTraitDifferences().forEach((traitId, oldTraitNewTraitPair) -> {
                 Trait oldTrait = oldTraitNewTraitPair.left;
                 Trait newTrait = oldTraitNewTraitPair.right;
-                if (strategies.containsKey(traitId)) {
+                // Do not emit for the box trait because it is added and removed for backward compatibility.
+                if (!traitId.equals(BoxTrait.ID) && strategies.containsKey(traitId)) {
                     for (DiffStrategy strategy : strategies.get(traitId)) {
                         List<ValidationEvent> diffEvents = strategy.diffType.validate(
                                 differences.getNewModel(),

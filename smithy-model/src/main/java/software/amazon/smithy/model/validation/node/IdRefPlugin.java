@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.model.validation.node;
 
-import java.util.function.BiConsumer;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.StringNode;
@@ -23,6 +22,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.IdRefTrait;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
@@ -38,13 +38,7 @@ final class IdRefPlugin extends MemberAndShapeTraitPlugin<StringShape, StringNod
     }
 
     @Override
-    protected void check(
-            Shape shape,
-            IdRefTrait trait,
-            StringNode node,
-            Context context,
-            BiConsumer<FromSourceLocation, String> emitter
-    ) {
+    protected void check(Shape shape, IdRefTrait trait, StringNode node, Context context, Emitter emitter) {
         try {
             ShapeId target = node.expectShapeId();
             Shape resolved = context.model().getShape(target).orElse(null);
@@ -62,7 +56,7 @@ final class IdRefPlugin extends MemberAndShapeTraitPlugin<StringShape, StringNod
                 }
             }
         } catch (SourceException e) {
-            emitter.accept(node, e.getMessageWithoutLocation());
+            emitter.accept(node, Severity.ERROR, e.getMessageWithoutLocation());
         }
     }
 
@@ -74,12 +68,7 @@ final class IdRefPlugin extends MemberAndShapeTraitPlugin<StringShape, StringNod
         }
     }
 
-    private void failWhenNoMatch(
-            FromSourceLocation location,
-            IdRefTrait trait,
-            BiConsumer<FromSourceLocation, String> emitter,
-            String message
-    ) {
-        emitter.accept(location, trait.getErrorMessage().orElse(message));
+    private void failWhenNoMatch(FromSourceLocation location, IdRefTrait trait, Emitter emitter, String message) {
+        emitter.accept(location, Severity.ERROR, trait.getErrorMessage().orElse(message));
     }
 }

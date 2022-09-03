@@ -79,6 +79,7 @@ import software.amazon.smithy.model.validation.ValidatedResultException;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.model.validation.ValidatorFactory;
+import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
 
 public class ModelAssemblerTest {
@@ -130,8 +131,6 @@ public class ModelAssemblerTest {
                                 .withMember("type", Node.from("string"))));
         ValidatedResult<Model> result = new ModelAssembler().addDocumentNode(node).assemble();
 
-        assertThat(result.getValidationEvents().stream().anyMatch(e -> e.getMessage().contains("is deprecated")),
-                   is(true));
         assertTrue(result.unwrap().getShape(ShapeId.from("ns.foo#String")).isPresent());
     }
 
@@ -824,6 +823,24 @@ public class ModelAssemblerTest {
     }
 
     @Test
+    public void providesDiffWhenConflictsAreFound() {
+        String a = "$version: \"2\"\n"
+                   + "namespace foo.baz\n"
+                   + "integer Foo\n";
+        String b = "$version: \"2\"\n"
+                   + "namespace foo.baz\n"
+                   + "@default(0)\n"
+                   + "long Foo\n";
+        ValidatedResult<Model> result = new ModelAssembler()
+                .addUnparsedModel("1.smithy", a)
+                .addUnparsedModel("2.smithy", b)
+                .assemble();
+
+        assertTrue(result.isBroken());
+        assertThat(result.getValidationEvents().get(0).getMessage(), containsString("Left is long, right is integer"));
+    }
+
+    @Test
     public void canRoundTripShapesWithMixinsThroughAssembler() {
         StructureShape mixin = StructureShape.builder()
                 .id("smithy.example#Mixin")
@@ -934,18 +951,110 @@ public class ModelAssemblerTest {
     }
 
     @Test
-    public void doesNotEmitWarningsTwice() {
-        List<ValidationEvent> events = new ArrayList<>();
-        Model.assembler()
-                .addUnparsedModel("foo.smithy", "$version: \"1.0\"\n")
-                .validationEventListener(e -> {
-                    if (e.getId().equals(Validator.MODEL_DEPRECATION)) {
-                        events.add(e);
-                    }
-                })
+    public void upgrades1_0_documentNodesToo() {
+        // Loads fine through import.
+        Model model1 = Model.assembler()
+                .addImport(getClass().getResource("needs-upgrade-document-node.json"))
                 .assemble()
                 .unwrap();
 
-        assertThat(events, hasSize(1));
+        // And through unparsed.
+        String contents = IoUtils.readUtf8Resource(getClass(), "needs-upgrade-document-node.json");
+        Model model2 = Model.assembler()
+                .addUnparsedModel("foo.json", contents)
+                .assemble()
+                .unwrap();
+
+        // And through document node.
+        Node node = Node.parse(contents);
+        Model model3 = Model.assembler()
+                .addDocumentNode(node)
+                .assemble()
+                .unwrap();
+
+        // Pathological case.
+        Model model4 = Model.assembler()
+                .addModel(model1)
+                .addModel(model2)
+                .addModel(model3)
+                .addDocumentNode(node)
+                .addUnparsedModel("foo.json", contents)
+                .assemble()
+                .unwrap();
+
+        assertThat(model1, equalTo(model2));
+        assertThat(model1, equalTo(model3));
+        assertThat(model1, equalTo(model4));
+    }
+
+    @Test
+    public void patches2_0_documentNodesToo() {
+        ShapeId boxDouble = ShapeId.from("smithy.example#BoxDouble");
+
+        // Loads fine through import.
+        Model model1 = Model.assembler()
+                .addImport(getClass().getResource("needs-downgrade-document-node.json"))
+                .assemble()
+                .unwrap();
+
+        assertThat(model1.expectShape(boxDouble).hasTrait(BoxTrait.class), is(true));
+
+        // And through unparsed.
+        String contents = IoUtils.readUtf8Resource(getClass(), "needs-downgrade-document-node.json");
+        Model model2 = Model.assembler()
+                .addUnparsedModel("foo.json", contents)
+                .assemble()
+                .unwrap();
+
+        assertThat(model2.expectShape(boxDouble).hasTrait(BoxTrait.class), is(true));
+
+        // And through document node.
+        Node node = Node.parse(contents);
+        Model model3 = Model.assembler()
+                .addDocumentNode(node)
+                .assemble()
+                .unwrap();
+
+        assertThat(model3.expectShape(boxDouble).hasTrait(BoxTrait.class), is(true));
+
+        // Pathological case.
+        Model model4 = Model.assembler()
+                .addModel(model1)
+                .addModel(model2)
+                .addModel(model3)
+                .addDocumentNode(node)
+                .addUnparsedModel("foo.json", contents)
+                .assemble()
+                .unwrap();
+
+        assertThat(model4.expectShape(boxDouble).hasTrait(BoxTrait.class), is(true));
+
+        assertThat(model1, equalTo(model2));
+        assertThat(model1, equalTo(model3));
+        assertThat(model1, equalTo(model4));
+    }
+
+    @Test
+    public void syntheticBoxingResultsInSameModelBetween1and2() {
+        Model model1 = Model.assembler()
+                .addImport(getClass().getResource("synthetic-boxing-1.smithy"))
+                .assemble()
+                .unwrap();
+
+        Model model2 = Model.assembler()
+                .addImport(getClass().getResource("synthetic-boxing-2.smithy"))
+                .assemble()
+                .unwrap();
+
+        Model model3 = Model.assembler()
+                .addImport(getClass().getResource("synthetic-boxing-1.smithy"))
+                .addImport(getClass().getResource("synthetic-boxing-2.smithy"))
+                .addModel(model1)
+                .addModel(model2)
+                .assemble()
+                .unwrap();
+
+        assertThat(model1, equalTo(model2));
+        assertThat(model1, equalTo(model3));
     }
 }

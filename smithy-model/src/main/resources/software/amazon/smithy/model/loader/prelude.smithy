@@ -30,46 +30,25 @@ double Double
 @unitType
 structure Unit {}
 
-@deprecated(
-    message: "Use Boolean instead, and add the @default trait to structure members that targets this shape",
-    since: "2.0"
-)
+@default(false)
 boolean PrimitiveBoolean
 
-@deprecated(
-    message: "Use Byte instead, and add the @default trait to structure members that targets this shape",
-    since: "2.0"
-)
+@default(0)
 byte PrimitiveByte
 
-@deprecated(
-    message: "Use Short instead, and add the @default trait to structure members that targets this shape",
-    since: "2.0"
-)
+@default(0)
 short PrimitiveShort
 
-@deprecated(
-    message: "Use Integer instead, and add the @default trait to structure members that targets this shape",
-    since: "2.0"
-)
+@default(0)
 integer PrimitiveInteger
 
-@deprecated(
-    message: "Use Long instead, and add the @default trait to structure members that targets this shape",
-    since: "2.0"
-)
+@default(0)
 long PrimitiveLong
 
-@deprecated(
-    message: "Use Float instead, and add the @default trait to structure members that targets this shape",
-    since: "2.0"
-)
+@default(0)
 float PrimitiveFloat
 
-@deprecated(
-    message: "Use Double instead, and add the @default trait to structure members that targets this shape",
-    since: "2.0"
-)
+@default(0)
 double PrimitiveDouble
 
 /// Makes a shape a trait.
@@ -169,6 +148,18 @@ structure deprecated {
     /// A description of when the shape was deprecated (e.g., a date or version).
     since: String,
 }
+
+/// Used only in Smithy 1.0 to indicate that a shape is boxed.
+/// This trait cannot be used in Smithy 2.0 models.
+///
+/// When a boxed shape is the target of a member, the member
+/// may or may not contain a value, and the member has no default value.
+@trait(
+    selector: """
+        :test(boolean, byte, short, integer, long, float, double,
+            member > :test(boolean, byte, short, integer, long, float, double))"""
+)
+structure box {}
 
 /// Adds documentation to a shape or member using CommonMark syntax.
 @trait
@@ -287,18 +278,23 @@ structure httpApiKeyAuth {
     scheme: NonEmptyString,
 }
 
-/// Provides a structure member with a default value.
+/// Provides a structure member with a default value. When added to root level shapes, requires that every
+/// targeting structure member defines the same default value on the member or sets a default of null.
+///
+/// This trait can currently only be used in Smithy 2.0 models.
 @trait(
-    selector: "structure > member :test(> :is(simpleType, list, map))",
-    conflicts: [required],
-    // The default trait can never be removed. It can only be added if the
-    // member is or was previously marked as required.
-    breakingChanges: [
-        {change: "remove"},
-        {change: "update", severity: "DANGER", message: "Default values should only be changed when absolutely necessary."}
-    ]
+    selector: ":is(simpleType, list, map, structure > member :test(> :is(simpleType, list, map)))"
 )
 document default
+
+/// Indicates that the default trait was added to a member.
+@trait(
+    selector: "structure > member [trait|default]",
+    breakingChanges: [
+        {change: "remove"}
+    ]
+)
+structure addedDefault {}
 
 /// Requires that non-authoritative generators like clients treat a structure member as
 /// nullable regardless of if the member is also marked with the required trait.
@@ -652,10 +648,7 @@ structure range {
 string pattern
 
 /// Marks a structure member as required, meaning a value for the member MUST be present.
-@trait(
-    selector: "structure > member"
-    conflicts: [default]
-)
+@trait(selector: "structure > member")
 structure required {}
 
 /// Configures a structure member's resource property mapping behavior.

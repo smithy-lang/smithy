@@ -15,8 +15,6 @@
 
 package software.amazon.smithy.model.validation.node;
 
-import java.util.function.BiConsumer;
-import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
@@ -37,7 +35,7 @@ abstract class MemberAndShapeTraitPlugin<S extends Shape, N extends Node, T exte
 
     @Override
     @SuppressWarnings("unchecked")
-    public final void apply(Shape shape, Node value, Context context, BiConsumer<FromSourceLocation, String> emitter) {
+    public final void apply(Shape shape, Node value, Context context, Emitter emitter) {
         if (nodeClass.isInstance(value)
                 && shape.getTrait(traitClass).isPresent()
                 && isMatchingShape(shape, context.model())) {
@@ -58,10 +56,5 @@ abstract class MemberAndShapeTraitPlugin<S extends Shape, N extends Node, T exte
                 .isPresent();
     }
 
-    protected abstract void check(
-            Shape shape,
-            T trait,
-            N value,
-            Context context,
-            BiConsumer<FromSourceLocation, String> emitter);
+    protected abstract void check(Shape shape, T trait, N value, Context context, Emitter emitter);
 }

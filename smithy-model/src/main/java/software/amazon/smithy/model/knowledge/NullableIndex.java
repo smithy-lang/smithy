@@ -18,17 +18,23 @@ package software.amazon.smithy.model.knowledge;
 import java.lang.ref.WeakReference;
 import java.util.Objects;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.BooleanNode;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.AddedDefaultTrait;
 import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.ClientOptionalTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.InputTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.SparseTrait;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * An index that checks if a member is nullable.
@@ -82,6 +88,39 @@ public class NullableIndex implements KnowledgeIndex {
         },
 
         /**
+         * Evaluates only default traits on members that are set to their zero value based on Smithy
+         * IDL 1.0 semantics (that is, only looks at shapes that had a zero value in Smithy v1, including byte,
+         * short, integer, long, float, double, and boolean. If a member is marked with addedDefault or with
+         * clientOptional or is in an input structure, then the member is always considered nullable.
+         */
+        @SmithyUnstableApi
+        CLIENT_ZERO_VALUE_V1 {
+            @Override
+            boolean isStructureMemberOptional(StructureShape container, MemberShape member, Shape target) {
+                return container.hasTrait(InputTrait.class)
+                       || CLIENT_ZERO_VALUE_V1_NO_INPUT.isStructureMemberOptional(container, member, target);
+            }
+        },
+
+        /**
+         * Evaluates only default traits on members that are set to their zero value based on Smithy
+         * IDL 1.0 semantics (that is, only looks at shapes that had a zero value in Smithy v1, including byte,
+         * short, integer, long, float, double, and boolean. If a member is marked with addedDefault or with
+         * clientOptional, then the member is always considered nullable.
+         */
+        @SmithyUnstableApi
+        CLIENT_ZERO_VALUE_V1_NO_INPUT {
+            @Override
+            boolean isStructureMemberOptional(StructureShape container, MemberShape member, Shape target) {
+                if (member.hasTrait(AddedDefaultTrait.class) || member.hasTrait(ClientOptionalTrait.class)) {
+                    return true;
+                }
+
+                return !isShapeSetToDefaultZeroValueInV1(member, target);
+            }
+        },
+
+        /**
          * A server, or any other kind of authoritative model consumer
          * that does not honor the {@link InputTrait} and {@link ClientOptionalTrait}.
          *
@@ -96,23 +135,15 @@ public class NullableIndex implements KnowledgeIndex {
         SERVER {
             @Override
             boolean isStructureMemberOptional(StructureShape container, MemberShape member, Shape target) {
-                // A member with the default trait is never nullable. Note that even 1.0 models will be
-                // assigned a default trait when they are "upgraded".
-                if (member.hasTrait(DefaultTrait.class)) {
-                    return false;
-                }
-
-                // Detects Smithy IDL 1.0 shapes that were marked as nullable using the box trait. When a structure
-                // member is loaded from a 1.0 model, the member is "upgraded" from v1 to v2 in the semantic model.
-                // Any member that was implicitly nullable in v1 gets a synthetic box trait on the member. Box traits
-                // are not allowed in 2.0 models, so this check is specifically here to ensure that the intended
-                // nullability semantics of 1.0 models are honored and not to interfere with 2.0 nullability semantics.
-                if (member.hasTrait(BoxTrait.class)) {
+                // Defaults set to null on a member make the member optional.
+                if (member.hasNullDefault()) {
                     return true;
+                } else if (member.hasNonNullDefault()) {
+                    return false;
+                } else {
+                    // A 2.0 member with the required trait is never nullable.
+                    return !member.hasTrait(RequiredTrait.class);
                 }
-
-                // A 2.0 member with the required trait is never nullable.
-                return !member.hasTrait(RequiredTrait.class);
             }
         };
 
@@ -173,14 +204,15 @@ public class NullableIndex implements KnowledgeIndex {
     /**
      * Checks if the given shape is optional using Smithy IDL 1.0 semantics.
      *
-     * <p>This means that the default trait is ignored, the required trait
-     * is ignored, and only the box trait and sparse traits are used.
+     * <p>This method does not return the same values that are returned by
+     * {@link #isMemberNullable(MemberShape)}. This method uses 1.0 model
+     * semantics and attempts to detect when a model has been passed though
+     * model assembler upgrades to provide the most accurate v1 nullability
+     * result.
      *
      * <p>Use {@link #isMemberNullable(MemberShape)} to check using Smithy
      * IDL 2.0 semantics that take required, default, and other traits
-     * into account. That method also accurately returns the nullability of
-     * 1.0 members as long as the model it's checking was sent through a
-     * ModelAssembler.
+     * into account with no special 1.0 handling.
      *
      * @param shapeId Shape or shape ID to check.
      * @return Returns true if the shape is nullable.
@@ -212,20 +244,16 @@ public class NullableIndex implements KnowledgeIndex {
 
     private boolean isMemberNullableInV1(Model model, MemberShape member) {
         Shape container = model.getShape(member.getContainer()).orElse(null);
+        Shape target = model.getShape(member.getTarget()).orElse(null);
 
         // Ignore broken models in this index. Other validators handle these checks.
-        if (container == null) {
+        if (container == null || target == null) {
             return false;
         }
 
         switch (container.getType()) {
             case STRUCTURE:
-                // Only structure shapes look at the box trait.
-                if (member.hasTrait(BoxTrait.class)) {
-                    return true;
-                } else {
-                    return isNullable(member.getTarget());
-                }
+                return isMemberNullable(member, CheckMode.CLIENT_ZERO_VALUE_V1_NO_INPUT);
             case MAP:
                 // Map keys can never be null.
                 if (member.getMemberName().equals("key")) {
@@ -234,6 +262,63 @@ public class NullableIndex implements KnowledgeIndex {
             case LIST:
                 // Sparse lists and maps are considered nullable.
                 return container.hasTrait(SparseTrait.class);
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Detects if the given member is configured to use the zero value for the target shape
+     * using Smithy 1.0 semantics (that is, it targets a number shape other than bigInteger
+     * or bigDecimal and set to 0; or it targets a boolean shape and is set to false).
+     *
+     * @param member Member to check.
+     * @param target Shape target to check.
+     * @return Returns true if the member has a default trait set to a v1 zero value.
+     */
+    @SmithyUnstableApi
+    public static boolean isShapeSetToDefaultZeroValueInV1(MemberShape member, Shape target) {
+        DefaultTrait memberDefault = member.getTrait(DefaultTrait.class).orElse(null);
+        Node defaultValue = memberDefault == null ? null : memberDefault.toNode();
+
+        // No default or null default values on members are considered nullable.
+        if (defaultValue == null || defaultValue.isNullNode()) {
+            return false;
+        }
+
+        ShapeType targetType = target.getType();
+        return isDefaultZeroValueOfTypeInV1(defaultValue, targetType);
+    }
+
+    /**
+     * Detects if the given node value equals the default value of the given shape type
+     * based on Smithy 1.0 semantics.
+     *
+     * @param defaultValue Value to check.
+     * @param targetType Shape type to check against.
+     * @return Returns true if the value is the v1 zero value of the type.
+     */
+    @SmithyUnstableApi
+    public static boolean isDefaultZeroValueOfTypeInV1(Node defaultValue, ShapeType targetType) {
+        if (defaultValue == null) {
+            return false;
+        }
+
+        switch (targetType) {
+            case BOOLEAN:
+                return defaultValue
+                        .asBooleanNode()
+                        .map(BooleanNode::getValue)
+                        .filter(value -> !value)
+                        .isPresent();
+            case BYTE:
+            case SHORT:
+            case INTEGER:
+            case INT_ENUM: // v1 models treat intEnum like a normal enum.
+            case LONG:
+            case FLOAT:
+            case DOUBLE:
+                return defaultValue.asNumberNode().filter(NumberNode::isZero).isPresent();
             default:
                 return false;
         }

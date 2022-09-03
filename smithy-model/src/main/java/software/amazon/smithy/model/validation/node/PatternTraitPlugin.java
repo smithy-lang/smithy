@@ -15,12 +15,11 @@
 
 package software.amazon.smithy.model.validation.node;
 
-import java.util.function.BiConsumer;
-import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.PatternTrait;
+import software.amazon.smithy.model.validation.Severity;
 
 /**
  * Validates the pattern trait on string shapes or members that target them.
@@ -32,15 +31,9 @@ final class PatternTraitPlugin extends MemberAndShapeTraitPlugin<StringShape, St
     }
 
     @Override
-    protected void check(
-            Shape shape,
-            PatternTrait trait,
-            StringNode node,
-            Context context,
-            BiConsumer<FromSourceLocation, String> emitter
-    ) {
+    protected void check(Shape shape, PatternTrait trait, StringNode node, Context context, Emitter emitter) {
         if (!trait.getPattern().matcher(node.getValue()).find()) {
-            emitter.accept(node, String.format(
+            emitter.accept(node, Severity.ERROR, String.format(
                     "String value provided for `%s` must match regular expression: %s",
                     shape.getId(), trait.getPattern().pattern()));
         }

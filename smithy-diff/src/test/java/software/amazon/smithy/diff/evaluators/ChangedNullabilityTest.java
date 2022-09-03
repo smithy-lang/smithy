@@ -1,6 +1,7 @@
 package software.amazon.smithy.diff.evaluators;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
@@ -10,12 +11,16 @@ import software.amazon.smithy.diff.ModelDiff;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.ModelSerializer;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.BoxTrait;
+import software.amazon.smithy.model.traits.ClientOptionalTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.InputTrait;
-import software.amazon.smithy.model.traits.ClientOptionalTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
+import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -30,6 +35,29 @@ public class ChangedNullabilityTest {
         StructureShape b = StructureShape.builder()
                 .id("smithy.example#A")
                 .addMember("foo", s.getId(), b2 -> b2.addTrait(new DefaultTrait(Node.from(""))))
+                .build();
+        Model model1 = Model.builder().addShapes(s, a).build();
+        Model model2 = Model.builder().addShapes(s, b).build();
+        ModelDiff.Result result = ModelDiff.builder().oldModel(model1).newModel(model2).compare();
+
+        assertThat(result.getDiffEvents().stream()
+                           .filter(event -> event.getId().equals("ChangedNullability"))
+                           .count(), equalTo(0L));
+    }
+
+    @Test
+    public void addingDefaultWithRequiredTraitIsOk() {
+        StringShape s = StringShape.builder().id("smithy.example#Str").build();
+        StructureShape a = StructureShape.builder()
+                .id("smithy.example#A")
+                .addMember("foo", s.getId(), b1 -> b1.addTrait(new DefaultTrait(Node.from(""))))
+                .build();
+        StructureShape b = StructureShape.builder()
+                .id("smithy.example#A")
+                .addMember("foo", s.getId(), b2 -> {
+                    b2.addTrait(new RequiredTrait());
+                    b2.addTrait(new DefaultTrait(Node.from("")));
+                })
                 .build();
         Model model1 = Model.builder().addShapes(s, a).build();
         Model model2 = Model.builder().addShapes(s, b).build();
@@ -197,5 +225,84 @@ public class ChangedNullabilityTest {
                            .filter(event -> event.getId().equals("ChangedNullability"))
                            .filter(event -> event.getMessage().contains("The @input trait was removed from"))
                            .count(), equalTo(1L));
+    }
+
+    @Test
+    public void doesNotEmitForBackwardCompatibleBoxTraitChanges() {
+        Model old = Model.assembler()
+                .addImport(getClass().getResource("box-added-to-member.smithy"))
+                .assemble()
+                .unwrap();
+
+        ShapeId bazId = ShapeId.from("smithy.example#Example$baz");
+        ShapeId bamId = ShapeId.from("smithy.example#Example$bam");
+        Model newModel = ModelTransformer.create().mapShapes(old, shape -> {
+            // Add the box trait to both shapes.
+            if (shape.isMemberShape() && shape.getId().equals(bazId) || shape.getId().equals(bamId)) {
+                MemberShape.Builder b = ((MemberShape) shape).toBuilder();
+                b.addTrait(new BoxTrait());
+                return b.build();
+            }
+            return shape;
+        });
+
+        // First, spot check that the transform worked and the models are different.
+        assertThat(old.expectShape(bazId).hasTrait(BoxTrait.class), is(false));
+        assertThat(newModel.expectShape(bazId).hasTrait(BoxTrait.class), is(true));
+        assertThat(old.expectShape(bamId).hasTrait(BoxTrait.class), is(false));
+        assertThat(newModel.expectShape(bamId).hasTrait(BoxTrait.class), is(true));
+
+        List<ValidationEvent> events = ModelDiff.compare(old, newModel);
+
+        // No events should have been emitted for the addition of the backward compatible box trait.
+        assertThat(events, empty());
+    }
+
+    @Test
+    public void doesNotEmitForBackwardCompatibleBoxTraitChangesFromRoundTripping() {
+        Model old = Model.assembler()
+                .addImport(getClass().getResource("box-added-to-member.smithy"))
+                .assemble()
+                .unwrap();
+
+        Model newModel = Model.assembler()
+                .addDocumentNode(ModelSerializer.builder().build().serialize(old))
+                .assemble()
+                .unwrap();
+
+        List<ValidationEvent> events = ModelDiff.compare(old, newModel);
+
+        // No events should have been emitted for the addition of the backward compatible box trait.
+        assertThat(events, empty());
+    }
+
+    @Test
+    public void roundTrippedV1ModelHasNoEvents() {
+        String originalModel =
+                "$version: \"1.0\"\n"
+                + "namespace smithy.example\n"
+                + "integer MyPrimitiveInteger\n"
+                + "@box\n"
+                + "integer MyBoxedInteger\n"
+                + "structure Foo {\n"
+                + "    a: MyPrimitiveInteger,\n"
+                + "    @box\n"
+                + "    b: MyPrimitiveInteger,\n"
+                + "    c: MyBoxedInteger,\n"
+                + "    @box\n"
+                + "    d: MyBoxedInteger,\n"
+                + "}\n";
+        Model oldModel = Model.assembler().addUnparsedModel("test.smithy", originalModel).assemble().unwrap();
+
+        // Round trip the v1 model and make sure there are no diff events.
+        String unparsedNew = Node.prettyPrintJson(ModelSerializer.builder().build().serialize(oldModel));
+        Model newModel = Model.assembler()
+                .addUnparsedModel("test.json", unparsedNew)
+                .assemble()
+                .unwrap();
+
+        List<ValidationEvent> events = ModelDiff.compare(oldModel, newModel);
+
+        assertThat(events, empty());
     }
 }

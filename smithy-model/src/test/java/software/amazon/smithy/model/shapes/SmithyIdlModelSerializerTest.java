@@ -6,6 +6,8 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 import java.io.IOException;
@@ -21,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
@@ -195,5 +198,23 @@ public class SmithyIdlModelSerializerTest {
 
         assertThat(modelResult, containsString("list Set"));
         assertThat(modelResult, containsString("@uniqueItems"));
+    }
+
+    @Test
+    public void serializesRootLevelDefaults() {
+        String stringModel = "$version: \"2.0\"\n"
+                + "namespace smithy.example\n"
+                + "@default(false)\n"
+                + "boolean PrimitiveBool\n";
+        Model model = Model.assembler().addUnparsedModel("test.smithy", stringModel).assemble().unwrap();
+        Map<Path, String> reserialized = SmithyIdlModelSerializer.builder().build().serialize(model);
+        String modelResult = reserialized.get(Paths.get("smithy.example.smithy"));
+        Model model2 = Model.assembler().addUnparsedModel("test.smithy", modelResult).assemble().unwrap();
+
+        assertThat(model.expectShape(ShapeId.from("smithy.example#PrimitiveBool")).hasTrait(DefaultTrait.ID),
+                   is(true));
+        assertThat(model2.expectShape(ShapeId.from("smithy.example#PrimitiveBool")).hasTrait(DefaultTrait.ID),
+                   is(true));
+        assertThat(model2, equalTo(model2));
     }
 }

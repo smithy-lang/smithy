@@ -15,16 +15,18 @@
 
 package software.amazon.smithy.model.validation.node;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiConsumer;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.validation.NodeValidationVisitor;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
@@ -44,7 +46,7 @@ public interface NodeValidatorPlugin {
      * @param context Evaluation context.
      * @param emitter Consumer to notify of validation event locations and messages.
      */
-    void apply(Shape shape, Node value, Context context, BiConsumer<FromSourceLocation, String> emitter);
+    void apply(Shape shape, Node value, Context context, Emitter emitter);
 
     /**
      * @return Gets the built-in Node validation plugins.
@@ -68,6 +70,7 @@ public interface NodeValidatorPlugin {
     @SmithyInternalApi
     final class Context {
         private final Model model;
+        private final Set<NodeValidationVisitor.Feature> features;
 
         // Use an LRU cache to ensure the Selector cache doesn't grow too large
         // when given bad inputs.
@@ -83,7 +86,12 @@ public interface NodeValidatorPlugin {
          * @param model Model being evaluated.
          */
         public Context(Model model) {
+            this(model, Collections.emptySet());
+        }
+
+        public Context(Model model, Set<NodeValidationVisitor.Feature> features) {
             this.model = model;
+            this.features = features;
         }
 
         /**
@@ -108,5 +116,15 @@ public interface NodeValidatorPlugin {
         public Set<Shape> select(Selector selector) {
             return selectorResults.computeIfAbsent(selector, s -> s.select(model));
         }
+
+        public boolean hasFeature(NodeValidationVisitor.Feature feature) {
+            return features.contains(feature);
+        }
+    }
+
+    @SmithyInternalApi
+    @FunctionalInterface
+    interface Emitter {
+        void accept(FromSourceLocation sourceLocation, Severity severity, String message);
     }
 }
