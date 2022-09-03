@@ -9,8 +9,7 @@ namespace smithy.api
 @trait(
     selector: """
         :test(boolean, byte, short, integer, long, float, double,
-              member > :test(boolean, byte, short, integer, long, float, double))""",
-    breakingChanges: [{change: "presence"}]
+              member > :test(boolean, byte, short, integer, long, float, double))"""
 )
 structure box {}
 

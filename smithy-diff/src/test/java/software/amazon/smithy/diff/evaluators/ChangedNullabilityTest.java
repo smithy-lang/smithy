@@ -1,8 +1,10 @@
 package software.amazon.smithy.diff.evaluators;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -10,12 +12,16 @@ import software.amazon.smithy.diff.ModelDiff;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.ModelSerializer;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.BoxTrait;
+import software.amazon.smithy.model.traits.ClientOptionalTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.InputTrait;
-import software.amazon.smithy.model.traits.ClientOptionalTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
+import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -197,5 +203,57 @@ public class ChangedNullabilityTest {
                            .filter(event -> event.getId().equals("ChangedNullability"))
                            .filter(event -> event.getMessage().contains("The @input trait was removed from"))
                            .count(), equalTo(1L));
+    }
+
+    @Test
+    public void doesNotEmitForBackwardCompatibleBoxTraitChanges() {
+        Model old = Model.assembler()
+                .addImport(getClass().getResource("box-added-to-member.smithy"))
+                .assemble()
+                .unwrap();
+
+        ShapeId bazId = ShapeId.from("smithy.example#Example$baz");
+        ShapeId bamId = ShapeId.from("smithy.example#Example$bam");
+        Model newModel = ModelTransformer.create().mapShapes(old, shape -> {
+            // Add the box trait to both shapes.
+            if (shape.isMemberShape() && shape.getId().equals(bazId) || shape.getId().equals(bamId)) {
+                MemberShape.Builder b = ((MemberShape) shape).toBuilder();
+                b.addTrait(new BoxTrait());
+                return b.build();
+            }
+            return shape;
+        });
+
+        // First, spot check that the transform worked and the models are different.
+        assertThat(old.expectShape(bazId).hasTrait(BoxTrait.class), is(false));
+        assertThat(newModel.expectShape(bazId).hasTrait(BoxTrait.class), is(true));
+        assertThat(old.expectShape(bamId).hasTrait(BoxTrait.class), is(false));
+        assertThat(newModel.expectShape(bamId).hasTrait(BoxTrait.class), is(true));
+
+        List<ValidationEvent> events = ModelDiff.compare(old, newModel);
+
+        // No events should have been emitted for the addition of the backward compatible box trait.
+        assertThat(events, empty());
+    }
+
+    @Test
+    public void doesNotEmitForBackwardCompatibleBoxTraitChangesFromRoundTripping() {
+        Model old = Model.assembler()
+                .addImport(getClass().getResource("box-added-to-member.smithy"))
+                .assemble()
+                .unwrap();
+
+        Model newModel = Model.assembler()
+                .addDocumentNode(ModelSerializer.builder().build().serialize(old))
+                .assemble()
+                .unwrap();
+
+        // First, spot check that the expected transforms worked and the models are different.
+        assertThat(old, not(equalTo(newModel)));
+
+        List<ValidationEvent> events = ModelDiff.compare(old, newModel);
+
+        // No events should have been emitted for the addition of the backward compatible box trait.
+        assertThat(events, empty());
     }
 }
