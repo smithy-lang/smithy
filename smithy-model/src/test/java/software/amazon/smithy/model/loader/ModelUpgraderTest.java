@@ -2,6 +2,7 @@ package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.hamcrest.Matcher;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.ShapeMatcher;
@@ -230,10 +232,8 @@ public class ModelUpgraderTest {
             Pair.of("2-to-1", "booleanRequiredToNullable"),
             Pair.of("2-to-1", "booleanDefaultWithAddedTraitToNullable"),
             Pair.of("2-to-1", "booleanDefaultWithClientOptionalTraitToNullable"),
-            Pair.of("2-to-1", "intEnumSetToZeroValueToNonNullable")
-
-            // This test is currently broken and needs to be fixed in ModelUpgrade.
-            //, Pair.of("2-to-1", "booleanDefaultZeroValueToNonNullablePrelude")
+            Pair.of("2-to-1", "intEnumSetToZeroValueToNonNullable"),
+            Pair.of("2-to-1", "booleanDefaultZeroValueToNonNullablePrelude")
         );
 
         cases.forEach(pair -> {
@@ -284,8 +284,12 @@ public class ModelUpgraderTest {
 
         // Check that box-trait style detection works the same as v1 checks in the nullable index. This ensurse that
         // box style detection even on round-tripped models works as expected.
-        String reasonBox = "Expected box checks to be " + result.get("v1") + " for " + name;
-        assertThat(reasonBox, model.expectShape(shape, MemberShape.class)
-                .getMemberTrait(model, BoxTrait.class).isPresent(), equalTo(result.get("v1")));
+        MemberShape member = model.expectShape(shape, MemberShape.class);
+        boolean isBoxed = member.getMemberTrait(model, BoxTrait.class).isPresent();
+        if (!isBoxed == result.get("v1")) {
+            String reasonBox = "Expected box checks to be " + result.get("v1") + " for " + name
+                               + "; traits: " + member.getAllTraits() + "; round trip " + roundTrip;
+            Assertions.fail(reasonBox);
+        }
     }
 }

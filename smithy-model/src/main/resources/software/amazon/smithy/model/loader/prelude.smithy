@@ -170,6 +170,18 @@ structure deprecated {
     since: String,
 }
 
+/// Used only in Smithy 1.0 to indicate that a shape is boxed.
+/// This trait cannot be used in Smithy 2.0 models.
+///
+/// When a boxed shape is the target of a member, the member
+/// may or may not contain a value, and the member has no default value.
+@trait(
+    selector: """
+        :test(boolean, byte, short, integer, long, float, double,
+            member > :test(boolean, byte, short, integer, long, float, double))"""
+)
+structure box {}
+
 /// Adds documentation to a shape or member using CommonMark syntax.
 @trait
 string documentation

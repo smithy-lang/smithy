@@ -246,9 +246,7 @@ public class NullableIndexTest {
     }
 
     @Test
-    public void worksWithV2NullabilityRulesForInteger() {
-        // 2.0 nullability rules are assumed. Using a model assembler with a 1.0 model will ensure that 1.0
-        // semantics are used in the NullableIndex.
+    public void worksWithV1NullabilityRulesForInteger() {
         IntegerShape integer = IntegerShape.builder()
                 .id("smithy.example#Integer")
                 .build();
@@ -259,7 +257,7 @@ public class NullableIndexTest {
         Model model = Model.builder().addShapes(integer, struct).build();
         NullableIndex index = NullableIndex.of(model);
 
-        assertThat(index.isNullable(struct.getMember("foo").get()), is(true));
+        assertThat(index.isNullable(struct.getMember("foo").get()), is(false));
     }
 
     @Test

@@ -17,12 +17,14 @@ package software.amazon.smithy.model.knowledge;
 
 import java.lang.ref.WeakReference;
 import java.util.Objects;
+import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
@@ -34,12 +36,23 @@ import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.InputTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.SparseTrait;
+import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * An index that checks if a member is nullable.
  */
 public class NullableIndex implements KnowledgeIndex {
+
+    /** Shapes that were boxed in 1.0, but @box was removed in 2.0. */
+    private static final Set<ShapeId> PREVIOUSLY_BOXED = SetUtils.of(
+            ShapeId.from("smithy.api#Boolean"),
+            ShapeId.from("smithy.api#Byte"),
+            ShapeId.from("smithy.api#Short"),
+            ShapeId.from("smithy.api#Integer"),
+            ShapeId.from("smithy.api#Long"),
+            ShapeId.from("smithy.api#Float"),
+            ShapeId.from("smithy.api#Double"));
 
     private final WeakReference<Model> model;
 
@@ -170,14 +183,15 @@ public class NullableIndex implements KnowledgeIndex {
     /**
      * Checks if the given shape is optional using Smithy IDL 1.0 semantics.
      *
-     * <p>This means that the default trait is ignored, the required trait
-     * is ignored, and only the box trait and sparse traits are used.
+     * <p>This method does not return the same values that are returned by
+     * {@link #isMemberNullable(MemberShape)}. This method uses 1.0 model
+     * semantics and attempts to detect when a model has been passed though
+     * model assembler upgrades to provide the most accurate v1 nullability
+     * result.
      *
      * <p>Use {@link #isMemberNullable(MemberShape)} to check using Smithy
      * IDL 2.0 semantics that take required, default, and other traits
-     * into account. That method also accurately returns the nullability of
-     * 1.0 members as long as the model it's checking was sent through a
-     * ModelAssembler.
+     * into account with no special 1.0 handling.
      *
      * @param shapeId Shape or shape ID to check.
      * @return Returns true if the shape is nullable.
@@ -189,11 +203,21 @@ public class NullableIndex implements KnowledgeIndex {
 
         if (shape == null) {
             return false;
+        } else if (PREVIOUSLY_BOXED.contains(shape.getId())) {
+            // Special case root-level checks of prelude shapes that were considered boxed in v1.
+            // This special casing is not used when checking member targets because the NullableIndex
+            // relies on the ModelAssembler to place box traits on members when it needs to determine that
+            // a member is nullable.
+            return true;
+        } else if (shape.isMemberShape()) {
+            return isMemberNullableInV1(m, shape.asMemberShape().get());
+        } else {
+            return isRootLevelShapeNullable(shape);
         }
+    }
 
+    private boolean isRootLevelShapeNullable(Shape shape) {
         switch (shape.getType()) {
-            case MEMBER:
-                return isMemberNullableInV1(m, shape.asMemberShape().get());
             case BOOLEAN:
             case BYTE:
             case SHORT:
@@ -220,18 +244,19 @@ public class NullableIndex implements KnowledgeIndex {
         switch (container.getType()) {
             case STRUCTURE:
                 if (member.hasTrait(BoxTrait.class)) {
-                    // The box trait is still around in memory and the model hasn't been reserialized,
-                    // then the shape is for sure nullable in v1.
+                    // The box trait makes a member nullable in v1.
                     return true;
                 } else if (member.hasTrait(AddedDefaultTrait.class)) {
                     // If the default trait was added to a member post-hoc, then v1 model semantics should ignore it.
                     return true;
-                } else if (isNullable(member.getTarget())) {
-                    // Does the target shape still have a box trait in memory and the shape hasn't been reserialized?
-                    // Then it's for sure nullable in v1.
-                    return true;
+                } else if (isShapeSetToDefaultZeroValueInV1(member, target)) {
+                    // If set to the default zero value on the member, then it is non-nullable.
+                    return false;
                 } else {
-                    return !isShapeSetToDefaultZeroValueInV1(member, target);
+                    // Check if the target has a box trait in memory. Prelude shapes will not have a box trait, but
+                    // model assembler will ensure that a box is added to members in this situation so that earlier
+                    // checks in this method will deem the member as nullable.
+                    return isRootLevelShapeNullable(target);
                 }
             case MAP:
                 // Map keys can never be null.

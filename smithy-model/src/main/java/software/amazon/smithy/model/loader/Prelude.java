@@ -85,7 +85,6 @@ public final class Prelude {
                     .disableValidation()
                     .traitFactory(ModelAssembler.LazyTraitFactoryHolder.INSTANCE)
                     .addImport(Prelude.class.getResource("prelude.smithy"))
-                    .addImport(Prelude.class.getResource("prelude-1.0.smithy"))
                     .assemble()
                     .unwrap();
         }

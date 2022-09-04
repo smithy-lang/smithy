@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NullableIndex;
@@ -28,6 +29,7 @@ import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.AddedDefaultTrait;
@@ -41,6 +43,7 @@ import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Upgrades Smithy models from IDL v1 to IDL v2, specifically taking into
@@ -59,6 +62,16 @@ final class ModelUpgrader {
             ShapeType.FLOAT,
             ShapeType.DOUBLE,
             ShapeType.BOOLEAN);
+
+    /** Shapes that were boxed in 1.0, but @box was removed in 2.0. */
+    private static final Set<ShapeId> HAD_BOX_TRAIT_IN_V1 = SetUtils.of(
+            ShapeId.from("smithy.api#Boolean"),
+            ShapeId.from("smithy.api#Byte"),
+            ShapeId.from("smithy.api#Short"),
+            ShapeId.from("smithy.api#Integer"),
+            ShapeId.from("smithy.api#Long"),
+            ShapeId.from("smithy.api#Float"),
+            ShapeId.from("smithy.api#Double"));
 
     private final Model model;
     private final List<ValidationEvent> events;
@@ -119,7 +132,24 @@ final class ModelUpgrader {
                 builder.addTrait(new DefaultTrait(new NumberNode(0, builder.getSourceLocation())));
             }
             shapeUpgrades.add(builder.build());
+        } else if (needsSyntheticBoxTraitOnMember(member, target)) {
+            shapeUpgrades.add(member.toBuilder().addTrait(new BoxTrait()).build());
         }
+    }
+
+    private boolean needsSyntheticBoxTraitOnMember(MemberShape member, Shape target) {
+        // Only do this for prelude shapes that had the box trait removed.
+        if (HAD_BOX_TRAIT_IN_V1.contains(target.getId())) {
+            // Don't add a box trait if it already has one.
+            if (!member.hasTrait(BoxTrait.class)) {
+                // Don't add a box trait if it has a default trait.
+                if (!member.hasTrait(DefaultTrait.class)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private boolean isZeroValidDefault(MemberShape member) {
@@ -164,10 +194,14 @@ final class ModelUpgrader {
             && !member.hasTrait(DefaultTrait.ID)
             // Don't add the default trait if the member has clientOptional.
             && !member.hasTrait(ClientOptionalTrait.class)
-            // Don't add a @default trait if the member was explicitly boxed in v1.
-            && !member.hasTrait(BoxTrait.ID)
-            // Don't add a @default trait if the targeted shape was explicitly boxed in v1.
-            && !target.hasTrait(BoxTrait.ID);
+            // Don't add a @default trait if the member or target are considered boxed in v1.
+            && memberAndTargetAreNotAlreadyBoxedInV1(member, target);
+    }
+
+    private boolean memberAndTargetAreNotAlreadyBoxedInV1(MemberShape member, Shape target) {
+        return memberAndTargetAreNotAlreadyExplicitlyBoxed(member, target)
+               // Some prelude shapes are considered boxed in v1 models.
+               && !HAD_BOX_TRAIT_IN_V1.contains(target.getId());
     }
 
     private boolean isDefaultPayload(MemberShape member, Shape target) {
@@ -201,10 +235,8 @@ final class ModelUpgrader {
         return HAD_DEFAULT_VALUE_IN_1_0.contains(target.getType()) || target.isIntEnumShape();
     }
 
-    // Don't upgrade if the member is already boxed somehow (e.g., an in-memory transform already occurred),
-    // and need to add the box trait to the member since it's already on the target.
     private boolean memberAndTargetAreNotAlreadyExplicitlyBoxed(MemberShape member, Shape target) {
-        return !(member.hasTrait(BoxTrait.ID) || target.hasTrait(BoxTrait.ID));
+        return !member.hasTrait(BoxTrait.ID) && !target.hasTrait(BoxTrait.ID);
     }
 
     // If the shape has no box trait but does have the addedDefault trait, then v1 Smithy implementations
