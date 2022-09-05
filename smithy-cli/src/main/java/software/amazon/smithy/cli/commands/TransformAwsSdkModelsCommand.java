@@ -66,6 +66,7 @@ public final class TransformAwsSdkModelsCommand extends SimpleCommand {
     private static final class Options implements ArgumentReceiver {
         private Path output;
         private Path models;
+        private boolean modelsRepoMode;
 
         @Override
         public Consumer<String> testParameter(String name) {
@@ -75,6 +76,15 @@ public final class TransformAwsSdkModelsCommand extends SimpleCommand {
                 return value -> models = new File(value).toPath();
             }
             return null;
+        }
+
+        @Override
+        public boolean testOption(String name) {
+            if (name.equals("--sdk")) {
+                modelsRepoMode = true;
+                return true;
+            }
+            return false;
         }
 
         @Override
@@ -90,22 +100,28 @@ public final class TransformAwsSdkModelsCommand extends SimpleCommand {
         //models expected to be a single file or directories to scan where 1 file per directory
         List<String> modelFiles = new ArrayList<>();
 
-        try {
-            Files.walk(options.models)
-                .filter(rawpath -> {
-                    Path path = rawpath.normalize();
-                    File file = path.toFile();
-                    String name = file.getName();
-                    if (file.getParentFile() != null) {
-                        String parentName = file.getParentFile().getName();
-                        return parentName.equals("smithy") && name.equals("model.json");
-                    }
-                    return false;
-                })
-                .forEach(path -> modelFiles.add(path.toFile().getAbsolutePath()));
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        if (options.models.toFile().isFile()) {
+            modelFiles.add(options.models.toFile().getAbsolutePath());
+        } else {
+            try {
+                Files.walk(options.models)
+                    .filter(rawpath -> {
+                        Path path = rawpath.normalize();
+                        File file = path.toFile();
+                        String name = file.getName();
+                        if (options.modelsRepoMode) {
+                            if (file.getParentFile() != null) {
+                                String parentName = file.getParentFile().getName();
+                                return parentName.equals("smithy") && name.equals("model.json");
+                            }
+                        }
+                        return name.endsWith(".smithty") || name.endsWith(".json");
+                    })
+                    .forEach(path -> modelFiles.add(path.toFile().getAbsolutePath()));
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
 
         final Path outputDir = handleOutputDirectory(options.output).orElseGet(() -> Path.of("."));
