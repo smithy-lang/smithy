@@ -17,7 +17,6 @@ package software.amazon.smithy.cli.commands;
 
 import java.util.Arrays;
 import java.util.List;
-
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;

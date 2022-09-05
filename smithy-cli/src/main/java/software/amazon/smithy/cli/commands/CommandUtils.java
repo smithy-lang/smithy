@@ -21,7 +21,6 @@ import java.net.URLClassLoader;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Logger;
-
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;

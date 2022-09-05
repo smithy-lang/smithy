@@ -17,14 +17,12 @@ package software.amazon.smithy.cli.commands;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -33,17 +31,18 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
 import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
 import software.amazon.smithy.cli.HelpPrinter;
+import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.SmithyIdlModelSerializer;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -65,68 +64,61 @@ public final class TransformAwsSdkModelsCommand extends SimpleCommand {
     }
 
     private static final class Options implements ArgumentReceiver {
-        private Path model;
+        private Path output;
+        private Path models;
 
         @Override
         public Consumer<String> testParameter(String name) {
-            if (name.equals("--model")) {
-                return value -> model = new File(value).toPath();
+            if (name.equals("--output")) {
+                return value -> output = new File(value).toPath();
+            } else if (name.equals("--models")) {
+                return value -> models = new File(value).toPath();
             }
             return null;
         }
 
         @Override
         public void registerHelp(HelpPrinter printer) {
-            printer.param("--model", null, "MODEL...",
-                          "Path to a Smithy model or directory that contains models in the aws-models repo structure");
+            printer.param("--output", null, "OUTPUT...",
+                          "Path to produce output");
         }
     }
-
-    // @Override
-    // public Parser getParser() {
-    //     return Parser.builder()
-    //             .option(SmithyCli.ALLOW_UNKNOWN_TRAITS, "Ignores unknown traits when validating models")
-    //             .option(SmithyCli.DISCOVER, "-d", "Enables model discovery, merging in models found inside of jars")
-    //             .parameter(SmithyCli.DISCOVER_CLASSPATH, "Enables model discovery using a custom classpath for models")
-    //             .parameter(SmithyCli.SEVERITY, "Sets a minimum validation event severity to display. "
-    //                                            + "Defaults to NOTE. Can be set to SUPPRESSED, NOTE, WARNING, "
-    //                                            + "DANGER, ERROR.")
-    //             .positional("<MODELS>", "Path to Smithy models or directories")
-    //             .build();
-    // }
 
     @Override
     protected int run(Arguments arguments, Env env, List<String> positional) {
         Options options = arguments.getReceiver(Options.class);
-        List<String> models = positional;
         //models expected to be a single file or directories to scan where 1 file per directory
-        List<String> modelFiles = new LinkedList<>();
-        for (String model : models) {
-            File modelFile = new File(model);
-            File[] fileArray = modelFile.listFiles(new FileFilter() {
-                @Override
-                public boolean accept(File pathname) {
-                    return pathname.getName().endsWith(".json") || pathname.getName().endsWith(".smithy");
-                }
-            });
-            if (fileArray != null) {
-                for (File f : fileArray) {
-                    modelFiles.add(f.getAbsolutePath());
-                }
-            }
+        List<String> modelFiles = new ArrayList<>();
+
+        try {
+            Files.walk(options.models)
+                .filter(rawpath -> {
+                    Path path = rawpath.normalize();
+                    File file = path.toFile();
+                    String name = file.getName();
+                    if (file.getParentFile() != null) {
+                        String parentName = file.getParentFile().getName();
+                        return parentName.equals("smithy") && name.equals("model.json");
+                    }
+                    return false;
+                })
+                .forEach(path -> modelFiles.add(path.toFile().getAbsolutePath()));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
 
-        final Path outputDir = handleOutputDirectory(options.model).orElseGet(() -> Path.of("."));
+        final Path outputDir = handleOutputDirectory(options.output).orElseGet(() -> Path.of("."));
         final Path reportFileOutput = outputDir.resolve("report.out");
         try (BufferedWriter reportWriter = Files.newBufferedWriter(reportFileOutput, StandardCharsets.UTF_8)) {
             for (String file : modelFiles) {
-                LOGGER.info(String.format("AWS SDK Smithy model sources: %s", models));
                 try {
                     final Model convertedModel = CommandUtils
                             .buildModelForSingleFile(file, arguments, env, env.stderr(), true);
                     final String serviceName = getServiceName(convertedModel);
                     //filenames of errors
-                    final Path errorPathOut = outputDir.resolve(serviceName.toLowerCase() + ".errors");
+                    // final Path errorPathOut = outputDir.resolve(serviceName.toLowerCase())
+                    //.resolve(serviceName.toLowerCase() + ".errors");
                     try {
                         final Map<Path, String> idlFiles = SmithyIdlModelSerializer.builder()
                                 .build()
@@ -204,9 +196,9 @@ public final class TransformAwsSdkModelsCommand extends SimpleCommand {
         return idlFile.get(0);
     }
 
-    public static Optional<Path> handleOutputDirectory(Path model) {
-        if (model != null) {
-            String outputRelativePath = model.toFile().getPath();
+    public static Optional<Path> handleOutputDirectory(Path output) {
+        if (output != null) {
+            String outputRelativePath = output.toFile().getPath();
             Path outputDirPath = Path.of(outputRelativePath);
             File outputDirFile = outputDirPath.toFile();
             if (outputDirFile.exists()) {
@@ -226,11 +218,10 @@ public final class TransformAwsSdkModelsCommand extends SimpleCommand {
     @Override
     public void printHelp(Arguments arguments, CliPrinter printer) {
         // TODO Auto-generated method stub
-
     }
 
-	@Override
-	protected List<ArgumentReceiver> createArgumentReceivers() {
-        return Collections.singletonList(new Options());
-	}
+    @Override
+    protected List<ArgumentReceiver> createArgumentReceivers() {
+        return ListUtils.of(new Options(), new BuildOptions(), new StandardOptions());
+    }
 }
