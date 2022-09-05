@@ -17,6 +17,7 @@ package software.amazon.smithy.cli.commands;
 
 import java.util.Arrays;
 import java.util.List;
+
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
@@ -34,6 +35,7 @@ public class SmithyCommand implements Command {
             new AstCommand(getName()),
             new SelectCommand(getName()),
             new DiffCommand(getName()),
+            new TransformAwsSdkModelsCommand(getName()),
             new Upgrade1to2Command(getName()));
 
     @Override

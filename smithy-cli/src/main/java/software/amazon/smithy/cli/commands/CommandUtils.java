@@ -21,6 +21,7 @@ import java.net.URLClassLoader;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Logger;
+
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
@@ -38,6 +39,45 @@ final class CommandUtils {
     private static final Logger LOGGER = Logger.getLogger(CommandUtils.class.getName());
 
     private CommandUtils() {}
+
+    static Model buildModelForSingleFile(
+        String model,
+        Arguments arguments,
+        Command.Env env,
+        CliPrinter printer,
+        boolean quietValidation
+    ) {
+        ModelAssembler assembler = CommandUtils.createModelAssembler(env.classLoader());
+        BuildOptions buildOptions = arguments.getReceiver(BuildOptions.class);
+        StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
+        ContextualValidationEventFormatter formatter = new ContextualValidationEventFormatter();
+
+        // --severity defaults to NOTE.
+        Severity minSeverity = standardOptions.severity();
+
+        assembler.validationEventListener(event -> {
+            // Only log events that are >= --severity. Note that setting --quiet inherently
+            // configures events to need to be >= DANGER.
+            if (event.getSeverity().ordinal() >= minSeverity.ordinal()) {
+                if (event.getSeverity() == Severity.WARNING) {
+                    // Only log warnings when not quiet
+                    printer.println(printer.style(formatter.format(event), Style.YELLOW));
+                } else if (event.getSeverity() == Severity.DANGER || event.getSeverity() == Severity.ERROR) {
+                    // Always output error and danger events, even when quiet.
+                    printer.println(printer.style(formatter.format(event), Style.RED));
+                } else {
+                    printer.println(formatter.format(event));
+                }
+            }
+        });
+
+        CommandUtils.handleModelDiscovery(buildOptions, assembler, env.classLoader());
+        CommandUtils.handleUnknownTraitsOption(buildOptions, assembler);
+        assembler.addImport(model);
+        ValidatedResult<Model> result = assembler.assemble();
+        Validator.validate(quietValidation, env.stderr(), result);
+        return result.getResult().orElseThrow(() -> new RuntimeException("Expected Validator to throw"));
+    }
 
     static Model buildModel(
             Arguments arguments,
