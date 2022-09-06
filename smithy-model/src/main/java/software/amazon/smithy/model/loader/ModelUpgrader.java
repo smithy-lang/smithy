@@ -201,7 +201,10 @@ final class ModelUpgrader {
     private boolean memberAndTargetAreNotAlreadyBoxedInV1(MemberShape member, Shape target) {
         return memberAndTargetAreNotAlreadyExplicitlyBoxed(member, target)
                // Some prelude shapes are considered boxed in v1 models.
-               && !HAD_BOX_TRAIT_IN_V1.contains(target.getId());
+               && !HAD_BOX_TRAIT_IN_V1.contains(target.getId())
+               // Check for the boxing tag here to avoid possible ordering issues when loading models and
+               // patching in synthetic box traits on target shapes.
+               && !target.hasTag("box-v1");
     }
 
     private boolean isDefaultPayload(MemberShape member, Shape target) {

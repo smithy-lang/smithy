@@ -330,6 +330,12 @@ final class LoaderShapeMap {
     ) {
         try {
             AbstractShapeBuilder<?, ?> builder = defineShape.builder();
+
+            // Special casing for v1 box traits.
+            if (defineShape.getShapeType() != ShapeType.MEMBER) {
+                ApplyV1BoxTag.INSTANCE.handleTagBoxing(builder);
+            }
+
             for (MemberShape.Builder memberBuilder : defineShape.memberBuilders().values()) {
                 for (ShapeModifier modifier : defineShape.modifiers()) {
                     modifier.modifyMember(builder, memberBuilder, traitClaimer, createdShapeMap);

@@ -4,7 +4,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -247,9 +246,6 @@ public class ChangedNullabilityTest {
                 .addDocumentNode(ModelSerializer.builder().build().serialize(old))
                 .assemble()
                 .unwrap();
-
-        // First, spot check that the expected transforms worked and the models are different.
-        assertThat(old, not(equalTo(newModel)));
 
         List<ValidationEvent> events = ModelDiff.compare(old, newModel);
 

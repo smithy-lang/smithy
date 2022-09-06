@@ -38,6 +38,11 @@ public final class TagsTrait extends StringListTrait implements ToSmithyBuilder<
     }
 
     @Override
+    public List<String> getTags() {
+        return getValues();
+    }
+
+    @Override
     public Builder toBuilder() {
         return builder().sourceLocation(getSourceLocation()).values(getValues());
     }

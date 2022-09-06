@@ -292,4 +292,44 @@ public class ModelUpgraderTest {
             Assertions.fail(reasonBox);
         }
     }
+
+    // Loading a Smithy 1.0 model and serializing it is lossy if we don't add some way
+    // to indicate that the box trait was present on a root level shape. This test ensures
+    // that the box-v1 tag is added to the shape and then also used when loading a v2
+    // model.
+    @Test
+    public void boxTraitOnRootShapeIsNotLossyWhenRoundTripped() {
+        Model model = Model.assembler()
+                .addUnparsedModel("foo.smithy", "$version: \"1.0\"\n"
+                                                + "namespace smithy.example\n"
+                                                + "@box\n"
+                                                + "integer MyInteger\n"
+                                                + "structure Foo {\n"
+                                                + "    @box\n"
+                                                + "    baz: MyInteger\n"
+                                                +"}\n")
+                .assemble()
+                .unwrap();
+        ShapeId myInteger = ShapeId.from("smithy.example#MyInteger");
+        ShapeId foo = ShapeId.from("smithy.example#Foo");
+        ShapeId fooBaz = ShapeId.from("smithy.example#Foo$baz");
+
+        assertThat(model.expectShape(myInteger).hasTrait(BoxTrait.class), is(true));
+        assertThat(model.expectShape(foo).hasTrait(BoxTrait.class), is(false));
+        assertThat(model.expectShape(fooBaz).hasTrait(BoxTrait.class), is(true));
+
+        Node serialized = ModelSerializer.builder().build().serialize(model);
+        String raw = Node.prettyPrintJson(serialized);
+        Model model2 = Model.assembler()
+                .addUnparsedModel("foo.json", raw)
+                .assemble()
+                .unwrap();
+
+        assertThat(model2.expectShape(myInteger).hasTrait(BoxTrait.class), is(true));
+        assertThat(model2.expectShape(myInteger).hasTag("box-v1"), is(true));
+        assertThat(model2.expectShape(foo).hasTrait(BoxTrait.class), is(false));
+        assertThat(model2.expectShape(fooBaz).hasTag("box-v1"), is(false));
+        // This member gets no synthetic box trait because the target is boxed.
+        assertThat(model2.expectShape(fooBaz).hasTrait(BoxTrait.class), is(false));
+    }
 }

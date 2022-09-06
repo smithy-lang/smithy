@@ -21,6 +21,7 @@ structure Foo {
     customPrimitiveLong: MyPrimitiveLong
 }
 
+@tags(["box-v1"])
 integer BoxedInteger
 
 long MyPrimitiveLong
