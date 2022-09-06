@@ -20,8 +20,6 @@ Trait selector
     A member of a structure that targets a simple type, list, or map.
 Value type
     Document type.
-Conflicts with
-    * :ref:`required-trait`
 See also
     * :ref:`structure-optionality`
     * :ref:`required-trait`
@@ -111,8 +109,45 @@ default values if the member is marked with the :ref:`internal-trait`.
 
 To allow servers to change default values if necessary, clients SHOULD NOT
 serialize default values unless the member is explicitly set to the default
-value. This implies that clients SHOULD implement a kind of "presence tracking"
-of defaulted members.
+value or marked with the :ref:`default-trait`. This implies that clients
+SHOULD implement a kind of "presence tracking" of defaulted members so that
+the member is only serialized if it is explicitly set to the default value.
+
+
+Default and required
+--------------------
+
+A member that is both ``@default`` and ``@required`` SHOULD always be
+serialized, and implementations SHOULD NOT use any form of presence tracking
+to omit a member if the member is not explicitly set to the default value.
+It is a protocol-specific decision as to whether this is enforced in
+serialized messages; some protocols follow this strictly whereas others may
+not.
+
+
+.. smithy-trait:: smithy.api#addedDefault
+.. _addedDefault-trait:
+
+``addedDefault`` trait
+======================
+
+Summary
+    Indicates that the :ref:`default-trait` was added to a structure member
+    after initially publishing the member. This allows tooling to decide
+    whether to ignore the ``@default`` trait if it will break backward
+    compatibility in the tool.
+Trait selector
+    ``structure > member [trait|default]``
+
+    *Member of a structure marked with the default trait*
+Value type
+    Annotation trait.
+See also
+    * :ref:`structure-optionality`
+    * :ref:`default-trait`
+    * :ref:`clientOptional-trait`
+    * :ref:`input-trait`
+    * :ref:`recommended-trait`
 
 
 .. smithy-trait:: smithy.api#required
@@ -130,8 +165,6 @@ Trait selector
     *Member of a structure*
 Value type
     Annotation trait.
-Conflicts with
-    * :ref:`default-trait`
 See also
     * :ref:`structure-optionality`
     * :ref:`default-trait`
