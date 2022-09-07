@@ -21,10 +21,10 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.rulesengine.language.lang.Identifier;
-import software.amazon.smithy.rulesengine.language.lang.expr.Expr;
-import software.amazon.smithy.rulesengine.language.lang.expr.Template;
-import software.amazon.smithy.rulesengine.language.lang.fn.GetAttr;
+import software.amazon.smithy.rulesengine.language.syntax.Identifier;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Template;
+import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
 
 class TemplateTest {
     @Test

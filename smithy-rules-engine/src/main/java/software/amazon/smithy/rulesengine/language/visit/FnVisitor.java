@@ -15,17 +15,17 @@
 
 package software.amazon.smithy.rulesengine.language.visit;
 
-import software.amazon.smithy.rulesengine.language.lang.fn.BooleanEquals;
-import software.amazon.smithy.rulesengine.language.lang.fn.GetAttr;
-import software.amazon.smithy.rulesengine.language.lang.fn.IsSet;
-import software.amazon.smithy.rulesengine.language.lang.fn.IsValidHostLabel;
-import software.amazon.smithy.rulesengine.language.lang.fn.Not;
-import software.amazon.smithy.rulesengine.language.lang.fn.ParseArn;
-import software.amazon.smithy.rulesengine.language.lang.fn.ParseUrl;
-import software.amazon.smithy.rulesengine.language.lang.fn.PartitionFn;
-import software.amazon.smithy.rulesengine.language.lang.fn.StringEquals;
-import software.amazon.smithy.rulesengine.language.lang.fn.Substring;
-import software.amazon.smithy.rulesengine.language.lang.fn.UriEncode;
+import software.amazon.smithy.rulesengine.language.syntax.fn.BooleanEquals;
+import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
+import software.amazon.smithy.rulesengine.language.syntax.fn.IsSet;
+import software.amazon.smithy.rulesengine.language.syntax.fn.IsValidHostLabel;
+import software.amazon.smithy.rulesengine.language.syntax.fn.Not;
+import software.amazon.smithy.rulesengine.language.syntax.fn.ParseArn;
+import software.amazon.smithy.rulesengine.language.syntax.fn.ParseUrl;
+import software.amazon.smithy.rulesengine.language.syntax.fn.PartitionFn;
+import software.amazon.smithy.rulesengine.language.syntax.fn.StringEquals;
+import software.amazon.smithy.rulesengine.language.syntax.fn.Substring;
+import software.amazon.smithy.rulesengine.language.syntax.fn.UriEncode;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi

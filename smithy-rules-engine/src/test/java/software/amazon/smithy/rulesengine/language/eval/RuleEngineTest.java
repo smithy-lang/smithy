@@ -24,7 +24,7 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.language.EndpointRuleset;
-import software.amazon.smithy.rulesengine.language.lang.Identifier;
+import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.utils.MapUtils;
 
 class RuleEngineTest {
