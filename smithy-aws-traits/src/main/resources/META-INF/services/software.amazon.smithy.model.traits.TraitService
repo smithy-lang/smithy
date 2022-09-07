@@ -12,6 +12,7 @@ software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientDiscoveredEndpoi
 software.amazon.smithy.aws.traits.customizations.S3UnwrappedXmlOutputTrait$Provider
 software.amazon.smithy.aws.traits.HttpChecksumTrait$Provider
 software.amazon.smithy.aws.traits.protocols.AwsQueryErrorTrait$Provider
+software.amazon.smithy.aws.traits.protocols.AwsQueryCompatibleTrait$Provider
 software.amazon.smithy.aws.traits.protocols.AwsQueryTrait$Provider
 software.amazon.smithy.aws.traits.protocols.Ec2QueryNameTrait$Provider
 software.amazon.smithy.aws.traits.protocols.Ec2QueryTrait$Provider

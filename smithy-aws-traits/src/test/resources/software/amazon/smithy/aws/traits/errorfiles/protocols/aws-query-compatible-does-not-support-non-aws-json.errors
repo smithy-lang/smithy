@@ -1,0 +1,2 @@
+[WARNING] smithy.example#MyService: This shape applies a trait that is deprecated: aws.protocols#awsQuery | DeprecatedTrait
+[ERROR] smithy.example#MyService: Trait `aws.protocols#awsQueryCompatible` cannot be applied to `smithy.example#MyService`. This trait may only be applied to shapes that match the following selector: service [trait|aws.protocols#awsJson1_0] | TraitTarget
