@@ -15,44 +15,36 @@
 
 package software.amazon.smithy.rulesengine.language.syntax.expr;
 
-import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
-
-import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceException;
-import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
+import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
 import software.amazon.smithy.rulesengine.language.eval.Eval;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Typecheck;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.fn.BooleanEquals;
-import software.amazon.smithy.rulesengine.language.syntax.fn.FnNode;
-import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
-import software.amazon.smithy.rulesengine.language.syntax.fn.IsSet;
-import software.amazon.smithy.rulesengine.language.syntax.fn.IsValidHostLabel;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Not;
-import software.amazon.smithy.rulesengine.language.syntax.fn.ParseArn;
-import software.amazon.smithy.rulesengine.language.syntax.fn.ParseUrl;
-import software.amazon.smithy.rulesengine.language.syntax.fn.StringEquals;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Substring;
+import software.amazon.smithy.rulesengine.language.syntax.fn.*;
+import software.amazon.smithy.rulesengine.language.util.MandatorySourceLocation;
 import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * A dynamically computed expression.
+ * <p>
+ * Expressions are the fundamental building block of the rule language.
+ */
 @SmithyUnstableApi
-public abstract class Expr implements FromSourceLocation, Typecheck, Eval, ToNode {
-    private final SourceLocation sourceLocation;
-
+public abstract class Expr extends MandatorySourceLocation implements Typecheck, Eval, ToNode {
     private Type cachedType;
 
-    public Expr(SourceLocation sourceLocation) {
-        this.sourceLocation = Objects.requireNonNull(sourceLocation);
+    public Expr(FromSourceLocation sourceLocation) {
+        super(sourceLocation);
     }
 
     public static Expr of(boolean value) {
@@ -112,10 +104,6 @@ public abstract class Expr implements FromSourceLocation, Typecheck, Eval, ToNod
 
     public static Literal literal(StringNode node) {
         return Literal.str(new Template(node));
-    }
-
-    public SourceLocation getSourceLocation() {
-        return this.sourceLocation;
     }
 
     public abstract <R> R accept(ExprVisitor<R> visitor);

@@ -16,6 +16,7 @@
 package software.amazon.smithy.rulesengine.language;
 
 import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
+import software.amazon.smithy.rulesengine.language.util.MandatorySourceLocation;
 import static software.amazon.smithy.rulesengine.language.util.StringUtils.indent;
 
 import java.util.Collection;
@@ -43,7 +44,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * A set of EndpointRules. Endpoint Rules describe the endpoint resolution behavior for a service.
  */
 @SmithyUnstableApi
-public final class EndpointRuleset implements FromSourceLocation, Typecheck, ToNode {
+public final class EndpointRuleset extends MandatorySourceLocation implements Typecheck, ToNode {
     private static final String LATEST_VERSION = "1.3";
     private static final String VERSION = "version";
     private static final String PARAMETERS = "parameters";
@@ -53,13 +54,11 @@ public final class EndpointRuleset implements FromSourceLocation, Typecheck, ToN
     private final Parameters parameters;
     private final String version;
 
-    private final SourceLocation sourceLocation;
-
     private EndpointRuleset(Builder builder) {
+        super(builder.sourceLocation);
         rules = builder.rules.copy();
         parameters = SmithyBuilder.requiredState("parameters", builder.parameters);
         version = SmithyBuilder.requiredState("version", builder.version);
-        sourceLocation = builder.getSourceLocation();
     }
 
     public static EndpointRuleset fromNode(Node node) throws RuleError {
@@ -92,11 +91,6 @@ public final class EndpointRuleset implements FromSourceLocation, Typecheck, ToN
     }
 
     @Override
-    public SourceLocation getSourceLocation() {
-        return sourceLocation;
-    }
-
-    @Override
     public Type typecheck(Scope<Type> scope) {
         return scope.inScope(() -> {
             parameters.writeToScope(scope);
@@ -122,7 +116,7 @@ public final class EndpointRuleset implements FromSourceLocation, Typecheck, ToN
 
     public Builder toBuilder() {
         return builder()
-                .sourceLocation(sourceLocation)
+                .sourceLocation(getSourceLocation())
                 .parameters(parameters)
                 .rules(getRules());
     }

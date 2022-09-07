@@ -15,9 +15,6 @@
 
 package software.amazon.smithy.rulesengine.language.syntax.expr;
 
-import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
-import static software.amazon.smithy.rulesengine.language.syntax.expr.Expr.parseShortform;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -25,15 +22,17 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
+import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Typecheck;
 import software.amazon.smithy.rulesengine.language.eval.Value;
+import static software.amazon.smithy.rulesengine.language.syntax.expr.Expr.parseShortform;
+import software.amazon.smithy.rulesengine.language.util.MandatorySourceLocation;
 import software.amazon.smithy.rulesengine.language.visit.TemplateVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -47,15 +46,14 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * Dynamic            getAttr short form
  */
 @SmithyUnstableApi
-public final class Template implements FromSourceLocation, ToNode {
+public final class Template extends MandatorySourceLocation implements ToNode {
 
     private final List<Part> parts;
-    private final SourceLocation sourceLocation;
 
     Template(StringNode template) {
+        super(template);
         this.parts =
                 ctx("when parsing template", template, () -> parseTemplate(template.getValue(), template));
-        sourceLocation = template.getSourceLocation();
     }
 
     public static Template fromString(String s) {
@@ -89,10 +87,6 @@ public final class Template implements FromSourceLocation, ToNode {
         return this.parts.stream().map(Part::toString).collect(Collectors.joining());
     }
 
-    @Override
-    public SourceLocation getSourceLocation() {
-        return sourceLocation;
-    }
 
     @Override
     public int hashCode() {
