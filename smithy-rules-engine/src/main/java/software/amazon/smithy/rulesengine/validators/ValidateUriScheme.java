@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import software.amazon.smithy.rulesengine.language.Endpoint;
-import software.amazon.smithy.rulesengine.language.lang.Identifier;
-import software.amazon.smithy.rulesengine.language.lang.expr.Literal;
-import software.amazon.smithy.rulesengine.language.lang.expr.Template;
+import software.amazon.smithy.rulesengine.language.syntax.Identifier;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Template;
 import software.amazon.smithy.rulesengine.language.visit.TraversingVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 

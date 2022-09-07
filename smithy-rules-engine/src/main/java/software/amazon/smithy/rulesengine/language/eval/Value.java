@@ -39,7 +39,7 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.SourceAwareBuilder;
-import software.amazon.smithy.rulesengine.language.lang.Identifier;
+import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;

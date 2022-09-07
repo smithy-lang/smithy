@@ -22,8 +22,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.rulesengine.language.EndpointRuleset;
-import software.amazon.smithy.rulesengine.language.lang.rule.Condition;
-import software.amazon.smithy.rulesengine.language.lang.rule.Rule;
+import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
+import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.language.visit.DefaultVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 

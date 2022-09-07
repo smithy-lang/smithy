@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
-import software.amazon.smithy.rulesengine.language.lang.Identifier;
-import software.amazon.smithy.rulesengine.language.lang.expr.Ref;
+import software.amazon.smithy.rulesengine.language.syntax.Identifier;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Ref;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
