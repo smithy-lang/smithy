@@ -79,7 +79,9 @@
         "supportsDualStack": false,
         "dualStackDnsSuffix": "c2s.ic.gov"
       },
-      "regions": {}
+      "regions": {
+        "aws-iso-global": {}
+      }
     },
     {
       "id": "aws-iso-b",
@@ -91,7 +93,9 @@
         "supportsDualStack": false,
         "dualStackDnsSuffix": "sc2s.sgov.gov"
       },
-      "regions": {}
+      "regions": {
+        "aws-iso-b-global": {}
+      }
     }
   ]
 }
