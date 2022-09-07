@@ -16,19 +16,19 @@
 package software.amazon.smithy.rulesengine.language.syntax;
 
 import java.util.Objects;
-import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.SourceAwareBuilder;
+import software.amazon.smithy.rulesengine.language.util.MandatorySourceLocation;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
-public final class Identifier implements FromSourceLocation, ToNode {
+public final class Identifier extends MandatorySourceLocation implements ToNode {
     private final StringNode name;
 
     Identifier(StringNode name) {
+        super(name);
         this.name = name;
     }
 
@@ -63,11 +63,6 @@ public final class Identifier implements FromSourceLocation, ToNode {
 
     public String toString() {
         return name.getValue();
-    }
-
-    @Override
-    public SourceLocation getSourceLocation() {
-        return name.getSourceLocation();
     }
 
     public String asString() {

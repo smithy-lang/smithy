@@ -36,6 +36,7 @@ import software.amazon.smithy.rulesengine.language.eval.Typecheck;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
+import software.amazon.smithy.rulesengine.language.util.MandatorySourceLocation;
 import software.amazon.smithy.rulesengine.language.util.StringUtils;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.MapUtils;
@@ -48,7 +49,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * An Endpoint as returned by EndpointRules.
  */
 @SmithyUnstableApi
-public final class Endpoint implements ToSmithyBuilder<Endpoint>, FromSourceLocation, Typecheck, ToNode {
+public final class Endpoint extends MandatorySourceLocation implements ToSmithyBuilder<Endpoint>, Typecheck, ToNode {
     private static final String URL = "url";
     private static final String PROPERTIES = "properties";
     private static final String HEADERS = "headers";
@@ -59,9 +60,8 @@ public final class Endpoint implements ToSmithyBuilder<Endpoint>, FromSourceLoca
     private final Expr url;
     private final Map<String, List<Expr>> headers;
     private final Map<Identifier, Literal> properties;
-    private final SourceLocation sourceLocation;
-
     private Endpoint(Builder builder) {
+        super(builder.sourceLocation);
         this.url = SmithyBuilder.requiredState("url", builder.url);
         Map<Identifier, Literal> properties = new LinkedHashMap<>(builder.properties.copy());
         List<Literal> authSchemes =
@@ -80,7 +80,6 @@ public final class Endpoint implements ToSmithyBuilder<Endpoint>, FromSourceLoca
 
         this.properties = properties;
         this.headers = builder.headers.copy();
-        this.sourceLocation = SmithyBuilder.requiredState("sourceLocation", builder.getSourceLocation());
     }
 
     public static Endpoint fromNode(Node node) {
@@ -125,18 +124,13 @@ public final class Endpoint implements ToSmithyBuilder<Endpoint>, FromSourceLoca
         return new Builder(SourceLocation.none());
     }
 
-    @Override
-    public SourceLocation getSourceLocation() {
-        return sourceLocation;
-    }
-
     public Expr getUrl() {
         return url;
     }
 
     @Override
     public Builder toBuilder() {
-        return builder(this.sourceLocation).url(url).properties(properties);
+        return builder(this.getSourceLocation()).url(url).properties(properties);
     }
 
     @Override
