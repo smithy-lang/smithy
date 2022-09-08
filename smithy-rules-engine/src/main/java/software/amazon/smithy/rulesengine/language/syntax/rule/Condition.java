@@ -24,11 +24,9 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.IntoSelf;
-import software.amazon.smithy.rulesengine.language.eval.Eval;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Typecheck;
-import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.rulesengine.language.syntax.fn.FnNode;
@@ -37,7 +35,7 @@ import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
-public final class Condition implements Typecheck, Eval, FromSourceLocation, ToNode, IntoSelf<Condition> {
+public final class Condition implements Typecheck, FromSourceLocation, ToNode, IntoSelf<Condition> {
     public static final String ASSIGN = "assign";
     private final Expr fn;
     private final Identifier result;
@@ -108,15 +106,6 @@ public final class Condition implements Typecheck, Eval, FromSourceLocation, ToN
         this.getResult().ifPresent(res -> sb.append(res).append(" = "));
         sb.append(this.fn);
         return sb.toString();
-    }
-
-    @Override
-    public Value eval(Scope<Value> scope) {
-        Value value = this.fn.eval(scope);
-        if (!value.isNone()) {
-            this.getResult().ifPresent(res -> scope.insert(res, value));
-        }
-        return value;
     }
 
     @Override

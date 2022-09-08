@@ -16,11 +16,11 @@
 package software.amazon.smithy.rulesengine.language.syntax.fn;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.eval.Value;
+import software.amazon.smithy.rulesengine.language.stdlib.BooleanEquals;
+import software.amazon.smithy.rulesengine.language.stdlib.StringEquals;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.rulesengine.language.util.StringUtils;
 import software.amazon.smithy.rulesengine.language.visit.FnVisitor;
@@ -38,12 +38,6 @@ public class StandardLibraryFunction extends Fn {
     public static StandardLibraryFunction ofExprs(FunctionDefinition defn, Expr... expr) {
         FnNode node = FnNode.ofExprs(defn.id(), expr);
         return new StandardLibraryFunction(defn, node);
-    }
-
-    @Override
-    public Value eval(Scope<Value> scope) {
-        List<Value> args = fnNode.getArgv().stream().map(expr -> expr.eval(scope)).collect(Collectors.toList());
-        return definition.eval(args);
     }
 
 
@@ -99,6 +93,11 @@ public class StandardLibraryFunction extends Fn {
 
     @Override
     public <T> T acceptFnVisitor(FnVisitor<T> visitor) {
-        return visitor.visitGenericFunction(this);
+        if (this.definition.id().equals(StringEquals.ID)) {
+            return visitor.visitStringEquals(fnNode.getArgv().get(0), fnNode.getArgv().get(1));
+        } else if (this.definition.id().equals(BooleanEquals.ID)) {
+            return visitor.visitBoolEquals(fnNode.getArgv().get(0), fnNode.getArgv().get(1));
+        }
+        return visitor.visitGenericFunction(this.definition, this.fnNode.getArgv());
     }
 }

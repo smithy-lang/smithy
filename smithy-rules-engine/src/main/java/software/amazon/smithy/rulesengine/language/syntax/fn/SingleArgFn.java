@@ -20,15 +20,14 @@ import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
-public abstract class SingleArgFn<T extends Type> extends Fn {
+abstract class SingleArgFn<T extends Type> extends Fn {
     final T expectedType;
 
-    public SingleArgFn(FnNode fnNode, T expectedType) {
+    SingleArgFn(FnNode fnNode, T expectedType) {
         super(fnNode);
         this.expectedType = expectedType;
     }
@@ -36,13 +35,6 @@ public abstract class SingleArgFn<T extends Type> extends Fn {
     public Expr target() {
         return expectOneArg();
     }
-
-    @Override
-    public Value eval(Scope<Value> scope) {
-        return evalArg(expectOneArg().eval(scope));
-    }
-
-    protected abstract Value evalArg(Value arg);
 
     @Override
     protected Type typecheckLocal(Scope<Type> scope) {

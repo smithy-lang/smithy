@@ -17,7 +17,6 @@ package software.amazon.smithy.rulesengine.language.syntax.fn;
 
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Ref;
 import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
@@ -39,12 +38,7 @@ public final class IsSet extends SingleArgFn<Type.Option> {
 
     @Override
     public <T> T acceptFnVisitor(FnVisitor<T> visitor) {
-        return visitor.visitIsSet(this);
-    }
-
-    @Override
-    protected Value evalArg(Value arg) {
-        return Value.bool(!arg.isNone());
+        return visitor.visitIsSet(this.target());
     }
 
     @Override

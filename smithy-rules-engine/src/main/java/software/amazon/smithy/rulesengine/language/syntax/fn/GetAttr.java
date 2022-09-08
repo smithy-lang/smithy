@@ -94,9 +94,8 @@ public final class GetAttr extends Expr {
         return result;
     }
 
-    @Override
-    public Value eval(Scope<Value> scope) {
-        Value root = target.eval(scope);
+    public Value eval(Value target) {
+        Value root = target;
         List<Part> path = getPath();
         for (Part part : path) {
             root = part.eval(root);

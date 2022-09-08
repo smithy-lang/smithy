@@ -17,6 +17,7 @@ package software.amazon.smithy.rulesengine.language.eval;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.EndpointRuleset;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
@@ -24,10 +25,8 @@ import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Ref;
 import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
+import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
 import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
-import software.amazon.smithy.rulesengine.language.syntax.fn.IsSet;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Not;
-import software.amazon.smithy.rulesengine.language.syntax.fn.StandardLibraryFunction;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
@@ -62,15 +61,14 @@ public class RuleEvaluator implements FnVisitor<Value>, ExprVisitor<Value> {
 
     @Override
     public Value visitLiteral(Literal literal) {
-        return literal.eval(scope);
+        return literal.eval(this);
     }
 
     @Override
     public Value visitRef(Ref ref) {
         return scope
                 .getValue(ref.getName())
-                .orElseThrow(
-                        () -> new RuntimeException(String.format("Invalid ruleset: %s was not in scope", ref)));
+                .orElse(Value.none());
     }
 
     @Override
@@ -79,22 +77,32 @@ public class RuleEvaluator implements FnVisitor<Value>, ExprVisitor<Value> {
     }
 
     @Override
-    public Value visitIsSet(IsSet fn) {
-        return fn.eval(scope);
+    public Value visitIsSet(Expr fn) {
+        return Value.bool(!fn.accept(this).isNone());
     }
 
     @Override
-    public Value visitNot(Not not) {
-        return Value.bool(!not.target().accept(this).expectBool());
+    public Value visitNot(Expr not) {
+        return Value.bool(!not.accept(this).expectBool());
+    }
+
+    @Override
+    public Value visitBoolEquals(Expr left, Expr right) {
+        return Value.bool(left.accept(this).expectBool() == right.accept(this).expectBool());
+    }
+
+    @Override
+    public Value visitStringEquals(Expr left, Expr right) {
+        return Value.bool(left.accept(this).expectString().equals(right.accept(this).expectString()));
     }
 
     public Value visitGetAttr(GetAttr getAttr) {
-        return getAttr.eval(scope);
+        return getAttr.eval(getAttr.getTarget().accept(this));
     }
 
     @Override
-    public Value visitGenericFunction(StandardLibraryFunction fn) {
-        return fn.eval(scope);
+    public Value visitGenericFunction(FunctionDefinition defn, List<Expr> args) {
+        return defn.eval(args.stream().map(arg -> arg.accept(this)).collect(Collectors.toList()));
     }
 
     private Value handleRule(Rule rule) {

@@ -25,7 +25,6 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
-import software.amazon.smithy.rulesengine.language.eval.Eval;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Typecheck;
@@ -51,7 +50,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * Expressions are the fundamental building block of the rule language.
  */
 @SmithyUnstableApi
-public abstract class Expr extends MandatorySourceLocation implements Typecheck, Eval, ToNode {
+public abstract class Expr extends MandatorySourceLocation implements Typecheck, ToNode {
     private Type cachedType;
 
     public Expr(FromSourceLocation sourceLocation) {

@@ -15,17 +15,21 @@
 
 package software.amazon.smithy.rulesengine.language.visit;
 
-import software.amazon.smithy.rulesengine.language.syntax.fn.IsSet;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Not;
-import software.amazon.smithy.rulesengine.language.syntax.fn.StandardLibraryFunction;
+import java.util.List;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
+import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
 public interface FnVisitor<R> {
 
-    R visitIsSet(IsSet fn);
+    R visitIsSet(Expr fn);
 
-    R visitNot(Not not);
+    R visitNot(Expr not);
 
-    R visitGenericFunction(StandardLibraryFunction fn);
+    R visitBoolEquals(Expr left, Expr right);
+
+    R visitStringEquals(Expr left, Expr right);
+
+    R visitGenericFunction(FunctionDefinition fn, List<Expr> args);
 }
