@@ -30,12 +30,12 @@ class TemplateTest {
     @Test
     void validateTemplate() {
         checkTemplateParts("asdf", "asdf");
-        checkTemplateParts("a{B}c", "a", "{dyn B}", "c");
+        checkTemplateParts("a{B}c", "a", "{B}", "c");
         checkTemplateParts("a{{b}}c", "a{b}c");
-        checkTemplateParts("https://{Bucket#arn-region}.{Region}.amazonaws.com", "https://", "{dyn Bucket#arn-region}", ".", "{dyn Region}", ".amazonaws.com");
-        checkTemplateParts("https://{Partition#meta.dnsSuffix}", "https://", "{dyn Partition#meta.dnsSuffix}");
-        checkTemplateParts("https://{ {\"ref\": \"Foo\"} }.com", "https://", "{dyn  {\"ref\": \"Foo\"} }", ".com");
-        checkTemplateParts("{a}b", "{dyn a}", "b");
+        checkTemplateParts("https://{Bucket#arn-region}.{Region}.amazonaws.com", "https://", "{Bucket#arn-region}", ".", "{Region}", ".amazonaws.com");
+        checkTemplateParts("https://{Partition#meta.dnsSuffix}", "https://", "{Partition#meta.dnsSuffix}");
+        checkTemplateParts("https://{ {\"ref\": \"Foo\"} }.com", "https://", "{ {\"ref\": \"Foo\"} }", ".com");
+        checkTemplateParts("{a}b", "{a}", "b");
     }
 
     private void checkTemplateParts(String templateInput, String... parts) {

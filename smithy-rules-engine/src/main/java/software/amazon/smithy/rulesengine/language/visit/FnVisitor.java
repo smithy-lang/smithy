@@ -15,19 +15,13 @@
 
 package software.amazon.smithy.rulesengine.language.visit;
 
-import software.amazon.smithy.rulesengine.language.syntax.fn.BooleanEquals;
 import software.amazon.smithy.rulesengine.language.syntax.fn.IsSet;
 import software.amazon.smithy.rulesengine.language.syntax.fn.Not;
 import software.amazon.smithy.rulesengine.language.syntax.fn.StandardLibraryFunction;
-import software.amazon.smithy.rulesengine.language.syntax.fn.StringEquals;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
 public interface FnVisitor<R> {
-
-    R visitBoolEquals(BooleanEquals fn);
-
-    R visitStringEquals(StringEquals fn);
 
     R visitIsSet(IsSet fn);
 

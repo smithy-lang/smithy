@@ -34,13 +34,13 @@ import software.amazon.smithy.rulesengine.language.stdlib.ParseArn;
 import software.amazon.smithy.rulesengine.language.stdlib.ParseUrl;
 import software.amazon.smithy.rulesengine.language.stdlib.Substring;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.fn.BooleanEquals;
+import software.amazon.smithy.rulesengine.language.stdlib.BooleanEquals;
 import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
 import software.amazon.smithy.rulesengine.language.syntax.fn.FnNode;
 import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
 import software.amazon.smithy.rulesengine.language.syntax.fn.IsSet;
 import software.amazon.smithy.rulesengine.language.syntax.fn.Not;
-import software.amazon.smithy.rulesengine.language.syntax.fn.StringEquals;
+import software.amazon.smithy.rulesengine.language.stdlib.StringEquals;
 import software.amazon.smithy.rulesengine.language.util.MandatorySourceLocation;
 import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -159,7 +159,7 @@ public abstract class Expr extends MandatorySourceLocation implements Typecheck,
         return IsSet.ofExpr(this);
     }
 
-    public BooleanEquals eq(boolean value) {
+    public Fn eq(boolean value) {
         return BooleanEquals.ofExprs(this, Expr.of(value));
     }
 
@@ -167,7 +167,7 @@ public abstract class Expr extends MandatorySourceLocation implements Typecheck,
         return Not.ofExpr(this);
     }
 
-    public StringEquals eq(String value) {
+    public Fn eq(String value) {
         return StringEquals.ofExprs(this, Expr.of(value));
     }
 

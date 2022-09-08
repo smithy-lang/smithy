@@ -22,6 +22,7 @@ import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
+import software.amazon.smithy.rulesengine.language.util.StringUtils;
 import software.amazon.smithy.rulesengine.language.visit.FnVisitor;
 
 public class StandardLibraryFunction extends Fn {
@@ -61,14 +62,37 @@ public class StandardLibraryFunction extends Fn {
             Type expected = expectedArgs.get(i);
             Type actual = fnNode.getArgv().get(i).typecheck(scope);
             if (!expected.equals(actual)) {
+                Type optAny = Type.optional(new Type.Any());
+                String hint = "";
+                if (actual.isA(optAny) && !expected.isA(optAny) && actual.expectOptional().inner().equals(expected)) {
+                    hint = String.format("\nhint: use `assign` in a condition or `isSet(%s)` to prove that this value is non-null", fnNode.getArgv().get(i));
+                    hint = StringUtils.indent(hint, 2);
+                }
                 throw new InnerParseError(
                         String.format(
-                                "Unexpected type in the second argument of %s: Expected %s but found %s",
-                                definition.id(), expected, actual)
+                                "Unexpected type in the %s argument of `%s`: Expected %s but found %s %s",
+                                ordinal(i + 1), definition.id(), expected, actual, hint)
                 );
             }
         }
         return definition.returnType();
+    }
+
+    private static String ordinal(int arg) {
+        switch (arg) {
+            case 1:
+                return "first";
+            case 2:
+                return "second";
+            case 3:
+                return "third";
+            case 4:
+                return "fourth";
+            case 5:
+                return "fifth";
+            default:
+                return String.format("%s", arg);
+        }
     }
 
     @Override
