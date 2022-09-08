@@ -42,7 +42,10 @@ apply JsonEnums @httpRequestTests([
                       "zero": "0"
                   }
               }""",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.JsonEnums",
+        },
         bodyMediaType: "application/json",
         params: {
             fooEnum1: "Foo",

@@ -12,7 +12,10 @@ use smithy.test#httpResponseTests
         protocol: awsJson1_1,
         documentation: "Serializes string shapes",
         body: "{\"String\":\"abc xyz\"}",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         bodyMediaType: "application/json",
         requireHeaders: [
             "Content-Length"
@@ -29,7 +32,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes string shapes with jsonvalue trait",
         body: "{\"JsonValue\":\"{\\\"string\\\":\\\"value\\\",\\\"number\\\":1234.5,\\\"boolTrue\\\":true,\\\"boolFalse\\\":false,\\\"array\\\":[1,2,3,4],\\\"object\\\":{\\\"key\\\":\\\"value\\\"},\\\"null\\\":null}\"}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -45,7 +51,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes integer shapes",
         body: "{\"Integer\":1234}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -61,7 +70,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes long shapes",
         body: "{\"Long\":999999999999}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -77,7 +89,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes float shapes",
         body: "{\"Float\":1234.5}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -93,7 +108,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes double shapes",
         body: "{\"Double\":1234.5}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -109,7 +127,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes blob shapes",
         body: "{\"Blob\":\"YmluYXJ5LXZhbHVl\"}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -125,7 +146,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes boolean shapes (true)",
         body: "{\"Boolean\":true}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -141,7 +165,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes boolean shapes (false)",
         body: "{\"Boolean\":false}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -157,7 +184,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes timestamp shapes",
         body: "{\"Timestamp\":946845296}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -173,7 +203,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes timestamp shapes with iso8601 timestampFormat",
         body: "{\"Iso8601Timestamp\":\"2000-01-02T20:34:56Z\"}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -189,7 +222,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes timestamp shapes with httpdate timestampFormat",
         body: "{\"HttpdateTimestamp\":\"Sun, 02 Jan 2000 20:34:56 GMT\"}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -205,7 +241,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes timestamp shapes with unixTimestamp timestampFormat",
         body: "{\"UnixTimestamp\":946845296}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -221,7 +260,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes list shapes",
         body: "{\"ListOfStrings\":[\"abc\",\"mno\",\"xyz\"]}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -241,7 +283,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes empty list shapes",
         body: "{\"ListOfStrings\":[]}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -257,7 +302,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes list of map shapes",
         body: "{\"ListOfMapsOfStrings\":[{\"foo\":\"bar\"},{\"abc\":\"xyz\"},{\"red\":\"blue\"}]}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -283,7 +331,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes list of structure shapes",
         body: "{\"ListOfStructs\":[{\"Value\":\"abc\"},{\"Value\":\"mno\"},{\"Value\":\"xyz\"}]}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -309,7 +360,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes list of recursive structure shapes",
         body: "{\"RecursiveList\":[{\"RecursiveList\":[{\"RecursiveList\":[{\"Integer\":123}]}]}]}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -337,7 +391,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes map shapes",
         body: "{\"MapOfStrings\":{\"abc\":\"xyz\",\"mno\":\"hjk\"}}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -356,7 +413,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes empty map shapes",
         body: "{\"MapOfStrings\":{}}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -372,7 +432,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes map of list shapes",
         body: "{\"MapOfListsOfStrings\":{\"abc\":[\"abc\",\"xyz\"],\"mno\":[\"xyz\",\"abc\"]}}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -397,7 +460,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes map of structure shapes",
         body: "{\"MapOfStructs\":{\"key1\":{\"Value\":\"value-1\"},\"key2\":{\"Value\":\"value-2\"}}}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -420,7 +486,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes map of recursive structure shapes",
         body: "{\"RecursiveMap\":{\"key1\":{\"RecursiveMap\":{\"key2\":{\"RecursiveMap\":{\"key3\":{\"Boolean\":false}}}}}}}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -448,7 +517,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes structure shapes",
         body: "{\"SimpleStruct\":{\"Value\":\"abc\"}}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -466,7 +538,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes structure members with locationName traits",
         body: "{\"StructWithJsonName\":{\"Value\":\"some-value\"}}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -484,7 +559,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes empty structure shapes",
         body: "{\"SimpleStruct\":{}}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -500,7 +578,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes structure which have no members",
         body: "{\"EmptyStruct\":{}}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
@@ -516,7 +597,10 @@ use smithy.test#httpResponseTests
         documentation: "Serializes recursive structure shapes",
         body: "{\"String\":\"top-value\",\"Boolean\":false,\"RecursiveStruct\":{\"String\":\"nested-value\",\"Boolean\":true,\"RecursiveList\":[{\"String\":\"string-only\"},{\"RecursiveStruct\":{\"MapOfStrings\":{\"color\":\"red\",\"size\":\"large\"}}}]}}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.KitchenSinkOperation",
+        },
         requireHeaders: [
             "Content-Length"
         ],
