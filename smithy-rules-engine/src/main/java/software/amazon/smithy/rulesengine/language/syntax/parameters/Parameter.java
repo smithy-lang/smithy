@@ -25,13 +25,13 @@ import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.rulesengine.language.SourceAwareBuilder;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.rulesengine.language.syntax.fn.BooleanEquals;
+import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -129,7 +129,7 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, ToParameterR
     }
 
     public Type toType() {
-        Type out = null;
+        Type out;
 
         switch (this.type) {
             case STRING:
@@ -327,7 +327,7 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, ToParameterR
 
     }
 
-    public static final class Builder extends SourceAwareBuilder<Builder, Parameter> {
+    public static final class Builder extends SourceLocationTrackingBuilder<Builder, Parameter> {
         private ParameterType type;
         private Identifier name;
         private String builtIn;

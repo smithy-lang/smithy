@@ -24,7 +24,6 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.IntoSelf;
-import software.amazon.smithy.rulesengine.language.SourceAwareBuilder;
 import software.amazon.smithy.rulesengine.language.eval.Eval;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
@@ -32,8 +31,8 @@ import software.amazon.smithy.rulesengine.language.eval.Typecheck;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
 import software.amazon.smithy.rulesengine.language.syntax.fn.FnNode;
+import software.amazon.smithy.rulesengine.language.util.SourceLocationHelpers;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -50,7 +49,7 @@ public final class Condition implements Typecheck, Eval, FromSourceLocation, ToN
 
     public static Condition fromNode(Node node) {
         ObjectNode on = node.expectObjectNode("condition must be an object node");
-        Fn fn = FnNode.fromNode(on).validate();
+        Expr fn = FnNode.fromNode(on).validate();
         Optional<Identifier> result = on.getStringMember(ASSIGN).map(Identifier::of);
         Builder builder = new Builder();
         result.ifPresent(builder::result);
@@ -131,7 +130,7 @@ public final class Condition implements Typecheck, Eval, FromSourceLocation, ToN
 
     public Expr expr() {
         if (this.getResult().isPresent()) {
-            return Expr.ref(this.getResult().get(), SourceAwareBuilder.javaLocation());
+            return Expr.ref(this.getResult().get(), SourceLocationHelpers.javaLocation());
         } else {
             throw new RuntimeException("Cannot generate expr from a condition without a result");
         }
@@ -139,10 +138,10 @@ public final class Condition implements Typecheck, Eval, FromSourceLocation, ToN
 
 
     public static class Builder implements SmithyBuilder<Condition> {
-        private Fn fn;
+        private Expr fn;
         private Identifier result;
 
-        public Builder fn(Fn fn) {
+        public Builder fn(Expr fn) {
             this.fn = fn;
             return this;
         }

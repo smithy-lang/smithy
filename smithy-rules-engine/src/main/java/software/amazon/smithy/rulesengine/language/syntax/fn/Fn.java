@@ -32,7 +32,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
 public abstract class Fn extends Expr implements Into<Condition> {
-    protected FnNode fnNode;
+    protected final FnNode fnNode;
 
     public Fn(FnNode fnNode) {
         super(fnNode.getSourceLocation());

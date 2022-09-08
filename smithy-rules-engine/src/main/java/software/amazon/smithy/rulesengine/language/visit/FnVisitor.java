@@ -16,25 +16,14 @@
 package software.amazon.smithy.rulesengine.language.visit;
 
 import software.amazon.smithy.rulesengine.language.syntax.fn.BooleanEquals;
-import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
 import software.amazon.smithy.rulesengine.language.syntax.fn.IsSet;
-import software.amazon.smithy.rulesengine.language.syntax.fn.IsValidHostLabel;
 import software.amazon.smithy.rulesengine.language.syntax.fn.Not;
-import software.amazon.smithy.rulesengine.language.syntax.fn.ParseArn;
-import software.amazon.smithy.rulesengine.language.syntax.fn.ParseUrl;
-import software.amazon.smithy.rulesengine.language.syntax.fn.PartitionFn;
+import software.amazon.smithy.rulesengine.language.syntax.fn.StandardLibraryFunction;
 import software.amazon.smithy.rulesengine.language.syntax.fn.StringEquals;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Substring;
-import software.amazon.smithy.rulesengine.language.syntax.fn.UriEncode;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
 public interface FnVisitor<R> {
-    R visitPartition(PartitionFn fn);
-
-    R visitParseArn(ParseArn fn);
-
-    R visitIsValidHostLabel(IsValidHostLabel fn);
 
     R visitBoolEquals(BooleanEquals fn);
 
@@ -44,11 +33,5 @@ public interface FnVisitor<R> {
 
     R visitNot(Not not);
 
-    R visitGetAttr(GetAttr getAttr);
-
-    R visitParseUrl(ParseUrl parseUrl);
-
-    R visitSubstring(Substring substring);
-
-    R visitUriEncode(UriEncode fn);
+    R visitGenericFunction(StandardLibraryFunction fn);
 }

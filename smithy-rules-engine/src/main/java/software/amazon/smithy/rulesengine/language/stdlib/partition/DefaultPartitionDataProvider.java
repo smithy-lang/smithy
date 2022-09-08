@@ -13,12 +13,22 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.rulesengine.language.syntax.fn.partition;
+package software.amazon.smithy.rulesengine.language.stdlib.partition;
 
+import java.io.InputStream;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.rulesengine.language.model.Partitions;
+import software.amazon.smithy.rulesengine.language.util.ResourceUtil;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
-public interface PartitionDataProvider {
-    Partitions loadPartitions();
+public final class DefaultPartitionDataProvider implements PartitionDataProvider {
+    private static final String DEFAULT_PARTITIONS_DATA =
+            "/software/amazon/smithy/rulesengine/language/partitions.json";
+
+    @Override
+    public Partitions loadPartitions() {
+        InputStream json = ResourceUtil.resourceAsStream(DEFAULT_PARTITIONS_DATA);
+        return Partitions.fromNode(Node.parse(json));
+    }
 }

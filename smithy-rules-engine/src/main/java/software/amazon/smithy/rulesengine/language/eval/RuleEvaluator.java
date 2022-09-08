@@ -27,14 +27,9 @@ import software.amazon.smithy.rulesengine.language.syntax.fn.BooleanEquals;
 import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
 import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
 import software.amazon.smithy.rulesengine.language.syntax.fn.IsSet;
-import software.amazon.smithy.rulesengine.language.syntax.fn.IsValidHostLabel;
 import software.amazon.smithy.rulesengine.language.syntax.fn.Not;
-import software.amazon.smithy.rulesengine.language.syntax.fn.ParseArn;
-import software.amazon.smithy.rulesengine.language.syntax.fn.ParseUrl;
-import software.amazon.smithy.rulesengine.language.syntax.fn.PartitionFn;
+import software.amazon.smithy.rulesengine.language.syntax.fn.StandardLibraryFunction;
 import software.amazon.smithy.rulesengine.language.syntax.fn.StringEquals;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Substring;
-import software.amazon.smithy.rulesengine.language.syntax.fn.UriEncode;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
@@ -86,21 +81,6 @@ public class RuleEvaluator implements FnVisitor<Value>, ExprVisitor<Value> {
     }
 
     @Override
-    public Value visitPartition(PartitionFn fn) {
-        return fn.eval(scope);
-    }
-
-    @Override
-    public Value visitParseArn(ParseArn fn) {
-        return fn.eval(scope);
-    }
-
-    @Override
-    public Value visitIsValidHostLabel(IsValidHostLabel fn) {
-        return fn.eval(scope);
-    }
-
-    @Override
     public Value visitBoolEquals(BooleanEquals fn) {
         return fn.eval(scope);
     }
@@ -120,23 +100,12 @@ public class RuleEvaluator implements FnVisitor<Value>, ExprVisitor<Value> {
         return Value.bool(!not.target().accept(this).expectBool());
     }
 
-    @Override
     public Value visitGetAttr(GetAttr getAttr) {
         return getAttr.eval(scope);
     }
 
     @Override
-    public Value visitParseUrl(ParseUrl parseUrl) {
-        return parseUrl.eval(scope);
-    }
-
-    @Override
-    public Value visitSubstring(Substring fn) {
-        return fn.eval(scope);
-    }
-
-    @Override
-    public Value visitUriEncode(UriEncode fn) {
+    public Value visitGenericFunction(StandardLibraryFunction fn) {
         return fn.eval(scope);
     }
 

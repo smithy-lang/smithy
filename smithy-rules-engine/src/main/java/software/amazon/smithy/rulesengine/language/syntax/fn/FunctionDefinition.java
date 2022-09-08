@@ -16,23 +16,19 @@
 package software.amazon.smithy.rulesengine.language.syntax.fn;
 
 import java.util.List;
-import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
-import software.amazon.smithy.utils.SmithyUnstableApi;
 
-@SmithyUnstableApi
-abstract class VarargFn extends Fn {
-    VarargFn(FnNode fnNode) {
-        super(fnNode);
+public abstract class FunctionDefinition {
+    public FunctionDefinition() {
     }
 
-    public abstract Value eval(Scope<Value> scope);
+    public abstract String id();
 
-    protected abstract Type typecheckLocal(Scope<Type> scope);
+    public abstract List<Type> arguments();
 
-    protected List<Expr> args() {
-        return this.fnNode.getArgv();
-    }
+    public abstract Type returnType();
+
+    public abstract Value eval(List<Value> arguments);
+
 }

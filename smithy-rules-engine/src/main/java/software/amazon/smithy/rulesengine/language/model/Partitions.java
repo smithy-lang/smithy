@@ -22,7 +22,7 @@ import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.rulesengine.language.SourceAwareBuilder;
+import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -107,7 +107,7 @@ public final class Partitions implements ToSmithyBuilder<Partitions>, FromSource
                 .partitions(partitions);
     }
 
-    public static class Builder extends SourceAwareBuilder<Builder, Partitions> {
+    public static class Builder extends SourceLocationTrackingBuilder<Builder, Partitions> {
         private String version;
         private final BuilderRef<List<Partition>> partitions = BuilderRef.forList();
 

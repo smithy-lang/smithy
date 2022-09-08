@@ -27,9 +27,9 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.rulesengine.language.SourceAwareBuilder;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
+import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -77,34 +77,26 @@ public final class FnNode implements FromSourceLocation, ToNode {
         return new Builder(sourceLocation);
     }
 
-    public Fn validate() {
+    public Expr validate() {
         switch (fn.getValue()) {
             case BooleanEquals.ID:
                 return new BooleanEquals(this);
-            case PartitionFn.ID:
-                return new PartitionFn(this);
             case StringEquals.ID:
                 return new StringEquals(this);
             case IsSet.ID:
                 return new IsSet(this);
-            case IsValidHostLabel.ID:
-                return new IsValidHostLabel(this);
             case GetAttr.ID:
-                return new GetAttr(this);
-            case ParseArn.ID:
-                return new ParseArn(this);
+                return GetAttr.builder(this)
+                        .target(getArgv().get(0))
+                        .path(getArgv().get(1).toNode().expectStringNode().getValue())
+                        .build();
             case Not.ID:
                 return new Not(this);
-            case ParseUrl.ID:
-                return new ParseUrl(this);
-            case Substring.ID:
-                return new Substring(this);
-            case UriEncode.ID:
-                return new UriEncode(this);
             default:
-                throw new RuleError(
-                        new SourceException(
-                                String.format("`%s` is not a valid function", fn), fn));
+                return FunctionRegistry.getGlobalRegistry().forNode(this).orElseThrow(() ->
+                        new RuleError(
+                                new SourceException(
+                                        String.format("`%s` is not a valid function", fn), fn)));
         }
     }
 
@@ -149,9 +141,9 @@ public final class FnNode implements FromSourceLocation, ToNode {
         return fn.equals(fnNode.fn) && argv.equals(fnNode.argv);
     }
 
-    public static class Builder extends SourceAwareBuilder<Builder, FnNode> {
+    public static class Builder extends SourceLocationTrackingBuilder<Builder, FnNode> {
         private StringNode fn;
-        private BuilderRef<List<Expr>> argv = BuilderRef.forList();
+        private final BuilderRef<List<Expr>> argv = BuilderRef.forList();
 
         public Builder(FromSourceLocation sourceLocation) {
             super(sourceLocation);

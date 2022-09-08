@@ -34,12 +34,12 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.Into;
 import software.amazon.smithy.rulesengine.language.Endpoint;
-import software.amazon.smithy.rulesengine.language.SourceAwareBuilder;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Typecheck;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
+import software.amazon.smithy.rulesengine.language.util.SourceLocationHelpers;
 import software.amazon.smithy.rulesengine.language.visit.RuleValueVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -244,7 +244,7 @@ public abstract class Rule implements Typecheck, ToNode, FromSourceLocation {
          */
         @SafeVarargs
         public final Builder errorOrElse(String error, Into<Condition>... condition) {
-            Builder next = new Builder(SourceAwareBuilder.javaLocation());
+            Builder next = new Builder(SourceLocationHelpers.javaLocation());
             next.onBuild = (Rule r) -> this.treeRule(
                     Rule.builder().conditions(condition).error(error),
                     r
@@ -264,7 +264,7 @@ public abstract class Rule implements Typecheck, ToNode, FromSourceLocation {
          * @return a new builder to attach subsequent rules to
          */
         public Builder validateOrElse(Into<Condition> condition, String error) {
-            Builder next = new Builder(SourceAwareBuilder.javaLocation());
+            Builder next = new Builder(SourceLocationHelpers.javaLocation());
             next.onBuild = (Rule r) -> this.treeRule(
                     Rule.builder().conditions(condition).treeRule(r),
                     Rule.builder().error(error)
@@ -281,10 +281,10 @@ public abstract class Rule implements Typecheck, ToNode, FromSourceLocation {
          *
          * @param condition a coercible {@link Condition}
          * @param error     an error description if the condition is not matched
-         * @returna new builder to attach subsequent rules to
+         * @return new builder to attach subsequent rules to
          */
         public Builder validateOrElse(String error, Into<Condition>... condition) {
-            Builder next = new Builder(SourceAwareBuilder.javaLocation());
+            Builder next = new Builder(SourceLocationHelpers.javaLocation());
             next.onBuild = (Rule r) -> this.treeRule(
                     Rule.builder().conditions(condition).treeRule(r),
                     Rule.builder().error(error)

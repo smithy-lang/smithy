@@ -33,15 +33,21 @@ import software.amazon.smithy.model.node.NullNode;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
-import software.amazon.smithy.rulesengine.language.SourceAwareBuilder;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
+import software.amazon.smithy.rulesengine.language.util.SourceLocationHelpers;
 import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * Literals allow rules and properties to define arbitrarily nested JSON structures (e.g.for properties)
+ * <p>
+ * They support template strings, but _do not_ support template objects since that creates ambiguity. {@link Template}s
+ * are a basic example of literals–literal strings. Literals can also be booleans, objects, integers or tuples.
+ */
 @SmithyUnstableApi
 public final class Literal extends Expr {
 
@@ -53,23 +59,23 @@ public final class Literal extends Expr {
     }
 
     public static Literal tuple(List<Literal> authSchemes) {
-        return new Literal(new Tuple(authSchemes), SourceAwareBuilder.javaLocation());
+        return new Literal(new Tuple(authSchemes), SourceLocationHelpers.javaLocation());
     }
 
     public static Literal record(Map<Identifier, Literal> record) {
-        return new Literal(new Obj(record), SourceAwareBuilder.javaLocation());
+        return new Literal(new Obj(record), SourceLocationHelpers.javaLocation());
     }
 
     public static Literal str(Template value) {
-        return new Literal(new Str(value), SourceAwareBuilder.javaLocation());
+        return new Literal(new Str(value), SourceLocationHelpers.javaLocation());
     }
 
     public static Literal integer(int value) {
-        return new Literal(new Int(Node.from(value)), SourceAwareBuilder.javaLocation());
+        return new Literal(new Int(Node.from(value)), SourceLocationHelpers.javaLocation());
     }
 
     public static Literal bool(boolean value) {
-        return new Literal(new Bool(Node.from(value)), SourceAwareBuilder.javaLocation());
+        return new Literal(new Bool(Node.from(value)), SourceLocationHelpers.javaLocation());
     }
 
     public static Literal fromNode(Node node) {

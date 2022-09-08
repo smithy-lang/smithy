@@ -13,17 +13,20 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.rulesengine.language.syntax.fn;
+package software.amazon.smithy.rulesengine.language.stdlib;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
-import software.amazon.smithy.rulesengine.language.eval.Scope;
+import java.util.Collections;
+import java.util.List;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
-import software.amazon.smithy.rulesengine.language.visit.FnVisitor;
+import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
+import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
+import software.amazon.smithy.rulesengine.language.syntax.fn.StandardLibraryFunction;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
@@ -32,7 +35,7 @@ import software.amazon.smithy.utils.StringUtils;
  * Function to parse a URI from a string.
  */
 @SmithyUnstableApi
-public class ParseUrl extends SingleArgFn<Type.Str> {
+public class ParseUrl extends FunctionDefinition {
     public static final String ID = "parseURL";
     public static final Identifier SCHEME = Identifier.of("scheme");
     public static final Identifier AUTHORITY = Identifier.of("authority");
@@ -40,22 +43,37 @@ public class ParseUrl extends SingleArgFn<Type.Str> {
     public static final Identifier NORMALIZED_PATH = Identifier.of("normalizedPath");
     public static final Identifier IS_IP = Identifier.of("isIp");
 
-    public ParseUrl(FnNode fnNode) {
-        super(fnNode, Type.str());
-    }
 
-    public static ParseUrl ofExprs(Expr expr) {
-        return new ParseUrl(FnNode.ofExprs(ID, expr));
+    @Override
+    public String id() {
+        return "parseURL";
     }
 
     @Override
-    public <T> T acceptFnVisitor(FnVisitor<T> visitor) {
-        return visitor.visitParseUrl(this);
+    public List<Type> arguments() {
+        return Collections.singletonList(Type.str());
+    }
+
+    public static Fn ofExprs(Expr expr) {
+        return StandardLibraryFunction.ofExprs(new ParseUrl(), expr);
     }
 
     @Override
-    protected Value evalArg(Value arg) {
-        String url = arg.expectString();
+    public Type returnType() {
+        return Type.optional(Type.record(
+                MapUtils.of(
+                        SCHEME, Type.str(),
+                        AUTHORITY, Type.str(),
+                        PATH, Type.str(),
+                        NORMALIZED_PATH, Type.str(),
+                        IS_IP, Type.bool()
+                )
+        ));
+    }
+
+    @Override
+    public Value eval(List<Value> arguments) {
+        String url = arguments.get(0).expectString();
         try {
             URL parsed = new URL(url);
             String path = parsed.getPath();
@@ -107,18 +125,5 @@ public class ParseUrl extends SingleArgFn<Type.Str> {
             System.out.printf("invalid URL: %s%n", e);
             return Value.none();
         }
-    }
-
-    @Override
-    protected Type typecheckArg(Scope<Type> scope, Type.Str arg) {
-        return Type.optional(Type.record(
-                MapUtils.of(
-                        SCHEME, Type.str(),
-                        AUTHORITY, Type.str(),
-                        PATH, Type.str(),
-                        NORMALIZED_PATH, Type.str(),
-                        IS_IP, Type.bool()
-                )
-        ));
     }
 }

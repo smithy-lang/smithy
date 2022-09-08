@@ -26,7 +26,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
 public abstract class SingleArgFn<T extends Type> extends Fn {
-    T expectedType;
+    final T expectedType;
 
     public SingleArgFn(FnNode fnNode, T expectedType) {
         super(fnNode);

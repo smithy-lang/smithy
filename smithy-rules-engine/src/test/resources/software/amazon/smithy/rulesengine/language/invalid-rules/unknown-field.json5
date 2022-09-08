@@ -3,11 +3,11 @@
 // while typechecking the endpoint
 //   at invalid-rules/unknown-field.json5:34
 // while checking the URL
-// while typechecking "{dyn partitionResult#nme}.amazonaws.com"
-// while typechecking the template `"{dyn partitionResult#nme}.amazonaws.com"`
+// while typechecking "{partitionResult#nme}.amazonaws.com"
+// while typechecking the template `"{partitionResult#nme}.amazonaws.com"`
 //   at invalid-rules/unknown-field.json5:35
-// while checking {dyn partitionResult#nme}
-// while typechecking partitionResult.nme
+// while checking {partitionResult#nme}
+// while typechecking partitionResult#nme
 // {name=String, dnsSuffix=String, dualStackDnsSuffix=String, supportsDualStack=Bool, supportsFIPS=Bool} does not contain field nme
 {
   "version": "1.2",
