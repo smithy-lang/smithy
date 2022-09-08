@@ -17,10 +17,12 @@ package software.amazon.smithy.rulesengine.language.syntax.fn;
 
 import java.util.HashMap;
 import java.util.Optional;
+import software.amazon.smithy.rulesengine.language.stdlib.BooleanEquals;
 import software.amazon.smithy.rulesengine.language.stdlib.IsValidHostLabel;
 import software.amazon.smithy.rulesengine.language.stdlib.ParseArn;
 import software.amazon.smithy.rulesengine.language.stdlib.ParseUrl;
 import software.amazon.smithy.rulesengine.language.stdlib.PartitionFn;
+import software.amazon.smithy.rulesengine.language.stdlib.StringEquals;
 import software.amazon.smithy.rulesengine.language.stdlib.Substring;
 import software.amazon.smithy.rulesengine.language.stdlib.UriEncode;
 import software.amazon.smithy.rulesengine.language.util.LazyValue;
@@ -29,12 +31,14 @@ public final class FunctionRegistry {
     private static final LazyValue<FunctionRegistry> GLOBAL_REGISTRY =
             LazyValue.<FunctionRegistry>builder().initializer(() -> {
                 FunctionRegistry registry = new FunctionRegistry();
-                registry.registerFunction(PartitionFn.ID, new PartitionFn());
-                registry.registerFunction(IsValidHostLabel.ID, new IsValidHostLabel());
-                registry.registerFunction(ParseArn.ID, new ParseArn());
-                registry.registerFunction(ParseUrl.ID, new ParseUrl());
-                registry.registerFunction(Substring.ID, new Substring());
-                registry.registerFunction(UriEncode.ID, new UriEncode());
+                registry.registerFunction(new StringEquals());
+                registry.registerFunction(new BooleanEquals());
+                registry.registerFunction(new PartitionFn());
+                registry.registerFunction(new IsValidHostLabel());
+                registry.registerFunction(new ParseArn());
+                registry.registerFunction(new ParseUrl());
+                registry.registerFunction(new Substring());
+                registry.registerFunction(new UriEncode());
                 return registry;
             }).build();
 
@@ -43,8 +47,8 @@ public final class FunctionRegistry {
     private FunctionRegistry() {
     }
 
-    public void registerFunction(String id, FunctionDefinition definition) {
-        registry.put(id, definition);
+    public void registerFunction(FunctionDefinition definition) {
+        registry.put(definition.id(), definition);
     }
 
     public Optional<StandardLibraryFunction> forNode(FnNode node) {

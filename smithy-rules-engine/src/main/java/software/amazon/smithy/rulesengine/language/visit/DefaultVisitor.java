@@ -20,13 +20,11 @@ import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Ref;
-import software.amazon.smithy.rulesengine.language.syntax.fn.BooleanEquals;
 import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
 import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
 import software.amazon.smithy.rulesengine.language.syntax.fn.IsSet;
 import software.amazon.smithy.rulesengine.language.syntax.fn.Not;
 import software.amazon.smithy.rulesengine.language.syntax.fn.StandardLibraryFunction;
-import software.amazon.smithy.rulesengine.language.syntax.fn.StringEquals;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -49,16 +47,6 @@ public abstract class DefaultVisitor<R> implements RuleValueVisitor<R>, ExprVisi
         return getDefault();
     }
 
-
-    @Override
-    public R visitBoolEquals(BooleanEquals fn) {
-        return getDefault();
-    }
-
-    @Override
-    public R visitStringEquals(StringEquals fn) {
-        return getDefault();
-    }
 
     @Override
     public R visitIsSet(IsSet fn) {

@@ -23,13 +23,11 @@ import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Ref;
-import software.amazon.smithy.rulesengine.language.syntax.fn.BooleanEquals;
 import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
 import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
 import software.amazon.smithy.rulesengine.language.syntax.fn.IsSet;
 import software.amazon.smithy.rulesengine.language.syntax.fn.Not;
 import software.amazon.smithy.rulesengine.language.syntax.fn.StandardLibraryFunction;
-import software.amazon.smithy.rulesengine.language.syntax.fn.StringEquals;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
@@ -78,16 +76,6 @@ public class RuleEvaluator implements FnVisitor<Value>, ExprVisitor<Value> {
     @Override
     public Value visitFn(Fn fn) {
         return fn.acceptFnVisitor(this);
-    }
-
-    @Override
-    public Value visitBoolEquals(BooleanEquals fn) {
-        return fn.eval(scope);
-    }
-
-    @Override
-    public Value visitStringEquals(StringEquals fn) {
-        return fn.eval(scope);
     }
 
     @Override
