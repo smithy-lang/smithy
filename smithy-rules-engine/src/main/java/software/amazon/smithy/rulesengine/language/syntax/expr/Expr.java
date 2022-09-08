@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.rulesengine.language.syntax.expr;
 
+import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
+
 import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceException;
@@ -23,13 +25,22 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
-import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
 import software.amazon.smithy.rulesengine.language.eval.Eval;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Typecheck;
+import software.amazon.smithy.rulesengine.language.stdlib.IsValidHostLabel;
+import software.amazon.smithy.rulesengine.language.stdlib.ParseArn;
+import software.amazon.smithy.rulesengine.language.stdlib.ParseUrl;
+import software.amazon.smithy.rulesengine.language.stdlib.Substring;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.fn.*;
+import software.amazon.smithy.rulesengine.language.syntax.fn.BooleanEquals;
+import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
+import software.amazon.smithy.rulesengine.language.syntax.fn.FnNode;
+import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
+import software.amazon.smithy.rulesengine.language.syntax.fn.IsSet;
+import software.amazon.smithy.rulesengine.language.syntax.fn.Not;
+import software.amazon.smithy.rulesengine.language.syntax.fn.StringEquals;
 import software.amazon.smithy.rulesengine.language.util.MandatorySourceLocation;
 import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -160,19 +171,19 @@ public abstract class Expr extends MandatorySourceLocation implements Typecheck,
         return StringEquals.ofExprs(this, Expr.of(value));
     }
 
-    public ParseArn parseArn() {
+    public Fn parseArn() {
         return ParseArn.ofExprs(this);
     }
 
-    public Substring substring(int startIndex, int stopIndex, Boolean reverse) {
+    public Fn substring(int startIndex, int stopIndex, Boolean reverse) {
         return Substring.ofExprs(this, startIndex, stopIndex, reverse);
     }
 
-    public IsValidHostLabel isValidHostLabel(boolean allowDots) {
+    public Fn isValidHostLabel(boolean allowDots) {
         return IsValidHostLabel.ofExprs(this, allowDots);
     }
 
-    public ParseUrl parseUrl() {
+    public Fn parseUrl() {
         return ParseUrl.ofExprs(this);
     }
 

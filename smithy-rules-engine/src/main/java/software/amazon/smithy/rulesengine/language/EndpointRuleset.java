@@ -16,7 +16,6 @@
 package software.amazon.smithy.rulesengine.language;
 
 import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
-import software.amazon.smithy.rulesengine.language.util.MandatorySourceLocation;
 import static software.amazon.smithy.rulesengine.language.util.StringUtils.indent;
 
 import java.util.Collection;
@@ -36,6 +35,8 @@ import software.amazon.smithy.rulesengine.language.eval.Typecheck;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
+import software.amazon.smithy.rulesengine.language.util.MandatorySourceLocation;
+import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -55,7 +56,7 @@ public final class EndpointRuleset extends MandatorySourceLocation implements Ty
     private final String version;
 
     private EndpointRuleset(Builder builder) {
-        super(builder.sourceLocation);
+        super(builder.getSourceLocation());
         rules = builder.rules.copy();
         parameters = SmithyBuilder.requiredState("parameters", builder.parameters);
         version = SmithyBuilder.requiredState("version", builder.version);
@@ -154,7 +155,7 @@ public final class EndpointRuleset extends MandatorySourceLocation implements Ty
         return builder.toString();
     }
 
-    public static class Builder extends SourceAwareBuilder<Builder, EndpointRuleset> {
+    public static class Builder extends SourceLocationTrackingBuilder<Builder, EndpointRuleset> {
         private final BuilderRef<List<Rule>> rules = BuilderRef.forList();
         private Parameters parameters;
         // default the version to the latest.

@@ -15,6 +15,9 @@
 
 package software.amazon.smithy.rulesengine.language.syntax.expr;
 
+import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
+import static software.amazon.smithy.rulesengine.language.syntax.expr.Expr.parseShortform;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -26,12 +29,10 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
-import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Typecheck;
 import software.amazon.smithy.rulesengine.language.eval.Value;
-import static software.amazon.smithy.rulesengine.language.syntax.expr.Expr.parseShortform;
 import software.amazon.smithy.rulesengine.language.util.MandatorySourceLocation;
 import software.amazon.smithy.rulesengine.language.visit.TemplateVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -295,7 +296,7 @@ public final class Template extends MandatorySourceLocation implements ToNode {
 
         @Override
         public String toString() {
-            return String.format("{dyn %s}", this.raw);
+            return String.format("{%s}", this.raw);
         }
 
         @Override

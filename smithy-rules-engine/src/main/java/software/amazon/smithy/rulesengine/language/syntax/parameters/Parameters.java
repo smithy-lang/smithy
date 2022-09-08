@@ -28,11 +28,11 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.rulesengine.language.SourceAwareBuilder;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
+import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -123,7 +123,7 @@ public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBui
         return params.build();
     }
 
-    public static class Builder extends SourceAwareBuilder<Builder, Parameters> {
+    public static class Builder extends SourceLocationTrackingBuilder<Builder, Parameters> {
         private final List<Parameter> parameters = new ArrayList<>();
 
         public Builder(FromSourceLocation sourceLocation) {

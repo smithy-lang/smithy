@@ -3,8 +3,8 @@
 // while typechecking the endpoint
 //   at invalid-rules/unset-in-wrong-tree.json5:37
 // while checking the URL
-// while typechecking "{dyn region}.amazonaws.com"
-// while typechecking the template `"{dyn region}.amazonaws.com"`
+// while typechecking "{region}.amazonaws.com"
+// while typechecking the template `"{region}.amazonaws.com"`
 //   at invalid-rules/unset-in-wrong-tree.json5:38
 // Expected string but found Option<String>. hint: use `assign` in a condition or `isSet` to prove that this value is non-null
 {

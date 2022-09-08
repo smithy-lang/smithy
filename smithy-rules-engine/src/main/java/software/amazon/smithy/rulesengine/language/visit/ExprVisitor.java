@@ -18,6 +18,7 @@ package software.amazon.smithy.rulesengine.language.visit;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Ref;
 import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
+import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
@@ -27,6 +28,8 @@ public interface ExprVisitor<R> {
     R visitRef(Ref ref);
 
     R visitFn(Fn fn);
+
+    R visitGetAttr(GetAttr getAttr);
 
     abstract class Default<R> implements ExprVisitor<R> {
         public abstract R getDefault();
@@ -38,6 +41,10 @@ public interface ExprVisitor<R> {
 
         @Override
         public R visitRef(Ref ref) {
+            return getDefault();
+        }
+
+        public R visitGetAttr(GetAttr getAttr) {
             return getDefault();
         }
 

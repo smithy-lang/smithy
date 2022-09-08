@@ -13,9 +13,10 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.rulesengine.language.syntax.fn;
+package software.amazon.smithy.rulesengine.language.stdlib;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -23,23 +24,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.regex.Pattern;
-import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
-import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
-import software.amazon.smithy.rulesengine.language.syntax.fn.partition.PartitionDataProvider;
-import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.model.Outputs;
 import software.amazon.smithy.rulesengine.language.model.Partition;
 import software.amazon.smithy.rulesengine.language.model.Partitions;
+import software.amazon.smithy.rulesengine.language.stdlib.partition.PartitionDataProvider;
+import software.amazon.smithy.rulesengine.language.syntax.Identifier;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
+import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
+import software.amazon.smithy.rulesengine.language.syntax.fn.FnNode;
+import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
+import software.amazon.smithy.rulesengine.language.syntax.fn.StandardLibraryFunction;
+import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.util.LazyValue;
-import software.amazon.smithy.rulesengine.language.visit.FnVisitor;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
-public final class PartitionFn extends SingleArgFn<Type.Str> {
+public final class PartitionFn extends FunctionDefinition {
     public static final String ID = "aws.partition";
 
     public static final Identifier NAME = Identifier.of("name");
@@ -53,26 +56,30 @@ public final class PartitionFn extends SingleArgFn<Type.Str> {
             .initializer(this::loadPartitionData)
             .build();
 
-    public PartitionFn(FnNode node) {
-        super(node, Type.str());
-    }
-
-    public static PartitionFn ofExprs(Expr expr) {
-        return new PartitionFn(FnNode.ofExprs(ID, expr));
-    }
-
-    public static PartitionFn fromParam(Parameter param) {
-        return PartitionFn.ofExprs(param.expr());
+    @Override
+    public String id() {
+        return ID;
     }
 
     @Override
-    public <T> T acceptFnVisitor(FnVisitor<T> visitor) {
-        return visitor.visitPartition(this);
+    public List<Type> arguments() {
+        return Collections.singletonList(Type.str());
     }
 
     @Override
-    public Value evalArg(Value arg) {
-        String regionName = arg.expectString();
+    public Type returnType() {
+        LinkedHashMap<Identifier, Type> type = new LinkedHashMap<>();
+        type.put(NAME, Type.str());
+        type.put(DNS_SUFFIX, Type.str());
+        type.put(DUAL_STACK_DNS_SUFFIX, Type.str());
+        type.put(SUPPORTS_DUAL_STACK, Type.bool());
+        type.put(SUPPORTS_FIPS, Type.bool());
+        return Type.optional(new Type.Record(type));
+    }
+
+    @Override
+    public Value eval(List<Value> arguments) {
+        String regionName = arguments.get(0).expectString();
 
         final PartitionData data = partitionData.value();
 
@@ -107,23 +114,20 @@ public final class PartitionFn extends SingleArgFn<Type.Str> {
                 INFERRED, Value.bool(inferred)));
     }
 
-    @Override
-    protected Type typecheckArg(Scope<Type> scope, Type.Str arg) {
-        LinkedHashMap<Identifier, Type> type = new LinkedHashMap<>();
-        type.put(NAME, Type.str());
-        type.put(DNS_SUFFIX, Type.str());
-        type.put(DUAL_STACK_DNS_SUFFIX, Type.str());
-        type.put(SUPPORTS_DUAL_STACK, Type.bool());
-        type.put(SUPPORTS_FIPS, Type.bool());
-        return Type.optional(new Type.Record(type));
+    public static Fn ofExprs(Expr expr) {
+        return new StandardLibraryFunction(new PartitionFn(), FnNode.ofExprs(ID, expr));
     }
+
+    public static Fn fromParam(Parameter param) {
+        return PartitionFn.ofExprs(param.expr());
+    }
+
 
     private PartitionData loadPartitionData() {
         Iterator<PartitionDataProvider> iter = ServiceLoader.load(PartitionDataProvider.class).iterator();
         if (!iter.hasNext()) {
             throw new RuntimeException("Unable to locate partition data");
         }
-        ;
 
         PartitionDataProvider provider = iter.next();
 

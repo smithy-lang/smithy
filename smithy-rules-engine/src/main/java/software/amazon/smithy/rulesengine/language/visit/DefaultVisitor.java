@@ -24,14 +24,9 @@ import software.amazon.smithy.rulesengine.language.syntax.fn.BooleanEquals;
 import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
 import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
 import software.amazon.smithy.rulesengine.language.syntax.fn.IsSet;
-import software.amazon.smithy.rulesengine.language.syntax.fn.IsValidHostLabel;
 import software.amazon.smithy.rulesengine.language.syntax.fn.Not;
-import software.amazon.smithy.rulesengine.language.syntax.fn.ParseArn;
-import software.amazon.smithy.rulesengine.language.syntax.fn.ParseUrl;
-import software.amazon.smithy.rulesengine.language.syntax.fn.PartitionFn;
+import software.amazon.smithy.rulesengine.language.syntax.fn.StandardLibraryFunction;
 import software.amazon.smithy.rulesengine.language.syntax.fn.StringEquals;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Substring;
-import software.amazon.smithy.rulesengine.language.syntax.fn.UriEncode;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -54,21 +49,6 @@ public abstract class DefaultVisitor<R> implements RuleValueVisitor<R>, ExprVisi
         return getDefault();
     }
 
-    @Override
-    public R visitPartition(PartitionFn fn) {
-        return getDefault();
-    }
-
-    @Override
-    public R visitParseArn(ParseArn fn) {
-        return getDefault();
-    }
-
-
-    @Override
-    public R visitIsValidHostLabel(IsValidHostLabel fn) {
-        return getDefault();
-    }
 
     @Override
     public R visitBoolEquals(BooleanEquals fn) {
@@ -90,23 +70,12 @@ public abstract class DefaultVisitor<R> implements RuleValueVisitor<R>, ExprVisi
         return getDefault();
     }
 
-    @Override
     public R visitGetAttr(GetAttr getAttr) {
         return getDefault();
     }
 
     @Override
-    public R visitParseUrl(ParseUrl parseUrl) {
-        return getDefault();
-    }
-
-    @Override
-    public R visitSubstring(Substring substring) {
-        return getDefault();
-    }
-
-    @Override
-    public R visitUriEncode(UriEncode fn) {
+    public R visitGenericFunction(StandardLibraryFunction fn) {
         return getDefault();
     }
 

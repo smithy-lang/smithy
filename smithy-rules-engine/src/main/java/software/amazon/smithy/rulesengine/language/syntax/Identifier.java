@@ -19,8 +19,8 @@ import java.util.Objects;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.rulesengine.language.SourceAwareBuilder;
 import software.amazon.smithy.rulesengine.language.util.MandatorySourceLocation;
+import software.amazon.smithy.rulesengine.language.util.SourceLocationHelpers;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
@@ -33,7 +33,7 @@ public final class Identifier extends MandatorySourceLocation implements ToNode 
     }
 
     public static Identifier of(String name) {
-        return new Identifier(new StringNode(name, SourceAwareBuilder.javaLocation()));
+        return new Identifier(new StringNode(name, SourceLocationHelpers.javaLocation()));
     }
 
     public static Identifier of(StringNode name) {

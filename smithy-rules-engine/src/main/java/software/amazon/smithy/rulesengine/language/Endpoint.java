@@ -37,6 +37,7 @@ import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
 import software.amazon.smithy.rulesengine.language.util.MandatorySourceLocation;
+import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
 import software.amazon.smithy.rulesengine.language.util.StringUtils;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.MapUtils;
@@ -60,8 +61,9 @@ public final class Endpoint extends MandatorySourceLocation implements ToSmithyB
     private final Expr url;
     private final Map<String, List<Expr>> headers;
     private final Map<Identifier, Literal> properties;
+
     private Endpoint(Builder builder) {
-        super(builder.sourceLocation);
+        super(builder.getSourceLocation());
         this.url = SmithyBuilder.requiredState("url", builder.url);
         Map<Identifier, Literal> properties = new LinkedHashMap<>(builder.properties.copy());
         List<Literal> authSchemes =
@@ -227,7 +229,7 @@ public final class Endpoint extends MandatorySourceLocation implements ToSmithyB
     /**
      * Builder for {@link Endpoint}.
      */
-    public static class Builder extends SourceAwareBuilder<Builder, Endpoint> {
+    public static class Builder extends SourceLocationTrackingBuilder<Builder, Endpoint> {
         private static final String SIGNING_NAME = "signingName";
         private static final String SIGNING_REGION_SET = "signingRegionSet";
 

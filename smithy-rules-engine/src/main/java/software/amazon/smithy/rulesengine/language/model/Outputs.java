@@ -21,7 +21,7 @@ import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.rulesengine.language.SourceAwareBuilder;
+import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -118,7 +118,7 @@ public final class Outputs implements ToSmithyBuilder<Outputs>, FromSourceLocati
                && Objects.equals(dualStackDnsSuffix, outputs.dualStackDnsSuffix);
     }
 
-    public static class Builder extends SourceAwareBuilder<Builder, Outputs> {
+    public static class Builder extends SourceLocationTrackingBuilder<Builder, Outputs> {
         private String dnsSuffix;
         private String dualStackDnsSuffix;
         private boolean supportsFips;

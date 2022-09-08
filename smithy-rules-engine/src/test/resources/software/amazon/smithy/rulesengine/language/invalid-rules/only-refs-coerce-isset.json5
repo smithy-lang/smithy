@@ -9,8 +9,8 @@
 // while typechecking the endpoint
 //   at invalid-rules/only-refs-coerce-isset.json5:86
 // while checking the URL
-// while typechecking "https://{dyn bucketArn#resourceId[1]}-{dyn bucketArn#accountId}.{dyn bucketArn#region}.{dyn partitionResult#dnsSuffix}"
-// while typechecking the template `"https://{dyn bucketArn#resourceId[1]}-{dyn bucketArn#accountId}.{dyn bucketArn#region}.{dyn partitionResult#dnsSuffix}"`
+// while typechecking "https://{bucketArn#resourceId[1]}-{bucketArn#accountId}.{bucketArn#region}.{partitionResult#dnsSuffix}"
+// while typechecking the template `"https://{bucketArn#resourceId[1]}-{bucketArn#accountId}.{bucketArn#region}.{partitionResult#dnsSuffix}"`
 //   at invalid-rules/only-refs-coerce-isset.json5:87
 // Expected string but found Option<String>. hint: use `assign` in a condition or `isSet` to prove that this value is non-null
 {

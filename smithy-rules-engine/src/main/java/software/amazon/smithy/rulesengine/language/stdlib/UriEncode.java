@@ -13,45 +13,47 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.rulesengine.language.syntax.fn;
+package software.amazon.smithy.rulesengine.language.stdlib;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import software.amazon.smithy.rulesengine.language.eval.Scope;
+import java.util.Collections;
+import java.util.List;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
+import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
+import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
+import software.amazon.smithy.rulesengine.language.syntax.fn.StandardLibraryFunction;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
-import software.amazon.smithy.rulesengine.language.visit.FnVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
-public final class UriEncode extends SingleArgFn<Type.Str> {
+public final class UriEncode extends FunctionDefinition {
 
     public static final String ID = "uriEncode";
     private static final String[] ENCODED_CHARACTERS = new String[]{"+", "*", "%7E"};
     private static final String[] ENCODED_CHARACTERS_REPLACEMENTS = new String[]{"%20", "%2A", "~"};
 
-    public UriEncode(FnNode node) {
-        super(node, Type.str());
-    }
 
-    public static UriEncode ofExprs(Expr expr) {
-        return new UriEncode(FnNode.ofExprs(ID, expr));
-    }
-
-    public static UriEncode fromParam(Parameter param) {
-        return UriEncode.ofExprs(param.expr());
+    @Override
+    public String id() {
+        return ID;
     }
 
     @Override
-    public <T> T acceptFnVisitor(FnVisitor<T> visitor) {
-        return visitor.visitUriEncode(this);
+    public List<Type> arguments() {
+        return Collections.singletonList(Type.str());
     }
 
     @Override
-    protected Value evalArg(Value arg) {
-        String url = arg.expectString();
+    public Type returnType() {
+        return Type.str();
+    }
+
+    @Override
+    public Value eval(List<Value> arguments) {
+        String url = arguments.get(0).expectString();
         try {
             String encoded = URLEncoder.encode(url, "UTF-8");
             for (int i = 0; i < ENCODED_CHARACTERS.length; i++) {
@@ -63,8 +65,11 @@ public final class UriEncode extends SingleArgFn<Type.Str> {
         }
     }
 
-    @Override
-    protected Type typecheckArg(Scope<Type> scope, Type.Str arg) {
-        return Type.str();
+    public static Fn ofExprs(Expr expr) {
+        return StandardLibraryFunction.ofExprs(new UriEncode(), expr);
+    }
+
+    public static Fn fromParam(Parameter param) {
+        return UriEncode.ofExprs(param.expr());
     }
 }

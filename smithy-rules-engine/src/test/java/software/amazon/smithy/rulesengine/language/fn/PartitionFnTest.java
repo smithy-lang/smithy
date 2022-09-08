@@ -27,7 +27,7 @@ import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
-import software.amazon.smithy.rulesengine.language.syntax.fn.PartitionFn;
+import software.amazon.smithy.rulesengine.language.stdlib.PartitionFn;
 
 public class PartitionFnTest {
     @Test

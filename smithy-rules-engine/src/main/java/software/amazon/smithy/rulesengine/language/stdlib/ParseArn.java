@@ -13,22 +13,25 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.rulesengine.language.syntax.fn;
+package software.amazon.smithy.rulesengine.language.stdlib;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.impl.Arn;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
-import software.amazon.smithy.rulesengine.language.visit.FnVisitor;
+import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
+import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
+import software.amazon.smithy.rulesengine.language.syntax.fn.StandardLibraryFunction;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
-public final class ParseArn extends SingleArgFn<Type.Str> {
+public final class ParseArn extends FunctionDefinition {
     public static final String ID = "aws.parseArn";
     public static final Identifier PARTITION = Identifier.of("partition");
     public static final Identifier SERVICE = Identifier.of("service");
@@ -36,22 +39,31 @@ public final class ParseArn extends SingleArgFn<Type.Str> {
     public static final Identifier ACCOUNT_ID = Identifier.of("accountId");
     private static final Identifier RESOURCE_ID = Identifier.of("resourceId");
 
-    public ParseArn(FnNode fnNode) {
-        super(fnNode, Type.str());
-    }
 
-    public static ParseArn ofExprs(Expr expr) {
-        return new ParseArn(FnNode.ofExprs(ID, expr));
+    @Override
+    public String id() {
+        return ID;
     }
 
     @Override
-    public <T> T acceptFnVisitor(FnVisitor<T> visitor) {
-        return visitor.visitParseArn(this);
+    public List<Type> arguments() {
+        return Collections.singletonList(Type.str());
     }
 
     @Override
-    protected Value evalArg(Value arg) {
-        String value = arg.expectString();
+    public Type returnType() {
+        return Type.optional(new Type.Record(MapUtils.of(
+                PARTITION, Type.str(),
+                SERVICE, Type.str(),
+                REGION, Type.str(),
+                ACCOUNT_ID, Type.str(),
+                RESOURCE_ID, Type.array(Type.str())
+        )));
+    }
+
+    @Override
+    public Value eval(List<Value> arguments) {
+        String value = arguments.get(0).expectString();
         Optional<Arn> arnOpt = Arn.parse(value);
         return arnOpt.map(arn ->
                 (Value) Value.record(MapUtils.of(
@@ -66,14 +78,7 @@ public final class ParseArn extends SingleArgFn<Type.Str> {
         ).orElse(new Value.None());
     }
 
-    @Override
-    protected Type typecheckArg(Scope<Type> scope, Type.Str arg) {
-        return Type.optional(new Type.Record(MapUtils.of(
-                PARTITION, Type.str(),
-                SERVICE, Type.str(),
-                REGION, Type.str(),
-                ACCOUNT_ID, Type.str(),
-                RESOURCE_ID, Type.array(Type.str())
-        )));
+    public static Fn ofExprs(Expr expr) {
+        return StandardLibraryFunction.ofExprs(new ParseArn(), expr);
     }
 }

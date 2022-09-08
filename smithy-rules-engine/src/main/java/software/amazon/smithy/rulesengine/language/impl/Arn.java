@@ -16,7 +16,6 @@
 package software.amazon.smithy.rulesengine.language.impl;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -36,14 +35,6 @@ public final class Arn implements ToSmithyBuilder<Arn> {
     private final String region;
     private final String accountId;
     private final List<String> resource;
-
-    public Arn(String partition, String service, String region, String accountId, List<String> resource) {
-        this.partition = partition;
-        this.service = service;
-        this.region = region;
-        this.accountId = accountId;
-        this.resource = Collections.unmodifiableList(resource);
-    }
 
     private Arn(Builder builder) {
         this.partition = SmithyBuilder.requiredState("partition", builder.partition);
