@@ -1,6 +1,6 @@
 // while typechecking stringEquals("local", Region)
 //   at invalid-rules/string-equals-unset.json5:17
-// Unexpected type in the second argument of stringEquals: Expected String but found Option<String>   
+// Unexpected type in the second argument of `stringEquals`: Expected String but found Option<String>   
 //   hint: use `assign` in a condition or `isSet(Region)` to prove that this value is non-null
 {
   "version": "1.2",

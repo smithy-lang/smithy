@@ -65,7 +65,9 @@ public class StandardLibraryFunction extends Fn {
                 Type optAny = Type.optional(new Type.Any());
                 String hint = "";
                 if (actual.isA(optAny) && !expected.isA(optAny) && actual.expectOptional().inner().equals(expected)) {
-                    hint = String.format("\nhint: use `assign` in a condition or `isSet(%s)` to prove that this value is non-null", fnNode.getArgv().get(i));
+                    hint = String.format(
+                            "%nhint: use `assign` in a condition or `isSet(%s)` to prove that this value is non-null",
+                            fnNode.getArgv().get(i));
                     hint = StringUtils.indent(hint, 2);
                 }
                 throw new InnerParseError(
