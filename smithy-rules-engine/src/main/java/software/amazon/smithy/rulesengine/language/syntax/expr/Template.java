@@ -32,7 +32,6 @@ import software.amazon.smithy.rulesengine.language.error.InnerParseError;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Typecheck;
-import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.util.MandatorySourceLocation;
 import software.amazon.smithy.rulesengine.language.visit.TemplateVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -136,10 +135,6 @@ public final class Template extends MandatorySourceLocation implements ToNode {
         return Node.from(sb.toString());
     }
 
-    public Value eval(Scope<Value> scope) {
-        return Value.str(parts.stream().map(part -> part.eval(scope)).collect(Collectors.joining()));
-    }
-
     private List<Part> parseTemplate(String template, FromSourceLocation context)
             throws InnerParseError {
         ArrayList<Part> out = new ArrayList<>();
@@ -186,7 +181,6 @@ public final class Template extends MandatorySourceLocation implements ToNode {
     }
 
     public abstract static class Part implements Typecheck {
-        abstract String eval(Scope<Value> scope);
 
         abstract <T> T accept(TemplateVisitor<T> visitor);
 
@@ -210,11 +204,6 @@ public final class Template extends MandatorySourceLocation implements ToNode {
 
         public String getValue() {
             return value;
-        }
-
-        @Override
-        String eval(Scope<Value> scope) {
-            return this.value;
         }
 
         @Override
@@ -261,11 +250,6 @@ public final class Template extends MandatorySourceLocation implements ToNode {
 
         public static Dynamic parse(String value, FromSourceLocation context) {
             return new Dynamic(value, parseShortform(value, context));
-        }
-
-        @Override
-        String eval(Scope<Value> scope) {
-            return ctx("while evaluating " + this, () -> expr.eval(scope).expectString());
         }
 
         @Override

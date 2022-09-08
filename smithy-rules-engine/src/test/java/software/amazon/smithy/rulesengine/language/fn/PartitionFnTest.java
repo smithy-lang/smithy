@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.rulesengine.language.eval.RuleEvaluator;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
@@ -61,6 +62,6 @@ public class PartitionFnTest {
                         .withMember("argv", ArrayNode.arrayNode(StringNode.from(region)))
                         .build());
 
-        return fn.eval(new Scope<>()).expectRecord();
+        return fn.accept(new RuleEvaluator()).expectRecord();
     }
 }

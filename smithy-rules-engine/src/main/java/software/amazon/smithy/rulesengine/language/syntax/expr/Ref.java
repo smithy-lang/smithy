@@ -23,7 +23,6 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -90,11 +89,6 @@ public final class Ref extends Expr {
     @Override
     public String toString() {
         return name.asString();
-    }
-
-    @Override
-    public Value eval(Scope<Value> scope) {
-        return scope.getValue(this.name).orElse(new Value.None());
     }
 
     @Override

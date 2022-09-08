@@ -34,12 +34,14 @@ import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
+import software.amazon.smithy.rulesengine.language.eval.RuleEvaluator;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.util.SourceLocationHelpers;
 import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
+import software.amazon.smithy.rulesengine.language.visit.TemplateVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -226,8 +228,7 @@ public final class Literal extends Expr {
         return nodeToType(source, scope);
     }
 
-    @Override
-    public Value eval(Scope<Value> scope) {
+    public Value eval(RuleEvaluator evaluator) {
         return source.accept(new Vistor<Value>() {
             @Override
             public Value visitBool(boolean b) {
@@ -236,14 +237,44 @@ public final class Literal extends Expr {
 
             @Override
             public Value visitStr(Template value) {
-                return value.eval(scope);
+                return Value.str(value.accept(new TemplateVisitor<String>() {
+                    @Override
+                    public String visitStaticTemplate(String value) {
+                        return value;
+                    }
+
+                    @Override
+                    public String visitSingleDynamicTemplate(Expr value) {
+                        return value.accept(evaluator).expectString();
+                    }
+
+                    @Override
+                    public String visitStaticElement(String value) {
+                        return value;
+                    }
+
+                    @Override
+                    public String visitDynamicElement(Expr value) {
+                        return value.accept(evaluator).expectString();
+                    }
+
+                    @Override
+                    public String startMultipartTemplate() {
+                        return "";
+                    }
+
+                    @Override
+                    public String finishMultipartTemplate() {
+                        return "";
+                    }
+                }).collect(Collectors.joining()));
             }
 
             @Override
             public Value visitObject(Map<Identifier, Literal> members) {
                 Map<Identifier, Value> tpe = new HashMap<>();
                 members.forEach((k, v) -> {
-                    tpe.put(k, v.eval(scope));
+                    tpe.put(k, v.accept(evaluator));
                 });
                 return Value.record(tpe);
             }
@@ -252,7 +283,7 @@ public final class Literal extends Expr {
             public Value visitTuple(List<Literal> members) {
                 List<Value> tuples = new ArrayList<>();
                 for (Literal el : ((Tuple) source).members) {
-                    tuples.add(el.eval(scope));
+                    tuples.add(el.accept(evaluator));
                 }
                 return Value.array(tuples);
             }

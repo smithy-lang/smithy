@@ -19,7 +19,6 @@ import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
 
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.rulesengine.language.visit.FnVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -43,16 +42,11 @@ public final class Not extends SingleArgFn<Type.Bool> {
 
     @Override
     public <T> T acceptFnVisitor(FnVisitor<T> visitor) {
-        return visitor.visitNot(this);
+        return visitor.visitNot(this.target());
     }
 
     public Expr target() {
         return expectOneArg();
-    }
-
-    @Override
-    protected Value evalArg(Value arg) {
-        return Value.bool(!arg.expectBool());
     }
 
     @Override
