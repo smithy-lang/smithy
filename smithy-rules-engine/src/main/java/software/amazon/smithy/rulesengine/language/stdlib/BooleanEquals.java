@@ -15,8 +15,6 @@
 
 package software.amazon.smithy.rulesengine.language.stdlib;
 
-import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
-
 import java.util.Arrays;
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.eval.Type;

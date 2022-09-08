@@ -28,9 +28,10 @@ import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
+import software.amazon.smithy.rulesengine.language.stdlib.BooleanEquals;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
-import software.amazon.smithy.rulesengine.language.stdlib.BooleanEquals;
+import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
 import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -247,11 +248,11 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, ToParameterR
         return Expr.ref(this.name, SourceLocation.none());
     }
 
-    public BooleanEquals eq(boolean b) {
+    public Fn eq(boolean b) {
         return BooleanEquals.fromParam(this, Expr.of(b));
     }
 
-    public BooleanEquals eq(Expr e) {
+    public Fn eq(Expr e) {
         return BooleanEquals.fromParam(this, e);
     }
 
