@@ -38,8 +38,9 @@ import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.rulesengine.language.SourceAwareBuilder;
-import software.amazon.smithy.rulesengine.language.lang.Identifier;
+import software.amazon.smithy.rulesengine.language.syntax.Identifier;
+import software.amazon.smithy.rulesengine.language.util.SourceLocationHelpers;
+import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -481,7 +482,7 @@ public abstract class Value implements FromSourceLocation, ToNode {
         }
 
         public static Builder builder() {
-            return new Builder(SourceAwareBuilder.javaLocation());
+            return new Builder(SourceLocationHelpers.javaLocation());
         }
 
         @Override
@@ -566,7 +567,7 @@ public abstract class Value implements FromSourceLocation, ToNode {
             return sb.toString();
         }
 
-        public static final class Builder extends SourceAwareBuilder<Builder, Endpoint> {
+        public static final class Builder extends SourceLocationTrackingBuilder<Builder, Endpoint> {
             private final BuilderRef<Map<String, Value>> properties = BuilderRef.forOrderedMap();
             private final BuilderRef<Map<String, List<String>>> headers = BuilderRef.forOrderedMap();
             private String url;

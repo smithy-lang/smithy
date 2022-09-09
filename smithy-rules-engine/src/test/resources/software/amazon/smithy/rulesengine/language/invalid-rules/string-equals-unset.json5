@@ -1,9 +1,7 @@
 // while typechecking stringEquals("local", Region)
-//   at invalid-rules/string-equals-unset.json5:19
-// while typechecking stringEquals("local", Region)
-// while typechecking stringEquals
-//   at invalid-rules/string-equals-unset.json5:24
-// Expected string but found Option<String>. hint: use `assign` in a condition or `isSet` to prove that this value is non-null
+//   at invalid-rules/string-equals-unset.json5:17
+// Unexpected type in the second argument: Expected String but found Option<String>   
+//   hint: use `assign` in a condition or `isSet(Region)` to prove that this value is non-null
 {
   "version": "1.2",
   "parameters": {

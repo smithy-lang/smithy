@@ -22,7 +22,7 @@ import static org.hamcrest.Matchers.not;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 import org.junit.jupiter.api.Test;
-import software.amazon.smithy.rulesengine.language.lang.fn.partition.PartitionDataProvider;
+import software.amazon.smithy.rulesengine.language.stdlib.partition.PartitionDataProvider;
 
 public class ServiceLoaderTest {
     @Test

@@ -1,9 +1,7 @@
 // while typechecking booleanEquals(true, UseDualStack)
-//   at invalid-rules/bool-equals-unset.json5:23
-// while typechecking booleanEquals(true, UseDualStack)
-// while typechecking booleanEquals
-//   at invalid-rules/bool-equals-unset.json5:28
-// Expected boolean but found Option<Bool>. hint: use `isSet` to convert Option<Bool> to bool
+//   at invalid-rules/bool-equals-unset.json5:21
+// Unexpected type in the second argument: Expected Bool but found Option<Bool>   
+//   hint: use `assign` in a condition or `isSet(UseDualStack)` to prove that this value is non-null
 {
   "version": "1.2",
   "parameters": {

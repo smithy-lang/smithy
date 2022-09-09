@@ -19,10 +19,9 @@ import java.util.List;
 import java.util.stream.Stream;
 import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.EndpointRuleset;
-import software.amazon.smithy.rulesengine.language.lang.expr.Expr;
-import software.amazon.smithy.rulesengine.language.lang.fn.Fn;
-import software.amazon.smithy.rulesengine.language.lang.rule.Condition;
-import software.amazon.smithy.rulesengine.language.lang.rule.Rule;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
+import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
+import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
@@ -41,11 +40,6 @@ public abstract class TraversingVisitor<R> extends DefaultVisitor<Stream<R>> {
     @Override
     public Stream<R> getDefault() {
         return Stream.empty();
-    }
-
-    @Override
-    public Stream<R> visitFn(Fn fn) {
-        return fn.acceptFnVisitor(this);
     }
 
     @Override

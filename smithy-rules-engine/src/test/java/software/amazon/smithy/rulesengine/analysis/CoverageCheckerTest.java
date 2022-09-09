@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.rulesengine.language.eval.Value;
-import software.amazon.smithy.rulesengine.language.lang.Identifier;
+import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.testutil.TestDiscovery;
 import software.amazon.smithy.utils.MapUtils;
 

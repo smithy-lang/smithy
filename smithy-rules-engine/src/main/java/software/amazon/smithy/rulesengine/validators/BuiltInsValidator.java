@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.rulesengine.language.EndpointRuleset;
-import software.amazon.smithy.rulesengine.language.lang.parameters.Builtins;
+import software.amazon.smithy.rulesengine.language.syntax.parameters.Builtins;
 import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 

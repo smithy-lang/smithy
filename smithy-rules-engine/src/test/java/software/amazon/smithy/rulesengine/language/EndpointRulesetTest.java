@@ -26,12 +26,12 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.language.eval.RuleEngine;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Value;
-import software.amazon.smithy.rulesengine.language.lang.Identifier;
-import software.amazon.smithy.rulesengine.language.lang.expr.Literal;
-import software.amazon.smithy.rulesengine.language.lang.parameters.Parameter;
-import software.amazon.smithy.rulesengine.language.lang.parameters.ParameterType;
-import software.amazon.smithy.rulesengine.language.lang.parameters.Parameters;
-import software.amazon.smithy.rulesengine.language.lang.rule.Rule;
+import software.amazon.smithy.rulesengine.language.syntax.Identifier;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
+import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
+import software.amazon.smithy.rulesengine.language.syntax.parameters.ParameterType;
+import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
+import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.utils.MapUtils;
 
 class EndpointRulesetTest {

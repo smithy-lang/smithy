@@ -32,9 +32,11 @@ import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Typecheck;
-import software.amazon.smithy.rulesengine.language.lang.parameters.Parameters;
-import software.amazon.smithy.rulesengine.language.lang.rule.EndpointRule;
-import software.amazon.smithy.rulesengine.language.lang.rule.Rule;
+import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
+import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
+import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
+import software.amazon.smithy.rulesengine.language.util.MandatorySourceLocation;
+import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -43,7 +45,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * A set of EndpointRules. Endpoint Rules describe the endpoint resolution behavior for a service.
  */
 @SmithyUnstableApi
-public final class EndpointRuleset implements FromSourceLocation, Typecheck, ToNode {
+public final class EndpointRuleset extends MandatorySourceLocation implements Typecheck, ToNode {
     private static final String LATEST_VERSION = "1.3";
     private static final String VERSION = "version";
     private static final String PARAMETERS = "parameters";
@@ -53,13 +55,11 @@ public final class EndpointRuleset implements FromSourceLocation, Typecheck, ToN
     private final Parameters parameters;
     private final String version;
 
-    private final SourceLocation sourceLocation;
-
     private EndpointRuleset(Builder builder) {
+        super(builder.getSourceLocation());
         rules = builder.rules.copy();
         parameters = SmithyBuilder.requiredState("parameters", builder.parameters);
         version = SmithyBuilder.requiredState("version", builder.version);
-        sourceLocation = builder.getSourceLocation();
     }
 
     public static EndpointRuleset fromNode(Node node) throws RuleError {
@@ -92,11 +92,6 @@ public final class EndpointRuleset implements FromSourceLocation, Typecheck, ToN
     }
 
     @Override
-    public SourceLocation getSourceLocation() {
-        return sourceLocation;
-    }
-
-    @Override
     public Type typecheck(Scope<Type> scope) {
         return scope.inScope(() -> {
             parameters.writeToScope(scope);
@@ -122,7 +117,7 @@ public final class EndpointRuleset implements FromSourceLocation, Typecheck, ToN
 
     public Builder toBuilder() {
         return builder()
-                .sourceLocation(sourceLocation)
+                .sourceLocation(getSourceLocation())
                 .parameters(parameters)
                 .rules(getRules());
     }
@@ -160,7 +155,7 @@ public final class EndpointRuleset implements FromSourceLocation, Typecheck, ToN
         return builder.toString();
     }
 
-    public static class Builder extends SourceAwareBuilder<Builder, EndpointRuleset> {
+    public static class Builder extends SourceLocationTrackingBuilder<Builder, EndpointRuleset> {
         private final BuilderRef<List<Rule>> rules = BuilderRef.forList();
         private Parameters parameters;
         // default the version to the latest.

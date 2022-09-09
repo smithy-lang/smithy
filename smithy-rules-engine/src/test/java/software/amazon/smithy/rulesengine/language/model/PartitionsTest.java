@@ -20,7 +20,6 @@ import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.rulesengine.language.util.ResourceUtil;
 
 public class PartitionsTest {
 

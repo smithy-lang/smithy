@@ -17,26 +17,16 @@ package software.amazon.smithy.rulesengine.language.visit;
 
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.Endpoint;
-import software.amazon.smithy.rulesengine.language.lang.expr.Expr;
-import software.amazon.smithy.rulesengine.language.lang.expr.Literal;
-import software.amazon.smithy.rulesengine.language.lang.expr.Ref;
-import software.amazon.smithy.rulesengine.language.lang.fn.BooleanEquals;
-import software.amazon.smithy.rulesengine.language.lang.fn.Fn;
-import software.amazon.smithy.rulesengine.language.lang.fn.GetAttr;
-import software.amazon.smithy.rulesengine.language.lang.fn.IsSet;
-import software.amazon.smithy.rulesengine.language.lang.fn.IsValidHostLabel;
-import software.amazon.smithy.rulesengine.language.lang.fn.Not;
-import software.amazon.smithy.rulesengine.language.lang.fn.ParseArn;
-import software.amazon.smithy.rulesengine.language.lang.fn.ParseUrl;
-import software.amazon.smithy.rulesengine.language.lang.fn.PartitionFn;
-import software.amazon.smithy.rulesengine.language.lang.fn.StringEquals;
-import software.amazon.smithy.rulesengine.language.lang.fn.Substring;
-import software.amazon.smithy.rulesengine.language.lang.fn.UriEncode;
-import software.amazon.smithy.rulesengine.language.lang.rule.Rule;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Ref;
+import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
+import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
+import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
-public abstract class DefaultVisitor<R> implements RuleValueVisitor<R>, ExprVisitor<R>, FnVisitor<R> {
+public abstract class DefaultVisitor<R> implements RuleValueVisitor<R>, ExprVisitor<R> {
     public abstract R getDefault();
 
     @Override
@@ -50,63 +40,31 @@ public abstract class DefaultVisitor<R> implements RuleValueVisitor<R>, ExprVisi
     }
 
     @Override
-    public R visitFn(Fn fn) {
+    public R visitIsSet(Expr fn) {
         return getDefault();
     }
 
     @Override
-    public R visitPartition(PartitionFn fn) {
+    public R visitNot(Expr not) {
         return getDefault();
     }
 
     @Override
-    public R visitParseArn(ParseArn fn) {
-        return getDefault();
-    }
-
-
-    @Override
-    public R visitIsValidHostLabel(IsValidHostLabel fn) {
+    public R visitBoolEquals(Expr left, Expr right) {
         return getDefault();
     }
 
     @Override
-    public R visitBoolEquals(BooleanEquals fn) {
+    public R visitStringEquals(Expr left, Expr right) {
         return getDefault();
     }
 
-    @Override
-    public R visitStringEquals(StringEquals fn) {
-        return getDefault();
-    }
-
-    @Override
-    public R visitIsSet(IsSet fn) {
-        return getDefault();
-    }
-
-    @Override
-    public R visitNot(Not not) {
-        return getDefault();
-    }
-
-    @Override
     public R visitGetAttr(GetAttr getAttr) {
         return getDefault();
     }
 
     @Override
-    public R visitParseUrl(ParseUrl parseUrl) {
-        return getDefault();
-    }
-
-    @Override
-    public R visitSubstring(Substring substring) {
-        return getDefault();
-    }
-
-    @Override
-    public R visitUriEncode(UriEncode fn) {
+    public R visitLibraryFunction(FunctionDefinition fn, List<Expr> args) {
         return getDefault();
     }
 

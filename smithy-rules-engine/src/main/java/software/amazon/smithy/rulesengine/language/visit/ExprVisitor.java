@@ -15,9 +15,12 @@
 
 package software.amazon.smithy.rulesengine.language.visit;
 
-import software.amazon.smithy.rulesengine.language.lang.expr.Literal;
-import software.amazon.smithy.rulesengine.language.lang.expr.Ref;
-import software.amazon.smithy.rulesengine.language.lang.fn.Fn;
+import java.util.List;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Ref;
+import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
+import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
@@ -26,7 +29,17 @@ public interface ExprVisitor<R> {
 
     R visitRef(Ref ref);
 
-    R visitFn(Fn fn);
+    R visitGetAttr(GetAttr getAttr);
+
+    R visitIsSet(Expr fn);
+
+    R visitNot(Expr not);
+
+    R visitBoolEquals(Expr left, Expr right);
+
+    R visitStringEquals(Expr left, Expr right);
+
+    R visitLibraryFunction(FunctionDefinition fn, List<Expr> args);
 
     abstract class Default<R> implements ExprVisitor<R> {
         public abstract R getDefault();
@@ -41,8 +54,32 @@ public interface ExprVisitor<R> {
             return getDefault();
         }
 
+        public R visitGetAttr(GetAttr getAttr) {
+            return getDefault();
+        }
+
         @Override
-        public R visitFn(Fn fn) {
+        public R visitIsSet(Expr fn) {
+            return getDefault();
+        }
+
+        @Override
+        public R visitNot(Expr not) {
+            return getDefault();
+        }
+
+        @Override
+        public R visitBoolEquals(Expr left, Expr right) {
+            return getDefault();
+        }
+
+        @Override
+        public R visitStringEquals(Expr left, Expr right) {
+            return getDefault();
+        }
+
+        @Override
+        public R visitLibraryFunction(FunctionDefinition fn, List<Expr> args) {
             return getDefault();
         }
     }

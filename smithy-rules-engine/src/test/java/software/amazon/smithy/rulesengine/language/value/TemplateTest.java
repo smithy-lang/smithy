@@ -21,21 +21,21 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.rulesengine.language.lang.Identifier;
-import software.amazon.smithy.rulesengine.language.lang.expr.Expr;
-import software.amazon.smithy.rulesengine.language.lang.expr.Template;
-import software.amazon.smithy.rulesengine.language.lang.fn.GetAttr;
+import software.amazon.smithy.rulesengine.language.syntax.Identifier;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Template;
+import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
 
 class TemplateTest {
     @Test
     void validateTemplate() {
         checkTemplateParts("asdf", "asdf");
-        checkTemplateParts("a{B}c", "a", "{dyn B}", "c");
+        checkTemplateParts("a{B}c", "a", "{B}", "c");
         checkTemplateParts("a{{b}}c", "a{b}c");
-        checkTemplateParts("https://{Bucket#arn-region}.{Region}.amazonaws.com", "https://", "{dyn Bucket#arn-region}", ".", "{dyn Region}", ".amazonaws.com");
-        checkTemplateParts("https://{Partition#meta.dnsSuffix}", "https://", "{dyn Partition#meta.dnsSuffix}");
-        checkTemplateParts("https://{ {\"ref\": \"Foo\"} }.com", "https://", "{dyn  {\"ref\": \"Foo\"} }", ".com");
-        checkTemplateParts("{a}b", "{dyn a}", "b");
+        checkTemplateParts("https://{Bucket#arn-region}.{Region}.amazonaws.com", "https://", "{Bucket#arn-region}", ".", "{Region}", ".amazonaws.com");
+        checkTemplateParts("https://{Partition#meta.dnsSuffix}", "https://", "{Partition#meta.dnsSuffix}");
+        checkTemplateParts("https://{ {\"ref\": \"Foo\"} }.com", "https://", "{ {\"ref\": \"Foo\"} }", ".com");
+        checkTemplateParts("{a}b", "{a}", "b");
     }
 
     private void checkTemplateParts(String templateInput, String... parts) {

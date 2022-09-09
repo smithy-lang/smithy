@@ -3,11 +3,11 @@
 // while typechecking the endpoint
 //   at invalid-rules/field-in-wrong-tree.json5:42
 // while checking the URL
-// while typechecking "{dyn partitionResult#name}.amazonaws.com"
-// while typechecking the template `"{dyn partitionResult#name}.amazonaws.com"`
+// while typechecking "{partitionResult#name}.amazonaws.com"
+// while typechecking the template `"{partitionResult#name}.amazonaws.com"`
 //   at invalid-rules/field-in-wrong-tree.json5:43
-// while checking {dyn partitionResult#name}
-// while typechecking partitionResult.name
+// while checking {partitionResult#name}
+// while typechecking partitionResult#name
 // while typechecking partitionResult
 // No field named partitionResult
 {

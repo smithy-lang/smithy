@@ -3,8 +3,8 @@
 // while typechecking the endpoint
 //   at invalid-rules/cant-template-bool.json5:21
 // while checking the URL
-// while typechecking "{dyn enabled}.amazonaws.com"
-// while typechecking the template `"{dyn enabled}.amazonaws.com"`
+// while typechecking "{enabled}.amazonaws.com"
+// while typechecking the template `"{enabled}.amazonaws.com"`
 //   at invalid-rules/cant-template-bool.json5:22
 // Expected string but found Bool
 {

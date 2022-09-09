@@ -18,7 +18,7 @@ package software.amazon.smithy.rulesengine.language.model;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.rulesengine.language.SourceAwareBuilder;
+import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -60,7 +60,7 @@ public final class RegionOverride implements ToSmithyBuilder<RegionOverride>, Fr
         return obj instanceof RegionOverride;
     }
 
-    public static class Builder extends SourceAwareBuilder<Builder, RegionOverride> {
+    public static class Builder extends SourceLocationTrackingBuilder<Builder, RegionOverride> {
 
         public Builder(FromSourceLocation sourceLocation) {
             super(sourceLocation);
