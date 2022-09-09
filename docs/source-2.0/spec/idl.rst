@@ -1398,7 +1398,7 @@ The suffixes for the generated names can be customized using the
 
     $version: "2"
     $operationInputSuffix: "Request"
-    $operationInputSuffix: "Response"
+    $operationOutputSuffix: "Response"
 
     namespace smithy.example
 
