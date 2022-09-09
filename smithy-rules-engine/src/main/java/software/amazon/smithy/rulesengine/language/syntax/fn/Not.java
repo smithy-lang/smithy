@@ -20,7 +20,7 @@ import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
-import software.amazon.smithy.rulesengine.language.visit.FnVisitor;
+import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
@@ -40,13 +40,13 @@ public final class Not extends SingleArgFn<Type.Bool> {
         return new Not(FnNode.ofExprs(ID, expr));
     }
 
-    @Override
-    public <T> T acceptFnVisitor(FnVisitor<T> visitor) {
-        return visitor.visitNot(this.target());
-    }
-
     public Expr target() {
         return expectOneArg();
+    }
+
+    @Override
+    public <R> R accept(ExprVisitor<R> visitor) {
+        return visitor.visitNot(target());
     }
 
     @Override

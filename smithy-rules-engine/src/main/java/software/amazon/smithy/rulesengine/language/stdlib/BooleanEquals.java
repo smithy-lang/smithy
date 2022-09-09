@@ -17,21 +17,30 @@ package software.amazon.smithy.rulesengine.language.stdlib;
 
 import java.util.Arrays;
 import java.util.List;
+import software.amazon.smithy.rulesengine.language.error.InnerParseError;
+import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
+import software.amazon.smithy.rulesengine.language.syntax.fn.FnNode;
 import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
-import software.amazon.smithy.rulesengine.language.syntax.fn.StandardLibraryFunction;
+import software.amazon.smithy.rulesengine.language.syntax.fn.LibraryFunction;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
+import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
-public final class BooleanEquals extends FunctionDefinition {
+public final class BooleanEquals extends Fn {
     public static final String ID = "booleanEquals";
+    private static final Defn DEFN = new Defn();
+
+    public BooleanEquals(FnNode fnNode) {
+        super(fnNode);
+    }
 
     public static Fn ofExprs(Expr left, Expr right) {
-        return StandardLibraryFunction.ofExprs(new BooleanEquals(), left, right);
+        return LibraryFunction.ofExprs(DEFN, left, right);
     }
 
     public static Fn fromParam(Parameter param, Expr value) {
@@ -39,22 +48,37 @@ public final class BooleanEquals extends FunctionDefinition {
     }
 
     @Override
-    public String id() {
-        return ID;
+    public <R> R accept(ExprVisitor<R> visitor) {
+        return visitor.visitBoolEquals(fnNode.getArgv().get(0), fnNode.getArgv().get(1));
     }
 
     @Override
-    public List<Type> arguments() {
-        return Arrays.asList(Type.bool(), Type.bool());
+    protected Type typecheckLocal(Scope<Type> scope) throws InnerParseError {
+        LibraryFunction.checkTypeSignature(DEFN.arguments(), fnNode.getArgv(), scope);
+        return DEFN.returnType();
     }
 
-    @Override
-    public Type returnType() {
-        return Type.bool();
-    }
+    static class Defn extends FunctionDefinition {
+        public static final String ID = BooleanEquals.ID;
 
-    @Override
-    public Value eval(List<Value> arguments) {
-        return Value.bool(arguments.get(0).expectBool() == arguments.get(1).expectBool());
+        @Override
+        public String id() {
+            return ID;
+        }
+
+        @Override
+        public List<Type> arguments() {
+            return Arrays.asList(Type.bool(), Type.bool());
+        }
+
+        @Override
+        public Type returnType() {
+            return Type.bool();
+        }
+
+        @Override
+        public Value eval(List<Value> arguments) {
+            return Value.bool(arguments.get(0).expectBool() == arguments.get(1).expectBool());
+        }
     }
 }

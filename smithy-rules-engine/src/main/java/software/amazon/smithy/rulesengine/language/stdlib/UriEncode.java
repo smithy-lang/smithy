@@ -24,7 +24,7 @@ import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
 import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
-import software.amazon.smithy.rulesengine.language.syntax.fn.StandardLibraryFunction;
+import software.amazon.smithy.rulesengine.language.syntax.fn.LibraryFunction;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -66,7 +66,7 @@ public final class UriEncode extends FunctionDefinition {
     }
 
     public static Fn ofExprs(Expr expr) {
-        return StandardLibraryFunction.ofExprs(new UriEncode(), expr);
+        return LibraryFunction.ofExprs(new UriEncode(), expr);
     }
 
     public static Fn fromParam(Parameter param) {

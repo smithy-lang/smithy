@@ -20,14 +20,13 @@ import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Ref;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
 import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
 import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
-public abstract class DefaultVisitor<R> implements RuleValueVisitor<R>, ExprVisitor<R>, FnVisitor<R> {
+public abstract class DefaultVisitor<R> implements RuleValueVisitor<R>, ExprVisitor<R> {
     public abstract R getDefault();
 
     @Override
@@ -39,12 +38,6 @@ public abstract class DefaultVisitor<R> implements RuleValueVisitor<R>, ExprVisi
     public R visitRef(Ref ref) {
         return getDefault();
     }
-
-    @Override
-    public R visitFn(Fn fn) {
-        return getDefault();
-    }
-
 
     @Override
     public R visitIsSet(Expr fn) {
@@ -71,7 +64,7 @@ public abstract class DefaultVisitor<R> implements RuleValueVisitor<R>, ExprVisi
     }
 
     @Override
-    public R visitGenericFunction(FunctionDefinition fn, List<Expr> args) {
+    public R visitLibraryFunction(FunctionDefinition fn, List<Expr> args) {
         return getDefault();
     }
 

@@ -24,18 +24,16 @@ import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Ref;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
 import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
 import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
-import software.amazon.smithy.rulesengine.language.visit.FnVisitor;
 import software.amazon.smithy.rulesengine.language.visit.RuleValueVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
-public class RuleEvaluator implements FnVisitor<Value>, ExprVisitor<Value> {
+public class RuleEvaluator implements ExprVisitor<Value> {
     private final Scope<Value> scope = new Scope<>();
 
     public Value evaluateRuleset(EndpointRuleset ruleset, Map<Identifier, Value> input) {
@@ -72,11 +70,6 @@ public class RuleEvaluator implements FnVisitor<Value>, ExprVisitor<Value> {
     }
 
     @Override
-    public Value visitFn(Fn fn) {
-        return fn.acceptFnVisitor(this);
-    }
-
-    @Override
     public Value visitIsSet(Expr fn) {
         return Value.bool(!fn.accept(this).isNone());
     }
@@ -101,7 +94,7 @@ public class RuleEvaluator implements FnVisitor<Value>, ExprVisitor<Value> {
     }
 
     @Override
-    public Value visitGenericFunction(FunctionDefinition defn, List<Expr> args) {
+    public Value visitLibraryFunction(FunctionDefinition defn, List<Expr> args) {
         return defn.eval(args.stream().map(arg -> arg.accept(this)).collect(Collectors.toList()));
     }
 

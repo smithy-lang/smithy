@@ -17,22 +17,23 @@ package software.amazon.smithy.rulesengine.language.syntax.fn;
 
 import java.util.HashMap;
 import java.util.Optional;
-import software.amazon.smithy.rulesengine.language.stdlib.BooleanEquals;
 import software.amazon.smithy.rulesengine.language.stdlib.IsValidHostLabel;
 import software.amazon.smithy.rulesengine.language.stdlib.ParseArn;
 import software.amazon.smithy.rulesengine.language.stdlib.ParseUrl;
 import software.amazon.smithy.rulesengine.language.stdlib.PartitionFn;
-import software.amazon.smithy.rulesengine.language.stdlib.StringEquals;
 import software.amazon.smithy.rulesengine.language.stdlib.Substring;
 import software.amazon.smithy.rulesengine.language.stdlib.UriEncode;
 import software.amazon.smithy.rulesengine.language.util.LazyValue;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * Collection of registered functions.
+ */
+@SmithyUnstableApi
 public final class FunctionRegistry {
     private static final LazyValue<FunctionRegistry> GLOBAL_REGISTRY =
             LazyValue.<FunctionRegistry>builder().initializer(() -> {
                 FunctionRegistry registry = new FunctionRegistry();
-                registry.registerFunction(new StringEquals());
-                registry.registerFunction(new BooleanEquals());
                 registry.registerFunction(new PartitionFn());
                 registry.registerFunction(new IsValidHostLabel());
                 registry.registerFunction(new ParseArn());
@@ -51,9 +52,9 @@ public final class FunctionRegistry {
         registry.put(definition.id(), definition);
     }
 
-    public Optional<StandardLibraryFunction> forNode(FnNode node) {
+    public Optional<LibraryFunction> forNode(FnNode node) {
         if (registry.containsKey(node.getId())) {
-            return Optional.of(new StandardLibraryFunction(registry.get(node.getId()), node));
+            return Optional.of(new LibraryFunction(registry.get(node.getId()), node));
         } else {
             return Optional.empty();
         }

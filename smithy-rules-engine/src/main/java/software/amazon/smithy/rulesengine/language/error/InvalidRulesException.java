@@ -18,11 +18,13 @@ package software.amazon.smithy.rulesengine.language.error;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.rulesengine.language.util.SourceLocationHelpers;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Exception thrown when the ruleset is invalid.
  */
-public class InvalidRulesException extends RuntimeException implements FromSourceLocation {
+@SmithyUnstableApi
+public final class InvalidRulesException extends RuntimeException implements FromSourceLocation {
     private final transient SourceLocation sourceLocation;
 
     public InvalidRulesException(String message, FromSourceLocation location) {

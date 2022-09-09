@@ -35,7 +35,7 @@ import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
 import software.amazon.smithy.rulesengine.language.syntax.fn.FnNode;
 import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
-import software.amazon.smithy.rulesengine.language.syntax.fn.StandardLibraryFunction;
+import software.amazon.smithy.rulesengine.language.syntax.fn.LibraryFunction;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.util.LazyValue;
 import software.amazon.smithy.utils.MapUtils;
@@ -115,7 +115,7 @@ public final class PartitionFn extends FunctionDefinition {
     }
 
     public static Fn ofExprs(Expr expr) {
-        return new StandardLibraryFunction(new PartitionFn(), FnNode.ofExprs(ID, expr));
+        return new LibraryFunction(new PartitionFn(), FnNode.ofExprs(ID, expr));
     }
 
     public static Fn fromParam(Parameter param) {

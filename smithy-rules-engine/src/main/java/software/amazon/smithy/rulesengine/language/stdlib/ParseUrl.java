@@ -26,7 +26,7 @@ import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
 import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
-import software.amazon.smithy.rulesengine.language.syntax.fn.StandardLibraryFunction;
+import software.amazon.smithy.rulesengine.language.syntax.fn.LibraryFunction;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
@@ -55,7 +55,7 @@ public class ParseUrl extends FunctionDefinition {
     }
 
     public static Fn ofExprs(Expr expr) {
-        return StandardLibraryFunction.ofExprs(new ParseUrl(), expr);
+        return LibraryFunction.ofExprs(new ParseUrl(), expr);
     }
 
     @Override
