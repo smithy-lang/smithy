@@ -22,7 +22,7 @@ import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
 import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
-import software.amazon.smithy.rulesengine.language.syntax.fn.StandardLibraryFunction;
+import software.amazon.smithy.rulesengine.language.syntax.fn.LibraryFunction;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
@@ -56,6 +56,6 @@ public final class IsValidHostLabel extends FunctionDefinition {
     }
 
     public static Fn ofExprs(Expr input, boolean allowDots) {
-        return StandardLibraryFunction.ofExprs(new IsValidHostLabel(), input, Expr.of(allowDots));
+        return LibraryFunction.ofExprs(new IsValidHostLabel(), input, Expr.of(allowDots));
     }
 }

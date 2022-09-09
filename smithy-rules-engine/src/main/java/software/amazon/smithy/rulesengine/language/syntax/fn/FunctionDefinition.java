@@ -18,7 +18,9 @@ package software.amazon.smithy.rulesengine.language.syntax.fn;
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+@SmithyUnstableApi
 public abstract class FunctionDefinition {
     public FunctionDefinition() {
     }

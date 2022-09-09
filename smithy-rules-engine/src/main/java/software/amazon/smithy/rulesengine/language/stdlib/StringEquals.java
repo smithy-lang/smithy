@@ -17,39 +17,64 @@ package software.amazon.smithy.rulesengine.language.stdlib;
 
 import java.util.Arrays;
 import java.util.List;
+import software.amazon.smithy.rulesengine.language.error.InnerParseError;
+import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
+import software.amazon.smithy.rulesengine.language.syntax.fn.FnNode;
 import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
-import software.amazon.smithy.rulesengine.language.syntax.fn.StandardLibraryFunction;
+import software.amazon.smithy.rulesengine.language.syntax.fn.LibraryFunction;
+import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
-public final class StringEquals extends FunctionDefinition {
+public final class StringEquals extends Fn {
     public static final String ID = "stringEquals";
+    private static final Defn DEFN = new Defn();
+
+    public StringEquals(FnNode fnNode) {
+        super(fnNode);
+    }
 
     public static Fn ofExprs(Expr left, Expr right) {
-        return StandardLibraryFunction.ofExprs(new StringEquals(), left, right);
+        return LibraryFunction.ofExprs(DEFN, left, right);
     }
 
     @Override
-    public String id() {
-        return ID;
+    public <R> R accept(ExprVisitor<R> visitor) {
+        return visitor.visitStringEquals(fnNode.getArgv().get(0), fnNode.getArgv().get(1));
     }
 
     @Override
-    public List<Type> arguments() {
-        return Arrays.asList(Type.str(), Type.str());
+    protected Type typecheckLocal(Scope<Type> scope) throws InnerParseError {
+        LibraryFunction.checkTypeSignature(DEFN.arguments(), fnNode.getArgv(), scope);
+        return DEFN.returnType();
     }
 
-    @Override
-    public Type returnType() {
-        return Type.bool();
-    }
+    private static class Defn extends FunctionDefinition {
+        public static final String ID = StringEquals.ID;
 
-    @Override
-    public Value eval(List<Value> arguments) {
-        return Value.bool(arguments.get(0).expectString().equals(arguments.get(1).expectString()));
+
+        @Override
+        public String id() {
+            return ID;
+        }
+
+        @Override
+        public List<Type> arguments() {
+            return Arrays.asList(Type.str(), Type.str());
+        }
+
+        @Override
+        public Type returnType() {
+            return Type.bool();
+        }
+
+        @Override
+        public Value eval(List<Value> arguments) {
+            return Value.bool(arguments.get(0).expectString().equals(arguments.get(1).expectString()));
+        }
     }
 }

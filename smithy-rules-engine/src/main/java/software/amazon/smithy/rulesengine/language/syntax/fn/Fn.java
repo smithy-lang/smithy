@@ -25,9 +25,6 @@ import software.amazon.smithy.rulesengine.Into;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
-import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
-import software.amazon.smithy.rulesengine.language.visit.FnVisitor;
-import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
@@ -49,8 +46,6 @@ public abstract class Fn extends Expr implements Into<Condition> {
     public Condition condition(String result) {
         return new Condition.Builder().fn(this).result(result).build();
     }
-
-    public abstract <T> T acceptFnVisitor(FnVisitor<T> visitor);
 
     /**
      * Returns the name of this function, eg. {@code isSet}, {@code parseUrl}
@@ -91,10 +86,6 @@ public abstract class Fn extends Expr implements Into<Condition> {
         return fnNode.getSourceLocation();
     }
 
-    public <R> R accept(ExprVisitor<R> visitor) {
-        return visitor.visitFn(this);
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {
@@ -114,30 +105,6 @@ public abstract class Fn extends Expr implements Into<Condition> {
     @Override
     public Node toNode() {
         return fnNode.toNode();
-    }
-
-    protected Pair<Expr, Expr> expectTwoArgs() {
-        List<Expr> argv = this.fnNode.getArgv();
-        if (argv.size() == 2) {
-            return Pair.of(argv.get(0), argv.get(1));
-        } else {
-            throw new RuleError(
-                    new SourceException("expected 2 arguments but found " + argv.size(),
-                            this.fnNode));
-        }
-
-    }
-
-    protected List<Expr> expectVariableArgs(int expectedNumberArgs) {
-        List<Expr> argv = this.fnNode.getArgv();
-        if (argv.size() == expectedNumberArgs) {
-            return argv;
-        } else {
-            throw new RuleError(
-                    new SourceException(String.format("expected %d arguments but found %d",
-                            expectedNumberArgs, argv.size()), this.fnNode));
-        }
-
     }
 
     @Override

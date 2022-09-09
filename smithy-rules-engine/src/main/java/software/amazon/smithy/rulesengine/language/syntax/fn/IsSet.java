@@ -20,7 +20,6 @@ import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Ref;
 import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
-import software.amazon.smithy.rulesengine.language.visit.FnVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
@@ -36,10 +35,6 @@ public final class IsSet extends SingleArgFn<Type.Option> {
         return new IsSet(FnNode.ofExprs(ID, expr));
     }
 
-    @Override
-    public <T> T acceptFnVisitor(FnVisitor<T> visitor) {
-        return visitor.visitIsSet(this.target());
-    }
 
     @Override
     protected Type typecheckArg(Scope<Type> scope, Type.Option arg) {
@@ -60,4 +55,8 @@ public final class IsSet extends SingleArgFn<Type.Option> {
         return Type.bool();
     }
 
+    @Override
+    public <R> R accept(ExprVisitor<R> visitor) {
+        return visitor.visitIsSet(target());
+    }
 }

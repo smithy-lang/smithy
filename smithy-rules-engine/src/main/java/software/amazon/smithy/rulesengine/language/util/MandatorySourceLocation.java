@@ -18,10 +18,12 @@ package software.amazon.smithy.rulesengine.language.util;
 import java.util.Objects;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Abstract class that mandates that all child classes provide a source location.
  */
+@SmithyInternalApi
 public abstract class MandatorySourceLocation implements FromSourceLocation  {
     private final SourceLocation sourceLocation;
 
