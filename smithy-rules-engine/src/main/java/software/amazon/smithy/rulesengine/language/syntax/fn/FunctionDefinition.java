@@ -25,12 +25,28 @@ public abstract class FunctionDefinition {
     public FunctionDefinition() {
     }
 
+    /**
+     * The ID of this function.
+     * @return The ID string
+     */
     public abstract String id();
 
+    /**
+     * The arguments to this function.
+     * @return The function arguments
+     */
     public abstract List<Type> arguments();
 
+    /**
+     * The return type of this function definition.
+     * @return The function return type
+     */
     public abstract Type returnType();
 
+    /**
+     * Evaluate the arguments to a given function to compute a result.
+     * @return The resulting value
+     */
     public abstract Value eval(List<Value> arguments);
 
 }
