@@ -48,7 +48,6 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
@@ -272,6 +271,8 @@ public final class Upgrade1to2Command extends SimpleCommand {
         protected Void getDefault(Shape shape) {
             if (shape.hasTrait(BoxTrait.class)) {
                 writer.eraseTrait(shape, shape.expectTrait(BoxTrait.class));
+            } else if (hasSyntheticDefault(shape)) {
+                addDefault(shape, shape.getType());
             }
             // Handle members in reverse definition order.
             shape.members().stream()
@@ -282,23 +283,7 @@ public final class Upgrade1to2Command extends SimpleCommand {
 
         private void handleMemberShape(MemberShape shape) {
             if (hasSyntheticDefault(shape)) {
-                SourceLocation memberLocation = shape.getSourceLocation();
-                String padding = "";
-                if (memberLocation.getColumn() > 1) {
-                    padding = StringUtils.repeat(' ', memberLocation.getColumn() - 1);
-                }
-                Shape target = completeModel.expectShape(shape.getTarget());
-                String defaultValue = "";
-                if (target.isBooleanShape()) {
-                    defaultValue = "false";
-                } else if (target instanceof NumberShape) {
-                    defaultValue = "0";
-                } else if (target.isBlobShape() || target.isStringShape()) {
-                    defaultValue = "\"\"";
-                } else {
-                    throw new UnsupportedOperationException("Unexpected default: " + target);
-                }
-                writer.insertLine(shape.getSourceLocation().getLine(), padding + "@default(" + defaultValue + ")");
+                addDefault(shape, completeModel.expectShape(shape.getTarget()).getType());
             }
 
             if (shape.hasTrait(BoxTrait.class)) {
@@ -306,7 +291,7 @@ public final class Upgrade1to2Command extends SimpleCommand {
             }
         }
 
-        private boolean hasSyntheticDefault(MemberShape shape) {
+        private boolean hasSyntheticDefault(Shape shape) {
             Optional<SourceLocation> defaultLocation = shape.getTrait(DefaultTrait.class)
                     .map(Trait::getSourceLocation);
             // When Smithy injects the default trait, it sets the source
@@ -314,6 +299,40 @@ public final class Upgrade1to2Command extends SimpleCommand {
             // impossible in any other scenario, so we can use this info
             // to know whether it was injected or not.
             return defaultLocation.filter(location -> shape.getSourceLocation().equals(location)).isPresent();
+        }
+
+        private void addDefault(Shape shape, ShapeType targetType) {
+            SourceLocation memberLocation = shape.getSourceLocation();
+            String padding = "";
+            if (memberLocation.getColumn() > 1) {
+                padding = StringUtils.repeat(' ', memberLocation.getColumn() - 1);
+            }
+            String defaultValue = "";
+            // Boxed members get a null default.
+            if (shape.hasTrait(BoxTrait.class)) {
+                defaultValue = "null";
+            } else {
+                switch (targetType) {
+                    case BOOLEAN:
+                        defaultValue = "false";
+                        break;
+                    case BYTE:
+                    case SHORT:
+                    case INTEGER:
+                    case LONG:
+                    case FLOAT:
+                    case DOUBLE:
+                        defaultValue = "0";
+                        break;
+                    case BLOB:
+                    case STRING:
+                        defaultValue = "\"\"";
+                        break;
+                    default:
+                        throw new UnsupportedOperationException("Unexpected default: " + targetType);
+                }
+            }
+            writer.insertLine(shape.getSourceLocation().getLine(), padding + "@default(" + defaultValue + ")");
         }
 
         @Override

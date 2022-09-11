@@ -62,7 +62,7 @@ public final class DefaultTraitValidator extends AbstractValidator {
                         if (memberDefault == null) {
                             events.add(error(member, String.format(
                                     "Member targets %s, which requires that the member defines the same default "
-                                    + "of `%s`",
+                                    + "of `%s` or `null`",
                                     shape.toShapeId(), Node.printJson(value))));
                         } else if (!memberDefault.toNode().isNullNode()
                                    && !value.equals(member.expectTrait(DefaultTrait.class).toNode())) {
@@ -101,7 +101,7 @@ public final class DefaultTraitValidator extends AbstractValidator {
                 return visitor;
             }
         } else if (value.isNullNode()) {
-            events.add(error(shape, trait, "The @default trait can only be set to null on members"));
+            events.add(error(shape, trait, "The @default trait can be set to null only on members"));
             return visitor;
         }
 

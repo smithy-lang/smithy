@@ -63,6 +63,7 @@ import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.BoxTrait;
+import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.DynamicTrait;
@@ -958,6 +959,8 @@ public class ModelAssemblerTest {
                 .assemble()
                 .unwrap();
 
+        assertionChecksFor_upgradesAndDowngrades(model1);
+
         // And through unparsed.
         String contents = IoUtils.readUtf8Resource(getClass(), "needs-upgrade-document-node.json");
         Model model2 = Model.assembler()
@@ -965,12 +968,16 @@ public class ModelAssemblerTest {
                 .assemble()
                 .unwrap();
 
+        assertionChecksFor_upgradesAndDowngrades(model2);
+
         // And through document node.
         Node node = Node.parse(contents);
         Model model3 = Model.assembler()
                 .addDocumentNode(node)
                 .assemble()
                 .unwrap();
+
+        assertionChecksFor_upgradesAndDowngrades(model3);
 
         // Pathological case.
         Model model4 = Model.assembler()
@@ -982,22 +989,37 @@ public class ModelAssemblerTest {
                 .assemble()
                 .unwrap();
 
+        assertionChecksFor_upgradesAndDowngrades(model4);
+
         assertThat(model1, equalTo(model2));
         assertThat(model1, equalTo(model3));
         assertThat(model1, equalTo(model4));
     }
 
+    private void assertionChecksFor_upgradesAndDowngrades(Model model) {
+        ShapeId boxDouble = ShapeId.from("smithy.example#BoxDouble");
+        ShapeId primitiveDouble = ShapeId.from("smithy.example#PrimitiveDouble");
+        ShapeId fooMember = ShapeId.from("smithy.example#Struct$foo");
+        ShapeId barMember = ShapeId.from("smithy.example#Struct$bar");
+        ShapeId boxedMember = ShapeId.from("smithy.example#Struct$boxed");
+        assertThat(model.expectShape(boxDouble).hasTrait(DefaultTrait.class), is(false));
+        assertThat(model.expectShape(primitiveDouble).hasTrait(DefaultTrait.class), is(true));
+        assertThat(model.expectShape(fooMember).hasTrait(DefaultTrait.class), is(true));
+        assertThat(model.expectShape(barMember).hasTrait(DefaultTrait.class), is(false));
+        assertThat(model.expectShape(boxedMember).hasTrait(DefaultTrait.class), is(true));
+        assertThat(model.expectShape(boxedMember).expectTrait(DefaultTrait.class).toNode(), equalTo(Node.nullNode()));
+        assertThat(model.expectShape(boxedMember).hasTrait(BoxTrait.class), is(true));
+    }
+
     @Test
     public void patches2_0_documentNodesToo() {
-        ShapeId boxDouble = ShapeId.from("smithy.example#BoxDouble");
-
         // Loads fine through import.
         Model model1 = Model.assembler()
                 .addImport(getClass().getResource("needs-downgrade-document-node.json"))
                 .assemble()
                 .unwrap();
 
-        assertThat(model1.expectShape(boxDouble).hasTrait(BoxTrait.class), is(true));
+        assertionChecksFor_upgradesAndDowngrades(model1);
 
         // And through unparsed.
         String contents = IoUtils.readUtf8Resource(getClass(), "needs-downgrade-document-node.json");
@@ -1006,7 +1028,7 @@ public class ModelAssemblerTest {
                 .assemble()
                 .unwrap();
 
-        assertThat(model2.expectShape(boxDouble).hasTrait(BoxTrait.class), is(true));
+        assertionChecksFor_upgradesAndDowngrades(model2);
 
         // And through document node.
         Node node = Node.parse(contents);
@@ -1015,7 +1037,7 @@ public class ModelAssemblerTest {
                 .assemble()
                 .unwrap();
 
-        assertThat(model3.expectShape(boxDouble).hasTrait(BoxTrait.class), is(true));
+        assertionChecksFor_upgradesAndDowngrades(model3);
 
         // Pathological case.
         Model model4 = Model.assembler()
@@ -1027,7 +1049,7 @@ public class ModelAssemblerTest {
                 .assemble()
                 .unwrap();
 
-        assertThat(model4.expectShape(boxDouble).hasTrait(BoxTrait.class), is(true));
+        assertionChecksFor_upgradesAndDowngrades(model4);
 
         assertThat(model1, equalTo(model2));
         assertThat(model1, equalTo(model3));

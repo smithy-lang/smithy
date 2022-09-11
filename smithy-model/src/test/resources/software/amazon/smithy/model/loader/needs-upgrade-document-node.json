@@ -18,6 +18,12 @@
                 },
                 "bar": {
                     "target": "smithy.example#BoxDouble"
+                },
+                "boxed": {
+                    "target": "smithy.example#PrimitiveDouble",
+                    "traits": {
+                        "smithy.api#box": {}
+                    }
                 }
             }
         }

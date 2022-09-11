@@ -25,5 +25,6 @@ structure PrimitiveBearer {
     @default(0)
     handlesRequired: PrimitiveLong,
 
+    @default(null)
     handlesBox: PrimitiveByte,
 }

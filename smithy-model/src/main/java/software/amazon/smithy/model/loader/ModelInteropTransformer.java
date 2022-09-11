@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
@@ -44,15 +43,21 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.utils.SetUtils;
 
 /**
- * Upgrades Smithy models from IDL v1 to IDL v2, specifically taking into
- * account the removal of the box trait, the change in default value
- * semantics of numbers and booleans, and the @default trait.
+ * Ensures interoperability between IDL 1 and IDL 2 models by adding default traits and synthetic box traits where
+ * needed to normalize across versions.
+ *
+ * <p>For 1 to 2 interop, this class adds default traits. If a root level v1 shape is not boxed and supports the box
+ * trait, a default trait is added set to the zero value of the type. If a v1 member is marked with the box trait,
+ * then a default trait is added to the member set to null. If a member is targets a streaming blob and is not
+ * required, the default trait is added set to an empty string.
+ *
+ * <p>For 2 to 1 interop, if a v2 member has a default set to null a synthetic box trait is added. If a root level
+ * does not have the default trait and the type supports the box trait, a synthetic box trait is added.
  */
 @SuppressWarnings("deprecation")
-final class ModelUpgrader {
+final class ModelInteropTransformer {
 
     /** Shape types in Smithy 1.0 that had a default value. */
     private static final EnumSet<ShapeType> HAD_DEFAULT_VALUE_IN_1_0 = EnumSet.of(
@@ -64,20 +69,12 @@ final class ModelUpgrader {
             ShapeType.DOUBLE,
             ShapeType.BOOLEAN);
 
-    private static final Set<ShapeType> SUPPORTS_RANGE_TRAIT_AND_ZERO_VALUE = SetUtils.of(
-            ShapeType.BYTE,
-            ShapeType.SHORT,
-            ShapeType.INTEGER,
-            ShapeType.LONG,
-            ShapeType.FLOAT,
-            ShapeType.DOUBLE);
-
     private final Model model;
     private final List<ValidationEvent> events;
     private final Function<Shape, Version> fileToVersion;
     private final List<Shape> shapeUpgrades = new ArrayList<>();
 
-    ModelUpgrader(Model model, List<ValidationEvent> events, Function<Shape, Version> fileToVersion) {
+    ModelInteropTransformer(Model model, List<ValidationEvent> events, Function<Shape, Version> fileToVersion) {
         this.model = model;
         this.events = events;
         this.fileToVersion = fileToVersion;
@@ -123,24 +120,23 @@ final class ModelUpgrader {
         } else if (member.hasTrait(BoxTrait.class)) {
             // Add a default trait to the member set to null to indicate it was boxed in v1.
             MemberShape.Builder builder = member.toBuilder();
-            builder.addTrait(new DefaultTrait(Node.nullNode()));
+            builder.addTrait(new DefaultTrait(new NullNode(member.getSourceLocation())));
             shapeUpgrades.add(builder.build());
         }
     }
 
     private boolean shouldV1MemberHaveDefaultTrait(MemberShape member, Shape target) {
         // Only when the targeted shape had a default value by default in v1 or if
-        // the member has the http payload trait and targets a streaming blob, which
-        // implies a default in 2.0
-        return (HAD_DEFAULT_VALUE_IN_1_0.contains(target.getType()) || isDefaultPayload(member, target))
+        // the member targets a streaming blob, which implies a default in 2.0
+        return (HAD_DEFAULT_VALUE_IN_1_0.contains(target.getType()) || streamingBlobNeedsDefault(member, target))
             // Don't re-add the @default trait
             && !member.hasTrait(DefaultTrait.ID)
             // Don't add a @default trait if the member or target are considered boxed in v1.
             && memberAndTargetAreNotAlreadyExplicitlyBoxed(member, target);
     }
 
-    private boolean isDefaultPayload(MemberShape member, Shape target) {
-        // httpPayload requires that the member is required or default.
+    private boolean streamingBlobNeedsDefault(MemberShape member, Shape target) {
+        // Streaming blobs require that the member is required or default.
         // No need to add the default trait if the member is required.
         if (member.isRequired()) {
             return false;

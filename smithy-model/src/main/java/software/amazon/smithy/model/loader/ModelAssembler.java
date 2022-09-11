@@ -555,8 +555,8 @@ public final class ModelAssembler {
         }
 
         // Do the 1.0 -> 2.0 transform before full-model validation.
-        ValidatedResult<Model> transformed = new ModelUpgrader(processedModel, events, processor::getShapeVersion)
-                .transform();
+        ValidatedResult<Model> transformed = new ModelInteropTransformer(processedModel, events,
+                                                                         processor::getShapeVersion).transform();
 
         if (disableValidation
                 || !transformed.getResult().isPresent()

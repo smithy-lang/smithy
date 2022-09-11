@@ -80,19 +80,18 @@ final class TimestampFormatPlugin implements NodeValidatorPlugin {
             if (value.isStringNode()) {
                 validateDatetime(shape, value, emitter);
             } else {
-                emitter.accept(value, Severity.ERROR,
-                               "Invalid " + value.getType() + " value provided for timestamp, `"
-                               + shape.getId() + "`. Expected a number that contains epoch seconds with "
-                               + "optional millisecond precision, or a string that contains an RFC 3339 "
-                               + "formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")");
+                emitter.accept(value, "Invalid " + value.getType() + " value provided for timestamp, `"
+                                      + shape.getId() + "`. Expected a number that contains epoch seconds with "
+                                      + "optional millisecond precision, or a string that contains an RFC 3339 "
+                                      + "formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")");
             }
         }
     }
 
     private void validateDatetime(Shape shape, Node value, Emitter emitter) {
         if (!value.isStringNode()) {
-            emitter.accept(value, Severity.ERROR, "Expected a string value for a date-time timestamp "
-                                                  + "(e.g., \"1985-04-12T23:20:50.52Z\")");
+            emitter.accept(value, "Expected a string value for a date-time timestamp "
+                                  + "(e.g., \"1985-04-12T23:20:50.52Z\")");
             return;
         }
 
@@ -101,10 +100,9 @@ final class TimestampFormatPlugin implements NodeValidatorPlugin {
         // See: https://bugs.openjdk.java.net/browse/JDK-8166138
         // However, Smithy doesn't allow offsets for timestamp shapes.
         if (!(timestamp.endsWith("Z") && isValidFormat(timestamp, DATE_TIME_Z))) {
-            emitter.accept(value, Severity.ERROR,
-                           "Invalid string value, `" + timestamp + "`, provided for timestamp, `"
-                           + shape.getId() + "`. Expected an RFC 3339 formatted timestamp (e.g., "
-                           + "\"1985-04-12T23:20:50.52Z\")");
+            emitter.accept(value, "Invalid string value, `" + timestamp + "`, provided for timestamp, `"
+                                  + shape.getId() + "`. Expected an RFC 3339 formatted timestamp (e.g., "
+                                  + "\"1985-04-12T23:20:50.52Z\")");
         }
     }
 
