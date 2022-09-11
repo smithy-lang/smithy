@@ -77,7 +77,7 @@ public final class ChangedDefault extends AbstractDiffEvaluator {
                 }
             }
         } else if (!oldTrait.toNode().equals(newTrait.toNode())) {
-            if (change.getNewShape().asMemberShape().isPresent()) {
+            if (change.getNewShape().isMemberShape()) {
                 evaluateChangedTrait(model, change.getNewShape().asMemberShape().get(), oldTrait, newTrait, events);
             } else {
                 events.add(error(change.getNewShape(), newTrait,

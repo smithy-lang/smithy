@@ -38,7 +38,7 @@ import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.Pair;
 
-public class ModelUpgraderTest {
+public class ModelInteropTransformerTest {
     @Test
     public void upgradesWhenAllModelsUse1_0() {
         UpgradeTestCase testCase = UpgradeTestCase.createAndValidate("upgrade/all-1.0");
@@ -144,7 +144,7 @@ public class ModelUpgraderTest {
         }
 
         private static UpgradeTestCase createFromDirectory(String directory) {
-            try (Stream<Path> paths = Files.walk(Paths.get(ModelUpgraderTest.class.getResource(directory).toURI()))) {
+            try (Stream<Path> paths = Files.walk(Paths.get(ModelInteropTransformerTest.class.getResource(directory).toURI()))) {
                 UpgradeTestCase testCase = new UpgradeTestCase();
                 paths.filter(Files::isRegularFile).forEach(file -> {
                     if (file.endsWith("upgraded.smithy") || file.endsWith("upgraded.json")) {

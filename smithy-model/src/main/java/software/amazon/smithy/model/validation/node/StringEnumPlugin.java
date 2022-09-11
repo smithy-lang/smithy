@@ -19,7 +19,6 @@ import java.util.List;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.EnumTrait;
-import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationUtils;
 
 /**
@@ -36,7 +35,7 @@ final class StringEnumPlugin extends FilteredPlugin<StringShape, StringNode> {
         shape.getTrait(EnumTrait.class).ifPresent(trait -> {
             List<String> values = trait.getEnumDefinitionValues();
             if (!values.contains(node.getValue())) {
-                emitter.accept(node, Severity.ERROR, String.format(
+                emitter.accept(node, String.format(
                         "String value provided for `%s` must be one of the following values: %s",
                         shape.getId(), ValidationUtils.tickedList(values)));
             }

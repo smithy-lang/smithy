@@ -1,6 +1,7 @@
 package software.amazon.smithy.diff.evaluators;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.util.List;
@@ -115,6 +116,30 @@ public class ChangedDefaultTest {
     }
 
     @Test
+    public void updateModelWithAddedDefault() {
+        String originalModel =
+                "$version: \"2\"\n"
+                + "namespace smithy.example\n"
+                + "structure Foo {\n"
+                + "    @required\n"
+                + "    bar: Integer\n"
+                + "}\n";
+        String updatedModel =
+                "$version: \"2\"\n"
+                + "namespace smithy.example\n"
+                + "structure Foo {\n"
+                + "    @addedDefault\n"
+                + "    bar: Integer = 1\n"
+                + "}\n";
+        Model modelA = Model.assembler().addUnparsedModel("test.smithy", originalModel).assemble().unwrap();
+        Model modelB = Model.assembler().addUnparsedModel("test.smithy", updatedModel).assemble().unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "ChangedDefault"), empty());
+        assertThat(TestHelper.findEvents(events, "ChangedNullability"), empty());
+    }
+
+    @Test
     public void errorWhenDefaultChangesFromZeroToNonZeroValue() {
         String originalModel =
                 "$version: \"2\"\n"
@@ -178,5 +203,49 @@ public class ChangedDefaultTest {
 
         assertThat(TestHelper.findEvents(events, "ChangedDefault").size(), equalTo(0));
         assertThat(TestHelper.findEvents(events, "ChangedNullability").size(), equalTo(0));
+    }
+
+    @Test
+    public void changingFromNullDefaultToOneIsBreaking() {
+        String originalModel =
+                "$version: \"2\"\n"
+                + "namespace smithy.example\n"
+                + "structure Foo {\n"
+                + "    bar: Integer = null\n"
+                + "}\n";
+        String updatedModel =
+                "$version: \"2\"\n"
+                + "namespace smithy.example\n"
+                + "structure Foo {\n"
+                + "    bar: Integer = 1\n"
+                + "}\n";
+        Model modelA = Model.assembler().addUnparsedModel("test.smithy", originalModel).assemble().unwrap();
+        Model modelB = Model.assembler().addUnparsedModel("test.smithy", updatedModel).assemble().unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "ChangedDefault").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedNullability").size(), equalTo(1));
+    }
+
+    @Test
+    public void changingFromNullDefaultToZeroIsBreaking() {
+        String originalModel =
+                "$version: \"2\"\n"
+                + "namespace smithy.example\n"
+                + "structure Foo {\n"
+                + "    bar: Integer = null\n"
+                + "}\n";
+        String updatedModel =
+                "$version: \"2\"\n"
+                + "namespace smithy.example\n"
+                + "structure Foo {\n"
+                + "    bar: Integer = 0\n"
+                + "}\n";
+        Model modelA = Model.assembler().addUnparsedModel("test.smithy", originalModel).assemble().unwrap();
+        Model modelB = Model.assembler().addUnparsedModel("test.smithy", updatedModel).assemble().unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "ChangedDefault").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedNullability").size(), equalTo(1));
     }
 }

@@ -31,6 +31,7 @@ import java.nio.file.attribute.FileTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -51,7 +52,10 @@ public class Upgrade1to2CommandTest {
         Model model = Model.assembler().addImport(initialPath).assemble().unwrap();
         String actual = new Upgrade1to2Command("smithy").upgradeFile(model, initialPath);
         String expected = IoUtils.readUtf8File(expectedPath);
-        assertThat(actual, equalTo(expected));
+
+        if (!actual.equals(expected)) {
+            Assertions.fail("Expected models to be equal:\n\nActual:\n\n" + actual + "\n\nExpected:\n\n" + expected);
+        }
     }
 
     public static Stream<Arguments> source() throws Exception {

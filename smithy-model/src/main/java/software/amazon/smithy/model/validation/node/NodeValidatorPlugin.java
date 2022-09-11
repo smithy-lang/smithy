@@ -126,5 +126,9 @@ public interface NodeValidatorPlugin {
     @FunctionalInterface
     interface Emitter {
         void accept(FromSourceLocation sourceLocation, Severity severity, String message);
+
+        default void accept(FromSourceLocation sourceLocation, String message) {
+            accept(sourceLocation, Severity.ERROR, message);
+        }
     }
 }

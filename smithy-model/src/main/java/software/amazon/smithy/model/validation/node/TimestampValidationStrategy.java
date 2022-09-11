@@ -19,7 +19,6 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.validation.Severity;
 
 /**
  * Defines how timestamps are validated.
@@ -47,10 +46,9 @@ public enum TimestampValidationStrategy implements NodeValidatorPlugin {
         @Override
         public void apply(Shape shape, Node value, Context context, Emitter emitter) {
             if (isTimestampMember(context.model(), shape) && !value.isNumberNode()) {
-                emitter.accept(shape, Severity.ERROR,
-                               "Invalid " + value.getType() + " value provided for timestamp, `"
-                               + shape.getId() + "`. Expected a number that contains epoch "
-                               + "seconds with optional millisecond precision");
+                emitter.accept(shape, "Invalid " + value.getType() + " value provided for timestamp, `"
+                                      + shape.getId() + "`. Expected a number that contains epoch "
+                                      + "seconds with optional millisecond precision");
             }
         }
     };
