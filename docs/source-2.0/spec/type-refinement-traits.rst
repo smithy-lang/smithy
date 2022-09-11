@@ -72,7 +72,7 @@ member.
     }
 
 The ``@default`` trait on a structure member can be set to ``null`` to
-explicitly indicate that the member is optional or to override the default
+explicitly indicate that the member has no default value or to override the default
 value requirement of a targeted shape.
 
 .. code-block:: smithy
