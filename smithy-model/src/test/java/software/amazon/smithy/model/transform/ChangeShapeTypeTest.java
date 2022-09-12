@@ -243,6 +243,14 @@ public class ChangeShapeTypeTest {
     }
 
     @Test
+    public void ignoresConversionToSameType() {
+        Shape startShape = StructureShape.builder().id(ShapeId.from("smithy.example#Test")).build();
+        Model model = Model.assembler().addShape(startShape).assemble().unwrap();
+
+        ModelTransformer.create().changeShapeType(model, MapUtils.of(startShape.getId(), ShapeType.STRUCTURE));
+    }
+
+    @Test
     public void cannotConvertUnionToAnythingButStructure() {
         Shape startShape = UnionShape.builder()
                 .id(ShapeId.from("smithy.example#Test"))

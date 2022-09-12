@@ -85,7 +85,10 @@ final class ChangeShapeType {
     Model transform(ModelTransformer transformer, Model model) {
         return transformer.mapShapes(model, shape -> {
             if (shapeToType.containsKey(shape.getId())) {
-                return shape.accept(new Retype(shapeToType.get(shape.getId()), synthesizeEnumNames));
+                ShapeType targetType = shapeToType.get(shape.getId());
+                return targetType == shape.getType()
+                       ? shape
+                       : shape.accept(new Retype(targetType, synthesizeEnumNames));
             } else {
                 return shape;
             }
