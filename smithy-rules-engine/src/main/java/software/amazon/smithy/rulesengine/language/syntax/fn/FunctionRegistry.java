@@ -17,12 +17,8 @@ package software.amazon.smithy.rulesengine.language.syntax.fn;
 
 import java.util.HashMap;
 import java.util.Optional;
-import software.amazon.smithy.rulesengine.language.stdlib.IsValidHostLabel;
-import software.amazon.smithy.rulesengine.language.stdlib.ParseArn;
-import software.amazon.smithy.rulesengine.language.stdlib.ParseUrl;
-import software.amazon.smithy.rulesengine.language.stdlib.PartitionFn;
-import software.amazon.smithy.rulesengine.language.stdlib.Substring;
-import software.amazon.smithy.rulesengine.language.stdlib.UriEncode;
+
+import software.amazon.smithy.rulesengine.language.stdlib.*;
 import software.amazon.smithy.rulesengine.language.util.LazyValue;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -40,6 +36,7 @@ public final class FunctionRegistry {
                 registry.registerFunction(new ParseUrl());
                 registry.registerFunction(new Substring());
                 registry.registerFunction(new UriEncode());
+                registry.registerFunction(new IsVirtualHostableS3Bucket());
                 return registry;
             }).build();
 

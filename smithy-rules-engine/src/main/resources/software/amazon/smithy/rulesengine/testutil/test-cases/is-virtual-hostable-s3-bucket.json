@@ -1,0 +1,31 @@
+{
+  "version": "1.0",
+  "testCases": [
+    {
+      "documentation": "bucket-name:  isVirtualHostable",
+      "params": {
+        "TestCaseId": "1",
+        "BucketName": "bucket-name",
+        "AllowDots": false
+      },
+      "expect": {
+        "endpoint": {
+          "url": "https://bucket-name.s3.amazonaws.com"
+        }
+      }
+    },
+    {
+      "documentation": "bucket-with-number-1: isVirtualHostable",
+      "params": {
+        "TestCaseId": "1",
+        "BucketName": "bucket-with-number-1",
+        "AllowDots": false
+      },
+      "expect": {
+        "endpoint": {
+          "url": "https://bucket-with-number-1.s3.amazonaws.com"
+        }
+      }
+    }
+  ]
+}
