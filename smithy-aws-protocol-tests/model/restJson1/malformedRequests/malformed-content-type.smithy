@@ -108,6 +108,31 @@ apply MalformedContentTypeWithPayload @httpMalformedRequestTests([
     }
 ])
 
+apply MalformedContentTypeWithoutBodyEmptyInput @httpMalformedRequestTests([
+    {
+        id: "RestJsonWithoutBodyEmptyInputExpectsEmptyContentType",
+        documentation: """
+        When there is no modeled body input, content type must not be set and the body must be empty.""",
+        protocol: restJson1,
+        request: {
+            method: "POST",
+            uri: "/MalformedContentTypeWithoutBodyEmptyInput",
+            body: "{}",
+            headers: {
+                // this should be omitted
+                "content-type": "application/json"
+            }
+        },
+        response: {
+            code: 415,
+            headers: {
+                "x-amzn-errortype": "UnsupportedMediaTypeException"
+            }
+        },
+        tags: [ "content-type" ]
+    }
+])
+
 @suppress(["UnstableTrait"])
 @http(method: "POST", uri: "/MalformedContentTypeWithoutBody")
 operation MalformedContentTypeWithoutBody {}
@@ -138,4 +163,15 @@ operation MalformedContentTypeWithGenericString {
 structure MalformedContentTypeWithGenericStringInput {
     @httpPayload
     payload: String
+}
+
+@suppress(["UnstableTrait"])
+@http(method: "POST", uri: "/MalformedContentTypeWithoutBodyEmptyInput")
+operation MalformedContentTypeWithoutBodyEmptyInput {
+    input: MalformedContentTypeWithoutBodyEmptyInputInput
+}
+
+structure MalformedContentTypeWithoutBodyEmptyInputInput {
+    @httpHeader("header")
+    header: String
 }
