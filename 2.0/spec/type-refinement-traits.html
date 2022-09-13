@@ -307,14 +307,10 @@ type of a shape.</p>
 <span id="smithy-api-default-trait"></span><span id="id1"></span><h2><span class="section-number">7.1. </span><code class="docutils literal notranslate"><span class="pre">default</span></code> trait<a class="headerlink" href="#default-trait" title="Permalink to this headline">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Provides a structure member with a default value.</dd>
-<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span> <span class="pre">:test(&gt;</span> <span class="pre">:is(simpleType,</span> <span class="pre">list,</span> <span class="pre">map))</span></code></p>
-<p>A member of a structure that targets a simple type, list, or map.</p>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:is(simpleType,</span> <span class="pre">list,</span> <span class="pre">map,</span> <span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span> <span class="pre">:test(&gt;</span> <span class="pre">:is(simpleType,</span> <span class="pre">list,</span> <span class="pre">map)))</span></code></p>
+<p>A simple type, list, map, or a member of a structure that targets a simple type, list, or map.</p>
 </dd>
 <dt>Value type</dt><dd>Document type.</dd>
-<dt>Conflicts with</dt><dd><ul class="simple">
-<li><a class="reference internal" href="#required-trait"><span class="std std-ref">required trait</span></a></li>
-</ul>
-</dd>
 <dt>See also</dt><dd><ul class="simple">
 <li><a class="reference internal" href="aggregate-types.html#structure-optionality"><span class="std std-ref">Structure member optionality</span></a></li>
 <li><a class="reference internal" href="#required-trait"><span class="std std-ref">required trait</span></a></li>
@@ -323,9 +319,9 @@ type of a shape.</p>
 </ul>
 </dd>
 </dl>
-<p>The <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait assigns a default value to a structure member using
-a document type. The following example defines a structure with a &quot;language&quot;
-member that has a default value:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait assigns a default value to a structure member. The
+following example defines a structure with a &quot;language&quot; member that has a
+default value:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Message</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="nt">@required</span><span class="w"></span>
 <span class="w">    </span><span class="py">title</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
@@ -348,6 +344,38 @@ member that has a default value:</p>
 <span class="w">    </span><span class="py">language</span><span class="p">:</span><span class="w"> </span><span class="vc">Language</span><span class="w"></span>
 }<span class="w"></span>
 </pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait can be added to root-level simple types, lists, or
+maps. This can serve as a kind of template to enforce default values across
+structure members in a model. Any structure member that targets a shape
+marked with <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> MUST also add a matching <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait to the
+member.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@default</span>(<span class="m">0</span>)<span class="w"></span>
+<span class="kd">integer </span><span class="nc">ZeroValueInteger</span><span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">Message</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">zeroValueInteger</span><span class="p">:</span><span class="w"> </span><span class="vc">ZeroValueInteger</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="c">// must be repeated and match the target.</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait on a structure member can be set to <code class="docutils literal notranslate"><span class="pre">null</span></code> to
+explicitly indicate that the member has no default value or to override the default
+value requirement of a targeted shape.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@default</span>(<span class="m">0</span>)<span class="w"></span>
+<span class="kd">integer </span><span class="nc">ZeroValueInteger</span><span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">Message</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">zeroValueInteger</span><span class="p">:</span><span class="w"> </span><span class="vc">ZeroValueInteger</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="c">// forces the member to be optional</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>The <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait on root-level shapes has no impact when targeted by
+any other shape than a structure member.</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait on root-level shapes cannot be set to <code class="docutils literal notranslate"><span class="pre">null</span></code>.</li>
+</ul>
 </div>
 <div class="section" id="default-value-constraints">
 <h3><span class="section-number">7.1.1. </span>Default value constraints<a class="headerlink" href="#default-value-constraints" title="Permalink to this headline">#</a></h3>
@@ -379,6 +407,11 @@ property was omitted.</p>
 </div>
 <div class="section" id="updating-default-values">
 <h3><span class="section-number">7.1.3. </span>Updating default values<a class="headerlink" href="#updating-default-values" title="Permalink to this headline">#</a></h3>
+<p>The default value of a root-level shape MUST NOT be changed nor can the default
+trait be added or removed from an existing root-level shape. Changing the
+default value of a root-level shape would cause any member reference to the
+shape to break and could inadvertently impact code generated types for the
+shape.</p>
 <p>The default value of a member SHOULD NOT be changed. However, it MAY be
 necessary in extreme cases to change a default value if changing the default
 value addresses a customer-impacting issue or availability issue for a service.
@@ -393,12 +426,43 @@ value. However, to avoid information disclosure, servers SHOULD NOT serialize
 default values if the member is marked with the <a class="reference internal" href="documentation-traits.html#internal-trait"><span class="std std-ref">internal trait</span></a>.</p>
 <p>To allow servers to change default values if necessary, clients SHOULD NOT
 serialize default values unless the member is explicitly set to the default
-value. This implies that clients SHOULD implement a kind of &quot;presence tracking&quot;
-of defaulted members.</p>
+value or marked with the <a class="reference internal" href="#default-trait"><span class="std std-ref">default trait</span></a>. This implies that clients
+SHOULD implement a kind of &quot;presence tracking&quot; of defaulted members so that
+the member is only serialized if it is explicitly set to the default value.</p>
 </div>
+<div class="section" id="default-and-required">
+<h3><span class="section-number">7.1.5. </span>Default and required<a class="headerlink" href="#default-and-required" title="Permalink to this headline">#</a></h3>
+<p>A member that is both <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> and <code class="docutils literal notranslate"><span class="pre">&#64;required</span></code> SHOULD always be
+serialized, and implementations SHOULD NOT use any form of presence tracking
+to omit a member if the member is not explicitly set to the default value.
+It is a protocol-specific decision as to whether this is enforced in
+serialized messages; some protocols follow this strictly whereas others may
+not.</p>
+</div>
+</div>
+<div class="section" id="addeddefault-trait">
+<span id="smithy-api-addeddefault-trait"></span><span id="id2"></span><h2><span class="section-number">7.2. </span><code class="docutils literal notranslate"><span class="pre">addedDefault</span></code> trait<a class="headerlink" href="#addeddefault-trait" title="Permalink to this headline">#</a></h2>
+<dl class="docutils">
+<dt>Summary</dt><dd>Indicates that the <a class="reference internal" href="#default-trait"><span class="std std-ref">default trait</span></a> was added to a structure member
+after initially publishing the member. This allows tooling to decide
+whether to ignore the <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait if it will break backward
+compatibility in the tool.</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span> <span class="pre">[trait|default]</span></code></p>
+<p><em>Member of a structure marked with the default trait</em></p>
+</dd>
+<dt>Value type</dt><dd>Annotation trait.</dd>
+<dt>See also</dt><dd><ul class="simple">
+<li><a class="reference internal" href="aggregate-types.html#structure-optionality"><span class="std std-ref">Structure member optionality</span></a></li>
+<li><a class="reference internal" href="#default-trait"><span class="std std-ref">default trait</span></a></li>
+<li><a class="reference internal" href="#clientoptional-trait"><span class="std std-ref">clientOptional trait</span></a></li>
+<li><a class="reference internal" href="#input-trait"><span class="std std-ref">input trait</span></a></li>
+<li><a class="reference internal" href="documentation-traits.html#recommended-trait"><span class="std std-ref">recommended trait</span></a></li>
+</ul>
+</dd>
+</dl>
 </div>
 <div class="section" id="required-trait">
-<span id="smithy-api-required-trait"></span><span id="id2"></span><h2><span class="section-number">7.2. </span><code class="docutils literal notranslate"><span class="pre">required</span></code> trait<a class="headerlink" href="#required-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-required-trait"></span><span id="id3"></span><h2><span class="section-number">7.3. </span><code class="docutils literal notranslate"><span class="pre">required</span></code> trait<a class="headerlink" href="#required-trait" title="Permalink to this headline">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Marks a structure member as required, meaning a value for the member MUST
 be present.</dd>
@@ -406,10 +470,6 @@ be present.</dd>
 <p><em>Member of a structure</em></p>
 </dd>
 <dt>Value type</dt><dd>Annotation trait.</dd>
-<dt>Conflicts with</dt><dd><ul class="simple">
-<li><a class="reference internal" href="#default-trait"><span class="std std-ref">default trait</span></a></li>
-</ul>
-</dd>
 <dt>See also</dt><dd><ul class="simple">
 <li><a class="reference internal" href="aggregate-types.html#structure-optionality"><span class="std std-ref">Structure member optionality</span></a></li>
 <li><a class="reference internal" href="#default-trait"><span class="std std-ref">default trait</span></a></li>
@@ -435,7 +495,7 @@ of operations, and errors.</p>
 </div>
 </div>
 <div class="section" id="clientoptional-trait">
-<span id="smithy-api-clientoptional-trait"></span><span id="id3"></span><h2><span class="section-number">7.3. </span><code class="docutils literal notranslate"><span class="pre">clientOptional</span></code> trait<a class="headerlink" href="#clientoptional-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-clientoptional-trait"></span><span id="id4"></span><h2><span class="section-number">7.4. </span><code class="docutils literal notranslate"><span class="pre">clientOptional</span></code> trait<a class="headerlink" href="#clientoptional-trait" title="Permalink to this headline">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Requires that non-authoritative generators like clients treat a structure
 member as optional regardless of if the member is also marked with the
@@ -485,7 +545,7 @@ the following structure:</p>
 </div>
 </div>
 <div class="section" id="enumvalue-trait">
-<span id="smithy-api-enumvalue-trait"></span><span id="id4"></span><h2><span class="section-number">7.4. </span><code class="docutils literal notranslate"><span class="pre">enumValue</span></code> trait<a class="headerlink" href="#enumvalue-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-enumvalue-trait"></span><span id="id5"></span><h2><span class="section-number">7.5. </span><code class="docutils literal notranslate"><span class="pre">enumValue</span></code> trait<a class="headerlink" href="#enumvalue-trait" title="Permalink to this headline">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Defines the value of an <a class="reference internal" href="simple-types.html#enum"><span class="std std-ref">enum</span></a> or <a class="reference internal" href="simple-types.html#intenum"><span class="std std-ref">intEnum</span></a>.
 For enum shapes, a non-empty string value must be used. For intEnum
@@ -522,7 +582,7 @@ shapes, an integer value must be used.</dd>
 </div>
 </div>
 <div class="section" id="error-trait">
-<span id="smithy-api-error-trait"></span><span id="id5"></span><h2><span class="section-number">7.5. </span><code class="docutils literal notranslate"><span class="pre">error</span></code> trait<a class="headerlink" href="#error-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-error-trait"></span><span id="id6"></span><h2><span class="section-number">7.6. </span><code class="docutils literal notranslate"><span class="pre">error</span></code> trait<a class="headerlink" href="#error-trait" title="Permalink to this headline">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that a structure shape represents an error. All shapes
 referenced by the <a class="reference internal" href="service-types.html#operation"><span class="std std-ref">errors list of an operation</span></a>
@@ -569,7 +629,7 @@ in Java).</p>
 </div>
 </div>
 <div class="section" id="input-trait">
-<span id="smithy-api-input-trait"></span><span id="id6"></span><h2><span class="section-number">7.6. </span><code class="docutils literal notranslate"><span class="pre">input</span></code> trait<a class="headerlink" href="#input-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-input-trait"></span><span id="id7"></span><h2><span class="section-number">7.7. </span><code class="docutils literal notranslate"><span class="pre">input</span></code> trait<a class="headerlink" href="#input-trait" title="Permalink to this headline">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Specializes a structure for use only as the input of a single operation,
 providing relaxed backward compatibility requirements for structure
@@ -618,7 +678,7 @@ trait from top-level input members and loosen requirements without risking
 breaking previously generated clients.</p>
 </div>
 <div class="section" id="output-trait">
-<span id="smithy-api-output-trait"></span><span id="id7"></span><h2><span class="section-number">7.7. </span><code class="docutils literal notranslate"><span class="pre">output</span></code> trait<a class="headerlink" href="#output-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-output-trait"></span><span id="id8"></span><h2><span class="section-number">7.8. </span><code class="docutils literal notranslate"><span class="pre">output</span></code> trait<a class="headerlink" href="#output-trait" title="Permalink to this headline">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Specializes a structure for use only as the output of a single operation.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
@@ -638,7 +698,7 @@ operation that targets it (if any). For example, the output shape of the
 ways that would otherwise require complex model transformations.</p>
 </div>
 <div class="section" id="sparse-trait">
-<span id="smithy-api-sparse-trait"></span><span id="id8"></span><h2><span class="section-number">7.8. </span><code class="docutils literal notranslate"><span class="pre">sparse</span></code> trait<a class="headerlink" href="#sparse-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-sparse-trait"></span><span id="id9"></span><h2><span class="section-number">7.9. </span><code class="docutils literal notranslate"><span class="pre">sparse</span></code> trait<a class="headerlink" href="#sparse-trait" title="Permalink to this headline">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that lists and maps MAY contain <code class="docutils literal notranslate"><span class="pre">null</span></code> values. The <code class="docutils literal notranslate"><span class="pre">sparse</span></code>
 trait has no effect on map keys; map keys are never allowed to be <code class="docutils literal notranslate"><span class="pre">null</span></code>.</dd>
@@ -664,7 +724,7 @@ trait has no effect on map keys; map keys are never allowed to be <code class="d
 </div>
 </div>
 <div class="section" id="mixin-trait">
-<span id="id9"></span><h2><span class="section-number">7.9. </span><code class="docutils literal notranslate"><span class="pre">mixin</span></code> trait<a class="headerlink" href="#mixin-trait" title="Permalink to this headline">#</a></h2>
+<span id="id10"></span><h2><span class="section-number">7.10. </span><code class="docutils literal notranslate"><span class="pre">mixin</span></code> trait<a class="headerlink" href="#mixin-trait" title="Permalink to this headline">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that the targeted shape is a mixin.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:not(member)</span></code></dd>
@@ -788,16 +848,18 @@ property and does not need to be explicitly added.</p>
 <li><a class="reference internal" href="#impact-on-api-design">7.1.2. Impact on API design</a></li>
 <li><a class="reference internal" href="#updating-default-values">7.1.3. Updating default values</a></li>
 <li><a class="reference internal" href="#default-value-serialization">7.1.4. Default value serialization</a></li>
+<li><a class="reference internal" href="#default-and-required">7.1.5. Default and required</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#required-trait">7.2. <code class="docutils literal notranslate"><span class="pre">required</span></code> trait</a></li>
-<li><a class="reference internal" href="#clientoptional-trait">7.3. <code class="docutils literal notranslate"><span class="pre">clientOptional</span></code> trait</a></li>
-<li><a class="reference internal" href="#enumvalue-trait">7.4. <code class="docutils literal notranslate"><span class="pre">enumValue</span></code> trait</a></li>
-<li><a class="reference internal" href="#error-trait">7.5. <code class="docutils literal notranslate"><span class="pre">error</span></code> trait</a></li>
-<li><a class="reference internal" href="#input-trait">7.6. <code class="docutils literal notranslate"><span class="pre">input</span></code> trait</a></li>
-<li><a class="reference internal" href="#output-trait">7.7. <code class="docutils literal notranslate"><span class="pre">output</span></code> trait</a></li>
-<li><a class="reference internal" href="#sparse-trait">7.8. <code class="docutils literal notranslate"><span class="pre">sparse</span></code> trait</a></li>
-<li><a class="reference internal" href="#mixin-trait">7.9. <code class="docutils literal notranslate"><span class="pre">mixin</span></code> trait</a></li>
+<li><a class="reference internal" href="#addeddefault-trait">7.2. <code class="docutils literal notranslate"><span class="pre">addedDefault</span></code> trait</a></li>
+<li><a class="reference internal" href="#required-trait">7.3. <code class="docutils literal notranslate"><span class="pre">required</span></code> trait</a></li>
+<li><a class="reference internal" href="#clientoptional-trait">7.4. <code class="docutils literal notranslate"><span class="pre">clientOptional</span></code> trait</a></li>
+<li><a class="reference internal" href="#enumvalue-trait">7.5. <code class="docutils literal notranslate"><span class="pre">enumValue</span></code> trait</a></li>
+<li><a class="reference internal" href="#error-trait">7.6. <code class="docutils literal notranslate"><span class="pre">error</span></code> trait</a></li>
+<li><a class="reference internal" href="#input-trait">7.7. <code class="docutils literal notranslate"><span class="pre">input</span></code> trait</a></li>
+<li><a class="reference internal" href="#output-trait">7.8. <code class="docutils literal notranslate"><span class="pre">output</span></code> trait</a></li>
+<li><a class="reference internal" href="#sparse-trait">7.9. <code class="docutils literal notranslate"><span class="pre">sparse</span></code> trait</a></li>
+<li><a class="reference internal" href="#mixin-trait">7.10. <code class="docutils literal notranslate"><span class="pre">mixin</span></code> trait</a></li>
 </ul>
 </li>
 </ul>

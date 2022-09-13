@@ -15,22 +15,20 @@ type of a shape.
 Summary
     Provides a structure member with a default value.
 Trait selector
-    ``structure > member :test(> :is(simpleType, list, map))``
+    ``:is(simpleType, list, map, structure > member :test(> :is(simpleType, list, map)))``
 
-    A member of a structure that targets a simple type, list, or map.
+    A simple type, list, map, or a member of a structure that targets a simple type, list, or map.
 Value type
     Document type.
-Conflicts with
-    * :ref:`required-trait`
 See also
     * :ref:`structure-optionality`
     * :ref:`required-trait`
     * :ref:`clientOptional-trait`
     * :ref:`input-trait`
 
-The ``@default`` trait assigns a default value to a structure member using
-a document type. The following example defines a structure with a "language"
-member that has a default value:
+The ``@default`` trait assigns a default value to a structure member. The
+following example defines a structure with a "language" member that has a
+default value:
 
 .. code-block:: smithy
 
@@ -57,6 +55,40 @@ The above example uses syntactic sugar to apply the ``@default`` trait. The
         @default("en")
         language: Language
     }
+
+The ``@default`` trait can be added to root-level simple types, lists, or
+maps. This can serve as a kind of template to enforce default values across
+structure members in a model. Any structure member that targets a shape
+marked with ``@default`` MUST also add a matching ``@default`` trait to the
+member.
+
+.. code-block:: smithy
+
+    @default(0)
+    integer ZeroValueInteger
+
+    structure Message {
+        zeroValueInteger: ZeroValueInteger = 0 // must be repeated and match the target.
+    }
+
+The ``@default`` trait on a structure member can be set to ``null`` to
+explicitly indicate that the member has no default value or to override the default
+value requirement of a targeted shape.
+
+.. code-block:: smithy
+
+    @default(0)
+    integer ZeroValueInteger
+
+    structure Message {
+        zeroValueInteger: ZeroValueInteger = null // forces the member to be optional
+    }
+
+.. note::
+
+    * The ``@default`` trait on root-level shapes has no impact when targeted by
+      any other shape than a structure member.
+    * The ``@default`` trait on root-level shapes cannot be set to ``null``.
 
 
 Default value constraints
@@ -94,6 +126,12 @@ property was omitted.
 Updating default values
 -----------------------
 
+The default value of a root-level shape MUST NOT be changed nor can the default
+trait be added or removed from an existing root-level shape. Changing the
+default value of a root-level shape would cause any member reference to the
+shape to break and could inadvertently impact code generated types for the
+shape.
+
 The default value of a member SHOULD NOT be changed. However, it MAY be
 necessary in extreme cases to change a default value if changing the default
 value addresses a customer-impacting issue or availability issue for a service.
@@ -111,8 +149,45 @@ default values if the member is marked with the :ref:`internal-trait`.
 
 To allow servers to change default values if necessary, clients SHOULD NOT
 serialize default values unless the member is explicitly set to the default
-value. This implies that clients SHOULD implement a kind of "presence tracking"
-of defaulted members.
+value or marked with the :ref:`default-trait`. This implies that clients
+SHOULD implement a kind of "presence tracking" of defaulted members so that
+the member is only serialized if it is explicitly set to the default value.
+
+
+Default and required
+--------------------
+
+A member that is both ``@default`` and ``@required`` SHOULD always be
+serialized, and implementations SHOULD NOT use any form of presence tracking
+to omit a member if the member is not explicitly set to the default value.
+It is a protocol-specific decision as to whether this is enforced in
+serialized messages; some protocols follow this strictly whereas others may
+not.
+
+
+.. smithy-trait:: smithy.api#addedDefault
+.. _addedDefault-trait:
+
+``addedDefault`` trait
+======================
+
+Summary
+    Indicates that the :ref:`default-trait` was added to a structure member
+    after initially publishing the member. This allows tooling to decide
+    whether to ignore the ``@default`` trait if it will break backward
+    compatibility in the tool.
+Trait selector
+    ``structure > member [trait|default]``
+
+    *Member of a structure marked with the default trait*
+Value type
+    Annotation trait.
+See also
+    * :ref:`structure-optionality`
+    * :ref:`default-trait`
+    * :ref:`clientOptional-trait`
+    * :ref:`input-trait`
+    * :ref:`recommended-trait`
 
 
 .. smithy-trait:: smithy.api#required
@@ -130,8 +205,6 @@ Trait selector
     *Member of a structure*
 Value type
     Annotation trait.
-Conflicts with
-    * :ref:`default-trait`
 See also
     * :ref:`structure-optionality`
     * :ref:`default-trait`

@@ -429,9 +429,9 @@ member in the above example is <code class="docutils literal notranslate"><span 
 <span id="structure-optionality"></span><h3><span class="section-number">3.3.3. </span>Structure member optionality<a class="headerlink" href="#structure-member-optionality" title="Permalink to this headline">#</a></h3>
 <p>Whether a structure member is optional is determined by evaluating the
 <a class="reference internal" href="type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a>, <a class="reference internal" href="type-refinement-traits.html#default-trait"><span class="std std-ref">default trait</span></a>, <a class="reference internal" href="type-refinement-traits.html#clientoptional-trait"><span class="std std-ref">clientOptional trait</span></a>,
-and <a class="reference internal" href="type-refinement-traits.html#input-trait"><span class="std std-ref">input trait</span></a>. Authoritative model consumers like servers MAY choose
-to determine optionality using more restrictive rules by ignoring the
-<code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> and <code class="docutils literal notranslate"><span class="pre">&#64;clientOptional</span></code> traits.</p>
+<a class="reference internal" href="type-refinement-traits.html#input-trait"><span class="std std-ref">input trait</span></a>, and <a class="reference internal" href="type-refinement-traits.html#addeddefault-trait"><span class="std std-ref">addedDefault trait</span></a>. Authoritative model
+consumers like servers MAY choose to determine optionality using more
+restrictive rules by ignoring the <code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> and <code class="docutils literal notranslate"><span class="pre">&#64;clientOptional</span></code> traits.</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
@@ -524,18 +524,25 @@ Smithy provides several ways to make it so that required members no longer
 need to be provided without breaking previously generated code.</p>
 <p class="rubric">Migrating <code class="docutils literal notranslate"><span class="pre">&#64;required</span></code> to <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code></p>
 <p>If a <code class="docutils literal notranslate"><span class="pre">required</span></code> member no longer needs to be be required, the <code class="docutils literal notranslate"><span class="pre">required</span></code>
-trait MAY be removed and replaced with the <a class="reference internal" href="type-refinement-traits.html#default-trait"><span class="std std-ref">default trait</span></a>. The member
-is still considered always present to tools like code generators, but instead
-of requiring the value to be provided by an end-user, a default value is
-automatically provided if missing. For example, the previous <code class="docutils literal notranslate"><span class="pre">TimeSpan</span></code>
-model can be backward compatibly changed to:</p>
+trait MAY be removed and replaced with the <a class="reference internal" href="type-refinement-traits.html#default-trait"><span class="std std-ref">default trait</span></a>. Alternatively,
+a <code class="docutils literal notranslate"><span class="pre">default</span></code> trait MAY be added to a member marked as <code class="docutils literal notranslate"><span class="pre">required</span></code> to
+provide a default value for the member but require that it is serialized.
+Either way, the member is still considered always present to tools like code
+generators, but instead of requiring the value to be provided by an end-user,
+a default value is automatically provided if missing. For example, the previous
+<code class="docutils literal notranslate"><span class="pre">TimeSpan</span></code> model can be backward compatibly changed to:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">TimeSpan</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="c">// @required is replaced with @default</span><span class="w"></span>
+<span class="w">    </span><span class="c">// @required is replaced with @default and @addedDefault</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@addedDefault</span><span class="w"></span>
 <span class="w">    </span><span class="py">years</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">0</span><span class="w"></span>
 <span class="w">    </span><span class="py">days</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">0</span><span class="w"></span>
 }<span class="w"></span>
 </pre></div>
 </div>
+<p>The <a class="reference internal" href="type-refinement-traits.html#addeddefault-trait"><span class="std std-ref">addedDefault trait</span></a> trait SHOULD be used any time a <code class="docutils literal notranslate"><span class="pre">default</span></code> trait is
+added to a previously published member. Some tooling does not treat the
+<code class="docutils literal notranslate"><span class="pre">required</span></code> trait as non-nullable but does treat the <code class="docutils literal notranslate"><span class="pre">default</span></code> trait as
+non-nullable.</p>
 <p class="rubric">Requiring members to be optional</p>
 <p>The <a class="reference internal" href="type-refinement-traits.html#clientoptional-trait"><span class="std std-ref">clientOptional trait</span></a> is used to indicate that a member that is
 currently required by authoritative model consumers like servers MAY become

@@ -311,7 +311,6 @@ to version 2.0 without breaking your models or customers.</p>
 with the <code class="docutils literal notranslate"><span class="pre">smithy</span></code> <a class="reference internal" href="../spec/json-ast.html#ast-top-level-properties"><span class="std std-ref">top level property</span></a>. For
 example, the following model:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="w"></span>
-
 <span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
 
 <span class="kd">string </span><span class="nc">Foo</span><span class="w"></span>
@@ -319,7 +318,6 @@ example, the following model:</p>
 </div>
 <p>Should be updated to:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-
 <span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
 
 <span class="kd">string </span><span class="nc">Foo</span><span class="w"></span>
@@ -334,7 +332,6 @@ case, it uses version 1.0 by default. For example:</p>
 </div>
 <p>Also needs to be updated to:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-
 <span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
 
 <span class="kd">string </span><span class="nc">Foo</span><span class="w"></span>
@@ -344,34 +341,96 @@ case, it uses version 1.0 by default. For example:</p>
 a single combined model. Therefore when migrating, it may be wise to migrate
 one file at a time.</p>
 </div>
-<div class="section" id="remove-the-box-trait">
-<h2>Remove the box trait<a class="headerlink" href="#remove-the-box-trait" title="Permalink to this headline">#</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">box</span></code> trait is removed in 2.0, so it must be removed from any shapes or
-members that use it. Smithy structure members are considered boxed by default,
-which can be changed using the <a class="reference internal" href="../spec/type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a> or <a class="reference internal" href="../spec/type-refinement-traits.html#default-trait"><span class="std std-ref">default trait</span></a>.
-In effect, this means you can indiscriminately remove the <code class="docutils literal notranslate"><span class="pre">box</span></code> trait from
-your models.</p>
+<div class="section" id="replace-the-box-trait">
+<h2>Replace the box trait<a class="headerlink" href="#replace-the-box-trait" title="Permalink to this headline">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">box</span></code> trait is removed in 2.0. Any shape marked with the <code class="docutils literal notranslate"><span class="pre">box</span></code> trait
+needs to be updated.</p>
+<div class="section" id="boxed-root-level-shapes">
+<h3>Boxed root-level shapes<a class="headerlink" href="#boxed-root-level-shapes" title="Permalink to this headline">#</a></h3>
+<p>For non-member, root level shapes, simply remove the <code class="docutils literal notranslate"><span class="pre">box</span></code> trait. Root level
+shapes in Smithy 2.0 have no default values unless you explicit assign them one.</p>
+<p>This 1.0 model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="nt">@box</span><span class="w"> </span><span class="c">// &lt; remove this</span><span class="w"></span>
+<span class="kd">boolean </span><span class="nc">MyBoolean</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Becomes this 2.0 model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="kd">boolean </span><span class="nc">MyBoolean</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="converting-primitive-root-level-shapes-from-1-0">
+<h3>Converting primitive root-level shapes from 1.0<a class="headerlink" href="#converting-primitive-root-level-shapes-from-1-0" title="Permalink to this headline">#</a></h3>
+<p>Some shapes in Smithy 1.0 had default zero values: boolean, byte, short,
+integer, long, float, and double. If you defined any of these shapes and did
+not mark them with the <code class="docutils literal notranslate"><span class="pre">&#64;box</span></code> trait, add the <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait to them
+set to <code class="docutils literal notranslate"><span class="pre">false</span></code> for booleans and <code class="docutils literal notranslate"><span class="pre">0</span></code> for numbers. Any member that targets
+them also need to repeat this default value on the member.</p>
+<p>This 1.0 model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="kd">boolean </span><span class="nc">MyPrimitiveBoolean</span><span class="w"></span>
+
+<span class="kd">boolean </span><span class="nc">MyPrimitiveInteger</span><span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">Foo</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">myBoolean</span><span class="p">:</span><span class="w"> </span><span class="vc">MyPrimitiveBoolean</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">myInteger</span><span class="p">:</span><span class="w"> </span><span class="vc">MyPrimitiveInteger</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>Becomes this 2.0 model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="nt">@default</span>(<span class="kc">false</span>)<span class="w"></span>
+<span class="kd">boolean </span><span class="nc">MyPrimitiveBoolean</span><span class="w"></span>
+
+<span class="nt">@default</span>(<span class="m">0</span>)<span class="w"></span>
+<span class="kd">boolean </span><span class="nc">MyPrimitiveInteger</span><span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">Foo</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">myBoolean</span><span class="p">:</span><span class="w"> </span><span class="vc">MyPrimitiveBoolean</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">false</span><span class="w"></span>
+<span class="w">    </span><span class="py">myInteger</span><span class="p">:</span><span class="w"> </span><span class="vc">MyPrimitiveInteger</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">0</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="boxed-members">
+<h3>Boxed members<a class="headerlink" href="#boxed-members" title="Permalink to this headline">#</a></h3>
+<p>If a member is marked with the box trait, replace the trait with a
+<code class="docutils literal notranslate"><span class="pre">&#64;default(null)</span></code> trait to have the same effect of overriding the
+default value of the target shape.</p>
+<p>This 1.0 model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nt">@box</span><span class="w"> </span><span class="c">// change this to = null below</span><span class="w"></span>
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">PrimitiveBoolean</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>Becomes this 2.0 model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">PrimitiveBoolean</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">null</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="../spec/aggregate-types.html#structure-optionality"><span class="std std-ref">Structure member optionality</span></a></p>
 </div>
-</div>
-<div class="section" id="replace-primitive-prelude-shape-targets">
-<h2>Replace Primitive prelude shape targets<a class="headerlink" href="#replace-primitive-prelude-shape-targets" title="Permalink to this headline">#</a></h2>
-<p>The primitive shapes have been removed from the prelude, and so any member
-targeting one of them must update to target its equivalent non-primitive
-shape as well as add the <a class="reference internal" href="../spec/type-refinement-traits.html#default-trait"><span class="std std-ref">default trait</span></a>.</p>
-<p>For example, the following model:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">User</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">PrimitiveString</span><span class="w"></span>
-}<span class="w"></span>
-</pre></div>
-</div>
-<p>Needs to be updated to:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">User</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"></span>
-}<span class="w"></span>
-</pre></div>
 </div>
 </div>
 <div class="section" id="convert-set-shapes-to-list-shapes">
@@ -380,7 +439,6 @@ shape as well as add the <a class="reference internal" href="../spec/type-refine
 list shape with the <a class="reference internal" href="../spec/constraint-traits.html#uniqueitems-trait"><span class="std std-ref">uniqueItems trait</span></a>.</p>
 <p>For example, the following set:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="w"></span>
-
 <span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
 
 <span class="kd">set </span><span class="nc">StringSet</span><span class="w"> </span>{<span class="w"></span>
@@ -390,7 +448,6 @@ list shape with the <a class="reference internal" href="../spec/constraint-trait
 </div>
 <p>Needs to be updated to:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-
 <span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
 
 <span class="nt">@uniqueItems</span><span class="w"></span>
@@ -408,7 +465,6 @@ Any such members that are not already marked with the <a class="reference intern
 will now need to be marked with the <a class="reference internal" href="../spec/type-refinement-traits.html#default-trait"><span class="std std-ref">default trait</span></a>.</p>
 <p>For example, the following model:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="w"></span>
-
 <span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
 
 <span class="kd">structure </span><span class="nc">OptionalStream</span><span class="w"> </span>{<span class="w"></span>
@@ -430,7 +486,6 @@ will now need to be marked with the <a class="reference internal" href="../spec/
 </div>
 <p>Needs to be updated to:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-
 <span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
 
 <span class="kd">structure </span><span class="nc">OptionalStream</span><span class="w"> </span>{<span class="w"></span>
@@ -462,7 +517,6 @@ to define those shapes as part of the definition of the operation rather than
 separately. This improves readability and reduces the amount of boilerplate
 needed to model an operation. For example, the following model:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="w"></span>
-
 <span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
 
 <span class="kd">operation </span><span class="nc">PutUser</span><span class="w"> </span>{<span class="w"></span>
@@ -484,7 +538,6 @@ needed to model an operation. For example, the following model:</p>
 </div>
 <p>can be updated to:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-
 <span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
 
 <span class="kd">operation </span><span class="nc">PutUser</span><span class="w"> </span>{<span class="w"></span>
@@ -512,7 +565,6 @@ operations all require that the resource's identifiers be present in input.
 With <a class="reference internal" href="../spec/mixins.html#mixins"><span class="std std-ref">Mixins</span></a>, it is easy to simply share these member definitions without
 having to copy and paste them. The following model:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="w"></span>
-
 <span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
 
 <span class="kd">operation </span><span class="nc">GetUser</span><span class="w"> </span>{<span class="w"></span>
@@ -543,7 +595,6 @@ having to copy and paste them. The following model:</p>
 </div>
 <p>Can be updated to:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-
 <span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
 
 <span class="nt">@mixin</span><span class="w"></span>
@@ -578,7 +629,6 @@ contain those identifiers you have to duplicate those definitions entirely. In
 IDL 2.0, you can use the target elision syntax with a structure bound to a
 resource. For example:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-
 <span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
 
 <span class="kd">resource </span><span class="nc">User</span><span class="w"> </span>{<span class="w"></span>
@@ -607,7 +657,6 @@ resource. For example:</p>
 <p>This syntax can also be used with mixins to more succinctly add additional
 traits to included members.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-
 <span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
 
 <span class="nt">@mixin</span><span class="w"></span>
@@ -631,7 +680,6 @@ traits to included members.</p>
 <p>Smithy IDL 2.0 removed the need to include commas when defining, lists, maps,
 and shape properties. For example, the following model:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="w"></span>
-
 <span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
 
 <span class="kd">operation </span><span class="nc">GetUser</span><span class="w"> </span>{<span class="w"></span>
@@ -646,7 +694,6 @@ and shape properties. For example, the following model:</p>
 </div>
 <p>can be updated to:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-
 <span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
 
 <span class="kd">operation </span><span class="nc">GetUser</span><span class="w"> </span>{<span class="w"></span>
@@ -670,7 +717,6 @@ means they can be individually targeted by traits, without having to have
 special handling inside of Smithy itself. Their definitions in the IDL are now
 also much more concise and readable. For example, the following model:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="w"></span>
-
 <span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
 
 <span class="nt">@enum</span>([<span class="w"></span>
@@ -696,7 +742,6 @@ also much more concise and readable. For example, the following model:</p>
 </div>
 <p>can be updated to:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-
 <span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
 
 <span class="kd">enum </span><span class="nc">Suit</span><span class="w"> </span>{<span class="w"></span>
@@ -775,8 +820,12 @@ also much more concise and readable. For example, the following model:</p>
             <ul>
 <li><a class="reference internal" href="#">Smithy IDL 1.0 to 2.0 Migration Guide</a><ul>
 <li><a class="reference internal" href="#update-the-model-file-version">Update the model file version</a></li>
-<li><a class="reference internal" href="#remove-the-box-trait">Remove the box trait</a></li>
-<li><a class="reference internal" href="#replace-primitive-prelude-shape-targets">Replace Primitive prelude shape targets</a></li>
+<li><a class="reference internal" href="#replace-the-box-trait">Replace the box trait</a><ul>
+<li><a class="reference internal" href="#boxed-root-level-shapes">Boxed root-level shapes</a></li>
+<li><a class="reference internal" href="#converting-primitive-root-level-shapes-from-1-0">Converting primitive root-level shapes from 1.0</a></li>
+<li><a class="reference internal" href="#boxed-members">Boxed members</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#convert-set-shapes-to-list-shapes">Convert set shapes to list shapes</a></li>
 <li><a class="reference internal" href="#add-the-default-trait-to-streaming-blobs">Add the default trait to streaming blobs</a></li>
 <li><a class="reference internal" href="#optional-migration-steps">Optional migration steps</a><ul>
