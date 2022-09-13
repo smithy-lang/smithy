@@ -1,5 +1,56 @@
 # Smithy Changelog
 
+## 1.25.0 (2022-09-13)
+
+Made many improvements for Smithy 1.0 and 2.0 interoperability. ([1394](https://github.com/awslabs/smithy/pull/1394))
+
+### Features
+
+* Default traits can now coexist with required trais. This indicates that a member should be serialized, but it is a
+  protocol-specific decision if and how this is enforced. This was a pattern that occurred in Smithy 1.0 models when
+  a member was required and targeted a shape with a zero value.
+* Default traits can be added to root-level shapes. Any structure member that targets a shape marked with the default
+  trait must repeat the default on the member. This removes the action at a distance problem observed in Smithy IDL 1.0
+  where a root level shape implicitly introduced a default zero value, and to know if that's the case for any member,
+  you had to look through from the member to the target shape. This change allows us to know if a root level shape was
+  boxed in IDL 1.0 too (root shapes with no default or a default set to anything other than the zero value was boxed).
+* Added the `@addedDefault` trait which is used to indicate that a `@default` trait was added to a member after it
+  was initially released. This can be used by tooling to make an appropriate determination if generating a
+  non-nullable type for the member is a backward compatible change. For example, if a generator only uses default
+  zero values to generate non-nullable types, then the removal of the required trait and addition of a default trait
+  would be a breaking change for them, so they can use addedDefault to ignore the default trait.
+* Add new NullableIndex modes for testing if a member is nullable based on the supported features of the
+  generator. For example, some generators only make members non-optional when the member is set to the zero value
+  of a type, so there is a NullableIndex check mode for that and other use cases.
+* When loading IDL 2.0 models, we will now patch synthetic box traits onto shapes that would have been considered
+  boxed in Smithy IDL 1.0. This improves further interop with tooling that has not yet adopted Smithy IDL 2 or that
+  hasn't yet migrated to use the NullableIndex abstraction.
+* When loading 1.0 models, rather than dropping the default trait from a member when the range trait of a shape is
+  invalid for its zero value, we now instead emit only a warning for this specific case. This prevents changing the
+  type and also doesn't lose the range constraint.
+* The Primitive* shapes in the prelude are no longer deprecated, and they now have a `@default` trait on them set to
+  the zero value of the type. This makes these traits function exactly as they did in Smithy 1.0 models. Any member
+  that targets one of these primitive prelude shapes must now also repeat the zero value of the target shape.
+* Added an optional nullability report to smithy-build that shows the computed nullability semantics of each member in
+  a model. This can be used to better understand nullability semantics.
+* Added method to NumberNode to detect if it is set to zero. ([#1385](https://github.com/awslabs/smithy/pull/1385))
+* In ChangeShapeType transform, ignored types changes to same type. ([#1397](https://github.com/awslabs/smithy/pull/1397))
+
+## Bug fixes
+
+* Updated smithy-diff to not emit events when diffing a 1.0 model against the 2.0 serialized version of the model.
+  This means that changes to the box trait are ignored unless the change impacts the nullability of the shape.
+  Special handling was added to detect breaking changes with the default trait too (you can't change a default
+  value of a root-level shape for example, you cannot change a default value of a shape to or from the zero value
+  of a type as this might break code generators, etc). ([1394](https://github.com/awslabs/smithy/pull/1394))
+* smithy-diff is no longer reporting expected `set` shape to `list` shape transitions. Sets are deprecated and
+  models are encouraged to migrate from sets to lists with the `@uniqueItems` trait. ([1383](https://github.com/awslabs/smithy/pull/1383))
+
+## Documentation
+
+* Fix operationOutputSuffix in example code snippet ([#1393](https://github.com/awslabs/smithy/pull/1393))
+* Fix ABNF grammar of inlined structure ([1377](https://github.com/awslabs/smithy/pull/1377))
+
 ## 1.24.0 (2022-08-30)
 
 ### Features
