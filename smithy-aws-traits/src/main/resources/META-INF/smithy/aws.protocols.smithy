@@ -32,7 +32,7 @@ structure awsJson1_1 with [HttpConfiguration] {}
 
 /// Contains HTTP protocol configuration for HTTP-based protocols.
 @private
-@mixin
+@mixin(localTraits: [private])
 structure HttpConfiguration {
     /// The priority ordered list of supported HTTP protocol versions.
     http: StringList
