@@ -17,6 +17,7 @@ package software.amazon.smithy.model.shapes;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -123,18 +124,20 @@ public final class ModelSerializer {
             if (!shape.isMemberShape() && shapeFilter.test(shape)) {
                 Node value = shape.accept(shapeSerializer);
                 shapes.put(Node.from(shape.getId().toString()), value);
-                // Add any necessary apply statements to inherited mixin members that added traits.
-                // Apply statements are used here instead of redefining members on structures because
-                // apply statements are more resilient to change over time if the shapes targeted by
+                // Add any necessary apply statements to inherited mixin members that added traits, but only if there
+                // are actually traits to serialize. Apply statements are used here instead of redefining members on
+                // structures because apply statements are more resilient to change over time if the shapes targeted by
                 // an inherited member changes.
                 if (!shapeSerializer.mixinMemberTraits.isEmpty()) {
                     for (MemberShape member : shapeSerializer.mixinMemberTraits) {
-                        ObjectNode.Builder applyBuilder = Node.objectNodeBuilder();
-                        applyBuilder.withMember("type", "apply");
-                        shapes.put(
-                            Node.from(member.getId().toString()),
-                            serializeTraits(applyBuilder, member.getIntroducedTraits().values()).build()
-                        );
+                        Map<StringNode, Node> introducedTraits = createIntroducedTraitsMap(
+                                member.getIntroducedTraits().values());
+                        if (!introducedTraits.isEmpty()) {
+                            ObjectNode.Builder applyBuilder = Node.objectNodeBuilder();
+                            applyBuilder.withMember("type", "apply");
+                            ObjectNode traits = serializeTraits(applyBuilder, introducedTraits).build();
+                            shapes.put(Node.from(member.getId().toString()), traits);
+                        }
                     }
                 }
             }
@@ -258,20 +261,29 @@ public final class ModelSerializer {
     }
 
     private ObjectNode.Builder serializeTraits(ObjectNode.Builder builder, Collection<Trait> traits) {
+        return serializeTraits(builder, createIntroducedTraitsMap(traits));
+    }
+
+    private ObjectNode.Builder serializeTraits(ObjectNode.Builder builder, Map<StringNode, Node> traits) {
         if (!traits.isEmpty()) {
+            builder.withMember("traits", new ObjectNode(traits, SourceLocation.none()));
+        }
+
+        return builder;
+    }
+
+    private Map<StringNode, Node> createIntroducedTraitsMap(Collection<Trait> traits) {
+        if (traits.isEmpty()) {
+            return Collections.emptyMap();
+        } else {
             Map<StringNode, Node> traitsToAdd = new TreeMap<>();
             for (Trait trait : traits) {
                 if (traitFilter.test(trait)) {
                     traitsToAdd.put(Node.from(trait.toShapeId().toString()), trait.toNode());
                 }
             }
-
-            if (!traitsToAdd.isEmpty()) {
-                builder.withMember("traits", new ObjectNode(traitsToAdd, SourceLocation.none()));
-            }
+            return traitsToAdd;
         }
-
-        return builder;
     }
 
     private final class ShapeSerializer extends ShapeVisitor.Default<Node> {
