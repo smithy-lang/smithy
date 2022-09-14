@@ -34,8 +34,16 @@ import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.traits.AddedDefaultTrait;
+import software.amazon.smithy.model.traits.BoxTrait;
+import software.amazon.smithy.model.traits.ClientOptionalTrait;
+import software.amazon.smithy.model.traits.DefaultTrait;
+import software.amazon.smithy.model.traits.NotPropertyTrait;
+import software.amazon.smithy.model.traits.PropertyTrait;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.utils.FunctionalUtils;
+import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -50,26 +58,62 @@ import software.amazon.smithy.utils.StringUtils;
  * to formats like JSON, YAML, Ion, etc.
  */
 public final class ModelSerializer {
+
+    // Explicitly filter out these traits. While some of these are automatically removed in the downgradeToV1
+    // model transformation, calling them out here explicitly is a defense in depth. This also has to remove all
+    // default traits from the output, whereas the downgradeToV1 transform only removes unnecessary default traits
+    // that don't correlate to boxing in V1 models.
+    private static final Set<ShapeId> V2_TRAITS_TO_FILTER_FROM_V1 = SetUtils.of(
+            DefaultTrait.ID,
+            AddedDefaultTrait.ID,
+            ClientOptionalTrait.ID,
+            PropertyTrait.ID,
+            NotPropertyTrait.ID);
+
     private final Predicate<String> metadataFilter;
     private final Predicate<Shape> shapeFilter;
     private final Predicate<Trait> traitFilter;
+    private final String version;
 
     private ModelSerializer(Builder builder) {
         metadataFilter = builder.metadataFilter;
+        version = builder.version;
+
         if (!builder.includePrelude) {
             shapeFilter = builder.shapeFilter.and(FunctionalUtils.not(Prelude::isPreludeShape));
+        } else if (version.equals("1.0")) {
+            throw new UnsupportedOperationException("Cannot serialize prelude and set model version to 1.0");
         } else {
             shapeFilter = builder.shapeFilter;
         }
-        // Never serialize synthetic traits.
-        traitFilter = builder.traitFilter.and(FunctionalUtils.not(Trait::isSynthetic));
+
+        if (version.equals("1.0")) {
+            traitFilter = builder.traitFilter.and(trait -> {
+                if (trait.toShapeId().equals(BoxTrait.ID)) {
+                    // Include the box trait in 1.0 models.
+                    return true;
+                } else if (V2_TRAITS_TO_FILTER_FROM_V1.contains(trait.toShapeId())) {
+                    // Exclude V2 specific traits.
+                    return false;
+                } else {
+                    return !trait.isSynthetic();
+                }
+            });
+        } else {
+            // 2.0 models just need to filter out synthetic traits, including box.
+            traitFilter = builder.traitFilter.and(FunctionalUtils.not(Trait::isSynthetic));
+        }
     }
 
     public ObjectNode serialize(Model model) {
         ShapeSerializer shapeSerializer = new ShapeSerializer();
 
+        if (version.equals("1.0")) {
+            model = ModelTransformer.create().downgradeToV1(model);
+        }
+
         ObjectNode.Builder builder = Node.objectNodeBuilder()
-                .withMember("smithy", Node.from(Model.MODEL_VERSION))
+                .withMember("smithy", Node.from(version))
                 .withOptionalMember("metadata", createMetadata(model).map(Node::withDeepSortedKeys));
 
         // Sort shapes by ID.
@@ -124,6 +168,7 @@ public final class ModelSerializer {
         private Predicate<Shape> shapeFilter = FunctionalUtils.alwaysTrue();
         private boolean includePrelude = false;
         private Predicate<Trait> traitFilter = FunctionalUtils.alwaysTrue();
+        private String version = "2.0";
 
         private Builder() {}
 
@@ -178,6 +223,31 @@ public final class ModelSerializer {
          */
         public Builder traitFilter(Predicate<Trait> traitFilter) {
             this.traitFilter = traitFilter;
+            return this;
+        }
+
+        /**
+         * Sets the IDL version to serialize. Defaults to 2.0.
+         *
+         * <p>Version "1.0" serialization cannot be used with {@link #includePrelude}.
+         *
+         * @param version IDL version to set. Can be "1", "1.0", "2", or "2.0".
+         *                "1" and "2" are normalized to "1.0" and "2.0".
+         * @return Returns the builder.
+         */
+        public Builder version(String version) {
+            switch (version) {
+                case "2":
+                case "2.0":
+                    this.version = "2.0";
+                    break;
+                case "1":
+                case "1.0":
+                    this.version = "1.0";
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported Smithy model version: " + version);
+            }
             return this;
         }
 
