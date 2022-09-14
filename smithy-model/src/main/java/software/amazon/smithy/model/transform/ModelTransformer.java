@@ -636,4 +636,20 @@ public final class ModelTransformer {
     public Model addClientOptional(Model model, boolean applyWhenNoDefaultValue) {
         return new AddClientOptional(applyWhenNoDefaultValue).transform(this, model);
     }
+
+    /**
+     * Removes Smithy IDL 2.0 features from a model that are not strictly necessary to keep for consistency with the
+     * rest of Smithy.
+     *
+     * <p>This transformer converts enum shapes to string shapes with the enum trait, intEnum shapes to integer shapes,
+     * flattens and removes mixins, removes properties from resources, and removes default traits that have no impact
+     * on IDL 1.0 semantics (i.e., default traits on structure members set to something other than null, or default
+     * traits on any other shape that are not the zero value of the shape of a 1.0 model).
+     *
+     * @param model Model to downgrade.
+     * @return Returns the downgraded model.
+     */
+    public Model downgradeToV1(Model model) {
+        return new DowngradeToV1().transform(this, model);
+    }
 }

@@ -254,6 +254,38 @@
             "mixins": [{
                 "target": "smithy.example#MixinMap"
             }]
+        },
+        "smithy.example#PrimitiveInteger": {
+            "type": "integer",
+            "traits": {
+                "smithy.api#default": 0
+            }
+        },
+        "smithy.example#Struct": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "smithy.example#PrimitiveInteger",
+                    "traits": {
+                        "smithy.api#default": 0
+                    }
+                },
+                "bar": {
+                    "target": "smithy.example#PrimitiveInteger",
+                    "traits": {
+                        "smithy.api#default": null
+                    }
+                },
+                "baz": {
+                    "target": "smithy.example#MixedInteger"
+                },
+                "bam": {
+                    "target": "smithy.example#MixedInteger",
+                    "traits": {
+                        "smithy.api#default": 1
+                    }
+                }
+            }
         }
     }
 }

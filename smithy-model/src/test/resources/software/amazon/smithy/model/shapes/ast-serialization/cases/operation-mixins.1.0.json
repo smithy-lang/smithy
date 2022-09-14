@@ -1,0 +1,29 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "smithy.example#ConcreteError": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#error": "client"
+            }
+        },
+        "smithy.example#MixedOperation": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.api#Unit"
+            },
+            "output": {
+                "target": "smithy.api#Unit"
+            },
+            "errors": [
+                {
+                    "target": "smithy.example#ConcreteError"
+                }
+            ],
+            "traits": {
+                "smithy.api#internal": {}
+            }
+        }
+    }
+}
