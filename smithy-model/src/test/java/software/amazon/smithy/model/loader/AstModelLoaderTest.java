@@ -15,14 +15,13 @@
 
 package software.amazon.smithy.model.loader;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AstModelLoaderTest {
     @Test
@@ -33,5 +32,15 @@ public class AstModelLoaderTest {
         assertEquals(1, model.getValidationEvents(Severity.ERROR).size());
         assertTrue(model.getValidationEvents(Severity.ERROR).get(0).getMessage()
                 .contains("Resource properties can only be used with Smithy version 2 or later."));
+    }
+
+    @Test
+    public void doesNotFailOnEmptyApply() {
+        // Empty apply statements are pointless but shouldn't break the loader.
+        Model.assembler()
+                .addImport(getClass().getResource("ast-empty-apply-1.json"))
+                .addImport(getClass().getResource("ast-empty-apply-2.json"))
+                .assemble()
+                .unwrap();
     }
 }
