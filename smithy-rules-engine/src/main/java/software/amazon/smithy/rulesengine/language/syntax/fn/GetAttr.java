@@ -33,6 +33,7 @@ import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Ref;
+import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
 import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -147,6 +148,17 @@ public final class GetAttr extends Expr {
         return ObjectNode.builder()
                 .withMember("fn", GetAttr.ID)
                 .withMember("argv", ArrayNode.arrayNode(target.toNode(), StringNode.from(unparse()))).build();
+    }
+
+    /**
+     * Convert this fn into a condition.
+     */
+    public Condition condition() {
+        return new Condition.Builder().fn(this).build();
+    }
+
+    public Condition condition(String result) {
+        return new Condition.Builder().fn(this).result(result).build();
     }
 
     private String unparse() {
