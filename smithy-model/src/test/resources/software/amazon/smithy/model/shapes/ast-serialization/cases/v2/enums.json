@@ -18,6 +18,21 @@
                 }
             }
         },
+        "smithy.example#StringEnumFromTrait": {
+            "type": "string",
+            "traits": {
+                "smithy.api#enum": [
+                    {
+                        "value": "footrait",
+                        "name": "FOOTRAIT"
+                    },
+                    {
+                        "value": "bartrait",
+                        "name": "BARTRAIT"
+                    }
+                ]
+            }
+        },
         "smithy.example#IntEnum": {
             "type": "intEnum",
             "members": {

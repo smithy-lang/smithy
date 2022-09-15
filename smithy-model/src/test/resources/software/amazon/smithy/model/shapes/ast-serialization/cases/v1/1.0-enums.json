@@ -18,6 +18,19 @@
                     }
                 ]
             }
+        },
+        "smithy.example#StringEnumNoName": {
+            "type": "string",
+            "traits": {
+                "smithy.api#enum": [
+                    {
+                        "value": "foo"
+                    },
+                    {
+                        "value": "bar"
+                    }
+                ]
+            }
         }
     }
 }

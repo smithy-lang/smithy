@@ -49,24 +49,43 @@ import software.amazon.smithy.utils.IoUtils;
 
 public class ModelSerializerTest {
     @TestFactory
-    public Stream<DynamicTest> generateTests() throws IOException, URISyntaxException {
+    public Stream<DynamicTest> generateV2RoundTripTests() throws IOException, URISyntaxException {
         return Files.list(Paths.get(
-                        SmithyIdlModelSerializer.class.getResource("ast-serialization/cases").toURI()))
+                        SmithyIdlModelSerializer.class.getResource("ast-serialization/cases/v2").toURI()))
                 .filter(path -> !path.toString().endsWith(".1.0.json"))
-                .map(path -> DynamicTest.dynamicTest(path.getFileName().toString(), () -> testRoundTrip(path)));
+                .map(path -> DynamicTest.dynamicTest(path.getFileName().toString(), () -> testRoundTripV2(path)));
     }
 
-    public void testRoundTrip(Path path) {
+    private void testRoundTripV2(Path path) {
+        testV2Serialization(path, path);
+        testV1DowngradeSerialization(path, Paths.get(path.toString().replace(".json", ".1.0.json")));
+    }
+
+    @TestFactory
+    public Stream<DynamicTest> generateV1RoundTripTests() throws IOException, URISyntaxException {
+        return Files.list(Paths.get(
+                        SmithyIdlModelSerializer.class.getResource("ast-serialization/cases/v1").toURI()))
+                .filter(path -> !path.toString().endsWith(".2.0.json"))
+                .map(path -> DynamicTest.dynamicTest(path.getFileName().toString(), () -> testRoundTripV1(path)));
+    }
+
+    private void testRoundTripV1(Path path) {
+        testV2Serialization(path, Paths.get(path.toString().replace(".json", ".2.0.json")));
+        testV1DowngradeSerialization(path, path);
+    }
+
+    private void testV2Serialization(Path path, Path expectedV2Path) {
         Model model = Model.assembler().addImport(path).assemble().unwrap();
         ModelSerializer serializer = ModelSerializer.builder().build();
         ObjectNode actual = serializer.serialize(model);
-        ObjectNode expected = Node.parse(IoUtils.readUtf8File(path)).expectObjectNode();
+        ObjectNode expected = Node.parse(IoUtils.readUtf8File(expectedV2Path)).expectObjectNode();
 
         Node.assertEquals(actual, expected);
+    }
 
-        // Now validate the file is serialized correctly when downgraded to 1.0.
-        Path downgradeFile = Paths.get(path.toString().replace(".json", ".1.0.json"));
-        ObjectNode expectedDowngrade = Node.parse(IoUtils.readUtf8File(downgradeFile)).expectObjectNode();
+    private void testV1DowngradeSerialization(Path path, Path expectedV1Path) {
+        Model model = Model.assembler().addImport(path).assemble().unwrap();
+        ObjectNode expectedDowngrade = Node.parse(IoUtils.readUtf8File(expectedV1Path)).expectObjectNode();
         ModelSerializer serializer1 = ModelSerializer.builder().version("1.0").build();
         ObjectNode model1 = serializer1.serialize(model);
 

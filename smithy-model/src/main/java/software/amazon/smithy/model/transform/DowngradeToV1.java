@@ -100,20 +100,36 @@ final class DowngradeToV1 {
         }
 
         for (Shape shape : model.getShapesWithTrait(DefaultTrait.class)) {
-            DefaultTrait trait = shape.expectTrait(DefaultTrait.class);
-            // Members with a null default are considered boxed. Keep the trait to retain consistency with other
-            // indexes and checks.
-            if (!trait.toNode().isNullNode()) {
-                if (!NullableIndex.isDefaultZeroValueOfTypeInV1(trait.toNode(), shape.getType())) {
-                    updates.add(Shape.shapeToBuilder(shape)
-                                        .removeTrait(DefaultTrait.ID)
-                                        .removeTrait(AddedDefaultTrait.ID)
-                                        .build());
-                }
+            if (removeDefaultFromShape(shape, model)) {
+                updates.add(Shape.shapeToBuilder(shape)
+                        .removeTrait(DefaultTrait.ID)
+                        .removeTrait(AddedDefaultTrait.ID)
+                        .build());
             }
         }
 
         return transformer.replaceShapes(model, updates);
+    }
+
+    private boolean removeDefaultFromShape(Shape shape, Model model) {
+        DefaultTrait trait = shape.expectTrait(DefaultTrait.class);
+
+        // Members with a null default are considered boxed. Keep the trait to retain consistency with other
+        // indexes and checks.
+        if (trait.toNode().isNullNode()) {
+            return false;
+        }
+
+        Shape target = model.expectShape(shape.asMemberShape().map(MemberShape::getTarget).orElse(shape.getId()));
+        DefaultTrait targetDefault = target.getTrait(DefaultTrait.class).orElse(null);
+
+        // If the target shape has no default trait or it isn't equal to the default trait of the member, then
+        // the default value has no representation in Smithy 1.0 models.
+        if (targetDefault == null || !targetDefault.toNode().equals(trait.toNode())) {
+            return true;
+        }
+
+        return !NullableIndex.isDefaultZeroValueOfTypeInV1(trait.toNode(), target.getType());
     }
 
     private Model removeOtherV2Traits(ModelTransformer transformer, Model model) {
