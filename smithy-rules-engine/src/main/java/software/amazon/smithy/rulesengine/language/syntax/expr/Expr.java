@@ -30,6 +30,7 @@ import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Typecheck;
 import software.amazon.smithy.rulesengine.language.stdlib.BooleanEquals;
 import software.amazon.smithy.rulesengine.language.stdlib.IsValidHostLabel;
+import software.amazon.smithy.rulesengine.language.stdlib.IsVirtualHostableS3Bucket;
 import software.amazon.smithy.rulesengine.language.stdlib.ParseArn;
 import software.amazon.smithy.rulesengine.language.stdlib.ParseUrl;
 import software.amazon.smithy.rulesengine.language.stdlib.StringEquals;
@@ -76,7 +77,7 @@ public abstract class Expr extends MandatorySourceLocation implements Typecheck,
             Optional<Node> fn = on.getMember("fn");
             if ((ref.isPresent() ? 1 : 0) + (fn.isPresent() ? 1 : 0) != 1) {
                 throw new SourceException("expected exactly one of `ref` or `fn` to be set, found "
-                                          + Node.printJson(node), node);
+                        + Node.printJson(node), node);
             }
             if (ref.isPresent()) {
                 return ref(Identifier.of(ref.get().expectStringNode("ref must be a string")), ref.get());
@@ -180,6 +181,10 @@ public abstract class Expr extends MandatorySourceLocation implements Typecheck,
 
     public Fn isValidHostLabel(boolean allowDots) {
         return IsValidHostLabel.ofExprs(this, allowDots);
+    }
+
+    public Fn isVirtualHostableS3Bucket(boolean allowDots) {
+        return IsVirtualHostableS3Bucket.ofExprs(this, allowDots);
     }
 
     public Fn parseUrl() {

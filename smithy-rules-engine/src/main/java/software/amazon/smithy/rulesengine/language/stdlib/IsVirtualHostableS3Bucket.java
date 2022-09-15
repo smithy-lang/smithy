@@ -19,7 +19,10 @@ import java.util.Arrays;
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
+import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
 import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
+import software.amazon.smithy.rulesengine.language.syntax.fn.LibraryFunction;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
@@ -50,5 +53,9 @@ public class IsVirtualHostableS3Bucket extends FunctionDefinition {
         } else {
             return Value.bool(hostLabel.matches("[a-z\\d][a-z\\d\\-]{1,61}[a-z\\d]"));
         }
+    }
+
+    public static Fn ofExprs(Expr input, boolean allowDots) {
+        return LibraryFunction.ofExprs(new IsVirtualHostableS3Bucket(), input, Expr.of(allowDots));
     }
 }
