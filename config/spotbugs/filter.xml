@@ -142,4 +142,10 @@
         <Class name="software.amazon.smithy.rulesengine.traits.ContextIndex"/>
         <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
     </Match>
+
+    <!-- We don't care about the return value of putIfAbsent in this cache -->
+    <Match>
+        <Class name="software.amazon.smithy.model.shapes.ShapeId$ShapeIdFactory"/>
+        <Bug pattern="RV_RETURN_VALUE_OF_PUTIFABSENT_IGNORED"/>
+    </Match>
 </FindBugsFilter>

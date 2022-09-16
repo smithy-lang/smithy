@@ -15,14 +15,13 @@
 
 package software.amazon.smithy.model.shapes;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import software.amazon.smithy.model.loader.ParserUtils;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.Node;
@@ -49,7 +48,7 @@ import software.amazon.smithy.model.node.Node;
 public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
 
     /** LRA (least recently added) cache of parsed shape IDs. */
-    private static final ShapeIdFactory FACTORY = new ShapeIdFactory(8192);
+    private static final ShapeIdFactory FACTORY = new ShapeIdFactory();
 
     private final String namespace;
     private final String name;
@@ -407,89 +406,63 @@ public final class ShapeId implements ToShapeId, Comparable<ShapeId> {
     /**
      * A least-recently used flyweight factory that creates shape IDs.
      *
-     * <p>Shape IDs are cached in a ConcurrentHashMap. Entries are stored in
-     * one of two ConcurrentLinkedQueues: a prioritized queue stores all
-     * shapes IDs in the 'smithy.api' namespace, while a deprioritized queue
-     * stores all shapes IDs in other namespaces. When the *estimated*
-     * number of cached items exceeds {@code maxSize}, entries are removed
-     * from the cache in the order of least recently added (not least
-     * recently used) until the number of estimated entries is less than
-     * {@code maxSize}. A simple LRU cache implementation that uses a
-     * ConcurrentLinkedQueue would be much more expensive since it requires
-     * that cache hits remove and then re-add a key to the queue (in micro
-     * benchmarks, removing and adding to a ConcurrentLinkedQueue on a
-     * cache hit was shown to be a fairly significant performance penalty).
-     *
-     * <p>When evicting, entries are removed by first draining the
-     * deprioritized queue, and then, if the deprioritized queue is empty,
-     * draining the prioritized queue. Draining the prioritized queue should
-     * only be necessary to account for misbehaving inputs.
-     *
-     * <p>While not an optimal cache, this cache is the way it is because it's
-     * meant to be concurrent, non-blocking, lightweight, dependency-free, and
-     * should improve the performance of normal workflows of using Smithy.
-     *
-     * <p>Other alternatives considered were:
-     *
-     * <ol>
-     *     <li>Pull in Caffeine. While appealing, Caffeine's cache didn't
-     *     perform noticeably better than this cache _and_ it is a dependency
-     *     that we wouldn't otherwise need to take, and we've drawn a pretty
-     *     hard line in Smithy to be dependency-free. We could potentially
-     *     "vendor" parts of Caffeine, but it's a large library that doesn't
-     *     lend itself well towards that use case.</li>
-     *     <li>Just use an unbounded ConcurrentHashMap. While simple, this
-     *     approach is not good for long running processes where you can't
-     *     control the input</li>
-     *     <li>Use an {@code AtomicInteger} to cap the maximum size of a
-     *     ConcurrentHashMap, and when the maximum size is hit, stop caching
-     *     entries. This approach would work for most normal use cases but
-     *     would not work well for long running processes that potentially
-     *     load multiple models.</li>
-     *     <li>Use a synchronized {@link LinkedHashMap}. This approach is
-     *     just a bit slower than the chosen approach.</li>
-     * </ol>
+     * <p>Prelude IDs are stored separately from non-prelude IDs because we can make a reasonable estimate about the
+     * size of the prelude and stop caching IDs when that size is exceeded. Prelude shapes are stored in a
+     * ConcurrentHashMap with a bounded size. Once the size exceeds 500, then items are no longer stored in the cache.
+     * Non-prelude shapes are stored in a bounded, synchronized LRU cache based on {@link LinkedHashMap}.
      */
     private static final class ShapeIdFactory {
-        private final int maxSize;
-        private final Queue<String> priorityQueue = new ConcurrentLinkedQueue<>();
-        private final Queue<String> deprioritizedQueue = new ConcurrentLinkedQueue<>();
-        private final ConcurrentMap<String, ShapeId> map;
-        private final AtomicInteger size = new AtomicInteger();
+        private static final int NON_PRELUDE_MAX_SIZE = 8192;
+        private static final int PRELUDE_MAX_SIZE = 500;
+        private static final String PRELUDE_PREFIX = Prelude.NAMESPACE + '#';
 
-        ShapeIdFactory(final int maxSize) {
-            this.maxSize = maxSize;
-            map = new ConcurrentHashMap<>(maxSize);
-        }
+        private final Map<String, ShapeId> nonPreludeCache;
+        private final ConcurrentMap<String, ShapeId> preludeCache;
 
-        ShapeId create(final String key) {
-            return map.computeIfAbsent(key, id -> {
-                ShapeId value = buildShapeId(key);
+        ShapeIdFactory() {
+            preludeCache = new ConcurrentHashMap<>(PRELUDE_MAX_SIZE);
 
-                if (value.getNamespace().equals(Prelude.NAMESPACE)) {
-                    priorityQueue.offer(key);
-                } else {
-                    deprioritizedQueue.offer(key);
+            // A simple LRU cache based on LinkedHashMap, wrapped in a synchronized map.
+            nonPreludeCache = Collections.synchronizedMap(new LinkedHashMap<String, ShapeId>(
+                    NON_PRELUDE_MAX_SIZE + 1, 1.0f, true) {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<String, ShapeId> eldest) {
+                    return this.size() > NON_PRELUDE_MAX_SIZE;
                 }
-
-                // Evict items when the cache gets too big.
-                if (size.incrementAndGet() > maxSize) {
-                    // Remove an element from the deprioritized queue if it isn't empty,
-                    // and if it is, then try to remove an element from the priority queue.
-                    String item = deprioritizedQueue.poll();
-                    if (item == null) {
-                        item = priorityQueue.poll();
-                    }
-
-                    size.decrementAndGet();
-                    map.remove(item);
-                }
-
-                return value;
             });
         }
 
-        private ShapeId buildShapeId(String absoluteShapeId) {
+        ShapeId create(final String key) {
+            if (key.startsWith(PRELUDE_PREFIX)) {
+                return getPreludeId(key);
+            } else {
+                return getNonPreludeId(key);
+            }
+        }
+
+        private ShapeId getPreludeId(String key) {
+            // computeIfAbsent isn't used here since we need to limit the cache size and creating multiple IDs
+            // simultaneously isn't an issue.
+            ShapeId result = preludeCache.get(key);
+            if (result != null) {
+                return result;
+            }
+
+            // The ID wasn't found so build it, and add it to the cache if the cache isn't too big already.
+            result = buildShapeId(key);
+
+            if (preludeCache.size() <= PRELUDE_MAX_SIZE) {
+                preludeCache.putIfAbsent(key, result);
+            }
+
+            return result;
+        }
+
+        private ShapeId getNonPreludeId(String key) {
+            return nonPreludeCache.computeIfAbsent(key, ShapeIdFactory::buildShapeId);
+        }
+
+        private static ShapeId buildShapeId(String absoluteShapeId) {
             int namespacePosition = absoluteShapeId.indexOf('#');
             if (namespacePosition <= 0 || namespacePosition == absoluteShapeId.length() - 1) {
                 throw new ShapeIdSyntaxException("Invalid shape ID: " + absoluteShapeId);
