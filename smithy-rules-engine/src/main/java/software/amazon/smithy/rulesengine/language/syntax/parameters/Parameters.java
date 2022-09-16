@@ -100,7 +100,9 @@ public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBui
 
     @Override
     public Builder toBuilder() {
-        return builder();
+        Builder b = builder().sourceLocation(sourceLocation);
+        parameters.forEach(b::addParameter);
+        return b;
     }
 
     public List<Parameter> toList() {
