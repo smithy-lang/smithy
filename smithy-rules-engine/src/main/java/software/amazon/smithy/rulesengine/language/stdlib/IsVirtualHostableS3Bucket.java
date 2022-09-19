@@ -49,7 +49,11 @@ public class IsVirtualHostableS3Bucket extends FunctionDefinition {
         String hostLabel = arguments.get(0).expectString();
         boolean allowDots = arguments.get(1).expectBool();
         if (allowDots) {
-            return Value.bool(hostLabel.matches("[a-z\\d][a-z\\d\\-.]{1,61}[a-z\\d]"));
+            return Value.bool(
+                    hostLabel.matches("[a-z\\d][a-z\\d\\-.]{1,61}[a-z\\d]")
+                    && !hostLabel.matches("(\\d+\\.){3}\\d+") // don't allow ip address
+                    && !hostLabel.matches(".*[.-]{2}.*") // don't allow names like bucket-.name or bucket.-name
+            );
         } else {
             return Value.bool(hostLabel.matches("[a-z\\d][a-z\\d\\-]{1,61}[a-z\\d]"));
         }
