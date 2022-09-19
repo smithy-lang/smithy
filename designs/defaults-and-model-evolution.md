@@ -320,16 +320,20 @@ The following shapes have restrictions on their default values:
 
 ### Updating default values
 
-The default value of a member MAY be changed. The default value of a root-level
-shape MUST NOT be changed since that would break any shape that refers to
-the shape, and could break other models that refer to a shape defined in a
-shared model.
+The default value of a root-level shape MUST NOT be changed since that would
+break any shape that refers to the shape, and could break other models that
+refer to a shape defined in a shared model.
 
-The default value of a member SHOULD NOT be changed. However, it MAY be
-necessary in extreme cases to change a default value if changing the default
-value addresses a customer-impacting issue or availability issue for a service.
-Changing default values can result in parties disagreeing on the default value
-of a member because they are using different versions of the same model.
+The default value of a member that targets a shape with a default value
+MUST NOT be removed (by changing the value to `null`) since that would
+transition the member from non-optional to optional in generated code.
+
+The default value of a member that targets a shape without a default value
+SHOULD NOT be changed. However, it MAY be necessary in extreme cases to change
+a default value if changing the default value addresses a customer-impacting
+issue or availability issue for a service. Changing default values can result
+in parties disagreeing on the default value of a member because they are using
+different versions of the same model.
 
 
 ### Readers MUST NOT differentiate from omitted or defaulted
