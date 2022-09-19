@@ -69,7 +69,7 @@ a ``type`` property to define the shape type or ``apply``.
     }
 
 All entries in the ``shapes`` map can contain a ``traits`` property that
-defines the traits attached to the shape. ``traits`` is a map of where
+defines the traits attached to the shape. ``traits`` is a map where
 each key is the absolute shape ID of a trait shape and each value is
 the value to assign to the trait.
 
