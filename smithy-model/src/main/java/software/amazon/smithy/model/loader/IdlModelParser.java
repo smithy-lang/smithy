@@ -1126,7 +1126,7 @@ final class IdlModelParser extends SimpleParser {
         expect('p');
         expect('l');
         expect('y');
-        sp();
+        rsp();
 
         String name = ParserUtils.parseShapeId(this);
         rws();

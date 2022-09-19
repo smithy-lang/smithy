@@ -237,7 +237,7 @@ string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
     TraitStructure          :`TraitStructureKvp` *(*`WS` `TraitStructureKvp`)
     TraitStructureKvp       :`NodeObjectKey` *`WS` ":" *`WS` `NodeValue`
     ApplyStatement          :(`ApplyStatementSingular` / `ApplyStatementBlock`)
-    ApplyStatementSingular  :%s"apply" `WS` `ShapeId` `WS` `Trait` `BR`
+    ApplyStatementSingular  :%s"apply" `SP` `ShapeId` `WS` `Trait` `BR`
     ApplyStatementBlock     :%s"apply" `SP` `ShapeId` `WS` "{" `TraitStatements` "}" `BR`
 
 .. rubric:: Shape ID
