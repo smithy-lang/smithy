@@ -16,6 +16,10 @@ use smithy.test#httpRequestTests
         method: "POST",
         uri: "/custom/",
         body: "{}",
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.HostWithPathOperation",
+        },
         host: "example.com/custom",
         appliesTo: "client"
     }

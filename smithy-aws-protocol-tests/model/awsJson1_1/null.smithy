@@ -16,7 +16,10 @@ use smithy.test#httpResponseTests
         protocol: awsJson1_1,
         body: "{}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.NullOperation",
+        },
         params: {
             string: null
         },
