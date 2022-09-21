@@ -21,6 +21,7 @@ import software.amazon.smithy.diff.ChangedShape;
 import software.amazon.smithy.diff.Differences;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
+import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -33,10 +34,17 @@ public final class ChangedShapeType extends AbstractDiffEvaluator {
         return differences.changedShapes()
                 .filter(diff -> diff.getOldShape().getType() != diff.getNewShape().getType())
                 .filter(diff -> !expectedSetToListChange(diff))
+                .filter(diff -> !expectedStringToEnumChange(diff))
                 .map(diff -> error(diff.getNewShape(), String.format(
                         "Shape `%s` type was changed from `%s` to `%s`.",
                         diff.getShapeId(), diff.getOldShape().getType(), diff.getNewShape().getType())))
                 .collect(Collectors.toList());
+    }
+
+    static boolean expectedStringToEnumChange(ChangedShape<Shape> diff) {
+        // Smithy diff doesn't raise an issue if a string with an enum trait is changed
+        // to an enum shape. The enum trait is deprecated and this is a recommended change.
+        return diff.getOldShape().hasTrait(EnumTrait.class) && diff.getNewShape().getType() == ShapeType.ENUM;
     }
 
     private boolean expectedSetToListChange(ChangedShape<Shape> diff) {
