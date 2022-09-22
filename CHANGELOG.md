@@ -1,5 +1,26 @@
 # Smithy Changelog
 
+## 1.25.1 (2022-09-23)
+
+### Features
+* Warn when box trait found on union member ([#1420](https://github.com/awslabs/smithy/pull/1420))
+* Warn when default used with union member target ([#1418](https://github.com/awslabs/smithy/pull/1418))
+* Simplify ShapeId caching ([#1411](https://github.com/awslabs/smithy/pull/1411))
+* Update smithy-diff for strings with the enum trait to enum shapes ([#1409](https://github.com/awslabs/smithy/pull/1409))
+* Add support for 1.0 downgrades and serialization ([#1403](https://github.com/awslabs/smithy/pull/1403) and [#1410](https://github.com/awslabs/smithy/pull/1410))
+* Add AwsQueryCompatible trait ([#1314](https://github.com/awslabs/smithy/pull/1314))
+
+### Bug Fixes
+* Only emit deprecation of enum trait in 2.0 models ([#1421](https://github.com/awslabs/smithy/pull/1421))
+* Enforce private on traits ([#1406](https://github.com/awslabs/smithy/pull/1406))
+* Fix apply statement parsing and ABNF ([#1414](https://github.com/awslabs/smithy/pull/1414))
+* Add test for synthetic box traits on mixins ([#1404](https://github.com/awslabs/smithy/pull/1404))
+
+### Documentation
+* Add some clarifications to revised default value design doc ([#1413](https://github.com/awslabs/smithy/pull/1413))
+* Revise default value design doc to match recent updates ([#1412](https://github.com/awslabs/smithy/pull/1412))
+* Fix typo in migration guide ([#1405](https://github.com/awslabs/smithy/pull/1405))
+
 ## 1.25.0 (2022-09-13)
 
 Made many improvements for Smithy 1.0 and 2.0 interoperability. ([1394](https://github.com/awslabs/smithy/pull/1394))
