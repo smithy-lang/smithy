@@ -173,13 +173,12 @@ final class LoaderTraitMap {
     }
 
     private boolean validateTraitVersion(LoadOperation.ApplyTrait operation) {
-        try {
-            operation.version.validateVersionedTrait(operation.target, operation.trait, operation.value);
-            return true;
-        } catch (SourceException e) {
-            events.add(ValidationEvent.fromSourceException(e));
-            return false;
+        ValidationEvent event = operation.version.validateVersionedTrait(
+                operation.target, operation.trait, operation.value);
+        if (event != null) {
+            events.add(event);
         }
+        return true;
     }
 
     private boolean isAppliedToPreludeOutsidePrelude(LoadOperation.ApplyTrait operation) {
