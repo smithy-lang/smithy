@@ -23,21 +23,33 @@ import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
+import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Emits a validation event if a model contains shapes that are bound to deprecated traits.
  */
 public final class DeprecatedTraitValidator extends AbstractValidator {
+
+    // The set of trait shape IDs where deprecation warnings are emitted elsewhere.
+    // For example, enum trait deprecation warnings are only emitted when loading 2.0 models.
+    private static final Set<ShapeId> HANDLED_ELSEWHERE = SetUtils.of(EnumTrait.ID);
+
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
 
         for (Shape trait : model.getShapesWithTrait(TraitDefinition.class)) {
             if (trait.hasTrait(DeprecatedTrait.class)) {
+                // Don't emit for deprecation warnings that are handled by some other validation.
+                if (HANDLED_ELSEWHERE.contains(trait.toShapeId())) {
+                    continue;
+                }
                 Set<Shape> shapesWithTrait = model.getShapesWithTrait(trait);
                 if (!shapesWithTrait.isEmpty()) {
                     DeprecatedTrait deprecatedTrait = trait.expectTrait(DeprecatedTrait.class);
