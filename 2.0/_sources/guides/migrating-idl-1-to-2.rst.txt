@@ -64,7 +64,8 @@ Boxed root-level shapes
 -----------------------
 
 For non-member, root level shapes, simply remove the ``box`` trait. Root level
-shapes in Smithy 2.0 have no default values unless you explicit assign them one.
+shapes in Smithy 2.0 have no default values unless you explicitly assign them
+one.
 
 This 1.0 model:
 

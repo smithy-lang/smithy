@@ -235,7 +235,7 @@ string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
                             :      *(`Comma` `TraitStructureKvp` *`WS`)
                             :  `TrailingComma`
     TraitStructureKvp       :`NodeObjectKey` *`WS` ":" *`WS` `NodeValue`
-    ApplyStatement          :%s"apply" `WS` `ShapeId` `WS` `Trait` `BR`
+    ApplyStatement          :%s"apply" `SP` `ShapeId` `WS` `Trait` `BR`
 
 .. rubric:: Shape ID
 
