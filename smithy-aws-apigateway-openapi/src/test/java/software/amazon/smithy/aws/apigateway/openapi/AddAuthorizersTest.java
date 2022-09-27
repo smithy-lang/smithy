@@ -22,7 +22,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -66,6 +65,8 @@ public class AddAuthorizersTest {
         assertThat(authorizer.getStringMember("identitySource").get().getValue(), equalTo("mapping.expression"));
         assertThat(authorizer.getStringMember("identityValidationExpression").get().getValue(), equalTo("[A-Z]+"));
         assertThat(authorizer.getNumberMember("authorizerResultTtlInSeconds").get().getValue(), equalTo(100));
+        assertThat(authorizer.getStringMember("authorizerPayloadFormatVersion").get().getValue(), equalTo("2.0"));
+        assertThat(authorizer.getBooleanMember("enableSimpleResponses").get().getValue(), equalTo(true));
     }
 
     @Test

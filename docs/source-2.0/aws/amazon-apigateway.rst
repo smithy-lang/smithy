@@ -164,6 +164,18 @@ An *authorizer* definition is a structure that supports the following members:
         authorization caching is disabled. If it is greater than 0,
         API Gateway will cache authorizer responses. If this field is not set,
         the default value is 300. The maximum value is 3600, or 1 hour.
+    * - authorizerPayloadFormatVersion
+      - ``string``
+      - For HTTP APIs, specifies the format of the data that API Gateway
+        sends to a Lambda authorizer, and how API Gateway interprets the
+        response from Lambda. Supported values are ``1.0`` and ``2.0``.
+        For more information, see `Lambda Authorizers Payload Format`_.
+    * - enableSimpleResponses
+      - ``boolean``
+      - For HTTP APIs, specifies whether a request authorizer returns a
+        Boolean value or an IAM policy. Supported only for authorizers
+        with an ``authorizerPayloadFormatVersion`` of 2.0. If enabled, the
+        Lambda authorizer function returns a Boolean value.
 
 .. code-block:: smithy
 
@@ -188,6 +200,8 @@ An *authorizer* definition is a structure that supports the following members:
             identitySource: "mapping.expression"
             identityValidationExpression: "[A-Z]+"
             resultTtlInSeconds: 100
+            authorizerPayloadFormatVersion: "2.0"
+            enableSimpleResponses: true
         }
     )
     service Weather {
@@ -871,3 +885,4 @@ integration response to two ``header`` parameters of the method response.
 .. _x-amazon-apigateway-api-key-source: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-api-key-source.html
 .. _IntegrationResponse: https://docs.aws.amazon.com/apigateway/api-reference/resource/integration-response/
 .. _mapping templates: https://docs.aws.amazon.com/apigateway/latest/developerguide/models-mappings.html#models-mappings-mappings
+.. _Lambda Authorizers Payload Format: https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-lambda-authorizer.html#http-api-lambda-authorizer.payload-format
