@@ -230,7 +230,7 @@ final class SmithyBuildImpl {
             String projectionName,
             ProjectionConfig projection,
             ValidatedResult<Model> baseModel
-    ) throws Throwable {
+    ) {
         Model resolvedModel = baseModel.unwrap();
         LOGGER.fine(() -> String.format("Creating the `%s` projection", projectionName));
 
@@ -283,22 +283,11 @@ final class SmithyBuildImpl {
                 .model(projectedModel)
                 .events(modelResult.getValidationEvents());
 
-        // Keep track of the first error created by plugins to fail the build after all plugins have run
-        Throwable firstPluginError = null;
         for (Map.Entry<String, ObjectNode> entry : resolvePlugins(projection).entrySet()) {
             if (pluginFilter.test(entry.getKey())) {
-                try {
-                    applyPlugin(projectionName, projection, baseProjectionDir, entry.getKey(), entry.getValue(),
+                applyPlugin(projectionName, projection, baseProjectionDir, entry.getKey(), entry.getValue(),
                             projectedModel, resolvedModel, modelResult, resultBuilder);
-                } catch (Throwable e) {
-                    LOGGER.severe(String.format("Plugin `%s` failed: %s", entry.getKey(), e));
-                    firstPluginError = firstPluginError == null ? e : firstPluginError;
-                }
             }
-        }
-
-        if (firstPluginError != null) {
-            throw firstPluginError;
         }
 
         return resultBuilder.build();
