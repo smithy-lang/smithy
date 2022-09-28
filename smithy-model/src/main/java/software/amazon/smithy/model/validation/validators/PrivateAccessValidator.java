@@ -35,7 +35,7 @@ public final class PrivateAccessValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        NeighborProvider provider = NeighborProviderIndex.of(model).getReverseProviderWithTraitRelationships();
+        NeighborProvider provider = NeighborProviderIndex.of(model).getReverseProvider();
 
         List<ValidationEvent> events = new ArrayList<>();
         for (Shape privateShape : model.getShapesWithTrait(PrivateTrait.class)) {
