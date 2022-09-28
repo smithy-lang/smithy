@@ -1,5 +1,11 @@
 # Smithy Changelog
 
+## 1.25.2 (2022-09-28)
+
+### Bug Fixes
+* Revert "Enforce private on traits (#1406)" ([#1428](https://github.com/awslabs/smithy/pull/1428))
+* Remove aws query compatible protocol test ([#1424](https://github.com/awslabs/smithy/pull/1424))
+
 ## 1.25.1 (2022-09-23)
 
 ### Features
