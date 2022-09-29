@@ -35,6 +35,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -547,29 +548,34 @@ public final class ModelAssembler {
         }
 
         Model processedModel = processor.buildModel();
+        Model transformed;
+
+        // Do the 1.0 -> 2.0 transform before full-model validation.
+        try {
+            transformed = new ModelInteropTransformer(processedModel, events, processor::getShapeVersion)
+                    .transform();
+        } catch (SourceException e) {
+            // The transformation shouldn't throw, but if it does, return here with the original model.
+            LOGGER.log(Level.SEVERE, "Error in ModelInteropTransformer: ", e);
+            events.add(ValidationEvent.fromSourceException(e));
+            return new ValidatedResult<>(processedModel, events);
+        }
 
         // If ERROR validation events occur while loading, then performing more
         // granular semantic validation will only obscure the root cause of errors.
         if (LoaderUtils.containsErrorEvents(events)) {
-            return returnOnlyErrors(processedModel, events);
+            return returnOnlyErrors(transformed, events);
         }
 
-        // Do the 1.0 -> 2.0 transform before full-model validation.
-        ValidatedResult<Model> transformed = new ModelInteropTransformer(processedModel, events,
-                                                                         processor::getShapeVersion).transform();
-
-        if (disableValidation
-                || !transformed.getResult().isPresent()
-                || LoaderUtils.containsErrorEvents(transformed.getValidationEvents())) {
-            // Don't continue to validate the model if the upgrade raised ERROR events.
-            return transformed;
+        if (disableValidation) {
+            return new ValidatedResult<>(transformed, events);
         }
 
         try {
-            return validate(transformed.getResult().get(), transformed.getValidationEvents());
+            return validate(transformed, events);
         } catch (SourceException e) {
             events.add(ValidationEvent.fromSourceException(e));
-            return new ValidatedResult<>(transformed.getResult().get(), events);
+            return new ValidatedResult<>(transformed, events);
         }
     }
 

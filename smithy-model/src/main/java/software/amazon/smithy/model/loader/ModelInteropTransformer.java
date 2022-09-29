@@ -41,7 +41,6 @@ import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.transform.ModelTransformer;
-import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 /**
@@ -74,13 +73,13 @@ final class ModelInteropTransformer {
     private final Function<Shape, Version> fileToVersion;
     private final List<Shape> shapeUpgrades = new ArrayList<>();
 
-    ModelInteropTransformer(Model model, List<ValidationEvent> events, Function<Shape, Version> fileToVersion) {
+    ModelInteropTransformer(Model model, List<ValidationEvent> mutableEvents, Function<Shape, Version> fileToVersion) {
         this.model = model;
-        this.events = events;
+        this.events = mutableEvents;
         this.fileToVersion = fileToVersion;
     }
 
-    ValidatedResult<Model> transform() {
+    Model transform() {
         // TODO: can these transforms be more efficiently moved into the loader?
         for (StructureShape struct : model.getStructureShapes()) {
             if (!Prelude.isPreludeShape(struct)) {
@@ -106,7 +105,7 @@ final class ModelInteropTransformer {
             }
         }
 
-        return new ValidatedResult<>(ModelTransformer.create().replaceShapes(model, shapeUpgrades), events);
+        return ModelTransformer.create().replaceShapes(model, shapeUpgrades);
     }
 
     private void upgradeV1Member(MemberShape member, Shape target) {
