@@ -50,6 +50,20 @@
                 }
             ]
         },
+        "smithy.example#InvalidTraitApplication": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.private#privateTrait": {}
+            }
+        },
+        "smithy.private#privateTrait": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#trait": {},
+                "smithy.api#private": {}
+            }
+        },
         "smithy.private#InvalidOperationInput": {
             "type": "structure",
             "members": {
@@ -64,6 +78,9 @@
                 },
                 "map": {
                     "target": "smithy.example#InvalidMap"
+                },
+                "traitApplication": {
+                    "target": "smithy.example#InvalidTraitApplication"
                 }
             },
             "traits": {
@@ -85,6 +102,9 @@
                 },
                 "map": {
                     "target": "smithy.example#InvalidMap"
+                },
+                "traitApplication": {
+                    "target": "smithy.example#InvalidTraitApplication"
                 }
             },
             "traits": {
