@@ -1108,4 +1108,32 @@ public class ModelAssemblerTest {
 
         assertThat(model1, equalTo(model2));
     }
+
+    @Test
+    public void versionTransformsAreAlwaysApplied() {
+        ValidatedResult<Model> result = Model.assembler()
+                .addImport(getClass().getResource("invalid-1.0-model-upgraded.smithy"))
+                .assemble();
+
+        // Ensure that the invalid trait caused the model to have errors.
+        assertThat(result.getValidationEvents(Severity.ERROR), not(empty()));
+
+        // Ensure that the model was created.
+        assertThat(result.getResult().isPresent(), is(true));
+
+        Model model = result.getResult().get();
+
+        // Ensure that the model upgrade transformations happened.
+        Shape myInteger = model.expectShape(ShapeId.from("smithy.example#MyInteger"));
+        Shape fooBaz = model.expectShape(ShapeId.from("smithy.example#Foo$baz"));
+        Shape fooBam = model.expectShape(ShapeId.from("smithy.example#Foo$bam"));
+
+        // These shapes have a default zero value so have a default trait for 2.0.
+        assertThat(myInteger.getAllTraits(), hasKey(DefaultTrait.ID));
+        assertThat(fooBaz.getAllTraits(), hasKey(DefaultTrait.ID));
+
+        // These members are considered boxed in 1.0.
+        assertThat(fooBam.getAllTraits(), hasKey(BoxTrait.ID));
+        assertThat(fooBam.expectTrait(DefaultTrait.class).toNode(), equalTo(Node.nullNode()));
+    }
 }
