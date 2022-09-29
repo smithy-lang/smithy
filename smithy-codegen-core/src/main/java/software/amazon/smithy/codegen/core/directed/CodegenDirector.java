@@ -81,7 +81,6 @@ public final class CodegenDirector<
      * <ul>
      *     <li>Flattens error hierarchies onto every operation.</li>
      *     <li>Flattens mixins</li>
-     *     <li>Converts enum strings to enum shapes.</li>
      * </ul>
      *
      * <p><em>Note</em>: This transform is applied automatically by a code
