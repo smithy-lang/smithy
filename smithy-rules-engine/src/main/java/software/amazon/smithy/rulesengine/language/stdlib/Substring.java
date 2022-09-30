@@ -56,7 +56,7 @@ public final class Substring extends FunctionDefinition {
 
         for (int i = 0; i < str.length(); i++) {
             char ch = str.charAt(i);
-            if (ch >= 0 && ch <= 127) {
+            if (!(ch <= 127)) {
                 return Value.none();
             }
         }
