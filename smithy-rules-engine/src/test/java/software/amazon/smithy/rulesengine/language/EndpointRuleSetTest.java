@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.rulesengine.language.eval.RuleEngine;
+import software.amazon.smithy.rulesengine.language.eval.RuleEvaluator;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
@@ -34,26 +34,27 @@ import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.utils.MapUtils;
 
-class EndpointRulesetTest {
-    private EndpointRuleset parse(String resource) {
+class EndpointRuleSetTest {
+    private EndpointRuleSet parse(String resource) {
         InputStream is = getClass().getClassLoader().getResourceAsStream(resource);
         assert is != null;
         Node node = ObjectNode.parse(is);
-        return EndpointRuleset.fromNode(node);
+        return EndpointRuleSet.fromNode(node);
     }
 
     @Test
     void testRuleEval() {
-        EndpointRuleset actual = parse(
+        EndpointRuleSet actual = parse(
                 "software/amazon/smithy/rulesengine/testutil/valid-rules/minimal-ruleset.json");
-        Value result = RuleEngine.evaluate(actual, MapUtils.of(Identifier.of("Region"), Value.str("us-east-1")));
+        Value result = RuleEvaluator.evaluate(actual, MapUtils.of(Identifier.of("Region"),
+                Value.string("us-east-1")));
         Value.Endpoint expected = new Value.Endpoint.Builder(SourceLocation.none())
                 .url("https://us-east-1.amazonaws.com")
                 .addProperty("authSchemes", Value.array(Collections.singletonList(
                         Value.record(MapUtils.of(
-                                Identifier.of("name"), Value.str("sigv4"),
-                                Identifier.of("signingRegion"), Value.str("us-east-1"),
-                                Identifier.of("signingName"), Value.str("serviceName")
+                                Identifier.of("name"), Value.string("sigv4"),
+                                Identifier.of("signingRegion"), Value.string("us-east-1"),
+                                Identifier.of("signingName"), Value.string("serviceName")
                         ))
                 )))
                 .build();
@@ -62,10 +63,10 @@ class EndpointRulesetTest {
 
     @Test
     void testMinimalRuleset() {
-        EndpointRuleset actual = parse(
+        EndpointRuleSet actual = parse(
                 "software/amazon/smithy/rulesengine/testutil/valid-rules/minimal-ruleset.json");
-        actual.typecheck(new Scope<>());
-        assertEquals(EndpointRuleset.builder()
+        actual.typeCheck(new Scope<>());
+        assertEquals(EndpointRuleSet.builder()
                 .version("1.3")
                 .parameters(Parameters
                         .builder()
@@ -80,7 +81,8 @@ class EndpointRulesetTest {
                         .builder()
                         .description("base rule")
                         .endpoint(Endpoint
-                                .builder(SourceLocation.none())
+                                .builder()
+                                .sourceLocation(SourceLocation.none())
                                 .url(Literal.of("https://{Region}.amazonaws.com"))
                                 .addAuthScheme(Identifier.of("sigv4"), MapUtils.of(
                                         Identifier.of("signingRegion"), Literal.of("{Region}"),

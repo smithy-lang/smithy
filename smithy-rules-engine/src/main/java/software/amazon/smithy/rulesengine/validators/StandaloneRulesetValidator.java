@@ -18,16 +18,19 @@ package software.amazon.smithy.rulesengine.validators;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import software.amazon.smithy.rulesengine.language.EndpointRuleset;
+import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * A meta validator that verifies a rule-set and tests.
+ */
 @SmithyUnstableApi
 public final class StandaloneRulesetValidator {
     private StandaloneRulesetValidator() {
     }
 
-    public static Stream<ValidationError> validate(EndpointRuleset ruleset, EndpointTestsTrait testSuite) {
+    public static Stream<ValidationError> validate(EndpointRuleSet ruleset, EndpointTestsTrait testSuite) {
         Stream<ValidationError> base = Stream.of(
                 BuiltInsValidator.validateBuiltIns(ruleset),
                 new ValidateUriScheme().visitRuleset(ruleset),
@@ -39,7 +42,7 @@ public final class StandaloneRulesetValidator {
         return base;
     }
 
-    public static void validateOrError(EndpointRuleset ruleset, EndpointTestsTrait testSuite) {
+    public static void validateOrError(EndpointRuleSet ruleset, EndpointTestsTrait testSuite) {
         List<ValidationError> errors = validate(ruleset, testSuite).collect(Collectors.toList());
         if (!errors.isEmpty()) {
             throw new RuntimeException(String.format("There were validation errors: %n%s", errors));

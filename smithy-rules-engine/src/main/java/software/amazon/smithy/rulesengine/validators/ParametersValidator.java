@@ -29,7 +29,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.rulesengine.language.EndpointRuleset;
+import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.ParameterType;
@@ -40,16 +40,21 @@ import software.amazon.smithy.rulesengine.traits.StaticContextParamDefinition;
 import software.amazon.smithy.rulesengine.traits.StaticContextParamsTrait;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * Validator for rule-set parameters.
+ */
 @SmithyUnstableApi
 public final class ParametersValidator {
 
     private ParametersValidator() {
     }
 
-    // validates ruleset-model parameters matching
-    // returns set of validation errors, empty if no errors
+    /**
+     * Validates ruleset-model parameters matching returns set of validation errors, empty if no errors.
+     */
     public static List<ValidationError> validateParametersMatching(
-            Map<String, Parameter> rulesetParams, Map<String, Parameter> modelParams
+            Map<String, Parameter> rulesetParams,
+            Map<String, Parameter> modelParams
     ) {
         ArrayList<ValidationError> errors = new ArrayList<>();
         HashSet<String> matchedParams = new HashSet<>();
@@ -58,13 +63,14 @@ public final class ParametersValidator {
             String name = entry.getKey();
             Parameter modelParam = modelParams.getOrDefault(name, null);
             if (modelParam == null) {
-                String error = String.format("Parameter '%s' exists in ruleset but not in service model", name);
+                String error = java.lang.String.format("Parameter '%s' exists in ruleset but not in service model",
+                        name);
                 errors.add(new ValidationError(ValidationErrorType.PARAMETER_MISMATCH, error,
                         entry.getValue().getSourceLocation()));
             } else {
                 matchedParams.add(name);
                 if (entry.getValue().getType() != modelParam.getType()) {
-                    String error = String.format("Type mismatch for parameter '%s'", name);
+                    String error = java.lang.String.format("Type mismatch for parameter '%s'", name);
                     errors.add(new ValidationError(ValidationErrorType.PARAMETER_TYPE_MISMATCH, error,
                             entry.getValue().getSourceLocation()));
                 }
@@ -74,7 +80,8 @@ public final class ParametersValidator {
         for (Map.Entry<String, Parameter> entry : modelParams.entrySet()) {
             String name = entry.getKey();
             if (!matchedParams.contains(name)) {
-                String error = String.format("Parameter '%s' exists in service model but not in ruleset", name);
+                String error = java.lang.String.format("Parameter '%s' exists in service model but not in ruleset",
+                        name);
                 errors.add(new ValidationError(ValidationErrorType.PARAMETER_MISMATCH, error,
                         entry.getValue().getSourceLocation()));
             }
@@ -92,7 +99,9 @@ public final class ParametersValidator {
     // returns set of validation errors and map of parameters extracted from model, empty if no errors
     // fills map of endpoint parameters extracted from the model
     public static List<ValidationError> validateModelAndExtractParameters(
-            Model model, ShapeId serviceShape, Map<String, Parameter> endpointParams
+            Model model,
+            ShapeId serviceShape,
+            Map<String, Parameter> endpointParams
     ) {
         ArrayList<ValidationError> errors = new ArrayList<ValidationError>();
         // TODO: is this validator still even right?
@@ -122,7 +131,7 @@ public final class ParametersValidator {
                                     builder.type(ParameterType.BOOLEAN);
                                     break;
                                 default:
-                                    throw new IllegalArgumentException(String.format(
+                                    throw new IllegalArgumentException(java.lang.String.format(
                                             "invalid parameter value type: `%s`", definition.getValue().getType()));
                             }
                             return builder.build();
@@ -133,7 +142,7 @@ public final class ParametersValidator {
                     String name = p.getName().asString();
                     Parameter param = endpointParams.getOrDefault(name, null);
                     if (param != null && param.getType() != p.getType()) {
-                        String error = String.format("Inconsistent type for '%s' parameter", name);
+                        String error = java.lang.String.format("Inconsistent type for '%s' parameter", name);
                         errors.add(new ValidationError(ValidationErrorType.INCONSISTENT_PARAMETER_TYPE, error,
                                 t.getSourceLocation()));
                     } else {
@@ -149,7 +158,8 @@ public final class ParametersValidator {
 
                     Shape targetType = model.expectShape(member.getTarget());
                     if (!targetType.isStringShape() && !targetType.isBooleanShape()) {
-                        String error = String.format("Unsupported type %s for '%s' parameter", targetType, name);
+                        String error = java.lang.String.format("Unsupported type %s for '%s' parameter", targetType,
+                                name);
                         errors.add(new ValidationError(ValidationErrorType.UNSUPPORTED_PARAMETER_TYPE, error,
                                 t.getSourceLocation()));
                     } else {
@@ -157,7 +167,7 @@ public final class ParametersValidator {
 
                         Parameter existingParam = endpointParams.getOrDefault(name, null);
                         if (existingParam != null && type != existingParam.getType()) {
-                            String error = String.format("Inconsistent type for '%s' parameter", name);
+                            String error = java.lang.String.format("Inconsistent type for '%s' parameter", name);
                             errors.add(new ValidationError(ValidationErrorType.INCONSISTENT_PARAMETER_TYPE, error,
                                     t.getSourceLocation()));
                         } else {
@@ -180,7 +190,7 @@ public final class ParametersValidator {
     // validates model for correct endpoint parameters annotations, then validates ruleset-model parameters matching
     // returns set of validation errors, empty if no errors
     public static List<ValidationError> validateParameters(
-            EndpointRuleset ruleset, ShapeId serviceShape, Model smithyModel
+            EndpointRuleSet ruleset, ShapeId serviceShape, Model smithyModel
     ) {
 
         Map<String, Parameter> rulesetParams = ruleset.getParameters().toList().stream()
@@ -213,7 +223,7 @@ public final class ParametersValidator {
      * @param ruleset the rule set to be tested
      * @return set of validation errors if present.
      */
-    public static List<ValidationError> validateTestsParameters(EndpointTestsTrait tests, EndpointRuleset ruleset) {
+    public static List<ValidationError> validateTestsParameters(EndpointTestsTrait tests, EndpointRuleSet ruleset) {
 
         ArrayList<ValidationError> errors = new ArrayList<ValidationError>();
 
@@ -226,7 +236,8 @@ public final class ParametersValidator {
         requiredRulesetParams.forEach(rp -> {
             String name = rp.getName().asString();
             if (!testSuiteParams.containsKey(name) || testSuiteParams.get(name).size() != tests.getTestCases().size()) {
-                String error = String.format("Required parameter '%s' is missing in at least one test case", name);
+                String error = java.lang.String.format("Required parameter '%s' is missing in at least one test case",
+                        name);
                 errors.add(new ValidationError(ValidationErrorType.REQUIRED_PARAMETER_MISSING, error,
                         rp.getSourceLocation()));
             }
@@ -238,13 +249,13 @@ public final class ParametersValidator {
             String name = rp.getName().asString();
             List<Parameter> testParams = testSuiteParams.getOrDefault(name, null);
             if (testParams == null) {
-                String error = String.format("Parameter '%s' is never used in test cases", name);
+                String error = java.lang.String.format("Parameter '%s' is never used in test cases", name);
                 errors.add(new ValidationError(ValidationErrorType.PARAMETER_IS_NOT_USED, error,
                         rp.getSourceLocation()));
             } else {
                 testParams.forEach(tp -> {
                     if (tp.getType() != rp.getType()) {
-                        String error = String.format("Type mismatch for parameter '%s', '%s' expected",
+                        String error = java.lang.String.format("Type mismatch for parameter '%s', '%s' expected",
                                 tp.getName().asString(), rp.getType());
                         errors.add(new ValidationError(ValidationErrorType.PARAMETER_TYPE_MISMATCH, error,
                                 tp.getSourceLocation()));
@@ -259,7 +270,7 @@ public final class ParametersValidator {
                 .collect(Collectors.toSet());
         testSuiteParams.forEach((name, list) -> {
             if (!rulesetParamNames.contains(name)) {
-                String error = String.format("Test parameter '%s' is not defined in ruleset", name);
+                String error = java.lang.String.format("Test parameter '%s' is not defined in ruleset", name);
                 errors.add(new ValidationError(ValidationErrorType.PARAMETER_IS_NOT_DEFINED, error,
                         list.get(0).getSourceLocation()));
             }
@@ -286,7 +297,7 @@ public final class ParametersValidator {
                                 .sourceLocation(value.getSourceLocation())
                                 .name(entry.getKey())
                                 .value(value);
-                        if (value instanceof Value.Str) {
+                        if (value instanceof Value.String) {
                             builder.type(ParameterType.STRING);
                         } else if (value instanceof Value.Bool) {
                             builder.type(ParameterType.BOOLEAN);

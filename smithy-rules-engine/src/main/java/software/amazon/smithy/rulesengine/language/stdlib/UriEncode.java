@@ -21,13 +21,15 @@ import java.util.Collections;
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.fn.Function;
 import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
 import software.amazon.smithy.rulesengine.language.syntax.fn.LibraryFunction;
-import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * A rule-set function for URI encoding a string.
+ */
 @SmithyUnstableApi
 public final class UriEncode extends FunctionDefinition {
 
@@ -37,39 +39,35 @@ public final class UriEncode extends FunctionDefinition {
 
 
     @Override
-    public String id() {
+    public String getId() {
         return ID;
     }
 
     @Override
-    public List<Type> arguments() {
-        return Collections.singletonList(Type.str());
+    public List<Type> getArguments() {
+        return Collections.singletonList(Type.string());
     }
 
     @Override
-    public Type returnType() {
-        return Type.str();
+    public Type getReturnType() {
+        return Type.string();
     }
 
     @Override
-    public Value eval(List<Value> arguments) {
+    public Value evaluate(List<Value> arguments) {
         String url = arguments.get(0).expectString();
         try {
             String encoded = URLEncoder.encode(url, "UTF-8");
             for (int i = 0; i < ENCODED_CHARACTERS.length; i++) {
                 encoded = encoded.replace(ENCODED_CHARACTERS[i], ENCODED_CHARACTERS_REPLACEMENTS[i]);
             }
-            return Value.str(encoded);
+            return Value.string(encoded);
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static Fn ofExprs(Expr expr) {
-        return LibraryFunction.ofExprs(new UriEncode(), expr);
-    }
-
-    public static Fn fromParam(Parameter param) {
-        return UriEncode.ofExprs(param.expr());
+    public static Function ofExpression(Expression expression) {
+        return LibraryFunction.ofExpressions(new UriEncode(), expression);
     }
 }

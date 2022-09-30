@@ -17,6 +17,10 @@ package software.amazon.smithy.rulesengine;
 
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * An interface that describe a type that can be transformed to type T.
+ * @param <T> the type.
+ */
 @SmithyUnstableApi
 public interface Into<T> {
     T into();

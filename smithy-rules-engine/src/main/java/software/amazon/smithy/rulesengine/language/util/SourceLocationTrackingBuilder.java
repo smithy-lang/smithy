@@ -15,7 +15,7 @@
 
 package software.amazon.smithy.rulesengine.language.util;
 
-import static software.amazon.smithy.rulesengine.language.util.SourceLocationHelpers.javaLocation;
+import static software.amazon.smithy.rulesengine.language.util.SourceLocationUtils.javaLocation;
 
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
@@ -48,8 +48,8 @@ public abstract class SourceLocationTrackingBuilder<B extends SourceLocationTrac
     }
 
     @SuppressWarnings("unchecked")
-    public B sourceLocation(SourceLocation sourceLocation) {
-        this.sourceLocation = sourceLocation;
+    public B sourceLocation(FromSourceLocation fromSourceLocation) {
+        this.sourceLocation = fromSourceLocation.getSourceLocation();
         return (B) this;
     }
 

@@ -23,6 +23,9 @@ import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
+/**
+ * Provides a facility for overriding a partition's regions.
+ */
 @SmithyUnstableApi
 public final class RegionOverride implements ToSmithyBuilder<RegionOverride>, FromSourceLocation {
     private final SourceLocation sourceLocation;

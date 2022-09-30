@@ -24,7 +24,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import software.amazon.smithy.rulesengine.language.EndpointRuleset;
+import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.eval.RuleEvaluator;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
@@ -37,33 +37,53 @@ import software.amazon.smithy.rulesengine.traits.EndpointTestCase;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
- * Analysis utility to determine test coverage of a ruleset for a given set of inputs.
+ * Analyzer for determining coverage of a rule-set.
  */
 @SmithyUnstableApi
 public final class CoverageChecker {
     private final CoverageCheckerCore checkerCore;
-    private final EndpointRuleset ruleset;
+    private final EndpointRuleSet ruleSet;
 
-    public CoverageChecker(EndpointRuleset ruleset) {
-        this.ruleset = ruleset;
+    public CoverageChecker(EndpointRuleSet ruleSet) {
+        this.ruleSet = ruleSet;
         this.checkerCore = new CoverageCheckerCore();
     }
 
+    /**
+     * Evaluates the rule-set with the given inputs to determine rule coverage.
+     *
+     * @param input the map parameters and inputs to test coverage.
+     */
     public void evaluateInput(Map<Identifier, Value> input) {
-        this.checkerCore.evaluateRuleset(ruleset, input);
+        this.checkerCore.evaluateRuleSet(ruleSet, input);
     }
 
+    /**
+     * Evaluate the rule-set using the given test case to determine rule coverage.
+     *
+     * @param testCase the test case to evaluate.
+     */
     public void evaluateTestCase(EndpointTestCase testCase) {
         HashMap<Identifier, Value> map = new HashMap<>();
         testCase.getParams().getStringMap().forEach((s, node) -> map.put(Identifier.of(s), Value.fromNode(node)));
-        this.checkerCore.evaluateRuleset(ruleset, map);
+        this.checkerCore.evaluateRuleSet(ruleSet, map);
     }
 
+    /**
+     * Analyze and provides the coverage results for the rule-set.
+     *
+     * @return stream of {@link CoverageResult}.
+     */
     public Stream<CoverageResult> checkCoverage() {
-        Stream<Condition> conditions = new CollectConditions().visitRuleset(ruleset);
+        Stream<Condition> conditions = new CollectConditions().visitRuleset(ruleSet);
         return coverageForConditions(conditions);
     }
 
+    /**
+     * Analyze and provides the coverage results for a specific rule.
+     *
+     * @return stream of {@link CoverageResult}.
+     */
     public Stream<CoverageResult> checkCoverageFromRule(Rule rule) {
         Stream<Condition> conditions = rule.accept(new CollectConditions());
         return coverageForConditions(conditions);
@@ -131,10 +151,10 @@ public final class CoverageChecker {
         Context context = null;
 
         @Override
-        public Value evaluateRuleset(EndpointRuleset ruleset, Map<Identifier, Value> input) {
+        public Value evaluateRuleSet(EndpointRuleSet ruleset, Map<Identifier, Value> parameterArguments) {
             try {
-                context = new Context(input);
-                return super.evaluateRuleset(ruleset, input);
+                context = new Context(parameterArguments);
+                return super.evaluateRuleSet(ruleset, parameterArguments);
             } finally {
                 context = null;
             }
@@ -211,7 +231,7 @@ public final class CoverageChecker {
                     .toString();
         }
 
-        public String prettyWithPath(EndpointRuleset ruleset) {
+        public String prettyWithPath(EndpointRuleSet ruleset) {
             PathFinder.Path path = PathFinder.findPath(ruleset, condition).orElseThrow(NoSuchElementException::new);
             StringBuilder sb = new StringBuilder();
             sb.append(pretty()).append("\n");

@@ -17,11 +17,11 @@ package software.amazon.smithy.rulesengine.language.syntax.fn;
 
 import java.util.HashMap;
 import java.util.Optional;
+import software.amazon.smithy.rulesengine.language.stdlib.AwsIsVirtualHostableS3Bucket;
+import software.amazon.smithy.rulesengine.language.stdlib.AwsPartition;
 import software.amazon.smithy.rulesengine.language.stdlib.IsValidHostLabel;
-import software.amazon.smithy.rulesengine.language.stdlib.IsVirtualHostableS3Bucket;
 import software.amazon.smithy.rulesengine.language.stdlib.ParseArn;
 import software.amazon.smithy.rulesengine.language.stdlib.ParseUrl;
-import software.amazon.smithy.rulesengine.language.stdlib.PartitionFn;
 import software.amazon.smithy.rulesengine.language.stdlib.Substring;
 import software.amazon.smithy.rulesengine.language.stdlib.UriEncode;
 import software.amazon.smithy.rulesengine.language.util.LazyValue;
@@ -36,13 +36,13 @@ public final class FunctionRegistry {
     private static final LazyValue<FunctionRegistry> GLOBAL_REGISTRY =
             LazyValue.<FunctionRegistry>builder().initializer(() -> {
                 FunctionRegistry registry = new FunctionRegistry();
-                registry.registerFunction(new PartitionFn());
+                registry.registerFunction(new AwsPartition());
                 registry.registerFunction(new IsValidHostLabel());
                 registry.registerFunction(new ParseArn());
                 registry.registerFunction(new ParseUrl());
                 registry.registerFunction(new Substring());
                 registry.registerFunction(new UriEncode());
-                registry.registerFunction(new IsVirtualHostableS3Bucket());
+                registry.registerFunction(new AwsIsVirtualHostableS3Bucket());
                 return registry;
             }).build();
 
@@ -56,12 +56,18 @@ public final class FunctionRegistry {
     }
 
     public void registerFunction(FunctionDefinition definition) {
-        registry.put(definition.id(), definition);
+        registry.put(definition.getId(), definition);
     }
 
-    public Optional<LibraryFunction> forNode(FnNode node) {
-        if (registry.containsKey(node.getId())) {
-            return Optional.of(new LibraryFunction(registry.get(node.getId()), node));
+    /**
+     * Retrieves the {@link LibraryFunction} for the given {@link FunctionNode} if registered.
+     *
+     * @param node the FunctionNode to retrieve the function for.
+     * @return the optional function.
+     */
+    public Optional<LibraryFunction> forNode(FunctionNode node) {
+        if (registry.containsKey(node.getName())) {
+            return Optional.of(new LibraryFunction(registry.get(node.getName()), node));
         } else {
             return Optional.empty();
         }

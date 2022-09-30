@@ -28,6 +28,9 @@ import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
+/**
+ * A model for defining the set of partitions that are used by the rule-set aws.partition function.
+ */
 @SmithyUnstableApi
 public final class Partitions implements ToSmithyBuilder<Partitions>, FromSourceLocation {
     private static final String VERSION = "version";

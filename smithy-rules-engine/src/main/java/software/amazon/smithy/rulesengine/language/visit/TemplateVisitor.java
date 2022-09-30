@@ -15,7 +15,7 @@
 
 package software.amazon.smithy.rulesengine.language.visit;
 
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -41,7 +41,7 @@ public interface TemplateVisitor<T> {
      * @param value The single expression that represents this template.
      * @return T
      */
-    T visitSingleDynamicTemplate(Expr value);
+    T visitSingleDynamicTemplate(Expression value);
 
     /**
      * Visit a static element within a multipart template. This will only be called after
@@ -59,12 +59,12 @@ public interface TemplateVisitor<T> {
      * @param value The dynamic template value
      * @return T
      */
-    T visitDynamicElement(Expr value);
+    T visitDynamicElement(Expression value);
 
     /**
      * Invoked prior to visiting a multipart template like `https://{Region}.{dnsSuffix}`. This function will
      * be followed by invocations of {@link #visitStaticTemplate(String)} and
-     * {@link #visitDynamicElement(Expr)}.
+     * {@link #visitDynamicElement(Expression)}.
      *
      * @return T
      */

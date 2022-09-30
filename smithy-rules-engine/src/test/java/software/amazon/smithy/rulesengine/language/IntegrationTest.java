@@ -71,7 +71,7 @@ public class IntegrationTest {
                 .flatMap(
                         suite -> suite.testSuite().getTestCases()
                                 .stream()
-                                .map(tc -> new TestDiscovery.RulesTestCase(suite.ruleset(), tc)));
+                                .map(tc -> new TestDiscovery.RulesTestCase(suite.ruleSet(), tc)));
     }
 
     private Stream<ValidationTestCase> invalidTestCases() {
@@ -84,18 +84,18 @@ public class IntegrationTest {
     @ParameterizedTest
     @MethodSource("validTestcases")
     void checkValidRules(ValidationTestCase validationTestCase) {
-        EndpointRuleset ruleset = EndpointRuleset.fromNode(validationTestCase.contents());
+        EndpointRuleSet ruleset = EndpointRuleSet.fromNode(validationTestCase.contents());
         List<ValidationError> errors = StandaloneRulesetValidator.validate(ruleset, null).collect(Collectors.toList());
         assertEquals(Collections.emptyList(), errors);
-        ruleset.typecheck(new Scope<>());
+        ruleset.typeCheck(new Scope<>());
     }
 
     @ParameterizedTest
     @MethodSource("validTestcases")
     void rulesRoundTripViaJson(ValidationTestCase validationTestCase) {
-        EndpointRuleset ruleset = EndpointRuleset.fromNode(validationTestCase.contents());
+        EndpointRuleSet ruleset = EndpointRuleSet.fromNode(validationTestCase.contents());
         Node serialized = ruleset.toNode();
-        EndpointRuleset deserialized = EndpointRuleset.fromNode(serialized);
+        EndpointRuleSet deserialized = EndpointRuleSet.fromNode(serialized);
         if (!deserialized.equals(ruleset)) {
             assertEquals(ruleset.toString(), deserialized.toString());
             assertEquals(ruleset, deserialized);
@@ -107,7 +107,7 @@ public class IntegrationTest {
     @MethodSource("checkableTestCases")
     void checkTestSuites(TestDiscovery.RulesTestCase testcase) {
         new TestDiscovery().testSuites().forEach(rulesTestSuite -> {
-            assertEquals(Collections.emptyList(), StandaloneRulesetValidator.validate(rulesTestSuite.ruleset(),
+            assertEquals(Collections.emptyList(), StandaloneRulesetValidator.validate(rulesTestSuite.ruleSet(),
                     rulesTestSuite.testSuite()).collect(Collectors.toList()));
         });
     }
@@ -122,8 +122,8 @@ public class IntegrationTest {
     @MethodSource("invalidTestCases")
     void checkInvalidRules(ValidationTestCase validationTestCase) throws IOException {
         RuleError error = assertThrows(RuleError.class, () -> {
-            EndpointRuleset ruleset = EndpointRuleset.fromNode(validationTestCase.contents());
-            ruleset.typecheck(new Scope<>());
+            EndpointRuleSet ruleset = EndpointRuleSet.fromNode(validationTestCase.contents());
+            ruleset.typeCheck(new Scope<>());
         });
         //validationTestCase.overrideComments(error.toString());
         assertEquals(validationTestCase.comments().trim(), error.toString().trim());
@@ -162,7 +162,7 @@ public class IntegrationTest {
         }
 
         String comments() throws FileNotFoundException {
-            return lines(IoUtils.toUtf8String(new FileInputStream(path.toFile())))
+            return lines(IoUtils.toUtf8String(new FileInputStream(path.toFile()))).stream()
                     .filter(line -> line.startsWith("// "))
                     .map(line -> line.substring(3))
                     .collect(Collectors.joining("\n"));
@@ -172,10 +172,11 @@ public class IntegrationTest {
          * Write back the current error message into the test case
          */
         void overrideComments(String comments) throws IOException {
-            String commentSection = lines(comments)
+            String commentSection = lines(comments).stream()
                                             .map(line -> "// " + line)
                                             .collect(Collectors.joining("\n")) + "\n";
             String newContents = commentSection + lines(IoUtils.toUtf8String(new FileInputStream(path.toFile())))
+                    .stream()
                     .filter(line -> !line.startsWith("// "))
                     .collect(Collectors.joining("\n"));
             Path realPath = Paths.get(path.toString().replaceFirst("/build/resources/test/",

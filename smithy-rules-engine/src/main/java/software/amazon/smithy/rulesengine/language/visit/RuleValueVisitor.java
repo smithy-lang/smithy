@@ -17,7 +17,7 @@ package software.amazon.smithy.rulesengine.language.visit;
 
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.Endpoint;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -28,9 +28,27 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  */
 @SmithyUnstableApi
 public interface RuleValueVisitor<R> {
+    /**
+     * Invoked when reaching a tree rule.
+     *
+     * @param rules the sub-rules within a tree rule.
+     * @return the visitor return type.
+     */
     R visitTreeRule(List<Rule> rules);
 
-    R visitErrorRule(Expr error);
+    /**
+     * Invoked when reaching an error rule.
+     *
+     * @param error the error expression for the rule.
+     * @return the visitor return type.
+     */
+    R visitErrorRule(Expression error);
 
+    /**
+     * Invoked when reaching an endpoint rule.
+     *
+     * @param endpoint the endpoint of the rule.
+     * @return the visitor return type.
+     */
     R visitEndpointRule(Endpoint endpoint);
 }

@@ -23,9 +23,13 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * An exception that can be thrown when rule-set is invalid. Used for providing meaningful contextual
+ * information when an invalid rule-set is encountered.
+ */
 @SmithyUnstableApi
 public final class RuleError extends RuntimeException {
-    private final List<Pair<String, SourceLocation>> context = new ArrayList<>();
+    private final List<Pair<String, SourceLocation>> contexts = new ArrayList<>();
     private final SourceException root;
 
     public RuleError(SourceException root) {
@@ -33,25 +37,25 @@ public final class RuleError extends RuntimeException {
         this.root = root;
     }
 
-    public static <T> T ctx(String message, Runnable f) throws RuleError {
-        return RuleError.ctx(message, SourceLocation.none(), () -> {
+    public static <T> T context(String message, Runnable f) throws RuleError {
+        return RuleError.context(message, SourceLocation.none(), () -> {
             f.run();
             return null;
         });
     }
 
-    public static <T> T ctx(String message, Evaluator<T> f) throws RuleError {
-        return RuleError.ctx(message, SourceLocation.none(), f);
+    public static <T> T context(String message, Evaluator<T> f) throws RuleError {
+        return RuleError.context(message, SourceLocation.none(), f);
     }
 
-    public static void ctx(String message, FromSourceLocation sourceLocation, Runnable f) {
-        ctx(message, sourceLocation, () -> {
+    public static void context(String message, FromSourceLocation sourceLocation, Runnable f) {
+        context(message, sourceLocation, () -> {
             f.run();
             return null;
         });
     }
 
-    public static <T> T ctx(String message, FromSourceLocation sourceLocation, Evaluator<T> f) throws RuleError {
+    public static <T> T context(String message, FromSourceLocation sourceLocation, Evaluator<T> f) throws RuleError {
         try {
             return f.call();
         } catch (SourceException ex) {
@@ -68,7 +72,7 @@ public final class RuleError extends RuntimeException {
     }
 
     public RuleError withContext(String context, SourceLocation loc) {
-        this.context.add(Pair.of(context, loc));
+        this.contexts.add(Pair.of(context, loc));
         return this;
     }
 
@@ -76,17 +80,17 @@ public final class RuleError extends RuntimeException {
     public String toString() {
         StringBuilder message = new StringBuilder();
         SourceLocation lastLoc = SourceLocation.none();
-        for (int i = context.size() - 1; i > 0; i--) {
-            Pair<String, SourceLocation> ctx = context.get(i);
-            message.append(ctx.left);
+        for (int i = contexts.size() - 1; i > 0; i--) {
+            Pair<String, SourceLocation> context = contexts.get(i);
+            message.append(context.left);
             message.append("\n");
-            if (ctx.right != SourceLocation.NONE && ctx.right != lastLoc) {
+            if (context.right != SourceLocation.NONE && context.right != lastLoc) {
                 message.append("  at ")
-                        .append(ctx.right.getSourceLocation().getFilename())
+                        .append(context.right.getSourceLocation().getFilename())
                         .append(":")
-                        .append(ctx.right.getSourceLocation().getLine())
+                        .append(context.right.getSourceLocation().getLine())
                         .append("\n");
-                lastLoc = ctx.right;
+                lastLoc = context.right;
             }
         }
 

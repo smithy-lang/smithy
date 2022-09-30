@@ -15,8 +15,8 @@
 
 package software.amazon.smithy.rulesengine.language.syntax.expr;
 
-import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
-import static software.amazon.smithy.rulesengine.language.syntax.expr.Expr.parseShortform;
+import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
+import static software.amazon.smithy.rulesengine.language.syntax.expr.Expression.parseShortform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +29,10 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
+import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.eval.Typecheck;
+import software.amazon.smithy.rulesengine.language.eval.TypeCheck;
 import software.amazon.smithy.rulesengine.language.util.MandatorySourceLocation;
 import software.amazon.smithy.rulesengine.language.visit.TemplateVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -53,7 +54,7 @@ public final class Template extends MandatorySourceLocation implements ToNode {
     Template(StringNode template) {
         super(template);
         this.parts =
-                ctx("when parsing template", template, () -> parseTemplate(template.getValue(), template));
+                context("when parsing template", template, () -> parseTemplate(template.getValue(), template));
     }
 
     public static Template fromString(String s) {
@@ -66,7 +67,7 @@ public final class Template extends MandatorySourceLocation implements ToNode {
         }
         if (parts.size() == 1) {
             // must be dynamic because previous branch handled single-element static template
-            return Stream.of(visitor.visitSingleDynamicTemplate(((Dynamic) parts.get(0)).expr));
+            return Stream.of(visitor.visitSingleDynamicTemplate(((Dynamic) parts.get(0)).expression));
         }
         Stream<T> start = Stream.of(visitor.startMultipartTemplate());
         Stream<T> components = parts.stream().map(part -> part.accept(visitor));
@@ -110,14 +111,14 @@ public final class Template extends MandatorySourceLocation implements ToNode {
         return String.format("\"%s\"", this.parts.stream().map(Part::toString).collect(Collectors.joining()));
     }
 
-    Type typecheck(Scope<Type> scope) {
-        return ctx(
+    Type typeCheck(Scope<Type> scope) {
+        return context(
                 String.format("while typechecking the template `%s`", this),
                 this,
                 () -> {
-                    this.parts.forEach(
-                            part -> ctx("while checking " + part, () -> part.typecheck(scope).expectString()));
-                    return Type.str();
+                    this.parts.forEach(part -> RuleError.context("while checking " + part,
+                            () -> part.typeCheck(scope).expectString()));
+                    return Type.string();
                 });
     }
 
@@ -180,7 +181,7 @@ public final class Template extends MandatorySourceLocation implements ToNode {
         return out;
     }
 
-    public abstract static class Part implements Typecheck {
+    public abstract static class Part implements TypeCheck {
 
         abstract <T> T accept(TemplateVisitor<T> visitor);
 
@@ -234,18 +235,18 @@ public final class Template extends MandatorySourceLocation implements ToNode {
         }
 
         @Override
-        public Type typecheck(Scope<Type> scope) {
-            return Type.str();
+        public Type typeCheck(Scope<Type> scope) {
+            return Type.string();
         }
     }
 
     public static final class Dynamic extends Part {
         private final String raw;
-        private final Expr expr;
+        private final Expression expression;
 
-        private Dynamic(String raw, Expr expr) {
+        private Dynamic(String raw, Expression expression) {
             this.raw = raw;
-            this.expr = expr;
+            this.expression = expression;
         }
 
         public static Dynamic parse(String value, FromSourceLocation context) {
@@ -254,7 +255,7 @@ public final class Template extends MandatorySourceLocation implements ToNode {
 
         @Override
         <T> T accept(TemplateVisitor<T> visitor) {
-            return visitor.visitDynamicElement(this.expr);
+            return visitor.visitDynamicElement(this.expression);
         }
 
         @Override
@@ -266,16 +267,16 @@ public final class Template extends MandatorySourceLocation implements ToNode {
                 return false;
             }
             Dynamic dynamic = (Dynamic) o;
-            return expr.equals(dynamic.expr);
+            return expression.equals(dynamic.expression);
         }
 
-        public Expr getExpr() {
-            return expr;
+        public Expression getExpr() {
+            return expression;
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(expr);
+            return Objects.hash(expression);
         }
 
         @Override
@@ -284,8 +285,8 @@ public final class Template extends MandatorySourceLocation implements ToNode {
         }
 
         @Override
-        public Type typecheck(Scope<Type> scope) {
-            return expr.typecheck(scope);
+        public Type typeCheck(Scope<Type> scope) {
+            return expression.typeCheck(scope);
         }
     }
 }

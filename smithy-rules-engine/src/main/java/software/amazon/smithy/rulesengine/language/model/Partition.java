@@ -28,6 +28,9 @@ import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
+/**
+ * Describes an AWS partition, it's regions, and the outputs to be provided by the rule-set aws.partition function.
+ */
 @SmithyUnstableApi
 public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLocation {
     private static final String ID = "id";
@@ -38,7 +41,7 @@ public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLo
     private final String id;
     private final String regionRegex;
     private final Map<String, RegionOverride> regions;
-    private final Outputs outputs;
+    private final PartitionOutputs partitionOutputs;
 
     private final SourceLocation sourceLocation;
 
@@ -46,7 +49,7 @@ public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLo
         this.id = builder.id;
         this.regionRegex = builder.regionRegex;
         this.regions = builder.regions.copy();
-        this.outputs = builder.outputs;
+        this.partitionOutputs = builder.partitionOutputs;
         this.sourceLocation = builder.getSourceLocation();
     }
 
@@ -68,7 +71,7 @@ public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLo
         objNode.getObjectMember(REGIONS).ifPresent(regionsNode ->
                 regionsNode.getMembers().forEach((k, v) -> b.putRegion(k.toString(), RegionOverride.fromNode(v))));
 
-        objNode.getObjectMember(OUTPUTS).ifPresent(outputsNode -> b.outputs(Outputs.fromNode(outputsNode)));
+        objNode.getObjectMember(OUTPUTS).ifPresent(outputsNode -> b.outputs(PartitionOutputs.fromNode(outputsNode)));
 
         return b.build();
     }
@@ -85,8 +88,8 @@ public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLo
         return regions;
     }
 
-    public Outputs outputs() {
-        return outputs;
+    public PartitionOutputs getOutputs() {
+        return partitionOutputs;
     }
 
     @Override
@@ -112,19 +115,19 @@ public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLo
         Partition partition = (Partition) o;
         return Objects.equals(id, partition.id) && Objects.equals(regionRegex, partition.regionRegex)
                && Objects.equals(regions, partition.regions)
-               && Objects.equals(outputs, partition.outputs);
+               && Objects.equals(partitionOutputs, partition.partitionOutputs);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, regionRegex, regions, outputs);
+        return Objects.hash(id, regionRegex, regions, partitionOutputs);
     }
 
     public static class Builder extends SourceLocationTrackingBuilder<Builder, Partition> {
         private String id;
         private String regionRegex;
         private final BuilderRef<Map<String, RegionOverride>> regions = BuilderRef.forOrderedMap();
-        private Outputs outputs;
+        private PartitionOutputs partitionOutputs;
 
         public Builder(FromSourceLocation sourceLocation) {
             super(sourceLocation);
@@ -151,8 +154,8 @@ public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLo
             return this;
         }
 
-        public Builder outputs(Outputs outputs) {
-            this.outputs = outputs;
+        public Builder outputs(PartitionOutputs partitionOutputs) {
+            this.partitionOutputs = partitionOutputs;
             return this;
         }
 

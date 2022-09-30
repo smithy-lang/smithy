@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Template;
 import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
 
@@ -47,22 +47,22 @@ class TemplateTest {
 
     @Test
     void validateShortformParsing() {
-        assertEquals(Expr.parseShortform("a", SourceLocation.none()), Expr.ref(Identifier.of("a"), SourceLocation.none()));
-        assertEquals(Expr.parseShortform("a#b", SourceLocation.none()), GetAttr
-                .builder(SourceLocation.none())
-                .target(Expr.ref(Identifier.of("a"), SourceLocation.none()))
+        assertEquals(Expression.parseShortform("a", SourceLocation.none()), Expression.reference(Identifier.of("a"), SourceLocation.none()));
+        assertEquals(Expression.parseShortform("a#b", SourceLocation.none()), GetAttr
+                .builder()
+                .target(Expression.reference(Identifier.of("a"), SourceLocation.none()))
                 .path("b")
                 .build());
-        assertEquals(Expr.parseShortform("a#b.c", SourceLocation.none()), GetAttr
-                .builder(SourceLocation.none())
-                .target(Expr.ref(Identifier.of("a"), SourceLocation.none()))
+        assertEquals(Expression.parseShortform("a#b.c", SourceLocation.none()), GetAttr
+                .builder()
+                .target(Expression.reference(Identifier.of("a"), SourceLocation.none()))
                 .path("b.c")
                 .build());
     }
 
     @Test
     void invalidTemplates() {
-        Expr.parseShortform("a#", SourceLocation.none());
+        Expression.parseShortform("a#", SourceLocation.none());
     }
 
 }

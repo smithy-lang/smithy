@@ -26,8 +26,11 @@ import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
+/**
+ * The outputs to be provided by the rule-set aws.partition function.
+ */
 @SmithyUnstableApi
-public final class Outputs implements ToSmithyBuilder<Outputs>, FromSourceLocation {
+public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>, FromSourceLocation {
     private static final String DNS_SUFFIX = "dnsSuffix";
     private static final String DUAL_STACK_DNS_SUFFIX = "dualStackDnsSuffix";
     private static final String SUPPORTS_FIPS = "supportsFIPS";
@@ -41,7 +44,7 @@ public final class Outputs implements ToSmithyBuilder<Outputs>, FromSourceLocati
 
     private final SourceLocation sourceLocation;
 
-    private Outputs(Builder builder) {
+    private PartitionOutputs(Builder builder) {
         this.dnsSuffix = builder.dnsSuffix;
         this.dualStackDnsSuffix = builder.dualStackDnsSuffix;
         this.supportsFips = builder.supportsFips;
@@ -53,7 +56,7 @@ public final class Outputs implements ToSmithyBuilder<Outputs>, FromSourceLocati
         return new Builder(SourceLocation.none());
     }
 
-    public static Outputs fromNode(Node node) {
+    public static PartitionOutputs fromNode(Node node) {
         ObjectNode objNode = node.expectObjectNode();
 
         objNode.expectNoAdditionalProperties(Arrays.asList(
@@ -91,7 +94,7 @@ public final class Outputs implements ToSmithyBuilder<Outputs>, FromSourceLocati
     }
 
     @Override
-    public SmithyBuilder<Outputs> toBuilder() {
+    public SmithyBuilder<PartitionOutputs> toBuilder() {
         return new Builder(getSourceLocation())
                 .dnsSuffix(dnsSuffix)
                 .dualStackDnsSuffix(dualStackDnsSuffix)
@@ -112,13 +115,13 @@ public final class Outputs implements ToSmithyBuilder<Outputs>, FromSourceLocati
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Outputs outputs = (Outputs) o;
-        return supportsFips == outputs.supportsFips && supportsDualStack == outputs.supportsDualStack
-               && Objects.equals(dnsSuffix, outputs.dnsSuffix)
-               && Objects.equals(dualStackDnsSuffix, outputs.dualStackDnsSuffix);
+        PartitionOutputs partitionOutputs = (PartitionOutputs) o;
+        return supportsFips == partitionOutputs.supportsFips && supportsDualStack == partitionOutputs.supportsDualStack
+               && Objects.equals(dnsSuffix, partitionOutputs.dnsSuffix)
+               && Objects.equals(dualStackDnsSuffix, partitionOutputs.dualStackDnsSuffix);
     }
 
-    public static class Builder extends SourceLocationTrackingBuilder<Builder, Outputs> {
+    public static class Builder extends SourceLocationTrackingBuilder<Builder, PartitionOutputs> {
         private String dnsSuffix;
         private String dualStackDnsSuffix;
         private boolean supportsFips;
@@ -149,8 +152,8 @@ public final class Outputs implements ToSmithyBuilder<Outputs>, FromSourceLocati
         }
 
         @Override
-        public Outputs build() {
-            return new Outputs(this);
+        public PartitionOutputs build() {
+            return new PartitionOutputs(this);
         }
     }
 }

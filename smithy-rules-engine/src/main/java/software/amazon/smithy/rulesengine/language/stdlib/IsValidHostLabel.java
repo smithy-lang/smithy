@@ -19,33 +19,36 @@ import java.util.Arrays;
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.fn.Function;
 import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
 import software.amazon.smithy.rulesengine.language.syntax.fn.LibraryFunction;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * A rule-engine function for checking whether a string is a valid DNS host label.
+ */
 @SmithyUnstableApi
 public final class IsValidHostLabel extends FunctionDefinition {
     public static final String ID = "isValidHostLabel";
 
     @Override
-    public String id() {
+    public String getId() {
         return ID;
     }
 
     @Override
-    public List<Type> arguments() {
-        return Arrays.asList(Type.str(), Type.bool());
+    public List<Type> getArguments() {
+        return Arrays.asList(Type.string(), Type.bool());
     }
 
     @Override
-    public Type returnType() {
+    public Type getReturnType() {
         return Type.bool();
     }
 
     @Override
-    public Value eval(List<Value> arguments) {
+    public Value evaluate(List<Value> arguments) {
         String hostLabel = arguments.get(0).expectString();
         boolean allowDots = arguments.get(1).expectBool();
         if (allowDots) {
@@ -55,7 +58,7 @@ public final class IsValidHostLabel extends FunctionDefinition {
         }
     }
 
-    public static Fn ofExprs(Expr input, boolean allowDots) {
-        return LibraryFunction.ofExprs(new IsValidHostLabel(), input, Expr.of(allowDots));
+    public static Function ofExpression(Expression input, boolean allowDots) {
+        return LibraryFunction.ofExpressions(new IsValidHostLabel(), input, Expression.of(allowDots));
     }
 }

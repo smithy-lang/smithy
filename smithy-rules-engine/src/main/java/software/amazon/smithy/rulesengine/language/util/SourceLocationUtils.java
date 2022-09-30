@@ -19,8 +19,8 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
-public final class SourceLocationHelpers {
-    private SourceLocationHelpers() {
+public final class SourceLocationUtils {
+    private SourceLocationUtils() {
     }
 
     /**
@@ -78,7 +78,7 @@ public final class SourceLocationHelpers {
         String normalized = e.getClassName().replace("$", ".");
         return !normalized.startsWith("java.")
                 && !normalized.startsWith("jdk.")
-                && !normalized.startsWith(SourceLocationHelpers.class.getCanonicalName())
+                && !normalized.startsWith(SourceLocationUtils.class.getCanonicalName())
                 && !normalized.startsWith("software.amazon.smithy.rulesengine");
     }
 }

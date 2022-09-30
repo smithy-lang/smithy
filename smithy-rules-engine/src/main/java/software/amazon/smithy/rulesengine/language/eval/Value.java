@@ -39,15 +39,17 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.util.SourceLocationHelpers;
 import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
+import software.amazon.smithy.rulesengine.language.util.SourceLocationUtils;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * An abstract representing a typed value.
+ */
 @SmithyUnstableApi
 public abstract class Value implements FromSourceLocation, ToNode {
-
     private SourceLocation sourceLocation;
 
     public Value(SourceLocation sourceLocation) {
@@ -88,7 +90,7 @@ public abstract class Value implements FromSourceLocation, ToNode {
 
             @Override
             public Value stringNode(StringNode node) {
-                return Value.str(node.getValue());
+                return Value.string(node.getValue());
             }
         });
         value.sourceLocation = source.getSourceLocation();
@@ -105,8 +107,8 @@ public abstract class Value implements FromSourceLocation, ToNode {
         return new None();
     }
 
-    public static Str str(String value) {
-        return new Str(value);
+    public static String string(java.lang.String value) {
+        return new String(value);
     }
 
     public static Record record(Map<Identifier, Value> value) {
@@ -121,13 +123,13 @@ public abstract class Value implements FromSourceLocation, ToNode {
         return new Array(value);
     }
 
-    public static Int integer(int value) {
-        return new Int(value);
+    public static Integer integer(int value) {
+        return new Integer(value);
     }
 
     public abstract Type type();
 
-    public String expectString() {
+    public java.lang.String expectString() {
         throw new RuntimeException("Expected string but was: " + this);
     }
 
@@ -156,14 +158,14 @@ public abstract class Value implements FromSourceLocation, ToNode {
         throw new RuntimeException("Expected array, found " + this);
     }
 
-    public int expectInt() {
+    public int expectInteger() {
         throw new RuntimeException("Expected int, found " + this);
     }
 
-    public static final class Int extends Value {
+    public static final class Integer extends Value {
         private final int value;
 
-        private Int(int value) {
+        private Integer(int value) {
             super(SourceLocation.none());
             this.value = value;
         }
@@ -174,7 +176,7 @@ public abstract class Value implements FromSourceLocation, ToNode {
         }
 
         @Override
-        public int expectInt() {
+        public int expectInteger() {
             return value;
         }
 
@@ -184,25 +186,25 @@ public abstract class Value implements FromSourceLocation, ToNode {
         }
     }
 
-    public static final class Str extends Value {
-        private final String value;
+    public static final class String extends Value {
+        private final java.lang.String value;
 
-        private Str(String value) {
+        private String(java.lang.String value) {
             super(SourceLocation.none());
             this.value = value;
         }
 
         @Override
         public Type type() {
-            return Type.str();
+            return Type.string();
         }
 
         @Override
-        public String expectString() {
+        public java.lang.String expectString() {
             return value();
         }
 
-        public String value() {
+        public java.lang.String value() {
             return value;
         }
 
@@ -219,12 +221,12 @@ public abstract class Value implements FromSourceLocation, ToNode {
             if (o == null || getClass() != o.getClass()) {
                 return false;
             }
-            Str str = (Str) o;
-            return value.equals(str.value);
+            String string = (String) o;
+            return value.equals(string.value);
         }
 
         @Override
-        public String toString() {
+        public java.lang.String toString() {
             return value;
         }
 
@@ -282,8 +284,8 @@ public abstract class Value implements FromSourceLocation, ToNode {
         }
 
         @Override
-        public String toString() {
-            return String.valueOf(value);
+        public java.lang.String toString() {
+            return java.lang.String.valueOf(value);
         }
     }
 
@@ -308,7 +310,7 @@ public abstract class Value implements FromSourceLocation, ToNode {
             return this;
         }
 
-        public Value get(String key) {
+        public Value get(java.lang.String key) {
             return get(Identifier.of(key));
         }
 
@@ -345,7 +347,7 @@ public abstract class Value implements FromSourceLocation, ToNode {
         }
 
         @Override
-        public String toString() {
+        public java.lang.String toString() {
             return value.toString();
         }
 
@@ -418,7 +420,7 @@ public abstract class Value implements FromSourceLocation, ToNode {
         }
 
         @Override
-        public String toString() {
+        public java.lang.String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append("[");
             sb.append(inner.stream().map(Object::toString).collect(Collectors.joining(", ")));
@@ -450,9 +452,9 @@ public abstract class Value implements FromSourceLocation, ToNode {
     }
 
     public static final class Endpoint extends Value {
-        private final String url;
-        private final Map<String, Value> properties;
-        private final Map<String, List<String>> headers;
+        private final java.lang.String url;
+        private final Map<java.lang.String, Value> properties;
+        private final Map<java.lang.String, List<java.lang.String>> headers;
 
         private Endpoint(Builder builder) {
             super(builder.getSourceLocation());
@@ -474,7 +476,7 @@ public abstract class Value implements FromSourceLocation, ToNode {
             });
 
             on.getObjectMember("headers").ifPresent(headers -> headers.getMembers().forEach(((key, value) -> {
-                String name = key.getValue();
+                java.lang.String name = key.getValue();
                 value.expectArrayNode("Header values must be an array").getElements()
                         .forEach(e -> builder.addHeader(name, e.expectStringNode().getValue()));
             })));
@@ -482,7 +484,7 @@ public abstract class Value implements FromSourceLocation, ToNode {
         }
 
         public static Builder builder() {
-            return new Builder(SourceLocationHelpers.javaLocation());
+            return new Builder(SourceLocationUtils.javaLocation());
         }
 
         @Override
@@ -511,15 +513,15 @@ public abstract class Value implements FromSourceLocation, ToNode {
             return builder.build();
         }
 
-        public Map<String, Value> getProperties() {
+        public Map<java.lang.String, Value> getProperties() {
             return properties;
         }
 
-        public String getUrl() {
+        public java.lang.String getUrl() {
             return url;
         }
 
-        public Map<String, List<String>> getHeaders() {
+        public Map<java.lang.String, List<java.lang.String>> getHeaders() {
             return headers;
         }
 
@@ -553,7 +555,7 @@ public abstract class Value implements FromSourceLocation, ToNode {
         }
 
         @Override
-        public String toString() {
+        public java.lang.String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append("url: ").append(url).append("\n");
             sb.append("properties:\n");
@@ -561,45 +563,46 @@ public abstract class Value implements FromSourceLocation, ToNode {
             // todo(rcoh)
             if (!headers.isEmpty()) {
                 headers.forEach((key, value) -> {
-                    sb.append(indent(String.format("%s:%s", key, value), 2));
+                    sb.append(indent(java.lang.String.format("%s:%s", key, value), 2));
                 });
             }
             return sb.toString();
         }
 
         public static final class Builder extends SourceLocationTrackingBuilder<Builder, Endpoint> {
-            private final BuilderRef<Map<String, Value>> properties = BuilderRef.forOrderedMap();
-            private final BuilderRef<Map<String, List<String>>> headers = BuilderRef.forOrderedMap();
-            private String url;
+            private final BuilderRef<Map<java.lang.String, Value>> properties = BuilderRef.forOrderedMap();
+            private final BuilderRef<Map<java.lang.String, List<java.lang.String>>> headers =
+                    BuilderRef.forOrderedMap();
+            private java.lang.String url;
 
             public Builder(FromSourceLocation sourceLocation) {
                 super(sourceLocation);
             }
 
-            public Builder url(String url) {
+            public Builder url(java.lang.String url) {
                 this.url = url;
                 return this;
             }
 
-            public Builder headers(Map<String, List<String>> headers) {
+            public Builder headers(Map<java.lang.String, List<java.lang.String>> headers) {
                 this.headers.clear();
                 this.headers.get().putAll(headers);
                 return this;
             }
 
-            public Builder addHeader(String name, String value) {
-                List<String> values = this.headers.get().computeIfAbsent(name, (k) -> new ArrayList<>());
+            public Builder addHeader(java.lang.String name, java.lang.String value) {
+                List<java.lang.String> values = this.headers.get().computeIfAbsent(name, (k) -> new ArrayList<>());
                 values.add(value);
                 return this;
             }
 
-            public Builder properties(Map<String, Value> properties) {
+            public Builder properties(Map<java.lang.String, Value> properties) {
                 this.properties.clear();
                 this.properties.get().putAll(properties);
                 return this;
             }
 
-            public Builder addProperty(String value, Value fromNode) {
+            public Builder addProperty(java.lang.String value, Value fromNode) {
                 this.properties.get().put(value, fromNode);
                 return this;
             }

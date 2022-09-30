@@ -17,6 +17,9 @@ package software.amazon.smithy.rulesengine.validators;
 
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * The type of validation error that has occurred.
+ */
 @SmithyUnstableApi
 public enum ValidationErrorType {
     INCONSISTENT_PARAMETER_TYPE,

@@ -21,63 +21,68 @@ import software.amazon.smithy.rulesengine.language.error.InnerParseError;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
-import software.amazon.smithy.rulesengine.language.syntax.fn.FnNode;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.fn.Function;
 import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
+import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionNode;
 import software.amazon.smithy.rulesengine.language.syntax.fn.LibraryFunction;
-import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
-import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
+import software.amazon.smithy.rulesengine.language.visit.ExpressionVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * Represents a two argument function that compares two expression for boolean equality.
+ */
 @SmithyUnstableApi
-public final class BooleanEquals extends Fn {
+public final class BooleanEquals extends Function {
     public static final String ID = "booleanEquals";
-    private static final Defn DEFN = new Defn();
+    private static final Definition DEFINITION = new Definition();
 
-    public BooleanEquals(FnNode fnNode) {
-        super(fnNode);
+    public BooleanEquals(FunctionNode functionNode) {
+        super(functionNode);
     }
 
-    public static Fn ofExprs(Expr left, Expr right) {
-        return LibraryFunction.ofExprs(DEFN, left, right);
-    }
-
-    public static Fn fromParam(Parameter param, Expr value) {
-        return BooleanEquals.ofExprs(param.expr(), value);
+    /**
+     * Returns a BooleanEquals {@link Function} comparing the left and right expressions for equality.
+     *
+     * @param left  the left hand-side expression.
+     * @param right the right hand-side expression.
+     * @return the function defining the BooleanEquals of the left and right expressions.
+     */
+    public static Function ofExpressions(Expression left, Expression right) {
+        return LibraryFunction.ofExpressions(DEFINITION, left, right);
     }
 
     @Override
-    public <R> R accept(ExprVisitor<R> visitor) {
-        return visitor.visitBoolEquals(fnNode.getArgv().get(0), fnNode.getArgv().get(1));
+    public <R> R accept(ExpressionVisitor<R> visitor) {
+        return visitor.visitBoolEquals(functionNode.getArguments().get(0), functionNode.getArguments().get(1));
     }
 
     @Override
-    protected Type typecheckLocal(Scope<Type> scope) throws InnerParseError {
-        LibraryFunction.checkTypeSignature(DEFN.arguments(), fnNode.getArgv(), scope);
-        return DEFN.returnType();
+    protected Type typeCheckLocal(Scope<Type> scope) throws InnerParseError {
+        LibraryFunction.checkTypeSignature(DEFINITION.getArguments(), functionNode.getArguments(), scope);
+        return DEFINITION.getReturnType();
     }
 
-    static class Defn extends FunctionDefinition {
+    static class Definition extends FunctionDefinition {
         public static final String ID = BooleanEquals.ID;
 
         @Override
-        public String id() {
+        public String getId() {
             return ID;
         }
 
         @Override
-        public List<Type> arguments() {
+        public List<Type> getArguments() {
             return Arrays.asList(Type.bool(), Type.bool());
         }
 
         @Override
-        public Type returnType() {
+        public Type getReturnType() {
             return Type.bool();
         }
 
         @Override
-        public Value eval(List<Value> arguments) {
+        public Value evaluate(List<Value> arguments) {
             return Value.bool(arguments.get(0).expectBool() == arguments.get(1).expectBool());
         }
     }

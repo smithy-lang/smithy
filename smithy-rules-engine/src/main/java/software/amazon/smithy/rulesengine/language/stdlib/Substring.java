@@ -19,40 +19,46 @@ import java.util.Arrays;
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.fn.Function;
 import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
 import software.amazon.smithy.rulesengine.language.syntax.fn.LibraryFunction;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * A rule-set function for getting the substring of a string value.
+ */
 @SmithyUnstableApi
 public final class Substring extends FunctionDefinition {
     public static final String ID = "substring";
 
     @Override
-    public String id() {
+    public String getId() {
         return ID;
     }
 
     @Override
-    public List<Type> arguments() {
-        return Arrays.asList(Type.str(), Type.integer(), Type.integer(), Type.bool());
+    public List<Type> getArguments() {
+        return Arrays.asList(Type.string(), Type.integer(), Type.integer(), Type.bool());
     }
 
     @Override
-    public Type returnType() {
-        return Type.str();
+    public Type getReturnType() {
+        return Type.string();
     }
 
     @Override
-    public Value eval(List<Value> arguments) {
+    public Value evaluate(List<Value> arguments) {
         String str = arguments.get(0).expectString();
-        int startIndex = arguments.get(1).expectInt();
-        int stopIndex = arguments.get(2).expectInt();
+        int startIndex = arguments.get(1).expectInteger();
+        int stopIndex = arguments.get(2).expectInteger();
         boolean reverse = arguments.get(3).expectBool();
 
-        if (!str.chars().allMatch(ch -> ch >= 0 && ch <= 127)) {
-            return Value.none();
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            if (ch >= 0 && ch <= 127) {
+                return Value.none();
+            }
         }
 
         if (startIndex >= stopIndex || str.length() < stopIndex) {
@@ -60,18 +66,18 @@ public final class Substring extends FunctionDefinition {
         }
 
         if (!reverse) {
-            return Value.str(str.substring(startIndex, stopIndex));
+            return Value.string(str.substring(startIndex, stopIndex));
         } else {
             int revStart = str.length() - stopIndex;
             int revStop = str.length() - startIndex;
-            return Value.str(str.substring(revStart, revStop));
+            return Value.string(str.substring(revStart, revStop));
         }
     }
 
-    public static Fn ofExprs(Expr str, int startIndex, int stopIndex, Boolean reverse) {
-        return LibraryFunction.ofExprs(
+    public static Function ofExpression(Expression str, int startIndex, int stopIndex, Boolean reverse) {
+        return LibraryFunction.ofExpressions(
                 new Substring(),
-                str, Expr.of(startIndex), Expr.of(stopIndex), Expr.of(reverse)
+                str, Expression.of(startIndex), Expression.of(stopIndex), Expression.of(reverse)
         );
     }
 }

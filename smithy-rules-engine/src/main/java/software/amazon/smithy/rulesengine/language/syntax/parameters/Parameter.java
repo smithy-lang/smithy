@@ -30,15 +30,15 @@ import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.stdlib.BooleanEquals;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.fn.Function;
 import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 @SmithyUnstableApi
-public final class Parameter implements ToSmithyBuilder<Parameter>, ToParameterReference, FromSourceLocation, ToNode {
+public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLocation, ToNode {
     public static final String TYPE = "type";
     public static final String DEPRECATED = "deprecated";
     public static final String DOCUMENTATION = "documentation";
@@ -62,7 +62,7 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, ToParameterR
 
     private final String documentation;
 
-    public Parameter(Builder builder) {
+    private Parameter(Builder builder) {
         if (builder.defaultValue != null && builder.builtIn == null) {
             throw new RuntimeException("Cannot set a default value for non-builtin parameters");
         }
@@ -82,12 +82,12 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, ToParameterR
 
     public static Parameter fromNode(StringNode name, ObjectNode node) throws RuleError {
         // TODO: support documentation from JSON
-        return RuleError.ctx("while parsing the parameter `" + name + "`", node, () -> {
+        return RuleError.context("while parsing the parameter `" + name + "`", node, () -> {
             node.expectNoAdditionalProperties(Arrays.asList(BUILT_IN, REQUIRED, TYPE, DEPRECATED, DOCUMENTATION,
                     DEFAULT));
             Builder builder = new Builder(node.getSourceLocation());
             String builtIn = node.getStringMember(BUILT_IN).map(StringNode::getValue).orElse(null);
-            ParameterType parameterType = RuleError.ctx("while parsing the parameter type", node,
+            ParameterType parameterType = RuleError.context("while parsing the parameter type", node,
                     () -> ParameterType.fromNode(node.expectStringMember(TYPE)));
             Optional<Deprecated> deprecated = node.getObjectMember(DEPRECATED).map(Deprecated::fromNode);
             deprecated.ifPresent(builder::deprecated);
@@ -134,7 +134,7 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, ToParameterR
 
         switch (this.type) {
             case STRING:
-                out = Type.str();
+                out = Type.string();
                 break;
             case BOOLEAN:
                 out = Type.bool();
@@ -213,13 +213,6 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, ToParameterR
                 .value(value);
     }
 
-    @Override
-    public ParameterReference toParameterReference() {
-        return ParameterReference.builder()
-                .name(getName().asString())
-                .build();
-    }
-
     public String template() {
         return "{" + name + "}";
     }
@@ -244,16 +237,33 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, ToParameterR
         return node.build();
     }
 
-    public Expr expr() {
-        return Expr.ref(this.name, SourceLocation.none());
+    /**
+     * Provides a reference to this parameter as an expression.
+     *
+     * @return the reference to the parameter.
+     */
+    public Expression toExpression() {
+        return Expression.reference(this.name, SourceLocation.none());
     }
 
-    public Fn eq(boolean b) {
-        return BooleanEquals.fromParam(this, Expr.of(b));
+    /**
+     * Provides a function comparing this parameter to a boolean value.
+     *
+     * @param b the boolean value to compare the parameter to.
+     * @return the BooleanEquals function comparing the parameter.
+     */
+    public Function equal(boolean b) {
+        return BooleanEquals.ofExpressions(this.toExpression(), Expression.of(b));
     }
 
-    public Fn eq(Expr e) {
-        return BooleanEquals.fromParam(this, e);
+    /**
+     * Provides a function comparing this parameter to expression.
+     *
+     * @param expression the expression.
+     * @return the BooleanEquals function comparing the parameter.
+     */
+    public Function equal(Expression expression) {
+        return BooleanEquals.ofExpressions(this.toExpression(), expression);
     }
 
     public Optional<String> getDocumentation() {

@@ -28,19 +28,19 @@ class CoverageCheckerTest {
     @Test
     void checkCoverage() {
         TestDiscovery.RulesTestSuite suite = new TestDiscovery().getTestSuite("local-region-override.json");
-        CoverageChecker checker = new CoverageChecker(suite.ruleset());
+        CoverageChecker checker = new CoverageChecker(suite.ruleSet());
         assertEquals((int) checker.checkCoverage().count(), 2);
 
-        checker.evaluateInput(MapUtils.of(Identifier.of("Region"), Value.str("local")));
+        checker.evaluateInput(MapUtils.of(Identifier.of("Region"), Value.string("local")));
         assertEquals(1, (int) checker.checkCoverage().count());
-        checker.evaluateInput(MapUtils.of(Identifier.of("Region"), Value.str("notlocal")));
+        checker.evaluateInput(MapUtils.of(Identifier.of("Region"), Value.string("notlocal")));
         assertEquals(0, (int) checker.checkCoverage().count());
     }
 
     @Test
     void checkCoverageOfTestSuite() {
         TestDiscovery.RulesTestSuite testSuites = new TestDiscovery().getTestSuite("local-region-override.json");
-        CoverageChecker checker = new CoverageChecker(testSuites.ruleset());
+        CoverageChecker checker = new CoverageChecker(testSuites.ruleSet());
         assertEquals(2, checker.checkCoverage()
                 .collect(Collectors.toList())
                 .size());

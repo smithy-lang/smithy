@@ -19,6 +19,9 @@ import java.util.Objects;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * Represents a validation error for a rule-set.
+ */
 @SmithyUnstableApi
 public final class ValidationError {
     private final ValidationErrorType validationErrorType;

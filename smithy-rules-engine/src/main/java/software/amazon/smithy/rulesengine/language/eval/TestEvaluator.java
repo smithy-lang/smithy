@@ -15,31 +15,41 @@
 
 package software.amazon.smithy.rulesengine.language.eval;
 
-import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
 import static software.amazon.smithy.rulesengine.language.util.StringUtils.indent;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-import software.amazon.smithy.rulesengine.language.EndpointRuleset;
+import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
+import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.traits.EndpointTestCase;
 import software.amazon.smithy.rulesengine.traits.EndpointTestExpectation;
 import software.amazon.smithy.rulesengine.traits.ExpectedEndpoint;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * Provides facilities for evaluating an endpoint rule-set and tests.
+ */
 @SmithyUnstableApi
 public final class TestEvaluator {
     private TestEvaluator() {
     }
 
-    public static void evaluate(EndpointRuleset ruleset, EndpointTestCase testCase) {
+    /**
+     * Evaluate the given rule-set and test case. Throws an exception in the event
+     * the test case does not pass.
+     *
+     * @param ruleset  The rule-set to be tested.
+     * @param testCase The test case.
+     */
+    public static void evaluate(EndpointRuleSet ruleset, EndpointTestCase testCase) {
         Map<Identifier, Value> map = new LinkedHashMap<>();
         testCase.getParams().getStringMap().forEach((s, node) -> {
             map.put(Identifier.of(s), Value.fromNode(node));
         });
-        Value got = RuleEngine.evaluate(ruleset, map);
-        ctx(
+        Value got = RuleEvaluator.evaluate(ruleset, map);
+        RuleError.context(
                 String.format("while executing test case%s", Optional
                         .ofNullable(testCase.getDocumentation())
                         .map(d -> " " + d)
@@ -75,7 +85,7 @@ public final class TestEvaluator {
             }
         } else {
             String wantError = want.getError().get();
-            ctx("While checking endpoint test (expecting an error)", () -> {
+            RuleError.context("While checking endpoint test (expecting an error)", () -> {
                 if (!got.expectString().equals(wantError)) {
                     throw new AssertionError(String.format("Expected error `%s` but got `%s`", wantError, got));
                 }

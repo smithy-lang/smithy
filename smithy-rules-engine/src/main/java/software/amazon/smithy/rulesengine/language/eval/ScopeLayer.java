@@ -21,17 +21,17 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Ref;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Reference;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
 final class ScopeLayer<T> {
     private final Map<Identifier, T> types;
-    private final Set<Ref> nonNullRefs;
+    private final Set<Reference> nonNullReferences;
 
-    ScopeLayer(HashMap<Identifier, T> types, Set<Ref> nonNullRefs) {
+    ScopeLayer(HashMap<Identifier, T> types, Set<Reference> nonNullReferences) {
         this.types = types;
-        this.nonNullRefs = nonNullRefs;
+        this.nonNullReferences = nonNullReferences;
     }
 
     ScopeLayer() {
@@ -42,13 +42,13 @@ final class ScopeLayer<T> {
         return types;
     }
 
-    public Set<Ref> getNonNullRefs() {
-        return nonNullRefs;
+    public Set<Reference> getNonNullRefs() {
+        return nonNullReferences;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(types, nonNullRefs);
+        return Objects.hash(types, nonNullReferences);
     }
 
     @Override
@@ -60,14 +60,14 @@ final class ScopeLayer<T> {
             return false;
         }
         ScopeLayer<?> scopeLayer = (ScopeLayer<?>) o;
-        return types.equals(scopeLayer.types) && nonNullRefs.equals(scopeLayer.nonNullRefs);
+        return types.equals(scopeLayer.types) && nonNullReferences.equals(scopeLayer.nonNullReferences);
     }
 
     @Override
     public String toString() {
         return "ScopeLayer["
                + "types=" + types + ", "
-               + "facts=" + nonNullRefs + ']';
+               + "facts=" + nonNullReferences + ']';
     }
 
 }

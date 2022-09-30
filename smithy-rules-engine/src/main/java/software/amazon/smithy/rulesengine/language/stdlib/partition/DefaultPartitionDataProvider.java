@@ -18,7 +18,6 @@ package software.amazon.smithy.rulesengine.language.stdlib.partition;
 import java.io.InputStream;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.rulesengine.language.model.Partitions;
-import software.amazon.smithy.rulesengine.language.util.ResourceUtil;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
@@ -28,7 +27,7 @@ public final class DefaultPartitionDataProvider implements PartitionDataProvider
 
     @Override
     public Partitions loadPartitions() {
-        InputStream json = ResourceUtil.resourceAsStream(DEFAULT_PARTITIONS_DATA);
+        InputStream json = DefaultPartitionDataProvider.class.getResourceAsStream(DEFAULT_PARTITIONS_DATA);
         return Partitions.fromNode(Node.parse(json));
     }
 }

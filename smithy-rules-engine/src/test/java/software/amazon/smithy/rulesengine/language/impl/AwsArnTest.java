@@ -20,12 +20,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
-class ArnTest {
+class AwsArnTest {
     @Test
     void arnsEndingInColon_1() {
         // If the resource is empty, the resource will be a [""]
         String arn = "arn:aws:s3:us-east-2:012345678:";
-        assertEquals(Arn.parse(arn), Optional.empty());
+        assertEquals(AwsArn.parse(arn), Optional.empty());
     }
 
     // This test is a description of current behavior more than it is a test of what the behavior _should_ be.
@@ -33,7 +33,7 @@ class ArnTest {
     void arnsEndingInColon_2() {
         // if the resource is non-empty and ends in colon, the resource will be `["outpost"]`
         String arn = "arn:aws:s3:us-east-2:012345678:outpost:";
-        Arn parsed = Arn.parse(arn).get();
+        AwsArn parsed = AwsArn.parse(arn).get();
         assertEquals(parsed.resource().get(0), "outpost");
         assertEquals(parsed.resource().get(1), "");
         assertEquals(parsed.resource().size(), 2);

@@ -21,13 +21,13 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
 
 class GetAttrTest {
     @Test
     void getAttrManualEqualToTemplate() {
-        Expr asTemplate = Expr.parseShortform("a#b[5]", SourceLocation.none());
-        Expr asGetAttr = GetAttr.fromNode(ObjectNode
+        Expression asTemplate = Expression.parseShortform("a#b[5]", SourceLocation.none());
+        Expression asGetAttr = GetAttr.fromNode(ObjectNode
                 .builder()
                 .withMember("fn", Node.from("getAttr"))
                 .withMember("argv", Node.fromNodes(

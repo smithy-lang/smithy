@@ -26,17 +26,17 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
- * An AWS Arn.
+ * An AWS ARN.
  */
 @SmithyUnstableApi
-public final class Arn implements ToSmithyBuilder<Arn> {
+public final class AwsArn implements ToSmithyBuilder<AwsArn> {
     private final String partition;
     private final String service;
     private final String region;
     private final String accountId;
     private final List<String> resource;
 
-    private Arn(Builder builder) {
+    private AwsArn(Builder builder) {
         this.partition = SmithyBuilder.requiredState("partition", builder.partition);
         this.service = SmithyBuilder.requiredState("service", builder.service);
         this.region = SmithyBuilder.requiredState("region", builder.region);
@@ -44,7 +44,13 @@ public final class Arn implements ToSmithyBuilder<Arn> {
         this.resource = builder.resource.copy();
     }
 
-    public static Optional<Arn> parse(String arn) {
+    /**
+     * Parses and returns the ARN components if the provided value is a valid AWS ARN.
+     *
+     * @param arn the value to parse.
+     * @return the optional ARN.
+     */
+    public static Optional<AwsArn> parse(String arn) {
         String[] base = arn.split(":", 6);
         if (base.length != 6) {
             return Optional.empty();
@@ -106,9 +112,9 @@ public final class Arn implements ToSmithyBuilder<Arn> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Arn arn = (Arn) o;
-        return partition.equals(arn.partition) && service.equals(arn.service) && region.equals(arn.region)
-               && accountId.equals(arn.accountId) && resource.equals(arn.resource);
+        AwsArn awsArn = (AwsArn) o;
+        return partition.equals(awsArn.partition) && service.equals(awsArn.service) && region.equals(awsArn.region)
+               && accountId.equals(awsArn.accountId) && resource.equals(awsArn.resource);
     }
 
     @Override
@@ -139,7 +145,7 @@ public final class Arn implements ToSmithyBuilder<Arn> {
                 .resource(resource);
     }
 
-    public static final class Builder implements SmithyBuilder<Arn> {
+    public static final class Builder implements SmithyBuilder<AwsArn> {
         private final BuilderRef<List<String>> resource = BuilderRef.forList();
         private String partition;
         private String service;
@@ -176,8 +182,8 @@ public final class Arn implements ToSmithyBuilder<Arn> {
         }
 
         @Override
-        public Arn build() {
-            return new Arn(this);
+        public AwsArn build() {
+            return new AwsArn(this);
         }
     }
 }

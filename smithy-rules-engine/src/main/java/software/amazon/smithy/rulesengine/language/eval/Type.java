@@ -25,9 +25,8 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
 public interface Type {
-
-    static Str str() {
-        return new Str();
+    static String string() {
+        return new String();
     }
 
     static Endpoint endpoint() {
@@ -47,7 +46,7 @@ public interface Type {
     }
 
     static Type integer() {
-        return new Int();
+        return new Integer();
     }
 
     static Option optional(Type t) {
@@ -58,19 +57,19 @@ public interface Type {
         return new Bool();
     }
 
-    default Str expectString() throws InnerParseError {
+    default String expectString() throws InnerParseError {
         throw new InnerParseError("Expected string but found " + this);
     }
 
-    default Record expectObject(String message) throws InnerParseError {
-        throw new InnerParseError(String.format("Expected record but found %s%n == hint: %s", this, message));
+    default Record expectObject(java.lang.String message) throws InnerParseError {
+        throw new InnerParseError(java.lang.String.format("Expected record but found %s%n == hint: %s", this, message));
     }
 
     default Bool expectBool() throws InnerParseError {
         throw new InnerParseError("Expected boolean but found " + this);
     }
 
-    default Int expectInt() throws InnerParseError {
+    default Integer expectInt() throws InnerParseError {
         throw new InnerParseError("Expected int but found " + this);
     }
 
@@ -99,7 +98,7 @@ public interface Type {
         return this;
     }
 
-    final class Int implements Type {
+    final class Integer implements Type {
         @Override
         public int hashCode() {
             return 2;
@@ -111,12 +110,12 @@ public interface Type {
         }
 
         @Override
-        public String toString() {
+        public java.lang.String toString() {
             return "Int";
         }
 
         @Override
-        public Int expectInt() {
+        public Integer expectInt() {
             return this;
         }
     }
@@ -141,7 +140,7 @@ public interface Type {
         }
 
         @Override
-        public String toString() {
+        public java.lang.String toString() {
             return "Any[]";
         }
 
@@ -162,7 +161,7 @@ public interface Type {
         }
 
         @Override
-        public String toString() {
+        public java.lang.String toString() {
             return "Empty[]";
         }
 
@@ -183,18 +182,18 @@ public interface Type {
         }
 
         @Override
-        public String toString() {
+        public java.lang.String toString() {
             return "Endpoint[]";
         }
 
     }
 
-    final class Str implements Type {
-        public Str() {
+    final class String implements Type {
+        public String() {
         }
 
         @Override
-        public Str expectString() {
+        public String expectString() {
             return this;
         }
 
@@ -209,7 +208,7 @@ public interface Type {
         }
 
         @Override
-        public String toString() {
+        public java.lang.String toString() {
             return "String";
         }
 
@@ -234,7 +233,7 @@ public interface Type {
         }
 
         @Override
-        public String toString() {
+        public java.lang.String toString() {
             return "Bool";
         }
 
@@ -248,15 +247,17 @@ public interface Type {
         }
 
         @Override
-        public Str expectString() throws InnerParseError {
-            throw new InnerParseError(String.format("Expected string but found %s. hint: use `assign` in a condition "
-                                                    + "or `isSet` to prove that this value is non-null", this));
+        public String expectString() throws InnerParseError {
+            throw new InnerParseError(java.lang.String
+                    .format("Expected string but found %s. hint: use `assign` in a condition "
+                            + "or `isSet` to prove that this value is non-null", this));
         }
 
         @Override
         public Bool expectBool() throws InnerParseError {
-            throw new InnerParseError(String.format("Expected boolean but found %s. hint: use `isSet` to convert "
-                                                    + "Option<Bool> to bool", this));
+            throw new InnerParseError(java.lang.String
+                    .format("Expected boolean but found %s. hint: use `isSet` to convert "
+                            + "Option<Bool> to bool", this));
         }
 
         @Override
@@ -299,8 +300,8 @@ public interface Type {
         }
 
         @Override
-        public String toString() {
-            return String.format("Option<%s>", inner);
+        public java.lang.String toString() {
+            return java.lang.String.format("Option<%s>", inner);
         }
 
     }
@@ -334,7 +335,7 @@ public interface Type {
         }
 
         @Override
-        public String toString() {
+        public java.lang.String toString() {
             return this.members.toString();
         }
 
@@ -378,8 +379,8 @@ public interface Type {
         }
 
         @Override
-        public String toString() {
-            return String.format("[%s]", this.member);
+        public java.lang.String toString() {
+            return java.lang.String.format("[%s]", this.member);
         }
 
     }
@@ -392,7 +393,7 @@ public interface Type {
         }
 
         @Override
-        public Record expectObject(String message) {
+        public Record expectObject(java.lang.String message) {
             return this;
         }
 
@@ -426,7 +427,7 @@ public interface Type {
         }
 
         @Override
-        public String toString() {
+        public java.lang.String toString() {
             return shape.toString();
         }
 

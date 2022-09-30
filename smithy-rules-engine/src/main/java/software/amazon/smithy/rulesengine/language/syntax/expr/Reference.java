@@ -15,7 +15,7 @@
 
 package software.amazon.smithy.rulesengine.language.syntax.expr;
 
-import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
+import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
 
 import java.util.Objects;
 import software.amazon.smithy.model.FromSourceLocation;
@@ -24,23 +24,23 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
+import software.amazon.smithy.rulesengine.language.visit.ExpressionVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * A reference to a field.
  */
 @SmithyUnstableApi
-public final class Ref extends Expr {
+public final class Reference extends Expression {
     private final Identifier name;
 
-    public Ref(Identifier name, FromSourceLocation sourceLocation) {
+    public Reference(Identifier name, FromSourceLocation sourceLocation) {
         super(sourceLocation.getSourceLocation());
         this.name = name;
     }
 
     @Override
-    public <R> R accept(ExprVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visitRef(this);
     }
 
@@ -52,8 +52,8 @@ public final class Ref extends Expr {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Ref ref = (Ref) o;
-        return name.equals(ref.name);
+        Reference reference = (Reference) o;
+        return name.equals(reference.name);
     }
 
     @Override
@@ -62,8 +62,8 @@ public final class Ref extends Expr {
     }
 
     @Override
-    public Type typecheckLocal(Scope<Type> scope) {
-        return ctx(
+    public Type typeCheckLocal(Scope<Type> scope) {
+        return context(
                 "while resolving the type of reference " + name,
                 this,
                 () -> {

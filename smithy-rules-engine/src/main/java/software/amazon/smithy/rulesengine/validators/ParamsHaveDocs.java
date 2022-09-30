@@ -16,7 +16,7 @@
 package software.amazon.smithy.rulesengine.validators;
 
 import java.util.stream.Stream;
-import software.amazon.smithy.rulesengine.language.EndpointRuleset;
+import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 
@@ -30,7 +30,7 @@ public final class ParamsHaveDocs {
     private ParamsHaveDocs() {
     }
 
-    public static Stream<ValidationError> ensureParamsHaveDocs(EndpointRuleset ruleset) {
+    public static Stream<ValidationError> ensureParamsHaveDocs(EndpointRuleSet ruleset) {
         return ruleset
                 .getParameters()
                 .toList().stream()

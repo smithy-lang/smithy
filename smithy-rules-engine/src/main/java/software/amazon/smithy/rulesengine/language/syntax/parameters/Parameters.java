@@ -15,8 +15,6 @@
 
 package software.amazon.smithy.rulesengine.language.syntax.parameters;
 
-import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +55,7 @@ public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBui
             builder.addParameter(
                     Parameter.fromNode(
                             kv.getKey(),
-                            ctx("when parsing parameter", () -> kv.getValue().expectObjectNode())));
+                            RuleError.context("when parsing parameter", () -> kv.getValue().expectObjectNode())));
         }
         return builder.build();
     }
@@ -65,7 +63,7 @@ public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBui
     public void writeToScope(Scope<Type> scope) {
         this.parameters.forEach(
                 (param) ->
-                        ctx(
+                        RuleError.context(
                                 String.format("while typechecking %s", param.getName()),
                                 param,
                                 () -> scope.insert(param.getName(), param.toType())));

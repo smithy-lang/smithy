@@ -15,49 +15,55 @@
 
 package software.amazon.smithy.rulesengine.language.syntax.fn;
 
-import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
+import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
 
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
-import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
+import software.amazon.smithy.rulesengine.language.visit.ExpressionVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
-public final class Not extends SingleArgFn<Type.Bool> {
-
+public final class Not extends SingleArgFunction<Type.Bool> {
     public static final String ID = "not";
 
-    public Not(FnNode fnNode) {
-        super(fnNode, Type.bool());
+    public Not(FunctionNode functionNode) {
+        super(functionNode, Type.bool());
     }
 
-    public static Not ofExpr(Expr expr) {
-        return new Not(FnNode.ofExprs(ID, expr));
+    /**
+     * Constructs a Not function with the given expression as argument.
+     *
+     * @param expression the expression to pass to Not.
+     * @return the Not function.
+     */
+    public static Not ofExpression(Expression expression) {
+        return new Not(FunctionNode.ofExpressions(ID, expression));
     }
 
-    public static Not ofExprs(Expr expr) {
-        return new Not(FnNode.ofExprs(ID, expr));
-    }
-
-    public Expr target() {
-        return expectOneArg();
+    /**
+     * Returns the expression argument to Not.
+     *
+     * @return the expression argument.
+     */
+    public Expression getTarget() {
+        return expectOneArgument();
     }
 
     @Override
-    public <R> R accept(ExprVisitor<R> visitor) {
-        return visitor.visitNot(target());
+    public <R> R accept(ExpressionVisitor<R> visitor) {
+        return visitor.visitNot(getTarget());
     }
 
     @Override
-    public Type typecheckLocal(Scope<Type> scope) {
+    public Type typeCheckLocal(Scope<Type> scope) {
         // Not must be typechecked in a interior scope because information doesn't flow back out of `not`
-        return scope.inScope(() -> ctx("while typechecking `not`", this,
-                () -> expectOneArg().typecheck(scope).expectBool()));
+        return scope.inScope(() -> context("while typechecking `not`", this,
+                () -> expectOneArgument().typeCheck(scope).expectBool()));
     }
 
     @Override
-    protected Type typecheckArg(Scope<Type> scope, Type.Bool arg) {
+    protected Type typeCheckArgument(Scope<Type> scope, Type.Bool arg) {
         return null;
     }
 }

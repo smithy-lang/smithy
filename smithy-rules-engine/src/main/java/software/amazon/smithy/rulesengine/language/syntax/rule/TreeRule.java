@@ -15,13 +15,12 @@
 
 package software.amazon.smithy.rulesengine.language.syntax.rule;
 
-import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
-
 import java.util.List;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.util.StringUtils;
@@ -56,9 +55,9 @@ public final class TreeRule extends Rule {
             throw new SourceException("Tree rule contains no rules!", this.getSourceLocation());
         }
         for (Rule rule : rules) {
-            ctx(
+            RuleError.context(
                     "while checking nested rule in tree rule",
-                    () -> scope.inScope(() -> rule.typecheck(scope)));
+                    () -> scope.inScope(() -> rule.typeCheck(scope)));
         }
         return Type.endpoint();
     }

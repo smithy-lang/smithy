@@ -26,18 +26,22 @@ import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.IntoSelf;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.eval.Typecheck;
+import software.amazon.smithy.rulesengine.language.eval.TypeCheck;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
-import software.amazon.smithy.rulesengine.language.syntax.fn.FnNode;
-import software.amazon.smithy.rulesengine.language.util.SourceLocationHelpers;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionNode;
+import software.amazon.smithy.rulesengine.language.util.SourceLocationUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * A condition is call to a rule-set function that used to determine whether a rule should be executed.
+ * Can assign the results of functions to new parameters within the current scope.
+ */
 @SmithyUnstableApi
-public final class Condition implements Typecheck, FromSourceLocation, ToNode, IntoSelf<Condition> {
+public final class Condition implements TypeCheck, FromSourceLocation, ToNode, IntoSelf<Condition> {
     public static final String ASSIGN = "assign";
-    private final Expr fn;
+    private final Expression fn;
     private final Identifier result;
 
     private Condition(Builder builder) {
@@ -45,9 +49,15 @@ public final class Condition implements Typecheck, FromSourceLocation, ToNode, I
         this.fn = SmithyBuilder.requiredState("fn", builder.fn);
     }
 
+    /**
+     * Constructs a condition from the given node.
+     *
+     * @param node the node.
+     * @return the condition instance.
+     */
     public static Condition fromNode(Node node) {
         ObjectNode on = node.expectObjectNode("condition must be an object node");
-        Expr fn = FnNode.fromNode(on).validate();
+        Expression fn = FunctionNode.fromNode(on).validate();
         Optional<Identifier> result = on.getStringMember(ASSIGN).map(Identifier::of);
         Builder builder = new Builder();
         result.ifPresent(builder::result);
@@ -72,7 +82,7 @@ public final class Condition implements Typecheck, FromSourceLocation, ToNode, I
         return Objects.hash(fn, result);
     }
 
-    public Expr getFn() {
+    public Expression getFn() {
         return fn;
     }
 
@@ -81,13 +91,18 @@ public final class Condition implements Typecheck, FromSourceLocation, ToNode, I
         return fn.getSourceLocation();
     }
 
+    /**
+     * Get the identifier of the parameter that the result is assigned to.
+     *
+     * @return the optional identifier.
+     */
     public Optional<Identifier> getResult() {
         return Optional.ofNullable(result);
     }
 
     @Override
-    public Type typecheck(Scope<Type> scope) {
-        Type conditionType = fn.typecheck(scope);
+    public Type typeCheck(Scope<Type> scope) {
+        Type conditionType = fn.typeCheck(scope);
         // If the condition is validated, then the expression must be a truthy type
         getResult().ifPresent(resultName -> {
             scope.getDeclaration(resultName).ifPresent(entry -> {
@@ -117,20 +132,25 @@ public final class Condition implements Typecheck, FromSourceLocation, ToNode, I
         return conditionNode.build();
     }
 
-    public Expr expr() {
+    /**
+     * Converts this condition to an expression reference if the condition has a result assignment. Otherwise throws
+     * an exception.
+     *
+     * @return the result as a reference expression.
+     */
+    public Expression toExpression() {
         if (this.getResult().isPresent()) {
-            return Expr.ref(this.getResult().get(), SourceLocationHelpers.javaLocation());
+            return Expression.reference(this.getResult().get(), SourceLocationUtils.javaLocation());
         } else {
-            throw new RuntimeException("Cannot generate expr from a condition without a result");
+            throw new RuntimeException("Cannot generate expression from a condition without a result");
         }
     }
 
-
     public static class Builder implements SmithyBuilder<Condition> {
-        private Expr fn;
+        private Expression fn;
         private Identifier result;
 
-        public Builder fn(Expr fn) {
+        public Builder fn(Expression fn) {
             this.fn = fn;
             return this;
         }

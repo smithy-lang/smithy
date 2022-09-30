@@ -15,7 +15,7 @@
 
 package software.amazon.smithy.rulesengine.language;
 
-import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
+import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,11 +30,12 @@ import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.eval.Typecheck;
+import software.amazon.smithy.rulesengine.language.eval.TypeCheck;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
 import software.amazon.smithy.rulesengine.language.util.MandatorySourceLocation;
 import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
@@ -50,7 +51,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * An Endpoint as returned by EndpointRules.
  */
 @SmithyUnstableApi
-public final class Endpoint extends MandatorySourceLocation implements ToSmithyBuilder<Endpoint>, Typecheck, ToNode {
+public final class Endpoint extends MandatorySourceLocation implements ToSmithyBuilder<Endpoint>, TypeCheck, ToNode {
     private static final String URL = "url";
     private static final String PROPERTIES = "properties";
     private static final String HEADERS = "headers";
@@ -58,8 +59,8 @@ public final class Endpoint extends MandatorySourceLocation implements ToSmithyB
     private static final String SIG_V4A = "sigv4a";
     private static final String SIGNING_REGION = "signingRegion";
 
-    private final Expr url;
-    private final Map<String, List<Expr>> headers;
+    private final Expression url;
+    private final Map<String, List<Expression>> headers;
     private final Map<Identifier, Literal> properties;
 
     private Endpoint(Builder builder) {
@@ -84,12 +85,19 @@ public final class Endpoint extends MandatorySourceLocation implements ToSmithyB
         this.headers = builder.headers.copy();
     }
 
+    /**
+     * Constructs an {@link Endpoint} from a {@link Node}. Node must be an {@link ObjectNode}.
+     *
+     * @param node the object node.
+     * @return the node as an {@link Endpoint}.
+     */
     public static Endpoint fromNode(Node node) {
         ObjectNode on = node.expectObjectNode();
 
-        Builder builder = builder(node);
+        Builder builder = builder()
+                .sourceLocation(node);
 
-        builder.url(Expr.fromNode(on.expectMember(URL, "URL must be included in endpoint")));
+        builder.url(Expression.fromNode(on.expectMember(URL, "URL must be included in endpoint")));
         on.expectNoAdditionalProperties(Arrays.asList(PROPERTIES, HEADERS, URL));
 
         on.getObjectMember(PROPERTIES)
@@ -105,7 +113,7 @@ public final class Endpoint extends MandatorySourceLocation implements ToSmithyB
             objectNode.getMembers().forEach((headerName, headerValues) -> {
                 builder.addHeader(headerName.getValue(),
                         headerValues.expectArrayNode("header values should be an array")
-                                .getElements().stream().map(Expr::fromNode).collect(Collectors.toList()));
+                                .getElements().stream().map(Expression::fromNode).collect(Collectors.toList()));
             });
         });
 
@@ -115,24 +123,26 @@ public final class Endpoint extends MandatorySourceLocation implements ToSmithyB
     /**
      * Create a new Endpoint builder.
      *
-     * @param location SourceLocation to attach to this endpoint
      * @return Endpoint builder
      */
-    public static Builder builder(FromSourceLocation location) {
-        return new Builder(location);
-    }
-
     public static Builder builder() {
         return new Builder(SourceLocation.none());
     }
 
-    public Expr getUrl() {
+    /**
+     * Returns the Endpoint URL as an expression.
+     *
+     * @return the endpoint URL expression.
+     */
+    public Expression getUrl() {
         return url;
     }
 
     @Override
     public Builder toBuilder() {
-        return builder(this.getSourceLocation()).url(url).properties(properties);
+        return builder()
+                .sourceLocation(this.getSourceLocation())
+                .url(url).properties(properties);
     }
 
     @Override
@@ -170,18 +180,18 @@ public final class Endpoint extends MandatorySourceLocation implements ToSmithyB
     }
 
     @Override
-    public Type typecheck(Scope<Type> scope) {
-        ctx("while checking the URL", url, () -> url.typecheck(scope).expectString());
-        ctx("while checking properties", () -> {
+    public Type typeCheck(Scope<Type> scope) {
+        context("while checking the URL", url, () -> url.typeCheck(scope).expectString());
+        RuleError.context("while checking properties", () -> {
             properties.forEach((k, lit) -> {
-                lit.typecheck(scope);
+                lit.typeCheck(scope);
             });
             return null;
         });
-        ctx("while checking headers", () -> {
-            for (List<Expr> headerList : headers.values()) {
-                for (Expr header : headerList) {
-                    header.typecheck(scope).expectString();
+        RuleError.context("while checking headers", () -> {
+            for (List<Expression> headerList : headers.values()) {
+                for (Expression header : headerList) {
+                    header.typeCheck(scope).expectString();
                 }
             }
             return null;
@@ -210,19 +220,29 @@ public final class Endpoint extends MandatorySourceLocation implements ToSmithyB
         return exprMapNode(headers);
     }
 
-    private Node exprMapNode(Map<String, List<Expr>> m) {
+    private Node exprMapNode(Map<String, List<Expression>> m) {
         ObjectNode.Builder mapNode = ObjectNode.builder();
         m.forEach((k, v) -> mapNode.withMember(k, ArrayNode.fromNodes(v.stream()
-                .map(Expr::toNode)
+                .map(Expression::toNode)
                 .collect(Collectors.toList()))));
         return mapNode.build();
     }
 
+    /**
+     * Get the endpoint properties as a map of {@link Identifier} to {@link Literal} values.
+     *
+     * @return the endpoint properties.
+     */
     public Map<Identifier, Literal> getProperties() {
         return properties;
     }
 
-    public Map<String, List<Expr>> getHeaders() {
+    /**
+     * Get the endpoint headers as a map of {@link String} to list of {@link Expression} values.
+     *
+     * @return the endpoint headers.
+     */
+    public Map<String, List<Expression>> getHeaders() {
         return headers;
     }
 
@@ -233,16 +253,16 @@ public final class Endpoint extends MandatorySourceLocation implements ToSmithyB
         private static final String SIGNING_NAME = "signingName";
         private static final String SIGNING_REGION_SET = "signingRegionSet";
 
-        private final BuilderRef<Map<String, List<Expr>>> headers = BuilderRef.forOrderedMap();
+        private final BuilderRef<Map<String, List<Expression>>> headers = BuilderRef.forOrderedMap();
         private final BuilderRef<Map<Identifier, Literal>> properties = BuilderRef.forOrderedMap();
         private final BuilderRef<List<Pair<Identifier, Map<Identifier, Literal>>>> authSchemes = BuilderRef.forList();
-        private Expr url;
+        private Expression url;
 
         public Builder(FromSourceLocation sourceLocation) {
             super(sourceLocation);
         }
 
-        public Builder url(Expr url) {
+        public Builder url(Expression url) {
             this.url = url;
             return this;
         }
@@ -280,13 +300,13 @@ public final class Endpoint extends MandatorySourceLocation implements ToSmithyB
                     SIGNING_NAME, signingService));
         }
 
-        public Builder headers(Map<String, List<Expr>> headers) {
+        public Builder headers(Map<String, List<Expression>> headers) {
             this.headers.clear();
             this.headers.get().putAll(headers);
             return this;
         }
 
-        public Builder addHeader(String name, List<Expr> value) {
+        public Builder addHeader(String name, List<Expression> value) {
             this.headers.get().put(name, value);
             return this;
         }

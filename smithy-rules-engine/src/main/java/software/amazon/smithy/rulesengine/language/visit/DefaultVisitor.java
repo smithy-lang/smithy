@@ -17,16 +17,21 @@ package software.amazon.smithy.rulesengine.language.visit;
 
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.Endpoint;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Ref;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Reference;
 import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
 import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * An abstract visitor implementation for a {@link RuleValueVisitor}, and {@link ExpressionVisitor}.
+ *
+ * @param <R> the return value type.
+ */
 @SmithyUnstableApi
-public abstract class DefaultVisitor<R> implements RuleValueVisitor<R>, ExprVisitor<R> {
+public abstract class DefaultVisitor<R> implements RuleValueVisitor<R>, ExpressionVisitor<R> {
     public abstract R getDefault();
 
     @Override
@@ -35,27 +40,27 @@ public abstract class DefaultVisitor<R> implements RuleValueVisitor<R>, ExprVisi
     }
 
     @Override
-    public R visitRef(Ref ref) {
+    public R visitRef(Reference reference) {
         return getDefault();
     }
 
     @Override
-    public R visitIsSet(Expr fn) {
+    public R visitIsSet(Expression fn) {
         return getDefault();
     }
 
     @Override
-    public R visitNot(Expr not) {
+    public R visitNot(Expression not) {
         return getDefault();
     }
 
     @Override
-    public R visitBoolEquals(Expr left, Expr right) {
+    public R visitBoolEquals(Expression left, Expression right) {
         return getDefault();
     }
 
     @Override
-    public R visitStringEquals(Expr left, Expr right) {
+    public R visitStringEquals(Expression left, Expression right) {
         return getDefault();
     }
 
@@ -64,7 +69,7 @@ public abstract class DefaultVisitor<R> implements RuleValueVisitor<R>, ExprVisi
     }
 
     @Override
-    public R visitLibraryFunction(FunctionDefinition fn, List<Expr> args) {
+    public R visitLibraryFunction(FunctionDefinition fn, List<Expression> args) {
         return getDefault();
     }
 
@@ -74,7 +79,7 @@ public abstract class DefaultVisitor<R> implements RuleValueVisitor<R>, ExprVisi
     }
 
     @Override
-    public R visitErrorRule(Expr error) {
+    public R visitErrorRule(Expression error) {
         return getDefault();
     }
 

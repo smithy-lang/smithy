@@ -15,7 +15,7 @@
 
 package software.amazon.smithy.rulesengine.language;
 
-import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
+import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
 import static software.amazon.smithy.rulesengine.language.util.StringUtils.indent;
 
 import java.util.Collection;
@@ -31,7 +31,7 @@ import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.eval.Typecheck;
+import software.amazon.smithy.rulesengine.language.eval.TypeCheck;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
@@ -45,7 +45,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * A set of EndpointRules. Endpoint Rules describe the endpoint resolution behavior for a service.
  */
 @SmithyUnstableApi
-public final class EndpointRuleset extends MandatorySourceLocation implements Typecheck, ToNode {
+public final class EndpointRuleSet extends MandatorySourceLocation implements TypeCheck, ToNode {
     private static final String LATEST_VERSION = "1.3";
     private static final String VERSION = "version";
     private static final String PARAMETERS = "parameters";
@@ -55,26 +55,26 @@ public final class EndpointRuleset extends MandatorySourceLocation implements Ty
     private final Parameters parameters;
     private final String version;
 
-    private EndpointRuleset(Builder builder) {
+    private EndpointRuleSet(Builder builder) {
         super(builder.getSourceLocation());
         rules = builder.rules.copy();
         parameters = SmithyBuilder.requiredState("parameters", builder.parameters);
         version = SmithyBuilder.requiredState("version", builder.version);
     }
 
-    public static EndpointRuleset fromNode(Node node) throws RuleError {
-        return ctx("when parsing endpoint ruleset", () -> EndpointRuleset.newFromNode(node));
+    public static EndpointRuleSet fromNode(Node node) throws RuleError {
+        return RuleError.context("when parsing endpoint ruleset", () -> EndpointRuleSet.newFromNode(node));
     }
 
-    private static EndpointRuleset newFromNode(Node node) throws RuleError {
+    private static EndpointRuleSet newFromNode(Node node) throws RuleError {
         ObjectNode on = node.expectObjectNode("The root of a ruleset must be an object");
-        EndpointRuleset.Builder builder = new Builder(node);
+        EndpointRuleSet.Builder builder = new Builder(node);
         Parameters parameters = Parameters.fromNode(on.expectObjectMember(PARAMETERS));
         StringNode version = on.expectStringMember(VERSION);
 
         on.expectArrayMember(RULES)
                 .getElements().forEach(n -> {
-                    builder.addRule(ctx("while parsing rule", n, () -> EndpointRule.fromNode(n)));
+                    builder.addRule(context("while parsing rule", n, () -> EndpointRule.fromNode(n)));
                 });
         return builder.version(version.getValue()).parameters(parameters).build();
     }
@@ -92,18 +92,18 @@ public final class EndpointRuleset extends MandatorySourceLocation implements Ty
     }
 
     @Override
-    public Type typecheck(Scope<Type> scope) {
+    public Type typeCheck(Scope<Type> scope) {
         return scope.inScope(() -> {
             parameters.writeToScope(scope);
             for (Rule rule : rules) {
-                rule.typecheck(scope);
+                rule.typeCheck(scope);
             }
             return Type.endpoint();
         });
     }
 
     public void typecheck() {
-        typecheck(new Scope<>());
+        typeCheck(new Scope<>());
     }
 
     @Override
@@ -141,7 +141,7 @@ public final class EndpointRuleset extends MandatorySourceLocation implements Ty
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        EndpointRuleset that = (EndpointRuleset) o;
+        EndpointRuleSet that = (EndpointRuleSet) o;
         return rules.equals(that.rules) && parameters.equals(that.parameters) && version.equals(that.version);
     }
 
@@ -155,7 +155,7 @@ public final class EndpointRuleset extends MandatorySourceLocation implements Ty
         return builder.toString();
     }
 
-    public static class Builder extends SourceLocationTrackingBuilder<Builder, EndpointRuleset> {
+    public static class Builder extends SourceLocationTrackingBuilder<Builder, EndpointRuleSet> {
         private final BuilderRef<List<Rule>> rules = BuilderRef.forList();
         private Parameters parameters;
         // default the version to the latest.
@@ -171,7 +171,7 @@ public final class EndpointRuleset extends MandatorySourceLocation implements Ty
         }
 
         /**
-         * Sets the version for the {@link EndpointRuleset}.
+         * Sets the version for the {@link EndpointRuleSet}.
          * If not set, the version will default to the latest version.
          *
          * @param version The version to set
@@ -217,7 +217,7 @@ public final class EndpointRuleset extends MandatorySourceLocation implements Ty
         }
 
         /**
-         * Set the parameters for this {@link EndpointRuleset}.
+         * Set the parameters for this {@link EndpointRuleSet}.
          *
          * @param parameters {@link Parameters} to set
          * @return the {@link Builder}
@@ -228,8 +228,8 @@ public final class EndpointRuleset extends MandatorySourceLocation implements Ty
         }
 
         @Override
-        public EndpointRuleset build() {
-            return new EndpointRuleset(this);
+        public EndpointRuleSet build() {
+            return new EndpointRuleSet(this);
         }
     }
 }

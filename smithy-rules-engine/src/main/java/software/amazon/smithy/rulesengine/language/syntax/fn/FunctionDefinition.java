@@ -20,6 +20,9 @@ import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * An abstract definition of a rule-engine function.
+ */
 @SmithyUnstableApi
 public abstract class FunctionDefinition {
     public FunctionDefinition() {
@@ -29,24 +32,24 @@ public abstract class FunctionDefinition {
      * The ID of this function.
      * @return The ID string
      */
-    public abstract String id();
+    public abstract String getId();
 
     /**
      * The arguments to this function.
      * @return The function arguments
      */
-    public abstract List<Type> arguments();
+    public abstract List<Type> getArguments();
 
     /**
      * The return type of this function definition.
      * @return The function return type
      */
-    public abstract Type returnType();
+    public abstract Type getReturnType();
 
     /**
      * Evaluate the arguments to a given function to compute a result.
      * @return The resulting value
      */
-    public abstract Value eval(List<Value> arguments);
+    public abstract Value evaluate(List<Value> arguments);
 
 }

@@ -15,37 +15,43 @@
 
 package software.amazon.smithy.rulesengine.language.syntax.fn;
 
-import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
-
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
+import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
 import software.amazon.smithy.rulesengine.language.util.StringUtils;
-import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
+import software.amazon.smithy.rulesengine.language.visit.ExpressionVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
- * A function ({@link Fn}) which is constructed from a {@link FunctionDefinition}.
+ * A function ({@link Function}) which is constructed from a {@link FunctionDefinition}.
  */
 @SmithyUnstableApi
-public class LibraryFunction extends Fn {
+public class LibraryFunction extends Function {
     private final FunctionDefinition definition;
-    private final FnNode fnNode;
+    private final FunctionNode functionNode;
 
-    public LibraryFunction(FunctionDefinition definition, FnNode fnNode) {
-        super(fnNode);
+    public LibraryFunction(FunctionDefinition definition, FunctionNode functionNode) {
+        super(functionNode);
         this.definition = definition;
-        this.fnNode = fnNode;
+        this.functionNode = functionNode;
     }
 
-    public static LibraryFunction ofExprs(FunctionDefinition defn, Expr... expr) {
-        FnNode node = FnNode.ofExprs(defn.id(), expr);
-        return new LibraryFunction(defn, node);
+    /**
+     * Creates a new {@link LibraryFunction} instance with the given arguments.
+     *
+     * @param definition the function definition.
+     * @param arguments  the function arguments.
+     * @return the {@link LibraryFunction} instance.
+     */
+    public static LibraryFunction ofExpressions(FunctionDefinition definition, Expression... arguments) {
+        FunctionNode node = FunctionNode.ofExpressions(definition.getId(), arguments);
+        return new LibraryFunction(definition, node);
     }
 
-    public static void checkTypeSignature(List<Type> expectedArgs, List<Expr> actualArguments, Scope<Type> scope)
+    public static void checkTypeSignature(List<Type> expectedArgs, List<Expression> actualArguments, Scope<Type> scope)
             throws InnerParseError {
         if (expectedArgs.size() != actualArguments.size()) {
             throw new InnerParseError(
@@ -57,7 +63,7 @@ public class LibraryFunction extends Fn {
         }
         for (int i = 0; i < expectedArgs.size(); i++) {
             Type expected = expectedArgs.get(i);
-            Type actual = actualArguments.get(i).typecheck(scope);
+            Type actual = actualArguments.get(i).typeCheck(scope);
             if (!expected.equals(actual)) {
                 Type optAny = Type.optional(new Type.Any());
                 String hint = "";
@@ -78,15 +84,15 @@ public class LibraryFunction extends Fn {
     }
 
     @Override
-    protected Type typecheckLocal(Scope<Type> scope) {
-        ctx(String.format("while typechecking the invocation of %s", definition.id()), this, () -> {
+    protected Type typeCheckLocal(Scope<Type> scope) {
+        RuleError.context(String.format("while typechecking the invocation of %s", definition.getId()), this, () -> {
             try {
-                checkTypeSignature(definition.arguments(), fnNode.getArgv(), scope);
+                checkTypeSignature(definition.getArguments(), functionNode.getArguments(), scope);
             } catch (InnerParseError e) {
                 throw new RuntimeException(e);
             }
         });
-        return definition.returnType();
+        return definition.getReturnType();
     }
 
     private static String ordinal(int arg) {
@@ -107,7 +113,7 @@ public class LibraryFunction extends Fn {
     }
 
     @Override
-    public <T> T accept(ExprVisitor<T> visitor) {
-        return visitor.visitLibraryFunction(this.definition, this.fnNode.getArgv());
+    public <T> T accept(ExpressionVisitor<T> visitor) {
+        return visitor.visitLibraryFunction(this.definition, this.functionNode.getArguments());
     }
 }

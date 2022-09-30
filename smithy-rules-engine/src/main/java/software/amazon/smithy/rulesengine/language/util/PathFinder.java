@@ -21,14 +21,14 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import software.amazon.smithy.rulesengine.language.EndpointRuleset;
+import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.language.visit.DefaultVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
- * Utility to determine with path of conditions that must be matched to reach a condition in a RuleSet.
+ * Utility to determine with path of conditions that must be matched to reach a condition in a rule-set.
  * <p>
  * See `PathFinder.findPath`
  */
@@ -46,7 +46,7 @@ public final class PathFinder {
      * @param target The target condition to reach.
      * @return Path
      */
-    public static Optional<Path> findPath(EndpointRuleset ruleset, Condition target) {
+    public static Optional<Path> findPath(EndpointRuleSet ruleset, Condition target) {
         return new PathFinderVisitor(target).search(ruleset);
     }
 
@@ -123,7 +123,7 @@ public final class PathFinder {
             this.target = target;
         }
 
-        public Optional<Path> search(EndpointRuleset ruleset) {
+        public Optional<Path> search(EndpointRuleSet ruleset) {
             for (Rule rule : ruleset.getRules()) {
                 Optional<Path> pathInRule = handleRule(rule);
                 if (pathInRule.isPresent()) {

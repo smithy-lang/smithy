@@ -21,15 +21,18 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
-import software.amazon.smithy.rulesengine.language.impl.Arn;
+import software.amazon.smithy.rulesengine.language.impl.AwsArn;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.fn.Function;
 import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
 import software.amazon.smithy.rulesengine.language.syntax.fn.LibraryFunction;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * An aws rule-set function for parsing an AWS ARN into it's componenet parts.
+ */
 @SmithyUnstableApi
 public final class ParseArn extends FunctionDefinition {
     public static final String ID = "aws.parseArn";
@@ -41,44 +44,44 @@ public final class ParseArn extends FunctionDefinition {
 
 
     @Override
-    public String id() {
+    public String getId() {
         return ID;
     }
 
     @Override
-    public List<Type> arguments() {
-        return Collections.singletonList(Type.str());
+    public List<Type> getArguments() {
+        return Collections.singletonList(Type.string());
     }
 
     @Override
-    public Type returnType() {
+    public Type getReturnType() {
         return Type.optional(new Type.Record(MapUtils.of(
-                PARTITION, Type.str(),
-                SERVICE, Type.str(),
-                REGION, Type.str(),
-                ACCOUNT_ID, Type.str(),
-                RESOURCE_ID, Type.array(Type.str())
+                PARTITION, Type.string(),
+                SERVICE, Type.string(),
+                REGION, Type.string(),
+                ACCOUNT_ID, Type.string(),
+                RESOURCE_ID, Type.array(Type.string())
         )));
     }
 
     @Override
-    public Value eval(List<Value> arguments) {
+    public Value evaluate(List<Value> arguments) {
         String value = arguments.get(0).expectString();
-        Optional<Arn> arnOpt = Arn.parse(value);
-        return arnOpt.map(arn ->
+        Optional<AwsArn> arnOpt = AwsArn.parse(value);
+        return arnOpt.map(awsArn ->
                 (Value) Value.record(MapUtils.of(
-                        PARTITION, Value.str(arn.partition()),
-                        SERVICE, Value.str(arn.service()),
-                        REGION, Value.str(arn.region()),
-                        ACCOUNT_ID, Value.str(arn.accountId()),
-                        RESOURCE_ID, Value.array(arn.resource().stream()
-                                .map(v -> (Value) Value.str(v))
+                        PARTITION, Value.string(awsArn.partition()),
+                        SERVICE, Value.string(awsArn.service()),
+                        REGION, Value.string(awsArn.region()),
+                        ACCOUNT_ID, Value.string(awsArn.accountId()),
+                        RESOURCE_ID, Value.array(awsArn.resource().stream()
+                                .map(v -> (Value) Value.string(v))
                                 .collect(Collectors.toList()))
                 ))
         ).orElse(new Value.None());
     }
 
-    public static Fn ofExprs(Expr expr) {
-        return LibraryFunction.ofExprs(new ParseArn(), expr);
+    public static Function ofExpression(Expression expression) {
+        return LibraryFunction.ofExpressions(new ParseArn(), expression);
     }
 }

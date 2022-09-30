@@ -23,31 +23,32 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.rulesengine.language.EndpointRuleset;
+import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.utils.MapUtils;
 
 class RuleEngineTest {
 
-    private EndpointRuleset parse(String resource) {
+    private EndpointRuleSet parse(String resource) {
         InputStream is = getClass().getClassLoader().getResourceAsStream(resource);
         assert is != null;
         Node node = ObjectNode.parse(is);
-        return EndpointRuleset.fromNode(node);
+        return EndpointRuleSet.fromNode(node);
     }
 
     @Test
     void testRuleEval() {
-        EndpointRuleset actual = parse(
+        EndpointRuleSet actual = parse(
                 "software/amazon/smithy/rulesengine/testutil/valid-rules/minimal-ruleset.json");
-        Value result = RuleEngine.evaluate(actual, MapUtils.of(Identifier.of("Region"), Value.str("us-east-1")));
+        Value result = RuleEvaluator.evaluate(actual, MapUtils.of(Identifier.of("Region"),
+                Value.string("us-east-1")));
         Value.Endpoint expected = new Value.Endpoint.Builder(SourceLocation.none())
                 .url("https://us-east-1.amazonaws.com")
                 .addProperty("authSchemes", Value.array(Collections.singletonList(
                         Value.record(MapUtils.of(
-                                Identifier.of("name"), Value.str("sigv4"),
-                                Identifier.of("signingRegion"), Value.str("us-east-1"),
-                                Identifier.of("signingName"), Value.str("serviceName")
+                                Identifier.of("name"), Value.string("sigv4"),
+                                Identifier.of("signingRegion"), Value.string("us-east-1"),
+                                Identifier.of("signingName"), Value.string("serviceName")
                         ))
                 )))
                 .build();

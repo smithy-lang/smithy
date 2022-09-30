@@ -49,12 +49,12 @@ public final class ValidateUriScheme extends TraversingVisitor<ValidationError> 
             }
 
             @Override
-            public Stream<ValidationError> visitStr(Template value) {
+            public Stream<ValidationError> visitString(Template value) {
                 return validateTemplate(value);
             }
 
             @Override
-            public Stream<ValidationError> visitObject(Map<Identifier, Literal> members) {
+            public Stream<ValidationError> visitRecord(Map<Identifier, Literal> members) {
                 return Stream.empty();
             }
 
@@ -64,7 +64,7 @@ public final class ValidateUriScheme extends TraversingVisitor<ValidationError> 
             }
 
             @Override
-            public Stream<ValidationError> visitInt(int value) {
+            public Stream<ValidationError> visitInteger(int value) {
                 return Stream.empty();
             }
         });

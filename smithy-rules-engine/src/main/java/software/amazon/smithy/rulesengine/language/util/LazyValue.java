@@ -18,6 +18,12 @@ package software.amazon.smithy.rulesengine.language.util;
 import java.util.function.Supplier;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * A lazy initialized value that is initialized once when retrieved.
+ * Not thread safe.
+ *
+ * @param <T> the type of the lazy initalized value.
+ */
 @SmithyUnstableApi
 public final class LazyValue<T> {
     private final Supplier<T> initializer;

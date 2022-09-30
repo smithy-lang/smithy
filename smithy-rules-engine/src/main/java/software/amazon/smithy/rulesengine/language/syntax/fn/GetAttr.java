@@ -15,12 +15,13 @@
 
 package software.amazon.smithy.rulesengine.language.syntax.fn;
 
-import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
+import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import software.amazon.smithy.model.FromSourceLocation;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -31,17 +32,20 @@ import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Ref;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Reference;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
-import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
+import software.amazon.smithy.rulesengine.language.visit.ExpressionVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * A rule-set expression for indexing a record/object or array.
+ */
 @SmithyUnstableApi
-public final class GetAttr extends Expr {
+public final class GetAttr extends Expression {
     public static final String ID = "getAttr";
-    private final Expr target;
+    private final Expression target;
     private final List<Part> path;
 
     private GetAttr(Builder builder) {
@@ -50,8 +54,8 @@ public final class GetAttr extends Expr {
         this.path = parse(builder.path, builder.getSourceLocation());
     }
 
-    public static Builder builder(FromSourceLocation context) {
-        return new Builder(context);
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**
@@ -95,7 +99,7 @@ public final class GetAttr extends Expr {
         return result;
     }
 
-    public Value eval(Value target) {
+    public Value evaluate(Value target) {
         Value root = target;
         List<Part> path = getPath();
         for (Part part : path) {
@@ -104,7 +108,7 @@ public final class GetAttr extends Expr {
         return root;
     }
 
-    public Expr getTarget() {
+    public Expression getTarget() {
         return target;
     }
 
@@ -118,26 +122,27 @@ public final class GetAttr extends Expr {
     }
 
     @Override
-    public <R> R accept(ExprVisitor<R> visitor) {
+    public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visitGetAttr(this);
     }
 
     @Override
-    public Type typecheckLocal(Scope<Type> scope) {
-        Expr target = getTarget();
+    public Type typeCheckLocal(Scope<Type> scope) {
+        Expression target = getTarget();
         List<Part> path = new ArrayList<>(getPath());
-        Type base = target.typecheck(scope);
+        Type base = target.typeCheck(scope);
 
         for (Part part : path) {
             Type finalBase = base;
-            base = ctx(String.format("while resolving %s in %s", part, base), this, () -> part.typecheck(finalBase));
+            base = context(String.format("while resolving %s in %s", part, base), this,
+                    () -> part.typeCheck(finalBase));
         }
         return base;
     }
 
     @Override
     public String template() {
-        String target = ((Ref) this.getTarget()).getName().asString();
+        String target = ((Reference) this.getTarget()).getName().asString();
         return "{" + target + "#" + unparse() + "}";
     }
 
@@ -151,12 +156,20 @@ public final class GetAttr extends Expr {
     }
 
     /**
-     * Convert this fn into a condition.
+     * Convert this function into a condition.
+     *
+     * @return the function as a condition.
      */
     public Condition condition() {
         return new Condition.Builder().fn(this).build();
     }
 
+    /**
+     * Converts this function into a condition which stores the output in the named result.
+     *
+     * @param result the name of the result parameter.
+     * @return the function as a condition.
+     */
     public Condition condition(String result) {
         return new Condition.Builder().fn(this).result(result).build();
     }
@@ -192,7 +205,7 @@ public final class GetAttr extends Expr {
     }
 
     public interface Part {
-        Type typecheck(Type container) throws InnerParseError;
+        Type typeCheck(Type container) throws InnerParseError;
 
         Value eval(Value container);
 
@@ -207,7 +220,7 @@ public final class GetAttr extends Expr {
                 return new Key(Identifier.of(key));
             }
 
-            public Type typecheck(Type container) throws InnerParseError {
+            public Type typeCheck(Type container) throws InnerParseError {
                 Type.Record record = container.expectObject(String.format("cannot index into %s, expected object",
                         container));
                 return record
@@ -257,7 +270,7 @@ public final class GetAttr extends Expr {
             }
 
             @Override
-            public Type typecheck(Type container) throws InnerParseError {
+            public Type typeCheck(Type container) throws InnerParseError {
                 Type.Array arr = container.expectArray();
                 return Type.optional(arr.getMember());
             }
@@ -296,15 +309,15 @@ public final class GetAttr extends Expr {
         }
     }
 
-    public static class Builder extends SourceLocationTrackingBuilder<Builder, GetAttr> {
-        Expr target;
+    public static final class Builder extends SourceLocationTrackingBuilder<Builder, GetAttr> {
+        Expression target;
         String path;
 
-        public Builder(FromSourceLocation sourceLocation) {
-            super(sourceLocation);
+        private Builder() {
+            super(SourceLocation.none());
         }
 
-        public Builder target(Expr target) {
+        public Builder target(Expression target) {
             this.target = target;
             return this;
         }

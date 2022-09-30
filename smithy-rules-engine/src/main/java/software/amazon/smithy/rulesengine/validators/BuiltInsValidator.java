@@ -20,11 +20,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.rulesengine.language.EndpointRuleset;
+import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Builtins;
 import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * Validates that the built-in's specified on parameters are supported.
+ */
 @SmithyUnstableApi
 public final class BuiltInsValidator {
     private BuiltInsValidator() {
@@ -36,7 +39,7 @@ public final class BuiltInsValidator {
      * @param ruleset The ruleset to check
      * @return validation errors
      */
-    public static Stream<ValidationError> validateBuiltIns(EndpointRuleset ruleset) {
+    public static Stream<ValidationError> validateBuiltIns(EndpointRuleSet ruleset) {
         return ruleset.getParameters().toList().stream().flatMap(param -> {
             Optional<String> builtIn = param.getBuiltIn();
             if (builtIn.isPresent()) {

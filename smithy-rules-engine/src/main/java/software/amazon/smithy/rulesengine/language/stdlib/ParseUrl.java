@@ -23,8 +23,8 @@ import java.util.List;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.fn.Function;
 import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
 import software.amazon.smithy.rulesengine.language.syntax.fn.LibraryFunction;
 import software.amazon.smithy.utils.MapUtils;
@@ -32,7 +32,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
 
 /**
- * Function to parse a URI from a string.
+ * A rule-set function to parse a URI from a string.
  */
 @SmithyUnstableApi
 public class ParseUrl extends FunctionDefinition {
@@ -45,34 +45,34 @@ public class ParseUrl extends FunctionDefinition {
 
 
     @Override
-    public String id() {
+    public String getId() {
         return "parseURL";
     }
 
     @Override
-    public List<Type> arguments() {
-        return Collections.singletonList(Type.str());
+    public List<Type> getArguments() {
+        return Collections.singletonList(Type.string());
     }
 
-    public static Fn ofExprs(Expr expr) {
-        return LibraryFunction.ofExprs(new ParseUrl(), expr);
+    public static Function ofExpression(Expression expression) {
+        return LibraryFunction.ofExpressions(new ParseUrl(), expression);
     }
 
     @Override
-    public Type returnType() {
+    public Type getReturnType() {
         return Type.optional(Type.record(
                 MapUtils.of(
-                        SCHEME, Type.str(),
-                        AUTHORITY, Type.str(),
-                        PATH, Type.str(),
-                        NORMALIZED_PATH, Type.str(),
+                        SCHEME, Type.string(),
+                        AUTHORITY, Type.string(),
+                        PATH, Type.string(),
+                        NORMALIZED_PATH, Type.string(),
                         IS_IP, Type.bool()
                 )
         ));
     }
 
     @Override
-    public Value eval(List<Value> arguments) {
+    public Value evaluate(List<Value> arguments) {
         String url = arguments.get(0).expectString();
         try {
             URL parsed = new URL(url);
@@ -115,10 +115,10 @@ public class ParseUrl extends FunctionDefinition {
                 normalizedPath = builder.toString();
             }
             return Value.record(MapUtils.of(
-                    SCHEME, Value.str(parsed.getProtocol()),
-                    AUTHORITY, Value.str(parsed.getAuthority()),
-                    PATH, Value.str(path),
-                    NORMALIZED_PATH, Value.str(normalizedPath.toString()),
+                    SCHEME, Value.string(parsed.getProtocol()),
+                    AUTHORITY, Value.string(parsed.getAuthority()),
+                    PATH, Value.string(path),
+                    NORMALIZED_PATH, Value.string(normalizedPath.toString()),
                     IS_IP, Value.bool(isIpAddr)
             ));
         } catch (MalformedURLException e) {

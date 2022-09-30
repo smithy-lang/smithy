@@ -23,26 +23,34 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.rulesengine.Into;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
-public abstract class Fn extends Expr implements Into<Condition> {
-    protected final FnNode fnNode;
+public abstract class Function extends Expression implements Into<Condition> {
+    protected final FunctionNode functionNode;
 
-    public Fn(FnNode fnNode) {
-        super(fnNode.getSourceLocation());
-        this.fnNode = fnNode;
+    public Function(FunctionNode functionNode) {
+        super(functionNode.getSourceLocation());
+        this.functionNode = functionNode;
     }
 
     /**
-     * Convert this fn into a condition.
+     * Convert this function into a condition.
+     *
+     * @return the function as a condition.
      */
     public Condition condition() {
         return new Condition.Builder().fn(this).build();
     }
 
+    /**
+     * Converts this function into a condition which stores the output in the named result.
+     *
+     * @param result the name of the result parameter.
+     * @return the function as a condition.
+     */
     public Condition condition(String result) {
         return new Condition.Builder().fn(this).result(result).build();
     }
@@ -53,37 +61,37 @@ public abstract class Fn extends Expr implements Into<Condition> {
      * @return The name
      */
     public String getName() {
-        return fnNode.getId();
+        return functionNode.getName();
     }
 
     /**
      * @return The arguments to this function
      */
-    public List<Expr> getArgv() {
-        return fnNode.getArgv();
+    public List<Expression> getArguments() {
+        return functionNode.getArguments();
     }
 
     @Override
     public String toString() {
-        return String.format("%s(%s)", fnNode.getId(), fnNode.getArgv().stream()
-                .map(Expr::toString)
+        return String.format("%s(%s)", functionNode.getName(), functionNode.getArguments().stream()
+                .map(Expression::toString)
                 .collect(Collectors.joining(", ")));
     }
 
-    protected Expr expectOneArg() {
-        List<Expr> argv = this.fnNode.getArgv();
+    protected Expression expectOneArgument() {
+        List<Expression> argv = this.functionNode.getArguments();
         if (argv.size() == 1) {
             return argv.get(0);
         } else {
             throw new RuleError(
                     new SourceException("expected 1 argument but found " + argv.size(),
-                            this.fnNode));
+                            this.functionNode));
         }
     }
 
     @Override
     public SourceLocation getSourceLocation() {
-        return fnNode.getSourceLocation();
+        return functionNode.getSourceLocation();
     }
 
     @Override
@@ -91,20 +99,20 @@ public abstract class Fn extends Expr implements Into<Condition> {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof Fn) {
-            return ((Fn) obj).fnNode.equals(this.fnNode);
+        if (obj instanceof Function) {
+            return ((Function) obj).functionNode.equals(this.functionNode);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fnNode);
+        return Objects.hash(functionNode);
     }
 
     @Override
     public Node toNode() {
-        return fnNode.toNode();
+        return functionNode.toNode();
     }
 
     @Override

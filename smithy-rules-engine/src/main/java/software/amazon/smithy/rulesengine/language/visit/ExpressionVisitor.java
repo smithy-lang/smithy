@@ -16,32 +16,37 @@
 package software.amazon.smithy.rulesengine.language.visit;
 
 import java.util.List;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Ref;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Reference;
 import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
 import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * Expression visitor pattern.
+ *
+ * @param <R> Return type of the visitor.
+ */
 @SmithyUnstableApi
-public interface ExprVisitor<R> {
+public interface ExpressionVisitor<R> {
     R visitLiteral(Literal literal);
 
-    R visitRef(Ref ref);
+    R visitRef(Reference reference);
 
     R visitGetAttr(GetAttr getAttr);
 
-    R visitIsSet(Expr fn);
+    R visitIsSet(Expression fn);
 
-    R visitNot(Expr not);
+    R visitNot(Expression not);
 
-    R visitBoolEquals(Expr left, Expr right);
+    R visitBoolEquals(Expression left, Expression right);
 
-    R visitStringEquals(Expr left, Expr right);
+    R visitStringEquals(Expression left, Expression right);
 
-    R visitLibraryFunction(FunctionDefinition fn, List<Expr> args);
+    R visitLibraryFunction(FunctionDefinition fn, List<Expression> args);
 
-    abstract class Default<R> implements ExprVisitor<R> {
+    abstract class Default<R> implements ExpressionVisitor<R> {
         public abstract R getDefault();
 
         @Override
@@ -50,7 +55,7 @@ public interface ExprVisitor<R> {
         }
 
         @Override
-        public R visitRef(Ref ref) {
+        public R visitRef(Reference reference) {
             return getDefault();
         }
 
@@ -59,27 +64,27 @@ public interface ExprVisitor<R> {
         }
 
         @Override
-        public R visitIsSet(Expr fn) {
+        public R visitIsSet(Expression fn) {
             return getDefault();
         }
 
         @Override
-        public R visitNot(Expr not) {
+        public R visitNot(Expression not) {
             return getDefault();
         }
 
         @Override
-        public R visitBoolEquals(Expr left, Expr right) {
+        public R visitBoolEquals(Expression left, Expression right) {
             return getDefault();
         }
 
         @Override
-        public R visitStringEquals(Expr left, Expr right) {
+        public R visitStringEquals(Expression left, Expression right) {
             return getDefault();
         }
 
         @Override
-        public R visitLibraryFunction(FunctionDefinition fn, List<Expr> args) {
+        public R visitLibraryFunction(FunctionDefinition fn, List<Expression> args) {
             return getDefault();
         }
     }

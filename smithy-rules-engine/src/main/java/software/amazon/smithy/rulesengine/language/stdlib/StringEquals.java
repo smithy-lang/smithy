@@ -21,59 +21,68 @@ import software.amazon.smithy.rulesengine.language.error.InnerParseError;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.Value;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Fn;
-import software.amazon.smithy.rulesengine.language.syntax.fn.FnNode;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.fn.Function;
 import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
+import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionNode;
 import software.amazon.smithy.rulesengine.language.syntax.fn.LibraryFunction;
-import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
+import software.amazon.smithy.rulesengine.language.visit.ExpressionVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * A rule-set function for comparing strings for equality.
+ */
 @SmithyUnstableApi
-public final class StringEquals extends Fn {
+public final class StringEquals extends Function {
     public static final String ID = "stringEquals";
-    private static final Defn DEFN = new Defn();
+    private static final Definition DEFINITION = new Definition();
 
-    public StringEquals(FnNode fnNode) {
-        super(fnNode);
+    public StringEquals(FunctionNode functionNode) {
+        super(functionNode);
     }
 
-    public static Fn ofExprs(Expr left, Expr right) {
-        return LibraryFunction.ofExprs(DEFN, left, right);
+    /**
+     * Constructs a function that compare the left and right expressions for string equality.
+     *
+     * @param left  the left expression.
+     * @param right the right expression.
+     * @return a function instance representing the StringEquals comparison.
+     */
+    public static Function ofExpressions(Expression left, Expression right) {
+        return LibraryFunction.ofExpressions(DEFINITION, left, right);
     }
 
     @Override
-    public <R> R accept(ExprVisitor<R> visitor) {
-        return visitor.visitStringEquals(fnNode.getArgv().get(0), fnNode.getArgv().get(1));
+    public <R> R accept(ExpressionVisitor<R> visitor) {
+        return visitor.visitStringEquals(functionNode.getArguments().get(0), functionNode.getArguments().get(1));
     }
 
     @Override
-    protected Type typecheckLocal(Scope<Type> scope) throws InnerParseError {
-        LibraryFunction.checkTypeSignature(DEFN.arguments(), fnNode.getArgv(), scope);
-        return DEFN.returnType();
+    protected Type typeCheckLocal(Scope<Type> scope) throws InnerParseError {
+        LibraryFunction.checkTypeSignature(DEFINITION.getArguments(), functionNode.getArguments(), scope);
+        return DEFINITION.getReturnType();
     }
 
-    private static class Defn extends FunctionDefinition {
+    private static class Definition extends FunctionDefinition {
         public static final String ID = StringEquals.ID;
 
-
         @Override
-        public String id() {
+        public String getId() {
             return ID;
         }
 
         @Override
-        public List<Type> arguments() {
-            return Arrays.asList(Type.str(), Type.str());
+        public List<Type> getArguments() {
+            return Arrays.asList(Type.string(), Type.string());
         }
 
         @Override
-        public Type returnType() {
+        public Type getReturnType() {
             return Type.bool();
         }
 
         @Override
-        public Value eval(List<Value> arguments) {
+        public Value evaluate(List<Value> arguments) {
             return Value.bool(arguments.get(0).expectString().equals(arguments.get(1).expectString()));
         }
     }

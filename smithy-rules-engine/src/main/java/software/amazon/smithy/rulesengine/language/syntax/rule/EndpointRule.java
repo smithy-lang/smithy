@@ -15,7 +15,7 @@
 
 package software.amazon.smithy.rulesengine.language.syntax.rule;
 
-import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
+import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
 
 import java.util.Objects;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -26,6 +26,9 @@ import software.amazon.smithy.rulesengine.language.util.StringUtils;
 import software.amazon.smithy.rulesengine.language.visit.RuleValueVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * A rule-set rule that specifies a resolved endpoint.
+ */
 @SmithyUnstableApi
 public final class EndpointRule extends Rule {
     private final Endpoint endpoint;
@@ -42,7 +45,7 @@ public final class EndpointRule extends Rule {
 
     @Override
     protected Type typecheckValue(Scope<Type> scope) {
-        return ctx("while typechecking the endpoint", endpoint, () -> endpoint.typecheck(scope));
+        return context("while typechecking the endpoint", endpoint, () -> endpoint.typeCheck(scope));
     }
 
     @Override
@@ -76,6 +79,11 @@ public final class EndpointRule extends Rule {
                + StringUtils.indent(endpoint.toString(), 2);
     }
 
+    /**
+     * Retrieves the resolved endpoint description.
+     *
+     * @return the endpoint.
+     */
     public Endpoint getEndpoint() {
         return endpoint;
     }

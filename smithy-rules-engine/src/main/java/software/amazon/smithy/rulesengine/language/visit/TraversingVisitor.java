@@ -18,15 +18,27 @@ package software.amazon.smithy.rulesengine.language.visit;
 import java.util.List;
 import java.util.stream.Stream;
 import software.amazon.smithy.rulesengine.language.Endpoint;
-import software.amazon.smithy.rulesengine.language.EndpointRuleset;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
+import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * A visitor for traversing the rules and conditions of a rule-set.
+ *
+ * @param <R> the return type.
+ */
 @SmithyUnstableApi
 public abstract class TraversingVisitor<R> extends DefaultVisitor<Stream<R>> {
-    public Stream<R> visitRuleset(EndpointRuleset ruleset) {
+
+    /**
+     * Given an {@link EndpointRuleSet} will invoke the visitor methods for each rule.
+     *
+     * @param ruleset the endpoint rule-set to traverse.
+     * @return a stream of values.
+     */
+    public Stream<R> visitRuleset(EndpointRuleSet ruleset) {
         return ruleset.getRules()
                 .stream()
                 .flatMap(this::handleRule);
@@ -48,7 +60,7 @@ public abstract class TraversingVisitor<R> extends DefaultVisitor<Stream<R>> {
     }
 
     @Override
-    public Stream<R> visitErrorRule(Expr error) {
+    public Stream<R> visitErrorRule(Expression error) {
         return error.accept(this);
     }
 
@@ -57,6 +69,12 @@ public abstract class TraversingVisitor<R> extends DefaultVisitor<Stream<R>> {
         return visitEndpoint(endpoint);
     }
 
+    /**
+     * {@link Endpoint} visitor method.
+     *
+     * @param endpoint the endpoint to visit.
+     * @return a stream of values.
+     */
     public Stream<R> visitEndpoint(Endpoint endpoint) {
         return Stream.concat(
                 endpoint.getUrl()
@@ -68,6 +86,12 @@ public abstract class TraversingVisitor<R> extends DefaultVisitor<Stream<R>> {
         );
     }
 
+    /**
+     * {@link Endpoint} visitor method.
+     *
+     * @param conditions the conditions to visit.
+     * @return a stream of values.
+     */
     public Stream<R> visitConditions(List<Condition> conditions) {
         return conditions.stream().flatMap(c -> c.getFn().accept(this));
     }

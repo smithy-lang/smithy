@@ -17,6 +17,10 @@ package software.amazon.smithy.rulesengine;
 
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * An interface that describe a type that can convert itself into itself.
+ * @param <T> the type.
+ */
 @SmithyUnstableApi
 public interface IntoSelf<T extends IntoSelf<T>> extends Into<T> {
     @Override

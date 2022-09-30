@@ -15,7 +15,7 @@
 
 package software.amazon.smithy.rulesengine.language.syntax.rule;
 
-import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
+import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
 import static software.amazon.smithy.rulesengine.language.util.StringUtils.indent;
 
 import java.util.ArrayList;
@@ -36,15 +36,15 @@ import software.amazon.smithy.rulesengine.Into;
 import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.eval.Typecheck;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
+import software.amazon.smithy.rulesengine.language.eval.TypeCheck;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
-import software.amazon.smithy.rulesengine.language.util.SourceLocationHelpers;
+import software.amazon.smithy.rulesengine.language.util.SourceLocationUtils;
 import software.amazon.smithy.rulesengine.language.visit.RuleValueVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
-public abstract class Rule implements Typecheck, ToNode, FromSourceLocation {
+public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
     public static final String DOCUMENTATION = "documentation";
     public static final String ENDPOINT = "endpoint";
     public static final String ERROR = "error";
@@ -112,14 +112,14 @@ public abstract class Rule implements Typecheck, ToNode, FromSourceLocation {
     }
 
     @Override
-    public Type typecheck(Scope<Type> scope) {
+    public Type typeCheck(Scope<Type> scope) {
         // ensure that we don't leak scope
         return scope.inScope(() -> {
             for (Condition condition : this.conditions) {
-                ctx(String.format("while typechecking %s", condition.getFn()), condition,
-                        () -> condition.typecheck(scope));
+                context(String.format("while typechecking %s", condition.getFn()), condition,
+                        () -> condition.typeCheck(scope));
             }
-            return ctx(String.format("while typechecking%s", this
+            return context(String.format("while typechecking%s", this
                             .getDocumentation()
                             .map(doc -> String.format(" `%s`", doc))
                             .orElse("")),
@@ -214,7 +214,7 @@ public abstract class Rule implements Typecheck, ToNode, FromSourceLocation {
         }
 
         public Rule error(Node error) {
-            return this.onBuild.apply(new ErrorRule(this, Expr.fromNode(error)));
+            return this.onBuild.apply(new ErrorRule(this, Expression.fromNode(error)));
         }
 
         public Rule error(String error) {
@@ -244,7 +244,7 @@ public abstract class Rule implements Typecheck, ToNode, FromSourceLocation {
          */
         @SafeVarargs
         public final Builder errorOrElse(String error, Into<Condition>... condition) {
-            Builder next = new Builder(SourceLocationHelpers.javaLocation());
+            Builder next = new Builder(SourceLocationUtils.javaLocation());
             next.onBuild = (Rule r) -> this.treeRule(
                     Rule.builder().conditions(condition).error(error),
                     r
@@ -264,7 +264,7 @@ public abstract class Rule implements Typecheck, ToNode, FromSourceLocation {
          * @return a new builder to attach subsequent rules to
          */
         public Builder validateOrElse(Into<Condition> condition, String error) {
-            Builder next = new Builder(SourceLocationHelpers.javaLocation());
+            Builder next = new Builder(SourceLocationUtils.javaLocation());
             next.onBuild = (Rule r) -> this.treeRule(
                     Rule.builder().conditions(condition).treeRule(r),
                     Rule.builder().error(error)
@@ -284,7 +284,7 @@ public abstract class Rule implements Typecheck, ToNode, FromSourceLocation {
          * @return new builder to attach subsequent rules to
          */
         public Builder validateOrElse(String error, Into<Condition>... condition) {
-            Builder next = new Builder(SourceLocationHelpers.javaLocation());
+            Builder next = new Builder(SourceLocationUtils.javaLocation());
             next.onBuild = (Rule r) -> this.treeRule(
                     Rule.builder().conditions(condition).treeRule(r),
                     Rule.builder().error(error)

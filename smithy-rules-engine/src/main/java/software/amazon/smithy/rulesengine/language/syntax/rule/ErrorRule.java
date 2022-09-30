@@ -15,22 +15,25 @@
 
 package software.amazon.smithy.rulesengine.language.syntax.rule;
 
-import static software.amazon.smithy.rulesengine.language.error.RuleError.ctx;
+import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
 
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
 import software.amazon.smithy.rulesengine.language.util.StringUtils;
 import software.amazon.smithy.rulesengine.language.visit.RuleValueVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * A rule-set rule that is used to indicate an error in evaluation.
+ */
 @SmithyUnstableApi
 public final class ErrorRule extends Rule {
-    private final Expr error;
+    private final Expression error;
 
-    public ErrorRule(Rule.Builder builder, Expr error) {
+    public ErrorRule(Rule.Builder builder, Expression error) {
         super(builder);
         this.error = error;
     }
@@ -42,7 +45,7 @@ public final class ErrorRule extends Rule {
 
     @Override
     protected Type typecheckValue(Scope<Type> scope) {
-        return ctx("while typechecking the error", error, () -> error.typecheck(scope).expectString());
+        return context("while typechecking the error", error, () -> error.typeCheck(scope).expectString());
     }
 
     @Override
@@ -63,7 +66,7 @@ public final class ErrorRule extends Rule {
                + StringUtils.indent(String.format("error(%s)", error), 2);
     }
 
-    public Expr getError() {
+    public Expression getError() {
         return error;
     }
 }

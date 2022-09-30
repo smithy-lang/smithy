@@ -17,11 +17,11 @@ package software.amazon.smithy.rulesengine.language.error;
 
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.rulesengine.language.util.SourceLocationHelpers;
+import software.amazon.smithy.rulesengine.language.util.SourceLocationUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
- * Exception thrown when the ruleset is invalid.
+ * Exception thrown when a rule-set is invalid.
  */
 @SmithyUnstableApi
 public final class InvalidRulesException extends RuntimeException implements FromSourceLocation {
@@ -41,7 +41,7 @@ public final class InvalidRulesException extends RuntimeException implements Fro
         if (sourceLocation == SourceLocation.NONE) {
             return message;
         } else {
-            String prettyLocation = SourceLocationHelpers.stackTraceForm(sourceLocation);
+            String prettyLocation = SourceLocationUtils.stackTraceForm(sourceLocation);
             return message.contains(prettyLocation) ? message : message + " (" + prettyLocation + ")";
         }
     }

@@ -13,11 +13,15 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.rulesengine.language.syntax.parameters;
+package software.amazon.smithy.rulesengine.language.eval;
 
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/*
+ * TypeCheck provides an interface for determining whether the given types within scope
+ * satisfy the associated constraints.
+ */
 @SmithyUnstableApi
-public interface ToParameterReference {
-    ParameterReference toParameterReference();
+public interface TypeCheck {
+    Type typeCheck(Scope<Type> scope);
 }

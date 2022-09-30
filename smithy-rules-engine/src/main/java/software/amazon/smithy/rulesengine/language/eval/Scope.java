@@ -26,9 +26,14 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Ref;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Reference;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * Scope is a stack for tracking facts for named values of type T.
+ *
+ * @param <T> The type of values in scope.
+ */
 @SmithyUnstableApi
 public final class Scope<T> {
     private final Deque<ScopeLayer<T>> scope;
@@ -39,9 +44,9 @@ public final class Scope<T> {
     }
 
     public static Scope<Value> fromNode(Node node) {
-        ObjectNode on = node.expectObjectNode("scope must be loaded from object node");
+        ObjectNode objectNode = node.expectObjectNode("scope must be loaded from object node");
         Scope<Value> scope = new Scope<>();
-        on.getMembers().forEach((member, value) -> scope.insert(member.getValue(), Value.fromNode(value)));
+        objectNode.getMembers().forEach((member, value) -> scope.insert(member.getValue(), Value.fromNode(value)));
         return scope;
     }
 
@@ -61,7 +66,7 @@ public final class Scope<T> {
         this.scope.getFirst().getTypes().put(name, value);
     }
 
-    public void setNonNull(Ref name) {
+    public void setNonNull(Reference name) {
         this.scope.getFirst().getNonNullRefs().add(name);
     }
 
@@ -83,8 +88,8 @@ public final class Scope<T> {
         return toPrint.toString();
     }
 
-    public boolean isNonNull(Ref ref) {
-        return scope.stream().anyMatch(s -> s.getNonNullRefs().contains(ref));
+    public boolean isNonNull(Reference reference) {
+        return scope.stream().anyMatch(s -> s.getNonNullRefs().contains(reference));
     }
 
     public T expectValue(Identifier name) throws InnerParseError {

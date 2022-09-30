@@ -23,13 +23,16 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.rulesengine.language.Endpoint;
-import software.amazon.smithy.rulesengine.language.EndpointRuleset;
+import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
 import software.amazon.smithy.rulesengine.language.visit.TraversingVisitor;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * Validator which verifies an endpoint with an authSchemes property conforms to a strict schema.
+ */
 @SmithyUnstableApi
 public final class AuthSchemesValidator {
     private static final Identifier DISABLE_DOUBLE_ENCODING = Identifier.of("disableDoubleEncoding");
@@ -40,7 +43,7 @@ public final class AuthSchemesValidator {
     private AuthSchemesValidator() {
     }
 
-    public static Stream<ValidationError> validateRuleset(EndpointRuleset ruleset) {
+    public static Stream<ValidationError> validateRuleset(EndpointRuleSet ruleset) {
         return new Validator().visitRuleset(ruleset);
     }
 
@@ -60,7 +63,7 @@ public final class AuthSchemesValidator {
                         authSchemes.getSourceLocation()));
             } else {
                 return authSchemeList.get().stream().flatMap(authScheme -> {
-                    Optional<Map<Identifier, Literal>> authSchemeMap = authScheme.asObject();
+                    Optional<Map<Identifier, Literal>> authSchemeMap = authScheme.asRecord();
                     if (!authSchemeMap.isPresent()) {
                         return Stream.of(new ValidationError(ValidationErrorType.INVALID_AUTH_SCHEMES,
                                 String.format("Expected authSchemes to be a list of objects, but found: %s",

@@ -17,38 +17,45 @@ package software.amazon.smithy.rulesengine.language.syntax.fn;
 
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expr;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Ref;
-import software.amazon.smithy.rulesengine.language.visit.ExprVisitor;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.expr.Reference;
+import software.amazon.smithy.rulesengine.language.visit.ExpressionVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * A rule-set function for determining whether a reference parameter is set.
+ */
 @SmithyUnstableApi
-public final class IsSet extends SingleArgFn<Type.Option> {
+public final class IsSet extends SingleArgFunction<Type.Option> {
     public static final String ID = "isSet";
 
-
-    public IsSet(FnNode fnNode) {
-        super(fnNode, Type.optional(new Type.Any()));
+    public IsSet(FunctionNode functionNode) {
+        super(functionNode, Type.optional(new Type.Any()));
     }
 
-    public static IsSet ofExpr(Expr expr) {
-        return new IsSet(FnNode.ofExprs(ID, expr));
+    /**
+     * Returns a new IsSet function taking the given expression as an argument.
+     *
+     * @param expression the argument to IsSet.
+     * @return new IsSet instance.
+     */
+    public static IsSet ofExpression(Expression expression) {
+        return new IsSet(FunctionNode.ofExpressions(ID, expression));
     }
-
 
     @Override
-    protected Type typecheckArg(Scope<Type> scope, Type.Option arg) {
-        Expr target = target();
+    protected Type typeCheckArgument(Scope<Type> scope, Type.Option arg) {
+        Expression target = getTarget();
         // Insert the non-null fact, but only for refs
-        target.accept(new ExprVisitor.Default<Void>() {
+        target.accept(new ExpressionVisitor.Default<Void>() {
             @Override
             public Void getDefault() {
                 return null;
             }
 
             @Override
-            public Void visitRef(Ref ref) {
-                scope.setNonNull(ref);
+            public Void visitRef(Reference reference) {
+                scope.setNonNull(reference);
                 return null;
             }
         });
@@ -56,7 +63,7 @@ public final class IsSet extends SingleArgFn<Type.Option> {
     }
 
     @Override
-    public <R> R accept(ExprVisitor<R> visitor) {
-        return visitor.visitIsSet(target());
+    public <R> R accept(ExpressionVisitor<R> visitor) {
+        return visitor.visitIsSet(getTarget());
     }
 }
