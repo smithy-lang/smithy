@@ -280,6 +280,51 @@ apply TestNoPayload @httpRequestTests([
     }
 ])
 
+@http(uri: "/no_payload_post", method: "POST")
+operation TestNoPayloadPost {
+    input: TestNoPayloadInputOutput,
+    output: TestNoPayloadInputOutput
+}
+
+apply TestNoPayloadPost @httpRequestTests([
+    {
+        id: "RestJsonHttpWithNoModeledBodyPost",
+        documentation: "Serializes a POST request with no modeled body",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/no_payload_post",
+        body: "",
+        headers: {
+            "Content-Length": "0"
+        },
+        forbidHeaders: [
+            "Content-Type"
+        ],
+        params: {}
+    }
+])
+
+apply TestNoPayloadPost @httpRequestTests([
+    {
+        id: "RestJsonHttpWithHeaderMemberNoModeledBodyPost",
+        documentation: "Serializes a POST request with header member but no modeled body",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/no_payload_post",
+        body: "",
+        headers: {
+            "X-Amz-Test-Id": "t-12345",
+            "Content-Length": "0"
+        },
+        forbidHeaders: [
+            "Content-Type"
+        ],
+        params: {
+            testId: "t-12345"
+        }
+    }
+])
+
 structure TestNoPayloadInputOutput {
     @httpHeader("X-Amz-Test-Id")
     testId: String,

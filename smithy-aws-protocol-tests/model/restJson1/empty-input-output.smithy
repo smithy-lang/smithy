@@ -27,7 +27,13 @@ apply NoInputAndNoOutput @httpRequestTests([
         protocol: restJson1,
         method: "POST",
         uri: "/NoInputAndNoOutput",
-        body: ""
+        body: "",
+        headers: {
+            "Content-Length": "0"
+        },
+        forbidHeaders: [
+            "Content-Type"
+        ],
     },
     {
         id: "RestJsonNoInputAllowsAccept",
@@ -39,8 +45,12 @@ apply NoInputAndNoOutput @httpRequestTests([
         uri: "/NoInputAndNoOutput",
         body: "",
         headers: {
-            "Accept": "application/json"
+            "Accept": "application/json",
+            "Content-Length": "0"
         },
+        forbidHeaders: [
+            "Content-Type"
+        ],
         appliesTo: "server",
     }
 ])
@@ -54,8 +64,35 @@ apply NoInputAndNoOutput @httpResponseTests([
             header.""",
        protocol: restJson1,
        code: 200,
-       body: ""
+       body: "",
+       headers: {
+           "Content-Length": "0"
+       },
+       forbidHeaders: [
+           "Content-Type"
+       ],
    }
+])
+
+@http(uri: "/NoInputAndNoOutputGet", method: "GET")
+operation NoInputAndNoOutputGet {}
+
+apply NoInputAndNoOutputGet @httpRequestTests([
+    {
+        id: "RestJsonNoInputAndNoOutputGet",
+        documentation: """
+                No input serializes no payload. When clients do not need to
+                serialize any data in the payload, they should omit a payload
+                altogether.""",
+        protocol: restJson1,
+        method: "GET",
+        uri: "/NoInputAndNoOutputGet",
+        body: "",
+        forbidHeaders: [
+            "Content-Length",
+            "Content-Type"
+        ],
+    },
 ])
 
 /// This test is similar to NoInputAndNoOutput, but uses explicit Unit types.
@@ -75,7 +112,13 @@ apply UnitInputAndOutput @httpRequestTests([
         protocol: restJson1,
         method: "POST",
         uri: "/UnitInputAndOutput",
-        body: ""
+        body: "",
+        headers: {
+            "Content-Length": "0"
+        },
+        forbidHeaders: [
+            "Content-Type"
+        ],
     },
     {
         id: "RestJsonUnitInputAllowsAccept",
@@ -87,8 +130,12 @@ apply UnitInputAndOutput @httpRequestTests([
         uri: "/UnitInputAndOutput",
         body: "",
         headers: {
-            "Accept": "application/json"
+            "Accept": "application/json",
+            "Content-Length": "0"
         },
+        forbidHeaders: [
+            "Content-Type"
+        ],
         appliesTo: "server",
     }
 ])
@@ -126,6 +173,12 @@ apply NoInputAndOutput @httpRequestTests([
         method: "POST",
         uri: "/NoInputAndOutputOutput",
         body: "",
+        headers: {
+            "Content-Length": "0"
+        },
+        forbidHeaders: [
+            "Content-Type"
+        ],
     },
     {
         id: "RestJsonNoInputAndOutputAllowsAccept",
@@ -137,8 +190,12 @@ apply NoInputAndOutput @httpRequestTests([
         uri: "/NoInputAndOutputOutput",
         body: "",
         headers: {
-            "Accept": "application/json"
+            "Accept": "application/json",
+            "Content-Length": "0"
         },
+        forbidHeaders: [
+            "Content-Type"
+        ],
         appliesTo: "server"
     }
 ])
@@ -194,6 +251,12 @@ apply EmptyInputAndEmptyOutput @httpRequestTests([
         method: "POST",
         uri: "/EmptyInputAndEmptyOutput",
         body: "",
+        headers: {
+            "Content-Length": "0"
+        },
+        forbidHeaders: [
+            "Content-Type"
+        ],
     },
     {
         id: "RestJsonEmptyInputAndEmptyOutputWithJson",
@@ -236,6 +299,31 @@ apply EmptyInputAndEmptyOutput @httpResponseTests([
         code: 200,
         body: "",
         appliesTo: "client",
+    },
+])
+
+
+@http(uri: "/EmptyInputAndEmptyOutputGet", method: "GET")
+operation EmptyInputAndEmptyOutputGet {
+    input: EmptyInputAndEmptyOutputInput,
+    output: EmptyInputAndEmptyOutputOutput
+}
+
+apply EmptyInputAndEmptyOutputGet @httpRequestTests([
+    {
+        id: "RestJsonEmptyInputAndEmptyOutputGet",
+        documentation: """
+                Clients should not serialize a JSON payload when no parameters
+                are given that are sent in the body. A service will tolerate
+                clients that omit a payload or that send a JSON object.""",
+        protocol: restJson1,
+        method: "GET",
+        uri: "/EmptyInputAndEmptyOutputGet",
+        body: "",
+        forbidHeaders: [
+            "Content-Length",
+            "Content-Type"
+        ],
     },
 ])
 

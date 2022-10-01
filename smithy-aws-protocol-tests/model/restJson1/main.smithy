@@ -19,8 +19,10 @@ service RestJson {
     operations: [
         // Basic input and output tests
         NoInputAndNoOutput,
+        NoInputAndNoOutputGet,
         NoInputAndOutput,
         EmptyInputAndEmptyOutput,
+        EmptyInputAndEmptyOutputGet,
         UnitInputAndOutput,
 
         // @httpHeader tests
@@ -136,5 +138,6 @@ service RestJson {
         TestPayloadStructure,
         TestPayloadBlob,
         TestNoPayload,
+        TestNoPayloadPost,
     ]
 }
