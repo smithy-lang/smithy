@@ -102,6 +102,11 @@ public class CodegenDirectorTest {
         }
 
         @Override
+        public void generateIntEnumShape(GenerateIntEnumDirective<TestContext, TestSettings> directive) {
+            generatedShapes.add(directive.shape().getId());
+        }
+
+        @Override
         public void customizeBeforeIntegrations(CustomizeDirective<TestContext, TestSettings> directive) {}
 
         @Override
@@ -169,6 +174,7 @@ public class CodegenDirectorTest {
                 ShapeId.from("smithy.example#ListFooInput"),
                 ShapeId.from("smithy.example#ListFooOutput"),
                 ShapeId.from("smithy.example#Status"),
+                ShapeId.from("smithy.example#FaceCard"),
                 ShapeId.from("smithy.example#Instruction"),
                 ShapeId.from("smithy.api#Unit")
         ));
@@ -209,6 +215,7 @@ public class CodegenDirectorTest {
                 ShapeId.from("smithy.example#ListFooInput"),
                 ShapeId.from("smithy.example#ListFooOutput"),
                 ShapeId.from("smithy.example#Status"),
+                ShapeId.from("smithy.example#FaceCard"),
                 ShapeId.from("smithy.example#Instruction"),
                 ShapeId.from("smithy.api#Unit")
         ));

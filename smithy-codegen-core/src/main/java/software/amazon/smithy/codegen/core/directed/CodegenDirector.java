@@ -35,6 +35,7 @@ import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.shapes.EnumShape;
+import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -470,6 +471,13 @@ public final class CodegenDirector<
         public Void enumShape(EnumShape shape) {
             LOGGER.finest(() -> "Generating enum shape" + shape.getId());
             directedCodegen.generateEnumShape(new GenerateEnumDirective<>(context, serviceShape, shape));
+            return null;
+        }
+
+        @Override
+        public Void intEnumShape(IntEnumShape shape) {
+            LOGGER.finest(() -> "Generating intEnum shape" + shape.getId());
+            directedCodegen.generateIntEnumShape(new GenerateIntEnumDirective<>(context, serviceShape, shape));
             return null;
         }
     }
