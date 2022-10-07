@@ -137,6 +137,7 @@ public class IntegrationTest {
         private final Path testCase;
 
         public ValidationTestCase(Path path, Path testCase) {
+            System.out.println("Loading path: " + path);
             this.path = path;
             this.testCase = testCase;
         }
@@ -144,7 +145,7 @@ public class IntegrationTest {
         Node contents() {
             try {
                 return Node.parseJsonWithComments(IoUtils.toUtf8String(new FileInputStream(path.toFile())), path.subpath(path.getNameCount() - 2, path.getNameCount())
-                        .toString());
+                        .toString().replace("\\", "/"));
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
