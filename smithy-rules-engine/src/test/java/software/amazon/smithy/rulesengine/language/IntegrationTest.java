@@ -46,6 +46,7 @@ import software.amazon.smithy.rulesengine.testutil.TestDiscovery;
 import software.amazon.smithy.rulesengine.validators.StandaloneRulesetValidator;
 import software.amazon.smithy.rulesengine.validators.ValidationError;
 import software.amazon.smithy.utils.IoUtils;
+import software.amazon.smithy.utils.StringUtils;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class IntegrationTest {
@@ -127,8 +128,8 @@ public class IntegrationTest {
         });
         //validationTestCase.overrideComments(error.toString());
         assertEquals(
-                validationTestCase.comments().replaceAll("\\R", " ").trim(),
-                error.toString().replaceAll("\\R", " ").trim());
+                validationTestCase.comments().replaceAll("\\s+", " ").trim(),
+                error.toString().replaceAll("\\s+", " ").trim());
     }
 
     public static final class ValidationTestCase {
