@@ -126,7 +126,9 @@ public class IntegrationTest {
             ruleset.typeCheck(new Scope<>());
         });
         //validationTestCase.overrideComments(error.toString());
-        assertEquals(validationTestCase.comments().trim(), error.toString().trim());
+        assertEquals(
+                validationTestCase.comments().replaceAll("\\R", " ").trim(),
+                error.toString().replaceAll("\\R", " ").trim());
     }
 
     public static final class ValidationTestCase {
