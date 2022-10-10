@@ -646,6 +646,25 @@ apply XmlTimestamps @httpRequestTests([
         }
     },
     {
+        id: "XmlTimestampsWithDateTimeOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of date-time on the target shape works like normal timestamps",
+        protocol: restXml,
+        method: "POST",
+        uri: "/XmlTimestamps",
+        body: """
+              <XmlTimestampsInputOutput>
+                  <dateTimeOnTarget>2014-04-29T18:30:38Z</dateTimeOnTarget>
+              </XmlTimestampsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            dateTimeOnTarget: 1398796238
+        }
+    },
+    {
         id: "XmlTimestampsWithEpochSecondsFormat",
         documentation: "Ensures that the timestampFormat of epoch-seconds works",
         protocol: restXml,
@@ -665,6 +684,25 @@ apply XmlTimestamps @httpRequestTests([
         }
     },
     {
+        id: "XmlTimestampsWithEpochSecondsOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of epoch-seconds on the target shape works",
+        protocol: restXml,
+        method: "POST",
+        uri: "/XmlTimestamps",
+        body: """
+              <XmlTimestampsInputOutput>
+                  <epochSecondsOnTarget>1398796238</epochSecondsOnTarget>
+              </XmlTimestampsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            epochSecondsOnTarget: 1398796238
+        }
+    },
+    {
         id: "XmlTimestampsWithHttpDateFormat",
         documentation: "Ensures that the timestampFormat of http-date works",
         protocol: restXml,
@@ -681,6 +719,25 @@ apply XmlTimestamps @httpRequestTests([
         },
         params: {
             httpDate: 1398796238
+        }
+    },
+    {
+        id: "XmlTimestampsWithHttpDateOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of http-date on the target shape works",
+        protocol: restXml,
+        method: "POST",
+        uri: "/XmlTimestamps",
+        body: """
+              <XmlTimestampsInputOutput>
+                  <httpDateOnTarget>Tue, 29 Apr 2014 18:30:38 GMT</httpDateOnTarget>
+              </XmlTimestampsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            httpDateOnTarget: 1398796238
         }
     },
 ])
@@ -723,6 +780,24 @@ apply XmlTimestamps @httpResponseTests([
         }
     },
     {
+        id: "XmlTimestampsWithDateTimeOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of date-time on the target shape works like normal timestamps",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <XmlTimestampsInputOutput>
+                  <dateTimeOnTarget>2014-04-29T18:30:38Z</dateTimeOnTarget>
+              </XmlTimestampsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            dateTimeOnTarget: 1398796238
+        }
+    },
+    {
         id: "XmlTimestampsWithEpochSecondsFormat",
         documentation: "Ensures that the timestampFormat of epoch-seconds works",
         protocol: restXml,
@@ -738,6 +813,24 @@ apply XmlTimestamps @httpResponseTests([
         },
         params: {
             epochSeconds: 1398796238
+        }
+    },
+    {
+        id: "XmlTimestampsWithEpochSecondsOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of epoch-seconds on the target shape works",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <XmlTimestampsInputOutput>
+                  <epochSecondsOnTarget>1398796238</epochSecondsOnTarget>
+              </XmlTimestampsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            epochSecondsOnTarget: 1398796238
         }
     },
     {
@@ -758,7 +851,34 @@ apply XmlTimestamps @httpResponseTests([
             httpDate: 1398796238
         }
     },
+    {
+        id: "XmlTimestampsWithHttpDateOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of http-date on the target shape works",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <XmlTimestampsInputOutput>
+                  <httpDateOnTarget>Tue, 29 Apr 2014 18:30:38 GMT</httpDateOnTarget>
+              </XmlTimestampsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            httpDateOnTarget: 1398796238
+        }
+    },
 ])
+
+@timestampFormat("date-time")
+timestamp DateTimeTimestamp
+
+@timestampFormat("epoch-seconds")
+timestamp EpochSecondsTimestamp
+
+@timestampFormat("http-date")
+timestamp HttpDateTimestamp
 
 structure XmlTimestampsInputOutput {
     normal: Timestamp,
@@ -766,11 +886,17 @@ structure XmlTimestampsInputOutput {
     @timestampFormat("date-time")
     dateTime: Timestamp,
 
+    dateTimeOnTarget: DateTimeTimestamp,
+
     @timestampFormat("epoch-seconds")
     epochSeconds: Timestamp,
 
+    epochSecondsOnTarget: EpochSecondsTimestamp,
+
     @timestampFormat("http-date")
     httpDate: Timestamp,
+
+    httpDateOnTarget: HttpDateTimestamp,
 }
 
 /// This example serializes enums as top level properties, in lists, sets, and maps.
