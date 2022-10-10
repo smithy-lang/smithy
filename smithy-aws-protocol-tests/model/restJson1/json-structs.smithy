@@ -396,6 +396,24 @@ apply JsonTimestamps @httpRequestTests([
         }
     },
     {
+        id: "RestJsonJsonTimestampsWithDateTimeOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of date-time on the target shape works like normal timestamps",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/JsonTimestamps",
+        body: """
+              {
+                  "dateTimeOnTarget": "2014-04-29T18:30:38Z"
+              }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            dateTimeOnTarget: 1398796238
+        }
+    },
+    {
         id: "RestJsonJsonTimestampsWithEpochSecondsFormat",
         documentation: "Ensures that the timestampFormat of epoch-seconds works",
         protocol: restJson1,
@@ -414,6 +432,24 @@ apply JsonTimestamps @httpRequestTests([
         }
     },
     {
+        id: "RestJsonJsonTimestampsWithEpochSecondsOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of epoch-seconds on the target shape works",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/JsonTimestamps",
+        body: """
+              {
+                  "epochSecondsOnTarget": 1398796238
+              }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            epochSecondsOnTarget: 1398796238
+        }
+    },
+    {
         id: "RestJsonJsonTimestampsWithHttpDateFormat",
         documentation: "Ensures that the timestampFormat of http-date works",
         protocol: restJson1,
@@ -429,6 +465,24 @@ apply JsonTimestamps @httpRequestTests([
         },
         params: {
             httpDate: 1398796238
+        }
+    },
+    {
+        id: "RestJsonJsonTimestampsWithHttpDateOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of http-date on the target shape works",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/JsonTimestamps",
+        body: """
+              {
+                  "httpDateOnTarget": "Tue, 29 Apr 2014 18:30:38 GMT"
+              }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            httpDateOnTarget: 1398796238
         }
     },
 ])
@@ -469,6 +523,23 @@ apply JsonTimestamps @httpResponseTests([
         }
     },
     {
+        id: "RestJsonJsonTimestampsWithDateTimeOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of date-time on the target shape works like normal timestamps",
+        protocol: restJson1,
+        code: 200,
+        body: """
+              {
+                  "dateTimeOnTarget": "2014-04-29T18:30:38Z"
+              }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            dateTimeOnTarget: 1398796238
+        }
+    },
+    {
         id: "RestJsonJsonTimestampsWithEpochSecondsFormat",
         documentation: "Ensures that the timestampFormat of epoch-seconds works",
         protocol: restJson1,
@@ -483,6 +554,23 @@ apply JsonTimestamps @httpResponseTests([
         },
         params: {
             epochSeconds: 1398796238
+        }
+    },
+    {
+        id: "RestJsonJsonTimestampsWithEpochSecondsOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of epoch-seconds on the target shape works",
+        protocol: restJson1,
+        code: 200,
+        body: """
+              {
+                  "epochSecondsOnTarget": 1398796238
+              }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            epochSecondsOnTarget: 1398796238
         }
     },
     {
@@ -502,7 +590,33 @@ apply JsonTimestamps @httpResponseTests([
             httpDate: 1398796238
         }
     },
+    {
+        id: "RestJsonJsonTimestampsWithHttpDateOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of http-date on the target shape works",
+        protocol: restJson1,
+        code: 200,
+        body: """
+              {
+                  "httpDateOnTarget": "Tue, 29 Apr 2014 18:30:38 GMT"
+              }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            httpDateOnTarget: 1398796238
+        }
+    },
 ])
+
+@timestampFormat("date-time")
+timestamp DateTimeTimestamp
+
+@timestampFormat("epoch-seconds")
+timestamp EpochSecondsTimestamp
+
+@timestampFormat("http-date")
+timestamp HttpDateTimestamp
 
 structure JsonTimestampsInputOutput {
     normal: Timestamp,
@@ -510,11 +624,17 @@ structure JsonTimestampsInputOutput {
     @timestampFormat("date-time")
     dateTime: Timestamp,
 
+    dateTimeOnTarget: DateTimeTimestamp,
+
     @timestampFormat("epoch-seconds")
     epochSeconds: Timestamp,
 
+    epochSecondsOnTarget: EpochSecondsTimestamp,
+
     @timestampFormat("http-date")
     httpDate: Timestamp,
+
+    httpDateOnTarget: HttpDateTimestamp,
 }
 
 /// This example serializes enums as top level properties, in lists, sets, and maps.
