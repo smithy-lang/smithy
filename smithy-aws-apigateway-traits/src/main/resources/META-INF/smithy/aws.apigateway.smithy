@@ -349,6 +349,8 @@ enum PassThroughBehavior {
 /// Defines the payloadFormatVersion used by authorizers
 @private
 enum PayloadFormatVersion {
+    /// Specifies 1.0 version of the format used by the authorizer
     V1_0 = "1.0"
+    /// Specifies 2.0 version of the format used by the authorizer
     V2_0 = "2.0"
 }
