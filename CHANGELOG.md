@@ -1,5 +1,18 @@
 # Smithy Changelog
 
+## 1.26.0 (2022-10-10)
+
+### Features
+
+* Add support for missing authorizer members ([#1426](https://github.com/awslabs/smithy/pull/1426))
+* Add intEnum DirectedCodegen ([#1434](https://github.com/awslabs/smithy/pull/1434))
+* Add Smithy Rules Engine (unstable) ([#1356](https://github.com/awslabs/smithy/pull/1356))
+
+### Documentation
+
+* Fix intEnum example ([#1432](https://github.com/awslabs/smithy/pull/1432))
+* Fix javadoc for CodegenDirector.simplifyModelForServiceCodegen ([#1433](https://github.com/awslabs/smithy/pull/1433))
+
 ## 1.25.2 (2022-09-28)
 
 ### Bug Fixes
