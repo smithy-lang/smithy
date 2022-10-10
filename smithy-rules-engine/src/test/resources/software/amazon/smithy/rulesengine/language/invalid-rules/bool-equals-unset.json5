@@ -1,0 +1,54 @@
+// while typechecking booleanEquals(true, UseDualStack)
+//   at invalid-rules/bool-equals-unset.json5:21
+// Unexpected type in the second argument: Expected Bool but found Option<Bool>   
+//   hint: use `assign` in a condition or `isSet(UseDualStack)` to prove that this value is non-null
+{
+  "version": "1.2",
+  "parameters": {
+    "Region": {
+      "type": "string",
+      "builtIn": "AWS::Region"
+    },
+    "UseDualStack": {
+      "type": "boolean",
+      "required": false
+    }
+  },
+  "rules": [
+    {
+      "documentation": "dualstack special case",
+      "conditions": [
+        {
+          "fn": "booleanEquals",
+          "argv": [
+            true,
+            {
+              "ref": "UseDualStack"
+            }
+          ]
+        }
+      ],
+      "endpoint": {
+        "url": "http://dualstack.localhost:8080"
+      },
+      "type": "endpoint"
+    },
+    {
+      "documentation": "base rule",
+      "conditions": [
+        {
+          "fn": "isSet",
+          "argv": [
+            {
+              "ref": "Region"
+            }
+          ]
+        }
+      ],
+      "endpoint": {
+        "url": "https://{Region}.someservice.amazonaws.com"
+      },
+      "type": "endpoint"
+    }
+  ]
+}

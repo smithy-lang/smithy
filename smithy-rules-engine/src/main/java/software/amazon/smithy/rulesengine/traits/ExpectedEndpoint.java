@@ -18,7 +18,10 @@ package software.amazon.smithy.rulesengine.traits;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import software.amazon.smithy.model.FromSourceLocation;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.rulesengine.language.util.StringUtils;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -28,12 +31,14 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * An endpoint test-case expectation.
  */
 @SmithyUnstableApi
-public final class ExpectedEndpoint implements ToSmithyBuilder<ExpectedEndpoint> {
+public final class ExpectedEndpoint implements FromSourceLocation, ToSmithyBuilder<ExpectedEndpoint> {
+    private final SourceLocation sourceLocation;
     private final String url;
     private final Map<String, List<String>> headers;
     private final Map<String, Node> properties;
 
     public ExpectedEndpoint(Builder builder) {
+        this.sourceLocation = builder.sourceLocation;
         this.url = SmithyBuilder.requiredState("url", builder.url);
         this.headers = builder.headers.copy();
         this.properties = builder.properties.copy();
@@ -56,8 +61,14 @@ public final class ExpectedEndpoint implements ToSmithyBuilder<ExpectedEndpoint>
     }
 
     @Override
+    public SourceLocation getSourceLocation() {
+        return sourceLocation;
+    }
+
+    @Override
     public SmithyBuilder<ExpectedEndpoint> toBuilder() {
         return builder()
+                .sourceLocation(sourceLocation)
                 .url(url)
                 .headers(headers)
                 .properties(properties);
@@ -81,12 +92,35 @@ public final class ExpectedEndpoint implements ToSmithyBuilder<ExpectedEndpoint>
                && Objects.equals(getProperties(), that.getProperties());
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("url: ").append(url).append("\n");
+        if (!headers.isEmpty()) {
+            headers.forEach(
+                    (key, value) -> {
+                        sb.append(StringUtils.indent(String.format("%s:%s", key, value), 2));
+                    });
+        }
+        if (!properties.isEmpty()) {
+            sb.append("properties:\n");
+            properties.forEach((k, v) -> sb.append(StringUtils.indent(String.format("%s: %s", k, v), 2)));
+        }
+        return sb.toString();
+    }
+
     public static final class Builder implements SmithyBuilder<ExpectedEndpoint> {
         private final BuilderRef<Map<String, List<String>>> headers = BuilderRef.forOrderedMap();
         private final BuilderRef<Map<String, Node>> properties = BuilderRef.forOrderedMap();
+        private SourceLocation sourceLocation = SourceLocation.none();
         private String url;
 
         private Builder() {
+        }
+
+        public Builder sourceLocation(FromSourceLocation fromSourceLocation) {
+            this.sourceLocation = fromSourceLocation.getSourceLocation();
+            return this;
         }
 
         public Builder url(String url) {

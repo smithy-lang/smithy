@@ -1,0 +1,27 @@
+// while typechecking
+//   at invalid-rules/cant-template-bool.json5:19
+// while typechecking the endpoint
+//   at invalid-rules/cant-template-bool.json5:21
+// while checking the URL
+// while typechecking "{enabled}.amazonaws.com"
+// while typechecking the template `"{enabled}.amazonaws.com"`
+//   at invalid-rules/cant-template-bool.json5:22
+// Expected string but found Bool
+{
+  "version": "1.2",
+  "parameters": {
+    "enabled": {
+      "type": "Boolean",
+      "required": true
+    }
+  },
+  "rules": [
+    {
+      "conditions": [],
+      "endpoint": {
+        "url": "{enabled}.amazonaws.com"
+      },
+      "type": "endpoint"
+    }
+  ]
+}

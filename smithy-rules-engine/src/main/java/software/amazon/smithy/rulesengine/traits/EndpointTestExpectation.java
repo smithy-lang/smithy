@@ -17,6 +17,8 @@ package software.amazon.smithy.rulesengine.traits;
 
 import java.util.Objects;
 import java.util.Optional;
+import software.amazon.smithy.model.FromSourceLocation;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -25,11 +27,13 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * An endpoint test case expectation.
  */
 @SmithyUnstableApi
-public final class EndpointTestExpectation implements ToSmithyBuilder<EndpointTestExpectation> {
+public final class EndpointTestExpectation implements FromSourceLocation, ToSmithyBuilder<EndpointTestExpectation> {
+    private final SourceLocation sourceLocation;
     private final String error;
     private final ExpectedEndpoint endpoint;
 
     EndpointTestExpectation(Builder builder) {
+        this.sourceLocation = builder.sourceLocation;
         this.error = builder.error;
         this.endpoint = builder.endpoint;
     }
@@ -47,8 +51,14 @@ public final class EndpointTestExpectation implements ToSmithyBuilder<EndpointTe
     }
 
     @Override
+    public SourceLocation getSourceLocation() {
+        return sourceLocation;
+    }
+
+    @Override
     public Builder toBuilder() {
         return builder()
+                .sourceLocation(sourceLocation)
                 .endpoint(endpoint)
                 .error(error);
     }
@@ -71,10 +81,16 @@ public final class EndpointTestExpectation implements ToSmithyBuilder<EndpointTe
     }
 
     public static final class Builder implements SmithyBuilder<EndpointTestExpectation> {
+        private SourceLocation sourceLocation = SourceLocation.none();
         private String error;
         private ExpectedEndpoint endpoint;
 
         private Builder() {
+        }
+
+        public Builder sourceLocation(FromSourceLocation fromSourceLocation) {
+            this.sourceLocation = fromSourceLocation.getSourceLocation();
+            return this;
         }
 
         public Builder error(String error) {

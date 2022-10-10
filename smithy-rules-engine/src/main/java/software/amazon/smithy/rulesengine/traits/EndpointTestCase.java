@@ -18,6 +18,8 @@ package software.amazon.smithy.rulesengine.traits;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import software.amazon.smithy.model.FromSourceLocation;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -28,17 +30,19 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Describes an endpoint rule-set test case.
  */
 @SmithyUnstableApi
-public final class EndpointTestCase implements ToSmithyBuilder<EndpointTestCase> {
+public final class EndpointTestCase implements FromSourceLocation, ToSmithyBuilder<EndpointTestCase> {
+    private final SourceLocation sourceLocation;
     private final String documentation;
     private final ObjectNode params;
     private final List<EndpointTestOperationInput> operationInputs;
     private final EndpointTestExpectation expect;
 
     public EndpointTestCase(Builder builder) {
+        this.sourceLocation = builder.sourceLocation;
         this.documentation = builder.documentation;
         this.params = builder.params;
         this.operationInputs = builder.operationInputs.copy();
-        this.expect = builder.expect;
+        this.expect = SmithyBuilder.requiredState("expect", builder.expect);
     }
 
     public static Builder builder() {
@@ -62,12 +66,23 @@ public final class EndpointTestCase implements ToSmithyBuilder<EndpointTestCase>
     }
 
     @Override
+    public SourceLocation getSourceLocation() {
+        return sourceLocation;
+    }
+
+    @Override
     public Builder toBuilder() {
         return builder()
+                .sourceLocation(sourceLocation)
                 .documentation(documentation)
                 .params(params)
                 .operationInputs(operationInputs)
                 .expect(expect);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getDocumentation(), getParams(), getOperationInputs(), getExpect());
     }
 
     @Override
@@ -85,18 +100,19 @@ public final class EndpointTestCase implements ToSmithyBuilder<EndpointTestCase>
                && Objects.equals(getExpect(), that.getExpect());
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getDocumentation(), getParams(), getOperationInputs(), getExpect());
-    }
-
     public static final class Builder implements SmithyBuilder<EndpointTestCase> {
         private final BuilderRef<List<EndpointTestOperationInput>> operationInputs = BuilderRef.forList();
+        private SourceLocation sourceLocation = SourceLocation.none();
         private String documentation;
-        private ObjectNode params;
+        private ObjectNode params = ObjectNode.objectNode();
         private EndpointTestExpectation expect;
 
         private Builder() {
+        }
+
+        public Builder sourceLocation(FromSourceLocation sourceLocation) {
+            this.sourceLocation = sourceLocation.getSourceLocation();
+            return this;
         }
 
         public Builder documentation(String documentation) {

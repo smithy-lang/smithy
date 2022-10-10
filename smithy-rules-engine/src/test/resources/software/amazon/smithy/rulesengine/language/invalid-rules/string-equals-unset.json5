@@ -1,0 +1,50 @@
+// while typechecking stringEquals("local", Region)
+//   at invalid-rules/string-equals-unset.json5:17
+// Unexpected type in the second argument: Expected String but found Option<String>   
+//   hint: use `assign` in a condition or `isSet(Region)` to prove that this value is non-null
+{
+  "version": "1.2",
+  "parameters": {
+    "Region": {
+      "type": "string",
+      "builtIn": "AWS::Region"
+    }
+  },
+  "rules": [
+    {
+      "documentation": "override rule for the local pseudo region",
+      "conditions": [
+        {
+          "fn": "stringEquals",
+          "argv": [
+            "local",
+            {
+              "ref": "Region"
+            }
+          ]
+        }
+      ],
+      "endpoint": {
+        "url": "http://localhost:8080"
+      },
+      "type": "endpoint"
+    },
+    {
+      "documentation": "base rule",
+      "conditions": [
+        {
+          "fn": "isSet",
+          "argv": [
+            {
+              "ref": "Region"
+            }
+          ]
+        }
+      ],
+      "endpoint": {
+        "url": "https://{Region}.someservice.amazonaws.com"
+      },
+      "type": "endpoint"
+    }
+  ]
+}

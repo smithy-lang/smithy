@@ -11,6 +11,10 @@ document endpointRuleSet
 @unstable
 @trait(selector: "service")
 structure endpointTests {
+    /// The endpoint tests schema version.
+    @required
+    version: String
+
     /// List of endpoint test cases.
     testCases: EndpointTestList
 }
@@ -102,6 +106,7 @@ structure EndpointTest {
     operationInputs: OperationInputs,
 
     /// The expected outcome of the test case.
+    @required
     expect: EndpointTestExpectation
 }
 
