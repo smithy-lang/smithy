@@ -51,10 +51,7 @@ final class FilterShapes {
 
     private static boolean canFilterShape(Model model, Shape shape) {
         return !shape.isMemberShape() || model.getShape(shape.asMemberShape().get().getContainer())
-                .filter(container -> container.isStructureShape()
-                        || container.isUnionShape()
-                        || container.isEnumShape()
-                        || container.isIntEnumShape())
+                .filter(container -> container.isStructureShape() || container.isUnionShape())
                 .isPresent();
     }
 }
