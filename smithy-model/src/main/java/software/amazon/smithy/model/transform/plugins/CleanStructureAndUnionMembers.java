@@ -28,6 +28,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.EnumShape;
+import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -39,7 +41,7 @@ import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.Pair;
 
 /**
- * Cleans up structure and union shapes after shapes are removed.
+ * Cleans up structure, union, enum, and intEnum shapes after shapes are removed.
  *
  * <ul>
  *     <li>Ensures that structure and union shapes are updated to no
@@ -60,7 +62,25 @@ public final class CleanStructureAndUnionMembers implements ModelTransformerPlug
     private Model removeMembersFromContainers(ModelTransformer transformer, Collection<Shape> removed, Model model) {
         List<Shape> replacements = new ArrayList<>(getStructureReplacements(model, removed));
         replacements.addAll(getUnionReplacements(model, removed));
+        replacements.addAll(getEnumReplacements(model, removed));
+        replacements.addAll(getIntEnumReplacements(model, removed));
         return transformer.replaceShapes(model, replacements);
+    }
+
+    private Collection<Shape> getEnumReplacements(Model model, Collection<Shape> removed) {
+        return createUpdatedShapes(model, removed, Shape::asEnumShape, entry -> {
+            EnumShape.Builder builder = entry.getKey().toBuilder();
+            entry.getValue().forEach(member -> builder.removeMember(member.getMemberName()));
+            return builder.build();
+        });
+    }
+
+    private Collection<Shape> getIntEnumReplacements(Model model, Collection<Shape> removed) {
+        return createUpdatedShapes(model, removed, Shape::asIntEnumShape, entry -> {
+            IntEnumShape.Builder builder = entry.getKey().toBuilder();
+            entry.getValue().forEach(member -> builder.removeMember(member.getMemberName()));
+            return builder.build();
+        });
     }
 
     private Collection<Shape> getStructureReplacements(Model model, Collection<Shape> removed) {
