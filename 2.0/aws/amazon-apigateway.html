@@ -471,6 +471,20 @@ authorization caching is disabled. If it is greater than 0,
 API Gateway will cache authorizer responses. If this field is not set,
 the default value is 300. The maximum value is 3600, or 1 hour.</td>
 </tr>
+<tr class="row-even"><td>authorizerPayloadFormatVersion</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>For HTTP APIs, specifies the format of the data that API Gateway
+sends to a Lambda authorizer, and how API Gateway interprets the
+response from Lambda. Supported values are <code class="docutils literal notranslate"><span class="pre">1.0</span></code> and <code class="docutils literal notranslate"><span class="pre">2.0</span></code>.
+For more information, see <a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-lambda-authorizer.html#http-api-lambda-authorizer.payload-format">Lambda Authorizers Payload Format</a>.</td>
+</tr>
+<tr class="row-odd"><td>enableSimpleResponses</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>For HTTP APIs, specifies whether a request authorizer returns a
+Boolean value or an IAM policy. Supported only for authorizers
+with an <code class="docutils literal notranslate"><span class="pre">authorizerPayloadFormatVersion</span></code> of 2.0. If enabled, the
+Lambda authorizer function returns a Boolean value.</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -495,6 +509,8 @@ the default value is 300. The maximum value is 3600, or 1 hour.</td>
 <span class="w">        </span><span class="py">identitySource</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mapping.expression&quot;</span><span class="w"></span>
 <span class="w">        </span><span class="py">identityValidationExpression</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[A-Z]+&quot;</span><span class="w"></span>
 <span class="w">        </span><span class="py">resultTtlInSeconds</span><span class="p">:</span><span class="w"> </span><span class="m">100</span><span class="w"></span>
+<span class="w">        </span><span class="py">authorizerPayloadFormatVersion</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="py">enableSimpleResponses</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
 <span class="w">    </span>}<span class="w"></span>
 )<span class="w"></span>
 <span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{<span class="w"></span>
