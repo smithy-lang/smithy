@@ -21,6 +21,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +35,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.shapes.EnumShape;
+import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -101,6 +105,56 @@ public class RemoveShapesTest {
                 .build();
         MapShape container = MapShape.builder().id(ShapeId.from("ns.foo#Container")).key(key).value(value).build();
         assertContainerMembersAreRemoved(container, Arrays.asList(key, value));
+    }
+
+    @Test
+    public void removesEnumMembersWhenRemoved() {
+        EnumShape container = EnumShape.builder()
+                .id(ShapeId.from("ns.foo#Enum"))
+                .addMember("foo", "foo")
+                .build();
+        assertContainerMembersAreRemoved(container, new ArrayList<>(container.members()));
+    }
+
+    @Test
+    public void notAllEnumMembersCanBeRemoved() {
+        EnumShape container = EnumShape.builder()
+                .id(ShapeId.from("ns.foo#Enum"))
+                .addMember("foo", "foo")
+                .build();
+
+        Model.Builder builder = Model.builder()
+                .addShape(container)
+                .addShape(StringShape.builder().id(STRING_TARGET).build());
+        container.members().forEach(builder::addShape);
+        Model model = builder.build();
+        ModelTransformer transformer = ModelTransformer.create();
+        assertThrows(SourceException.class, () -> transformer.removeShapes(model, container.members()));
+    }
+
+    @Test
+    public void removesIntEnumMembersWhenRemoved() {
+        IntEnumShape container = IntEnumShape.builder()
+                .id(ShapeId.from("ns.foo#Enum"))
+                .addMember("foo", 1)
+                .build();
+        assertContainerMembersAreRemoved(container, new ArrayList<>(container.members()));
+    }
+
+    @Test
+    public void notAllIntEnumMembersCanBeRemoved() {
+        IntEnumShape container = IntEnumShape.builder()
+                .id(ShapeId.from("ns.foo#Enum"))
+                .addMember("foo", 1)
+                .build();
+
+        Model.Builder builder = Model.builder()
+                .addShape(container)
+                .addShape(StringShape.builder().id(STRING_TARGET).build());
+        container.members().forEach(builder::addShape);
+        Model model = builder.build();
+        ModelTransformer transformer = ModelTransformer.create();
+        assertThrows(SourceException.class, () -> transformer.removeShapes(model, container.members()));
     }
 
     @Test
