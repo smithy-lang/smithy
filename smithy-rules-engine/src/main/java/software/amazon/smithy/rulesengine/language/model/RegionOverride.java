@@ -18,6 +18,7 @@ package software.amazon.smithy.rulesengine.language.model;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -27,7 +28,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Provides a facility for overriding a partition's regions.
  */
 @SmithyUnstableApi
-public final class RegionOverride implements ToSmithyBuilder<RegionOverride>, FromSourceLocation {
+public final class RegionOverride implements ToSmithyBuilder<RegionOverride>, FromSourceLocation, ToNode {
     private final SourceLocation sourceLocation;
 
     private RegionOverride(Builder builder) {
@@ -61,6 +62,11 @@ public final class RegionOverride implements ToSmithyBuilder<RegionOverride>, Fr
     @Override
     public boolean equals(Object obj) {
         return obj instanceof RegionOverride;
+    }
+
+    @Override
+    public Node toNode() {
+        return Node.objectNode();
     }
 
     public static class Builder extends SourceLocationTrackingBuilder<Builder, RegionOverride> {
