@@ -15,6 +15,9 @@
 
 package software.amazon.smithy.rulesengine.language.model;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
@@ -25,10 +28,6 @@ import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
-
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Describes an AWS partition, it's regions, and the outputs to be provided by the rule-set aws.partition function.
