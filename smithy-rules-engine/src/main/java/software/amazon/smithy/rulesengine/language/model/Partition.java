@@ -21,7 +21,9 @@ import java.util.Objects;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -32,7 +34,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Describes an AWS partition, it's regions, and the outputs to be provided by the rule-set aws.partition function.
  */
 @SmithyUnstableApi
-public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLocation {
+public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLocation, ToNode {
     private static final String ID = "id";
     private static final String REGION_REGEX = "regionRegex";
     private static final String REGIONS = "regions";
@@ -121,6 +123,24 @@ public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLo
     @Override
     public int hashCode() {
         return Objects.hash(id, regionRegex, regions, partitionOutputs);
+    }
+
+    @Override
+    public Node toNode() {
+        return Node.objectNodeBuilder()
+                .withMember(ID, Node.from(id))
+                .withMember(REGION_REGEX, Node.from(regionRegex))
+                .withMember(REGIONS, regionsNode())
+                .withMember(OUTPUTS, partitionOutputs.toNode())
+                .build();
+    }
+
+    private Node regionsNode() {
+        ObjectNode.Builder on = ObjectNode.builder();
+        regions.forEach((k, v) ->
+                on.withMember(k, v.toNode())
+        );
+        return on.build();
     }
 
     public static class Builder extends SourceLocationTrackingBuilder<Builder, Partition> {

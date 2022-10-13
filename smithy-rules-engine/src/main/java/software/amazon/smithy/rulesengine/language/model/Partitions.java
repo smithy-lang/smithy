@@ -20,8 +20,7 @@ import java.util.List;
 import java.util.Objects;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.*;
 import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -32,7 +31,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * A model for defining the set of partitions that are used by the rule-set aws.partition function.
  */
 @SmithyUnstableApi
-public final class Partitions implements ToSmithyBuilder<Partitions>, FromSourceLocation {
+public final class Partitions implements ToSmithyBuilder<Partitions>, FromSourceLocation, ToNode {
     private static final String VERSION = "version";
     private static final String PARTITIONS = "partitions";
     private final String version;
@@ -108,6 +107,20 @@ public final class Partitions implements ToSmithyBuilder<Partitions>, FromSource
         return new Builder(getSourceLocation())
                 .version(version)
                 .partitions(partitions);
+    }
+
+    @Override
+    public Node toNode() {
+        return Node.objectNodeBuilder()
+                .withMember(VERSION, Node.from(version))
+                .withMember(PARTITIONS, partitionsNode())
+                .build();
+    }
+
+    private Node partitionsNode() {
+        ArrayNode.Builder node = ArrayNode.builder();
+        partitions.forEach(node::withValue);
+        return node.build();
     }
 
     public static class Builder extends SourceLocationTrackingBuilder<Builder, Partitions> {

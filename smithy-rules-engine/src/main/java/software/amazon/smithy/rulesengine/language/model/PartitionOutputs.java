@@ -21,6 +21,7 @@ import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -30,7 +31,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * The outputs to be provided by the rule-set aws.partition function.
  */
 @SmithyUnstableApi
-public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>, FromSourceLocation {
+public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>, FromSourceLocation, ToNode {
     private static final String DNS_SUFFIX = "dnsSuffix";
     private static final String DUAL_STACK_DNS_SUFFIX = "dualStackDnsSuffix";
     private static final String SUPPORTS_FIPS = "supportsFIPS";
@@ -119,6 +120,16 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
         return supportsFips == partitionOutputs.supportsFips && supportsDualStack == partitionOutputs.supportsDualStack
                && Objects.equals(dnsSuffix, partitionOutputs.dnsSuffix)
                && Objects.equals(dualStackDnsSuffix, partitionOutputs.dualStackDnsSuffix);
+    }
+
+    @Override
+    public Node toNode() {
+        return Node.objectNodeBuilder()
+                .withMember(DNS_SUFFIX, dnsSuffix)
+                .withMember(DUAL_STACK_DNS_SUFFIX, dualStackDnsSuffix)
+                .withMember(SUPPORTS_FIPS, supportsFips)
+                .withMember(SUPPORTS_DUAL_STACK, supportsDualStack)
+                .build();
     }
 
     public static class Builder extends SourceLocationTrackingBuilder<Builder, PartitionOutputs> {
