@@ -218,7 +218,7 @@ Smithy defines the following built-in timestamp formats:
       - Description
     * - date-time
       - Date time as defined by the ``date-time`` production in
-        `RFC3339 section 5.6 <https://xml2rfc.tools.ietf.org/public/rfc/html/rfc3339.html#anchor14>`_
+        :rfc:`3339#section-5.6`
         with no UTC offset and optional fractional precision (for example,
         ``1985-04-12T23:20:50.52Z``).
     * - http-date
@@ -340,7 +340,7 @@ The following table defines how simple types are serialized in XML documents.
     * - Shape
       - Serialization
     * - blob
-      - Serialized as a `base64 encoded`_ string
+      - Serialized as a :rfc:`base64 encoded <4648#section-4>` string
 
         .. code-block:: smithy
 
@@ -381,7 +381,7 @@ The following table defines how simple types are serialized in XML documents.
       - Serialized as the string value of the number using scientific
         notation if an exponent is needed.
     * - timestamp
-      - Serialized as `RFC 3339`_ date-time value.
+      - Serialized as :rfc:`3339` date-time value.
 
         .. code-block:: smithy
 
@@ -1019,7 +1019,6 @@ The XML serialization is:
     </MyStructure>
 
 .. _base64 encoded: https://tools.ietf.org/html/rfc4648#section-4
-.. _RFC 3339: https://tools.ietf.org/html/rfc3339
 .. _XML namespace: https://www.w3.org/TR/REC-xml-names/
 .. _namespace prefix: https://www.w3.org/TR/REC-xml-names/#NT-Prefix
 

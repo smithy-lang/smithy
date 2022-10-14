@@ -157,7 +157,8 @@ endpoint host prior to its use. Clients MUST fail when expanding a
 After the ``hostPrefix`` template is expanded, a client MUST prepend the
 expanded value to the client's derived endpoint host. The client MUST NOT add
 any additional characters between the ``hostPrefix`` and client derived
-endpoint host. The resolved host value MUST result in a valid `RFC 3986 Host`_.
+endpoint host. The resolved host value MUST result in a valid
+:rfc:`3986#section-3.2.2` host.
 
 Clients SHOULD provide a way for users to disable the ``hostPrefix`` injection
 behavior. If a user sets this flag, the client MUST NOT perform any
@@ -240,4 +241,3 @@ to an operation marked with the :ref:`endpoint-trait` will be ignored.
         foo: String
     }
 
-.. _RFC 3986 Host: https://tools.ietf.org/html/rfc3986#section-3.2.2

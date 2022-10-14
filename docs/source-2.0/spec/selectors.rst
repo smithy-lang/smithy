@@ -1604,7 +1604,7 @@ The above selector is equivalent to the following pseudo-code:
 Grammar
 =======
 
-Selectors are defined by the following ABNF_ grammar.
+Selectors are defined by the following :rfc:`ABNF <5234>` grammar.
 
 .. admonition:: Lexical note
    :class: note
@@ -1663,5 +1663,4 @@ Selectors are defined by the following ABNF_ grammar.
     SelectorVariableSet                :"$" `smithy:Identifier` "(" `Selector` ")"
     SelectorVariableGet                :"${" `smithy:Identifier` "}"
 
-.. _ABNF: https://tools.ietf.org/html/rfc5234
 .. _set: https://en.wikipedia.org/wiki/Set_(abstract_data_type)
