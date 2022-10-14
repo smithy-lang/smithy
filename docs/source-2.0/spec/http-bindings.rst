@@ -14,8 +14,8 @@ and error structures are considered when serializing HTTP messages.
 
 .. important::
 
-    Violating `HTTP specifications`_ or relying on poorly-supported HTTP
-    functionality when defining HTTP bindings will limit interoperability
+    Violating :rfc`HTTP specifications <7230>` or relying on poorly-supported
+    HTTP functionality when defining HTTP bindings will limit interoperability
     and likely lead to undefined behavior across Smithy implementations. For
     example, avoid defining GET/DELETE requests with payloads, defining
     response payloads for operations with a 204/205 status, etc.
@@ -685,7 +685,8 @@ structure with the ``httpLabel`` trait MUST have a corresponding
   ``1985-04-12T23%3A20%3A50.52Z``). The :ref:`timestampFormat-trait`
   MAY be used to use a custom serialization format.
 - Reserved characters defined in :rfc:`section 2.2 of RFC3986 <3986#section-2.2>`
-  and the `%` itself MUST be percent-encoded_ (that is, ``:/?#[]@!$&'()*+,;=%``).
+  and the `%` itself MUST be :rfc:`percent-encoded <3986#section-2.1>` (that is,
+  ``:/?#[]@!$&'()*+,;=%``).
 - However, if the label is greedy, then "/" MUST NOT be percent-encoded
   because greedy labels are meant to span multiple path segments.
 
@@ -923,7 +924,8 @@ request:
 * "&" is used to separate query string parameter key-value pairs.
 * "=" is used to separate query string parameter names from values.
 * Reserved characters in keys and values as defined in :rfc:`section 2.2 of RFC3986 <3986#section-2.2>` and `%`
-  MUST be percent-encoded_ (that is, ``:/?#[]@!$&'()*+,;=%``).
+  MUST be :rfc:`percent-encoded <3986#section-2.1>` (that is,
+  ``:/?#[]@!$&'()*+,;=%``).
 * ``boolean`` values are serialized as ``true`` or ``false``.
 * ``timestamp`` values are serialized as an :rfc:`3339`
   ``date-time`` string by default (for example, ``1985-04-12T23:20:50.52Z``,
@@ -961,10 +963,10 @@ the body of the response.
 
 .. rubric:: Do not put too much data in the query string
 
-While there is no limit placed on the length of an `HTTP request line`_,
-many HTTP client and server implementations enforce limits in practice.
-Carefully consider the maximum allowed length of each member that is bound to
-an HTTP query string or path.
+While there is no limit placed on the length of an
+:rfc:`HTTP request line <7230#section-3.1.1>`, many HTTP client and server
+implementations enforce limits in practice. Carefully consider the maximum
+allowed length of each member that is bound to an HTTP query string or path.
 
 
 .. smithy-trait:: smithy.api#httpQueryParams
@@ -1031,7 +1033,7 @@ the body of the response.
 See the :ref:`httpQuery-trait` serialization rules that define how the keys and values of the
 target map will be serialized in the request query string. Key-value pairs in the target map
 are treated like they were explicitly bound using the :ref:`httpQuery-trait`, including the
-requirement that reserved characters MUST be percent-encoded_.
+requirement that reserved characters MUST be :rfc:`percent-encoded <3986#section-2.1>`.
 
 When servers deserialize the query string into a ``map`` of ``string``, they SHOULD take the
 first encountered value for each key. Since this rule applies to all future query string
@@ -1366,7 +1368,3 @@ marked with the ``httpPayload`` trait:
         message: String
     }
 
-
-.. _percent-encoded: https://tools.ietf.org/html/rfc3986#section-2.1
-.. _HTTP request line: https://tools.ietf.org/html/rfc7230.html#section-3.1.1
-.. _HTTP specifications: https://datatracker.ietf.org/doc/html/rfc7230
