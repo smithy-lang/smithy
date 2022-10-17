@@ -6,10 +6,13 @@ $version: "2.0"
 namespace aws.protocoltests.restxml
 
 use aws.protocols#restXml
+use aws.protocoltests.shared#DateTime
+use aws.protocoltests.shared#EpochSeconds
 use aws.protocoltests.shared#FooEnum
 use aws.protocoltests.shared#FooEnumList
 use aws.protocoltests.shared#FooEnumSet
 use aws.protocoltests.shared#FooEnumMap
+use aws.protocoltests.shared#HttpDate
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -871,32 +874,23 @@ apply XmlTimestamps @httpResponseTests([
     },
 ])
 
-@timestampFormat("date-time")
-timestamp DateTimeTimestamp
-
-@timestampFormat("epoch-seconds")
-timestamp EpochSecondsTimestamp
-
-@timestampFormat("http-date")
-timestamp HttpDateTimestamp
-
 structure XmlTimestampsInputOutput {
     normal: Timestamp,
 
     @timestampFormat("date-time")
     dateTime: Timestamp,
 
-    dateTimeOnTarget: DateTimeTimestamp,
+    dateTimeOnTarget: DateTime,
 
     @timestampFormat("epoch-seconds")
     epochSeconds: Timestamp,
 
-    epochSecondsOnTarget: EpochSecondsTimestamp,
+    epochSecondsOnTarget: EpochSeconds,
 
     @timestampFormat("http-date")
     httpDate: Timestamp,
 
-    httpDateOnTarget: HttpDateTimestamp,
+    httpDateOnTarget: HttpDate,
 }
 
 /// This example serializes enums as top level properties, in lists, sets, and maps.
