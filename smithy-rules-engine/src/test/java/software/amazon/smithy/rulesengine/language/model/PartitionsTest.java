@@ -59,4 +59,40 @@ public class PartitionsTest {
 
         assertThat(parsed, equalTo(expected));
     }
+
+    @Test
+    public void toNode_propertiesSerializedCorrectly() {
+        Partitions partitions = Partitions.builder()
+                .version("1.0")
+                .addPartition(Partition.builder()
+                        .id("aws")
+                        .regionRegex("^(us|eu|ap|sa|ca|me|af)-\\w+-\\d+$")
+                        .putRegion("ca-central-1", RegionOverride.builder().build())
+                        .putRegion("us-west-2", RegionOverride.builder().build())
+                        .outputs(PartitionOutputs.builder()
+                                .dnsSuffix("amazonaws.com")
+                                .dualStackDnsSuffix("api.aws")
+                                .supportsFips(true)
+                                .supportsDualStack(true)
+                                .build())
+                        .build())
+                .addPartition(Partition.builder()
+                        .id("aws-cn")
+                        .regionRegex("^cn\\-\\w+\\-\\d+$")
+                        .putRegion("cn-north-1", RegionOverride.builder().build())
+                        .putRegion("cn-northwest-1", RegionOverride.builder().build())
+                        .outputs(PartitionOutputs.builder()
+                                .dnsSuffix("amazonaws.com.cn")
+                                .dualStackDnsSuffix("api.amazonwebservices.com.cn")
+                                .supportsFips(true)
+                                .supportsDualStack(true)
+                                .build())
+                        .build())
+                .build();
+
+        Node expected = Node.parse(PartitionsTest.class.getResourceAsStream("complete-partitions.json"));
+        Node actual = partitions.toNode();
+
+        assertThat(actual, equalTo(expected));
+    }
 }
