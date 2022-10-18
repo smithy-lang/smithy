@@ -18,6 +18,7 @@ package software.amazon.smithy.diff.evaluators;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 
@@ -35,10 +36,13 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.DynamicTrait;
+import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.ListUtils;
 
 public class ModifiedTraitTest {
     private static final ShapeId ID = ShapeId.from("com.foo#baz");
@@ -266,5 +270,24 @@ public class ModifiedTraitTest {
                 "Changed trait contents of `smithy.example#aTrait` at path `/k` from \"a\" to \"k\"",
                 "Changed trait contents of `smithy.example#aTrait` at path `/l` from \"a\" to \"l\""
         ));
+    }
+
+    @Test
+    public void letsOtherValidatorsHandleRequiredTrait() {
+        String originalModel =
+                "$version: \"2.0\"\n"
+                + "namespace smithy.example\n"
+                + "structure Baz {}\n"
+                + "structure Foo {\n"
+                + "    @required\n"
+                + "    baz: Baz\n"
+                + "}\n";
+        Model oldModel = Model.assembler().addUnparsedModel("foo.smithy", originalModel).assemble().unwrap();
+        Model newModel = ModelTransformer.create().replaceShapes(oldModel, ListUtils.of(
+                Shape.shapeToBuilder(oldModel.expectShape(ShapeId.from("smithy.example#Foo$baz")))
+                        .removeTrait(RequiredTrait.ID)
+                        .build()));
+
+        assertThat(TestHelper.findEvents(ModelDiff.compare(oldModel, newModel), "ModifiedTrait"), empty());
     }
 }
