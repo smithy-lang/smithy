@@ -21,8 +21,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
@@ -31,7 +29,6 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.ResourceIdentifierTrait;
-import software.amazon.smithy.utils.Pair;
 
 /**
  * Index of operation shapes to the identifiers bound to the operation.
@@ -155,25 +152,29 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
     }
 
     private boolean isCollection(ResourceShape resource, ToShapeId operationId) {
-        return resource.getCollectionOperations().contains(operationId)
+        return resource.getCollectionOperations().contains(operationId.toShapeId())
                 || (resource.getCreate().isPresent() && resource.getCreate().get().toShapeId().equals(operationId))
                 || (resource.getList().isPresent() && resource.getList().get().toShapeId().equals(operationId));
     }
 
-    private boolean isImplicitIdentifierBinding(Map.Entry<String, MemberShape> memberEntry, ResourceShape resource) {
-        return resource.getIdentifiers().containsKey(memberEntry.getKey())
-                && memberEntry.getValue().getTrait(RequiredTrait.class).isPresent()
-                && memberEntry.getValue().getTarget().equals(resource.getIdentifiers().get(memberEntry.getKey()));
+    private boolean isImplicitIdentifierBinding(MemberShape member, ResourceShape resource) {
+        return resource.getIdentifiers().containsKey(member.getMemberName())
+                && member.getTrait(RequiredTrait.class).isPresent()
+                && member.getTarget().equals(resource.getIdentifiers().get(member.getMemberName()));
     }
 
     private Map<String, String> computeBindings(ResourceShape resource, StructureShape shape) {
-        return shape.getAllMembers().entrySet().stream()
-                .flatMap(entry -> entry.getValue().getTrait(ResourceIdentifierTrait.class)
-                        .map(trait -> Stream.of(Pair.of(trait.getValue(), entry.getKey())))
-                        .orElseGet(() -> isImplicitIdentifierBinding(entry, resource)
-                                ? Stream.of(Pair.of(entry.getKey(), entry.getKey()))
-                                : Stream.empty()))
-                .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
-
+        Map<String, String> bindings = new HashMap<>();
+        for (MemberShape member : shape.getAllMembers().values()) {
+            if (member.hasTrait(ResourceIdentifierTrait.class)) {
+                // Mark as a binding if the member has an explicit @resourceIdentifier trait.
+                String bindingName = member.expectTrait(ResourceIdentifierTrait.class).getValue();
+                bindings.put(bindingName, member.getMemberName());
+            } else if (isImplicitIdentifierBinding(member, resource)) {
+                // Mark as a binding if the member is an implicit identifier binding.
+                bindings.put(member.getMemberName(), member.getMemberName());
+            }
+        }
+        return bindings;
     }
 }
