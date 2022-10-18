@@ -17,6 +17,10 @@ package software.amazon.smithy.model.validation.validators;
 
 import static java.lang.String.format;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,9 +30,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.IdentifierBindingIndex;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.ResourceIdentifierTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
@@ -38,7 +45,7 @@ import software.amazon.smithy.utils.Pair;
 
 /**
  * Validates that operations bound to resource shapes have identifier
- * bindings for all of the identifiers of the parent of the binding resource,
+ * bindings for all the identifiers of the parent of the binding resource,
  * that operations bound to a resource with the {@code collection}
  * trait are bound using a collection binding, and operations bound with
  * no {@code collection} trait are bound using an instance binding.
@@ -47,16 +54,58 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        IdentifierBindingIndex bindingIndex = IdentifierBindingIndex.of(model);
+        List<ValidationEvent> events = new ArrayList<>();
+        validateResourceIdentifierTraits(model, events);
+        validateOperationBindings(model, events);
+        return events;
+    }
 
-        return Stream.of(
+    // Check if this shape has conflicting resource identifier bindings due to trait bindings.
+    private void validateResourceIdentifierTraits(Model model, List<ValidationEvent> events) {
+        for (ShapeId container : findStructuresWithResourceIdentifierTraits(model)) {
+            Map<String, Set<String>> bindings = computePotentialStructureBindings(model, container);
+            for (Map.Entry<String, Set<String>> entry : bindings.entrySet()) {
+                if (entry.getValue().size() > 1) {
+                    events.add(error(model.expectShape(container), String.format(
+                            "Conflicting resource identifier member bindings found for identifier '%s' between "
+                            + "members %s", entry.getKey(), String.join(", ", entry.getValue()))));
+                }
+            }
+        }
+    }
+
+    private Set<ShapeId> findStructuresWithResourceIdentifierTraits(Model model) {
+        Set<ShapeId> containers = new HashSet<>();
+        for (MemberShape member : model.getMemberShapesWithTrait(ResourceIdentifierTrait.class)) {
+            containers.add(member.getContainer());
+        }
+        return containers;
+    }
+
+    private Map<String, Set<String>> computePotentialStructureBindings(Model model, ShapeId container) {
+        return model.getShape(container).map(struct -> {
+            Map<String, Set<String>> bindings = new HashMap<>();
+            // Ensure no two members are bound to the same identifier.
+            for (MemberShape member : struct.members()) {
+                String bindingName = member.getTrait(ResourceIdentifierTrait.class)
+                        .map(ResourceIdentifierTrait::getValue)
+                        .orElseGet(member::getMemberName);
+                bindings.computeIfAbsent(bindingName, k -> new HashSet<>()).add(member.getMemberName());
+            }
+            return bindings;
+        }).orElse(Collections.emptyMap());
+    }
+
+    private void validateOperationBindings(Model model, List<ValidationEvent> events) {
+        IdentifierBindingIndex bindingIndex = IdentifierBindingIndex.of(model);
+        Stream.of(
                 model.shapes(ResourceShape.class)
                         .flatMap(resource -> validateResource(model, resource, bindingIndex)),
                 model.shapes(ResourceShape.class)
                         .flatMap(resource -> validateCollectionBindings(model, resource, bindingIndex)),
                 model.shapes(ResourceShape.class)
                         .flatMap(resource -> validateInstanceBindings(model, resource, bindingIndex))
-        ).flatMap(Function.identity()).collect(Collectors.toList());
+        ).flatMap(Function.identity()).forEach(events::add);
     }
 
     private Stream<ValidationEvent> validateResource(

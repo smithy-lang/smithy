@@ -142,4 +142,11 @@ public class IdentifierBindingIndexTest {
                    equalTo(IdentifierBindingIndex.BindingType.INSTANCE));
         assertThat(index.getOperationInputBindings(resource.getId(), operation.getId()), equalTo(expectedBindings));
     }
+
+    @Test
+    public void doesNotFailWhenLoadingModelWithCollidingMemberBindings() {
+        // Ensure that this does not fail to load. This previously failed when using Collectors.toMap due to
+        // a collision in the keys used to map an identifier to multiple members.
+        Model.assembler().addImport(getClass().getResource("colliding-resource-identifiers.smithy")).assemble();
+    }
 }

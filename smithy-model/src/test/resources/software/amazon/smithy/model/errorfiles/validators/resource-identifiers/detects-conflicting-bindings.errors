@@ -1,0 +1,2 @@
+[ERROR] smithy.example#GetFooInput: Conflicting resource identifier member bindings found for identifier 'bar' between members bar, bam | ResourceIdentifierBinding
+[ERROR] smithy.example#PutFooInput: Conflicting resource identifier member bindings found for identifier 'bar' between members a, b | ResourceIdentifierBinding
