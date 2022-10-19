@@ -978,7 +978,6 @@ structure hostLabel {}
 /// Suppresses validation events by ID for a given shape.
 @trait
 list suppress {
-    @pattern("^[_a-zA-Z][A-Za-z0-9]*$")
     @length(min: 1)
     member: String
 }

@@ -21,7 +21,7 @@ metadata validators = [
     {
         // This one is suppressed.
         name: "EmitEachSelector",
-        id: "SuppressedValidator",
+        id: "SuppressedValidator.Foo",
         message: "This is suppressed",
         severity: "WARNING",
         configuration: {
@@ -43,11 +43,11 @@ metadata suppressions = [
         reason: "Please ignore this",
     },
     {
-        id: "SuppressedValidator",
+        id: "SuppressedValidator.Foo",
         namespace: "smithy.example.ignore.this.one", // matches nothing
     },
     {
-        id: "SuppressedValidator",
+        id: "SuppressedValidator.Foo",
         namespace: "smithy.example"
     },
 ]
@@ -60,6 +60,7 @@ service MyService {
     operations: [GetFoo],
 }
 
+@suppress(["IgnoreMe.Too"])
 operation GetFoo {
     input: GetFooInput,
     output: GetFooOutput
