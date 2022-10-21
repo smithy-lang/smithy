@@ -523,4 +523,29 @@ public class NullableIndexTest {
         assertThat(index.isMemberNullable(model.expectShape(ShapeId.from("smithy.example#Foo$baz"), MemberShape.class)),
                    is(false));
     }
+
+    // The required trait makes this non-nullable. The default(null) trait just means that there's no default value,
+    // it doesn't make the member nullable. A value is still required to be present. Therefore, it's non-nullable
+    // in code generated types. "default(null)" just means the framework does not provide a default value.
+    @Test
+    public void requiredMembersAreNonNullableEvenIfDefaultNullTraitIsPresent() {
+        String modelText =
+                "$version: \"2.0\"\n"
+                + "namespace smithy.example\n"
+                + "structure Foo {\n"
+                + "    @required\n"
+                + "    baz: Integer = null\n"
+                + "}\n";
+        Model model = Model.assembler()
+                .addUnparsedModel("foo.smithy", modelText)
+                .assemble()
+                .unwrap();
+
+        NullableIndex index = NullableIndex.of(model);
+
+        assertThat(
+            index.isMemberNullable(model.expectShape(ShapeId.from("smithy.example#Foo$baz"), MemberShape.class)),
+            is(false)
+        );
+    }
 }

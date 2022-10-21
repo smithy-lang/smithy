@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -356,5 +357,28 @@ public class ChangedNullabilityTest {
 
         assertThat(events, hasSize(1));
         assertThat(events.get(0).getSeverity(), is(Severity.WARNING));
+    }
+
+    @Test
+    public void doesNotWarnWhenExtraneousDefaultNullTraitRemoved() {
+        String originalModel =
+                "$version: \"2.0\"\n"
+                + "namespace smithy.example\n"
+                + "structure Foo {\n"
+                + "    @required\n"
+                + "    baz: Integer = null\n"
+                + "}\n";
+        Model oldModel = Model.assembler().addUnparsedModel("foo.smithy", originalModel).assemble().unwrap();
+        Model newModel = ModelTransformer.create().replaceShapes(oldModel, ListUtils.of(
+                Shape.shapeToBuilder(oldModel.expectShape(ShapeId.from("smithy.example#Foo$baz")))
+                        .removeTrait(DefaultTrait.ID)
+                        .build()));
+
+        // The only emitted even should be a warning about the removal of the default trait, which can be ignored
+        // given the effective nullability of the member is unchanged.
+        List<ValidationEvent> events = ModelDiff.compare(oldModel, newModel);
+        assertThat(TestHelper.findEvents(events, "ChangedNullability"), empty());
+        assertThat(TestHelper.findEvents(events, "ChangedDefault"), empty());
+        assertThat(TestHelper.findEvents(events, "ModifiedTrait"), not(empty()));
     }
 }

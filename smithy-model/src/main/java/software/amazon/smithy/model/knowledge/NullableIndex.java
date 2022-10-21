@@ -135,15 +135,11 @@ public class NullableIndex implements KnowledgeIndex {
         SERVER {
             @Override
             boolean isStructureMemberOptional(StructureShape container, MemberShape member, Shape target) {
-                // Defaults set to null on a member make the member optional.
-                if (member.hasNullDefault()) {
-                    return true;
-                } else if (member.hasNonNullDefault()) {
-                    return false;
-                } else {
-                    // A 2.0 member with the required trait is never nullable.
-                    return !member.hasTrait(RequiredTrait.class);
-                }
+                // Evaluated in this order.
+                // 1. Does the member have the required trait? Stop further checks, it's non-optional.
+                // 2. Does the member have a default trait set to null? Stop further checks, it's optional.
+                // 3. Does the member have a default trait not set to null? Stop further checks, it's non-optional.
+                return !member.hasTrait(RequiredTrait.class) && !member.hasNonNullDefault();
             }
         };
 
