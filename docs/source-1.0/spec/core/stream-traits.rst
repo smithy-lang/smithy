@@ -36,12 +36,12 @@ Validation
     * The ``streaming`` trait is *structurally exclusive by target*, meaning
       only a single member of a structure can target a shape marked as
       ``streaming``.
-    * If a service supports a protocol that supports the :ref:`httpPayload-trait`,
-      any member that targets a ``streaming`` ``blob`` must also be marked as
-      ``@httpPayload``.
+    * If a service supports the :ref:`httpPayload-trait`, any member that
+      targets a ``streaming`` shape must also be marked as ``@httpPayload``.
 
 .. code-block:: smithy
 
+    @http(method: "GET", uri: "/streaming-operation")
     operation StreamingOperation {
         input: StreamingOperationInput,
         output: StreamingOperationOutput,
@@ -58,6 +58,20 @@ Validation
 
     @streaming
     blob StreamingBlob
+
+
+Deserializing streaming blobs
+=============================
+
+It is often impossible for a server to know if a zero-length payload was sent
+by a client, or if no payload was explicitly sent by a client. As a result,
+required streaming members SHOULD be interpreted by deserializers as if they
+have a default zero-length value when not present.
+
+.. note::
+    In Smithy IDL version 2, members that target a streaming blob MUST be
+    marked as ``required`` or be given an explicit default value of
+    zero bytes.
 
 
 .. smithy-trait:: smithy.api#requiresLength
@@ -376,7 +390,7 @@ traits can be used to influence the serialization of an event stream event.
 Structure members that are sent as part of an event stream are serialized
 in either a header or the payload of an event.
 
-The :ref:`eventHeader-trait` is used to serialize a structure member as an
+The :ref:`eventheader-trait` is used to serialize a structure member as an
 event header. The payload of an event is defined by either marking a single
 member with the :ref:`eventpayload-trait`, or by combining all members that
 are not marked with the ``eventHeader`` or ``eventPayload`` trait into a
