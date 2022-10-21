@@ -802,13 +802,10 @@ final class IdlModelParser extends SimpleParser {
 
             parseMember(op, definedMembers, memberParsing);
 
-            // Clears out any previously captured documentation
-            // comments that may have been found when parsing the member.
-            clearPendingDocs();
-
             ws();
         }
 
+        clearPendingDocs();
         expect('}');
     }
 
@@ -861,6 +858,12 @@ final class IdlModelParser extends SimpleParser {
             sp();
             memberBuilder.addTrait(memberParsing.createAssignmentTrait(memberId, IdlNodeParser.parseNode(this)));
             br();
+        } else {
+            // Clears out any previously captured documentation
+            // comments that may have been found when parsing the member.
+            // Default value parsing may safely load comments for the next
+            // member, so leave those intact.
+            clearPendingDocs();
         }
 
         // Only add the member once fully parsed.

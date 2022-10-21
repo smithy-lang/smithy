@@ -17,11 +17,13 @@ package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,7 @@ import java.util.Optional;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -38,6 +41,8 @@ import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.StringShape;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.StringTrait;
@@ -285,5 +290,27 @@ public class IdlModelLoaderTest {
 
         assertThat(operations, hasSize(1));
         assertThat(operations.get(0), instanceOf(LoadOperation.ModelVersion.class));
+    }
+
+    @Test
+    public void defaultValueSugaringDoesNotEatSubsequentDocumentation() {
+        Model model = Model.assembler()
+            .addImport(getClass().getResource("default-subsequent-trait.smithy"))
+            .assemble()
+            .unwrap();
+
+        StructureShape testShape = model.expectShape(ShapeId.from("smithy.example#TestShape"), StructureShape.class);
+        MemberShape barMember = testShape.getMember("bar").orElseThrow(AssertionFailedError::new);
+
+        assertEquals("bar", barMember.expectTrait(DocumentationTrait.class).getValue());
+        assertEquals(3, barMember.getAllTraits().size());
+
+        MemberShape bazMember = testShape.getMember("baz").orElseThrow(AssertionFailedError::new);
+
+        assertEquals("baz", bazMember.expectTrait(DocumentationTrait.class).getValue());
+        assertEquals(2, bazMember.getAllTraits().size());
+
+        StringShape stringShape = model.expectShape(ShapeId.from("smithy.example#MyString"), StringShape.class);
+        assertEquals(0, stringShape.getAllTraits().size());
     }
 }
