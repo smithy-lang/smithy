@@ -196,10 +196,6 @@ ReservedWords
 Validates that shape names and member names do not match a configured set of
 reserved words.
 
-Reserved words are compared in a case-insensitive manner via substring match
-and support a leading and trailing wildcard character, "*". See
-:ref:`wildcard evaluation <reserved-words-wildcards>` for more detail.
-
 Rationale
     Tools that generate code from Smithy models SHOULD automatically convert
     reserved words into symbols that are safe to use in the targeted
@@ -223,9 +219,15 @@ Configuration
           - Description
         * - words
           - [ ``string`` ]
-          - **Required**. A list of words that shape or member names MUST not
-            case-insensitively match. Supports only the leading and trailing
-            wildcard character of "*".
+          - A list of words that shape or member names MUST not case-insensitively
+            match. Supports a leading and trailing wildcard character of "*".
+            See :ref:`reserved-words-wildcards` for details.
+        * - terms
+          - [ ``string`` ]
+          - A list of search terms that match shape or member names
+            case-insensitively based on word boundaries (for example, the term
+            "access key id" matches "AccessKeyId", "access_key_id", and
+            "accesskeyid"). See :ref:`reserved-words-boundaries` for details.
         * - selector
           - ``string``
           - Specifies a selector of shapes to validate for this configuration.
@@ -343,6 +345,79 @@ be specified.
       * - **Codename**
         - Match
 
+.. _reserved-words-boundaries:
+
+Reserved words boundary matching
+--------------------------------
+
+Word boundaries can be used to find reserved words. Word boundary search
+text consists of one or more alphanumeric words separated by a single
+space. When comparing against another string, the contents of the string
+are separated into words based on word boundaries. Those words are
+case-insensitively compared against the words in the search text for a match.
+
+Word boundaries are detected when the casing between two characters changes,
+or the type of character between two characters changes. The following table
+demonstrates how comparison text is parsed into words.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 50 50
+
+    * - Comparison text
+      - Parsed words
+    * - accessKey
+      - access key
+    * - accessKeyID
+      - access key id
+    * - accessKeyIDValue
+      - access key id value
+    * - accesskeyId
+      - accesskey id
+    * - accessKey1
+      - access key 1
+    * - access_keyID
+      - access key id
+
+The following table shows matches for a reserved term of ``secret id``,
+meaning the word "secret" needs to be followed by the word "id". Word
+boundary searches also match if the search terms concatenated together with
+no spaces is considered a word in the search text (for example,
+``secret id`` will match the word ``secretid``).
+
+.. list-table::
+   :header-rows: 1
+   :widths: 75 25
+
+   * - Comparison text
+     - Result
+   * - Some\ **SecretId**
+     - Match
+   * - Some\ **SecretID**\ Value
+     - Match
+   * - Some\ **Secret__ID**\ __value
+     - Match
+   * - **secret_id**
+     - Match
+   * - **secret_id**\ 100
+     - Match
+   * - **secretid**
+     - Match
+   * - **secretid**\ _value
+     - Match
+   * - secretidvalue
+     - No Match
+   * - SecretThingId
+     - No match
+   * - SomeSecretid
+     - No match
+
+.. admonition:: Syntax restrictions
+
+    * Empty search terms are not valid.
+    * Only a single space can appear between words in word boundary patterns.
+    * Leading and trailing spaces are not permitted in word boundary patterns.
+    * Word boundary patterns can only contain alphanumeric characters.
 
 
 .. _StandardOperationVerb:
