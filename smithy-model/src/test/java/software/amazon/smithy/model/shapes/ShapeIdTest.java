@@ -136,6 +136,57 @@ public class ShapeIdTest {
         assertTrue(ShapeId.isValidNamespace("f.b1.c_d_1234.e"));
     }
 
+    @Test
+    public void checksIfValidNamespaceNameIdentifierOnly() {
+        // Empty String
+        assertFalse(ShapeId.isValidNamespace(""));
+
+        // Underscore Only
+        assertFalse(ShapeId.isValidNamespace("_"));
+        assertFalse(ShapeId.isValidNamespace("__"));
+
+        // Starts with DIGIT
+        assertFalse(ShapeId.isValidNamespace("1"));
+        assertFalse(ShapeId.isValidNamespace("1_"));
+        assertFalse(ShapeId.isValidNamespace("1a"));
+        assertFalse(ShapeId.isValidNamespace("12"));
+
+        // IdentifierStart: 1*"_" (ALPHA / DIGIT)
+        assertTrue(ShapeId.isValidNamespace("_a"));
+        assertTrue(ShapeId.isValidNamespace("_1"));
+        assertTrue(ShapeId.isValidNamespace("__a"));
+        assertTrue(ShapeId.isValidNamespace("__1"));
+        assertFalse(ShapeId.isValidNamespace("__#"));
+
+        // IdentifierStart: ALPHA
+        assertTrue(ShapeId.isValidNamespace("a"));
+        assertFalse(ShapeId.isValidNamespace("#"));
+
+        // Identifier: 1*"_" (ALPHA / DIGIT) *`IdentifierChars`
+        assertTrue(ShapeId.isValidNamespace("_ab"));
+        assertTrue(ShapeId.isValidNamespace("_a1"));
+        assertTrue(ShapeId.isValidNamespace("_a_"));
+        assertFalse(ShapeId.isValidNamespace("_a#"));
+        assertTrue(ShapeId.isValidNamespace("_1a"));
+        assertTrue(ShapeId.isValidNamespace("_12"));
+        assertTrue(ShapeId.isValidNamespace("_1_"));
+        assertFalse(ShapeId.isValidNamespace("_1#"));
+        assertTrue(ShapeId.isValidNamespace("__ab"));
+        assertTrue(ShapeId.isValidNamespace("__a1"));
+        assertTrue(ShapeId.isValidNamespace("__a_"));
+        assertFalse(ShapeId.isValidNamespace("__a#"));
+        assertTrue(ShapeId.isValidNamespace("__1a"));
+        assertTrue(ShapeId.isValidNamespace("__12"));
+        assertTrue(ShapeId.isValidNamespace("__1_"));
+        assertFalse(ShapeId.isValidNamespace("__1#"));
+
+        // Identifier: ALPHA *`IdentifierChars`
+        assertTrue(ShapeId.isValidNamespace("ab"));
+        assertTrue(ShapeId.isValidNamespace("a1"));
+        assertTrue(ShapeId.isValidNamespace("a_"));
+        assertFalse(ShapeId.isValidNamespace("a#"));
+    }
+
     @ParameterizedTest
     @MethodSource("shapeIdData")
     public void ShapeIdValidationsTest(String shapeId, boolean isInvalid) {

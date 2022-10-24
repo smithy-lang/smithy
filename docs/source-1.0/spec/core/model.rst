@@ -244,7 +244,7 @@ Shape IDs are formally defined by the following ABNF:
     AbsoluteRootShapeId  :`Namespace` "#" `Identifier`
     Namespace            :`Identifier` *("." `Identifier`)
     Identifier           :`IdentifierStart` *`IdentifierChars`
-    IdentifierStart      :*"_" ALPHA
+    IdentifierStart      :(1*"_" (ALPHA / DIGIT)) / ALPHA
     IdentifierChars      :ALPHA / DIGIT / "_"
     ShapeIdMember        :"$" `Identifier`
 
