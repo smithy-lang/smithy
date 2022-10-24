@@ -38,6 +38,7 @@ import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.SetUtils;
 
 /**
@@ -99,7 +100,7 @@ public final class CfnResourceIndex implements KnowledgeIndex {
                     Set<ResourceShape> parentResources = model.getServiceShapes()
                             .stream()
                             .map(service -> bottomUpIndex.getResourceBinding(service, resourceId))
-                            .flatMap(Optional::stream)
+                            .flatMap(OptionalUtils::stream)
                             .collect(Collectors.toSet());
 
                     // Start with the explicit resource identifiers.
