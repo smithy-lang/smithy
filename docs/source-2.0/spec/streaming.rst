@@ -24,9 +24,6 @@ by a single top-level operation input or output structure member. For example:
     operation StreamingOperation {
         input := {}
         output := {
-            @required
-            streamId: String
-
             @httpPayload
             output: StreamingBlob = ""
         }
