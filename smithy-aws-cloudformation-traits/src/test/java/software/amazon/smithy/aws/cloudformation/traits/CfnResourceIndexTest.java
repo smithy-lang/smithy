@@ -99,15 +99,15 @@ public class CfnResourceIndexTest {
         bazResource.identifiers = SetUtils.of("barId", "bazId");
         bazResource.additionalIdentifiers = ListUtils.of();
         bazResource.mutabilities = MapUtils.of(
-                "barId", SetUtils.of(Mutability.READ),
+                "barId", SetUtils.of(Mutability.CREATE, Mutability.READ),
                 "bazId", SetUtils.of(Mutability.READ),
                 "bazExplicitMutableProperty", CfnResourceIndex.FULLY_MUTABLE,
                 "bazImplicitFullyMutableProperty", CfnResourceIndex.FULLY_MUTABLE,
                 "bazImplicitCreateProperty", SetUtils.of(Mutability.CREATE, Mutability.READ),
                 "bazImplicitReadProperty", SetUtils.of(Mutability.READ),
                 "bazImplicitWriteProperty", SetUtils.of(Mutability.CREATE, Mutability.WRITE));
-        bazResource.createOnlyProperties = SetUtils.of("bazImplicitCreateProperty");
-        bazResource.readOnlyProperties = SetUtils.of("barId", "bazId", "bazImplicitReadProperty");
+        bazResource.createOnlyProperties = SetUtils.of("barId", "bazImplicitCreateProperty");
+        bazResource.readOnlyProperties = SetUtils.of("bazId", "bazImplicitReadProperty");
         bazResource.writeOnlyProperties = SetUtils.of("bazImplicitWriteProperty");
 
         return ListUtils.of(fooResource, barResource, bazResource);
