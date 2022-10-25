@@ -1,0 +1,7 @@
+[DANGER] smithy.example#MyList1: Lists are not allowed | BadShape.List
+[SUPPRESSED] smithy.example#MyList2: Lists are not allowed | BadShape.List
+[SUPPRESSED] smithy.example#MyList3: Lists are not allowed | BadShape.List
+[SUPPRESSED] smithy.example#MyMap: Maps are not allowed | BadShape.Map
+[SUPPRESSED] smithy.example#Foo$a: Required is not allowed | BadTrait.Required
+[SUPPRESSED] smithy.example#Foo$b: Documentation is not allowed | BadTrait
+[SUPPRESSED] smithy.example#Foo$c: Default is not allowed | BadTrait.Default

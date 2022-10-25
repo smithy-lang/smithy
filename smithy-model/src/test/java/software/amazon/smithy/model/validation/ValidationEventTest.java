@@ -21,8 +21,12 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -329,5 +333,36 @@ public class ValidationEventTest {
         assertEquals(result.getMember("shapeId").get().asStringNode().get().getValue(), "ns.foo#baz");
         assertEquals(result.getMember("filename").get().asStringNode().get().getValue(), "file");
         assertEquals(result.getMember("message").get().asStringNode().get().getValue(), "The message");
+    }
+
+    @ParameterizedTest
+    @MethodSource("containsIdSupplier")
+    public void suppressesEventIds(boolean match, String eventId, String testId) {
+        ValidationEvent event = ValidationEvent.builder().id(eventId).severity(Severity.DANGER).message(".").build();
+
+        assertThat(eventId + " contains? " + match + " " + testId, event.containsId(testId), is(match));
+    }
+
+    public static Stream<Arguments> containsIdSupplier() {
+        return Stream.of(
+                Arguments.of(true, "BadThing", "BadThing"),
+                Arguments.of(true, "BadThing.Foo", "BadThing"),
+                Arguments.of(true, "BadThing.Foo", "BadThing.Foo"),
+                Arguments.of(true, "BadThing.Foo.Bar", "BadThing.Foo.Bar"),
+
+                Arguments.of(false, "BadThing.Foo", "BadThing.Foo.Bar"),
+                Arguments.of(false, "BadThing.Foo", "BadThing.Foo.Bar.Baz"),
+                Arguments.of(false, "BadThing.Fooz", "BadThing.Foo"),
+                Arguments.of(false, "BadThing.Foo.Bar", "BadThing.Foo.Bar.Baz"),
+
+                // Tests for strange, but acceptable ids and suppression IDs. Preventing these now is
+                // technically backward incompatible, so they're acceptable.
+                Arguments.of(true, "BadThing.", "BadThing."),
+                Arguments.of(true, "BadThing.", "BadThing"),
+                Arguments.of(false, "BadThing", "BadThing."),
+                Arguments.of(true, "BadThing.Foo.", "BadThing.Foo"),
+                Arguments.of(true, "BadThing.Foo.", "BadThing.Foo."),
+                Arguments.of(false, "BadThing.Foo.", "BadThing.Foo.Bar")
+        );
     }
 }
