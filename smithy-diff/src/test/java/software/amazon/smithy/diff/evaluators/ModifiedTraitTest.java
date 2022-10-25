@@ -92,6 +92,22 @@ public class ModifiedTraitTest {
         assertThat(events.get(0).getMessage(), containsString(searchString));
     }
 
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testWithoutDefinition(String oldValue, String newValue, String tag, String searchString) {
+        TestCaseData data = new TestCaseData(oldValue, newValue);
+
+        Model modelA = Model.assembler().addShape(data.oldShape).assemble().unwrap();
+        Model modelB = Model.assembler().addShape(data.newShape).assemble().unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "ModifiedTrait").size(), equalTo(1));
+        assertThat(events.get(0).getMessage(), containsString(searchString));
+        for (ValidationEvent event : events) {
+            assertThat(event.getSeverity(), equalTo(Severity.WARNING));
+        }
+    }
+
     public static Collection<String[]> data() {
         return Arrays.asList(new String[][] {
                 {null, "hi", "diff.error.add", "Added"},
@@ -106,6 +122,17 @@ public class ModifiedTraitTest {
                 .addTrait(TagsTrait.builder().addValue(tag).build())
                 .addTrait(TraitDefinition.builder().build())
                 .build();
+    }
+
+    @Test
+    public void noEventsForUnmodifiedTraitWithoutDefinition() {
+        TestCaseData data = new TestCaseData("hi", "hi");
+
+        Model modelA = Model.assembler().addShape(data.oldShape).assemble().unwrap();
+        Model modelB = Model.assembler().addShape(data.newShape).assemble().unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "ModifiedTrait").size(), equalTo(0));
     }
 
     @Test
