@@ -38,6 +38,8 @@ import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
+import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.ListUtils;
@@ -95,7 +97,8 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
             new DiffStrategy(DiffType.REMOVE, Severity.WARNING));
 
     /** Traits in this list have special backward compatibility rules and can't be validated here. */
-    private static final Set<ShapeId> IGNORED_TRAITS = SetUtils.of(BoxTrait.ID, RequiredTrait.ID);
+    private static final Set<ShapeId> IGNORED_TRAITS = SetUtils.of(BoxTrait.ID, RequiredTrait.ID,
+            SyntheticEnumTrait.ID, OriginalShapeIdTrait.ID);
 
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
@@ -108,8 +111,12 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                 Trait oldTrait = oldTraitNewTraitPair.left;
                 Trait newTrait = oldTraitNewTraitPair.right;
                 // Do not emit for the box trait because it is added and removed for backward compatibility.
-                if (!IGNORED_TRAITS.contains(traitId) && strategies.containsKey(traitId)) {
-                    for (DiffStrategy strategy : strategies.get(traitId)) {
+                if (!IGNORED_TRAITS.contains(traitId)) {
+                    // If we don't know about the trait, warn on any change to it.
+                    List<DiffStrategy> diffStrategies = strategies.computeIfAbsent(traitId,
+                            t -> ListUtils.of(new DiffStrategy(DiffType.CONST, Severity.WARNING)));
+
+                    for (DiffStrategy strategy : diffStrategies) {
                         List<ValidationEvent> diffEvents = strategy.diffType.validate(
                                 differences.getNewModel(),
                                 "",
