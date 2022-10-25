@@ -11,7 +11,7 @@ operation MalformedMap {
     input: MalformedMapInput
 }
 
-apply MalformedList @httpMalformedRequestTests([
+apply MalformedMap @httpMalformedRequestTests([
     {
         id: "RestJsonBodyMalformedMapNullKey",
         documentation: """
