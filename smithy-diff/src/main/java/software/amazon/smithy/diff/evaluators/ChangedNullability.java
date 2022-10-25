@@ -18,7 +18,6 @@ package software.amazon.smithy.diff.evaluators;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.StringJoiner;
 import java.util.stream.Stream;
 import software.amazon.smithy.diff.ChangedShape;
 import software.amazon.smithy.diff.Differences;
@@ -26,6 +25,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NullableIndex;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ClientOptionalTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
@@ -45,24 +45,23 @@ public class ChangedNullability extends AbstractDiffEvaluator {
     public List<ValidationEvent> evaluate(Differences differences) {
         NullableIndex oldIndex = NullableIndex.of(differences.getOldModel());
         NullableIndex newIndex = NullableIndex.of(differences.getNewModel());
-
         List<ValidationEvent> events = new ArrayList<>();
 
-        Stream<ChangedShape<MemberShape>> changed = Stream.concat(
+        Stream.concat(
             // Get members that changed.
             differences.changedShapes(MemberShape.class),
             // Get members of structures that added/removed the input trait.
             changedInputMembers(differences)
-        );
-
-        changed.map(change -> {
+        ).forEach(change -> {
             // If NullableIndex says the nullability of a member changed, then that's a breaking change.
             MemberShape oldShape = change.getOldShape();
             MemberShape newShape = change.getNewShape();
             boolean wasNullable = oldIndex.isMemberNullable(oldShape);
             boolean isNowNullable = newIndex.isMemberNullable(newShape);
-            return wasNullable == isNowNullable ? null : createError(differences, change, wasNullable);
-        }).filter(Objects::nonNull).forEach(events::add);
+            if (wasNullable != isNowNullable) {
+                createErrors(differences, change, wasNullable, events);
+            }
+        });
 
         return events;
     }
@@ -79,10 +78,11 @@ public class ChangedNullability extends AbstractDiffEvaluator {
                         .filter(Objects::nonNull));
     }
 
-    private ValidationEvent createError(
+    private void createErrors(
             Differences differences,
             ChangedShape<MemberShape> change,
-            boolean wasNullable
+            boolean wasNullable,
+            List<ValidationEvent> events
     ) {
         MemberShape oldMember = change.getOldShape();
         MemberShape newMember = change.getNewShape();
@@ -90,67 +90,80 @@ public class ChangedNullability extends AbstractDiffEvaluator {
                                        oldMember.getMemberName(),
                                        wasNullable ? "nullable" : "non-nullable",
                                        wasNullable ? "non-nullable" : "nullable");
-        StringJoiner joiner = new StringJoiner("; ", message, "");
         boolean oldHasInput = hasInputTrait(differences.getOldModel(), oldMember);
         boolean newHasInput = hasInputTrait(differences.getNewModel(), newMember);
+        ShapeId shape = change.getShapeId();
         Shape newTarget = differences.getNewModel().expectShape(newMember.getTarget());
-        Severity severity = null;
+        int currentEventSize = events.size();
 
         if (oldHasInput && !newHasInput) {
             // If there was an input trait before, but not now, then the nullability must have
             // changed from nullable to non-nullable.
-            joiner.add("The @input trait was removed from " + newMember.getContainer());
-            severity = Severity.ERROR;
+            events.add(emit(Severity.ERROR, "RemovedInputTrait", shape, message,
+                            "The @input trait was removed from " + newMember.getContainer()));
         } else if (!oldHasInput && newHasInput) {
             // If there was no input trait before, but there is now, then the nullability must have
             // changed from non-nullable to nullable.
-            joiner.add("The @input trait was added to " + newMember.getContainer());
-            severity = Severity.DANGER;
+            events.add(emit(Severity.DANGER, "AddedInputTrait", shape, message,
+                            "The @input trait was added to " + newMember.getContainer()));
         } else if (!newHasInput) {
             // Can't add nullable to a preexisting required member.
             if (change.isTraitAdded(ClientOptionalTrait.ID) && change.isTraitInBoth(RequiredTrait.ID)) {
-                joiner.add("The @nullable trait was added to a @required member.");
-                severity = Severity.ERROR;
+                events.add(emit(Severity.ERROR, "AddedNullableTrait", shape, message,
+                                "The @nullable trait was added to a @required member."));
             }
             // Can't add required to a member unless the member is marked as nullable.
             if (change.isTraitAdded(RequiredTrait.ID) && !newMember.hasTrait(ClientOptionalTrait.ID)) {
-                joiner.add("The @required trait was added to a member that is not marked as @nullable.");
-                severity = Severity.ERROR;
+                events.add(emit(Severity.ERROR, "AddedRequiredTrait", shape, message,
+                                "The @required trait was added to a member that is not marked as @nullable."));
             }
             // Can't add the default trait to a member unless the member was previously required.
             if (change.isTraitAdded(DefaultTrait.ID) && !change.isTraitRemoved(RequiredTrait.ID)) {
-                joiner.add("The @default trait was added to a member that was not previously @required.");
-                severity = Severity.ERROR;
+                events.add(emit(Severity.ERROR, "AddedDefaultTrait", shape, message,
+                                "The @default trait was added to a member that was not previously @required."));
             }
             // Can only remove the required trait if the member was nullable or replaced by the default trait.
             if (change.isTraitRemoved(RequiredTrait.ID)
                     && !newMember.hasTrait(DefaultTrait.ID)
                     && !oldMember.hasTrait(ClientOptionalTrait.ID)) {
                 if (newTarget.isStructureShape() || newTarget.isUnionShape()) {
-                    severity = severity == null ? Severity.WARNING : severity;
-                    joiner.add("The @required trait was removed from a member that targets a " + newTarget.getType()
-                               + ". This is backward compatible in generators that always treat structures and "
-                               + "unions as optional (e.g., AWS generators)");
+                    events.add(emit(Severity.WARNING, "RemovedRequiredTrait.StructureOrUnion", shape, message,
+                                    "The @required trait was removed from a member that targets a "
+                                    + newTarget.getType() + ". This is backward compatible in generators that "
+                                    + "always treat structures and unions as optional (e.g., AWS generators)"));
                 } else {
-                    joiner.add("The @required trait was removed and not replaced with the @default trait and "
-                               + "@addedDefault trait.");
-                    severity = Severity.ERROR;
+                    events.add(emit(Severity.ERROR, "RemovedRequiredTrait", shape, message,
+                                    "The @required trait was removed and not replaced with the @default trait and "
+                                    + "@addedDefault trait."));
                 }
             }
         }
 
-        // If no explicit severity was detected, then assume an error.
-        severity = severity == null ? Severity.ERROR : severity;
-
-        return ValidationEvent.builder()
-                .id(getEventId())
-                .shapeId(change.getNewShape())
-                .severity(severity)
-                .message(joiner.toString())
-                .build();
+        // If not specific event was emitted, emit a generic event.
+        if (events.size() == currentEventSize) {
+            events.add(emit(Severity.ERROR, null, shape, null, message));
+        }
     }
 
     private boolean hasInputTrait(Model model, MemberShape member) {
         return model.getShape(member.getContainer()).filter(shape -> shape.hasTrait(InputTrait.ID)).isPresent();
+    }
+
+    private ValidationEvent emit(
+            Severity severity,
+            String eventIdSuffix,
+            ShapeId shape,
+            String prefixMessage,
+            String message
+    ) {
+        String actualId = eventIdSuffix == null ? getEventId() : (getEventId() + '.' + eventIdSuffix);
+        String actualMessage = prefixMessage == null ? message : (prefixMessage + "; " + message);
+        return ValidationEvent.builder()
+                .id(actualId)
+                .shapeId(shape)
+                .message(actualMessage)
+                .severity(severity)
+                .message(message)
+                .build();
     }
 }

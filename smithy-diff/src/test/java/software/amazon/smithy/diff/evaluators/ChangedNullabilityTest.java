@@ -90,7 +90,7 @@ public class ChangedNullabilityTest {
         assertThat(result.isDiffBreaking(), is(true));
         assertThat(result.getDiffEvents().stream()
                            .filter(event -> event.getSeverity() == Severity.ERROR)
-                           .filter(event -> event.getId().equals("ChangedNullability"))
+                           .filter(event -> event.getId().equals("ChangedNullability.AddedDefaultTrait"))
                            .filter(event -> event.getShapeId().get().equals(a.getAllMembers().get("foo").getId()))
                            .filter(event -> event.getMessage().contains("The @default trait was added to a member that "
                                                                         + "was not previously @required"))
@@ -115,7 +115,7 @@ public class ChangedNullabilityTest {
         ModelDiff.Result result = ModelDiff.builder().oldModel(model1).newModel(model2).compare();
 
         assertThat(result.getDiffEvents().stream()
-                           .filter(event -> event.getId().equals("ChangedNullability"))
+                           .filter(event -> event.getId().equals("ChangedNullability.RemovedRequiredTrait.StructureOrUnion"))
                            .count(), equalTo(0L));
     }
 
@@ -137,7 +137,7 @@ public class ChangedNullabilityTest {
         assertThat(result.isDiffBreaking(), is(true));
         assertThat(result.getDiffEvents().stream()
                            .filter(event -> event.getSeverity() == Severity.ERROR)
-                           .filter(event -> event.getId().equals("ChangedNullability"))
+                           .filter(event -> event.getId().equals("ChangedNullability.RemovedRequiredTrait"))
                            .filter(event -> event.getShapeId().get().equals(a.getAllMembers().get("foo").getId()))
                            .filter(event -> event.getMessage().contains("The @required trait was removed and not "
                                                                         + "replaced with the @default trait"))
@@ -157,7 +157,7 @@ public class ChangedNullabilityTest {
 
         assertThat(events.stream()
                            .filter(event -> event.getSeverity() == Severity.ERROR)
-                           .filter(event -> event.getId().equals("ChangedNullability"))
+                           .filter(event -> event.getId().equals("ChangedNullability.AddedRequiredTrait"))
                            .filter(event -> event.getMessage().contains("The @required trait was added to a member "
                                                                         + "that is not marked as @nullable"))
                            .count(), equalTo(1L));
@@ -180,7 +180,7 @@ public class ChangedNullabilityTest {
 
         assertThat(events.stream()
                            .filter(event -> event.getSeverity() == Severity.ERROR)
-                           .filter(event -> event.getId().equals("ChangedNullability"))
+                           .filter(event -> event.getId().equals("ChangedNullability.AddedNullableTrait"))
                            .filter(event -> event.getMessage().contains("The @nullable trait was added to a "
                                                                         + "@required member"))
                            .count(), equalTo(1L));
@@ -202,7 +202,7 @@ public class ChangedNullabilityTest {
 
         assertThat(events.stream()
                            .filter(event -> event.getSeverity() == Severity.DANGER)
-                           .filter(event -> event.getId().equals("ChangedNullability"))
+                           .filter(event -> event.getId().equals("ChangedNullability.AddedInputTrait"))
                            .filter(event -> event.getMessage().contains("The @input trait was added to"))
                            .count(), equalTo(1L));
     }
@@ -226,7 +226,7 @@ public class ChangedNullabilityTest {
 
         assertThat(events.stream()
                            .filter(event -> event.getSeverity() == Severity.ERROR)
-                           .filter(event -> event.getId().equals("ChangedNullability"))
+                           .filter(event -> event.getId().equals("ChangedNullability.RemovedInputTrait"))
                            .filter(event -> event.getMessage().contains("The @input trait was removed from"))
                            .count(), equalTo(1L));
     }
