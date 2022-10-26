@@ -292,22 +292,26 @@ public final class CodegenDirector<
 
         LOGGER.fine("All setup done. Beginning code generation");
 
+        LOGGER.finest(() -> "Performing custom codegen for "
+                + directedCodegen.getClass().getName() + " before shape codegen");
+        CustomizeDirective<C, S> customizeDirective = new CustomizeDirective<>(context, serviceShape);
+        directedCodegen.customizeBeforeShapeGeneration(customizeDirective);
+
+        LOGGER.finest(() -> "Generating shapes for service " + serviceShape.getId());
         generateShapesInService(context, serviceShape);
 
         LOGGER.finest(() -> "Generating service " + serviceShape.getId());
         directedCodegen.generateService(new GenerateServiceDirective<>(context, serviceShape));
 
-        CustomizeDirective<C, S> postProcess = new CustomizeDirective<>(context, serviceShape);
-
         LOGGER.finest(() -> "Performing custom codegen for "
                             + directedCodegen.getClass().getName() + " before integrations");
-        directedCodegen.customizeBeforeIntegrations(postProcess);
+        directedCodegen.customizeBeforeIntegrations(customizeDirective);
 
         applyIntegrationCustomizations(context, integrations);
 
         LOGGER.finest(() -> "Performing custom codegen for "
                             + directedCodegen.getClass().getName() + " after integrations");
-        directedCodegen.customizeAfterIntegrations(postProcess);
+        directedCodegen.customizeAfterIntegrations(customizeDirective);
 
         LOGGER.finest(() -> "Directed codegen finished for " + directedCodegen.getClass().getName());
 
