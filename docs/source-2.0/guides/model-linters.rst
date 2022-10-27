@@ -128,7 +128,8 @@ MissingSensitiveTrait
 This validator scans shape or member names and identifies ones that look like they could contain
 sensitive information but are not marked with the ``@sensitive`` trait. This does not apply to
 shapes where the ``@sensitive`` trait would be invalid. Users may also configure this validator
-with custom lists of words or phrases, and choose to ignore the built-in defaults.
+with a custom list of terms, and choose to ignore the built-in defaults. The defaults terms include
+categories of personal information such as 'birth day', 'billing address', 'zip code', or 'gender'.
 
 Rationale
     Sensitive information often incurs legal requirements regarding the handling and logging
@@ -146,22 +147,17 @@ Configuration
        * - Property
          - Type
          - Description
-       * - words
+       * - terms
          - [ ``string`` ]
-         - A list of words to either be added to or replace the default
-           words. These are matched to without regards to casing.
-           This property defaults to an empty list.
-       * - phrases
-         - [ ``string`` ]
-         - A list of phrases to either be added to or replace the default
-           phrases. These are matched to without regards to casing or word boundaries.
-           Use this property when trying to match word fragments or multi-words.
-           This property defaults to an empty list.
+         - A list of search terms that match shape or member names
+           case-insensitively based on word boundaries (for example, the term
+           "access key id" matches "AccessKeyId", "access_key_id", and
+           "accesskeyid"). See :ref:`words-boundaries` for details.
        * - excludeDefaults
          - ``boolean``
          - A flag indicating whether or not to disregard the default set
-           of words and phrases. This property is not required and defaults to false.
-           If set to true, either ``words`` or ``phrases`` must be provided.
+           of terms. This property is not required and defaults to false.
+           If set to true, ``terms`` must be provided.
 
 Example:
 
@@ -173,8 +169,7 @@ Example:
         name: "MissingSensitiveTrait"
         configuration: {
             excludeDefaults: false,
-            words: ["confidential"],
-            phrases: ["MyPrivateInfo"]
+            terms: ["social security number"]
         }
     }]
 
@@ -284,7 +279,7 @@ Configuration
           - A list of search terms that match shape or member names
             case-insensitively based on word boundaries (for example, the term
             "access key id" matches "AccessKeyId", "access_key_id", and
-            "accesskeyid"). See :ref:`reserved-words-boundaries` for details.
+            "accesskeyid"). See :ref:`words-boundaries` for details.
         * - selector
           - ``string``
           - Specifies a selector of shapes to validate for this configuration.
@@ -402,12 +397,12 @@ be specified.
       * - **Codename**
         - Match
 
-.. _reserved-words-boundaries:
+.. _words-boundaries:
 
-Reserved words boundary matching
+Words boundary matching
 --------------------------------
 
-Word boundaries can be used to find reserved words. Word boundary search
+Word boundaries can be used to find terms of interest. Word boundary search
 text consists of one or more alphanumeric words separated by a single
 space. When comparing against another string, the contents of the string
 are separated into words based on word boundaries. Those words are
@@ -436,7 +431,7 @@ demonstrates how comparison text is parsed into words.
     * - access_keyID
       - access key id
 
-The following table shows matches for a reserved term of ``secret id``,
+The following table shows matches for a search term of ``secret id``,
 meaning the word "secret" needs to be followed by the word "id". Word
 boundary searches also match if the search terms concatenated together with
 no spaces is considered a word in the search text (for example,

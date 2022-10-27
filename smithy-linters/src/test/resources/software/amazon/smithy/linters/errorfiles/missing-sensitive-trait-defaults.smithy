@@ -20,8 +20,8 @@ operation FooOperation {
 
 structure FooOperationRequest {
     firstMember: CabAnkle,
-    secondMember: BillingInfo,
-    thirdMember: SafeBillingInfo
+    secondMember: BillingAddress,
+    thirdMember: SafeBillingAddress
 }
 
 structure FooOperationResponse {
@@ -32,7 +32,7 @@ structure CabAnkle {
 }
 
 // should get flagged
-structure BillingInfo {
+structure BillingAddress {
     // should get flagged
     bank: MyString,
     data: MyString,
@@ -43,7 +43,7 @@ structure BillingInfo {
 }
 
 @sensitive
-structure SafeBillingInfo {
+structure SafeBillingAddress {
     bank: MyString,
     data: MyString,
     safeBank: MySensitiveString,

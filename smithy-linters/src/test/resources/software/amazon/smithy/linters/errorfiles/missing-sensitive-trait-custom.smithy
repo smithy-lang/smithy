@@ -5,13 +5,13 @@ metadata validators = [{
     id: "DefaultMissingSensitiveTrait",
     configuration: {
         excludeDefaults: true,
-        phrases: [
-            "caBANKle",
-        ],
-        words: [
+        terms: [
+            "bank",
             "foo",
             "string",
-            "secondMember"
+            "second member",
+            "bill inginfo",
+            "da ta"
         ]
     }
 }]
@@ -29,12 +29,15 @@ operation FooOperation {
     errors: [],
 }
 
+// should get flagged
 structure FooOperationRequest {
     firstMember: CabAnkle,
+    // should get flagged
     secondMember: BillingInfo,
     thirdMember: SafeBillingInfo
 }
 
+// should get flagged
 structure FooOperationResponse {
 }
 
@@ -42,14 +45,15 @@ structure CabAnkle {
     myMember: MyString
 }
 
-// should get flagged
+//should not get flagged
 structure BillingInfo {
     // should get flagged
     bank: MyString,
     data: MyString,
+    // should not get flagged
     safeBank: MySensitiveString,
-    // should get flagged
     firstName: FirstName,
+    // should not get flagged
     lastName: LastName
 }
 
@@ -67,7 +71,6 @@ string MyString
 @sensitive
 string MySensitiveString
 
-// should get flagged
 string FirstName
 
 @sensitive

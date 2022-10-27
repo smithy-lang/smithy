@@ -20,6 +20,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import software.amazon.smithy.utils.StringUtils;
 
 /**
@@ -58,18 +60,28 @@ final class WordBoundaryMatcher implements Predicate<String> {
 
     @Override
     public boolean test(String text) {
+        return matchedTermsAsStream(text)
+                .findAny()
+                .isPresent();
+    }
+
+    /**
+     * Returns all the terms that the input text matched.
+     * @param text the String within which to search for matches
+     * @return set of all matches
+     */
+    public Set<String> getAllMatches(String text) {
+        return matchedTermsAsStream(text).collect(Collectors.toSet());
+    }
+
+    private Stream<String> matchedTermsAsStream(String text) {
         if (text == null || text.isEmpty() || words.isEmpty()) {
-            return false;
+            return Stream.empty();
         }
 
-        String searchString = searchCache.computeIfAbsent(text, WordBoundaryMatcher::splitWords);
-        for (String needle : words) {
-            if (testWordMatch(needle, searchString)) {
-                return true;
-            }
-        }
-
-        return false;
+        String haystack = searchCache.computeIfAbsent(text, WordBoundaryMatcher::splitWords);
+        return words.stream()
+                .filter(needle -> testWordMatch(needle, haystack));
     }
 
     private boolean testWordMatch(String needle, String haystack) {
