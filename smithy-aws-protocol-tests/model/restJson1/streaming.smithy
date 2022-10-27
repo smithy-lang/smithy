@@ -123,7 +123,8 @@ apply StreamingTraitsRequireLength @httpRequestTests([
         params: {
             foo: "Foo",
             blob: "blobby blob blob"
-        }
+        },
+        appliesTo: "client"
     },
     {
         id: "RestJsonStreamingTraitsRequireLengthWithNoBlobBody",
@@ -137,7 +138,8 @@ apply StreamingTraitsRequireLength @httpRequestTests([
         },
         params: {
             foo: "Foo"
-        }
+        },
+        appliesTo: "client"
     },
 ])
 
