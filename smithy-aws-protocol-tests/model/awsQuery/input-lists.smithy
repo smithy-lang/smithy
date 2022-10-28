@@ -42,14 +42,14 @@ apply QueryLists @httpRequestTests([
     },
     {
         id: "EmptyQueryLists",
-        documentation: "Does not serialize empty query lists",
+        documentation: "Serializes empty query lists",
         protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: "Action=QueryLists&Version=2020-01-08",
+        body: "Action=QueryLists&Version=2020-01-08&ListArg=",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             ListArg: []
