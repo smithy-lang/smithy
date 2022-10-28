@@ -8,6 +8,7 @@ resource Foo {
     }
     read: GetFoo
     put: PutFoo
+    delete: DeleteFoo
 }
 
 @readonly
@@ -25,7 +26,22 @@ operation GetFoo {
 @idempotent
 operation PutFoo {
     input:= {
-    @required
+        @resourceIdentifier("bar")
+        @required
+        a: String
+
+        @resourceIdentifier("bar")
+        @required
+        b: String
+    }
+}
+
+@idempotent
+operation DeleteFoo {
+    input:= {
+        @required
+        bar: String
+
         @resourceIdentifier("bar")
         @required
         a: String

@@ -33,6 +33,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ReadonlyTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.ResourceIdentifierTrait;
+import software.amazon.smithy.utils.MapUtils;
 
 public class IdentifierBindingIndexTest {
 
@@ -144,9 +145,19 @@ public class IdentifierBindingIndexTest {
     }
 
     @Test
-    public void doesNotFailWhenLoadingModelWithCollidingMemberBindings() {
+    public void explicitBindingsPreferred() {
         // Ensure that this does not fail to load. This previously failed when using Collectors.toMap due to
         // a collision in the keys used to map an identifier to multiple members.
-        Model.assembler().addImport(getClass().getResource("colliding-resource-identifiers.smithy")).assemble();
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("colliding-resource-identifiers.smithy"))
+                .assemble()
+                .unwrap();
+        IdentifierBindingIndex index = IdentifierBindingIndex.of(model);
+
+        // Ensure that the explicit trait bindings are preferred over implicit bindings.
+        assertThat(index.getOperationInputBindings(
+                        ShapeId.from("smithy.example#Foo"),
+                        ShapeId.from("smithy.example#GetFoo")),
+                equalTo(MapUtils.of("bar", "bam")));
     }
 }
