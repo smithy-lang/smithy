@@ -18,7 +18,6 @@ package software.amazon.smithy.model.validation.validators;
 import static java.lang.String.format;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -63,14 +62,25 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
     // Check if this shape has conflicting resource identifier bindings due to trait bindings.
     private void validateResourceIdentifierTraits(Model model, List<ValidationEvent> events) {
         for (ShapeId container : findStructuresWithResourceIdentifierTraits(model)) {
-            Map<String, Set<String>> bindings = computePotentialStructureBindings(model, container);
+            if (!model.getShape(container).isPresent()) {
+                continue;
+            }
+
+            Shape structure = model.expectShape(container);
+            Map<String, Set<String>> bindings = computePotentialStructureBindings(structure);
             for (Map.Entry<String, Set<String>> entry : bindings.entrySet()) {
-                if (entry.getValue().size() > 1) {
-                    events.add(error(model.expectShape(container), String.format(
-                            "Conflicting resource identifier member bindings found for identifier '%s' between "
-                            + "members %s", entry.getKey(), String.join(", ", entry.getValue()))));
+                // Only emit this event if the potential bindings contains
+                // more than the implicit binding.
+                if (entry.getValue().size() > 1 && entry.getValue().contains(entry.getKey())) {
+                    Set<String> explicitBindings = entry.getValue();
+                    explicitBindings.remove(entry.getKey());
+                    events.add(warning(structure, String.format(
+                            "Implicit resource identifier for '%s' is overridden by `resourceIdentifier` trait on "
+                            + "members: '%s'", entry.getKey(), String.join("', '", explicitBindings))));
                 }
             }
+
+            validateResourceIdentifierTraitConflicts(structure, events);
         }
     }
 
@@ -82,18 +92,36 @@ public final class ResourceIdentifierBindingValidator extends AbstractValidator 
         return containers;
     }
 
-    private Map<String, Set<String>> computePotentialStructureBindings(Model model, ShapeId container) {
-        return model.getShape(container).map(struct -> {
-            Map<String, Set<String>> bindings = new HashMap<>();
-            // Ensure no two members are bound to the same identifier.
-            for (MemberShape member : struct.members()) {
-                String bindingName = member.getTrait(ResourceIdentifierTrait.class)
-                        .map(ResourceIdentifierTrait::getValue)
-                        .orElseGet(member::getMemberName);
-                bindings.computeIfAbsent(bindingName, k -> new HashSet<>()).add(member.getMemberName());
+    private Map<String, Set<String>> computePotentialStructureBindings(Shape structure) {
+        Map<String, Set<String>> bindings = new HashMap<>();
+        // Ensure no two members are bound to the same identifier.
+        for (MemberShape member : structure.members()) {
+            String bindingName = member.getTrait(ResourceIdentifierTrait.class)
+                    .map(ResourceIdentifierTrait::getValue)
+                    .orElseGet(member::getMemberName);
+            bindings.computeIfAbsent(bindingName, k -> new HashSet<>()).add(member.getMemberName());
+        }
+        return bindings;
+    }
+
+    private void validateResourceIdentifierTraitConflicts(Shape structure, List<ValidationEvent> events) {
+        Map<String, Set<String>> explicitBindings = new HashMap<>();
+        // Ensure no two members use a resourceIdentifier trait to bind to
+        // the same identifier.
+        for (MemberShape member : structure.members()) {
+            if (member.hasTrait(ResourceIdentifierTrait.class)) {
+                explicitBindings.computeIfAbsent(member.expectTrait(ResourceIdentifierTrait.class).getValue(),
+                        k -> new HashSet<>()).add(member.getMemberName());
             }
-            return bindings;
-        }).orElse(Collections.emptyMap());
+        }
+
+        for (Map.Entry<String, Set<String>> entry : explicitBindings.entrySet()) {
+            if (entry.getValue().size() > 1) {
+                events.add(error(structure, String.format(
+                        "Conflicting resource identifier member bindings found for identifier '%s' between "
+                        + "members: '%s'", entry.getKey(), String.join("', '", entry.getValue()))));
+            }
+        }
     }
 
     private void validateOperationBindings(Model model, List<ValidationEvent> events) {

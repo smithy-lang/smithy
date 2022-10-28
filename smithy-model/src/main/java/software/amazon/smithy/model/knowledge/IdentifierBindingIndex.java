@@ -169,10 +169,12 @@ public final class IdentifierBindingIndex implements KnowledgeIndex {
             if (member.hasTrait(ResourceIdentifierTrait.class)) {
                 // Mark as a binding if the member has an explicit @resourceIdentifier trait.
                 String bindingName = member.expectTrait(ResourceIdentifierTrait.class).getValue();
+                // Override any implicit bindings with explicit trait bindings.
                 bindings.put(bindingName, member.getMemberName());
             } else if (isImplicitIdentifierBinding(member, resource)) {
                 // Mark as a binding if the member is an implicit identifier binding.
-                bindings.put(member.getMemberName(), member.getMemberName());
+                // Only utilize implicit bindings when an explicit binding wasn't found.
+                bindings.putIfAbsent(member.getMemberName(), member.getMemberName());
             }
         }
         return bindings;

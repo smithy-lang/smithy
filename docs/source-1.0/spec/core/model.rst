@@ -1950,6 +1950,10 @@ on ``GetHistoricalForecastInput$customHistoricalIdName`` maps that member
 to the "historicalId" identifier.
 
 
+If an operation input supplies both an explicit and an implicit identifier
+binding, the explicit identifier binding is utilized.
+
+
 .. _lifecycle-operations:
 
 Resource lifecycle operations
