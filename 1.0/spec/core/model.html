@@ -516,7 +516,7 @@ For example, <code class="docutils literal notranslate"><span class="pre">smithy
     <a class="reference internal" href="#grammar-token-smithy-IdentifierStart"><code class="xref docutils literal notranslate"><span class="pre">IdentifierStart</span></code></a> *<a class="reference internal" href="#grammar-token-smithy-IdentifierChars"><code class="xref docutils literal notranslate"><span class="pre">IdentifierChars</span></code></a>
 
 <strong id="grammar-token-smithy-IdentifierStart"><span id="grammar-token-identifierstart"></span>IdentifierStart</strong> =
-    *&quot;_&quot; ALPHA
+    (1*&quot;_&quot; (ALPHA / DIGIT)) / ALPHA
 
 <strong id="grammar-token-smithy-IdentifierChars"><span id="grammar-token-identifierchars"></span>IdentifierChars</strong> =
     ALPHA / DIGIT / &quot;_&quot;
@@ -2128,6 +2128,8 @@ maps it to the &quot;forecastId&quot; identifier is provided by the
 &quot;customForecastIdName&quot; member, and the <a class="reference internal" href="resource-traits.html#resourceidentifier-trait"><span class="std std-ref">resourceIdentifier trait</span></a>
 on <code class="docutils literal notranslate"><span class="pre">GetHistoricalForecastInput$customHistoricalIdName</span></code> maps that member
 to the &quot;historicalId&quot; identifier.</p>
+<p>If an operation input supplies both an explicit and an implicit identifier
+binding, the explicit identifier binding is utilized.</p>
 </div>
 </div>
 <div class="section" id="resource-lifecycle-operations">

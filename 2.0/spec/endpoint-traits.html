@@ -437,7 +437,8 @@ endpoint host prior to its use. Clients MUST fail when expanding a
 <p>After the <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> template is expanded, a client MUST prepend the
 expanded value to the client's derived endpoint host. The client MUST NOT add
 any additional characters between the <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> and client derived
-endpoint host. The resolved host value MUST result in a valid <a class="reference external" href="https://tools.ietf.org/html/rfc3986#section-3.2.2">RFC 3986 Host</a>.</p>
+endpoint host. The resolved host value MUST result in a valid
+<span class="target" id="index-1"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html#section-3.2.2"><strong>RFC 3986#section-3.2.2</strong></a> host.</p>
 <p>Clients SHOULD provide a way for users to disable the <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> injection
 behavior. If a user sets this flag, the client MUST NOT perform any
 <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> expansion and MUST NOT prepend the prefix to the client derived

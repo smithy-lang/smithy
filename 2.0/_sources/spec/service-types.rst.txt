@@ -678,6 +678,10 @@ maps it to the "forecastId" identifier is provided by the
 on ``GetHistoricalForecastInput$customHistoricalIdName`` maps that member
 to the "historicalId" identifier.
 
+If an operation input supplies both an explicit and an implicit identifier
+binding, the explicit identifier binding is utilized.
+
+
 .. _resource-properties:
 
 Resource Properties

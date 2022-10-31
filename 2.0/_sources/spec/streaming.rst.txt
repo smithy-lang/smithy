@@ -20,19 +20,13 @@ by a single top-level operation input or output structure member. For example:
 
 .. code-block:: smithy
 
+    @http(method: "GET", uri: "/streaming-operation")
     operation StreamingOperation {
-        input: StreamingOperationInput
-        output: StreamingOperationOutput
-    }
-
-    @input
-    structure StreamingOperationInput {}
-
-    @output
-    structure StreamingOperationOutput {
-        @required
-        streamId: String
-        output: StreamingBlob
+        input := {}
+        output := {
+            @httpPayload
+            output: StreamingBlob = ""
+        }
     }
 
     @streaming
@@ -483,10 +477,6 @@ Summary
     large and thus should not be stored in memory or that the size is unknown
     at the start of the request.
 
-    .. warning::
-        Members targeting streaming blobs MUST be marked with the
-        :ref:`required-trait` or :ref:`default-trait`.
-
     When applied to a union, it indicates that shape represents an
     :ref:`event stream <event-streams>`.
 Trait selector::
@@ -494,6 +484,8 @@ Trait selector::
 Value type
     Annotation trait
 Validation
+    * Members that target a streaming blob MUST be marked with the
+      :ref:`required-trait` or :ref:`default-trait`.
     * ``streaming`` shapes can only be referenced from top-level members
       of operation input or output structures.
     * Structures that contain a member that targets a ``streaming`` shape
@@ -501,6 +493,17 @@ Validation
     * The ``streaming`` trait is *structurally exclusive by target*, meaning
       only a single member of a structure can target a shape marked as
       ``streaming``.
+    * If a service supports the :ref:`httpPayload-trait`, any member that
+      targets a ``streaming`` shape must also be marked as ``@httpPayload``.
+
+
+Deserializing streaming blobs
+-----------------------------
+
+It is often impossible for a server to know if a zero-length payload was sent
+by a client, or if no payload was explicitly sent by a client. As a result,
+required streaming members SHOULD be interpreted by deserializers as if they
+have a default zero-length value when not present.
 
 
 .. smithy-trait:: smithy.api#requiresLength

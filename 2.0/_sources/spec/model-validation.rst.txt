@@ -60,6 +60,11 @@ objects that are used to constrain a model. Each object in the
 
         If ``id`` is not specified, it will default to the ``name`` property of
         the validator definition.
+
+        IDs that contain dots (.) are hierarchical. For example, the ID
+        "Foo.Bar" contains the ID "Foo". Event ID hierarchies can be leveraged
+        to group validation events and allow more granular
+        :ref:`suppressions <suppression-definition>`.
     * - message
       - ``string``
       - Provides a custom message to use when emitting validation events. The
@@ -260,6 +265,53 @@ ID of ``OverlyBroadValidator``:
             namespace: "*"
         }
     ]
+
+
+Matching suppression event IDs
+==============================
+
+Both the :ref:`suppress-trait` and suppressions
+:ref:`defined in metadata <suppressions-metadata>` match events hierarchically
+based on dot (.) segments. For example, given a validation event ID of
+"Foo.Bar", and a suppression ID of "Foo", the suppression ID matches the
+event ID because "Foo.Bar" begins with the segment "Foo". However, a suppression
+ID of "Foo.Bar" does not match an event ID of "Foo" because "Foo.Bar" is more
+specific. Further, a suppression ID of "ABC" does not match an event ID of
+"ABC123" because "ABC" is not a segment of the event ID.
+
+.. list-table::
+    :header-rows: 1
+
+    * - Event ID
+      - Suppression ID
+      - Is match
+    * - ``Foo``
+      - ``Foo``
+      - Yes
+    * - ``Foo.Bar``
+      - ``Foo``
+      - Yes
+    * - ``Foo.Bar.Baz``
+      - ``Foo``
+      - Yes
+    * - ``Foo.``
+      - ``Foo.``
+      - Yes
+    * - ``Foo.``
+      - ``Foo``
+      - Yes
+    * - ``Foo``
+      - ``Foo.``
+      - No
+    * - ``Foosball``
+      - ``Foo``
+      - No
+    * - ``Foo``
+      - ``Foo.Bar``
+      - No
+    * - ``Abc.Foo.Bar``
+      - ``Foo.Bar``
+      - No
 
 
 -------------------

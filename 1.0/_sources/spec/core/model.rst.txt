@@ -244,7 +244,7 @@ Shape IDs are formally defined by the following ABNF:
     AbsoluteRootShapeId  :`Namespace` "#" `Identifier`
     Namespace            :`Identifier` *("." `Identifier`)
     Identifier           :`IdentifierStart` *`IdentifierChars`
-    IdentifierStart      :*"_" ALPHA
+    IdentifierStart      :(1*"_" (ALPHA / DIGIT)) / ALPHA
     IdentifierChars      :ALPHA / DIGIT / "_"
     ShapeIdMember        :"$" `Identifier`
 
@@ -1948,6 +1948,10 @@ maps it to the "forecastId" identifier is provided by the
 "customForecastIdName" member, and the :ref:`resourceIdentifier-trait`
 on ``GetHistoricalForecastInput$customHistoricalIdName`` maps that member
 to the "historicalId" identifier.
+
+
+If an operation input supplies both an explicit and an implicit identifier
+binding, the explicit identifier binding is utilized.
 
 
 .. _lifecycle-operations:

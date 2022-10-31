@@ -351,8 +351,12 @@ implements the validator.</td>
 <p>Multiple instances of a single validator can be configured for a model.
 Providing an <code class="docutils literal notranslate"><span class="pre">id</span></code> allows suppressions to suppress a specific instance
 of a validator.</p>
-<p class="last">If <code class="docutils literal notranslate"><span class="pre">id</span></code> is not specified, it will default to the <code class="docutils literal notranslate"><span class="pre">name</span></code> property of
+<p>If <code class="docutils literal notranslate"><span class="pre">id</span></code> is not specified, it will default to the <code class="docutils literal notranslate"><span class="pre">name</span></code> property of
 the validator definition.</p>
+<p class="last">IDs that contain dots (.) are hierarchical. For example, the ID
+&quot;Foo.Bar&quot; contains the ID &quot;Foo&quot;. Event ID hierarchies can be leveraged
+to group validation events and allow more granular
+<a class="reference internal" href="#suppression-definition"><span class="std std-ref">suppressions</span></a>.</p>
 </td>
 </tr>
 <tr class="row-even"><td>message</td>
@@ -536,6 +540,70 @@ ID of <code class="docutils literal notranslate"><span class="pre">OverlyBroadVa
 <span class="w">    </span>}<span class="w"></span>
 ]<span class="w"></span>
 </pre></div>
+</div>
+</div>
+<div class="section" id="matching-suppression-event-ids">
+<h3><span class="section-number">17.4.3. </span>Matching suppression event IDs<a class="headerlink" href="#matching-suppression-event-ids" title="Permalink to this headline">#</a></h3>
+<p>Both the <a class="reference internal" href="#suppress-trait"><span class="std std-ref">suppress trait</span></a> and suppressions
+<a class="reference internal" href="#suppressions-metadata"><span class="std std-ref">defined in metadata</span></a> match events hierarchically
+based on dot (.) segments. For example, given a validation event ID of
+&quot;Foo.Bar&quot;, and a suppression ID of &quot;Foo&quot;, the suppression ID matches the
+event ID because &quot;Foo.Bar&quot; begins with the segment &quot;Foo&quot;. However, a suppression
+ID of &quot;Foo.Bar&quot; does not match an event ID of &quot;Foo&quot; because &quot;Foo.Bar&quot; is more
+specific. Further, a suppression ID of &quot;ABC&quot; does not match an event ID of
+&quot;ABC123&quot; because &quot;ABC&quot; is not a segment of the event ID.</p>
+<div class="table-wrapper docutils container">
+<table border="1" class="docutils align-default">
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Event ID</th>
+<th class="head">Suppression ID</th>
+<th class="head">Is match</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">Foo</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">Foo</span></code></td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">Foo.Bar</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">Foo</span></code></td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">Foo.Bar.Baz</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">Foo</span></code></td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">Foo.</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">Foo.</span></code></td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">Foo.</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">Foo</span></code></td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">Foo</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">Foo.</span></code></td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">Foosball</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">Foo</span></code></td>
+<td>No</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">Foo</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">Foo.Bar</span></code></td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">Abc.Foo.Bar</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">Foo.Bar</span></code></td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -1004,6 +1072,7 @@ traits.</p>
 <li><a class="reference internal" href="#suppressions">17.4. Suppressions</a><ul>
 <li><a class="reference internal" href="#suppress-trait">17.4.1. <code class="docutils literal notranslate"><span class="pre">suppress</span></code> trait</a></li>
 <li><a class="reference internal" href="#suppression-metadata">17.4.2. Suppression metadata</a></li>
+<li><a class="reference internal" href="#matching-suppression-event-ids">17.4.3. Matching suppression event IDs</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#built-in-validators">17.5. Built-in validators</a><ul>

@@ -840,7 +840,7 @@ For example, <code class="docutils literal notranslate"><span class="pre">smithy
     <a class="reference internal" href="#grammar-token-smithy-IdentifierStart"><code class="xref docutils literal notranslate"><span class="pre">IdentifierStart</span></code></a> *<a class="reference internal" href="#grammar-token-smithy-IdentifierChars"><code class="xref docutils literal notranslate"><span class="pre">IdentifierChars</span></code></a>
 
 <strong id="grammar-token-smithy-IdentifierStart"><span id="grammar-token-identifierstart"></span>IdentifierStart</strong> =
-    *&quot;_&quot; ALPHA
+    (1*&quot;_&quot; (ALPHA / DIGIT)) / ALPHA
 
 <strong id="grammar-token-smithy-IdentifierChars"><span id="grammar-token-identifierchars"></span>IdentifierChars</strong> =
     ALPHA / DIGIT / &quot;_&quot;

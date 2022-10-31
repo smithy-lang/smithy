@@ -309,19 +309,13 @@ or streams of events (<a class="reference internal" href="#event-streams"><span 
 bytes or UTF-8 characters. A data stream is created by applying the
 <a class="reference internal" href="#streaming-trait"><span class="std std-ref">streaming trait</span></a> to a blob or string. This stream can then be referenced
 by a single top-level operation input or output structure member. For example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">StreamingOperation</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">StreamingOperationInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">StreamingOperationOutput</span><span class="w"></span>
-}<span class="w"></span>
-
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">StreamingOperationInput</span><span class="w"> </span>{}<span class="w"></span>
-
-<span class="nt">@output</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">StreamingOperationOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">streamId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">StreamingBlob</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/streaming-operation&quot;</span>)<span class="w"></span>
+<span class="kd">operation </span><span class="nc">StreamingOperation</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{}<span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="nt">@httpPayload</span><span class="w"></span>
+<span class="w">        </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">StreamingBlob</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
 }<span class="w"></span>
 
 <span class="nt">@streaming</span><span class="w"></span>
@@ -696,17 +690,14 @@ of an event:</p>
 <p>When applied to a blob, this simply means that the data could be very
 large and thus should not be stored in memory or that the size is unknown
 at the start of the request.</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Members targeting streaming blobs MUST be marked with the
-<a class="reference internal" href="type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a> or <a class="reference internal" href="type-refinement-traits.html#default-trait"><span class="std std-ref">default trait</span></a>.</p>
-</div>
 <p>When applied to a union, it indicates that shape represents an
 <a class="reference internal" href="#event-streams"><span class="std std-ref">event stream</span></a>.</p>
 </dd>
 <dt>Trait selector::</dt><dd><code class="docutils literal notranslate"><span class="pre">:is(blob,</span> <span class="pre">union)</span></code></dd>
 <dt>Value type</dt><dd>Annotation trait</dd>
 <dt>Validation</dt><dd><ul class="simple">
+<li>Members that target a streaming blob MUST be marked with the
+<a class="reference internal" href="type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a> or <a class="reference internal" href="type-refinement-traits.html#default-trait"><span class="std std-ref">default trait</span></a>.</li>
 <li><code class="docutils literal notranslate"><span class="pre">streaming</span></code> shapes can only be referenced from top-level members
 of operation input or output structures.</li>
 <li>Structures that contain a member that targets a <code class="docutils literal notranslate"><span class="pre">streaming</span></code> shape
@@ -714,9 +705,18 @@ MUST NOT be targeted by other members.</li>
 <li>The <code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait is <em>structurally exclusive by target</em>, meaning
 only a single member of a structure can target a shape marked as
 <code class="docutils literal notranslate"><span class="pre">streaming</span></code>.</li>
+<li>If a service supports the <a class="reference internal" href="http-bindings.html#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>, any member that
+targets a <code class="docutils literal notranslate"><span class="pre">streaming</span></code> shape must also be marked as <code class="docutils literal notranslate"><span class="pre">&#64;httpPayload</span></code>.</li>
 </ul>
 </dd>
 </dl>
+<div class="section" id="deserializing-streaming-blobs">
+<h3><span class="section-number">13.3.1. </span>Deserializing streaming blobs<a class="headerlink" href="#deserializing-streaming-blobs" title="Permalink to this headline">#</a></h3>
+<p>It is often impossible for a server to know if a zero-length payload was sent
+by a client, or if no payload was explicitly sent by a client. As a result,
+required streaming members SHOULD be interpreted by deserializers as if they
+have a default zero-length value when not present.</p>
+</div>
 </div>
 <div class="section" id="requireslength-trait">
 <span id="smithy-api-requireslength-trait"></span><span id="id10"></span><h2><span class="section-number">13.4. </span><code class="docutils literal notranslate"><span class="pre">requiresLength</span></code> trait<a class="headerlink" href="#requireslength-trait" title="Permalink to this headline">#</a></h2>
@@ -828,7 +828,10 @@ of operation input structures.</li>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#streaming-trait">13.3. <code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait</a></li>
+<li><a class="reference internal" href="#streaming-trait">13.3. <code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait</a><ul>
+<li><a class="reference internal" href="#deserializing-streaming-blobs">13.3.1. Deserializing streaming blobs</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#requireslength-trait">13.4. <code class="docutils literal notranslate"><span class="pre">requiresLength</span></code> trait</a></li>
 </ul>
 </li>

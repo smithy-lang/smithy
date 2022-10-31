@@ -6,7 +6,8 @@ Smithy IDL
 
 Smithy models are defined using either the Smithy interface definition language
 (IDL) or the :ref:`JSON abstract syntax tree <json-ast>` (AST). This document
-defines the ABNF_ grammar and syntax for defining models with the Smithy IDL.
+defines the :rfc:`ABNF <5234>` grammar and syntax for defining models with the
+Smithy IDL.
 
 
 -------------------
@@ -89,7 +90,7 @@ Smithy IDL ABNF
 ---------------
 
 The Smithy IDL is defined by the following ABNF which uses case-sensitive
-string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
+string support defined in :rfc:`7405`.
 
 .. productionlist:: smithy
     idl:*`WS` `ControlSection` `MetadataSection` `ShapeSection`
@@ -2346,5 +2347,4 @@ example is interpreted as ``Foo\nBaz Bam``:
     Baz \
     Bam"""
 
-.. _ABNF: https://tools.ietf.org/html/rfc5234
 .. _CommonMark: https://spec.commonmark.org/

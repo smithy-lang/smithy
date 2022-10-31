@@ -629,7 +629,7 @@ plane unless an operation or resource is marked with the
 
 .. code-block:: smithy
 
-    use aws.api#controlPlane
+    use aws.api#dataPlane
 
     @dataPlane
     operation PutThings {

@@ -304,7 +304,7 @@
 <div class="section" id="idempotency">
 <h2><span class="section-number">9.1. </span>Idempotency<a class="headerlink" href="#idempotency" title="Permalink to this headline">#</a></h2>
 <p>Operations marked with the <a class="reference internal" href="#readonly-trait"><span class="std std-ref">readonly trait</span></a> or <a class="reference internal" href="#idempotent-trait"><span class="std std-ref">idempotent trait</span></a>
-are considered idempotent as defined in <a class="reference external" href="https://datatracker.ietf.org/doc/html/rfc7231#section-4.2.2">RFC 7231, section 4.2.2</a>. Operations
+are considered idempotent as defined in <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc7231.html#section-4.2.2"><strong>RFC 7231#section-4.2.2</strong></a>. Operations
 that contain a top-level input member marked with the <a class="reference internal" href="#idempotencytoken-trait"><span class="std std-ref">idempotencyToken trait</span></a>
 that are provided a token for the member are also considered idempotent. All
 other operations SHOULD be considered unsafe to retry unless the response to
@@ -325,7 +325,7 @@ identify and discard replayed requests.</dd>
 <p>Only a single member of the input of an operation can be targeted by the
 <code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait; only top-level structure members of the input of an
 operation are considered.</p>
-<p>A unique identifier (typically a <a class="reference external" href="https://tools.ietf.org/html/rfc4122">UUID</a>) SHOULD be used by the client when
+<p>A unique identifier (typically a <span class="target" id="index-1"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc4122.html"><strong>UUID</strong></a>) SHOULD be used by the client when
 providing the value for the request token member. When the request token is
 present, the service MUST ensure that the request is not replayed within a
 service-defined period of time. This allows the client to safely retry

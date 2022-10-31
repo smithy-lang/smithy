@@ -309,8 +309,8 @@ label and to a header). Only top-level members of an operation's input, output,
 and error structures are considered when serializing HTTP messages.</p>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
-<p class="last">Violating <a class="reference external" href="https://datatracker.ietf.org/doc/html/rfc7230">HTTP specifications</a> or relying on poorly-supported HTTP
-functionality when defining HTTP bindings will limit interoperability
+<p class="last">Violating :rfc`HTTP specifications &lt;7230&gt;` or relying on poorly-supported
+HTTP functionality when defining HTTP bindings will limit interoperability
 and likely lead to undefined behavior across Smithy implementations. For
 example, avoid defining GET/DELETE requests with payloads, defining
 response payloads for operations with a 204/205 status, etc.</p>
@@ -1040,7 +1040,8 @@ structure with the <code class="docutils literal notranslate"><span class="pre">
 <code class="docutils literal notranslate"><span class="pre">1985-04-12T23%3A20%3A50.52Z</span></code>). The <a class="reference internal" href="protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat trait</span></a>
 MAY be used to use a custom serialization format.</li>
 <li>Reserved characters defined in <span class="target" id="index-5"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html#section-2.2"><strong>section 2.2 of RFC3986</strong></a>
-and the <cite>%</cite> itself MUST be <a class="reference external" href="https://tools.ietf.org/html/rfc3986#section-2.1">percent-encoded</a> (that is, <code class="docutils literal notranslate"><span class="pre">:/?#[]&#64;!$&amp;'()*+,;=%</span></code>).</li>
+and the <cite>%</cite> itself MUST be <span class="target" id="index-6"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html#section-2.1"><strong>percent-encoded</strong></a> (that is,
+<code class="docutils literal notranslate"><span class="pre">:/?#[]&#64;!$&amp;'()*+,;=%</span></code>).</li>
 <li>However, if the label is greedy, then &quot;/&quot; MUST NOT be percent-encoded
 because greedy labels are meant to span multiple path segments.</li>
 </ul>
@@ -1231,10 +1232,11 @@ request:</p>
 <ul class="simple">
 <li>&quot;&amp;&quot; is used to separate query string parameter key-value pairs.</li>
 <li>&quot;=&quot; is used to separate query string parameter names from values.</li>
-<li>Reserved characters in keys and values as defined in <span class="target" id="index-6"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html#section-2.2"><strong>section 2.2 of RFC3986</strong></a> and <cite>%</cite>
-MUST be <a class="reference external" href="https://tools.ietf.org/html/rfc3986#section-2.1">percent-encoded</a> (that is, <code class="docutils literal notranslate"><span class="pre">:/?#[]&#64;!$&amp;'()*+,;=%</span></code>).</li>
+<li>Reserved characters in keys and values as defined in <span class="target" id="index-7"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html#section-2.2"><strong>section 2.2 of RFC3986</strong></a> and <cite>%</cite>
+MUST be <span class="target" id="index-8"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html#section-2.1"><strong>percent-encoded</strong></a> (that is,
+<code class="docutils literal notranslate"><span class="pre">:/?#[]&#64;!$&amp;'()*+,;=%</span></code>).</li>
 <li><code class="docutils literal notranslate"><span class="pre">boolean</span></code> values are serialized as <code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>.</li>
-<li><code class="docutils literal notranslate"><span class="pre">timestamp</span></code> values are serialized as an <span class="target" id="index-7"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3339.html"><strong>RFC 3339</strong></a>
+<li><code class="docutils literal notranslate"><span class="pre">timestamp</span></code> values are serialized as an <span class="target" id="index-9"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3339.html"><strong>RFC 3339</strong></a>
 <code class="docutils literal notranslate"><span class="pre">date-time</span></code> string by default (for example, <code class="docutils literal notranslate"><span class="pre">1985-04-12T23:20:50.52Z</span></code>,
 and with percent-encoding, <code class="docutils literal notranslate"><span class="pre">1985-04-12T23%3A20%3A50.52Z</span></code>). The
 <a class="reference internal" href="protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat trait</span></a> MAY be used to use a custom serialization
@@ -1268,10 +1270,10 @@ of an operation, then those members are sent as part of the
 <a class="reference internal" href="#http-protocol-document-payloads"><span class="std std-ref">protocol-specific document</span></a> sent in
 the body of the response.</p>
 <p class="rubric">Do not put too much data in the query string</p>
-<p>While there is no limit placed on the length of an <a class="reference external" href="https://tools.ietf.org/html/rfc7230.html#section-3.1.1">HTTP request line</a>,
-many HTTP client and server implementations enforce limits in practice.
-Carefully consider the maximum allowed length of each member that is bound to
-an HTTP query string or path.</p>
+<p>While there is no limit placed on the length of an
+<span class="target" id="index-10"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc7230.html#section-3.1.1"><strong>HTTP request line</strong></a>, many HTTP client and server
+implementations enforce limits in practice. Carefully consider the maximum
+allowed length of each member that is bound to an HTTP query string or path.</p>
 </div>
 <div class="section" id="httpqueryparams-trait">
 <span id="smithy-api-httpqueryparams-trait"></span><span id="id9"></span><h2><span class="section-number">14.8. </span><code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait<a class="headerlink" href="#httpqueryparams-trait" title="Permalink to this headline">#</a></h2>
@@ -1323,7 +1325,7 @@ the body of the response.</p>
 <p>See the <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a> serialization rules that define how the keys and values of the
 target map will be serialized in the request query string. Key-value pairs in the target map
 are treated like they were explicitly bound using the <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>, including the
-requirement that reserved characters MUST be <a class="reference external" href="https://tools.ietf.org/html/rfc3986#section-2.1">percent-encoded</a>.</p>
+requirement that reserved characters MUST be <span class="target" id="index-11"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html#section-2.1"><strong>percent-encoded</strong></a>.</p>
 <p>When servers deserialize the query string into a <code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code>, they SHOULD take the
 first encountered value for each key. Since this rule applies to all future query string
 values, and changing from a <code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code> to a <code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code> is
@@ -1507,7 +1509,7 @@ default, the checksum used for a service is a MD5 checksum passed in the
 Content-MD5 header.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
 <dt>Value type</dt><dd>Annotation trait.</dd>
-<dt>See</dt><dd><span class="target" id="index-8"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc1864.html"><strong>RFC 1864</strong></a></dd>
+<dt>See</dt><dd><span class="target" id="index-12"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc1864.html"><strong>RFC 1864</strong></a></dd>
 </dl>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpChecksumRequired</span><span class="w"></span>
 <span class="kd">operation </span><span class="nc">PutSomething</span><span class="w"> </span>{<span class="w"></span>

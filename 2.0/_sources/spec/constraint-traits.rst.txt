@@ -439,4 +439,3 @@ An *enum definition* is a structure that supports the following members:
 .. _ECMA 262 regular expression dialect: https://www.ecma-international.org/ecma-262/8.0/index.html#sec-patterns
 .. _CommonMark: https://spec.commonmark.org/
 .. _OWASP Regular expression Denial of Service: https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS
-.. _JSON Schema "Instance Equality": https://json-schema.org/draft/2020-12/json-schema-core.html#rfc.section.4.2.2

@@ -324,13 +324,13 @@ MUST NOT be targeted by other members.</li>
 <li>The <code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait is <em>structurally exclusive by target</em>, meaning
 only a single member of a structure can target a shape marked as
 <code class="docutils literal notranslate"><span class="pre">streaming</span></code>.</li>
-<li>If a service supports a protocol that supports the <a class="reference internal" href="http-traits.html#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>,
-any member that targets a <code class="docutils literal notranslate"><span class="pre">streaming</span></code> <code class="docutils literal notranslate"><span class="pre">blob</span></code> must also be marked as
-<code class="docutils literal notranslate"><span class="pre">&#64;httpPayload</span></code>.</li>
+<li>If a service supports the <a class="reference internal" href="http-traits.html#httppayload-trait"><span class="std std-ref">httpPayload trait</span></a>, any member that
+targets a <code class="docutils literal notranslate"><span class="pre">streaming</span></code> shape must also be marked as <code class="docutils literal notranslate"><span class="pre">&#64;httpPayload</span></code>.</li>
 </ul>
 </dd>
 </dl>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">StreamingOperation</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/streaming-operation&quot;</span>)<span class="w"></span>
+<span class="kd">operation </span><span class="nc">StreamingOperation</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">StreamingOperationInput</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">StreamingOperationOutput</span><span class="p">,</span><span class="w"></span>
 }<span class="w"></span>
@@ -347,6 +347,19 @@ any member that targets a <code class="docutils literal notranslate"><span class
 <span class="nt">@streaming</span><span class="w"></span>
 <span class="kd">blob </span><span class="nc">StreamingBlob</span><span class="w"></span>
 </pre></div>
+</div>
+<div class="section" id="deserializing-streaming-blobs">
+<h3><span class="section-number">10.1.1. </span>Deserializing streaming blobs<a class="headerlink" href="#deserializing-streaming-blobs" title="Permalink to this headline">#</a></h3>
+<p>It is often impossible for a server to know if a zero-length payload was sent
+by a client, or if no payload was explicitly sent by a client. As a result,
+required streaming members SHOULD be interpreted by deserializers as if they
+have a default zero-length value when not present.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In Smithy IDL version 2, members that target a streaming blob MUST be
+marked as <code class="docutils literal notranslate"><span class="pre">required</span></code> or be given an explicit default value of
+zero bytes.</p>
+</div>
 </div>
 </div>
 <div class="section" id="requireslength-trait">
@@ -895,7 +908,10 @@ of an event:</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">10. Streaming Traits</a><ul>
-<li><a class="reference internal" href="#streaming-trait">10.1. <code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait</a></li>
+<li><a class="reference internal" href="#streaming-trait">10.1. <code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait</a><ul>
+<li><a class="reference internal" href="#deserializing-streaming-blobs">10.1.1. Deserializing streaming blobs</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#requireslength-trait">10.2. <code class="docutils literal notranslate"><span class="pre">requiresLength</span></code> trait</a></li>
 <li><a class="reference internal" href="#event-streams">10.3. Event streams</a><ul>
 <li><a class="reference internal" href="#modeled-errors-in-event-streams">10.3.1. Modeled errors in event streams</a></li>

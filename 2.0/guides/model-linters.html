@@ -311,8 +311,8 @@ can be used to apply additional validation to Smithy models.</p>
 <p>The following example adds <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code> as a Gradle dependency
 to a <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code> file:</p>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.26.0&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.26.0&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.26.1&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.26.1&quot;</span><span class="p">)</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
@@ -484,9 +484,6 @@ This property is not required and defaults to false.</td>
 <span id="id4"></span><h3>ReservedWords<a class="headerlink" href="#reservedwords" title="Permalink to this headline">#</a></h3>
 <p>Validates that shape names and member names do not match a configured set of
 reserved words.</p>
-<p>Reserved words are compared in a case-insensitive manner via substring match
-and support a leading and trailing wildcard character, &quot;*&quot;. See
-<a class="reference internal" href="#reserved-words-wildcards"><span class="std std-ref">wildcard evaluation</span></a> for more detail.</p>
 <dl class="docutils">
 <dt>Rationale</dt><dd>Tools that generate code from Smithy models SHOULD automatically convert
 reserved words into symbols that are safe to use in the targeted
@@ -512,11 +509,18 @@ value is a list of objects with the following properties:</p>
 <tbody valign="top">
 <tr class="row-even"><td>words</td>
 <td>[ <code class="docutils literal notranslate"><span class="pre">string</span></code> ]</td>
-<td><strong>Required</strong>. A list of words that shape or member names MUST not
-case-insensitively match. Supports only the leading and trailing
-wildcard character of &quot;*&quot;.</td>
+<td>A list of words that shape or member names MUST not case-insensitively
+match. Supports a leading and trailing wildcard character of &quot;*&quot;.
+See <a class="reference internal" href="#reserved-words-wildcards"><span class="std std-ref">Wildcards in ReservedWords</span></a> for details.</td>
 </tr>
-<tr class="row-odd"><td>selector</td>
+<tr class="row-odd"><td>terms</td>
+<td>[ <code class="docutils literal notranslate"><span class="pre">string</span></code> ]</td>
+<td>A list of search terms that match shape or member names
+case-insensitively based on word boundaries (for example, the term
+&quot;access key id&quot; matches &quot;AccessKeyId&quot;, &quot;access_key_id&quot;, and
+&quot;accesskeyid&quot;). See <a class="reference internal" href="#reserved-words-boundaries"><span class="std std-ref">Reserved words boundary matching</span></a> for details.</td>
+</tr>
+<tr class="row-even"><td>selector</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td><p class="first">Specifies a selector of shapes to validate for this configuration.
 Defaults to validating all shapes, including member names.</p>
@@ -527,7 +531,7 @@ evaluated instead of the shape name.</p>
 </div>
 </td>
 </tr>
-<tr class="row-even"><td>reason</td>
+<tr class="row-odd"><td>reason</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td>A reason to display for why this set of words is reserved.</td>
 </tr>
@@ -683,6 +687,109 @@ matches for a reserved word of <code class="docutils literal notranslate"><span 
 </div>
 </li>
 </ul>
+</div>
+<div class="section" id="reserved-words-boundary-matching">
+<span id="reserved-words-boundaries"></span><h4>Reserved words boundary matching<a class="headerlink" href="#reserved-words-boundary-matching" title="Permalink to this headline">#</a></h4>
+<p>Word boundaries can be used to find reserved words. Word boundary search
+text consists of one or more alphanumeric words separated by a single
+space. When comparing against another string, the contents of the string
+are separated into words based on word boundaries. Those words are
+case-insensitively compared against the words in the search text for a match.</p>
+<p>Word boundaries are detected when the casing between two characters changes,
+or the type of character between two characters changes. The following table
+demonstrates how comparison text is parsed into words.</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Comparison text</th>
+<th class="head">Parsed words</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>accessKey</td>
+<td>access key</td>
+</tr>
+<tr class="row-odd"><td>accessKeyID</td>
+<td>access key id</td>
+</tr>
+<tr class="row-even"><td>accessKeyIDValue</td>
+<td>access key id value</td>
+</tr>
+<tr class="row-odd"><td>accesskeyId</td>
+<td>accesskey id</td>
+</tr>
+<tr class="row-even"><td>accessKey1</td>
+<td>access key 1</td>
+</tr>
+<tr class="row-odd"><td>access_keyID</td>
+<td>access key id</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The following table shows matches for a reserved term of <code class="docutils literal notranslate"><span class="pre">secret</span> <span class="pre">id</span></code>,
+meaning the word &quot;secret&quot; needs to be followed by the word &quot;id&quot;. Word
+boundary searches also match if the search terms concatenated together with
+no spaces is considered a word in the search text (for example,
+<code class="docutils literal notranslate"><span class="pre">secret</span> <span class="pre">id</span></code> will match the word <code class="docutils literal notranslate"><span class="pre">secretid</span></code>).</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="75%" />
+<col width="25%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Comparison text</th>
+<th class="head">Result</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Some<strong>SecretId</strong></td>
+<td>Match</td>
+</tr>
+<tr class="row-odd"><td>Some<strong>SecretID</strong>Value</td>
+<td>Match</td>
+</tr>
+<tr class="row-even"><td>Some<strong>Secret__ID</strong>__value</td>
+<td>Match</td>
+</tr>
+<tr class="row-odd"><td><strong>secret_id</strong></td>
+<td>Match</td>
+</tr>
+<tr class="row-even"><td><strong>secret_id</strong>100</td>
+<td>Match</td>
+</tr>
+<tr class="row-odd"><td><strong>secretid</strong></td>
+<td>Match</td>
+</tr>
+<tr class="row-even"><td><strong>secretid</strong>_value</td>
+<td>Match</td>
+</tr>
+<tr class="row-odd"><td>secretidvalue</td>
+<td>No Match</td>
+</tr>
+<tr class="row-even"><td>SecretThingId</td>
+<td>No match</td>
+</tr>
+<tr class="row-odd"><td>SomeSecretid</td>
+<td>No match</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition-syntax-restrictions admonition">
+<p class="first admonition-title">Syntax restrictions</p>
+<ul class="last simple">
+<li>Empty search terms are not valid.</li>
+<li>Only a single space can appear between words in word boundary patterns.</li>
+<li>Leading and trailing spaces are not permitted in word boundary patterns.</li>
+<li>Word boundary patterns can only contain alphanumeric characters.</li>
+</ul>
+</div>
 </div>
 </div>
 <div class="section" id="standardoperationverb">
@@ -1262,6 +1369,7 @@ using the following Smithy model:</p>
 <li><a class="reference internal" href="#noninclusiveterms">NoninclusiveTerms</a></li>
 <li><a class="reference internal" href="#reservedwords">ReservedWords</a><ul>
 <li><a class="reference internal" href="#wildcards-in-reservedwords">Wildcards in ReservedWords</a></li>
+<li><a class="reference internal" href="#reserved-words-boundary-matching">Reserved words boundary matching</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#standardoperationverb">StandardOperationVerb</a></li>

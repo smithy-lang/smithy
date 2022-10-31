@@ -490,13 +490,13 @@ override the default format using the <code class="docutils literal notranslate"
 <tbody valign="top">
 <tr class="row-even"><td>date-time</td>
 <td>Date time as defined by the <code class="docutils literal notranslate"><span class="pre">date-time</span></code> production in
-<a class="reference external" href="https://xml2rfc.tools.ietf.org/public/rfc/html/rfc3339.html#anchor14">RFC3339 section 5.6</a>
+<span class="target" id="index-1"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3339.html#section-5.6"><strong>RFC 3339#section-5.6</strong></a>
 with no UTC offset and optional fractional precision (for example,
 <code class="docutils literal notranslate"><span class="pre">1985-04-12T23:20:50.52Z</span></code>).</td>
 </tr>
 <tr class="row-odd"><td>http-date</td>
 <td>An HTTP date as defined by the <code class="docutils literal notranslate"><span class="pre">IMF-fixdate</span></code> production in
-<span class="target" id="index-1"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc7231.html#section-7.1.1.1"><strong>RFC 7231#section-7.1.1.1</strong></a> (for example,
+<span class="target" id="index-2"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc7231.html#section-7.1.1.1"><strong>RFC 7231#section-7.1.1.1</strong></a> (for example,
 <code class="docutils literal notranslate"><span class="pre">Tue,</span> <span class="pre">29</span> <span class="pre">Apr</span> <span class="pre">2014</span> <span class="pre">18:30:38</span> <span class="pre">GMT</span></code>). Note that in addition to the
 <code class="docutils literal notranslate"><span class="pre">IMF-fixdate</span></code> format specified in the RFC, implementations MUST
 also support optional fractional seconds (for example,
@@ -598,7 +598,7 @@ members that target it. Given the following:</p>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>blob</td>
-<td><p class="first">Serialized as a <a class="reference external" href="https://tools.ietf.org/html/rfc4648#section-4">base64 encoded</a> string</p>
+<td><p class="first">Serialized as a <span class="target" id="index-3"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc4648.html#section-4"><strong>base64 encoded</strong></a> string</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Struct</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="py">binary</span><span class="p">:</span><span class="w"> </span><span class="vc">Blob</span><span class="w"></span>
 }<span class="w"></span>
@@ -647,7 +647,7 @@ notation if an exponent is needed.</td>
 notation if an exponent is needed.</td>
 </tr>
 <tr class="row-odd"><td>timestamp</td>
-<td><p class="first">Serialized as <a class="reference external" href="https://tools.ietf.org/html/rfc3339">RFC 3339</a> date-time value.</p>
+<td><p class="first">Serialized as <span class="target" id="index-4"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3339.html"><strong>RFC 3339</strong></a> date-time value.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Struct</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="py">date</span><span class="p">:</span><span class="w"> </span><span class="vc">Timestamp</span><span class="w"></span>
 }<span class="w"></span>
