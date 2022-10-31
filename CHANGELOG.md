@@ -1,5 +1,35 @@
 # Smithy Changelog
 
+## 1.26.1 (2022-10-31)
+
+### Features
+
+* Added support for hierarchical event IDs in validation events, allowing for more granular suppression ([#1466](https://github.com/awslabs/smithy/pull/1466))
+* Removed the pattern from the `@suppress` trait's entry list, allowing them to match all validator IDs ([#1455](https://github.com/awslabs/smithy/pull/1455))
+* Added the ability to lint based on word boundaries for the `ReservedWords` validator ([#1461](https://github.com/awslabs/smithy/pull/1461))
+* Added a `toNode` method to the `Partition` class in `smithy-rules-engine` ([#1449](https://github.com/awslabs/smithy/pull/1449))
+* Added a warning when `smithy-diff` detects changes to traits that do not have definitions loaded ([#1468](https://github.com/awslabs/smithy/pull/1468))
+* Improved validation for members that target nullable shapes ([#1454](https://github.com/awslabs/smithy/pull/1454), [1460](https://github.com/awslabs/smithy/pull/1460))
+* Added a hook to the `CodegenDirector` to allow for customization before shape generation ([#1469](https://github.com/awslabs/smithy/pull/1469))
+* Updated model assembling to always attempt model interop transforms ([#1435](https://github.com/awslabs/smithy/pull/1435))
+
+### Bug Fixes
+
+* Fixed a bug where transforms would not remove enum members ([#1442](https://github.com/awslabs/smithy/pull/1442), [#1447](https://github.com/awslabs/smithy/pull/1447))
+* Fixed a bug where documentation comments were dropped if they occurred after a member using the default value syntactic
+  sugar ([1459](https://github.com/awslabs/smithy/pull/1459))
+* Fixed an issue where resource identifier collisions would cause a model to fail loading ([#1453](https://github.com/awslabs/smithy/pull/1453),
+  [#1474](https://github.com/awslabs/smithy/pull/1474))
+* Added `@private` to the local traits for the AWS `HttpConfiguration` shape ([#1445](https://github.com/awslabs/smithy/pull/1445))
+* Fixed an issue with behavior defined in an `awsQuery` protocol test ([#1444](https://github.com/awslabs/smithy/pull/1444))
+* Fixed several protocol tests in the `awsJson1_1` protocol test suite ([#1392](https://github.com/awslabs/smithy/pull/1392))
+* Fixed an incorrect application of the `@httpMalformedRequestTests` trait ([#1467](https://github.com/awslabs/smithy/pull/1467))
+
+### Documentation
+
+* Clarified streaming trait values and semantics ([#1458](https://github.com/awslabs/smithy/pull/1458))
+* Updated the identifier ABNF and parser ([#1464](https://github.com/awslabs/smithy/pull/1464))
+
 ## 1.26.0 (2022-10-10)
 
 ### Features
