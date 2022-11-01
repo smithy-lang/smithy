@@ -39,6 +39,7 @@ public class CfnResourceIndexTest {
     private static final ShapeId FOO = ShapeId.from("smithy.example#FooResource");
     private static final ShapeId BAR = ShapeId.from("smithy.example#BarResource");
     private static final ShapeId BAZ = ShapeId.from("smithy.example#BazResource");
+    private static final ShapeId BAT = ShapeId.from("smithy.example#BatResource");
 
     private static Model model;
     private static CfnResourceIndex cfnResourceIndex;
@@ -110,7 +111,18 @@ public class CfnResourceIndexTest {
         bazResource.readOnlyProperties = SetUtils.of("bazId", "bazImplicitReadProperty");
         bazResource.writeOnlyProperties = SetUtils.of("bazImplicitWriteProperty");
 
-        return ListUtils.of(fooResource, barResource, bazResource);
+        ResourceData batResource = new ResourceData();
+        batResource.resourceId = BAT;
+        batResource.identifiers = SetUtils.of("batId");
+        batResource.additionalIdentifiers = ListUtils.of();
+        batResource.mutabilities = MapUtils.of(
+                "batId", SetUtils.of(Mutability.CREATE, Mutability.READ));
+        batResource.createOnlyProperties = SetUtils.of("batId");
+        batResource.readOnlyProperties = SetUtils.of();
+        batResource.writeOnlyProperties = SetUtils.of();
+
+
+        return ListUtils.of(fooResource, barResource, bazResource, batResource);
     }
 
     @ParameterizedTest
@@ -188,5 +200,15 @@ public class CfnResourceIndexTest {
         assertTrue(barProperties.containsKey("barValidAdditionalProperty"));
         assertTrue(barProperties.get("barValidAdditionalProperty").getMutabilities().isEmpty());
         assertFalse(barProperties.containsKey("barValidExcludedProperty"));
+    }
+
+    @Test
+    public void handlesIdentifierExplicitMutabilityOverwrite() {
+        Map<String, CfnResourceProperty> batProperties = cfnResourceIndex.getResource(BAT)
+                .get().getProperties();
+
+        // Since there is a `@cfnMutability` trait applied to the member in the additional-schema
+        //  for that resource, its default mutability should get overwritten
+        assertThat(batProperties.get("batId").getMutabilities(), containsInAnyOrder(Mutability.CREATE, Mutability.READ));
     }
 }

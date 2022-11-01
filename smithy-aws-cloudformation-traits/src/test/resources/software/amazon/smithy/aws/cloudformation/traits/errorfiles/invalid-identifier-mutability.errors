@@ -1,0 +1,7 @@
+[WARNING] smithy.example#FooResource: This shape applies a trait that is unstable: aws.cloudformation#cfnResource | UnstableTrait
+[WARNING] smithy.example#FooOne$member: This shape applies a trait that is unstable: aws.cloudformation#cfnMutability | UnstableTrait
+[WARNING] smithy.example#FooTwo$member: This shape applies a trait that is unstable: aws.cloudformation#cfnMutability | UnstableTrait
+[WARNING] smithy.example#FooThree$member: This shape applies a trait that is unstable: aws.cloudformation#cfnMutability | UnstableTrait
+[ERROR] smithy.example#FooOne$member: Member is implicitly bound as an identifier "smithy.example#FooOne$member" and cannot have "full" mutability | CfnMutabilityTrait
+[ERROR] smithy.example#FooTwo$member: Member is implicitly bound as an identifier "smithy.example#FooTwo$member" and cannot have "write" mutability | CfnMutabilityTrait
+[ERROR] smithy.example#FooThree$member: Member is implicitly bound as an identifier "smithy.example#FooThree$member" and cannot have "create" mutability | CfnMutabilityTrait

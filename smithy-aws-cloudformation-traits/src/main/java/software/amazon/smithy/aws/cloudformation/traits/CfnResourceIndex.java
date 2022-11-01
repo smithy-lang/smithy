@@ -154,7 +154,7 @@ public final class CfnResourceIndex implements KnowledgeIndex {
                                 .ifPresent(shape -> {
                                     addAdditionalIdentifiers(builder, computeResourceAdditionalIdentifiers(shape));
                                     updatePropertyMutabilities(builder, model, resourceId, null, shape,
-                                            SetUtils.of(), Function.identity());
+                                            SetUtils.of(), Function.identity(), true);
                                 });
                     }
 
@@ -246,19 +246,20 @@ public final class CfnResourceIndex implements KnowledgeIndex {
             ShapeId operationId,
             StructureShape propertyContainer,
             Set<Mutability> defaultMutabilities,
-            Function<Set<Mutability>, Set<Mutability>> updater
+            Function<Set<Mutability>, Set<Mutability>> updater,
+            Boolean forceUpdate
     ) {
         // Handle the @excludeProperty trait.
         propertyContainer.accept(new ExcludedPropertiesVisitor(model))
                 .forEach(builder::addExcludedProperty);
 
         for (MemberShape member : propertyContainer.members()) {
+
             // We've explicitly set identifier mutability based on how the
-            // resource instance comes about, so only handle non-identifiers.
-            if (inputOperationMemberIsIdentifier(model, resourceId, operationId, member)) {
+            // resource instance comes about, so only handle non-identifiers (unless forced)
+            if (!forceUpdate && inputOperationMemberIsIdentifier(model, resourceId, operationId, member)) {
                 continue;
             }
-
             String memberName = member.getMemberName();
             Set<Mutability> explicitMutability = getExplicitMutability(model, member);
 
@@ -269,7 +270,8 @@ public final class CfnResourceIndex implements KnowledgeIndex {
 
             if (builder.hasPropertyDefinition(memberName)) {
                 builder.updatePropertyDefinition(memberName,
-                        getCfnResourcePropertyUpdater(member, explicitMutability, updater));
+                        getCfnResourcePropertyUpdater(member, explicitMutability, updater),
+                        forceUpdate);
             } else {
                 builder.putPropertyDefinition(memberName,
                         CfnResourceProperty.builder()
@@ -279,6 +281,28 @@ public final class CfnResourceIndex implements KnowledgeIndex {
                                 .build());
             }
         }
+    }
+
+
+    private void updatePropertyMutabilities(
+            CfnResource.Builder builder,
+            Model model,
+            ShapeId resourceId,
+            ShapeId operationId,
+            StructureShape propertyContainer,
+            Set<Mutability> defaultMutabilities,
+            Function<Set<Mutability>, Set<Mutability>> updater
+    ) {
+        updatePropertyMutabilities(
+                builder,
+                model,
+                resourceId,
+                operationId,
+                propertyContainer,
+                defaultMutabilities,
+                updater,
+                false
+        );
     }
 
     private Function<CfnResourceProperty, CfnResourceProperty> getCfnResourcePropertyUpdater(

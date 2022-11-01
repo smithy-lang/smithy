@@ -13,6 +13,7 @@ service TestService {
     resources: [
         FooResource,
         BarResource,
+        BatResource
     ],
 }
 
@@ -239,4 +240,19 @@ string BazId
 structure ComplexProperty {
     property: String,
     another: String,
+}
+
+string BatId
+
+@cfnResource(name: "Bat", additionalSchemas: [Bat])
+resource BatResource {
+    identifiers: {
+        batId: BatId
+    }
+}
+
+structure Bat {
+    @required
+    @cfnMutability("create-and-read")
+    batId: BatId
 }

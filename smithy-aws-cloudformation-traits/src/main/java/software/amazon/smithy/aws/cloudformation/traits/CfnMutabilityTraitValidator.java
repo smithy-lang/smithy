@@ -16,9 +16,13 @@
 package software.amazon.smithy.aws.cloudformation.traits;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -38,6 +42,33 @@ public final class CfnMutabilityTraitValidator extends AbstractValidator {
             if (shape.hasTrait(CfnAdditionalIdentifierTrait.ID) && (trait.isWrite() || trait.isCreate())) {
                 events.add(error(shape, trait, String.format("Member with the mutability value of \"%s\" "
                         + "is also marked as an additional identifier", trait.getValue())));
+            }
+
+            // Must check for unsafe usage when overriding mutability for identifier bindings
+            for (Shape resourceShape : model.getShapesWithTrait(CfnResourceTrait.class)) {
+                CfnResourceTrait resourceTrait = resourceShape.expectTrait(CfnResourceTrait.class);
+                model.getShape(ShapeId.fromParts(shape.getId().getNamespace(), shape.getId().getName())).ifPresent(
+                        schemaShape -> {
+                            boolean isIdentifier = false;
+                            // check that the resource schemas include the shape, and that the member
+                            //  is bound as an identifier in the resource
+                            if (resourceTrait.getAdditionalSchemas().contains(schemaShape.toShapeId())) {
+                                isIdentifier = resourceShape.asResourceShape()
+                                        .map(ResourceShape::getIdentifiers)
+                                        .orElseGet(Collections::emptyMap)
+                                        .containsKey(
+                                                shape.asMemberShape()
+                                                        .map(MemberShape::getMemberName)
+                                                        .orElseGet(String::new)
+                                        );
+                            }
+                            // If member is implicitly an identifier, validate its mutability
+                            if (isIdentifier && !(trait.isRead() || trait.isCreateAndRead())) {
+                                events.add(error(shape, trait, String.format(
+                                        "Member is implicitly bound as an identifier \"%s\" and "
+                                                + "cannot have \"%s\" mutability", shape.getId(), trait.getValue())));
+                            }
+                });
             }
         }
 
