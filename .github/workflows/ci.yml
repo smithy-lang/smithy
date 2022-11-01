@@ -16,7 +16,7 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: gradle/wrapper-validation-action@v1
 
       - name: Set up JDK ${{ matrix.java }}
@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Documentation Build
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Set up Python 3.x
       uses: actions/setup-python@v2
