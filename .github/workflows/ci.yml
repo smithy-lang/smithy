@@ -28,7 +28,7 @@ jobs:
       - name: Clean and build
         run: ./gradlew clean build -Plog-tests
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: java-${{ matrix.java }}-${{ matrix.os }}-test-report
@@ -51,7 +51,7 @@ jobs:
     - name: Build docs
       run: cd docs && make html
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: built-docs
         path: docs/build/html
