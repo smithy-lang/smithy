@@ -10,6 +10,10 @@ use aws.protocoltests.shared#FooEnum
 use aws.protocoltests.shared#FooEnumList
 use aws.protocoltests.shared#FooEnumSet
 use aws.protocoltests.shared#FooEnumMap
+use aws.protocoltests.shared#IntegerEnum
+use aws.protocoltests.shared#IntegerEnumList
+use aws.protocoltests.shared#IntegerEnumSet
+use aws.protocoltests.shared#IntegerEnumMap
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -617,6 +621,110 @@ structure JsonEnumsInputOutput {
     fooEnumList: FooEnumList,
     fooEnumSet: FooEnumSet,
     fooEnumMap: FooEnumMap,
+}
+
+/// This example serializes intEnums as top level properties, in lists, sets, and maps.
+@idempotent
+@http(uri: "/JsonIntEnums", method: "PUT")
+operation JsonIntEnums {
+    input: JsonIntEnumsInputOutput,
+    output: JsonIntEnumsInputOutput
+}
+
+apply JsonIntEnums @httpRequestTests([
+    {
+        id: "RestJsonJsonIntEnums",
+        documentation: "Serializes intEnums as integers",
+        protocol: restJson1,
+        method: "PUT",
+        uri: "/JsonIntEnums",
+        body: """
+              {
+                  "integerEnum1": 1,
+                  "integerEnum2": 2,
+                  "integerEnum3": 3,
+                  "integerEnumList": [
+                      1,
+                      2,
+                      3
+                  ],
+                  "integerEnumSet": [
+                      1,
+                      2
+                  ],
+                  "integerEnumMap": {
+                      "abc": 1,
+                      "def": 2
+                  }
+              }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            integerEnum1: 1,
+            integerEnum2: 2,
+            integerEnum3: 3,
+            integerEnumList: [1, 2, 3],
+            integerEnumSet: [1, 2],
+            integerEnumMap: {
+                "abc": 1,
+                "def": 2
+            }
+        }
+    }
+])
+
+apply JsonIntEnums @httpResponseTests([
+    {
+        id: "RestJsonJsonIntEnums",
+        documentation: "Serializes intEnums as integers",
+        protocol: restJson1,
+        code: 200,
+        body: """
+              {
+                  "integerEnum1": 1,
+                  "integerEnum2": 2,
+                  "integerEnum3": 3,
+                  "integerEnumList": [
+                      1,
+                      2,
+                      3
+                  ],
+                  "integerEnumSet": [
+                      1,
+                      2
+                  ],
+                  "integerEnumMap": {
+                      "abc": 1,
+                      "def": 2
+                  }
+              }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            integerEnum1: 1,
+            integerEnum2: 2,
+            integerEnum3: 3,
+            integerEnumList: [1, 2, 3],
+            integerEnumSet: [1, 2],
+            integerEnumMap: {
+                "abc": 1,
+                "def": 2
+            }
+        }
+    }
+])
+
+structure JsonIntEnumsInputOutput {
+    integerEnum1: IntegerEnum,
+    integerEnum2: IntegerEnum,
+    integerEnum3: IntegerEnum,
+    integerEnumList: IntegerEnumList,
+    integerEnumSet: IntegerEnumSet,
+    integerEnumMap: IntegerEnumMap,
 }
 
 /// Recursive shapes

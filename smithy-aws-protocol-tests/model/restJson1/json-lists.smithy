@@ -8,6 +8,7 @@ use aws.protocols#restJson1
 use aws.protocoltests.shared#BooleanList
 use aws.protocoltests.shared#EpochSeconds
 use aws.protocoltests.shared#FooEnumList
+use aws.protocoltests.shared#IntegerEnumList
 use aws.protocoltests.shared#GreetingList
 use aws.protocoltests.shared#IntegerList
 use aws.protocoltests.shared#NestedStringList
@@ -65,6 +66,10 @@ apply JsonLists @httpRequestTests([
                       "Foo",
                       "0"
                   ],
+                  "intEnumList": [
+                      1,
+                      2
+                  ],
                   "nestedStringList": [
                       [
                           "foo",
@@ -112,6 +117,10 @@ apply JsonLists @httpRequestTests([
             "enumList": [
                 "Foo",
                 "0"
+            ],
+            "intEnumList": [
+                1,
+                2
             ],
             "nestedStringList": [
                 [
@@ -204,6 +213,10 @@ apply JsonLists @httpResponseTests([
                       "Foo",
                       "0"
                   ],
+                  "intEnumList": [
+                      1,
+                      2
+                  ],
                   "nestedStringList": [
                       [
                           "foo",
@@ -251,6 +264,10 @@ apply JsonLists @httpResponseTests([
             "enumList": [
                 "Foo",
                 "0"
+            ],
+            "intEnumList": [
+                1,
+                2
             ],
             "nestedStringList": [
                 [
@@ -323,6 +340,8 @@ structure JsonListsInputOutput {
     timestampList: TimestampList,
 
     enumList: FooEnumList,
+
+    intEnumList: IntegerEnumList,
 
     nestedStringList: NestedStringList,
 
