@@ -1,5 +1,11 @@
 # Smithy Changelog
 
+## 1.26.2 (2022-11-07)
+
+### Bug Fixes
+
+* Add missing regions and fix typo in partitions.json ([#1487](https://github.com/awslabs/smithy/pull/1487))
+
 ## 1.26.1 (2022-10-31)
 
 ### Features
