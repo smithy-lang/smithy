@@ -89,7 +89,7 @@ import java.util.regex.Pattern;
  *
  *     <pre>{@code
  *     SimpleCodeWriter writer = new SimpleCodeWriter();
- *     writer.write("Hello, $C.", () -> writer.write("there"));
+ *     writer.write("Hello, $C.", (Runnable) () -> writer.write("there"));
  *     assert(writer.toString().equals("Hello, there.\n"));
  *     }</pre></li>
  *
