@@ -10,6 +10,10 @@ use aws.protocoltests.shared#FooEnum
 use aws.protocoltests.shared#FooEnumList
 use aws.protocoltests.shared#FooEnumSet
 use aws.protocoltests.shared#FooEnumMap
+use aws.protocoltests.shared#IntegerEnum
+use aws.protocoltests.shared#IntegerEnumList
+use aws.protocoltests.shared#IntegerEnumSet
+use aws.protocoltests.shared#IntegerEnumMap
 use smithy.test#httpResponseTests
 
 // This example serializes simple scalar types in the top level XML document.
@@ -377,6 +381,70 @@ structure XmlEnumsOutput {
     fooEnumList: FooEnumList,
     fooEnumSet: FooEnumSet,
     fooEnumMap: FooEnumMap,
+}
+
+/// This example serializes intEnums as top level properties, in lists, sets, and maps.
+operation XmlIntEnums {
+    output: XmlIntEnumsOutput
+}
+
+apply XmlIntEnums @httpResponseTests([
+    {
+        id: "Ec2XmlIntEnums",
+        documentation: "Serializes simple scalar properties",
+        protocol: ec2Query,
+        code: 200,
+        body: """
+              <XmlIntEnumsResponse xmlns="https://example.com/">
+                  <intEnum1>1</intEnum1>
+                  <intEnum2>2</intEnum2>
+                  <intEnum3>3</intEnum3>
+                  <intEnumList>
+                      <member>1</member>
+                      <member>2</member>
+                  </intEnumList>
+                  <intEnumSet>
+                      <member>1</member>
+                      <member>2</member>
+                  </intEnumSet>
+                  <intEnumMap>
+                      <entry>
+                          <key>a</key>
+                          <value>1</value>
+                      </entry>
+                      <entry>
+                          <key>b</key>
+                          <value>2</value>
+                      </entry>
+                  </intEnumMap>
+                  <RequestId>requestid</RequestId>
+              </XmlIntEnumsResponse>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "text/xml;charset=UTF-8"
+        },
+        params: {
+            intEnum1: 1,
+            intEnum2: 2,
+            intEnum3: 3,
+            intEnumList: [1, 2],
+            intEnumSet: [1, 2],
+            intEnumMap: {
+                "a": 1,
+                "b": 1
+            }
+        }
+    }
+])
+
+structure XmlIntEnumsOutput {
+    intEnum1: IntegerEnum,
+    intEnum2: IntegerEnum,
+    intEnum3: IntegerEnum,
+    intEnumList: IntegerEnumList,
+    intEnumSet: IntegerEnumSet,
+    intEnumMap: IntegerEnumMap,
 }
 
 /// Recursive shapes
