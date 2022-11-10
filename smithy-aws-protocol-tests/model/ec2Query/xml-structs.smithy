@@ -432,7 +432,7 @@ apply XmlIntEnums @httpResponseTests([
             intEnumSet: [1, 2],
             intEnumMap: {
                 "a": 1,
-                "b": 1
+                "b": 2
             }
         }
     }
