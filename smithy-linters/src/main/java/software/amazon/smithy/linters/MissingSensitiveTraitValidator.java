@@ -38,10 +38,12 @@ public final class MissingSensitiveTraitValidator extends AbstractValidator {
             "account number",
             "bank",
             "billing address",
-            "birth day",
             "birth",
-            "citizen ship",
+            "birth day",
+            "citizenship",
+            "credentials",
             "credit card",
+            "csc",
             "driver license",
             "drivers license",
             "email",
@@ -51,16 +53,19 @@ public final class MissingSensitiveTraitValidator extends AbstractValidator {
             "insurance",
             "ip address",
             "last name",
+            "maiden name",
             "mailing address",
+            "pass phrase",
+            "pass word",
             "passport",
             "phone",
             "religion",
+            "secret",
             "sexual orientation",
             "social security",
             "ssn",
             "tax payer",
             "telephone",
-            "user name",
             "zip code"
     );
 
@@ -125,18 +130,25 @@ public final class MissingSensitiveTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> validationEvents = new ArrayList<>();
-        validationEvents.addAll(scanShapeNames(model));
-        validationEvents.addAll(scanMemberNames(model));
+        validationEvents.addAll(scanShapes(model));
         return validationEvents;
     }
 
-    private List<ValidationEvent> scanShapeNames(Model model) {
+    private List<ValidationEvent> scanShapes(Model model) {
         List<ValidationEvent> validationEvents = new ArrayList<>();
 
         for (Shape shape : model.toSet()) {
-            // Sensitive trait cannot be applied to the 4 types below
-            if (!shape.isMemberShape()
-                    && !shape.isOperationShape()
+            if (shape.isMemberShape()) {
+                MemberShape memberShape = (MemberShape) shape;
+                Shape containingShape = model.expectShape(memberShape.getContainer());
+                Shape targetShape = model.expectShape(memberShape.getTarget());
+
+                if (!containingShape.hasTrait(SensitiveTrait.class) && !targetShape.hasTrait(SensitiveTrait.class)) {
+                    Optional<ValidationEvent> optionalValidationEvent =
+                            detectSensitiveTerms(memberShape.getMemberName(), memberShape);
+                    optionalValidationEvent.ifPresent(validationEvents::add);
+                }
+            } else if (!shape.isOperationShape()
                     && !shape.isServiceShape()
                     && !shape.isResourceShape()
                     && !shape.hasTrait(SensitiveTrait.class)) {
@@ -149,36 +161,18 @@ public final class MissingSensitiveTraitValidator extends AbstractValidator {
         return validationEvents;
     }
 
-    private List<ValidationEvent> scanMemberNames(Model model) {
-        List<ValidationEvent> validationEvents = new ArrayList<>();
-
-        for (MemberShape memberShape : model.getMemberShapes()) {
-            Shape containingShape = model.expectShape(memberShape.getContainer());
-            Shape targetShape = model.expectShape(memberShape.getTarget());
-
-            if (!containingShape.hasTrait(SensitiveTrait.class) && !targetShape.hasTrait(SensitiveTrait.class)) {
-                Optional<ValidationEvent> optionalValidationEvent =
-                        detectSensitiveTerms(memberShape.getMemberName(), memberShape);
-                optionalValidationEvent.ifPresent(validationEvents::add);
-            }
-        }
-
-        return validationEvents;
-    }
-
     private Optional<ValidationEvent> detectSensitiveTerms(String name, Shape shape) {
-        Optional<String> matchedTerm = wordMatcher.getAllMatches(name).stream().findAny();
+        Optional<String> matchedTerm = wordMatcher.getFirstMatch(name);
 
-        return matchedTerm.map(s -> emit(shape, s));
-    }
-
-    private ValidationEvent emit(Shape shape, String word) {
-        String message = shape.isMemberShape()
-                ? String.format("This member possibly contains sensitive data but neither the enclosing nor target"
-                + " shape are marked with the sensitive trait (based on the presence of '%s')", word)
-                : String.format("This shape possibly contains sensitive data but is not marked "
-                + "with the sensitive trait (based on the presence of '%s')", word);
-
-        return warning(shape, message);
+        if (matchedTerm.isPresent()) {
+            String message = shape.isMemberShape()
+                    ? String.format("This member possibly contains sensitive data but neither the enclosing nor target"
+                    + " shape are marked with the sensitive trait (based on the presence of '%s')", matchedTerm.get())
+                    : String.format("This shape possibly contains sensitive data but is not marked "
+                    + "with the sensitive trait (based on the presence of '%s')", matchedTerm.get());
+            return Optional.of(warning(shape, message));
+        } else {
+            return Optional.empty();
+        }
     }
 }

@@ -129,7 +129,8 @@ This validator scans shape or member names and identifies ones that look like th
 sensitive information but are not marked with the ``@sensitive`` trait. This does not apply to
 shapes where the ``@sensitive`` trait would be invalid. Users may also configure this validator
 with a custom list of terms, and choose to ignore the built-in defaults. The defaults terms include
-categories of personal information such as 'birth day', 'billing address', 'zip code', or 'gender'.
+types of personal information such as 'birth day', 'billing address', 'zip code', or 'gender',
+as well as information that could be maliciously exploited such as  'password', 'secret key', or 'credit card'.
 
 Rationale
     Sensitive information often incurs legal requirements regarding the handling and logging
@@ -169,7 +170,7 @@ Example:
         name: "MissingSensitiveTrait"
         configuration: {
             excludeDefaults: false,
-            terms: ["social security number"]
+            terms: ["home planet"]
         }
     }]
 
@@ -400,7 +401,7 @@ be specified.
 .. _words-boundaries:
 
 Words boundary matching
---------------------------------
+-----------------------
 
 Word boundaries can be used to find terms of interest. Word boundary search
 text consists of one or more alphanumeric words separated by a single

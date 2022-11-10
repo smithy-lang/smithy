@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 metadata validators = [
         {name: "MissingSensitiveTrait",
@@ -28,7 +28,9 @@ structure FooOperationResponse {
 }
 
 structure CabAnkle {
-    myMember: MyString
+    myMember: MyString,
+    // should get flagged
+    myBirthday: MyString
 }
 
 // should get flagged
