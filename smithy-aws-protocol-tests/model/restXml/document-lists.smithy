@@ -184,10 +184,10 @@ apply XmlLists @httpResponseTests([
                       <member>Foo</member>
                       <member>0</member>
                   </enumList>
-                  <enumList>
+                  <intEnumList>
                       <member>1</member>
                       <member>2</member>
-                  </enumList>
+                  </intEnumList>
                   <nestedStringList>
                       <member>
                           <member>foo</member>
