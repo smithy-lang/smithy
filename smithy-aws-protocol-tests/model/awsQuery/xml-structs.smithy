@@ -407,7 +407,7 @@ apply XmlIntEnums @httpResponseTests([
         code: 200,
         body: """
               <XmlIntEnumsResponse xmlns="https://example.com/">
-                  <XmlEnumsResult>
+                  <XmlIntEnumsResult>
                       <intEnum1>1</intEnum1>
                       <intEnum2>2</intEnum2>
                       <intEnum3>3</intEnum3>
