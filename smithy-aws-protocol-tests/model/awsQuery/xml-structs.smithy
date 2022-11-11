@@ -429,7 +429,7 @@ apply XmlIntEnums @httpResponseTests([
                               <value>2</value>
                           </entry>
                       </intEnumMap>
-                  </XmlEnumsResult>
+                  </XmlIntEnumsResult>
               </XmlIntEnumsResponse>
               """,
         bodyMediaType: "application/xml",
