@@ -483,6 +483,27 @@ disableFeatures (``[string]``)
             }
         }
 
+.. _generate-cloudformation-jsonschema-setting-useIntegerType:
+
+useIntegerType (``boolean``)
+    Set to true to use the ``integer`` type when converting ``byte``, ``short``,
+    ``integer``, and ``long`` shapes.
+
+    By default, these shape types are converted with a type of ``number``.
+
+    .. code-block:: json
+
+        {
+            "version": "2.0",
+            "plugins": {
+                "cloudformation": {
+                    "service": "smithy.example#Queues",
+                    "organizationName": "Smithy",
+                    "useIntegerType": true
+                }
+            }
+        }
+
 .. _generate-cloudformation-other-traits:
 
 --------------------------------------
