@@ -110,6 +110,7 @@ public class JsonSchemaConfig {
     private ShapeId service;
     private boolean supportNonNumericFloats = false;
     private boolean enableOutOfServiceReferences = false;
+    private boolean useIntegerType;
 
     public JsonSchemaConfig() {
         nodeMapper.setWhenMissingSetter(NodeMapper.WhenMissing.INGORE);
@@ -383,5 +384,23 @@ public class JsonSchemaConfig {
      */
     public void setEnableOutOfServiceReferences(boolean enableOutOfServiceReferences) {
         this.enableOutOfServiceReferences = enableOutOfServiceReferences;
+    }
+
+
+    public boolean getUseIntegerType() {
+        return useIntegerType;
+    }
+
+    /**
+     * Set to true to use the "integer" type when converting {@code byte},
+     * {@code short}, {@code integer}, and {@code long} shapes to Json Schema.
+     *
+     * <p>By default, these shape types are converted to Json Schema with a type
+     * of "number".
+     *
+     * @param useIntegerType True to use "integer".
+     */
+    public void setUseIntegerType(boolean useIntegerType) {
+        this.useIntegerType = useIntegerType;
     }
 }

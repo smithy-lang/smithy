@@ -82,8 +82,6 @@ public class OpenApiConfig extends JsonSchemaConfig {
     private Map<String, Node> jsonAdd = Collections.emptyMap();
     private List<String> externalDocs = ListUtils.of(
             "Homepage", "API Reference", "User Guide", "Developer Guide", "Reference", "Guide");
-    private boolean useIntegerType;
-
     private OpenApiVersion version = OpenApiVersion.VERSION_3_0_2;
 
     public OpenApiConfig() {
@@ -310,23 +308,6 @@ public class OpenApiConfig extends JsonSchemaConfig {
      */
     public void setExternalDocs(List<String> externalDocs) {
         this.externalDocs = Objects.requireNonNull(externalDocs);
-    }
-
-    public boolean getUseIntegerType() {
-        return useIntegerType;
-    }
-
-    /**
-     * Set to true to use the "integer" type when converting {@code byte},
-     * {@code short}, {@code integer}, and {@code long} shapes to OpenAPI.
-     *
-     * <p>By default, these shape types are converted to OpenAPI with a type
-     * of "number".
-     *
-     * @param useIntegerType True to use "integer".
-     */
-    public void setUseIntegerType(boolean useIntegerType) {
-        this.useIntegerType = useIntegerType;
     }
 
     public OpenApiVersion getVersion() {
