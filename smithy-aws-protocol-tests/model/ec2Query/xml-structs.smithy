@@ -6,6 +6,8 @@ namespace aws.protocoltests.ec2
 
 use aws.protocols#ec2QueryName
 use aws.protocols#ec2Query
+use aws.protocoltests.shared#DateTime
+use aws.protocoltests.shared#EpochSeconds
 use aws.protocoltests.shared#FooEnum
 use aws.protocoltests.shared#FooEnumList
 use aws.protocoltests.shared#FooEnumSet
@@ -14,6 +16,7 @@ use aws.protocoltests.shared#IntegerEnum
 use aws.protocoltests.shared#IntegerEnumList
 use aws.protocoltests.shared#IntegerEnumSet
 use aws.protocoltests.shared#IntegerEnumMap
+use aws.protocoltests.shared#HttpDate
 use smithy.test#httpResponseTests
 
 // This example serializes simple scalar types in the top level XML document.
@@ -267,6 +270,25 @@ apply XmlTimestamps @httpResponseTests([
         }
     },
     {
+        id: "Ec2XmlTimestampsWithDateTimeOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of date-time on the target shape works like normal timestamps",
+        protocol: ec2Query,
+        code: 200,
+        body: """
+              <XmlTimestampsResponse xmlns="https://example.com/">
+                  <dateTimeOnTarget>2014-04-29T18:30:38Z</dateTimeOnTarget>
+                  <RequestId>requestid</RequestId>
+              </XmlTimestampsResponse>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "text/xml;charset=UTF-8"
+        },
+        params: {
+            dateTimeOnTarget: 1398796238
+        }
+    },
+    {
         id: "Ec2XmlTimestampsWithEpochSecondsFormat",
         documentation: "Ensures that the timestampFormat of epoch-seconds works",
         protocol: ec2Query,
@@ -283,6 +305,25 @@ apply XmlTimestamps @httpResponseTests([
         },
         params: {
             epochSeconds: 1398796238
+        }
+    },
+    {
+        id: "Ec2XmlTimestampsWithEpochSecondsOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of epoch-seconds on the target shape works",
+        protocol: ec2Query,
+        code: 200,
+        body: """
+              <XmlTimestampsResponse xmlns="https://example.com/">
+                  <epochSecondsOnTarget>1398796238</epochSecondsOnTarget>
+                  <RequestId>requestid</RequestId>
+              </XmlTimestampsResponse>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "text/xml;charset=UTF-8"
+        },
+        params: {
+            epochSecondsOnTarget: 1398796238
         }
     },
     {
@@ -304,6 +345,25 @@ apply XmlTimestamps @httpResponseTests([
             httpDate: 1398796238
         }
     },
+    {
+        id: "Ec2XmlTimestampsWithHttpDateOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of http-date on the target shape works",
+        protocol: ec2Query,
+        code: 200,
+        body: """
+              <XmlTimestampsResponse xmlns="https://example.com/">
+                  <httpDateOnTarget>Tue, 29 Apr 2014 18:30:38 GMT</httpDateOnTarget>
+                  <RequestId>requestid</RequestId>
+              </XmlTimestampsResponse>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "text/xml;charset=UTF-8"
+        },
+        params: {
+            httpDateOnTarget: 1398796238
+        }
+    },
 ])
 
 structure XmlTimestampsOutput {
@@ -312,11 +372,17 @@ structure XmlTimestampsOutput {
     @timestampFormat("date-time")
     dateTime: Timestamp,
 
+    dateTimeOnTarget: DateTime,
+
     @timestampFormat("epoch-seconds")
     epochSeconds: Timestamp,
 
+    epochSecondsOnTarget: EpochSeconds,
+
     @timestampFormat("http-date")
     httpDate: Timestamp,
+
+    httpDateOnTarget: HttpDate,
 }
 
 /// This example serializes enums as top level properties, in lists, sets, and maps.

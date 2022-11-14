@@ -6,6 +6,8 @@ $version: "2.0"
 namespace aws.protocoltests.restxml
 
 use aws.protocols#restXml
+use aws.protocoltests.shared#DateTime
+use aws.protocoltests.shared#EpochSeconds
 use aws.protocoltests.shared#FooEnum
 use aws.protocoltests.shared#FooEnumList
 use aws.protocoltests.shared#FooEnumSet
@@ -14,7 +16,7 @@ use aws.protocoltests.shared#IntegerEnum
 use aws.protocoltests.shared#IntegerEnumList
 use aws.protocoltests.shared#IntegerEnumSet
 use aws.protocoltests.shared#IntegerEnumMap
-
+use aws.protocoltests.shared#HttpDate
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -651,6 +653,25 @@ apply XmlTimestamps @httpRequestTests([
         }
     },
     {
+        id: "XmlTimestampsWithDateTimeOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of date-time on the target shape works like normal timestamps",
+        protocol: restXml,
+        method: "POST",
+        uri: "/XmlTimestamps",
+        body: """
+              <XmlTimestampsInputOutput>
+                  <dateTimeOnTarget>2014-04-29T18:30:38Z</dateTimeOnTarget>
+              </XmlTimestampsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            dateTimeOnTarget: 1398796238
+        }
+    },
+    {
         id: "XmlTimestampsWithEpochSecondsFormat",
         documentation: "Ensures that the timestampFormat of epoch-seconds works",
         protocol: restXml,
@@ -670,6 +691,25 @@ apply XmlTimestamps @httpRequestTests([
         }
     },
     {
+        id: "XmlTimestampsWithEpochSecondsOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of epoch-seconds on the target shape works",
+        protocol: restXml,
+        method: "POST",
+        uri: "/XmlTimestamps",
+        body: """
+              <XmlTimestampsInputOutput>
+                  <epochSecondsOnTarget>1398796238</epochSecondsOnTarget>
+              </XmlTimestampsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            epochSecondsOnTarget: 1398796238
+        }
+    },
+    {
         id: "XmlTimestampsWithHttpDateFormat",
         documentation: "Ensures that the timestampFormat of http-date works",
         protocol: restXml,
@@ -686,6 +726,25 @@ apply XmlTimestamps @httpRequestTests([
         },
         params: {
             httpDate: 1398796238
+        }
+    },
+    {
+        id: "XmlTimestampsWithHttpDateOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of http-date on the target shape works",
+        protocol: restXml,
+        method: "POST",
+        uri: "/XmlTimestamps",
+        body: """
+              <XmlTimestampsInputOutput>
+                  <httpDateOnTarget>Tue, 29 Apr 2014 18:30:38 GMT</httpDateOnTarget>
+              </XmlTimestampsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            httpDateOnTarget: 1398796238
         }
     },
 ])
@@ -728,6 +787,24 @@ apply XmlTimestamps @httpResponseTests([
         }
     },
     {
+        id: "XmlTimestampsWithDateTimeOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of date-time on the target shape works like normal timestamps",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <XmlTimestampsInputOutput>
+                  <dateTimeOnTarget>2014-04-29T18:30:38Z</dateTimeOnTarget>
+              </XmlTimestampsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            dateTimeOnTarget: 1398796238
+        }
+    },
+    {
         id: "XmlTimestampsWithEpochSecondsFormat",
         documentation: "Ensures that the timestampFormat of epoch-seconds works",
         protocol: restXml,
@@ -743,6 +820,24 @@ apply XmlTimestamps @httpResponseTests([
         },
         params: {
             epochSeconds: 1398796238
+        }
+    },
+    {
+        id: "XmlTimestampsWithEpochSecondsOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of epoch-seconds on the target shape works",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <XmlTimestampsInputOutput>
+                  <epochSecondsOnTarget>1398796238</epochSecondsOnTarget>
+              </XmlTimestampsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            epochSecondsOnTarget: 1398796238
         }
     },
     {
@@ -763,6 +858,24 @@ apply XmlTimestamps @httpResponseTests([
             httpDate: 1398796238
         }
     },
+    {
+        id: "XmlTimestampsWithHttpDateOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of http-date on the target shape works",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <XmlTimestampsInputOutput>
+                  <httpDateOnTarget>Tue, 29 Apr 2014 18:30:38 GMT</httpDateOnTarget>
+              </XmlTimestampsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            httpDateOnTarget: 1398796238
+        }
+    },
 ])
 
 structure XmlTimestampsInputOutput {
@@ -771,11 +884,17 @@ structure XmlTimestampsInputOutput {
     @timestampFormat("date-time")
     dateTime: Timestamp,
 
+    dateTimeOnTarget: DateTime,
+
     @timestampFormat("epoch-seconds")
     epochSeconds: Timestamp,
 
+    epochSecondsOnTarget: EpochSeconds,
+
     @timestampFormat("http-date")
     httpDate: Timestamp,
+
+    httpDateOnTarget: HttpDate,
 }
 
 /// This example serializes enums as top level properties, in lists, sets, and maps.
