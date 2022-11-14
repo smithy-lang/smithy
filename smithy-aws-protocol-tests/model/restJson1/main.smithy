@@ -73,6 +73,7 @@ service RestJson {
         SimpleScalarProperties,
         JsonTimestamps,
         JsonEnums,
+        JsonIntEnums,
         RecursiveShapes,
         JsonLists,
         JsonMaps,

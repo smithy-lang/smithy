@@ -8,6 +8,7 @@ use aws.protocols#restXml
 use aws.protocoltests.shared#BooleanList
 use aws.protocoltests.shared#EpochSeconds
 use aws.protocoltests.shared#FooEnumList
+use aws.protocoltests.shared#IntegerEnumList
 use aws.protocoltests.shared#GreetingList
 use aws.protocoltests.shared#IntegerList
 use aws.protocoltests.shared#NestedStringList
@@ -69,6 +70,10 @@ apply XmlLists @httpRequestTests([
                       <member>Foo</member>
                       <member>0</member>
                   </enumList>
+                  <intEnumList>
+                      <member>1</member>
+                      <member>2</member>
+                  </intEnumList>
                   <nestedStringList>
                       <member>
                           <member>foo</member>
@@ -118,6 +123,7 @@ apply XmlLists @httpRequestTests([
             booleanList: [true, false],
             timestampList: [1398796238, 1398796238],
             enumList: ["Foo", "0"],
+            intEnumList: [1, 2],
             nestedStringList: [["foo", "bar"], ["baz", "qux"]],
             renamedListMembers: ["foo", "bar"],
             flattenedList: ["hi", "bye"],
@@ -178,6 +184,10 @@ apply XmlLists @httpResponseTests([
                       <member>Foo</member>
                       <member>0</member>
                   </enumList>
+                  <intEnumList>
+                      <member>1</member>
+                      <member>2</member>
+                  </intEnumList>
                   <nestedStringList>
                       <member>
                           <member>foo</member>
@@ -231,6 +241,7 @@ apply XmlLists @httpResponseTests([
             booleanList: [true, false],
             timestampList: [1398796238, 1398796238],
             enumList: ["Foo", "0"],
+            intEnumList: [1, 2],
             nestedStringList: [["foo", "bar"], ["baz", "qux"]],
             renamedListMembers: ["foo", "bar"],
             flattenedList: ["hi", "bye"],
@@ -330,6 +341,8 @@ structure XmlListsInputOutput {
     timestampList: TimestampList,
 
     enumList: FooEnumList,
+
+    intEnumList: IntegerEnumList,
 
     nestedStringList: NestedStringList,
 

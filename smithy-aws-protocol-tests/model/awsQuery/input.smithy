@@ -7,6 +7,7 @@ namespace aws.protocoltests.query
 use aws.protocols#awsQuery
 use aws.protocoltests.shared#EpochSeconds
 use aws.protocoltests.shared#FooEnum
+use aws.protocoltests.shared#IntegerEnum
 use smithy.test#httpRequestTests
 
 /// This test serializes strings, numbers, and boolean values.
@@ -144,6 +145,24 @@ apply SimpleInputParams @httpRequestTests([
         }
     },
     {
+        id: "QueryIntEnums",
+        documentation: "Serializes intEnums in the query string",
+        protocol: awsQuery,
+        method: "POST",
+        uri: "/",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        requireHeaders: [
+            "Content-Length"
+        ],
+        body: "Action=SimpleInputParams&Version=2020-01-08&IntegerEnum=1",
+        bodyMediaType: "application/x-www-form-urlencoded",
+        params: {
+            IntegerEnum: 1,
+        }
+    },
+    {
         id: "AwsQuerySupportsNaNFloatInputs",
         documentation: "Supports handling NaN float values.",
         protocol: awsQuery,
@@ -211,6 +230,7 @@ structure SimpleInputParamsInput {
     Boo: Double,
     Qux: Blob,
     FooEnum: FooEnum,
+    IntegerEnum: IntegerEnum
 }
 
 /// This test serializes timestamps.

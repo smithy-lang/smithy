@@ -120,3 +120,23 @@ structure GreetingStruct {
 list GreetingList {
     member: GreetingStruct
 }
+
+intEnum IntegerEnum {
+    A = 1
+    B = 2
+    C = 3
+}
+
+list IntegerEnumList {
+    member: IntegerEnum
+}
+
+@uniqueItems
+list IntegerEnumSet {
+     member: IntegerEnum
+}
+
+map IntegerEnumMap {
+     key: String,
+     value: IntegerEnum
+}

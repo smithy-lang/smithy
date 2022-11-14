@@ -71,6 +71,7 @@ service RestXml {
         XmlBlobs,
         XmlTimestamps,
         XmlEnums,
+        XmlIntEnums,
         RecursiveShapes,
         XmlLists,
         XmlMaps,
