@@ -1,0 +1,5 @@
+[WARNING] smithy.example#BillingAddress: This shape possibly contains sensitive data but is not marked with the sensitive trait (based on the presence of 'billing address') | DefaultMissingSensitiveTrait
+[WARNING] smithy.example#BillingAddress$bank: This member possibly contains sensitive data but neither the enclosing nor target shape are marked with the sensitive trait (based on the presence of 'bank') | DefaultMissingSensitiveTrait
+[WARNING] smithy.example#BillingAddress$firstName: This member possibly contains sensitive data but neither the enclosing nor target shape are marked with the sensitive trait (based on the presence of 'first name') | DefaultMissingSensitiveTrait
+[WARNING] smithy.example#FirstName: This shape possibly contains sensitive data but is not marked with the sensitive trait (based on the presence of 'first name') | DefaultMissingSensitiveTrait
+[WARNING] smithy.example#CabAnkle$myBirthday: This member possibly contains sensitive data but neither the enclosing nor target shape are marked with the sensitive trait (based on the presence of 'birthday') | DefaultMissingSensitiveTrait
