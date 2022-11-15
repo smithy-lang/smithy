@@ -13,4 +13,4 @@ version = release
 
 html_theme_options['source_directory'] = "docs/source-1.0"
 html_theme_options['announcement'] = '''<strong>⚠️ You are viewing version 1.0.</strong><br/>
-Version 2.0 is available at <a href="https://awslabs.github.io/smithy/2.0/">https://awslabs.github.io/smithy/2.0/</a>.'''
+Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2.0/</a>.'''

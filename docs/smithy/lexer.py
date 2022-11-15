@@ -25,7 +25,7 @@ __all__ = ["SmithyLexer"]
 
 class SmithyLexer(RegexLexer):
     name = "Smithy"
-    url = "https://awslabs.github.io/smithy/"
+    url = "https://smithy.io/"
     filenames = ["*.smithy"]
     aliases = ["smithy"]
 

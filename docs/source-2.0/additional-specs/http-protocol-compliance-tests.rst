@@ -797,4 +797,4 @@ specific types of malformed values.
     }
 
 .. _CommonMark: https://spec.commonmark.org/
-.. _CodeWriter: https://awslabs.github.io/smithy/javadoc/1.13.1/software/amazon/smithy/utils/CodeWriter.html
+.. _CodeWriter: https://smithy.io/javadoc/__smithy_version__/software/amazon/smithy/utils/CodeWriter.html
