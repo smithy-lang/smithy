@@ -1195,14 +1195,14 @@ from Smithy `Node`s. ([#301](https://github.com/awslabs/smithy/pull/301))
 #### Trait updates
 
 * Individual protocols are now defined as individual traits that are annotated with
-[the `protocolDefinition` trait.](https://awslabs.github.io/smithy/1.0/spec/core/protocol-traits.html#protocoldefinition-trait) [BC]
+[the `protocolDefinition` trait.](https://smithy.io/2.0/spec/protocol-traits.html#protocoldefinition-trait) [BC]
   ([#273](https://github.com/awslabs/smithy/pull/273), [#280](https://github.com/awslabs/smithy/pull/280), [#379](https://github.com/awslabs/smithy/pull/379),
     [#390](https://github.com/awslabs/smithy/pull/390))
-  * Previously listed [AWS protocols now have trait implementations.](https://awslabs.github.io/smithy/1.0/spec/aws/index.html#aws-protocols)
+  * Previously listed [AWS protocols now have trait implementations.](https://smithy.io/2.0/aws/index.html#aws-protocols)
 * Individual authentication schemes are now defined as individual traits that are annotated with
-[the `authDefinition` trait.](https://awslabs.github.io/smithy/1.0/spec/core/auth-traits.html#authdefinition-trait) [BC]
+[the `authDefinition` trait.](https://smithy.io/2.0/spec/authentication-traits.html#authdefinition-trait) [BC]
   ([#273](https://github.com/awslabs/smithy/pull/273), [#280](https://github.com/awslabs/smithy/pull/280))
-  * Previously listed [authentication schemes now have trait implementations.](https://awslabs.github.io/smithy/1.0/spec/core/auth-traits.html)
+  * Previously listed [authentication schemes now have trait implementations.](https://smithy.io/2.0/spec/authentication-traits.html)
 * The `smithy.api#enum` trait is now a list of enum definitions instead of a map of string keys to
 enum definitions to improve clarity and encourage adding more properties to definitions. [BC] ([#326](https://github.com/awslabs/smithy/pull/326))
 * The `aws.api#streaming` trait is now applied to shapes directly instead of members. [BC] ([#340](https://github.com/awslabs/smithy/pull/340))
