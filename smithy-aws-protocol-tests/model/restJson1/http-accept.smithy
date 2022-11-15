@@ -20,7 +20,7 @@ use smithy.test#httpResponseTests
         params: {},
         body: "{}",
         method: "GET",
-		appliesTo: "server",
+        appliesTo: "server",
     },
     {
         id: "AcceptHeaderStarStarRequestTest",
@@ -32,7 +32,7 @@ use smithy.test#httpResponseTests
         params: {},
         body: "{}",
         method: "GET",
-		appliesTo: "server",
+        appliesTo: "server",
     }
 ])
 operation AcceptHeaderStarService {
