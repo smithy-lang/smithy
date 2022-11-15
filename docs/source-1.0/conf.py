@@ -3,6 +3,7 @@ shared_config = "../conf.py"
 with open(shared_config) as file:
     exec(file.read())
 
+# TODO: Migrate to use the 2.0 tabs library.
 extensions.append("sphinx_tabs.tabs")
 
 # Place version specific overrides after here.

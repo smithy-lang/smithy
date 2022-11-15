@@ -11,10 +11,10 @@ clean:
 	-rm -rf build/*
 
 html1:
-	@$(SPHINXBUILD) -M html "source-1.0" "build/1.0" $(SPHINXOPTS) $(O)
+	@$(SPHINXBUILD) -M html "source-1.0" "build/1.0" $(SPHINXOPTS) -W --keep-going -n $(O)
 
 html2:
-	@$(SPHINXBUILD) -M html "source-2.0" "build/2.0" $(SPHINXOPTS) $(O)
+	@$(SPHINXBUILD) -M html "source-2.0" "build/2.0" $(SPHINXOPTS) -W --keep-going -n $(O)
 
 html: html1 html2 merge-versions
 
