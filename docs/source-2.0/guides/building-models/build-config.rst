@@ -292,6 +292,47 @@ Only the following shape type changes are supported:
     }
 
 
+.. _excludeShapesBySelector-transform:
+
+excludeShapesBySelector
+-----------------------
+
+Removes all shapes matching the given :ref:`selector <selectors>`.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - selector
+      - ``string``
+      - A valid :ref:`selector <selectors>` used to exclude shapes.
+
+.. code-block:: json
+
+    {
+        "version": "1.0",
+        "projections": {
+            "exampleProjection": {
+                "transforms": [
+                    {
+                        "name": "excludeShapesBySelector",
+                        "args": {
+                            // Excludes all operations that use event streams.
+                            "selector": "[trait|streaming] :test(<) :is(< member < structure <-[input, output]- operation)"
+                        }
+                    }
+                ]
+            }
+        }
+    }
+
+.. note::
+
+    This transformer does not remove shapes from the prelude.
+
 .. _excludeShapesByTag-transform:
 
 excludeShapesByTag
@@ -373,6 +414,47 @@ Removes shapes if they are marked with one or more specific traits.
         }
     }
 
+
+.. _includeShapesBySelector-transform:
+
+includeShapesBySelector
+-----------------------
+
+Includes only the shapes matching the given :ref:`selector <selectors>`.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - selector
+      - ``string``
+      - A valid :ref:`selector <selectors>` used to include shapes.
+
+.. code-block:: json
+
+    {
+        "version": "1.0",
+        "projections": {
+            "exampleProjection": {
+                "transforms": [
+                    {
+                        "name": "includeShapesBySelector",
+                        "args": {
+                            // Includes only shapes in the FooService closure.
+                            "selector": "[id=smithy.example#FooService] is(*, ~> *)"
+                        }
+                    }
+                ]
+            }
+        }
+    }
+
+.. note::
+
+    This transformer does not remove shapes from the prelude.
 
 .. _includeShapesByTag-transform:
 
