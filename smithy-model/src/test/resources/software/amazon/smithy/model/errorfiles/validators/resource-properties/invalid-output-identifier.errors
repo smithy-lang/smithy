@@ -1,1 +1,1 @@
-[ERROR] com.example#CreateResourceOutput$id: Member `id` does not target a property for resource `com.example#Resource1` | ResourceOperationInputOutput
+[ERROR] com.example#CreateResourceOutput$id: Member `id` does not target a property or identifier for resource `com.example#Resource1` | ResourceOperationInputOutput
