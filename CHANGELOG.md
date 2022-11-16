@@ -1,5 +1,18 @@
 # Smithy Changelog
 
+## 1.26.3 (2022-11-17)
+
+### Features
+
+* Moved useIntegerType to jsonschema ([1495](https://github.com/awslabs/smithy/pull/1495))
+* Added intEnum protocol tests ([1492](https://github.com/awslabs/smithy/pull/1492))
+
+### Documentation
+
+* Updated links to point to smithy.io ([1497](https://github.com/awslabs/smithy/pull/1497))
+* Fixed docs and fail on additional doc warnings ([1496](https://github.com/awslabs/smithy/pull/1496))
+* Fixed AbstractCodeWriter documentation ([1490](https://github.com/awslabs/smithy/pull/1490))
+
 ## 1.26.2 (2022-11-07)
 
 ### Bug Fixes
