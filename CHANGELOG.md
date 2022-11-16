@@ -6,6 +6,14 @@
 
 * Moved useIntegerType to jsonschema ([1495](https://github.com/awslabs/smithy/pull/1495))
 * Added intEnum protocol tests ([1492](https://github.com/awslabs/smithy/pull/1492))
+* Added timestampFormat protocol tests on target shapes ([1440](https://github.com/awslabs/smithy/pull/1440))
+* Added MissingSensitiveTraitValidator ([1364](https://github.com/awslabs/smithy/pull/1364))
+
+### Bug Fixes
+
+* Fixed applying protocol tests to correct opertaions ([1477](https://github.com/awslabs/smithy/pull/1477))
+* Fixed cfn-mutability for inherited identifiers ([1465](https://github.com/awslabs/smithy/pull/1465))
+* Fixed Resource shape properties Type entry ([1415](https://github.com/awslabs/smithy/pull/1415))
 
 ### Documentation
 
