@@ -8,7 +8,6 @@
         <title>AWS JSON 1.0 protocol - Smithy 1.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
-    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -132,7 +131,7 @@
 <div class="announcement">
   <aside class="announcement-content">
      <strong>⚠️ You are viewing version 1.0.</strong><br/>
-Version 2.0 is available at <a href="https://awslabs.github.io/smithy/2.0/">https://awslabs.github.io/smithy/2.0/</a>. 
+Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2.0/</a>. 
   </aside>
 </div>
 
@@ -244,7 +243,7 @@ Version 2.0 is available at <a href="https://awslabs.github.io/smithy/2.0/">http
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Implementations</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://awslabs.github.io/smithy/implementations.html">Implementations</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/implementations.html">Implementations</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
@@ -257,7 +256,7 @@ Version 2.0 is available at <a href="https://awslabs.github.io/smithy/2.0/">http
 <p class="caption" role="heading"><span class="caption-text">Project links</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://awslabs.github.io/smithy/2.0/">2.0 Documentation</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/">2.0 Documentation</a></li>
 </ul>
 
 </div>
@@ -310,7 +309,7 @@ Version 2.0 is available at <a href="https://awslabs.github.io/smithy/2.0/">http
 responses with JSON documents.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
 <dt>Value type</dt><dd>Structure</dd>
-<dt>See</dt><dd><a class="reference external" href="https://github.com/awslabs/smithy/tree/1.26.2/smithy-aws-protocol-tests/model/awsJson1_0">Protocol tests</a></dd>
+<dt>See</dt><dd><a class="reference external" href="https://github.com/awslabs/smithy/tree/1.26.3/smithy-aws-protocol-tests/model/awsJson1_0">Protocol tests</a></dd>
 </dl>
 <p><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsJson1_0</span></code> is a structure that supports the following
 members:</p>
@@ -671,43 +670,6 @@ In <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span
 for both protocols. See <a class="reference internal" href="#operation-error-serialization">Operation error serialization</a> for full details on how to
 deserialize errors for <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code>.</p>
 </div>
-<div class="section" id="aws-protocols-awsquerycompatible-trait">
-<span id="aws-protocols-awsqueryerror-trait"></span><span id="aws-protocols-awsqueryerror-trait"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQueryCompatible</span></code> trait<a class="headerlink" href="#aws-protocols-awsquerycompatible-trait" title="Permalink to this headline">#</a></h2>
-<dl class="docutils">
-<dt>Summary</dt><dd><p>When using the <a class="reference internal" href="aws-query-protocol.html#aws-protocols-awsquery-trait"><span class="std std-ref">awsQuery</span></a> protocol,
-custom <code class="docutils literal notranslate"><span class="pre">Code</span></code> and <code class="docutils literal notranslate"><span class="pre">HTTP</span> <span class="pre">response</span> <span class="pre">code</span></code> values can be defined for an error response via
-the <a class="reference internal" href="aws-query-protocol.html#aws-protocols-awsqueryerror-trait"><span class="std std-ref">awsQueryError</span></a> trait.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">awsQueryCompatible</span></code> trait allows services to backward compatibly migrate from <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> to
-<a class="reference internal" href="#aws-protocols-awsjson1-0-trait"><span class="std std-ref">awsJson1_0</span></a> without removing values defined in the <code class="docutils literal notranslate"><span class="pre">awsQueryError</span></code> trait.</p>
-<p>This trait adds the <code class="docutils literal notranslate"><span class="pre">x-amzn-query-error</span></code> header in the form of <code class="docutils literal notranslate"><span class="pre">Code;Fault</span></code> to error responses.
-<code class="docutils literal notranslate"><span class="pre">Code</span></code> is the value defined in the <a class="reference internal" href="aws-query-protocol.html#aws-protocols-awsqueryerror-trait"><span class="std std-ref">awsQueryError</span></a>,
-and <code class="docutils literal notranslate"><span class="pre">Fault</span></code> is one of <code class="docutils literal notranslate"><span class="pre">Sender</span></code> or <code class="docutils literal notranslate"><span class="pre">Receiver</span></code>.</p>
-</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span> <span class="pre">[trait|awsJson1_0]</span></code></dd>
-<dt>Value type</dt><dd>Annotation trait</dd>
-</dl>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">aws.protocols#awsQueryCompatible</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">aws.protocols#awsQueryError</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">aws.protocols#awsJson1_0</span><span class="w"></span>
-
-<span class="nt">@awsQueryCompatible</span><span class="w"></span>
-<span class="nt">@awsJson1</span><span class="vc">_0</span><span class="w"></span>
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span><span class="w"></span>
-}<span class="w"></span>
-
-<span class="nt">@awsQueryError</span>(<span class="w"></span>
-<span class="w">    </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;InvalidThing&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">httpResponseCode</span><span class="p">:</span><span class="w"> </span><span class="m">400</span><span class="p">,</span><span class="w"></span>
-)<span class="w"></span>
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">InvalidThingException</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
-</pre></div>
-</div>
-</div>
 <div class="section" id="protocol-compliance-tests">
 <h2>Protocol compliance tests<a class="headerlink" href="#protocol-compliance-tests" title="Permalink to this headline">#</a></h2>
 <p>A full compliance test suite is provided and SHALL be considered a normative
@@ -791,7 +753,6 @@ the expected serialized HTTP requests and responses for each case.</p>
 <li><a class="reference internal" href="#non-numeric-float-and-double-serialization">Non-numeric float and double serialization</a></li>
 <li><a class="reference internal" href="#operation-error-serialization">Operation error serialization</a></li>
 <li><a class="reference internal" href="#differences-between-awsjson1-0-and-awsjson1-1">Differences between <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code> and <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span></code></a></li>
-<li><a class="reference internal" href="#aws-protocols-awsquerycompatible-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQueryCompatible</span></code> trait</a></li>
 <li><a class="reference internal" href="#protocol-compliance-tests">Protocol compliance tests</a></li>
 </ul>
 </li>
@@ -809,7 +770,6 @@ the expected serialized HTTP requests and responses for each case.</p>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
-    <script src="../../_static/tabs.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/tabs.js"></script>

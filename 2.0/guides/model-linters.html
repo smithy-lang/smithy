@@ -8,8 +8,8 @@
         <title>Model linters - Smithy 2.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
-    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
     
@@ -256,7 +256,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://awslabs.github.io/smithy/1.0/">1.0 Documentation</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
 
 </div>
@@ -311,8 +311,8 @@ can be used to apply additional validation to Smithy models.</p>
 <p>The following example adds <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code> as a Gradle dependency
 to a <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code> file:</p>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.26.2&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.26.2&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.26.3&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.26.3&quot;</span><span class="p">)</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
@@ -412,8 +412,66 @@ models.</dd>
 </pre></div>
 </div>
 </div>
+<div class="section" id="missingsensitivetrait">
+<span id="id3"></span><h3>MissingSensitiveTrait<a class="headerlink" href="#missingsensitivetrait" title="Permalink to this headline">#</a></h3>
+<p>This validator scans shape or member names and identifies ones that look like they could contain
+sensitive information but are not marked with the <code class="docutils literal notranslate"><span class="pre">&#64;sensitive</span></code> trait. This does not apply to
+shapes where the <code class="docutils literal notranslate"><span class="pre">&#64;sensitive</span></code> trait would be invalid. Users may also configure this validator
+with a custom list of terms, and choose to ignore the built-in defaults. The defaults terms include
+types of personal information such as 'birth day', 'billing address', 'zip code', or 'gender',
+as well as information that could be maliciously exploited such as  'password', 'secret key', or 'credit card'.</p>
+<dl class="docutils">
+<dt>Rationale</dt><dd>Sensitive information often incurs legal requirements regarding the handling and logging
+of it. Mistakenly not marking sensitive data accordingly carries a large risk, and it is
+helpful to have an automated validator to catch instances of this rather than rely on best efforts.</dd>
+<dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">WARNING</span></code></dd>
+<dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>terms</td>
+<td>[ <code class="docutils literal notranslate"><span class="pre">string</span></code> ]</td>
+<td>A list of search terms that match shape or member names
+case-insensitively based on word boundaries (for example, the term
+&quot;access key id&quot; matches &quot;AccessKeyId&quot;, &quot;access_key_id&quot;, and
+&quot;accesskeyid&quot;). See <a class="reference internal" href="#words-boundaries"><span class="std std-ref">Words boundary matching</span></a> for details.</td>
+</tr>
+<tr class="row-odd"><td>excludeDefaults</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>A flag indicating whether or not to disregard the default set
+of terms. This property is not required and defaults to false.
+If set to true, <code class="docutils literal notranslate"><span class="pre">terms</span></code> must be provided.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+
+<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingSensitiveTrait&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">excludeDefaults</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">terms</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;home planet&quot;</span>]<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}]<span class="w"></span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="noninclusiveterms">
-<span id="id3"></span><h3>NoninclusiveTerms<a class="headerlink" href="#noninclusiveterms" title="Permalink to this headline">#</a></h3>
+<span id="id4"></span><h3>NoninclusiveTerms<a class="headerlink" href="#noninclusiveterms" title="Permalink to this headline">#</a></h3>
 <p>Validates that all text content in a model (i.e. shape names, member names,
 documentation, trait values, etc.) does not contain words that perpetuate cultural
 biases. This validator has a built-in set of bias terms that are commonly found
@@ -481,7 +539,7 @@ This property is not required and defaults to false.</td>
 </div>
 </div>
 <div class="section" id="reservedwords">
-<span id="id4"></span><h3>ReservedWords<a class="headerlink" href="#reservedwords" title="Permalink to this headline">#</a></h3>
+<span id="id5"></span><h3>ReservedWords<a class="headerlink" href="#reservedwords" title="Permalink to this headline">#</a></h3>
 <p>Validates that shape names and member names do not match a configured set of
 reserved words.</p>
 <dl class="docutils">
@@ -518,7 +576,7 @@ See <a class="reference internal" href="#reserved-words-wildcards"><span class="
 <td>A list of search terms that match shape or member names
 case-insensitively based on word boundaries (for example, the term
 &quot;access key id&quot; matches &quot;AccessKeyId&quot;, &quot;access_key_id&quot;, and
-&quot;accesskeyid&quot;). See <a class="reference internal" href="#reserved-words-boundaries"><span class="std std-ref">Reserved words boundary matching</span></a> for details.</td>
+&quot;accesskeyid&quot;). See <a class="reference internal" href="#words-boundaries"><span class="std std-ref">Words boundary matching</span></a> for details.</td>
 </tr>
 <tr class="row-even"><td>selector</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
@@ -688,9 +746,9 @@ matches for a reserved word of <code class="docutils literal notranslate"><span 
 </li>
 </ul>
 </div>
-<div class="section" id="reserved-words-boundary-matching">
-<span id="reserved-words-boundaries"></span><h4>Reserved words boundary matching<a class="headerlink" href="#reserved-words-boundary-matching" title="Permalink to this headline">#</a></h4>
-<p>Word boundaries can be used to find reserved words. Word boundary search
+<div class="section" id="words-boundary-matching">
+<span id="words-boundaries"></span><h4>Words boundary matching<a class="headerlink" href="#words-boundary-matching" title="Permalink to this headline">#</a></h4>
+<p>Word boundaries can be used to find terms of interest. Word boundary search
 text consists of one or more alphanumeric words separated by a single
 space. When comparing against another string, the contents of the string
 are separated into words based on word boundaries. Those words are
@@ -731,7 +789,7 @@ demonstrates how comparison text is parsed into words.</p>
 </tbody>
 </table>
 </div>
-<p>The following table shows matches for a reserved term of <code class="docutils literal notranslate"><span class="pre">secret</span> <span class="pre">id</span></code>,
+<p>The following table shows matches for a search term of <code class="docutils literal notranslate"><span class="pre">secret</span> <span class="pre">id</span></code>,
 meaning the word &quot;secret&quot; needs to be followed by the word &quot;id&quot;. Word
 boundary searches also match if the search terms concatenated together with
 no spaces is considered a word in the search text (for example,
@@ -793,7 +851,7 @@ no spaces is considered a word in the search text (for example,
 </div>
 </div>
 <div class="section" id="standardoperationverb">
-<span id="id5"></span><h3>StandardOperationVerb<a class="headerlink" href="#standardoperationverb" title="Permalink to this headline">#</a></h3>
+<span id="id6"></span><h3>StandardOperationVerb<a class="headerlink" href="#standardoperationverb" title="Permalink to this headline">#</a></h3>
 <p>Looks at each operation shape name and determines if the first word in the
 operation shape name is one of the defined standard verbs or if it is a verb
 that has better alternatives.</p>
@@ -865,7 +923,7 @@ be provided.</p>
 </div>
 </div>
 <div class="section" id="repeatedshapename">
-<span id="stutteredshapename"></span><span id="id6"></span><h3>RepeatedShapeName<a class="headerlink" href="#repeatedshapename" title="Permalink to this headline">#</a></h3>
+<span id="stutteredshapename"></span><span id="id7"></span><h3>RepeatedShapeName<a class="headerlink" href="#repeatedshapename" title="Permalink to this headline">#</a></h3>
 <p>Validates that <a class="reference internal" href="../spec/aggregate-types.html#structure"><span class="std std-ref">Structure</span></a> member names and <a class="reference internal" href="../spec/aggregate-types.html#union"><span class="std std-ref">Union</span></a> member
 names do not case-insensitively repeat their container shape names.</p>
 <p>As an example, if a structure named &quot;Table&quot; contained a member named
@@ -900,7 +958,7 @@ is case-insensitively identical to the containing shape's name.</td>
 </dl>
 </div>
 <div class="section" id="inputoutputstructurereuse">
-<span id="id7"></span><h3>InputOutputStructureReuse<a class="headerlink" href="#inputoutputstructurereuse" title="Permalink to this headline">#</a></h3>
+<span id="id8"></span><h3>InputOutputStructureReuse<a class="headerlink" href="#inputoutputstructurereuse" title="Permalink to this headline">#</a></h3>
 <p>Validates that every operation defines a dedicated input and output shape
 marked with the <a class="reference internal" href="../spec/type-refinement-traits.html#input-trait"><span class="std std-ref">input trait</span></a> and <a class="reference internal" href="../spec/type-refinement-traits.html#output-trait"><span class="std std-ref">output trait</span></a>.</p>
 <dl class="docutils">
@@ -921,7 +979,7 @@ operations together.</li>
 </dl>
 </div>
 <div class="section" id="missingpaginatedtrait">
-<span id="id8"></span><h3>MissingPaginatedTrait<a class="headerlink" href="#missingpaginatedtrait" title="Permalink to this headline">#</a></h3>
+<span id="id9"></span><h3>MissingPaginatedTrait<a class="headerlink" href="#missingpaginatedtrait" title="Permalink to this headline">#</a></h3>
 <p>Checks for operations that look like they should be paginated but do not
 have the <a class="reference internal" href="../spec/behavior-traits.html#paginated-trait"><span class="std std-ref">paginated trait</span></a>.</p>
 <dl class="docutils">
@@ -987,7 +1045,7 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">[&quot;
 </div>
 </div>
 <div class="section" id="shouldhaveusedtimestamp">
-<span id="id9"></span><h3>ShouldHaveUsedTimestamp<a class="headerlink" href="#shouldhaveusedtimestamp" title="Permalink to this headline">#</a></h3>
+<span id="id10"></span><h3>ShouldHaveUsedTimestamp<a class="headerlink" href="#shouldhaveusedtimestamp" title="Permalink to this headline">#</a></h3>
 <p>Looks for shapes that likely represent time, but that do not use a
 timestamp shape.</p>
 <p>The ShouldHaveUsedTimestamp validator checks the following names:</p>
@@ -1042,7 +1100,7 @@ represent time.</td>
 </dl>
 </div>
 <div class="section" id="missingclientoptionaltrait">
-<span id="id10"></span><h3>MissingClientOptionalTrait<a class="headerlink" href="#missingclientoptionaltrait" title="Permalink to this headline">#</a></h3>
+<span id="id11"></span><h3>MissingClientOptionalTrait<a class="headerlink" href="#missingclientoptionaltrait" title="Permalink to this headline">#</a></h3>
 <p>Allows services to control backward compatibility guarantees for
 members marked as <a class="reference internal" href="../spec/type-refinement-traits.html#required-trait"><span class="std std-ref">&#64;required</span></a> and
 <a class="reference internal" href="../spec/type-refinement-traits.html#default-trait"><span class="std std-ref">&#64;default</span></a> by requiring the application of the
@@ -1366,10 +1424,11 @@ using the following Smithy model:</p>
 <li><a class="reference internal" href="#linters-in-smithy-linters">Linters in <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code></a><ul>
 <li><a class="reference internal" href="#abbreviationname">AbbreviationName</a></li>
 <li><a class="reference internal" href="#camelcase">CamelCase</a></li>
+<li><a class="reference internal" href="#missingsensitivetrait">MissingSensitiveTrait</a></li>
 <li><a class="reference internal" href="#noninclusiveterms">NoninclusiveTerms</a></li>
 <li><a class="reference internal" href="#reservedwords">ReservedWords</a><ul>
 <li><a class="reference internal" href="#wildcards-in-reservedwords">Wildcards in ReservedWords</a></li>
-<li><a class="reference internal" href="#reserved-words-boundary-matching">Reserved words boundary matching</a></li>
+<li><a class="reference internal" href="#words-boundary-matching">Words boundary matching</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#standardoperationverb">StandardOperationVerb</a></li>
@@ -1398,8 +1457,8 @@ using the following Smithy model:</p>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/scripts/furo.js"></script>
-    <script src="../_static/tabs.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script src="../_static/tabs.js"></script>
     </body>
 </html>
