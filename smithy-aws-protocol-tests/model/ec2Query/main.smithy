@@ -78,5 +78,8 @@ service AwsEc2 {
 
         // custom endpoints with paths
         HostWithPathOperation,
+
+        DatetimeOffsets,
+        OffsetDatetimes,
     ]
 }

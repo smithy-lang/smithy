@@ -92,5 +92,8 @@ service RestXml {
         EndpointOperation,
         EndpointWithHostLabelOperation,
         EndpointWithHostLabelHeaderOperation,
+
+        DatetimeOffsets,
+        OffsetDatetimes,
     ]
 }
