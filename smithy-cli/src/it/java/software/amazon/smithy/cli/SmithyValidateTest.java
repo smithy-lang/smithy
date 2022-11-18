@@ -32,8 +32,7 @@ public class SmithyValidateTest {
         IntegUtils.run("invalid-model", ListUtils.of("validate", "model"), result -> {
             assertThat(result.getExitCode(), equalTo(1));
             assertThat(result.getOutput(), containsString("ERROR: smithy.example#MyString (TraitTarget)"));
-            // Normalize windows paths.
-            assertThat(result.getOutput().replace("\\", "/"), containsString("@ model/invalid.smithy"));
+            assertThat(result.getOutput(), containsString("invalid.smithy"));
             assertThat(result.getOutput(), containsString("@range(min: 10, max: 100) // not valid for strings!"));
             assertThat(result.getOutput(), containsString("ERROR: 1"));
         });

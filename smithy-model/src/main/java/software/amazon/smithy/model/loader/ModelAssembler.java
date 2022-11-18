@@ -266,7 +266,8 @@ public final class ModelAssembler {
                 throw new ModelImportException("Error loading the contents of " + importPath, e);
             }
         } else if (Files.isRegularFile(importPath)) {
-            inputStreamModels.put(importPath.toString(), () -> {
+            // Use an absolute path for better de-duping of the same file.
+            inputStreamModels.put(importPath.toAbsolutePath().toString(), () -> {
                 try {
                     return Files.newInputStream(importPath);
                 } catch (IOException e) {
@@ -309,8 +310,8 @@ public final class ModelAssembler {
 
         if (key.startsWith("file:")) {
             try {
-                // Paths.get ensures paths are normalized for Windows too.
-                key = Paths.get(url.toURI()).toString();
+                // Use an absolute Path to ensure paths are normalized for Windows too, and better de-duping.
+                key = Paths.get(url.toURI()).toAbsolutePath().toString();
             } catch (URISyntaxException e) {
                 key = key.substring(5);
             }
