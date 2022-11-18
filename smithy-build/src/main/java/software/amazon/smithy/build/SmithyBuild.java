@@ -179,9 +179,16 @@ public final class SmithyBuild {
     public SmithyBuild config(SmithyBuildConfig config) {
         this.config = config;
         for (String source : config.getSources()) {
-            sources.add(Paths.get(source));
+            addSource(Paths.get(source));
         }
         return this;
+    }
+
+    // Add a source path using absolute paths to better de-conflict source files. ModelAssembler also
+    // de-conflicts imports with absolute paths, but this ensures the same file doesn't appear twice in
+    // the build plugin output (though it does not use realpath to de-conflict based on symlinks).
+    private void addSource(Path path) {
+        sources.add(path.toAbsolutePath());
     }
 
     /**
@@ -377,7 +384,9 @@ public final class SmithyBuild {
      * @return Returns the builder.
      */
     public SmithyBuild registerSources(Path... pathToSources) {
-        Collections.addAll(sources, pathToSources);
+        for (Path path : pathToSources) {
+            addSource(path);
+        }
         return this;
     }
 
