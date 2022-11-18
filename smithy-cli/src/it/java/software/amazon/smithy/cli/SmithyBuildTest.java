@@ -69,4 +69,14 @@ public class SmithyBuildTest {
             assertThat(result.getOutput(), containsString("Caused by"));
         });
     }
+
+    @Test
+    public void successfullyDeDupesConfigAndCliArguments() {
+        // The config adds model as a source and so does the CLI. Without de-duping, this would fail due to the
+        // enum being defined twice with the same members. Without de-conflicting in SmithyBuild, the sources plugin
+        // would fail due to finding two files named main.smithy.
+        IntegUtils.run("simple-config-sources", ListUtils.of("build", "model"), result -> {
+            assertThat(result.getExitCode(), equalTo(0));
+        });
+    }
 }
