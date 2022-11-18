@@ -44,7 +44,7 @@ public final class Substring extends FunctionDefinition {
 
     @Override
     public Type getReturnType() {
-        return Type.string();
+        return Type.optional(Type.string());
     }
 
     @Override
