@@ -123,10 +123,9 @@ public class IntegrationTest {
     @MethodSource("invalidTestCases")
     void checkInvalidRules(ValidationTestCase validationTestCase) throws IOException {
         RuleError error = assertThrows(RuleError.class, () -> {
-            EndpointRuleSet ruleset = EndpointRuleSet.fromNode(validationTestCase.contents());
-            ruleset.typeCheck(new Scope<>());
+            EndpointRuleSet.fromNode(validationTestCase.contents());
         });
-        // validationTestCase.overrideComments(error.toString());
+        //validationTestCase.overrideComments(error.toString());
         assertEquals(
                 validationTestCase.comments().replaceAll("\\s+", " ").trim(),
                 error.toString().replaceAll("\\s+", " ").trim());
