@@ -1,5 +1,6 @@
+// when parsing endpoint ruleset
 // while typechecking booleanEquals(true, UseDualStack)
-//   at invalid-rules/bool-equals-unset.json5:21
+//   at invalid-rules/bool-equals-unset.json5:22
 // Unexpected type in the second argument: Expected Bool but found Option<Bool>   
 //   hint: use `assign` in a condition or `isSet(UseDualStack)` to prove that this value is non-null
 {
