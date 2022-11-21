@@ -229,7 +229,9 @@ public final class EndpointRuleSet extends MandatorySourceLocation implements Ty
 
         @Override
         public EndpointRuleSet build() {
-            return new EndpointRuleSet(this);
+            EndpointRuleSet ruleSet = new EndpointRuleSet(this);
+            ruleSet.typecheck();
+            return ruleSet;
         }
     }
 }

@@ -1,4 +1,5 @@
-//   at invalid-rules/wrong-default-type.json5:6
+// when parsing endpoint ruleset
+//   at invalid-rules/wrong-default-type.json5:7
 // Invalid type for field "default": Type must match parameter type. Expected String, found Bool.
 {
   "version": "1.2",

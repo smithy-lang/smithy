@@ -126,7 +126,7 @@ public class IntegrationTest {
             EndpointRuleSet ruleset = EndpointRuleSet.fromNode(validationTestCase.contents());
             ruleset.typeCheck(new Scope<>());
         });
-        //validationTestCase.overrideComments(error.toString());
+        // validationTestCase.overrideComments(error.toString());
         assertEquals(
                 validationTestCase.comments().replaceAll("\\s+", " ").trim(),
                 error.toString().replaceAll("\\s+", " ").trim());

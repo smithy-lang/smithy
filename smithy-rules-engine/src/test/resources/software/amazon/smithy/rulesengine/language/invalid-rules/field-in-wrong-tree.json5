@@ -1,11 +1,12 @@
+// when parsing endpoint ruleset
 // while typechecking
-//   at invalid-rules/field-in-wrong-tree.json5:40
+//   at invalid-rules/field-in-wrong-tree.json5:41
 // while typechecking the endpoint
-//   at invalid-rules/field-in-wrong-tree.json5:42
+//   at invalid-rules/field-in-wrong-tree.json5:43
 // while checking the URL
 // while typechecking "{partitionResult#name}.amazonaws.com"
 // while typechecking the template `"{partitionResult#name}.amazonaws.com"`
-//   at invalid-rules/field-in-wrong-tree.json5:43
+//   at invalid-rules/field-in-wrong-tree.json5:44
 // while checking {partitionResult#name}
 // while typechecking partitionResult#name
 // while typechecking partitionResult
