@@ -32,7 +32,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 /**
  * Topologically sorts shapes based on their dependencies (i.e., mixins).
  *
- * <p>While this class is reusable, is is also stateful; shapes and edges
+ * <p>While this class is reusable, it is also stateful; shapes and edges
  * are enqueued, and when sorted, all shapes and edges are dequeued.
  */
 public final class TopologicalShapeSort {
