@@ -1,5 +1,11 @@
 # Smithy Changelog
 
+## 1.26.4 (2022-11-22)
+
+### Bug Fixes
+
+* Fixed updating mixins when replacing shapes in transforms ([1509](https://github.com/awslabs/smithy/pull/1509))
+
 ## 1.26.3 (2022-11-17)
 
 ### Features
@@ -11,7 +17,7 @@
 
 ### Bug Fixes
 
-* Fixed applying protocol tests to correct opertaions ([1477](https://github.com/awslabs/smithy/pull/1477))
+* Fixed applying protocol tests to correct operations ([1477](https://github.com/awslabs/smithy/pull/1477))
 * Fixed cfn-mutability for inherited identifiers ([1465](https://github.com/awslabs/smithy/pull/1465))
 * Fixed Resource shape properties Type entry ([1415](https://github.com/awslabs/smithy/pull/1415))
 
