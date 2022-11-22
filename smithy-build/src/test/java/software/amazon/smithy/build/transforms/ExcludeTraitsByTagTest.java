@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.TraitDefinition;
@@ -47,5 +48,11 @@ public class ExcludeTraitsByTagTest {
 
         assertFalse(traits.contains(ShapeId.from("ns.foo#quux")));
         assertTrue(traits.contains(ShapeId.from("ns.foo#bar")));
+
+        // Mixin members are retained, but tagged traits are excluded.
+        MemberShape mixedMember = result.expectShape(ShapeId.from("ns.foo#MyOperationInput$mixedMember"),
+                MemberShape.class);
+        assertFalse(mixedMember.findMemberTrait(result, "ns.foo#corge").isPresent());
+        assertTrue(mixedMember.findMemberTrait(result, "ns.foo#bar").isPresent());
     }
 }

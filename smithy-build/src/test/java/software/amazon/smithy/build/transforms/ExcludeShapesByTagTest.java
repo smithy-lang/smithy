@@ -18,6 +18,7 @@ package software.amazon.smithy.build.transforms;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -27,6 +28,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.IntEnumShape;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.TagsTrait;
@@ -73,5 +75,9 @@ public class ExcludeShapesByTagTest {
 
         IntEnumShape bar = result.expectShape(ShapeId.from("smithy.example#Bar"), IntEnumShape.class);
         assertThat(bar.members().size(), is(1));
+
+        // Mixin members are retained, but excluded traits are removed.
+        MemberShape baz = result.expectShape(ShapeId.from("smithy.example#StructForMixin$baz"), MemberShape.class);
+        assertFalse(baz.findMemberTrait(result, "MyTrait").isPresent());
     }
 }
