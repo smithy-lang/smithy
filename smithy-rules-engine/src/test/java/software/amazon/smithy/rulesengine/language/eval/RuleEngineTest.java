@@ -23,23 +23,16 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.rulesengine.RulesetTestUtil;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.utils.MapUtils;
 
 class RuleEngineTest {
 
-    private EndpointRuleSet parse(String resource) {
-        InputStream is = getClass().getClassLoader().getResourceAsStream(resource);
-        assert is != null;
-        Node node = ObjectNode.parse(is);
-        return EndpointRuleSet.fromNode(node);
-    }
-
     @Test
     void testRuleEval() {
-        EndpointRuleSet actual = parse(
-                "software/amazon/smithy/rulesengine/testutil/valid-rules/minimal-ruleset.json");
+        EndpointRuleSet actual = RulesetTestUtil.minimalRuleSet();
         Value result = RuleEvaluator.evaluate(actual, MapUtils.of(Identifier.of("Region"),
                 Value.string("us-east-1")));
         Value.Endpoint expected = new Value.Endpoint.Builder(SourceLocation.none())

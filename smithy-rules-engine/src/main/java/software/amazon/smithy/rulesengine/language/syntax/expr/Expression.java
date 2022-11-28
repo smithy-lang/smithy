@@ -208,7 +208,7 @@ public abstract class Expression extends MandatorySourceLocation implements Type
      */
     public Type type() {
         if (cachedType == null) {
-            throw new RuntimeException("you must call typeCheck first");
+            throw new RuntimeException("typechecking was never invoked on this expression.");
         }
         return cachedType;
     }
