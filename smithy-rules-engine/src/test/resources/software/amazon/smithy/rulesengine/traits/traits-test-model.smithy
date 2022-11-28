@@ -50,12 +50,13 @@ apply ExampleService @endpointTests({
                 "boolFoo": true
             },
             "operationInputs": [{
-                "operationName": "GetThing",
+                "operationName": GetThing,
                 "clientParams": {
                     "stringFoo": "client value"
                 },
                 "operationParams": {
-                    "buzz": "a buzz value"
+                    "buzz": "a buzz value",
+                    "fizz": "a required value"
                 },
                 "builtInParams": {
                     "SDK::Endpoint": "https://custom.example.com"
@@ -94,6 +95,7 @@ operation GetThing {
 
 @input
 structure GetThingInput {
+    @required
     fizz: String,
 
     @contextParam(name: "stringBaz")

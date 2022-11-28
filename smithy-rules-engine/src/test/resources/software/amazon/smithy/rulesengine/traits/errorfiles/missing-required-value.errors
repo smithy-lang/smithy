@@ -1,0 +1,2 @@
+[WARNING] smithy.example#InvalidService: This shape applies a trait that is unstable: smithy.rules#endpointTests | UnstableTrait
+[ERROR] smithy.example#InvalidService: For operationInput test defined on line 20: Missing required structure member `fizz` for `smithy.example#GetThingInput` | EndpointTestsTrait

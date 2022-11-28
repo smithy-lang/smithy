@@ -122,8 +122,9 @@ list OperationInputs {
 @unstable
 @private
 structure OperationInput {
-    /// The name of the service operation targeted by the test.
+    /// The service operation targeted by the test.
     @required
+    @idRef(failWhenMissing: true, selector: "operation")
     operationName: String,
 
     /// Defines the input parameters used to generate the operation request.

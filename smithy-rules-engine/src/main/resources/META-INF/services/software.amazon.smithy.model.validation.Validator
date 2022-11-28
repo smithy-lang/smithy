@@ -1,1 +1,2 @@
 software.amazon.smithy.rulesengine.traits.StaticContextParamsTraitValidator
+software.amazon.smithy.rulesengine.traits.EndpointTestsTraitValidator
