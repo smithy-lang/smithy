@@ -23,13 +23,11 @@ import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.HelpPrinter;
-import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Arguments available to commands that load and build models.
  */
-@SmithyInternalApi
-public final class BuildOptions implements ArgumentReceiver {
+final class BuildOptions implements ArgumentReceiver {
 
     public static final String ALLOW_UNKNOWN_TRAITS = "--allow-unknown-traits";
     public static final String DISCOVER = "--discover";
@@ -58,13 +56,13 @@ public final class BuildOptions implements ArgumentReceiver {
 
     @Override
     public void registerHelp(HelpPrinter printer) {
-        printer.option(ALLOW_UNKNOWN_TRAITS, null, "Ignores unknown traits when validating models");
-        printer.option(DISCOVER, "-d", "Enables model discovery, merging in models found inside of jars");
+        printer.option(ALLOW_UNKNOWN_TRAITS, null, "Ignore unknown traits when validating models");
+        printer.option(DISCOVER, "-d", "Enable model discovery, merging in models found inside of jars");
         printer.param(DISCOVER_CLASSPATH, null, "CLASSPATH",
-                            "Enables model discovery using a custom classpath for models");
-        printer.option(DEPENDENCY_MODE, null, "(ignore|forbid|standard) Allows dependencies to be ignored or forbidden "
-                                              + "by setting to 'ignore' or 'forbid'. Defaults to 'standard', allowing "
-                                              + "dependencies to be declared and resolved using Maven.");
+                            "Enable model discovery using a custom classpath for models");
+        printer.option(DEPENDENCY_MODE, null, "(ignore|forbid|standard) Allow dependencies to be ignored or forbidden. "
+                                              + "Defaults to 'standard', allowing dependencies to be declared and "
+                                              + "resolved using Maven.");
         printer.param("--output", null, "OUTPUT_PATH",
                       "Where to write Smithy artifacts, caches, and other files (defaults to './build/smithy').");
         printer.positional(MODELS, "Model files and directories to load");

@@ -23,10 +23,8 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
-import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
-@SmithyUnstableApi
 public final class MavenConfig implements ToSmithyBuilder<MavenConfig> {
 
     private final Set<String> dependencies;

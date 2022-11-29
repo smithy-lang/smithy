@@ -35,13 +35,11 @@ import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.utils.SmithyInternalApi;
 
-@SmithyInternalApi
-public final class DiffCommand extends ClasspathCommand {
+final class DiffCommand extends ClasspathCommand {
     private static final Logger LOGGER = Logger.getLogger(DiffCommand.class.getName());
 
-    public DiffCommand(String parentCommandName, DependencyResolver.Factory dependencyResolverFactory) {
+    DiffCommand(String parentCommandName, DependencyResolver.Factory dependencyResolverFactory) {
         super(parentCommandName, dependencyResolverFactory);
     }
 

@@ -27,14 +27,12 @@ import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.cli.dependencies.MavenDependencyResolver;
-import software.amazon.smithy.utils.SmithyInternalApi;
 
-@SmithyInternalApi
-public final class WarmupCommand extends ClasspathCommand {
+final class WarmupCommand extends ClasspathCommand {
 
     private static final Logger LOGGER = Logger.getLogger(WarmupCommand.class.getName());
 
-    public WarmupCommand(String parentCommandName, DependencyResolver.Factory dependencyResolverFactory) {
+    WarmupCommand(String parentCommandName, DependencyResolver.Factory dependencyResolverFactory) {
         super(parentCommandName, dependencyResolverFactory);
     }
 

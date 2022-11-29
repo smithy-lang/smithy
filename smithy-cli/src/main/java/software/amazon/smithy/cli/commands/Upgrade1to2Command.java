@@ -59,17 +59,15 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.SimpleParser;
-import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
-@SmithyInternalApi
 @SuppressWarnings("deprecation")
-public final class Upgrade1to2Command extends SimpleCommand {
+final class Upgrade1to2Command extends SimpleCommand {
     private static final Logger LOGGER = Logger.getLogger(Upgrade1to2Command.class.getName());
     private static final Pattern VERSION_1 = Pattern.compile("(?m)^\\s*\\$\\s*version:\\s*\"1\\.0\"\\s*$");
     private static final Pattern VERSION_2 = Pattern.compile("(?m)^\\s*\\$\\s*version:\\s*\"2\\.0\"\\s*$");
 
-    public Upgrade1to2Command(String parentCommandName) {
+    Upgrade1to2Command(String parentCommandName) {
         super(parentCommandName);
     }
 

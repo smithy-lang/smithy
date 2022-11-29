@@ -19,12 +19,10 @@ import java.util.List;
 import software.amazon.smithy.build.model.MavenRepository;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.Command;
-import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Resolves Maven dependencies for the Smithy CLI.
  */
-@SmithyUnstableApi
 public interface DependencyResolver {
     /**
      * Add a Maven repository.
@@ -62,9 +60,9 @@ public interface DependencyResolver {
     @FunctionalInterface
     interface Factory {
         /**
-         * Creates a {@link DependencyResolver} optionally based on the loaded build configuration.
+         * Creates a {@link DependencyResolver}.
          *
-         * @param config smithy-build.json configuration.
+         * @param config smithy-build.json configuration that can be used to configure the resolver.
          * @param env Command environment, including stderr and stdout printers.
          * @return Returns the created resolver.
          */

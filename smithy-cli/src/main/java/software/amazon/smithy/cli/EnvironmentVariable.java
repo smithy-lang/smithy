@@ -28,6 +28,11 @@ public enum EnvironmentVariable {
     /** The current version of the CLI. This is set automatically by the CLI. */
     SMITHY_VERSION;
 
+    /**
+     * Gets the system property or the environment variable for the property, in that order.
+     *
+     * @return Returns the found system property or environment variable or null.
+     */
     public String getValue() {
         String name = toString();
         String value = System.getProperty(name);
@@ -37,6 +42,11 @@ public enum EnvironmentVariable {
         return value;
     }
 
+    /**
+     * Sets a system property for the environment variable.
+     *
+     * @param value Value to set.
+     */
     public void setValue(String value) {
         System.setProperty(toString(), value);
     }

@@ -50,13 +50,11 @@ import org.eclipse.aether.transport.file.FileTransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
 import software.amazon.smithy.build.model.MavenRepository;
-import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Resolves Maven dependencies for the Smithy CLI using Maven resolvers.
  */
-@SmithyUnstableApi
 public final class MavenDependencyResolver implements DependencyResolver {
 
     private static final Logger LOGGER = Logger.getLogger(DependencyResolver.class.getName());
@@ -71,6 +69,9 @@ public final class MavenDependencyResolver implements DependencyResolver {
         this(null);
     }
 
+    /**
+     * @param cacheLocation Maven local cache location.
+     */
     public MavenDependencyResolver(String cacheLocation) {
         final DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
         locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
@@ -89,6 +90,7 @@ public final class MavenDependencyResolver implements DependencyResolver {
         if (cacheLocation == null) {
             String userHome = System.getProperty("user.home");
             cacheLocation = Paths.get(userHome, ".m2", "repository").toString();
+            LOGGER.fine("Set default Maven local cache location to ~/.m2/repository");
         }
 
         LocalRepository local = new LocalRepository(cacheLocation);
@@ -124,13 +126,7 @@ public final class MavenDependencyResolver implements DependencyResolver {
 
     @Override
     public void addDependency(String coordinates) {
-        addDependency(coordinates, "compile");
-    }
-
-    public void addDependency(String coordinates, String scope) {
-        Dependency dependency;
-        dependency = createDependency(coordinates, scope);
-        dependencies.add(dependency);
+        dependencies.add(createDependency(coordinates, "compile"));
     }
 
     @Override
@@ -196,7 +192,7 @@ public final class MavenDependencyResolver implements DependencyResolver {
     }
 
     /**
-     * Based on Maven's StringAuthentication.
+     * Based on Maven's StringAuthentication. There doesn't appear to be another way to do this.
      */
     private static final class MavenAuth implements Authentication {
         private final String key;

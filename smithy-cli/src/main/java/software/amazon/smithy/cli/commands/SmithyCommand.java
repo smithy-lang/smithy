@@ -17,6 +17,7 @@ package software.amazon.smithy.cli.commands;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
@@ -26,7 +27,6 @@ import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
-import software.amazon.smithy.cli.dependencies.MavenDependencyResolver;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -34,17 +34,8 @@ public class SmithyCommand implements Command {
 
     private final List<Command> commands;
 
-    public SmithyCommand() {
-        this(null);
-    }
-
     public SmithyCommand(DependencyResolver.Factory dependencyResolverFactory) {
-        if (dependencyResolverFactory == null) {
-            dependencyResolverFactory = (config, env) -> {
-                return new MavenDependencyResolver(EnvironmentVariable.SMITHY_MAVEN_CACHE.getValue());
-            };
-        }
-
+        Objects.requireNonNull(dependencyResolverFactory);
         commands = Arrays.asList(
             new ValidateCommand(getName(), dependencyResolverFactory),
             new BuildCommand(getName(), dependencyResolverFactory),

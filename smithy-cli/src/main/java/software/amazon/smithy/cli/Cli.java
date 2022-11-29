@@ -18,10 +18,9 @@ package software.amazon.smithy.cli;
 import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
-import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
- * This class provides a very basic CLI abstraction.
+ * This class provides a basic CLI abstraction.
  *
  * <p>Why are we not using a library for this? Because parsing command line
  * options isn't difficult, we don't need to take a dependency, this code
@@ -29,7 +28,6 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * CLI features are supported in case we want to migrate to a library or
  * event a different language.
  */
-@SmithyUnstableApi
 public final class Cli {
 
     private static final Logger LOGGER = Logger.getLogger(Cli.class.getName());
@@ -72,9 +70,10 @@ public final class Cli {
         StandardOptions standardOptions = new StandardOptions();
         arguments.addReceiver(standardOptions);
 
-        // Use or disable ANSI escapes in the printers.
-        CliPrinter out = new CliPrinter.ColorPrinter(stdoutPrinter, standardOptions);
-        CliPrinter err = new CliPrinter.ColorPrinter(stdErrPrinter, standardOptions);
+        // Use or disable ANSI escapes in the printers. Note that determining the color setting is deferred
+        // using a Supplier to allow the CLI parameters to be fully resolved.
+        CliPrinter out = new CliPrinter.ColorPrinter(stdoutPrinter, standardOptions::colorSetting);
+        CliPrinter err = new CliPrinter.ColorPrinter(stdErrPrinter, standardOptions::colorSetting);
 
         // Setup logging after parsing all arguments.
         arguments.onComplete((opts, positional) -> {

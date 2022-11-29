@@ -28,6 +28,9 @@ import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Removes Smithy CLI dependencies that conflict with the JARs used by the CLI.
+ *
+ * <p>This makes creating a dedicated ClassLoader simpler because Smithy dependencies are provided by the parent
+ * class loader when running the CLI.
  */
 public final class FilterCliVersionResolver implements DependencyResolver {
 
@@ -39,6 +42,10 @@ public final class FilterCliVersionResolver implements DependencyResolver {
     private final String version;
     private final DependencyResolver delegate;
 
+    /**
+     * @param version Version of the Smithy CLI.
+     * @param delegate Resolver to resolve dependencies and filter.
+     */
     public FilterCliVersionResolver(String version, DependencyResolver delegate) {
         this.version = version;
         this.delegate = delegate;

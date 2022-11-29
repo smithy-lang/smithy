@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.logging.Logger;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.ProjectionResult;
 import software.amazon.smithy.build.SmithyBuild;
@@ -39,13 +38,10 @@ import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.validation.Severity;
-import software.amazon.smithy.utils.SmithyInternalApi;
 
-@SmithyInternalApi
-public final class BuildCommand extends ClasspathCommand {
-    private static final Logger LOGGER = Logger.getLogger(BuildCommand.class.getName());
+final class BuildCommand extends ClasspathCommand {
 
-    public BuildCommand(String parentCommandName, DependencyResolver.Factory dependencyResolverFactory) {
+    BuildCommand(String parentCommandName, DependencyResolver.Factory dependencyResolverFactory) {
         super(parentCommandName, dependencyResolverFactory);
     }
 

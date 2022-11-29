@@ -22,9 +22,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.function.Consumer;
 import software.amazon.smithy.cli.CliError;
-import software.amazon.smithy.utils.SmithyUnstableApi;
 
-@SmithyUnstableApi
 final class IsolatedRunnable implements Runnable {
 
     private final ClassLoader classLoader;

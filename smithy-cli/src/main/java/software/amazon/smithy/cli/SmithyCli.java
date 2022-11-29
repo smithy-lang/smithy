@@ -18,6 +18,7 @@ package software.amazon.smithy.cli;
 import java.util.List;
 import software.amazon.smithy.cli.commands.SmithyCommand;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
+import software.amazon.smithy.cli.dependencies.MavenDependencyResolver;
 import software.amazon.smithy.utils.IoUtils;
 
 /**
@@ -109,6 +110,12 @@ public final class SmithyCli {
      * @return Returns the created CLI.
      */
     public Cli createCli() {
+        if (dependencyResolverFactory == null) {
+            dependencyResolverFactory = (config, env) -> {
+                return new MavenDependencyResolver(EnvironmentVariable.SMITHY_MAVEN_CACHE.getValue());
+            };
+        }
+
         return new Cli(new SmithyCommand(dependencyResolverFactory), classLoader);
     }
 

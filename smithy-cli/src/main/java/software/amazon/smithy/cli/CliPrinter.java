@@ -18,12 +18,11 @@ package software.amazon.smithy.cli;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.function.Consumer;
-import software.amazon.smithy.utils.SmithyUnstableApi;
+import java.util.function.Supplier;
 
 /**
  * Handles text output of the CLI.
  */
-@SmithyUnstableApi
 public interface CliPrinter {
     /**
      * Prints text to the writer and appends a new line.
@@ -88,12 +87,12 @@ public interface CliPrinter {
      */
     final class ColorPrinter implements CliPrinter {
         private final CliPrinter delegate;
-        private final StandardOptions options;
+        private final Supplier<StandardOptions.ColorSetting> colorSettingSupplier;
         private final boolean ansiSupported;
 
-        public ColorPrinter(CliPrinter delegate, StandardOptions options) {
+        public ColorPrinter(CliPrinter delegate, Supplier<StandardOptions.ColorSetting> colorSettingSupplier) {
             this.delegate = delegate;
-            this.options = options;
+            this.colorSettingSupplier = colorSettingSupplier;
             this.ansiSupported = isAnsiColorSupported();
         }
 
@@ -108,7 +107,7 @@ public interface CliPrinter {
 
         @Override
         public String style(String text, Style... styles) {
-            if (options.forceColor() || (!options.noColor() && ansiSupported)) {
+            if (colorSettingSupplier.get() != StandardOptions.ColorSetting.NO_COLOR && ansiSupported) {
                 return delegate.style(text, styles);
             } else {
                 return text;

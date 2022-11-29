@@ -17,13 +17,11 @@ package software.amazon.smithy.cli.dependencies;
 
 import java.nio.file.Path;
 import java.util.Objects;
-import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * An artifact resolved from a repository that provides the path on disk where the artifact
  * was downloaded, and the coordinates of the artifact.
  */
-@SmithyUnstableApi
 public final class ResolvedArtifact {
     private final Path path;
     private final String coordinates;

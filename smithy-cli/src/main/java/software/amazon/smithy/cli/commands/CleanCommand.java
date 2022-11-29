@@ -26,14 +26,12 @@ import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.ConfigOptions;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.SmithyInternalApi;
 
-@SmithyInternalApi
-public final class CleanCommand extends SimpleCommand {
+final class CleanCommand extends SimpleCommand {
 
     private static final Logger LOGGER = Logger.getLogger(CleanCommand.class.getName());
 
-    public CleanCommand(String parentCommandName) {
+    CleanCommand(String parentCommandName) {
         super(parentCommandName);
     }
 

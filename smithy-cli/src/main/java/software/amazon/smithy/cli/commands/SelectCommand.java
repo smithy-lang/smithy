@@ -37,12 +37,10 @@ import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.IoUtils;
-import software.amazon.smithy.utils.SmithyInternalApi;
 
-@SmithyInternalApi
-public final class SelectCommand extends ClasspathCommand {
+final class SelectCommand extends ClasspathCommand {
 
-    public SelectCommand(String parentCommandName, DependencyResolver.Factory dependencyResolverFactory) {
+    SelectCommand(String parentCommandName, DependencyResolver.Factory dependencyResolverFactory) {
         super(parentCommandName, dependencyResolverFactory);
     }
 

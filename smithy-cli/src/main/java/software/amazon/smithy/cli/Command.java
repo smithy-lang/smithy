@@ -15,12 +15,9 @@
 
 package software.amazon.smithy.cli;
 
-import software.amazon.smithy.utils.SmithyUnstableApi;
-
 /**
  * Represents a CLI command.
  */
-@SmithyUnstableApi
 public interface Command {
     /**
      * Gets the name of the command.
@@ -100,10 +97,6 @@ public interface Command {
 
         public ClassLoader classLoader() {
             return classLoader == null ? getClass().getClassLoader() : classLoader;
-        }
-
-        public boolean hasClassLoader() {
-            return classLoader != null;
         }
 
         public Env withClassLoader(ClassLoader classLoader) {

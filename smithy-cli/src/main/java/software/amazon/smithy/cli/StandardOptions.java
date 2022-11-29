@@ -18,12 +18,10 @@ package software.amazon.smithy.cli;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import software.amazon.smithy.model.validation.Severity;
-import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Options available to all commands.
  */
-@SmithyInternalApi
 public final class StandardOptions implements ArgumentReceiver {
 
     public static final String HELP_SHORT = "-h";
@@ -44,23 +42,33 @@ public final class StandardOptions implements ArgumentReceiver {
     private boolean quiet;
     private boolean debug;
     private boolean stackTrace;
-    private boolean noColor;
-    private boolean forceColor;
+    private ColorSetting colorSetting;
+
+    /** Specifies the color setting of the CLI. */
+    public enum ColorSetting {
+        /** Use colors if the CLI detects they are supported. */
+        AUTO,
+
+        /** Disable colors. Set with --no-color. */
+        NO_COLOR,
+
+        /** Force colors. Set with --force-color. */
+        FORCE_COLOR
+    }
 
     @Override
     public void registerHelp(HelpPrinter printer) {
-        printer.option(HELP, HELP_SHORT, "Prints this help output");
+        printer.option(HELP, HELP_SHORT, "Print help output");
         printer.option(DEBUG, null, "Display debug information");
-        printer.option(QUIET, null, "Silences all output except errors");
+        printer.option(QUIET, null, "Silence output except errors");
         printer.option(STACKTRACE, null, "Display a stacktrace on error");
-        printer.option(NO_COLOR, null, "Explicitly disable ANSI colors");
-        printer.option(FORCE_COLOR, null, "Explicitly enable ANSI colors");
+        printer.option(NO_COLOR, null, "Disable ANSI colors");
+        printer.option(FORCE_COLOR, null, "Force the use of ANSI colors");
         printer.param(LOGGING, null, "LOG_LEVEL",
-                            "Sets the log level (defaults to WARNING). Set to one of OFF, SEVERE, WARNING, INFO, "
+                            "Set the log level (defaults to WARNING). Set to one of OFF, SEVERE, WARNING, INFO, "
                             + "FINE, ALL.");
-        printer.param(SEVERITY, null, "SEVERITY", "Sets the minimum reported validation severity to "
-                                                      + "report. Set to one of NOTE, WARNING (default), "
-                                                      + "DANGER, ERROR");
+        printer.param(SEVERITY, null, "SEVERITY", "Set the minimum reported validation severity (one of NOTE, "
+                                                  + "WARNING [default setting], DANGER, ERROR).");
     }
 
     @Override
@@ -91,12 +99,10 @@ public final class StandardOptions implements ArgumentReceiver {
                 stackTrace = true;
                 return true;
             case NO_COLOR:
-                noColor = true;
-                forceColor = false;
+                colorSetting = ColorSetting.NO_COLOR;
                 return true;
             case FORCE_COLOR:
-                noColor = false;
-                forceColor = true;
+                colorSetting = ColorSetting.FORCE_COLOR;
                 return true;
             default:
                 return false;
@@ -153,11 +159,7 @@ public final class StandardOptions implements ArgumentReceiver {
         return stackTrace;
     }
 
-    public boolean noColor() {
-        return noColor;
-    }
-
-    public boolean forceColor() {
-        return forceColor;
+    public ColorSetting colorSetting() {
+        return colorSetting;
     }
 }

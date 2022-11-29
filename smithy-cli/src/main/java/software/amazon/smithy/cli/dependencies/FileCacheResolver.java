@@ -44,6 +44,11 @@ public final class FileCacheResolver implements DependencyResolver {
     private final File location;
     private final long referenceTimeInMillis;
 
+    /**
+     * @param location The location to the cache.
+     * @param referenceTimeInMillis Invalidate cache items if this time is newer than the cache item time.
+     * @param delegate Resolver to delegate to when dependencies aren't cached.
+     */
     public FileCacheResolver(File location, long referenceTimeInMillis, DependencyResolver delegate) {
         this.location = location;
         this.referenceTimeInMillis = referenceTimeInMillis;
@@ -74,7 +79,7 @@ public final class FileCacheResolver implements DependencyResolver {
         return result;
     }
 
-    List<ResolvedArtifact> load() {
+    private List<ResolvedArtifact> load() {
         // Invalidate the cache if smithy-build.json was updated after the cache was written.
         Path filePath = location.toPath();
         if (!Files.exists(filePath)) {

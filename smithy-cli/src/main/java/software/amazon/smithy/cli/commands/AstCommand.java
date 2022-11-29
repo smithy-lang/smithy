@@ -22,12 +22,10 @@ import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ModelSerializer;
-import software.amazon.smithy.utils.SmithyInternalApi;
 
-@SmithyInternalApi
-public final class AstCommand extends ClasspathCommand {
+final class AstCommand extends ClasspathCommand {
 
-    public AstCommand(String parentCommandName, DependencyResolver.Factory dependencyResolverFactory) {
+    AstCommand(String parentCommandName, DependencyResolver.Factory dependencyResolverFactory) {
         super(parentCommandName, dependencyResolverFactory);
     }
 

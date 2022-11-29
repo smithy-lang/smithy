@@ -105,18 +105,28 @@ abstract class ClasspathCommand extends SimpleCommand {
         Set<String> dependencies = smithyBuildConfig.getMaven()
                 .map(MavenConfig::getDependencies)
                 .orElse(Collections.emptySet());
-        boolean useIsolation = mode == BuildOptions.DependencyMode.STANDARD && !dependencies.isEmpty();
 
-        if (mode == BuildOptions.DependencyMode.FORBID && !dependencies.isEmpty()) {
-            throw new DependencyResolverException(String.format(
-                    "%s is set to 'forbid', but the following Maven dependencies are defined in smithy-build.json: "
-                    + "%s. Dependencies are forbidden in this configuration.",
-                    BuildOptions.DEPENDENCY_MODE, dependencies));
-        } else if (mode == BuildOptions.DependencyMode.IGNORE && !dependencies.isEmpty()) {
-            LOGGER.warning(() -> String.format(
-                    "%s is set to 'ignore', and the following Maven dependencies are defined in smithy-build.json: "
-                    + "%s. If the build fails, then you may need to manually configure the classpath.",
-                    BuildOptions.DEPENDENCY_MODE, dependencies));
+        boolean useIsolation = false;
+        switch (mode) {
+            case FORBID:
+                if (!dependencies.isEmpty()) {
+                    throw new DependencyResolverException(String.format(
+                            "%s is set to 'forbid', but the following Maven dependencies are defined in "
+                            + "smithy-build.json: %s. Dependencies are forbidden in this configuration.",
+                            BuildOptions.DEPENDENCY_MODE, dependencies));
+                }
+                break;
+            case IGNORE:
+                if (!dependencies.isEmpty()) {
+                    LOGGER.warning(() -> String.format(
+                            "%s is set to 'ignore', and the following Maven dependencies are defined in "
+                            + "smithy-build.json: %s. If the build fails, then you may need to manually configure "
+                            + "the classpath.", BuildOptions.DEPENDENCY_MODE, dependencies));
+                }
+                break;
+            case STANDARD:
+            default:
+                useIsolation = !dependencies.isEmpty();
         }
 
         if (useIsolation) {
@@ -125,10 +135,10 @@ abstract class ClasspathCommand extends SimpleCommand {
                                                    smithyBuildConfig.getMaven().get());
             long end = System.nanoTime();
             LOGGER.fine(() -> "Dependency resolution time in ms: " + ((end - start) / 1000000));
-            new IsolatedRunnable(files, getClass().getClassLoader(), consumer).run();
+            new IsolatedRunnable(files, env.classLoader(), consumer).run();
             LOGGER.fine(() -> "Command time in ms: " + ((System.nanoTime() - end) / 1000000));
         } else {
-            consumer.accept(getClass().getClassLoader());
+            consumer.accept(env.classLoader());
         }
     }
 
