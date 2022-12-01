@@ -385,6 +385,28 @@ The following example defines metadata in the model:
             }
         }
 
+Metadata is not defined within a namespace. Unquoted object property values
+are considered :ref:`syntactic shape IDs <syntactic-shape-ids>` and resolve
+to the prelude namespace, ``smithy.api``.
+
+The following Smithy IDL model:
+
+.. code-block:: smithy
+
+    $version: "1.0"
+    metadata exampleSyntacticShapeId = required
+
+Is equivalent to the following JSON AST model:
+
+.. code-block:: json
+
+    {
+        "smithy": "1.0",
+        "metadata": {
+            "exampleSyntacticShapeId": "smithy.api#required"
+        }
+    }
+
 
 -------------
 Shape section

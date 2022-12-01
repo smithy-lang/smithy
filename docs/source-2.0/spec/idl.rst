@@ -390,6 +390,7 @@ The following example defines metadata in the model:
 
     .. code-block:: smithy
 
+        $version: "2"
         metadata greeting = "hello"
         metadata "stringList" = ["a", "b", "c"]
 
@@ -404,6 +405,28 @@ The following example defines metadata in the model:
                 "stringList": ["a", "b", "c"]
             }
         }
+
+Metadata is not defined within a namespace. Unquoted object property values
+are considered :ref:`syntactic shape IDs <syntactic-shape-ids>` and resolve
+to the prelude namespace, ``smithy.api``.
+
+The following Smithy IDL model:
+
+.. code-block:: smithy
+
+    $version: "2"
+    metadata exampleSyntacticShapeId = required
+
+Is equivalent to the following JSON AST model:
+
+.. code-block:: json
+
+    {
+        "smithy": "2",
+        "metadata": {
+            "exampleSyntacticShapeId": "smithy.api#required"
+        }
+    }
 
 
 -------------
