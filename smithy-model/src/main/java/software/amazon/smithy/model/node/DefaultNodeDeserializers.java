@@ -621,12 +621,10 @@ final class DefaultNodeDeserializers {
 
     // Creates an ObjectCreatorFactory that caches the result of finding ObjectCreators.
     private static ObjectCreatorFactory cachedCreator(ObjectCreatorFactory delegate) {
-        ConcurrentMap<String, NodeMapper.ObjectCreator> cache = new ConcurrentHashMap<>();
+        IdentityClassCache<String, NodeMapper.ObjectCreator> cache = new IdentityClassCache<>();
         return (nodeType, target, nodeMapper) -> {
             String key = nodeType.getNodeClass() + ":" + target.getTypeName();
-            return cache.computeIfAbsent(key, pair -> {
-                return delegate.getCreator(nodeType, target, nodeMapper);
-            });
+            return cache.getForClass(key, target, () -> delegate.getCreator(nodeType, target, nodeMapper));
         };
     }
 
