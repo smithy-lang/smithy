@@ -198,7 +198,7 @@ string support defined in :rfc:`7405`.
     ElidedListMember        :%s"$member"
     ExplicitListMember      :%s"member" *`SP` ":" *`SP` `ShapeId`
     MapStatement            :%s"map" `SP` `Identifier` [`Mixins`] *`WS` `MapMembers`
-    MapMembers              :"{" *`WS` `MapKey` `BR` `MapValue` *`WS` "}"
+    MapMembers              :"{" *`WS` `MapKey` `WS` `MapValue` *`WS` "}"
     MapKey                  :`TraitStatements` (`ElidedMapKey` / `ExplicitMapKey`)
     MapValue                :`TraitStatements` (`ElidedMapValue` / `ExplicitMapValue`)
     ElidedMapKey            :%s"$key"
