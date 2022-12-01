@@ -1,0 +1,136 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "com.example#A": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String"
+            },
+            "value": {
+                "target": "smithy.api#String"
+            }
+        },
+        "com.example#B": {
+            "type": "map",
+            "key": {
+                "target": "com.example#String"
+            },
+            "value": {
+                "target": "com.example#String"
+            }
+        },
+        "com.example#C": {
+            "type": "map",
+            "key": {
+                "target": "com.example#String"
+            },
+            "value": {
+                "target": "com.example#String"
+            },
+            "traits": {
+                "smithy.api#deprecated": {}
+            }
+        },
+        "com.example#D": {
+            "type": "map",
+            "key": {
+                "target": "com.example#String"
+            },
+            "value": {
+                "target": "com.example#String"
+            },
+            "traits": {
+                "smithy.api#deprecated": {},
+                "smithy.api#since": "1.0"
+            }
+        },
+        "com.example#E": {
+            "type": "map",
+            "key": {
+                "target": "com.example#String",
+                "traits": {
+                    "smithy.api#internal": {},
+                    "smithy.api#since": "1.1"
+                }
+            },
+            "value": {
+                "target": "com.example#String"
+            },
+            "traits": {
+                "smithy.api#deprecated": {},
+                "smithy.api#since": "1.0"
+            }
+        },
+        "com.example#F": {
+            "type": "map",
+            "key": {
+                "target": "com.example#String",
+                "traits": {
+                    "smithy.api#internal": {},
+                    "smithy.api#since": "1.1"
+                }
+            },
+            "value": {
+                "target": "com.example#String",
+                "traits": {
+                    "smithy.api#internal": {},
+                    "smithy.api#since": "1.1"
+                }
+            },
+            "traits": {
+                "smithy.api#deprecated": {},
+                "smithy.api#since": "1.0"
+            }
+        },
+        "com.example#G": {
+            "type": "map",
+            "key": {
+                "target": "com.example#String",
+                "traits": {
+                    "smithy.api#internal": {},
+                    "smithy.api#since": "1.1"
+                }
+            },
+            "value": {
+                "target": "com.example#String",
+                "traits": {
+                    "smithy.api#since": "1.2"
+                }
+            },
+            "traits": {
+                "smithy.api#deprecated": {},
+                "smithy.api#since": "1.0"
+            }
+        },
+        "com.example#H": {
+            "type": "map",
+            "key": {
+                "target": "com.example#String"
+            },
+            "value": {
+                "target": "com.example#String"
+            }
+        },
+        "com.example#I": {
+            "type": "map",
+            "key": {
+                "target": "com.example#String"
+            },
+            "value": {
+                "target": "com.example#String"
+            }
+        },
+        "com.example#J": {
+            "type": "map",
+            "key": {
+                "target": "com.example#String"
+            },
+            "value": {
+                "target": "com.example#String"
+            }
+        },
+        "com.example#String": {
+            "type": "string"
+        }
+    }
+}
