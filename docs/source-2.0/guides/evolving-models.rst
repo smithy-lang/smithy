@@ -61,6 +61,16 @@ The following changes to structure shapes are backward-compatible:
 #. Adding the :ref:`required-trait` to a member of a structure if the member
    is marked as ``clientOptional`` or the structure is marked with the ``input``
    trait.
+#. Adding or removing the :ref:`input-trait` from a structure is generally
+   backward incompatible.
+
+   .. note::
+
+       Many code generators automatically create dedicated synthetic input
+       structures for each operation and treat the synthetic structure
+       as if it is marked with the ``@input`` trait. Code generators that do
+       this MAY ignore backward incompatible changes around adding or removing
+       the ``@input`` trait.
 
 The following changes to a structure are not backward-compatible:
 
