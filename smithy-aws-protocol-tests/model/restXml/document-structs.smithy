@@ -6,10 +6,17 @@ $version: "2.0"
 namespace aws.protocoltests.restxml
 
 use aws.protocols#restXml
+use aws.protocoltests.shared#DateTime
+use aws.protocoltests.shared#EpochSeconds
 use aws.protocoltests.shared#FooEnum
 use aws.protocoltests.shared#FooEnumList
 use aws.protocoltests.shared#FooEnumSet
 use aws.protocoltests.shared#FooEnumMap
+use aws.protocoltests.shared#IntegerEnum
+use aws.protocoltests.shared#IntegerEnumList
+use aws.protocoltests.shared#IntegerEnumSet
+use aws.protocoltests.shared#IntegerEnumMap
+use aws.protocoltests.shared#HttpDate
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -646,6 +653,25 @@ apply XmlTimestamps @httpRequestTests([
         }
     },
     {
+        id: "XmlTimestampsWithDateTimeOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of date-time on the target shape works like normal timestamps",
+        protocol: restXml,
+        method: "POST",
+        uri: "/XmlTimestamps",
+        body: """
+              <XmlTimestampsInputOutput>
+                  <dateTimeOnTarget>2014-04-29T18:30:38Z</dateTimeOnTarget>
+              </XmlTimestampsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            dateTimeOnTarget: 1398796238
+        }
+    },
+    {
         id: "XmlTimestampsWithEpochSecondsFormat",
         documentation: "Ensures that the timestampFormat of epoch-seconds works",
         protocol: restXml,
@@ -665,6 +691,25 @@ apply XmlTimestamps @httpRequestTests([
         }
     },
     {
+        id: "XmlTimestampsWithEpochSecondsOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of epoch-seconds on the target shape works",
+        protocol: restXml,
+        method: "POST",
+        uri: "/XmlTimestamps",
+        body: """
+              <XmlTimestampsInputOutput>
+                  <epochSecondsOnTarget>1398796238</epochSecondsOnTarget>
+              </XmlTimestampsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            epochSecondsOnTarget: 1398796238
+        }
+    },
+    {
         id: "XmlTimestampsWithHttpDateFormat",
         documentation: "Ensures that the timestampFormat of http-date works",
         protocol: restXml,
@@ -681,6 +726,25 @@ apply XmlTimestamps @httpRequestTests([
         },
         params: {
             httpDate: 1398796238
+        }
+    },
+    {
+        id: "XmlTimestampsWithHttpDateOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of http-date on the target shape works",
+        protocol: restXml,
+        method: "POST",
+        uri: "/XmlTimestamps",
+        body: """
+              <XmlTimestampsInputOutput>
+                  <httpDateOnTarget>Tue, 29 Apr 2014 18:30:38 GMT</httpDateOnTarget>
+              </XmlTimestampsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            httpDateOnTarget: 1398796238
         }
     },
 ])
@@ -723,6 +787,24 @@ apply XmlTimestamps @httpResponseTests([
         }
     },
     {
+        id: "XmlTimestampsWithDateTimeOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of date-time on the target shape works like normal timestamps",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <XmlTimestampsInputOutput>
+                  <dateTimeOnTarget>2014-04-29T18:30:38Z</dateTimeOnTarget>
+              </XmlTimestampsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            dateTimeOnTarget: 1398796238
+        }
+    },
+    {
         id: "XmlTimestampsWithEpochSecondsFormat",
         documentation: "Ensures that the timestampFormat of epoch-seconds works",
         protocol: restXml,
@@ -738,6 +820,24 @@ apply XmlTimestamps @httpResponseTests([
         },
         params: {
             epochSeconds: 1398796238
+        }
+    },
+    {
+        id: "XmlTimestampsWithEpochSecondsOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of epoch-seconds on the target shape works",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <XmlTimestampsInputOutput>
+                  <epochSecondsOnTarget>1398796238</epochSecondsOnTarget>
+              </XmlTimestampsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            epochSecondsOnTarget: 1398796238
         }
     },
     {
@@ -758,6 +858,24 @@ apply XmlTimestamps @httpResponseTests([
             httpDate: 1398796238
         }
     },
+    {
+        id: "XmlTimestampsWithHttpDateOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of http-date on the target shape works",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <XmlTimestampsInputOutput>
+                  <httpDateOnTarget>Tue, 29 Apr 2014 18:30:38 GMT</httpDateOnTarget>
+              </XmlTimestampsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            httpDateOnTarget: 1398796238
+        }
+    },
 ])
 
 structure XmlTimestampsInputOutput {
@@ -766,11 +884,17 @@ structure XmlTimestampsInputOutput {
     @timestampFormat("date-time")
     dateTime: Timestamp,
 
+    dateTimeOnTarget: DateTime,
+
     @timestampFormat("epoch-seconds")
     epochSeconds: Timestamp,
 
+    epochSecondsOnTarget: EpochSeconds,
+
     @timestampFormat("http-date")
     httpDate: Timestamp,
+
+    httpDateOnTarget: HttpDate,
 }
 
 /// This example serializes enums as top level properties, in lists, sets, and maps.
@@ -887,6 +1011,122 @@ structure XmlEnumsInputOutput {
     fooEnumList: FooEnumList,
     fooEnumSet: FooEnumSet,
     fooEnumMap: FooEnumMap,
+}
+
+/// This example serializes enums as top level properties, in lists, sets, and maps.
+@idempotent
+@http(uri: "/XmlIntEnums", method: "PUT")
+operation XmlIntEnums {
+    input: XmlIntEnumsInputOutput,
+    output: XmlIntEnumsInputOutput
+}
+
+apply XmlIntEnums @httpRequestTests([
+    {
+        id: "XmlIntEnums",
+        documentation: "Serializes simple scalar properties",
+        protocol: restXml,
+        method: "PUT",
+        uri: "/XmlIntEnums",
+        body: """
+              <XmlIntEnumsInputOutput>
+                  <intEnum1>1</intEnum1>
+                  <intEnum2>2</intEnum2>
+                  <intEnum3>3</intEnum3>
+                  <intEnumList>
+                      <member>1</member>
+                      <member>2</member>
+                  </intEnumList>
+                  <intEnumSet>
+                      <member>1</member>
+                      <member>2</member>
+                  </intEnumSet>
+                  <intEnumMap>
+                      <entry>
+                          <key>a</key>
+                          <value>1</value>
+                      </entry>
+                      <entry>
+                          <key>b</key>
+                          <value>2</value>
+                      </entry>
+                  </intEnumMap>
+              </XmlIntEnumsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            intEnum1: 1,
+            intEnum2: 2,
+            intEnum3: 3,
+            intEnumList: [1, 2],
+            intEnumSet: [1, 2],
+            intEnumMap: {
+                "a": 1,
+                "b": 2
+            }
+        }
+    }
+])
+
+apply XmlIntEnums @httpResponseTests([
+    {
+        id: "XmlIntEnums",
+        documentation: "Serializes simple scalar properties",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <XmlIntEnumsInputOutput>
+                  <intEnum1>1</intEnum1>
+                  <intEnum2>2</intEnum2>
+                  <intEnum3>3</intEnum3>
+                  <intEnumList>
+                      <member>1</member>
+                      <member>2</member>
+                  </intEnumList>
+                  <intEnumSet>
+                      <member>1</member>
+                      <member>2</member>
+                  </intEnumSet>
+                  <intEnumMap>
+                      <entry>
+                          <key>a</key>
+                          <value>1</value>
+                      </entry>
+                      <entry>
+                          <key>b</key>
+                          <value>2</value>
+                      </entry>
+                  </intEnumMap>
+              </XmlIntEnumsInputOutput>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            intEnum1: 1,
+            intEnum2: 2,
+            intEnum3: 3,
+            intEnumList: [1, 2],
+            intEnumSet: [1, 2],
+            intEnumMap: {
+                "a": 1,
+                "b": 2
+            }
+        }
+    }
+])
+
+structure XmlIntEnumsInputOutput {
+    intEnum1: IntegerEnum,
+    intEnum2: IntegerEnum,
+    intEnum3: IntegerEnum,
+    intEnumList: IntegerEnumList,
+    intEnumSet: IntegerEnumSet,
+    intEnumMap: IntegerEnumMap,
 }
 
 /// Recursive shapes

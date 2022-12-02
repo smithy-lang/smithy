@@ -34,6 +34,16 @@ final class TraitSuppression implements Suppression {
 
     @Override
     public boolean test(ValidationEvent event) {
-        return event.getShapeId().filter(shape::equals).isPresent() && trait.getValues().contains(event.getId());
+        if (!event.getShapeId().filter(shape::equals).isPresent()) {
+            return false;
+        }
+
+        for (String value : trait.getValues()) {
+            if (event.containsId(value)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

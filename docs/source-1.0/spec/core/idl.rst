@@ -235,7 +235,7 @@ string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
                             :      *(`Comma` `TraitStructureKvp` *`WS`)
                             :  `TrailingComma`
     TraitStructureKvp       :`NodeObjectKey` *`WS` ":" *`WS` `NodeValue`
-    ApplyStatement          :%s"apply" `WS` `ShapeId` `WS` `Trait` `BR`
+    ApplyStatement          :%s"apply" `SP` `ShapeId` `WS` `Trait` `BR`
 
 .. rubric:: Shape ID
 
@@ -384,6 +384,28 @@ The following example defines metadata in the model:
                 "stringList": ["a", "b", "c"]
             }
         }
+
+Metadata is not defined within a namespace. Unquoted object property values
+are considered :ref:`syntactic shape IDs <syntactic-shape-ids>` and resolve
+to the prelude namespace, ``smithy.api``.
+
+The following Smithy IDL model:
+
+.. code-block:: smithy
+
+    $version: "1.0"
+    metadata exampleSyntacticShapeId = required
+
+Is equivalent to the following JSON AST model:
+
+.. code-block:: json
+
+    {
+        "smithy": "1.0",
+        "metadata": {
+            "exampleSyntacticShapeId": "smithy.api#required"
+        }
+    }
 
 
 -------------

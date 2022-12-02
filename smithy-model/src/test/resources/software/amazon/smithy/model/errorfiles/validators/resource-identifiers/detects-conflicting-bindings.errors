@@ -1,0 +1,4 @@
+[WARNING] smithy.example#GetFooInput: Implicit resource identifier for 'bar' is overridden by `resourceIdentifier` trait on members: 'bam' | ResourceIdentifierBinding
+[ERROR] smithy.example#PutFooInput: Conflicting resource identifier member bindings found for identifier 'bar' between members: 'a', 'b' | ResourceIdentifierBinding
+[ERROR] smithy.example#DeleteFooInput: Conflicting resource identifier member bindings found for identifier 'bar' between members: 'a', 'b' | ResourceIdentifierBinding
+[WARNING] smithy.example#DeleteFooInput: Implicit resource identifier for 'bar' is overridden by `resourceIdentifier` trait on members: 'a', 'b' | ResourceIdentifierBinding

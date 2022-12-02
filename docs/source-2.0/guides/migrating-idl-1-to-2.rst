@@ -17,7 +17,6 @@ example, the following model:
 .. code-block:: smithy
 
     $version: "1.0"
-
     namespace smithy.example
 
     string Foo
@@ -27,7 +26,6 @@ Should be updated to:
 .. code-block:: smithy
 
     $version: "2"
-
     namespace smithy.example
 
     string Foo
@@ -46,7 +44,6 @@ Also needs to be updated to:
 .. code-block:: smithy
 
     $version: "2"
-
     namespace smithy.example
 
     string Foo
@@ -56,61 +53,117 @@ a single combined model. Therefore when migrating, it may be wise to migrate
 one file at a time.
 
 
-Remove the box trait
-====================
+Replace the box trait
+=====================
 
-The ``box`` trait is removed in 2.0, so it must be removed from any shapes or
-members that use it. Smithy structure members are considered boxed by default,
-which can be changed using the :ref:`required-trait` or :ref:`default-trait`.
-In effect, this means you can indiscriminately remove the ``box`` trait from
-your models.
+The ``box`` trait is removed in 2.0. Any shape marked with the ``box`` trait
+needs to be updated.
+
+
+Boxed root-level shapes
+-----------------------
+
+For non-member, root level shapes, simply remove the ``box`` trait. Root level
+shapes in Smithy 2.0 have no default values unless you explicitly assign them
+one.
+
+This 1.0 model:
+
+.. code-block:: smithy
+
+    $version: "1.0"
+    namespace smithy.example
+
+    @box // < remove this
+    boolean MyBoolean
+
+Becomes this 2.0 model:
+
+.. code-block:: smithy
+
+    $version: "2"
+    namespace smithy.example
+
+    boolean MyBoolean
+
+
+Converting primitive root-level shapes from 1.0
+-----------------------------------------------
+
+Some shapes in Smithy 1.0 had default zero values: boolean, byte, short,
+integer, long, float, and double. If you defined any of these shapes and did
+not mark them with the ``@box`` trait, add the ``@default`` trait to them
+set to ``false`` for booleans and ``0`` for numbers. Any member that targets
+them also need to repeat this default value on the member.
+
+This 1.0 model:
+
+.. code-block:: smithy
+
+    $version: "1.0"
+    namespace smithy.example
+
+    boolean MyPrimitiveBoolean
+
+    boolean MyPrimitiveInteger
+
+    structure Foo {
+        myBoolean: MyPrimitiveBoolean,
+        myInteger: MyPrimitiveInteger
+    }
+
+Becomes this 2.0 model:
+
+.. code-block:: smithy
+
+    $version: "2"
+    namespace smithy.example
+
+    @default(false)
+    boolean MyPrimitiveBoolean
+
+    @default(0)
+    boolean MyPrimitiveInteger
+
+    structure Foo {
+        myBoolean: MyPrimitiveBoolean = false
+        myInteger: MyPrimitiveInteger = 0
+    }
+
+
+Boxed members
+-------------
+
+If a member is marked with the box trait, replace the trait with a
+``@default(null)`` trait to have the same effect of overriding the
+default value of the target shape.
+
+This 1.0 model:
+
+.. code-block:: smithy
+
+    $version: "1.0"
+    namespace smithy.example
+
+    structure MyStructure {
+        @box // change this to = null below
+        foo: PrimitiveBoolean
+    }
+
+Becomes this 2.0 model:
+
+.. code-block:: smithy
+
+    $version: "2"
+    namespace smithy.example
+
+    structure MyStructure {
+        foo: PrimitiveBoolean = null
+    }
 
 .. seealso::
 
     :ref:`structure-optionality`
-
-
-Replace Primitive prelude shape targets
-=======================================
-
-The primitive shapes have been removed from the prelude, and so any member
-targeting one of them must update to target its equivalent non-primitive
-shape as well as add the :ref:`default-trait`.
-
-.. list-table:
-    :header-rows: 1
-    :widths: 50 50
-
-    * - Old target
-      - New target
-    * - ``PrimitiveBoolean``
-      - ``Boolean``
-    * - ``PrimitiveShort``
-      - ``Short``
-    * - ``PrimitiveInteger``
-      - ``Integer``
-    * - ``PrimitiveLong``
-      - ``Long``
-    * - ``PrimitiveFloat``
-      - ``Float``
-    * - ``PrimitiveDouble``
-      - ``Double``
-
-For example, the following model:
-
-.. code-block:: smithy
-
-    structure User {
-        name: PrimitiveString
-    }
-
-Needs to be updated to:
-
-.. code-block:: smithy
-
-    structure User {
-        name: String = ""
-    }
 
 
 Convert set shapes to list shapes
@@ -124,7 +177,6 @@ For example, the following set:
 .. code-block:: smithy
 
     $version: "1.0"
-
     namespace smithy.example
 
     set StringSet {
@@ -136,7 +188,6 @@ Needs to be updated to:
 .. code-block:: smithy
 
     $version: "2"
-
     namespace smithy.example
 
     @uniqueItems
@@ -158,7 +209,6 @@ For example, the following model:
 .. code-block:: smithy
 
     $version: "1.0"
-
     namespace smithy.example
 
     structure OptionalStream {
@@ -182,7 +232,6 @@ Needs to be updated to:
 .. code-block:: smithy
 
     $version: "2"
-
     namespace smithy.example
 
     structure OptionalStream {
@@ -220,7 +269,6 @@ needed to model an operation. For example, the following model:
 .. code-block:: smithy
 
     $version: "1.0"
-
     namespace smithy.example
 
     operation PutUser {
@@ -244,7 +292,6 @@ can be updated to:
 .. code-block:: smithy
 
     $version: "2"
-
     namespace smithy.example
 
     operation PutUser {
@@ -275,7 +322,6 @@ having to copy and paste them. The following model:
 .. code-block:: smithy
 
     $version: "1.0"
-
     namespace smithy.example
 
     operation GetUser {
@@ -308,7 +354,6 @@ Can be updated to:
 .. code-block:: smithy
 
     $version: "2"
-
     namespace smithy.example
 
     @mixin
@@ -347,7 +392,6 @@ resource. For example:
 .. code-block:: smithy
 
     $version: "2"
-
     namespace smithy.example
 
     resource User {
@@ -378,7 +422,6 @@ traits to included members.
 .. code-block:: smithy
 
     $version: "2"
-
     namespace smithy.example
 
     @mixin
@@ -405,7 +448,6 @@ and shape properties. For example, the following model:
 .. code-block:: smithy
 
     $version: "1.0"
-
     namespace smithy.example
 
     operation GetUser {
@@ -422,7 +464,6 @@ can be updated to:
 .. code-block:: smithy
 
     $version: "2"
-
     namespace smithy.example
 
     operation GetUser {
@@ -448,7 +489,6 @@ also much more concise and readable. For example, the following model:
 .. code-block:: smithy
 
     $version: "1.0"
-
     namespace smithy.example
 
     @enum([
@@ -476,7 +516,6 @@ can be updated to:
 .. code-block:: smithy
 
     $version: "2"
-
     namespace smithy.example
 
     enum Suit {

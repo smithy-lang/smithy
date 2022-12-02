@@ -18,12 +18,18 @@ package software.amazon.smithy.build.transforms;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import java.nio.file.Paths;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.shapes.EnumShape;
+import software.amazon.smithy.model.shapes.IntEnumShape;
+import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.TagsTrait;
 
@@ -50,5 +56,28 @@ public class ExcludeShapesByTagTest {
 
         assertThat(result.getShape(stringA.getId()), is(Optional.empty()));
         assertThat(result.getShape(stringB.getId()), not(Optional.empty()));
+    }
+
+    @Test
+    public void filtersMembers() throws Exception {
+        Model model = Model.assembler()
+                .addImport(Paths.get(getClass().getResource("filter-by-tags.smithy").toURI()))
+                .assemble()
+                .unwrap();
+        TransformContext context = TransformContext.builder()
+                .model(model)
+                .settings(Node.objectNode().withMember("tags", Node.fromStrings("filter")))
+                .build();
+        Model result = new ExcludeShapesByTag().transform(context);
+
+        EnumShape foo = result.expectShape(ShapeId.from("smithy.example#Foo"), EnumShape.class);
+        assertThat(foo.members().size(), is(1));
+
+        IntEnumShape bar = result.expectShape(ShapeId.from("smithy.example#Bar"), IntEnumShape.class);
+        assertThat(bar.members().size(), is(1));
+
+        // Mixin members are retained, but excluded traits are removed.
+        MemberShape baz = result.expectShape(ShapeId.from("smithy.example#StructForMixin$baz"), MemberShape.class);
+        assertFalse(baz.findMemberTrait(result, "MyTrait").isPresent());
     }
 }

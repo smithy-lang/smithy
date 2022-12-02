@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.diff.evaluators;
 
+import static software.amazon.smithy.diff.evaluators.ChangedShapeType.expectedStringToEnumChange;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +26,7 @@ import software.amazon.smithy.diff.Differences;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
+import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.Pair;
@@ -38,10 +41,25 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.changedShapes()
-                .flatMap(change -> OptionalUtils.stream(change.getChangedTrait(EnumTrait.class))
+                .flatMap(change -> OptionalUtils.stream(getChangedEnumTraitPair(change))
                         .map(p -> Pair.of(change, p)))
                 .flatMap(pair -> validateEnum(pair.getLeft(), pair.getRight()).stream())
                 .collect(Collectors.toList());
+    }
+
+    private Optional<Pair<EnumTrait, EnumTrait>> getChangedEnumTraitPair(ChangedShape<Shape> change) {
+        // Change between two enum traits
+        Optional<Pair<EnumTrait, EnumTrait>> changedEnumTrait = change.getChangedTrait(EnumTrait.class);
+        if (changedEnumTrait.isPresent()) {
+            return changedEnumTrait;
+        }
+        // Change between enum trait in old model and enum shape synthetic enum trait in new model
+        if (expectedStringToEnumChange(change)) {
+            return Optional.of(Pair.of(
+                    change.getOldShape().expectTrait(EnumTrait.class),
+                    change.getNewShape().expectTrait(SyntheticEnumTrait.class)));
+        }
+        return Optional.empty();
     }
 
     private List<ValidationEvent> validateEnum(ChangedShape<Shape> change, Pair<EnumTrait, EnumTrait> trait) {

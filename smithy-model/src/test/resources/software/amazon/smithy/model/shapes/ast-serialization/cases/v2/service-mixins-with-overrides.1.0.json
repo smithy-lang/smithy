@@ -1,0 +1,99 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "smithy.example#MixedError": {
+            "type": "structure",
+            "members": {
+                "message": {
+                    "target": "smithy.example#MixedRename"
+                }
+            },
+            "traits": {
+                "smithy.api#error": "server"
+            }
+        },
+        "smithy.example#MixedOperation": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.api#Unit"
+            },
+            "output": {
+                "target": "smithy.api#Unit"
+            }
+        },
+        "smithy.example#MixedRename": {
+            "type": "string"
+        },
+        "smithy.example#MixedResource": {
+            "type": "resource"
+        },
+        "smithy.example#MixedService": {
+            "type": "service",
+            "version": "2022-01-01",
+            "operations": [
+                {
+                    "target": "smithy.example#MixedOperation"
+                },
+                {
+                    "target": "smithy.example#MixinOperation"
+                }
+            ],
+            "resources": [
+                {
+                    "target": "smithy.example#MixedResource"
+                },
+                {
+                    "target": "smithy.example#MixinResource"
+                }
+            ],
+            "errors": [
+                {
+                    "target": "smithy.example#MixedError"
+                },
+                {
+                    "target": "smithy.example#MixinError"
+                }
+            ],
+            "rename": {
+                "smithy.example#MixinRename": "ThisWillBeInherited",
+                "smithy.example#OverriddenRename": "Override",
+                "smithy.example#MixedRename": "LocalRename"
+            },
+            "traits": {
+                "smithy.api#internal": {}
+            }
+        },
+        "smithy.example#MixinError": {
+            "type": "structure",
+            "members": {
+                "message": {
+                    "target": "smithy.example#MixinRename"
+                },
+                "state": {
+                    "target": "smithy.example#OverriddenRename"
+                }
+            },
+            "traits": {
+                "smithy.api#error": "client"
+            }
+        },
+        "smithy.example#MixinOperation": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.api#Unit"
+            },
+            "output": {
+                "target": "smithy.api#Unit"
+            }
+        },
+        "smithy.example#MixinRename": {
+            "type": "string"
+        },
+        "smithy.example#MixinResource": {
+            "type": "resource"
+        },
+        "smithy.example#OverriddenRename": {
+            "type": "string"
+        }
+    }
+}

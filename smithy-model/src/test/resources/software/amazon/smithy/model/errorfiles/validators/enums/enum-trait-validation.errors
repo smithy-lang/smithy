@@ -9,10 +9,3 @@
 [ERROR] ns.foo#Invalid2: Error validating trait `enum`.1.name: String value provided for `smithy.api#EnumConstantBodyName` must match regular expression: ^[a-zA-Z_]+[a-zA-Z_0-9]*$ | TraitValue
 [ERROR] ns.foo#Invalid3: Duplicate enum trait values found with the same `name` property of 'a' | EnumTrait
 [ERROR] ns.foo#Invalid4: Duplicate enum trait values found with the same `value` property of 'a' | EnumTrait
-[WARNING] ns.foo#Invalid1: This shape applies a trait that is deprecated: smithy.api#enum | DeprecatedTrait
-[WARNING] ns.foo#Invalid2: This shape applies a trait that is deprecated: smithy.api#enum | DeprecatedTrait
-[WARNING] ns.foo#Invalid3: This shape applies a trait that is deprecated: smithy.api#enum | DeprecatedTrait
-[WARNING] ns.foo#Invalid4: This shape applies a trait that is deprecated: smithy.api#enum | DeprecatedTrait
-[WARNING] ns.foo#ValidFullDefinition: This shape applies a trait that is deprecated: smithy.api#enum | DeprecatedTrait
-[WARNING] ns.foo#ValidNoName: This shape applies a trait that is deprecated: smithy.api#enum | DeprecatedTrait
-[WARNING] ns.foo#Warn1: This shape applies a trait that is deprecated: smithy.api#enum | DeprecatedTrait

@@ -5,7 +5,8 @@
             "type": "structure",
             "members": {},
             "traits": {
-                "smithy.api#error": "server"
+                "smithy.api#error": "server",
+                "smithy.api#mixin": {}
             }
         },
         "smithy.example#MixinOperation": {
@@ -17,7 +18,7 @@
                 "target": "smithy.api#Unit"
             },
             "errors": [{
-                "target": "smithy.example#MixinError"
+                "target": "smithy.example#ConcreteError"
             }],
             "traits": {
                 "smithy.api#mixin": {},
@@ -27,6 +28,11 @@
         "smithy.example#ConcreteError": {
             "type": "structure",
             "members": {},
+            "mixins": [
+                {
+                    "target": "smithy.example#MixinError"
+                }
+            ],
             "traits": {
                 "smithy.api#error": "client"
             }

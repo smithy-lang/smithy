@@ -116,6 +116,11 @@ public final class IntEnumShape extends IntegerShape {
             return this;
         }
 
+        @Override
+        public Builder id(String shapeId) {
+            return id(ShapeId.from(shapeId));
+        }
+
         /**
          * Replaces the members of the builder.
          *

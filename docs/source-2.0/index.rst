@@ -149,4 +149,4 @@ Read more
 
     implementations
     Source code <https://github.com/awslabs/smithy>
-    1.0 Documentation <https://awslabs.github.io/smithy/1.0/>
+    1.0 Documentation <https://smithy.io/1.0/>

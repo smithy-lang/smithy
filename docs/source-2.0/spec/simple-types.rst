@@ -299,16 +299,16 @@ The above example is exactly equivalent to the following:
         JACK
 
         @enumValue(2)
-        QUEEN = 2
+        QUEEN
 
         @enumValue(3)
-        KING = 3
+        KING
 
         @enumValue(4)
-        ACE = 4
+        ACE
 
         @enumValue(5)
-        JOKER = 5
+        JOKER
     }
 
 

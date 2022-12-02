@@ -1,5 +1,159 @@
 # Smithy Changelog
 
+## 1.26.4 (2022-11-22)
+
+### Bug Fixes
+
+* Fixed updating mixins when replacing shapes in transforms ([1509](https://github.com/awslabs/smithy/pull/1509))
+
+## 1.26.3 (2022-11-17)
+
+### Features
+
+* Moved useIntegerType to jsonschema ([1495](https://github.com/awslabs/smithy/pull/1495))
+* Added intEnum protocol tests ([1492](https://github.com/awslabs/smithy/pull/1492))
+* Added timestampFormat protocol tests on target shapes ([1440](https://github.com/awslabs/smithy/pull/1440))
+* Added MissingSensitiveTraitValidator ([1364](https://github.com/awslabs/smithy/pull/1364))
+
+### Bug Fixes
+
+* Fixed applying protocol tests to correct operations ([1477](https://github.com/awslabs/smithy/pull/1477))
+* Fixed cfn-mutability for inherited identifiers ([1465](https://github.com/awslabs/smithy/pull/1465))
+* Fixed Resource shape properties Type entry ([1415](https://github.com/awslabs/smithy/pull/1415))
+
+### Documentation
+
+* Updated links to point to smithy.io ([1497](https://github.com/awslabs/smithy/pull/1497))
+* Fixed docs and fail on additional doc warnings ([1496](https://github.com/awslabs/smithy/pull/1496))
+* Fixed AbstractCodeWriter documentation ([1490](https://github.com/awslabs/smithy/pull/1490))
+
+## 1.26.2 (2022-11-07)
+
+### Bug Fixes
+
+* Add missing regions and fix typo in partitions.json ([#1487](https://github.com/awslabs/smithy/pull/1487))
+
+## 1.26.1 (2022-10-31)
+
+### Features
+
+* Added support for hierarchical event IDs in validation events, allowing for more granular suppression ([#1466](https://github.com/awslabs/smithy/pull/1466))
+* Removed the pattern from the `@suppress` trait's entry list, allowing them to match all validator IDs ([#1455](https://github.com/awslabs/smithy/pull/1455))
+* Added the ability to lint based on word boundaries for the `ReservedWords` validator ([#1461](https://github.com/awslabs/smithy/pull/1461))
+* Added a `toNode` method to the `Partition` class in `smithy-rules-engine` ([#1449](https://github.com/awslabs/smithy/pull/1449))
+* Added a warning when `smithy-diff` detects changes to traits that do not have definitions loaded ([#1468](https://github.com/awslabs/smithy/pull/1468))
+* Improved validation for members that target nullable shapes ([#1454](https://github.com/awslabs/smithy/pull/1454), [1460](https://github.com/awslabs/smithy/pull/1460))
+* Added a hook to the `CodegenDirector` to allow for customization before shape generation ([#1469](https://github.com/awslabs/smithy/pull/1469))
+* Updated model assembling to always attempt model interop transforms ([#1435](https://github.com/awslabs/smithy/pull/1435))
+
+### Bug Fixes
+
+* Fixed a bug where transforms would not remove enum members ([#1442](https://github.com/awslabs/smithy/pull/1442), [#1447](https://github.com/awslabs/smithy/pull/1447))
+* Fixed a bug where documentation comments were dropped if they occurred after a member using the default value syntactic
+  sugar ([1459](https://github.com/awslabs/smithy/pull/1459))
+* Fixed an issue where resource identifier collisions would cause a model to fail loading ([#1453](https://github.com/awslabs/smithy/pull/1453),
+  [#1474](https://github.com/awslabs/smithy/pull/1474))
+* Added `@private` to the local traits for the AWS `HttpConfiguration` shape ([#1445](https://github.com/awslabs/smithy/pull/1445))
+* Fixed an issue with behavior defined in an `awsQuery` protocol test ([#1444](https://github.com/awslabs/smithy/pull/1444))
+* Fixed several protocol tests in the `awsJson1_1` protocol test suite ([#1392](https://github.com/awslabs/smithy/pull/1392))
+* Fixed an incorrect application of the `@httpMalformedRequestTests` trait ([#1467](https://github.com/awslabs/smithy/pull/1467))
+
+### Documentation
+
+* Clarified streaming trait values and semantics ([#1458](https://github.com/awslabs/smithy/pull/1458))
+* Updated the identifier ABNF and parser ([#1464](https://github.com/awslabs/smithy/pull/1464))
+
+## 1.26.0 (2022-10-10)
+
+### Features
+
+* Add support for missing authorizer members ([#1426](https://github.com/awslabs/smithy/pull/1426))
+* Add intEnum DirectedCodegen ([#1434](https://github.com/awslabs/smithy/pull/1434))
+* Add Smithy Rules Engine (unstable) ([#1356](https://github.com/awslabs/smithy/pull/1356))
+
+### Documentation
+
+* Fix intEnum example ([#1432](https://github.com/awslabs/smithy/pull/1432))
+* Fix javadoc for CodegenDirector.simplifyModelForServiceCodegen ([#1433](https://github.com/awslabs/smithy/pull/1433))
+
+## 1.25.2 (2022-09-28)
+
+### Bug Fixes
+* Revert "Enforce private on traits (#1406)" ([#1428](https://github.com/awslabs/smithy/pull/1428))
+* Remove aws query compatible protocol test ([#1424](https://github.com/awslabs/smithy/pull/1424))
+
+## 1.25.1 (2022-09-23)
+
+### Features
+* Warn when box trait found on union member ([#1420](https://github.com/awslabs/smithy/pull/1420))
+* Warn when default used with union member target ([#1418](https://github.com/awslabs/smithy/pull/1418))
+* Simplify ShapeId caching ([#1411](https://github.com/awslabs/smithy/pull/1411))
+* Update smithy-diff for strings with the enum trait to enum shapes ([#1409](https://github.com/awslabs/smithy/pull/1409))
+* Add support for 1.0 downgrades and serialization ([#1403](https://github.com/awslabs/smithy/pull/1403) and [#1410](https://github.com/awslabs/smithy/pull/1410))
+* Add AwsQueryCompatible trait ([#1314](https://github.com/awslabs/smithy/pull/1314))
+
+### Bug Fixes
+* Only emit deprecation of enum trait in 2.0 models ([#1421](https://github.com/awslabs/smithy/pull/1421))
+* Enforce private on traits ([#1406](https://github.com/awslabs/smithy/pull/1406))
+* Fix apply statement parsing and ABNF ([#1414](https://github.com/awslabs/smithy/pull/1414))
+* Add test for synthetic box traits on mixins ([#1404](https://github.com/awslabs/smithy/pull/1404))
+
+### Documentation
+* Add some clarifications to revised default value design doc ([#1413](https://github.com/awslabs/smithy/pull/1413))
+* Revise default value design doc to match recent updates ([#1412](https://github.com/awslabs/smithy/pull/1412))
+* Fix typo in migration guide ([#1405](https://github.com/awslabs/smithy/pull/1405))
+
+## 1.25.0 (2022-09-13)
+
+Made many improvements for Smithy 1.0 and 2.0 interoperability. ([1394](https://github.com/awslabs/smithy/pull/1394))
+
+### Features
+
+* Default traits can now coexist with required trais. This indicates that a member should be serialized, but it is a
+  protocol-specific decision if and how this is enforced. This was a pattern that occurred in Smithy 1.0 models when
+  a member was required and targeted a shape with a zero value.
+* Default traits can be added to root-level shapes. Any structure member that targets a shape marked with the default
+  trait must repeat the default on the member. This removes the action at a distance problem observed in Smithy IDL 1.0
+  where a root level shape implicitly introduced a default zero value, and to know if that's the case for any member,
+  you had to look through from the member to the target shape. This change allows us to know if a root level shape was
+  boxed in IDL 1.0 too (root shapes with no default or a default set to anything other than the zero value was boxed).
+* Added the `@addedDefault` trait which is used to indicate that a `@default` trait was added to a member after it
+  was initially released. This can be used by tooling to make an appropriate determination if generating a
+  non-nullable type for the member is a backward compatible change. For example, if a generator only uses default
+  zero values to generate non-nullable types, then the removal of the required trait and addition of a default trait
+  would be a breaking change for them, so they can use addedDefault to ignore the default trait.
+* Add new NullableIndex modes for testing if a member is nullable based on the supported features of the
+  generator. For example, some generators only make members non-optional when the member is set to the zero value
+  of a type, so there is a NullableIndex check mode for that and other use cases.
+* When loading IDL 2.0 models, we will now patch synthetic box traits onto shapes that would have been considered
+  boxed in Smithy IDL 1.0. This improves further interop with tooling that has not yet adopted Smithy IDL 2 or that
+  hasn't yet migrated to use the NullableIndex abstraction.
+* When loading 1.0 models, rather than dropping the default trait from a member when the range trait of a shape is
+  invalid for its zero value, we now instead emit only a warning for this specific case. This prevents changing the
+  type and also doesn't lose the range constraint.
+* The Primitive* shapes in the prelude are no longer deprecated, and they now have a `@default` trait on them set to
+  the zero value of the type. This makes these traits function exactly as they did in Smithy 1.0 models. Any member
+  that targets one of these primitive prelude shapes must now also repeat the zero value of the target shape.
+* Added an optional nullability report to smithy-build that shows the computed nullability semantics of each member in
+  a model. This can be used to better understand nullability semantics.
+* Added method to NumberNode to detect if it is set to zero. ([#1385](https://github.com/awslabs/smithy/pull/1385))
+* In ChangeShapeType transform, ignored types changes to same type. ([#1397](https://github.com/awslabs/smithy/pull/1397))
+
+## Bug fixes
+
+* Updated smithy-diff to not emit events when diffing a 1.0 model against the 2.0 serialized version of the model.
+  This means that changes to the box trait are ignored unless the change impacts the nullability of the shape.
+  Special handling was added to detect breaking changes with the default trait too (you can't change a default
+  value of a root-level shape for example, you cannot change a default value of a shape to or from the zero value
+  of a type as this might break code generators, etc). ([1394](https://github.com/awslabs/smithy/pull/1394))
+* smithy-diff is no longer reporting expected `set` shape to `list` shape transitions. Sets are deprecated and
+  models are encouraged to migrate from sets to lists with the `@uniqueItems` trait. ([1383](https://github.com/awslabs/smithy/pull/1383))
+
+## Documentation
+
+* Fix operationOutputSuffix in example code snippet ([#1393](https://github.com/awslabs/smithy/pull/1393))
+* Fix ABNF grammar of inlined structure ([1377](https://github.com/awslabs/smithy/pull/1377))
+
 ## 1.24.0 (2022-08-30)
 
 ### Features
@@ -1068,14 +1222,14 @@ from Smithy `Node`s. ([#301](https://github.com/awslabs/smithy/pull/301))
 #### Trait updates
 
 * Individual protocols are now defined as individual traits that are annotated with
-[the `protocolDefinition` trait.](https://awslabs.github.io/smithy/1.0/spec/core/protocol-traits.html#protocoldefinition-trait) [BC]
+[the `protocolDefinition` trait.](https://smithy.io/2.0/spec/protocol-traits.html#protocoldefinition-trait) [BC]
   ([#273](https://github.com/awslabs/smithy/pull/273), [#280](https://github.com/awslabs/smithy/pull/280), [#379](https://github.com/awslabs/smithy/pull/379),
     [#390](https://github.com/awslabs/smithy/pull/390))
-  * Previously listed [AWS protocols now have trait implementations.](https://awslabs.github.io/smithy/1.0/spec/aws/index.html#aws-protocols)
+  * Previously listed [AWS protocols now have trait implementations.](https://smithy.io/2.0/aws/index.html#aws-protocols)
 * Individual authentication schemes are now defined as individual traits that are annotated with
-[the `authDefinition` trait.](https://awslabs.github.io/smithy/1.0/spec/core/auth-traits.html#authdefinition-trait) [BC]
+[the `authDefinition` trait.](https://smithy.io/2.0/spec/authentication-traits.html#authdefinition-trait) [BC]
   ([#273](https://github.com/awslabs/smithy/pull/273), [#280](https://github.com/awslabs/smithy/pull/280))
-  * Previously listed [authentication schemes now have trait implementations.](https://awslabs.github.io/smithy/1.0/spec/core/auth-traits.html)
+  * Previously listed [authentication schemes now have trait implementations.](https://smithy.io/2.0/spec/authentication-traits.html)
 * The `smithy.api#enum` trait is now a list of enum definitions instead of a map of string keys to
 enum definitions to improve clarity and encourage adding more properties to definitions. [BC] ([#326](https://github.com/awslabs/smithy/pull/326))
 * The `aws.api#streaming` trait is now applied to shapes directly instead of members. [BC] ([#340](https://github.com/awslabs/smithy/pull/340))

@@ -6,7 +6,8 @@ Smithy IDL
 
 Smithy models are defined using either the Smithy interface definition language
 (IDL) or the :ref:`JSON abstract syntax tree <json-ast>` (AST). This document
-defines the ABNF_ grammar and syntax for defining models with the Smithy IDL.
+defines the :rfc:`ABNF <5234>` grammar and syntax for defining models with the
+Smithy IDL.
 
 
 -------------------
@@ -89,7 +90,7 @@ Smithy IDL ABNF
 ---------------
 
 The Smithy IDL is defined by the following ABNF which uses case-sensitive
-string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
+string support defined in :rfc:`7405`.
 
 .. productionlist:: smithy
     idl:*`WS` `ControlSection` `MetadataSection` `ShapeSection`
@@ -197,7 +198,7 @@ string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
     ElidedListMember        :%s"$member"
     ExplicitListMember      :%s"member" *`SP` ":" *`SP` `ShapeId`
     MapStatement            :%s"map" `SP` `Identifier` [`Mixins`] *`WS` `MapMembers`
-    MapMembers              :"{" *`WS` `MapKey` `BR` `MapValue` *`WS` "}"
+    MapMembers              :"{" *`WS` `MapKey` `WS` `MapValue` *`WS` "}"
     MapKey                  :`TraitStatements` (`ElidedMapKey` / `ExplicitMapKey`)
     MapValue                :`TraitStatements` (`ElidedMapValue` / `ExplicitMapValue`)
     ElidedMapKey            :%s"$key"
@@ -237,7 +238,7 @@ string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
     TraitStructure          :`TraitStructureKvp` *(*`WS` `TraitStructureKvp`)
     TraitStructureKvp       :`NodeObjectKey` *`WS` ":" *`WS` `NodeValue`
     ApplyStatement          :(`ApplyStatementSingular` / `ApplyStatementBlock`)
-    ApplyStatementSingular  :%s"apply" `WS` `ShapeId` `WS` `Trait` `BR`
+    ApplyStatementSingular  :%s"apply" `SP` `ShapeId` `WS` `Trait` `BR`
     ApplyStatementBlock     :%s"apply" `SP` `ShapeId` `WS` "{" `TraitStatements` "}" `BR`
 
 .. rubric:: Shape ID
@@ -389,6 +390,7 @@ The following example defines metadata in the model:
 
     .. code-block:: smithy
 
+        $version: "2"
         metadata greeting = "hello"
         metadata "stringList" = ["a", "b", "c"]
 
@@ -403,6 +405,28 @@ The following example defines metadata in the model:
                 "stringList": ["a", "b", "c"]
             }
         }
+
+Metadata is not defined within a namespace. Unquoted object property values
+are considered :ref:`syntactic shape IDs <syntactic-shape-ids>` and resolve
+to the prelude namespace, ``smithy.api``.
+
+The following Smithy IDL model:
+
+.. code-block:: smithy
+
+    $version: "2"
+    metadata exampleSyntacticShapeId = required
+
+Is equivalent to the following JSON AST model:
+
+.. code-block:: json
+
+    {
+        "smithy": "2",
+        "metadata": {
+            "exampleSyntacticShapeId": "smithy.api#required"
+        }
+    }
 
 
 -------------
@@ -2346,5 +2370,4 @@ example is interpreted as ``Foo\nBaz Bam``:
     Baz \
     Bam"""
 
-.. _ABNF: https://tools.ietf.org/html/rfc5234
 .. _CommonMark: https://spec.commonmark.org/

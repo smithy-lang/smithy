@@ -35,6 +35,7 @@ import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.shapes.EnumShape;
+import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -81,7 +82,6 @@ public final class CodegenDirector<
      * <ul>
      *     <li>Flattens error hierarchies onto every operation.</li>
      *     <li>Flattens mixins</li>
-     *     <li>Converts enum strings to enum shapes.</li>
      * </ul>
      *
      * <p><em>Note</em>: This transform is applied automatically by a code
@@ -292,22 +292,26 @@ public final class CodegenDirector<
 
         LOGGER.fine("All setup done. Beginning code generation");
 
+        LOGGER.finest(() -> "Performing custom codegen for "
+                + directedCodegen.getClass().getName() + " before shape codegen");
+        CustomizeDirective<C, S> customizeDirective = new CustomizeDirective<>(context, serviceShape);
+        directedCodegen.customizeBeforeShapeGeneration(customizeDirective);
+
+        LOGGER.finest(() -> "Generating shapes for service " + serviceShape.getId());
         generateShapesInService(context, serviceShape);
 
         LOGGER.finest(() -> "Generating service " + serviceShape.getId());
         directedCodegen.generateService(new GenerateServiceDirective<>(context, serviceShape));
 
-        CustomizeDirective<C, S> postProcess = new CustomizeDirective<>(context, serviceShape);
-
         LOGGER.finest(() -> "Performing custom codegen for "
                             + directedCodegen.getClass().getName() + " before integrations");
-        directedCodegen.customizeBeforeIntegrations(postProcess);
+        directedCodegen.customizeBeforeIntegrations(customizeDirective);
 
         applyIntegrationCustomizations(context, integrations);
 
         LOGGER.finest(() -> "Performing custom codegen for "
                             + directedCodegen.getClass().getName() + " after integrations");
-        directedCodegen.customizeAfterIntegrations(postProcess);
+        directedCodegen.customizeAfterIntegrations(customizeDirective);
 
         LOGGER.finest(() -> "Directed codegen finished for " + directedCodegen.getClass().getName());
 
@@ -471,6 +475,13 @@ public final class CodegenDirector<
         public Void enumShape(EnumShape shape) {
             LOGGER.finest(() -> "Generating enum shape" + shape.getId());
             directedCodegen.generateEnumShape(new GenerateEnumDirective<>(context, serviceShape, shape));
+            return null;
+        }
+
+        @Override
+        public Void intEnumShape(IntEnumShape shape) {
+            LOGGER.finest(() -> "Generating intEnum shape" + shape.getId());
+            directedCodegen.generateIntEnumShape(new GenerateIntEnumDirective<>(context, serviceShape, shape));
             return null;
         }
     }

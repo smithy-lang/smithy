@@ -47,6 +47,7 @@ service AwsQuery {
         XmlBlobs,
         XmlTimestamps,
         XmlEnums,
+        XmlIntEnums,
         RecursiveXmlShapes,
         RecursiveXmlShapes,
         IgnoresWrappingXmlName,

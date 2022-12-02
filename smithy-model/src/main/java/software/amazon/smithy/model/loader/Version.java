@@ -20,7 +20,11 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
+import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.MixinTrait;
+import software.amazon.smithy.model.validation.Severity;
+import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.Validator;
 
 /**
  * Tracks version-specific features and validation.
@@ -64,7 +68,8 @@ enum Version {
         }
 
         @Override
-        void validateVersionedTrait(ShapeId target, ShapeId traitId, Node value) {
+        ValidationEvent validateVersionedTrait(ShapeId target, ShapeId traitId, Node value) {
+            return null;
         }
     },
 
@@ -100,7 +105,7 @@ enum Version {
         }
 
         @Override
-        void validateVersionedTrait(ShapeId target, ShapeId traitId, Node value) {
+        ValidationEvent validateVersionedTrait(ShapeId target, ShapeId traitId, Node value) {
             String errorMessage = null;
             if (traitId.equals(MixinTrait.ID)) {
                 errorMessage = String.format("Mixins can only be used in Smithy 2.0 or later. Attempted to apply "
@@ -111,12 +116,16 @@ enum Version {
             }
 
             if (errorMessage != null) {
-                throw ModelSyntaxException.builder()
-                        .message(errorMessage)
+                return ValidationEvent.builder()
+                        .severity(Severity.ERROR)
+                        .id(Validator.MODEL_ERROR)
                         .shapeId(target)
                         .sourceLocation(value)
+                        .message(errorMessage)
                         .build();
             }
+
+            return null;
         }
 
         @Override
@@ -163,14 +172,26 @@ enum Version {
 
         @Override
         @SuppressWarnings("deprecated")
-        void validateVersionedTrait(ShapeId target, ShapeId traitId, Node value) {
+        ValidationEvent validateVersionedTrait(ShapeId target, ShapeId traitId, Node value) {
             if (traitId.equals(BoxTrait.ID)) {
-                throw ModelSyntaxException.builder()
-                        .message("@box is not supported in Smithy IDL 2.0")
+                return ValidationEvent.builder()
+                        .id(Validator.MODEL_ERROR)
+                        .severity(Severity.ERROR)
                         .shapeId(target)
                         .sourceLocation(value)
+                        .message("@box is not supported in Smithy IDL 2.0")
+                        .build();
+            } else if (traitId.equals(EnumTrait.ID)) {
+                return ValidationEvent.builder()
+                        .id(Validator.MODEL_DEPRECATION)
+                        .severity(Severity.WARNING)
+                        .shapeId(target)
+                        .sourceLocation(value)
+                        .message("The enum trait is deprecated. Smithy 2.0 models should use the enum shape.")
                         .build();
             }
+
+            return null;
         }
     };
 
@@ -252,5 +273,5 @@ enum Version {
      * @param value The Node value of the trait.
      * @throws ModelSyntaxException if the given trait cannot be used in this version.
      */
-    abstract void validateVersionedTrait(ShapeId target, ShapeId traitId, Node value);
+    abstract ValidationEvent validateVersionedTrait(ShapeId target, ShapeId traitId, Node value);
 }

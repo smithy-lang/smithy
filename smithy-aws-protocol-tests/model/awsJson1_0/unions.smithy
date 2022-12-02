@@ -11,6 +11,7 @@ use aws.protocoltests.shared#StringList
 use aws.protocoltests.shared#StringMap
 use aws.protocoltests.shared#GreetingStruct
 use aws.protocoltests.shared#FooEnum
+use aws.protocoltests.shared#IntegerEnum
 
 
 /// This operation uses unions for inputs and outputs.
@@ -38,6 +39,7 @@ union MyUnion {
     blobValue: Blob,
     timestampValue: Timestamp,
     enumValue: FooEnum,
+    intEnumValue: IntegerEnum,
     listValue: StringList,
     mapValue: StringMap,
     structureValue: GreetingStruct,
@@ -179,6 +181,29 @@ apply JsonUnions @httpRequestTests([
         params: {
             contents: {
                 enumValue: "Foo"
+            }
+        }
+    },
+    {
+        id: "AwsJson10SerializeIntEnumUnionValue",
+        documentation: "Serializes an intEnum union value",
+        protocol: awsJson1_0,
+        method: "POST",
+        "uri": "/",
+        body: """
+            {
+                "contents": {
+                    "intEnumValue": 1
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/x-amz-json-1.0",
+            "X-Amz-Target": "JsonRpc10.JsonUnions",
+        },
+        params: {
+            contents: {
+                intEnumValue: 1
             }
         }
     },
@@ -387,6 +412,27 @@ apply JsonUnions @httpResponseTests([
         params: {
             contents: {
                 enumValue: "Foo"
+            }
+        }
+    },
+    {
+        id: "AwsJson10DeserializeIntEnumUnionValue",
+        documentation: "Deserializes an intEnum union value",
+        protocol: awsJson1_0,
+        code: 200,
+        body: """
+            {
+                "contents": {
+                    "intEnumValue": 1
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/x-amz-json-1.0",
+        },
+        params: {
+            contents: {
+                intEnumValue: 1
             }
         }
     },

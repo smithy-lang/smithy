@@ -129,22 +129,27 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
 
     @Override
     public Schema byteShape(ByteShape shape) {
-        return buildSchema(shape, createBuilder(shape, "number"));
+        return buildIntegerSchema(shape);
     }
 
     @Override
     public Schema shortShape(ShortShape shape) {
-        return buildSchema(shape, createBuilder(shape, "number"));
+        return buildIntegerSchema(shape);
     }
 
     @Override
     public Schema integerShape(IntegerShape shape) {
-        return buildSchema(shape, createBuilder(shape, "number"));
+        return buildIntegerSchema(shape);
     }
 
     @Override
     public Schema longShape(LongShape shape) {
-        return buildSchema(shape, createBuilder(shape, "number"));
+        return buildIntegerSchema(shape);
+    }
+
+    private Schema buildIntegerSchema(Shape shape) {
+        String type = converter.getConfig().getUseIntegerType() ? "integer" : "number";
+        return buildSchema(shape, createBuilder(shape, type));
     }
 
     @Override

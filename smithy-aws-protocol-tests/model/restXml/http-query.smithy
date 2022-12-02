@@ -1,6 +1,6 @@
 // This file defines test cases that test HTTP query string bindings.
-// See: https://awslabs.github.io/smithy/1.0/spec/http.html#httpquery-trait and
-// https://awslabs.github.io/smithy/1.0/spec/http.html#httpqueryparams-trait
+// See: https://smithy.io/2.0/spec/http-bindings.html#httpquery-trait and
+// https://smithy.io/2.0/spec/http-bindings.html#httpqueryparams-trait
 
 $version: "2.0"
 
@@ -11,6 +11,8 @@ use aws.protocoltests.shared#BooleanList
 use aws.protocoltests.shared#DoubleList
 use aws.protocoltests.shared#FooEnum
 use aws.protocoltests.shared#FooEnumList
+use aws.protocoltests.shared#IntegerEnum
+use aws.protocoltests.shared#IntegerEnumList
 use aws.protocoltests.shared#IntegerList
 use aws.protocoltests.shared#IntegerSet
 use aws.protocoltests.shared#StringList
@@ -71,6 +73,9 @@ apply AllQueryStringTypes @httpRequestTests([
             "EnumList=Foo",
             "EnumList=Baz",
             "EnumList=Bar",
+            "IntegerEnum=1",
+            "IntegerEnumList=1",
+            "IntegerEnumList=2",
         ],
         params: {
             queryString: "Hello there",
@@ -91,6 +96,8 @@ apply AllQueryStringTypes @httpRequestTests([
             queryTimestampList: [1, 2, 3],
             queryEnum: "Foo",
             queryEnumList: ["Foo", "Baz", "Bar"],
+            queryIntegerEnum: 1,
+            queryIntegerEnumList: [1, 2],
         }
     },
     {
@@ -216,6 +223,12 @@ structure AllQueryStringTypesInput {
 
     @httpQuery("EnumList")
     queryEnumList: FooEnumList,
+
+    @httpQuery("IntegerEnum")
+    queryIntegerEnum: IntegerEnum,
+
+    @httpQuery("IntegerEnumList")
+    queryIntegerEnumList: IntegerEnumList,
 
     @httpQueryParams
     queryParamsMapOfStrings: StringMap,

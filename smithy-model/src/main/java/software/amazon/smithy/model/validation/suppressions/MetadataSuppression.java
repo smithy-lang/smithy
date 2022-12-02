@@ -55,7 +55,7 @@ final class MetadataSuppression implements Suppression {
 
     @Override
     public boolean test(ValidationEvent event) {
-        return event.getId().equals(id) && matchesNamespace(event);
+        return event.containsId(id) && matchesNamespace(event);
     }
 
     @Override

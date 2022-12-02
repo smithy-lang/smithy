@@ -63,6 +63,7 @@ service AwsEc2 {
         XmlBlobs,
         XmlTimestamps,
         XmlEnums,
+        XmlIntEnums,
         RecursiveXmlShapes,
         RecursiveXmlShapes,
         IgnoresWrappingXmlName,

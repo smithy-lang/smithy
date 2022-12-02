@@ -135,8 +135,7 @@ This proposal:
 1. Introduces a `@default` trait
 2. Introduces a `@clientOptional` trait
 3. Removes the `@box` trait
-4. Deprecates the `Primitive*` shapes from the prelude
-5. Make the optionality of a structure completely controlled by members rather
+4. Make the optionality of a structure completely controlled by members rather
    than the shape targeted by a member
 
 The `@default` trait initializes a structure member with a value (note that IDL
@@ -162,11 +161,14 @@ In the above example:
   first checking if the value is non-optional.
 
 If the `title` member ever needs to be made optional, the `@required` trait
-can be replaced with the `@default` trait:
+can be replaced with the `@default` trait and `@addedDefault` trait:
 
 ```
 structure Message {
+    @addedDefault
     title: String = ""
+
+    @addedDefault
     message: String = ""
 }
 ```
@@ -174,6 +176,11 @@ structure Message {
 With the above change, codegen remains the same: both values are non-optional.
 However, if `title` is not set in client code, server-side validation for the
 type will _not_ fail because `title` has a default value of `""`.
+
+The `@addedDefault` trait is used to indicate that a default trait was added
+to a member after initially publishing the member. This metadata can be used
+by code generators to make an appropriate decision on whether using the default
+value is backward compatible.
 
 
 ## Proposal overview
@@ -186,8 +193,7 @@ optionality controls from shapes to structure members. Smithy IDL 2.0 will:
    the shape targeted by a member, localizing this concern to members. This
    makes optionality of a member easier to understand for both readers and
    writers.
-2. Add a `@clientOptional` trait that can target structure members. This trait
-   is essentially a more constrained and better named `@box` trait. The primary
+2. Add a `@clientOptional` trait that can target structure members. The primary
    use case for this trait is to apply it to members also marked as `@required`
    to force non-authoritative code generators like clients to treat the member
    as optional. The service reserves the right to remove the `@required` trait
@@ -195,11 +201,6 @@ optionality controls from shapes to structure members. Smithy IDL 2.0 will:
    version bump of the service.
 3. Remove the `@box` trait from the Smithy 2.0 prelude and fail to load models
    that contain the `@box` trait.
-4. Deprecate the `PrimitiveBoolean`, `PrimitiveShort`, `PrimitiveInteger`,
-   `PrimitiveLong`, `PrimitiveFloat`, and `PrimitiveDouble` shapes in the
-   Smithy 2.0 prelude. These shapes are treated exactly the same as their
-   prelude counterparts not prefixed with "Primitive", so there is no need to
-   use these shapes.
 
 
 ## `@default` trait
@@ -236,19 +237,53 @@ structure Message {
 }
 ```
 
+The default trait can also be applied to root-level shapes to require that
+all structure members that target the shape repeat its default value.
+
+```
+@default(0)
+integer PrimitiveInteger
+
+structure Foo {
+    value: PrimitiveInteger = 0 // < repeating the default is required
+}
+```
+
+This provides the same behavior of primitive root-level shapes in IDL 1.0, but
+makes the default value more explicit on structure members, removing
+action at a distance.
+
+The default value of a target shape can be removed from a member by setting the
+default value of the member to `null`. This indicates that the member has no
+default value.
+
+```
+structure Baz {
+    value: PrimitiveInteger = null
+}
+```
+
+Note that this is equivalent to the following Smithy IDL 1.0 model:
+
+```
+structure Baz {
+    @box
+    value: PrimitiveInteger
+}
+```
+
+All of the `Primitive*` shapes in the Smithy prelude now have corresponding
+default values set to `0` for numeric types and `false` for `PrimitiveBoolean`.
+
 The `@default` trait is defined in Smithy as:
 
 ```
-/// Provides a structure member with a default value.
+/// Provides a structure member with a default value. When added to root level shapes, requires that every
+/// targeting structure member defines the same default value on the member or sets a default of null.
+///
+/// This trait can currently only be used in Smithy 2.0 models.
 @trait(
-    selector: "structure > member :test(> :is(simpleType, collection, map))"
-    conflicts: [required]
-    // The default trait can never be removed. It can only be added if the
-    // member was previously marked as required or is required.
-    breakingChanges: [
-        {change: "remove"}
-        {change: "update", severity: "DANGER", message: "Default values should only be changed when absolutely necessary."}
-    ]
+    selector: ":is(simpleType, list, map, structure > member :test(> :is(simpleType, list, map)))"
 )
 document default
 ```
@@ -256,19 +291,27 @@ document default
 
 ### Default value constraints
 
-The `@default` trait conflicts with the `@required` trait. The `@default` trait
-accepts a document type. The value of the trait MUST be compatible with the
-shape targeted by the member and any applied constraint traits (for example,
-values for numeric types MUST be numbers that fit within the targeted type and
-match any `@length` constraints, string types match any `@pattern` or `@length`
-traits, etc).
+The `@default` trait accepts a document type. The value of the trait MUST be
+compatible with the shape targeted by the member and adhere to the following
+constraints:
+
+* The default value of an enum or intEnum MUST match one of the enum values.
+* The default value of a string MUST be compatible with any length, enum, or
+  pattern traits.
+* The default value on a list or map MUST be compatible with a length trait,
+  if present.
+* The default value on a numeric type SHOULD be compatible with a range trait,
+  if present. It was a common pattern in Smithy IDL 1.0 to define a numeric
+  type with a default zero value, but require that the value be greater than
+  zero. This specific validation is relaxed in order to not modify these types
+  or need to drop the range constraint.
 
 The following shapes have restrictions on their default values:
 
 * enum: can be set to any valid string _value_ of the enum.
 * intEnum: can be set to any valid integer _value_ of the enum.
-* document: can be set to `null`, `true`, `false`, string, numbers, an empty
-  list, or an empty map.
+* document: can be set to `true`, `false`, string, numbers, an empty list, or
+  an empty map.
 * list/set: can only be set to an empty list.
 * map: can only be set to an empty map.
 * structure: no default value.
@@ -277,11 +320,20 @@ The following shapes have restrictions on their default values:
 
 ### Updating default values
 
-The default value of a member SHOULD NOT be changed. However, it MAY be
-necessary in extreme cases to change a default value if changing the default
-value addresses a customer-impacting issue or availability issue for a service.
-Changing default values can result in parties disagreeing on the default value
-of a member because they are using different versions of the same model.
+The default value of a root-level shape MUST NOT be changed since that would
+break any shape that refers to the shape, and could break other models that
+refer to a shape defined in a shared model.
+
+The default value of a member that targets a shape with a default value
+MUST NOT be removed (by changing the value to `null`) since that would
+transition the member from non-optional to optional in generated code.
+
+The default value of a member that targets a shape without a default value
+SHOULD NOT be changed. However, it MAY be necessary in extreme cases to change
+a default value if changing the default value addresses a customer-impacting
+issue or availability issue for a service. Changing default values can result
+in parties disagreeing on the default value of a member because they are using
+different versions of the same model.
 
 
 ### Readers MUST NOT differentiate from omitted or defaulted
@@ -325,6 +377,12 @@ To allow servers to change default values if necessary, clients SHOULD NOT
 serialize default values unless the member is explicitly set to the default
 value. This implies that clients SHOULD implement a kind of "presence tracking"
 of defaulted members.
+
+A member that is both `@default` and `@required` SHOULD always be serialized,
+and implementations SHOULD NOT use any form of presence tracking to omit a
+member if the member is not explicitly set to the default value. It is a
+protocol-specific decision whether this is enforced in serialized messages;
+some protocols follow this strictly, whereas others may not.
 
 
 ### Impact on API design
@@ -460,11 +518,19 @@ backward compatible. Backward compatibility rules of the `@default`,
 `@required`, and `@clientOptional` traits are as follows:
 
 - The `@default` trait can never be removed from a member.
-- The value of the `@default` trait SHOULD NOT be changed unless absolutely
-  necessary.
+- The value of the `@default` trait on a root-level shape MUST NOT be changed.
+- The value of the `@default` trait on a member SHOULD NOT be changed unless
+  absolutely necessary.
 - The `@default` trait can only be added to a member if the member was
   previously marked as `@required` or `@clientOptional`. This ensures that
   generated code for the member remains non-optional.
+- The `@addedDefault` trait SHOULD be added to structure members any time a
+  `@default` trait is added to give more metadata to code generators so that
+  they can generate backward compatible code. For example, if a generator only
+  honors defaults that are set to the zero value of a type and do not use
+  the `@required` trait to inform optionality, then adding a `@default` trait
+  would introduce backward compatible type changes. These generators can use
+  the `@addedDefault` trait to know to ignore the `@default` trait.
 - The `@required` trait can only be removed under the following conditions:
   - It is replaced with the `@default` trait
   - The containing structure is marked with the `@input` trait.

@@ -23,7 +23,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.BottomUpIndex;
 import software.amazon.smithy.model.knowledge.IdentifierBindingIndex;
 import software.amazon.smithy.model.knowledge.KnowledgeIndex;
 import software.amazon.smithy.model.knowledge.OperationIndex;
@@ -36,6 +38,7 @@ import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.SetUtils;
 
 /**
@@ -48,6 +51,8 @@ public final class CfnResourceIndex implements KnowledgeIndex {
 
     static final Set<Mutability> FULLY_MUTABLE = SetUtils.of(
             Mutability.CREATE, Mutability.READ, Mutability.WRITE);
+    static final Set<Mutability> INHERITED_MUTABILITY = SetUtils.of(
+            Mutability.CREATE, Mutability.READ);
 
     private final Map<ShapeId, CfnResource> resourceDefinitions = new HashMap<>();
 
@@ -85,15 +90,22 @@ public final class CfnResourceIndex implements KnowledgeIndex {
 
     public CfnResourceIndex(Model model) {
         OperationIndex operationIndex = OperationIndex.of(model);
+        BottomUpIndex bottomUpIndex = BottomUpIndex.of(model);
         model.shapes(ResourceShape.class)
                 .filter(shape -> shape.hasTrait(CfnResourceTrait.ID))
                 .forEach(resource -> {
                     CfnResource.Builder builder = CfnResource.builder();
                     ShapeId resourceId = resource.getId();
 
+                    Set<ResourceShape> parentResources = model.getServiceShapes()
+                            .stream()
+                            .map(service -> bottomUpIndex.getResourceBinding(service, resourceId))
+                            .flatMap(OptionalUtils::stream)
+                            .collect(Collectors.toSet());
+
                     // Start with the explicit resource identifiers.
                     builder.primaryIdentifiers(resource.getIdentifiers().keySet());
-                    setIdentifierMutabilities(builder, resource);
+                    setIdentifierMutabilities(builder, resource, parentResources);
 
                     // Use the read lifecycle's input to collect the additional identifiers
                     // and its output to collect readable properties.
@@ -164,13 +176,22 @@ public final class CfnResourceIndex implements KnowledgeIndex {
         return Optional.ofNullable(resourceDefinitions.get(resource.toShapeId()));
     }
 
-    private void setIdentifierMutabilities(CfnResource.Builder builder, ResourceShape resource) {
-        Set<Mutability> mutability = getDefaultIdentifierMutabilities(resource);
+    private boolean identifierIsInherited(String identifier, Set<ResourceShape> parentResources) {
+        return parentResources.stream()
+                .anyMatch(parentResource -> parentResource.getIdentifiers().containsKey(identifier));
+    }
+
+    private void setIdentifierMutabilities(
+            CfnResource.Builder builder,
+            ResourceShape resource,
+            Set<ResourceShape> parentResources) {
+        Set<Mutability> defaultIdentifierMutability = getDefaultIdentifierMutabilities(resource);
 
         resource.getIdentifiers().forEach((name, shape) -> {
             builder.putPropertyDefinition(name, CfnResourceProperty.builder()
                     .hasExplicitMutability(true)
-                    .mutabilities(mutability)
+                    .mutabilities(identifierIsInherited(name, parentResources)
+                            ? INHERITED_MUTABILITY : defaultIdentifierMutability)
                     .addShapeId(shape)
                     .build());
         });

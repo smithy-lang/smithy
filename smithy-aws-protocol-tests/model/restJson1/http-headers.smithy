@@ -1,5 +1,5 @@
 // This file defines test cases that test HTTP header bindings.
-// See: https://awslabs.github.io/smithy/1.0/spec/http.html#httpheader-trait
+// See: https://smithy.io/2.0/spec/http-bindings.html#httpheader-trait
 
 $version: "2.0"
 
@@ -11,6 +11,8 @@ use aws.protocoltests.shared#DateTime
 use aws.protocoltests.shared#EpochSeconds
 use aws.protocoltests.shared#FooEnum
 use aws.protocoltests.shared#FooEnumList
+use aws.protocoltests.shared#IntegerEnum
+use aws.protocoltests.shared#IntegerEnumList
 use aws.protocoltests.shared#HttpDate
 use aws.protocoltests.shared#IntegerList
 use aws.protocoltests.shared#StringList
@@ -134,6 +136,23 @@ apply InputAndOutputWithHeaders @httpRequestTests([
             headerEnumList: ["Foo", "Bar", "Baz"],
         }
     },
+    {
+        id: "RestJsonInputAndOutputWithIntEnumHeaders",
+        documentation: "Tests requests with intEnum header bindings",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/InputAndOutputWithHeaders",
+        headers: {
+            "X-IntegerEnum": "1",
+            "X-IntegerEnumList": "1, 2, 3"
+        },
+        body: "",
+        params: {
+            headerIntegerEnum: 1,
+            headerIntegerEnumList: [1, 2, 3],
+        }
+    },
+
     {
         id: "RestJsonSupportsNaNFloatHeaderInputs",
         documentation: "Supports handling NaN float header values.",
@@ -280,6 +299,20 @@ apply InputAndOutputWithHeaders @httpResponseTests([
         }
     },
     {
+        id: "RestJsonInputAndOutputWithIntEnumHeaders",
+        documentation: "Tests responses with intEnum header bindings",
+        protocol: restJson1,
+        code: 200,
+        headers: {
+            "X-IntegerEnum": "1",
+            "X-IntegerEnumList": "1, 2, 3"
+        },
+        params: {
+            headerIntegerEnum: 1,
+            headerIntegerEnumList: [1, 2, 3],
+        }
+    },
+    {
         id: "RestJsonSupportsNaNFloatHeaderOutputs",
         documentation: "Supports handling NaN float header values.",
         protocol: restJson1,
@@ -371,6 +404,12 @@ structure InputAndOutputWithHeadersIO {
 
     @httpHeader("X-EnumList")
     headerEnumList: FooEnumList,
+
+    @httpHeader("X-IntegerEnum")
+    headerIntegerEnum: IntegerEnum,
+
+    @httpHeader("X-IntegerEnumList")
+    headerIntegerEnumList: IntegerEnumList,
 }
 
 /// Null and empty headers are not sent over the wire.

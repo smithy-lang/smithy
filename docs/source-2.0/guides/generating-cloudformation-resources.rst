@@ -483,6 +483,27 @@ disableFeatures (``[string]``)
             }
         }
 
+.. _generate-cloudformation-jsonschema-setting-useIntegerType:
+
+useIntegerType (``boolean``)
+    Set to true to use the ``integer`` type when converting ``byte``, ``short``,
+    ``integer``, and ``long`` shapes.
+
+    By default, these shape types are converted with a type of ``number``.
+
+    .. code-block:: json
+
+        {
+            "version": "2.0",
+            "plugins": {
+                "cloudformation": {
+                    "service": "smithy.example#Queues",
+                    "organizationName": "Smithy",
+                    "useIntegerType": true
+                }
+            }
+        }
+
 .. _generate-cloudformation-other-traits:
 
 --------------------------------------
@@ -561,10 +582,10 @@ service providers. See the `Javadocs`_ for more information.
 .. _modeling a resource provider: https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-types.html
 .. _develop the resource provider: https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-develop.html
 .. _CloudFormation Command Line Interface: https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/what-is-cloudformation-cli.html
-.. _Smithy Resource: https://awslabs.github.io/smithy/1.0/spec/core/model.html#resource
+.. _Smithy Resource: https://smithy.io/2.0/spec/service-types.html#resource
 .. _Smithy Gradle plugin: https://github.com/awslabs/smithy-gradle-plugin
 .. _type name: https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-typeName
-.. _Javadocs: https://awslabs.github.io/smithy/javadoc/__smithy_version__/software/amazon/smithy/aws/cloudformation/schema/fromsmithy/Smithy2CfnExtension.html
+.. _Javadocs: https://smithy.io/javadoc/__smithy_version__/software/amazon/smithy/aws/cloudformation/schema/fromsmithy/Smithy2CfnExtension.html
 .. _the handlers section: https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-handlers
 .. _the deprecatedProperties section: https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-deprecatedproperties
 .. _the required property section: https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-required

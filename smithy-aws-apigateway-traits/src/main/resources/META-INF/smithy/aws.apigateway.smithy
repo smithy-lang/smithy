@@ -177,6 +177,15 @@ structure AuthorizerDefinition {
 
     /// The number of seconds for which the resulting IAM policy is cached.
     resultTtlInSeconds: Integer
+
+    /// Format version of the payload sent from API Gateway to the authorizer
+    /// and how API Gateway interprets the response. Used only by HTTP APIs.
+    authorizerPayloadFormatVersion: PayloadFormatVersion
+
+    /// Specifies if the autorizer returns either a boolean or an IAM Policy.
+    /// If enabled, authorizer returns a boolean. Used only by HTTP APIs.
+    /// Only supported when authorizerPayloadFormatVersion is set to 2.0.
+    enableSimpleResponses: Boolean
 }
 
 /// Defines a response and specifies parameter mappings.
@@ -335,4 +344,13 @@ enum PassThroughBehavior {
     /// integration request or no mapping template is defined in the integration
     /// request.
     NEVER = "never"
+}
+
+/// Defines the payloadFormatVersion used by authorizers
+@private
+enum PayloadFormatVersion {
+    /// Specifies 1.0 version of the format used by the authorizer
+    V1_0 = "1.0"
+    /// Specifies 2.0 version of the format used by the authorizer
+    V2_0 = "2.0"
 }

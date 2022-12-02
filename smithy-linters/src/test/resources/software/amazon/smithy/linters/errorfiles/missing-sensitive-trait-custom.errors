@@ -1,0 +1,6 @@
+[WARNING] smithy.example#FooOperationRequest: This shape possibly contains sensitive data but is not marked with the sensitive trait (based on the presence of 'foo') | DefaultMissingSensitiveTrait
+[WARNING] smithy.example#FooOperationRequest$secondMember: This member possibly contains sensitive data but neither the enclosing nor target shape are marked with the sensitive trait (based on the presence of 'second member') | DefaultMissingSensitiveTrait
+[WARNING] smithy.example#FooOperationResponse: This shape possibly contains sensitive data but is not marked with the sensitive trait (based on the presence of 'foo') | DefaultMissingSensitiveTrait
+[WARNING] smithy.example#MyString: This shape possibly contains sensitive data but is not marked with the sensitive trait (based on the presence of 'string') | DefaultMissingSensitiveTrait
+[WARNING] smithy.example#BillingInfo$bank: This member possibly contains sensitive data but neither the enclosing nor target shape are marked with the sensitive trait (based on the presence of 'bank') | DefaultMissingSensitiveTrait
+[WARNING] smithy.example#BillingInfo$data: This member possibly contains sensitive data but neither the enclosing nor target shape are marked with the sensitive trait (based on the presence of 'data') | DefaultMissingSensitiveTrait

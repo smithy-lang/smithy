@@ -23,6 +23,7 @@ operation ListFoo {
         status: Status
         items: StringList
         instruction: Instruction
+        facecard: FaceCard
     }
 }
 
@@ -35,6 +36,12 @@ list StringList {
     {name: "BAD", value: "BAD"}
 ])
 string Status
+
+intEnum FaceCard {
+    JACK = 1
+    QUEEN = 2
+    KING = 3
+}
 
 union Instruction {
     continueIteration: Unit,

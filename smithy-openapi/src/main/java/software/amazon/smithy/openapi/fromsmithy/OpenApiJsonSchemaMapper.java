@@ -61,15 +61,8 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
             builder.putExtension("deprecated", Node.from(true));
         }
 
-        // Handle OpenAPI's custom "integer" type.
-        // https://swagger.io/specification/#data-types
         boolean useOpenApiIntegerType = config instanceof OpenApiConfig
                 && ((OpenApiConfig) config).getUseIntegerType();
-        if (useOpenApiIntegerType) {
-            if (shape.isByteShape() || shape.isShortShape() || shape.isIntegerShape() || shape.isLongShape()) {
-                builder.type("integer");
-            }
-        }
 
         // Don't overwrite an existing format setting.
         if (!builder.getFormat().isPresent()) {

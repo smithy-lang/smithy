@@ -42,6 +42,8 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
     private final String identitySource;
     private final String identityValidationExpression;
     private final Integer resultTtlInSeconds;
+    private final String authorizerPayloadFormatVersion;
+    private final Boolean enableSimpleResponses;
 
     private AuthorizerDefinition(Builder builder) {
         scheme = SmithyBuilder.requiredState(SCHEME_KEY, builder.scheme);
@@ -51,6 +53,8 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
         identitySource = builder.identitySource;
         identityValidationExpression = builder.identityValidationExpression;
         resultTtlInSeconds = builder.resultTtlInSeconds;
+        authorizerPayloadFormatVersion = builder.authorizerPayloadFormatVersion;
+        enableSimpleResponses = builder.enableSimpleResponses;
 
         if (builder.customAuthType != null) {
             customAuthType = builder.customAuthType;
@@ -162,6 +166,25 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
         return Optional.ofNullable(resultTtlInSeconds);
     }
 
+    /**
+     * Gets the format of the payload returned by the authorizer.
+     *
+     * @return Returns payload type.
+     */
+    public Optional<String> getAuthorizerPayloadFormatVersion() {
+        return Optional.ofNullable(authorizerPayloadFormatVersion);
+    }
+
+    /**
+     * Gets whether the authorizer returns simple responses.
+     *
+     * @return Returns true if authorizer returns a boolean,
+     * false if it returns an IAM policy.
+     */
+    public Optional<Boolean> getEnableSimpleResponses() {
+        return Optional.ofNullable(enableSimpleResponses);
+    }
+
     @Override
     public Builder toBuilder() {
         return builder()
@@ -172,7 +195,9 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
                 .credentials(credentials)
                 .identitySource(identitySource)
                 .identityValidationExpression(identityValidationExpression)
-                .resultTtlInSeconds(resultTtlInSeconds);
+                .resultTtlInSeconds(resultTtlInSeconds)
+                .authorizerPayloadFormatVersion(authorizerPayloadFormatVersion)
+                .enableSimpleResponses(enableSimpleResponses);
     }
 
     @Override
@@ -198,7 +223,9 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
                && Objects.equals(credentials, that.credentials)
                && Objects.equals(identitySource, that.identitySource)
                && Objects.equals(identityValidationExpression, that.identityValidationExpression)
-               && Objects.equals(resultTtlInSeconds, that.resultTtlInSeconds);
+               && Objects.equals(resultTtlInSeconds, that.resultTtlInSeconds)
+               && Objects.equals(authorizerPayloadFormatVersion, that.authorizerPayloadFormatVersion)
+               && Objects.equals(enableSimpleResponses, that.enableSimpleResponses);
     }
 
     @Override
@@ -218,6 +245,8 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
         private String identitySource;
         private String identityValidationExpression;
         private Integer resultTtlInSeconds;
+        private String authorizerPayloadFormatVersion;
+        private Boolean enableSimpleResponses;
 
         @Override
         public AuthorizerDefinition build() {
@@ -331,6 +360,28 @@ public final class AuthorizerDefinition implements ToNode, ToSmithyBuilder<Autho
          */
         public Builder resultTtlInSeconds(Integer resultTtlInSeconds) {
             this.resultTtlInSeconds = resultTtlInSeconds;
+            return this;
+        }
+
+        /**
+         * Sets the format of the payload returned by the authorizer.
+         *
+         * @param authorizerPayloadFormatVersion format of the payload.
+         * @return Returns the builder.
+         */
+        public Builder authorizerPayloadFormatVersion(String authorizerPayloadFormatVersion) {
+            this.authorizerPayloadFormatVersion = authorizerPayloadFormatVersion;
+            return this;
+        }
+
+        /**
+         * Sets whether the authorizer returns simple responses.
+         *
+         * @param enableSimpleResponses defines if authorizer should return simple responses.
+         * @return Returns the builder.
+         */
+        public Builder enableSimpleResponses(Boolean enableSimpleResponses) {
+            this.enableSimpleResponses = enableSimpleResponses;
             return this;
         }
     }

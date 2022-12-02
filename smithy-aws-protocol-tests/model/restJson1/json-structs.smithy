@@ -6,10 +6,17 @@ $version: "2.0"
 namespace aws.protocoltests.restjson
 
 use aws.protocols#restJson1
+use aws.protocoltests.shared#DateTime
+use aws.protocoltests.shared#EpochSeconds
 use aws.protocoltests.shared#FooEnum
 use aws.protocoltests.shared#FooEnumList
 use aws.protocoltests.shared#FooEnumSet
 use aws.protocoltests.shared#FooEnumMap
+use aws.protocoltests.shared#IntegerEnum
+use aws.protocoltests.shared#IntegerEnumList
+use aws.protocoltests.shared#IntegerEnumSet
+use aws.protocoltests.shared#IntegerEnumMap
+use aws.protocoltests.shared#HttpDate
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -396,6 +403,24 @@ apply JsonTimestamps @httpRequestTests([
         }
     },
     {
+        id: "RestJsonJsonTimestampsWithDateTimeOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of date-time on the target shape works like normal timestamps",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/JsonTimestamps",
+        body: """
+              {
+                  "dateTimeOnTarget": "2014-04-29T18:30:38Z"
+              }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            dateTimeOnTarget: 1398796238
+        }
+    },
+    {
         id: "RestJsonJsonTimestampsWithEpochSecondsFormat",
         documentation: "Ensures that the timestampFormat of epoch-seconds works",
         protocol: restJson1,
@@ -414,6 +439,24 @@ apply JsonTimestamps @httpRequestTests([
         }
     },
     {
+        id: "RestJsonJsonTimestampsWithEpochSecondsOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of epoch-seconds on the target shape works",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/JsonTimestamps",
+        body: """
+              {
+                  "epochSecondsOnTarget": 1398796238
+              }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            epochSecondsOnTarget: 1398796238
+        }
+    },
+    {
         id: "RestJsonJsonTimestampsWithHttpDateFormat",
         documentation: "Ensures that the timestampFormat of http-date works",
         protocol: restJson1,
@@ -429,6 +472,24 @@ apply JsonTimestamps @httpRequestTests([
         },
         params: {
             httpDate: 1398796238
+        }
+    },
+    {
+        id: "RestJsonJsonTimestampsWithHttpDateOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of http-date on the target shape works",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/JsonTimestamps",
+        body: """
+              {
+                  "httpDateOnTarget": "Tue, 29 Apr 2014 18:30:38 GMT"
+              }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            httpDateOnTarget: 1398796238
         }
     },
 ])
@@ -469,6 +530,23 @@ apply JsonTimestamps @httpResponseTests([
         }
     },
     {
+        id: "RestJsonJsonTimestampsWithDateTimeOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of date-time on the target shape works like normal timestamps",
+        protocol: restJson1,
+        code: 200,
+        body: """
+              {
+                  "dateTimeOnTarget": "2014-04-29T18:30:38Z"
+              }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            dateTimeOnTarget: 1398796238
+        }
+    },
+    {
         id: "RestJsonJsonTimestampsWithEpochSecondsFormat",
         documentation: "Ensures that the timestampFormat of epoch-seconds works",
         protocol: restJson1,
@@ -483,6 +561,23 @@ apply JsonTimestamps @httpResponseTests([
         },
         params: {
             epochSeconds: 1398796238
+        }
+    },
+    {
+        id: "RestJsonJsonTimestampsWithEpochSecondsOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of epoch-seconds on the target shape works",
+        protocol: restJson1,
+        code: 200,
+        body: """
+              {
+                  "epochSecondsOnTarget": 1398796238
+              }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            epochSecondsOnTarget: 1398796238
         }
     },
     {
@@ -502,6 +597,23 @@ apply JsonTimestamps @httpResponseTests([
             httpDate: 1398796238
         }
     },
+    {
+        id: "RestJsonJsonTimestampsWithHttpDateOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of http-date on the target shape works",
+        protocol: restJson1,
+        code: 200,
+        body: """
+              {
+                  "httpDateOnTarget": "Tue, 29 Apr 2014 18:30:38 GMT"
+              }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            httpDateOnTarget: 1398796238
+        }
+    },
 ])
 
 structure JsonTimestampsInputOutput {
@@ -510,11 +622,17 @@ structure JsonTimestampsInputOutput {
     @timestampFormat("date-time")
     dateTime: Timestamp,
 
+    dateTimeOnTarget: DateTime,
+
     @timestampFormat("epoch-seconds")
     epochSeconds: Timestamp,
 
+    epochSecondsOnTarget: EpochSeconds,
+
     @timestampFormat("http-date")
     httpDate: Timestamp,
+
+    httpDateOnTarget: HttpDate,
 }
 
 /// This example serializes enums as top level properties, in lists, sets, and maps.
@@ -617,6 +735,110 @@ structure JsonEnumsInputOutput {
     fooEnumList: FooEnumList,
     fooEnumSet: FooEnumSet,
     fooEnumMap: FooEnumMap,
+}
+
+/// This example serializes intEnums as top level properties, in lists, sets, and maps.
+@idempotent
+@http(uri: "/JsonIntEnums", method: "PUT")
+operation JsonIntEnums {
+    input: JsonIntEnumsInputOutput,
+    output: JsonIntEnumsInputOutput
+}
+
+apply JsonIntEnums @httpRequestTests([
+    {
+        id: "RestJsonJsonIntEnums",
+        documentation: "Serializes intEnums as integers",
+        protocol: restJson1,
+        method: "PUT",
+        uri: "/JsonIntEnums",
+        body: """
+              {
+                  "integerEnum1": 1,
+                  "integerEnum2": 2,
+                  "integerEnum3": 3,
+                  "integerEnumList": [
+                      1,
+                      2,
+                      3
+                  ],
+                  "integerEnumSet": [
+                      1,
+                      2
+                  ],
+                  "integerEnumMap": {
+                      "abc": 1,
+                      "def": 2
+                  }
+              }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            integerEnum1: 1,
+            integerEnum2: 2,
+            integerEnum3: 3,
+            integerEnumList: [1, 2, 3],
+            integerEnumSet: [1, 2],
+            integerEnumMap: {
+                "abc": 1,
+                "def": 2
+            }
+        }
+    }
+])
+
+apply JsonIntEnums @httpResponseTests([
+    {
+        id: "RestJsonJsonIntEnums",
+        documentation: "Serializes intEnums as integers",
+        protocol: restJson1,
+        code: 200,
+        body: """
+              {
+                  "integerEnum1": 1,
+                  "integerEnum2": 2,
+                  "integerEnum3": 3,
+                  "integerEnumList": [
+                      1,
+                      2,
+                      3
+                  ],
+                  "integerEnumSet": [
+                      1,
+                      2
+                  ],
+                  "integerEnumMap": {
+                      "abc": 1,
+                      "def": 2
+                  }
+              }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            integerEnum1: 1,
+            integerEnum2: 2,
+            integerEnum3: 3,
+            integerEnumList: [1, 2, 3],
+            integerEnumSet: [1, 2],
+            integerEnumMap: {
+                "abc": 1,
+                "def": 2
+            }
+        }
+    }
+])
+
+structure JsonIntEnumsInputOutput {
+    integerEnum1: IntegerEnum,
+    integerEnum2: IntegerEnum,
+    integerEnum3: IntegerEnum,
+    integerEnumList: IntegerEnumList,
+    integerEnumSet: IntegerEnumSet,
+    integerEnumMap: IntegerEnumMap,
 }
 
 /// Recursive shapes

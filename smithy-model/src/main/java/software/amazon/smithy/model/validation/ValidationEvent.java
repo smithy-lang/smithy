@@ -242,6 +242,31 @@ public final class ValidationEvent implements Comparable<ValidationEvent>, ToNod
     }
 
     /**
+     * Tests if the event ID hierarchically contains the given ID.
+     *
+     * <p>Event IDs that contain dots (.) are hierarchical. An event ID of
+     * {@code "Foo.Bar"} contains the ID {@code "Foo"} and {@code "Foo.Bar"}.
+     * However, an event ID of {@code "Foo"} does not contain the ID
+     * {@code "Foo.Bar"} as {@code "Foo.Bar"} is more specific than {@code "Foo"}.
+     * If an event ID exactly matches the given {@code id}, then it also contains
+     * the ID (for example, {@code "Foo.Bar."} contains {@code "Foo.Bar."}.
+     *
+     * @param id ID to test.
+     * @return Returns true if the event's event ID contains the given {@code id}.
+     */
+    public boolean containsId(String id) {
+        int eventLength = eventId.length();
+        int suppressionLength = id.length();
+        if (suppressionLength == eventLength) {
+            return id.equals(eventId);
+        } else if (suppressionLength > eventLength) {
+            return false;
+        } else {
+            return eventId.startsWith(id) && eventId.charAt(id.length()) == '.';
+        }
+    }
+
+    /**
      * Returns the identifier of the validation event.
      *
      * <p>The validation event identifier can be used to suppress events.

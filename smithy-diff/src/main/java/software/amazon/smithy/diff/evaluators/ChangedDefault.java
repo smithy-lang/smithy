@@ -59,10 +59,11 @@ public final class ChangedDefault extends AbstractDiffEvaluator {
             DefaultTrait oldTrait,
             DefaultTrait newTrait
     ) {
-        // Removing the default trait is always a breaking change.
         if (newTrait == null) {
-            events.add(error(change.getNewShape(),
-                             "@default trait was removed. This will break previously generated code."));
+            if (!isInconsequentialRemovalOfDefaultTrait(model, oldTrait, change.getNewShape())) {
+                events.add(error(change.getNewShape(),
+                                 "@default trait was removed. This will break previously generated code."));
+            }
         } else if (oldTrait == null) {
             if (change.getNewShape().getType() != ShapeType.MEMBER) {
                 events.add(error(change.getNewShape(), newTrait,
@@ -86,6 +87,25 @@ public final class ChangedDefault extends AbstractDiffEvaluator {
                                  + ". New value: " + Node.printJson(newTrait.toNode())));
             }
         }
+    }
+
+    private boolean isInconsequentialRemovalOfDefaultTrait(Model model, DefaultTrait trait, Shape removedFrom) {
+        // Removing a default of null if the target is nullable is not an issue.
+        return removedFrom.asMemberShape()
+                .map(member -> {
+                    if (trait.toNode().isNullNode()) {
+                        // If the target has no defined default, then removing a default(null) trait is fine.
+                        Node targetDefault = model.expectShape(member.getTarget())
+                                .getTrait(DefaultTrait.class)
+                                .map(DefaultTrait::toNode)
+                                .orElse(Node.nullNode()); // If no default, then assume target has a default of null.
+                        return targetDefault.isNullNode();
+                    } else {
+                        // Removing a non-null trait is always an issue.
+                        return false;
+                    }
+                })
+                .orElse(false);
     }
 
     private void evaluateChangedTrait(Model model, MemberShape member, DefaultTrait oldTrait,

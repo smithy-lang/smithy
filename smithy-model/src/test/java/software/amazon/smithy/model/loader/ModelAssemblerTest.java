@@ -55,6 +55,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.ModelSerializer;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -1078,5 +1079,61 @@ public class ModelAssemblerTest {
 
         assertThat(model1, equalTo(model2));
         assertThat(model1, equalTo(model3));
+    }
+
+    @Test
+    public void appliesBoxTraitsToMixinsToo() {
+        Model model1 = Model.assembler()
+                .addImport(getClass().getResource("synthetic-boxing-mixins.smithy"))
+                .assemble()
+                .unwrap();
+
+        // MixedInteger and MixinInteger have synthetic box traits.
+        assertThat(model1.expectShape(ShapeId.from("smithy.example#MixinInteger")).hasTrait(BoxTrait.class), is(true));
+        assertThat(model1.expectShape(ShapeId.from("smithy.example#MixedInteger")).hasTrait(BoxTrait.class), is(true));
+
+        // MixinStruct$bar and MixedStruct$bar have synthetic box traits.
+        StructureShape mixinStruct = model1.expectShape(ShapeId.from("smithy.example#MixinStruct"),
+                                                        StructureShape.class);
+        StructureShape mixedStruct = model1.expectShape(ShapeId.from("smithy.example#MixedStruct"),
+                                                        StructureShape.class);
+        assertThat(mixinStruct.getAllMembers().get("bar").hasTrait(BoxTrait.class), is(true));
+        assertThat(mixinStruct.getAllMembers().get("bar").hasTrait(DefaultTrait.class), is(true));
+        assertThat(mixedStruct.getAllMembers().get("bar").hasTrait(BoxTrait.class), is(true));
+        assertThat(mixedStruct.getAllMembers().get("bar").hasTrait(DefaultTrait.class), is(true));
+
+        // Now ensure round-tripping results in the same model.
+        Node serialized = ModelSerializer.builder().build().serialize(model1);
+        Model model2 = Model.assembler().addDocumentNode(serialized).assemble().unwrap();
+
+        assertThat(model1, equalTo(model2));
+    }
+
+    @Test
+    public void versionTransformsAreAlwaysApplied() {
+        ValidatedResult<Model> result = Model.assembler()
+                .addImport(getClass().getResource("invalid-1.0-model-upgraded.smithy"))
+                .assemble();
+
+        // Ensure that the invalid trait caused the model to have errors.
+        assertThat(result.getValidationEvents(Severity.ERROR), not(empty()));
+
+        // Ensure that the model was created.
+        assertThat(result.getResult().isPresent(), is(true));
+
+        Model model = result.getResult().get();
+
+        // Ensure that the model upgrade transformations happened.
+        Shape myInteger = model.expectShape(ShapeId.from("smithy.example#MyInteger"));
+        Shape fooBaz = model.expectShape(ShapeId.from("smithy.example#Foo$baz"));
+        Shape fooBam = model.expectShape(ShapeId.from("smithy.example#Foo$bam"));
+
+        // These shapes have a default zero value so have a default trait for 2.0.
+        assertThat(myInteger.getAllTraits(), hasKey(DefaultTrait.ID));
+        assertThat(fooBaz.getAllTraits(), hasKey(DefaultTrait.ID));
+
+        // These members are considered boxed in 1.0.
+        assertThat(fooBam.getAllTraits(), hasKey(BoxTrait.ID));
+        assertThat(fooBam.expectTrait(DefaultTrait.class).toNode(), equalTo(Node.nullNode()));
     }
 }

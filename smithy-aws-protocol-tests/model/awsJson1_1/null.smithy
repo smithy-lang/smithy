@@ -16,7 +16,10 @@ use smithy.test#httpResponseTests
         protocol: awsJson1_1,
         body: "{}",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.NullOperation",
+        },
         params: {
             string: null
         },
@@ -33,7 +36,10 @@ use smithy.test#httpResponseTests
                 "string": null
             }""",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.NullOperation",
+        },
         params: {},
         method: "POST",
         uri: "/",
@@ -50,7 +56,10 @@ use smithy.test#httpResponseTests
                 }
             }""",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.NullOperation",
+        },
         params: {
             "sparseStringMap": {
                 "foo": null
@@ -70,7 +79,10 @@ use smithy.test#httpResponseTests
                 ]
             }""",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.NullOperation",
+        },
         params: {
             "sparseStringList": [
                 null

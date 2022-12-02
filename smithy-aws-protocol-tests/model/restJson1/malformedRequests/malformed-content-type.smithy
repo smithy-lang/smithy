@@ -82,7 +82,7 @@ apply MalformedContentTypeWithPayload @httpMalformedRequestTests([
     }
 ])
 
-apply MalformedContentTypeWithGenericString @httpMalformedRequestTests([
+apply MalformedContentTypeWithPayload @httpMalformedRequestTests([
     {
         id: "RestJsonWithPayloadExpectsImpliedContentType",
         documentation: """

@@ -69,7 +69,7 @@ a ``type`` property to define the shape type or ``apply``.
     }
 
 All entries in the ``shapes`` map can contain a ``traits`` property that
-defines the traits attached to the shape. ``traits`` is a map of where
+defines the traits attached to the shape. ``traits`` is a map where
 each key is the absolute shape ID of a trait shape and each value is
 the value to assign to the trait.
 
@@ -496,7 +496,7 @@ shapes defined in JSON support the same properties as the Smithy IDL.
       - Map<String, :ref:`AST shape reference <ast-shape-reference>`>
       - Defines identifier names and shape IDs used to identify the resource.
     * - :ref:`properties <resource-properties>`
-      - :ref:`AST shape reference <ast-shape-reference>`
+      - Map<String, :ref:`AST shape reference <ast-shape-reference>`>
       - Defines a map of property string names to shape IDs that
         enumerate the properties of the resource.
     * - :ref:`create <create-lifecycle>`

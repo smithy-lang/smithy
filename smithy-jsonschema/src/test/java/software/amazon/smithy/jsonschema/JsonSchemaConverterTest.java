@@ -270,6 +270,25 @@ public class JsonSchemaConverterTest {
     }
 
     @Test
+    public void convertsIntegersWhenConfigSet() {
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setUseIntegerType(true);
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("integer-types.smithy"))
+                .assemble()
+                .unwrap();
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .model(model)
+                .config(config)
+                .build()
+                .convert();
+
+        Node expected = Node.parse(
+                IoUtils.toUtf8String(getClass().getResourceAsStream("integer-types.jsonschema.json")));
+        Node.assertEquals(document.toNode(), expected);
+    }
+
+    @Test
     public void supportsRangeTrait() {
         IntegerShape shape = IntegerShape.builder()
                 .id("smithy.example#Number")

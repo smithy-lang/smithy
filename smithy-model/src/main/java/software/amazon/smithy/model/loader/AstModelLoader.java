@@ -194,7 +194,7 @@ final class AstModelLoader {
                 return loadOperation(id, value);
             case "apply":
                 LoaderUtils.checkForAdditionalProperties(value, id, APPLY_PROPERTIES).ifPresent(this::emit);
-                applyTraits(id, value.expectObjectMember(TRAITS));
+                value.getObjectMember(TRAITS).ifPresent(traits -> applyTraits(id, traits));
                 return null;
             default:
                 throw new SourceException("Invalid shape `type`: " + type, value);

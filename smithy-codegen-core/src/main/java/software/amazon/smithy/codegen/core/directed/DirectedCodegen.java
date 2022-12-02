@@ -100,6 +100,23 @@ public interface DirectedCodegen<C extends CodegenContext<S, ?, I>, S, I extends
     void generateEnumShape(GenerateEnumDirective<C, S> directive);
 
     /**
+     * Generates the code needed for an intEnum shape.
+     *
+     * @param directive Directive to perform.
+     */
+    void generateIntEnumShape(GenerateIntEnumDirective<C, S> directive);
+
+    /**
+     * Performs any necessary code generation before all shapes are generated,
+     * using the created codegen context object.
+     *
+     * @param directive Directive to perform.
+     */
+    default void customizeBeforeShapeGeneration(CustomizeDirective<C, S> directive) {
+        // Does nothing by default.
+    }
+
+    /**
      * Performs any necessary code generation after all shapes are generated,
      * using the created codegen context object before integrations perform
      * customizations.

@@ -93,7 +93,7 @@ public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBui
     }
 
     /**
-     * Gets an immuatable map of authorizer names to their definitions.
+     * Gets an immutable map of authorizer names to their definitions.
      *
      * @return Returns the authorizers.
      */

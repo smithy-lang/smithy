@@ -18,7 +18,6 @@ package software.amazon.smithy.rulesengine.traits;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
@@ -39,6 +38,7 @@ public class ContextIndexTest {
                 .assemble()
                 .unwrap();
     }
+
     @Test
     public void indexesClientContextParams() {
         ContextIndex index = ContextIndex.of(model);

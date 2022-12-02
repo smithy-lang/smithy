@@ -1,5 +1,5 @@
 // This file defines test cases that test HTTP streaming bindings.
-// See: https://awslabs.github.io/smithy/1.0/spec/core/stream-traits.html?highlight=streaming#streaming-trait
+// See: https://smithy.io/2.0/spec/streaming.html
 
 $version: "2.0"
 

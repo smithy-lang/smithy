@@ -6,7 +6,7 @@ Idempotency
 ===========
 
 Operations marked with the :ref:`readonly-trait` or :ref:`idempotent-trait`
-are considered idempotent as defined in `RFC 7231, section 4.2.2`_. Operations
+are considered idempotent as defined in :rfc:`7231#section-4.2.2`. Operations
 that contain a top-level input member marked with the :ref:`idempotencytoken-trait`
 that are provided a token for the member are also considered idempotent. All
 other operations SHOULD be considered unsafe to retry unless the response to
@@ -36,7 +36,7 @@ Only a single member of the input of an operation can be targeted by the
 ``idempotencyToken`` trait; only top-level structure members of the input of an
 operation are considered.
 
-A unique identifier (typically a UUID_) SHOULD be used by the client when
+A unique identifier (typically a :rfc:`UUID <4122>`) SHOULD be used by the client when
 providing the value for the request token member. When the request token is
 present, the service MUST ensure that the request is not replayed within a
 service-defined period of time. This allows the client to safely retry
@@ -269,9 +269,9 @@ explicitly on the operation.
     }
 
 Attaching the ``paginated`` trait to a service provides default pagination
-configuration settings to all operations bound within the closure of the
-service. Pagination settings configured on an operation override any inherited
-service setting.
+configuration settings to all ``paginated`` operations bound within the closure
+of the service. Pagination settings configured on an operation override any
+inherited service setting.
 
 The following example defines a paginated operation that inherits some
 settings from a service.
@@ -468,5 +468,3 @@ The following changes are considered backward compatible:
 1. Adding the ``paginated`` trait to an existing operation.
 2. Adding the ``pageSize`` member to an existing ``paginated`` trait.
 
-.. _UUID: https://tools.ietf.org/html/rfc4122
-.. _RFC 7231, section 4.2.2: https://datatracker.ietf.org/doc/html/rfc7231#section-4.2.2
