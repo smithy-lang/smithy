@@ -18,6 +18,7 @@ package software.amazon.smithy.cli.commands;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import software.amazon.smithy.cli.Ansi;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
@@ -60,8 +61,9 @@ public class SmithyCommand implements Command {
 
     @Override
     public void printHelp(Arguments arguments, CliPrinter printer) {
+        Ansi ansi = printer.ansi();
         printer.println(String.format("Usage: %s [-h | --help] [--version] <command> [<args>]",
-                                      printer.style("smithy", Style.BRIGHT_WHITE, Style.UNDERLINE)));
+                                      ansi.style("smithy", Style.BRIGHT_WHITE, Style.UNDERLINE)));
         printer.println("");
         printer.println("Available commands:");
 
@@ -77,7 +79,7 @@ public class SmithyCommand implements Command {
         for (Command command : commands) {
             if (!command.isHidden()) {
                 printer.println(String.format("    %-" + longestName + "s %s",
-                                              printer.style(command.getName(), Style.YELLOW),
+                                              ansi.style(command.getName(), Style.YELLOW),
                                               command.getSummary()));
             }
         }

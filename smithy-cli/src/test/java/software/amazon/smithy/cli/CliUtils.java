@@ -27,8 +27,8 @@ public final class CliUtils {
     }
 
     private static Result run(Cli cli, String... args) {
-        CapturedPrinter stdout = new CapturedPrinter();
-        CapturedPrinter stderr = new CapturedPrinter();
+        CliPrinter stdout = new BufferPrinter();
+        CliPrinter stderr = new BufferPrinter();
         cli.stdout(stdout);
         cli.stderr(stderr);
         int result;
@@ -40,16 +40,7 @@ public final class CliUtils {
             result = e.code;
         }
 
-        return new Result(result, stdout.result.toString(), stderr.result.toString());
-    }
-
-    private static class CapturedPrinter implements CliPrinter {
-        private final StringBuilder result = new StringBuilder();
-
-        @Override
-        public synchronized void println(String text) {
-            result.append(text).append(System.lineSeparator());
-        }
+        return new Result(result, stdout.toString(), stderr.toString());
     }
 
     public static final class Result {

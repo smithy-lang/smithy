@@ -15,109 +15,59 @@
 
 package software.amazon.smithy.cli;
 
-import java.util.function.IntConsumer;
-
 /**
  * Parameters used to change the ANSI public style of text.
  */
-@FunctionalInterface
-public interface Style {
+public enum Style {
+    BOLD(1),
+    FAINT(2),
+    ITALIC(3),
+    UNDERLINE(4),
 
-    Style BOLD = new SingularCode(1);
-    Style FAINT = new SingularCode(2);
-    Style ITALIC = new SingularCode(3);
-    Style UNDERLINE = new SingularCode(4);
+    BLACK(30),
+    RED(31),
+    GREEN(32),
+    YELLOW(33),
+    BLUE(34),
+    MAGENTA(35),
+    CYAN(36),
+    WHITE(37),
 
-    Style BLACK = new SingularCode(30);
-    Style RED = new SingularCode(31);
-    Style GREEN = new SingularCode(32);
-    Style YELLOW = new SingularCode(33);
-    Style BLUE = new SingularCode(34);
-    Style MAGENTA = new SingularCode(35);
-    Style CYAN = new SingularCode(36);
-    Style WHITE = new SingularCode(37);
+    BRIGHT_BLACK(90),
+    BRIGHT_RED(91),
+    BRIGHT_GREEN(92),
+    BRIGHT_YELLOW(93),
+    BRIGHT_BLUE(94),
+    BRIGHT_MAGENTA(95),
+    BRIGHT_CYAN(96),
+    BRIGHT_WHITE(97),
 
-    Style BRIGHT_BLACK = new SingularCode(90);
-    Style BRIGHT_RED = new SingularCode(91);
-    Style BRIGHT_GREEN = new SingularCode(92);
-    Style BRIGHT_YELLOW = new SingularCode(93);
-    Style BRIGHT_BLUE = new SingularCode(94);
-    Style BRIGHT_MAGENTA = new SingularCode(95);
-    Style BRIGHT_CYAN = new SingularCode(96);
-    Style BRIGHT_WHITE = new SingularCode(97);
+    BG_BLACK(40),
+    BG_RED(41),
+    BG_GREEN(42),
+    BG_YELLOW(43),
+    BG_BLUE(44),
+    BG_MAGENTA(45),
+    BG_CYAN(46),
+    BG_WHITE(47),
 
-    Style BG_BLACK = new SingularCode(40);
-    Style BG_RED = new SingularCode(41);
-    Style BG_GREEN = new SingularCode(42);
-    Style BG_YELLOW = new SingularCode(43);
-    Style BG_BLUE = new SingularCode(44);
-    Style BG_MAGENTA = new SingularCode(45);
-    Style BG_CYAN = new SingularCode(46);
-    Style BG_WHITE = new SingularCode(47);
+    BG_BRIGHT_BLACK(100),
+    BG_BRIGHT_RED(101),
+    BG_BRIGHT_GREEN(102),
+    BG_BRIGHT_YELLOW(103),
+    BG_BRIGHT_BLUE(104),
+    BG_BRIGHT_MAGENTA(105),
+    BG_BRIGHT_CYAN(106),
+    BG_BRIGHT_WHITE(107);
 
-    Style BG_BRIGHT_BLACK = new SingularCode(100);
-    Style BG_BRIGHT_RED = new SingularCode(101);
-    Style BG_BRIGHT_GREEN = new SingularCode(102);
-    Style BG_BRIGHT_YELLOW = new SingularCode(103);
-    Style BG_BRIGHT_BLUE = new SingularCode(104);
-    Style BG_BRIGHT_MAGENTA = new SingularCode(105);
-    Style BG_BRIGHT_CYAN = new SingularCode(106);
-    Style BG_BRIGHT_WHITE = new SingularCode(107);
+    private final String code;
 
-    /**
-     * Pushes one or more ANSI color codes to the consumer.
-     *
-     * <p>Most implementations will push a single code, but multiple
-     * codes are needed to do things like use 8-bit colors
-     * (e.g., 38+5+206 to make pink foreground text).
-     *
-     * @param codeConsumer Consumer to push integers to.
-     */
-    void pushCodes(IntConsumer codeConsumer);
-
-    /**
-     * Formats the given text with ANSI escapes.
-     *
-     * <p>Each {@code styles} is one or more ANSI escape codes in the format of
-     * "1", "38;5;206" to create an 8-bit color, etc.
-     *
-     * @param text Text to format.
-     * @param styles Styles to apply.
-     * @return Returns the formatted text, and then resets the formatting.
-     * @see <a href="https://man7.org/linux/man-pages/man4/console_codes.4.html">ANSI console codes</a>
-     */
-    static String format(String text, Style... styles) {
-        StringBuilder result = new StringBuilder("\033[");
-        IntConsumer consumer = result::append;
-        boolean isAfterFirst = false;
-
-        for (Style style : styles) {
-            if (isAfterFirst) {
-                result.append(';');
-            }
-            style.pushCodes(consumer);
-            isAfterFirst = true;
-        }
-
-        result.append('m');
-        result.append(text);
-        result.append("\033[0m");
-        return result.toString();
+    Style(int code) {
+        this.code = String.valueOf(code);
     }
 
-    /**
-     * A simple implementation of {@code Style} that pushes a single code.
-     */
-    final class SingularCode implements Style {
-        private final int code;
-
-        public SingularCode(int code) {
-            this.code = code;
-        }
-
-        @Override
-        public void pushCodes(IntConsumer codeConsumer) {
-            codeConsumer.accept(code);
-        }
+    @Override
+    public String toString() {
+        return code;
     }
 }

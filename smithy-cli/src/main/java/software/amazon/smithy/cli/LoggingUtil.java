@@ -132,9 +132,9 @@ final class LoggingUtil {
             if (isLoggable(record)) {
                 String formatted = formatter.format(record);
                 if (record.getLevel().equals(Level.SEVERE)) {
-                    printer.println(printer.style(formatted, Style.RED));
+                    printer.println(formatted, Style.RED);
                 } else if (record.getLevel().equals(Level.WARNING)) {
-                    printer.println(printer.style(formatted, Style.YELLOW));
+                    printer.println(formatted, Style.YELLOW);
                 } else {
                     printer.println(formatted);
                 }

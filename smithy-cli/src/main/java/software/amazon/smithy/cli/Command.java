@@ -47,8 +47,7 @@ public interface Command {
     /**
      * Gets the long description of the command.
      *
-     * @param printer CliPrinter used in case formatting is needed via
-     *                {@link CliPrinter#style(String, Style...)}.
+     * @param printer Printer used to style strings.
      * @return Returns the long description.
      */
     default String getDocumentation(CliPrinter printer) {

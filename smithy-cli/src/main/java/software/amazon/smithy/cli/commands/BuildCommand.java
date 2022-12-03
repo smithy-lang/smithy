@@ -127,12 +127,12 @@ final class BuildCommand extends ClasspathCommand {
             Style ansiColor = resultConsumer.failedProjections.isEmpty()
                               ? Style.BRIGHT_GREEN
                               : Style.BRIGHT_YELLOW;
-            env.stderr().println(env.stderr().style(
+            env.stderr().println(
                     String.format("Smithy built %s projection(s), %s plugin(s), and %s artifacts",
                                   resultConsumer.projectionCount,
                                   resultConsumer.pluginCount,
                                   resultConsumer.artifactCount),
-                    Style.BOLD, ansiColor));
+                    Style.BOLD, ansiColor);
         }
 
         // Throw an exception if any errors occurred.
@@ -166,25 +166,29 @@ final class BuildCommand extends ClasspathCommand {
             StringWriter writer = new StringWriter();
             writer.write(String.format("%nProjection %s failed: %s%n", name, exception.toString()));
             exception.printStackTrace(new PrintWriter(writer));
-            printer.println(printer.style(writer.toString(), Style.RED));
+            printer.println(writer.toString(), Style.RED);
         }
 
         @Override
         public void accept(ProjectionResult result) {
+            try (CliPrinter.Buffer buffer = printer.buffer()) {
+                printProjectionResult(buffer, result);
+            }
+        }
+
+        private void printProjectionResult(CliPrinter.Buffer buffer, ProjectionResult result) {
             if (result.isBroken()) {
                 // Write out validation errors as they occur.
                 failedProjections.add(result.getProjectionName());
-                StringBuilder message = new StringBuilder(System.lineSeparator());
-                message.append(result.getProjectionName())
-                        .append(" has a model that failed validation")
-                        .append(System.lineSeparator());
+                buffer
+                        .println()
+                        .print(result.getProjectionName(), Style.RED)
+                        .println(" has a model that failed validation");
                 result.getEvents().forEach(event -> {
                     if (event.getSeverity() == Severity.DANGER || event.getSeverity() == Severity.ERROR) {
-                        message.append(event).append(System.lineSeparator());
+                        buffer.println(event.toString(), Style.RED);
                     }
                 });
-                // Always print errors.
-                printer.println(printer.style(message.toString(), Style.RED));
             } else {
                 // Only increment the projection count if it succeeded.
                 projectionCount.incrementAndGet();
@@ -199,7 +203,7 @@ final class BuildCommand extends ClasspathCommand {
             if (!quiet) {
                 String message = String.format("Completed projection %s (%d shapes): %s",
                                                result.getProjectionName(), result.getModel().toSet().size(), root);
-                printer.println(printer.style(message, Style.GREEN));
+                buffer.println(message, Style.GREEN);
             }
 
             // Increment the total number of artifacts written.

@@ -62,10 +62,10 @@ final class CommandUtils {
             if (event.getSeverity().ordinal() >= minSeverity.ordinal()) {
                 if (event.getSeverity() == Severity.WARNING) {
                     // Only log warnings when not quiet
-                    printer.println(printer.style(formatter.format(event), Style.YELLOW));
+                    printer.println(formatter.format(event), Style.YELLOW);
                 } else if (event.getSeverity() == Severity.DANGER || event.getSeverity() == Severity.ERROR) {
                     // Always output error and danger events, even when quiet.
-                    printer.println(printer.style(formatter.format(event), Style.RED));
+                    printer.println(formatter.format(event), Style.RED);
                 } else {
                     printer.println(formatter.format(event));
                 }
@@ -74,6 +74,7 @@ final class CommandUtils {
 
         CommandUtils.handleModelDiscovery(buildOptions, assembler, classLoader, config);
         CommandUtils.handleUnknownTraitsOption(buildOptions, assembler);
+
         config.getSources().forEach(assembler::addImport);
         models.forEach(assembler::addImport);
         config.getImports().forEach(assembler::addImport);

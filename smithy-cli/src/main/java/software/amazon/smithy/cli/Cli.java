@@ -15,8 +15,9 @@
 
 package software.amazon.smithy.cli;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
@@ -31,9 +32,8 @@ import java.util.logging.Logger;
 public final class Cli {
 
     private static final Logger LOGGER = Logger.getLogger(Cli.class.getName());
-    private CliPrinter stdoutPrinter;
-    private CliPrinter stdErrPrinter;
-
+    private CliPrinter stdout;
+    private CliPrinter stderr;
     private final ClassLoader classLoader;
     private final Command command;
 
@@ -60,109 +60,63 @@ public final class Cli {
         StandardOptions standardOptions = new StandardOptions();
         arguments.addReceiver(standardOptions);
 
-        if (stdoutPrinter == null) {
-            stdoutPrinter = System.out::println;
+        if (stdout == null || stderr == null) {
+            Ansi ansi = Ansi.detect();
+            if (stdout == null) {
+                stdout(CliPrinter.fromOutputStream(ansi, System.out));
+            }
+            if (stderr == null) {
+                stderr(CliPrinter.fromOutputStream(ansi, System.err));
+            }
         }
-
-        if (stdErrPrinter == null) {
-            stdErrPrinter = System.err::println;
-        }
-
-        // Use or disable ANSI escapes in the printers.
-        CliPrinter out = new ColorPrinter(stdoutPrinter);
-        CliPrinter err = new ColorPrinter(stdErrPrinter);
 
         // Setup logging after parsing all arguments.
         arguments.onComplete((opts, positional) -> {
-            LoggingUtil.configureLogging(opts.getReceiver(StandardOptions.class), err);
+            LoggingUtil.configureLogging(opts.getReceiver(StandardOptions.class), stderr);
             LOGGER.fine(() -> "Running CLI command: " + Arrays.toString(args));
         });
 
         try {
-            return command.execute(arguments, new Command.Env(out, err, classLoader));
-        } catch (Exception e) {
-            err.printException(e, standardOptions.stackTrace());
-            throw CliError.wrap(e);
-        } finally {
             try {
-                LoggingUtil.restoreLogging();
-            } catch (RuntimeException e) {
-                // Show the error, but don't fail the CLI since most invocations are one-time use.
-                err.println(err.style("Unable to restore logging to previous settings", Style.RED));
-                err.printException(e, standardOptions.stackTrace());
-            }
-        }
-    }
-
-    public void stdout(CliPrinter printer) {
-        stdoutPrinter = synchronizedPrinter(printer);
-    }
-
-    public void stderr(CliPrinter printer) {
-        stdErrPrinter = synchronizedPrinter(printer);
-    }
-
-    private CliPrinter synchronizedPrinter(CliPrinter printer) {
-        return new CliPrinter() {
-            @Override
-            public void println(String text) {
-                synchronized (printer) {
-                    printer.println(text);
+                Command.Env env = new Command.Env(stdout, stderr, classLoader);
+                return command.execute(arguments, env);
+            } catch (Exception e) {
+                printException(e, standardOptions.stackTrace());
+                throw CliError.wrap(e);
+            } finally {
+                try {
+                    LoggingUtil.restoreLogging();
+                } catch (RuntimeException e) {
+                    // Show the error, but don't fail the CLI since most invocations are one-time use.
+                    printException(e, standardOptions.stackTrace());
                 }
             }
-
-            @Override
-            public String style(String text, Style... styles) {
-                return printer.style(text, styles);
-            }
-        };
+        } finally {
+            stdout.flush();
+            stderr.flush();
+        }
     }
 
-    /**
-     * A CliPrinter that prints ANSI colors if able and allowed.
-     */
-    private static final class ColorPrinter implements CliPrinter {
-        private final CliPrinter delegate;
-        private final boolean ansiSupported = isAnsiColorSupported();
+    public void stdout(CliPrinter stdout) {
+        this.stdout = stdout;
+    }
 
-        ColorPrinter(CliPrinter delegate) {
-            this.delegate = delegate;
-        }
+    public void stderr(CliPrinter stderr) {
+        this.stderr = stderr;
+    }
 
-        private static boolean isAnsiColorSupported() {
-            if (EnvironmentVariable.FORCE_COLOR.isSet()) {
-                return true;
+    private void printException(Throwable e, boolean stacktrace) {
+        if (!stacktrace) {
+            stderr.println(e.getMessage(), Style.RED);
+        } else {
+            try (CliPrinter.Buffer buffer = stderr.buffer()) {
+                StringWriter writer = new StringWriter();
+                e.printStackTrace(new PrintWriter(writer));
+                String result = writer.toString();
+                int positionOfName = result.indexOf(':');
+                buffer.print(result.substring(0, positionOfName), Style.RED, Style.UNDERLINE);
+                buffer.println(result.substring(positionOfName));
             }
-
-            // Disable colors if NO_COLOR is set to anything.
-            if (EnvironmentVariable.NO_COLOR.isSet()) {
-                return false;
-            }
-
-            String term = EnvironmentVariable.TERM.get();
-
-            // If term is set to "dumb", then don't use colors.
-            if (Objects.equals(term, "dumb")) {
-                return false;
-            }
-
-            // If TERM isn't set at all and Windows is detected, then don't use colors.
-            if (term == null && System.getProperty("os.name").contains("win")) {
-                return false;
-            }
-
-            // Disable colors if no console is associated.
-            return System.console() != null;
-        }
-
-        @Override
-        public void println(String text) {
-            delegate.println(text);
-        }
-
-        @Override
-        public String style(String text, Style... styles) {
-            return ansiSupported ? delegate.style(text, styles) : text;
         }
     }
 }

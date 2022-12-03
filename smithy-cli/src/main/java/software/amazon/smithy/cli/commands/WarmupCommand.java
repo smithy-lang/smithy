@@ -17,7 +17,6 @@ package software.amazon.smithy.cli.commands;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -82,7 +81,7 @@ final class WarmupCommand extends ClasspathCommand {
 
             new ValidateCommand("a", (c, e) -> resolver).execute(arguments, env);
             new BuildCommand("a", (c, e) -> resolver).execute(arguments, env);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
