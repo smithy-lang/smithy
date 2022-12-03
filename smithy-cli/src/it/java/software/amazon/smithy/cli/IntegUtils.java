@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import software.amazon.smithy.utils.IoUtils;
+import software.amazon.smithy.utils.MapUtils;
 
 public final class IntegUtils {
 
@@ -47,7 +48,7 @@ public final class IntegUtils {
     }
 
     public static void run(String projectName, List<String> args, Consumer<RunResult> consumer) {
-        run(projectName, args, Collections.emptyMap(), consumer);
+        run(projectName, args, MapUtils.of(EnvironmentVariable.NO_COLOR.toString(), "true"), consumer);
     }
 
     public static void run(String projectName, List<String> args, Map<String, String> env,
@@ -60,7 +61,7 @@ public final class IntegUtils {
         try {
             String cacheDir = Files.createTempDirectory("foo").toString();
             Map<String, String> actualEnv = new HashMap<>(env);
-            actualEnv.put("SMITHY_MAVEN_CACHE", cacheDir);
+            actualEnv.put(EnvironmentVariable.SMITHY_MAVEN_CACHE.toString(), cacheDir);
             withProject(projectName, path -> consumer.accept(run(path, args, actualEnv)));
         } catch (IOException e) {
             throw new RuntimeException(e);

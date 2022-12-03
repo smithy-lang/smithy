@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.cli.commands;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -161,15 +163,10 @@ final class BuildCommand extends ClasspathCommand {
         @Override
         public void accept(String name, Throwable exception) {
             failedProjections.add(name);
-            StringBuilder message = new StringBuilder(
-                    String.format("%nProjection %s failed: %s%n", name, exception.toString()));
-
-            for (StackTraceElement element : exception.getStackTrace()) {
-                message.append(element).append(System.lineSeparator());
-            }
-
-            // Always print errors.
-            printer.println(printer.style(message.toString(), Style.RED));
+            StringWriter writer = new StringWriter();
+            writer.write(String.format("%nProjection %s failed: %s%n", name, exception.toString()));
+            exception.printStackTrace(new PrintWriter(writer));
+            printer.println(printer.style(writer.toString(), Style.RED));
         }
 
         @Override

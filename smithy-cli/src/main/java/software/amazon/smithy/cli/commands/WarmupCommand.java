@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import software.amazon.smithy.build.model.MavenRepository;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.Arguments;
+import software.amazon.smithy.cli.EnvironmentVariable;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.cli.dependencies.MavenDependencyResolver;
 
@@ -53,7 +54,7 @@ final class WarmupCommand extends ClasspathCommand {
 
     @Override
     int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env, List<String> models) {
-        if (System.getenv("SMITHY_WARMUP_INTERNAL_ONLY") == null) {
+        if (EnvironmentVariable.getByName("SMITHY_WARMUP_INTERNAL_ONLY") == null) {
             throw new UnsupportedOperationException("The warmup command is for internal use only and may "
                                                     + "be removed in the future");
         }

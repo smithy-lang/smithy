@@ -30,6 +30,7 @@ import software.amazon.smithy.build.model.MavenRepository;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
+import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.ConfigOptions;
 import software.amazon.smithy.cli.EnvironmentVariable;
 import software.amazon.smithy.cli.SmithyCli;
@@ -101,32 +102,35 @@ abstract class ClasspathCommand extends SimpleCommand {
             Env env,
             Consumer<ClassLoader> consumer
     ) {
-        BuildOptions.DependencyMode mode = buildOptions.dependencyMode();
         Set<String> dependencies = smithyBuildConfig.getMaven()
                 .map(MavenConfig::getDependencies)
                 .orElse(Collections.emptySet());
 
+        String dependencyMode = EnvironmentVariable.SMITHY_DEPENDENCY_MODE.get();
         boolean useIsolation = false;
-        switch (mode) {
-            case FORBID:
+        switch (dependencyMode) {
+            case "forbid":
                 if (!dependencies.isEmpty()) {
                     throw new DependencyResolverException(String.format(
                             "%s is set to 'forbid', but the following Maven dependencies are defined in "
                             + "smithy-build.json: %s. Dependencies are forbidden in this configuration.",
-                            BuildOptions.DEPENDENCY_MODE, dependencies));
+                            EnvironmentVariable.SMITHY_DEPENDENCY_MODE, dependencies));
                 }
                 break;
-            case IGNORE:
+            case "ignore":
                 if (!dependencies.isEmpty()) {
                     LOGGER.warning(() -> String.format(
                             "%s is set to 'ignore', and the following Maven dependencies are defined in "
                             + "smithy-build.json: %s. If the build fails, then you may need to manually configure "
-                            + "the classpath.", BuildOptions.DEPENDENCY_MODE, dependencies));
+                            + "the classpath.", EnvironmentVariable.SMITHY_DEPENDENCY_MODE, dependencies));
                 }
                 break;
-            case STANDARD:
-            default:
+            case "standard":
                 useIsolation = !dependencies.isEmpty();
+                break;
+            default:
+                throw new CliError(String.format("Unknown %s setting: '%s'",
+                                                 EnvironmentVariable.SMITHY_DEPENDENCY_MODE, dependencyMode));
         }
 
         if (useIsolation) {
@@ -178,7 +182,7 @@ abstract class ClasspathCommand extends SimpleCommand {
 
     private static void addConfiguredMavenRepos(SmithyBuildConfig config, DependencyResolver resolver) {
         // Environment variables take precedence over config files.
-        String envRepos = EnvironmentVariable.SMITHY_MAVEN_REPOS.getValue();
+        String envRepos = EnvironmentVariable.SMITHY_MAVEN_REPOS.get();
         if (envRepos != null) {
             for (String repo : envRepos.split("\\|")) {
                 resolver.addRepository(MavenRepository.builder().url(repo.trim()).build());

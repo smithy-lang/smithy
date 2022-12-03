@@ -16,7 +16,7 @@
 package software.amazon.smithy.cli;
 
 import java.util.Arrays;
-import java.util.function.Consumer;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
@@ -31,13 +31,8 @@ import java.util.logging.Logger;
 public final class Cli {
 
     private static final Logger LOGGER = Logger.getLogger(Cli.class.getName());
-    private static CliPrinter deprecatedStdOut;
-
-    // Delegate to the stdout consumer by default since this can change.
-    private CliPrinter stdoutPrinter = new CliPrinter.ConsumerPrinter(str -> System.out.print(str));
-
-    // Don't use a method reference in case System.err is changed after initialization.
-    private CliPrinter stdErrPrinter = new CliPrinter.ConsumerPrinter(str -> System.err.print(str));
+    private CliPrinter stdoutPrinter;
+    private CliPrinter stdErrPrinter;
 
     private final ClassLoader classLoader;
     private final Command command;
@@ -51,11 +46,6 @@ public final class Cli {
     public Cli(Command command, ClassLoader classLoader) {
         this.command = command;
         this.classLoader = classLoader;
-
-        if (deprecatedStdOut != null) {
-            stdout(deprecatedStdOut);
-            stderr(deprecatedStdOut);
-        }
     }
 
     /**
@@ -70,10 +60,17 @@ public final class Cli {
         StandardOptions standardOptions = new StandardOptions();
         arguments.addReceiver(standardOptions);
 
-        // Use or disable ANSI escapes in the printers. Note that determining the color setting is deferred
-        // using a Supplier to allow the CLI parameters to be fully resolved.
-        CliPrinter out = new CliPrinter.ColorPrinter(stdoutPrinter, standardOptions::colorSetting);
-        CliPrinter err = new CliPrinter.ColorPrinter(stdErrPrinter, standardOptions::colorSetting);
+        if (stdoutPrinter == null) {
+            stdoutPrinter = System.out::println;
+        }
+
+        if (stdErrPrinter == null) {
+            stdErrPrinter = System.err::println;
+        }
+
+        // Use or disable ANSI escapes in the printers.
+        CliPrinter out = new ColorPrinter(stdoutPrinter);
+        CliPrinter err = new ColorPrinter(stdErrPrinter);
 
         // Setup logging after parsing all arguments.
         arguments.onComplete((opts, positional) -> {
@@ -98,17 +95,74 @@ public final class Cli {
     }
 
     public void stdout(CliPrinter printer) {
-        stdoutPrinter = printer;
+        stdoutPrinter = synchronizedPrinter(printer);
     }
 
     public void stderr(CliPrinter printer) {
-        stdErrPrinter = printer;
+        stdErrPrinter = synchronizedPrinter(printer);
     }
 
-    // This method exists to offer compatibility with older Smithy Gradle plugins and silence
-    // their build warning messages. This method may be removed in the future. Use instance methods instead.
-    @Deprecated
-    public static void setStdout(Consumer<String> consumer) {
-        deprecatedStdOut = new CliPrinter.ConsumerPrinter(text -> consumer.accept(text.toString()));
+    private CliPrinter synchronizedPrinter(CliPrinter printer) {
+        return new CliPrinter() {
+            @Override
+            public void println(String text) {
+                synchronized (printer) {
+                    printer.println(text);
+                }
+            }
+
+            @Override
+            public String style(String text, Style... styles) {
+                return printer.style(text, styles);
+            }
+        };
+    }
+
+    /**
+     * A CliPrinter that prints ANSI colors if able and allowed.
+     */
+    private static final class ColorPrinter implements CliPrinter {
+        private final CliPrinter delegate;
+        private final boolean ansiSupported = isAnsiColorSupported();
+
+        ColorPrinter(CliPrinter delegate) {
+            this.delegate = delegate;
+        }
+
+        private static boolean isAnsiColorSupported() {
+            if (EnvironmentVariable.FORCE_COLOR.isSet()) {
+                return true;
+            }
+
+            // Disable colors if NO_COLOR is set to anything.
+            if (EnvironmentVariable.NO_COLOR.isSet()) {
+                return false;
+            }
+
+            String term = EnvironmentVariable.TERM.get();
+
+            // If term is set to "dumb", then don't use colors.
+            if (Objects.equals(term, "dumb")) {
+                return false;
+            }
+
+            // If TERM isn't set at all and Windows is detected, then don't use colors.
+            if (term == null && System.getProperty("os.name").contains("win")) {
+                return false;
+            }
+
+            // Disable colors if no console is associated.
+            return System.console() != null;
+        }
+
+        @Override
+        public void println(String text) {
+            delegate.println(text);
+        }
+
+        @Override
+        public String style(String text, Style... styles) {
+            return ansiSupported ? delegate.style(text, styles) : text;
+        }
     }
 }

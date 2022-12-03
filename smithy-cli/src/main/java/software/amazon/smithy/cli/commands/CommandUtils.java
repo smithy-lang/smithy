@@ -26,6 +26,7 @@ import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
 import software.amazon.smithy.cli.Command;
+import software.amazon.smithy.cli.EnvironmentVariable;
 import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.model.Model;
@@ -101,8 +102,17 @@ final class CommandUtils {
     ) {
         if (options.discoverClasspath() != null) {
             discoverModelsWithClasspath(options.discoverClasspath(), assembler);
-        } else if (options.useModelDiscovery(config)) {
+        } else if (shouldDiscoverDependencies(options, config)) {
             assembler.discoverModels(baseLoader);
+        }
+    }
+
+    private static boolean shouldDiscoverDependencies(BuildOptions options, SmithyBuildConfig config) {
+        if (options.discover()) {
+            return true;
+        } else {
+            return config.getMaven().isPresent()
+                   && EnvironmentVariable.SMITHY_DEPENDENCY_MODE.get().equals("standard");
         }
     }
 

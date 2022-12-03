@@ -18,10 +18,15 @@ package software.amazon.smithy.cli;
 public final class CliUtils {
 
     public static Result runSmithy(String... args) {
-        return run(SmithyCli.create().createCli(), args);
+        try {
+            EnvironmentVariable.NO_COLOR.set("true");
+            return run(SmithyCli.create().createCli(), args);
+        } finally {
+            EnvironmentVariable.NO_COLOR.clear();
+        }
     }
 
-    public static Result run(Cli cli, String... args) {
+    private static Result run(Cli cli, String... args) {
         CapturedPrinter stdout = new CapturedPrinter();
         CapturedPrinter stderr = new CapturedPrinter();
         cli.stdout(stdout);

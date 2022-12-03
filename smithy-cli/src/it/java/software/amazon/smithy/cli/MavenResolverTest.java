@@ -132,25 +132,31 @@ public class MavenResolverTest {
 
     @Test
     public void canIgnoreDependencyResolution() {
-        IntegUtils.run("aws-model", ListUtils.of("validate", "--dependency-mode", "ignore", "model"), result -> {
+        IntegUtils.run("aws-model", ListUtils.of("validate", "model"),
+                       MapUtils.of(EnvironmentVariable.SMITHY_DEPENDENCY_MODE.toString(), "ignore"),
+                       result -> {
             assertThat(result.getExitCode(), equalTo(1));
-            assertThat(result.getOutput(), containsString("--dependency-mode is set to 'ignore'"));
         });
     }
 
     @Test
     public void canForbidDependencyResolution() {
-        IntegUtils.run("aws-model", ListUtils.of("validate", "--dependency-mode", "forbid", "model"), result -> {
+        IntegUtils.run("aws-model", ListUtils.of("validate", "model"),
+                       MapUtils.of(EnvironmentVariable.SMITHY_DEPENDENCY_MODE.toString(), "forbid"),
+                       result -> {
             assertThat(result.getExitCode(), equalTo(1));
-            assertThat(result.getOutput(), containsString("--dependency-mode is set to 'forbid'"));
+            assertThat(result.getOutput(), containsString("set to 'forbid'"));
         });
     }
 
     @Test
     public void validatesDependencyResolution() {
-        IntegUtils.run("aws-model", ListUtils.of("validate", "--dependency-mode", "Beeblebrox", "model"), result -> {
+        IntegUtils.run("aws-model",
+                       ListUtils.of("validate", "model"),
+                       MapUtils.of(EnvironmentVariable.SMITHY_DEPENDENCY_MODE.toString(), "Beeblebrox"),
+                       result -> {
             assertThat(result.getExitCode(), equalTo(1));
-            assertThat(result.getOutput(), containsString("Invalid --dependency-mode parameter: 'Beeblebrox'"));
+            assertThat(result.getOutput(), containsString("Beeblebrox"));
         });
     }
 

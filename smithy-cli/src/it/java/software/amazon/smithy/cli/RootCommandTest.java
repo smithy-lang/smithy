@@ -18,9 +18,11 @@ package software.amazon.smithy.cli;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.MapUtils;
 
 public class RootCommandTest {
     @Test
@@ -36,6 +38,9 @@ public class RootCommandTest {
         IntegUtils.run("simple-config-sources", ListUtils.of("-h"), result -> {
             assertThat(result.getExitCode(), equalTo(0));
             ensureHelpOutput(result);
+
+            // We force NO_COLOR by default in the run method. Test that's honored here.
+            assertThat(result.getOutput(), not(containsString("[0m")));
         });
     }
 
@@ -68,6 +73,17 @@ public class RootCommandTest {
         IntegUtils.run("simple-config-sources", ListUtils.of("--foo"), result -> {
             assertThat(result.getExitCode(), equalTo(1));
             assertThat(result.getOutput(), containsString("Unknown argument or command: --foo"));
+        });
+    }
+
+    @Test
+    public void runsWithColors() {
+        IntegUtils.run("simple-config-sources",
+                       ListUtils.of("--help"),
+                       MapUtils.of(EnvironmentVariable.FORCE_COLOR.toString(), "true"),
+                       result -> {
+            assertThat(result.getExitCode(), equalTo(0));
+            assertThat(result.getOutput(), containsString("[0m"));
         });
     }
 

@@ -81,12 +81,14 @@ public class SmithyCommand implements Command {
                                               command.getSummary()));
             }
         }
+
+        printer.println("");
     }
 
     @Override
     public int execute(Arguments arguments, Env env) {
-        // Set the current CLI version as a system property so it can be used in config files.
-        EnvironmentVariable.SMITHY_VERSION.setValue(SmithyCli.getVersion());
+        // Set the current CLI version as a system property, so it can be used in config files.
+        EnvironmentVariable.SMITHY_VERSION.set(SmithyCli.getVersion());
 
         String command = arguments.shift();
 

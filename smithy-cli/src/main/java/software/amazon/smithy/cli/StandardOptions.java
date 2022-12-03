@@ -17,6 +17,7 @@ package software.amazon.smithy.cli;
 
 import java.util.function.Consumer;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import software.amazon.smithy.model.validation.Severity;
 
 /**
@@ -30,10 +31,10 @@ public final class StandardOptions implements ArgumentReceiver {
     public static final String DEBUG = "--debug";
     public static final String QUIET = "--quiet";
     public static final String STACKTRACE = "--stacktrace";
-    public static final String NO_COLOR = "--no-color";
-    public static final String FORCE_COLOR = "--force-color";
     public static final String LOGGING = "--logging";
     public static final String SEVERITY = "--severity";
+
+    private static final Logger LOGGER = Logger.getLogger(StandardOptions.class.getName());
 
     private boolean help;
     private boolean version;
@@ -42,19 +43,6 @@ public final class StandardOptions implements ArgumentReceiver {
     private boolean quiet;
     private boolean debug;
     private boolean stackTrace;
-    private ColorSetting colorSetting;
-
-    /** Specifies the color setting of the CLI. */
-    public enum ColorSetting {
-        /** Use colors if the CLI detects they are supported. */
-        AUTO,
-
-        /** Disable colors. Set with --no-color. */
-        NO_COLOR,
-
-        /** Force colors. Set with --force-color. */
-        FORCE_COLOR
-    }
 
     @Override
     public void registerHelp(HelpPrinter printer) {
@@ -62,8 +50,6 @@ public final class StandardOptions implements ArgumentReceiver {
         printer.option(DEBUG, null, "Display debug information");
         printer.option(QUIET, null, "Silence output except errors");
         printer.option(STACKTRACE, null, "Display a stacktrace on error");
-        printer.option(NO_COLOR, null, "Disable ANSI colors");
-        printer.option(FORCE_COLOR, null, "Force the use of ANSI colors");
         printer.param(LOGGING, null, "LOG_LEVEL",
                             "Set the log level (defaults to WARNING). Set to one of OFF, SEVERE, WARNING, INFO, "
                             + "FINE, ALL.");
@@ -98,11 +84,11 @@ public final class StandardOptions implements ArgumentReceiver {
             case STACKTRACE:
                 stackTrace = true;
                 return true;
-            case NO_COLOR:
-                colorSetting = ColorSetting.NO_COLOR;
+            case "--no-color":
+                LOGGER.warning("--no-color is no longer supported. Use the NO_COLOR environment variable.");
                 return true;
-            case FORCE_COLOR:
-                colorSetting = ColorSetting.FORCE_COLOR;
+            case "--force-color":
+                LOGGER.warning("--force-color is no longer supported. Use the FORCE_COLOR environment variable.");
                 return true;
             default:
                 return false;
@@ -157,9 +143,5 @@ public final class StandardOptions implements ArgumentReceiver {
 
     public boolean stackTrace() {
         return stackTrace;
-    }
-
-    public ColorSetting colorSetting() {
-        return colorSetting;
     }
 }

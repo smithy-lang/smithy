@@ -112,7 +112,7 @@ public final class SmithyCli {
     public Cli createCli() {
         if (dependencyResolverFactory == null) {
             dependencyResolverFactory = (config, env) -> {
-                return new MavenDependencyResolver(EnvironmentVariable.SMITHY_MAVEN_CACHE.getValue());
+                return new MavenDependencyResolver(EnvironmentVariable.SMITHY_MAVEN_CACHE.get());
             };
         }
 

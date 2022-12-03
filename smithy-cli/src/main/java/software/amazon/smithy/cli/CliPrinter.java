@@ -17,8 +17,6 @@ package software.amazon.smithy.cli;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * Handles text output of the CLI.
@@ -63,55 +61,6 @@ public interface CliPrinter {
             result = style(result.substring(0, positionOfName), Style.RED, Style.UNDERLINE)
                      + result.substring(positionOfName);
             println(result);
-        }
-    }
-
-    /**
-     * CliPrinter that calls a Consumer that accepts a CharSequence.
-     */
-    final class ConsumerPrinter implements CliPrinter {
-        private final Consumer<CharSequence> consumer;
-
-        public ConsumerPrinter(Consumer<CharSequence> consumer) {
-            this.consumer = consumer;
-        }
-
-        @Override
-        public void println(String text) {
-            consumer.accept(text + System.lineSeparator());
-        }
-    }
-
-    /**
-     * A CliPrinter that prints ANSI colors if able and allowed.
-     */
-    final class ColorPrinter implements CliPrinter {
-        private final CliPrinter delegate;
-        private final Supplier<StandardOptions.ColorSetting> colorSettingSupplier;
-        private final boolean ansiSupported;
-
-        public ColorPrinter(CliPrinter delegate, Supplier<StandardOptions.ColorSetting> colorSettingSupplier) {
-            this.delegate = delegate;
-            this.colorSettingSupplier = colorSettingSupplier;
-            this.ansiSupported = isAnsiColorSupported();
-        }
-
-        private static boolean isAnsiColorSupported() {
-            return System.console() != null && System.getenv().get("TERM") != null;
-        }
-
-        @Override
-        public void println(String text) {
-            delegate.println(text);
-        }
-
-        @Override
-        public String style(String text, Style... styles) {
-            if (colorSettingSupplier.get() != StandardOptions.ColorSetting.NO_COLOR && ansiSupported) {
-                return delegate.style(text, styles);
-            } else {
-                return text;
-            }
         }
     }
 }
