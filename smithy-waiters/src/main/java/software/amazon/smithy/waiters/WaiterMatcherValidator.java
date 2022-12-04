@@ -94,9 +94,10 @@ final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEve
             }
         }
 
-        addEvent(Severity.WARNING, INVALID_ERROR_TYPE, String.format(
+        addEvent(Severity.WARNING, String.format(
                 "errorType '%s' not found on operation. This operation defines the following errors: %s",
-                error, operation.getErrors()));
+                    error, operation.getErrors()),
+                INVALID_ERROR_TYPE, waiterName, String.valueOf(acceptorIndex), error);
 
         return events;
     }
@@ -114,10 +115,11 @@ final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEve
             case BOOLEAN_EQUALS:
                 // A booleanEquals comparator requires an `expected` value of "true" or "false".
                 if (!pathMatcher.getExpected().equals("true") && !pathMatcher.getExpected().equals("false")) {
-                    addEvent(Severity.ERROR, NON_SUPPRESSABLE_ERROR, String.format(
+                    addEvent(Severity.ERROR, String.format(
                             "Waiter acceptors with a %s comparator must set their `expected` value to 'true' or "
-                            + "'false', but found '%s'.",
-                            PathComparator.BOOLEAN_EQUALS, pathMatcher.getExpected()));
+                                + "'false', but found '%s'.",
+                                PathComparator.BOOLEAN_EQUALS, pathMatcher.getExpected()),
+                            NON_SUPPRESSABLE_ERROR);
                 }
                 validateReturnType(pathMatcher.getComparator(), RuntimeType.BOOLEAN, returnType);
                 break;
@@ -138,18 +140,21 @@ final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEve
             }
             return result.getReturnType();
         } catch (JmespathException e) {
-            addEvent(Severity.ERROR, NON_SUPPRESSABLE_ERROR, String.format(
-                    "Invalid JMESPath expression (%s): %s", path, e.getMessage()));
+            addEvent(Severity.ERROR, String.format(
+                        "Invalid JMESPath expression (%s): %s", path, e.getMessage()),
+                    NON_SUPPRESSABLE_ERROR);
             return RuntimeType.ANY;
         }
     }
 
     private void validateReturnType(PathComparator comparator, RuntimeType expected, RuntimeType actual) {
         if (actual != RuntimeType.ANY && actual != expected) {
-            addEvent(Severity.DANGER, JMESPATH_PROBLEM, String.format(
+            addEvent(Severity.DANGER, String.format(
                     "Waiter acceptors with a %s comparator must return a `%s` type, but this acceptor was "
-                    + "statically determined to return a `%s` type.",
-                    comparator, expected, actual));
+                        + "statically determined to return a `%s` type.",
+                        comparator, expected, actual),
+                    JMESPATH_PROBLEM, waiterName, String.valueOf(acceptorIndex), comparator.toString(),
+                        actual.toString());
         }
     }
 
@@ -175,13 +180,14 @@ final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEve
         }
 
         String problemMessage = problem.message + " (" + problem.line + ":" + problem.column + ")";
-        addEvent(severity, severity == Severity.ERROR ? NON_SUPPRESSABLE_ERROR : JMESPATH_PROBLEM, String.format(
-                "Problem found in JMESPath expression (%s): %s", path, problemMessage));
+        addEvent(severity, String.format("Problem found in JMESPath expression (%s): %s", path, problemMessage),
+                severity == Severity.ERROR ? NON_SUPPRESSABLE_ERROR : JMESPATH_PROBLEM, waiterName,
+                    String.valueOf(acceptorIndex));
     }
 
-    private void addEvent(Severity severity, String id, String message) {
+    private void addEvent(Severity severity, String message, String... eventIdParts) {
         events.add(ValidationEvent.builder()
-                .id(id)
+                .id(String.join(".", eventIdParts))
                 .shape(operation)
                 .sourceLocation(waitable)
                 .severity(severity)

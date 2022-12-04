@@ -309,7 +309,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
                         if (!members.containsKey(entryKey)) {
                             String message = String.format(
                                     "Invalid structure member `%s` found for `%s`", entryKey, shape.getId());
-                            events.add(event(message, Severity.WARNING));
+                            events.add(event(message, Severity.WARNING, shape.getId().toString(), entryKey));
                         } else {
                             events.addAll(traverse(entryKey, entryValue).memberShape(members.get(entryKey)));
                         }
@@ -402,17 +402,23 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         return ListUtils.of(event("Encountered invalid shape type: " + shape.getType()));
     }
 
-    private ValidationEvent event(String message) {
-        return event(message, Severity.ERROR);
+    private ValidationEvent event(String message, String... additionalEventIdParts) {
+        return event(message, Severity.ERROR, additionalEventIdParts);
     }
 
-    private ValidationEvent event(String message, Severity severity) {
-        return event(message, severity, value.getSourceLocation());
+    private ValidationEvent event(String message, Severity severity, String... additionalEventIdParts) {
+        return event(message, severity, value.getSourceLocation(), additionalEventIdParts);
     }
 
-    private ValidationEvent event(String message, Severity severity, SourceLocation sourceLocation) {
+    private ValidationEvent event(
+            String message,
+            Severity severity,
+            SourceLocation sourceLocation,
+            String... additionalEventIdParts
+    ) {
         return ValidationEvent.builder()
-                .id(eventId)
+                .id(additionalEventIdParts.length > 0
+                        ? eventId + "." + String.join(".", additionalEventIdParts) : eventId)
                 .severity(severity)
                 .sourceLocation(sourceLocation)
                 .shapeId(eventShapeId)

@@ -28,48 +28,104 @@ public abstract class AbstractValidator implements Validator {
         return defaultName;
     }
 
-    protected final ValidationEvent error(Shape shape, String message) {
-        return createEvent(Severity.ERROR, shape, shape.getSourceLocation(), message);
+    protected final ValidationEvent error(
+            Shape shape,
+            String message,
+            String... additionalEventIdParts
+    ) {
+        return createEvent(Severity.ERROR, shape, shape.getSourceLocation(), message, additionalEventIdParts);
     }
 
-    protected final ValidationEvent error(Shape shape, FromSourceLocation location, String message) {
-        return createEvent(Severity.ERROR, shape, location, message);
+    protected final ValidationEvent error(
+            Shape shape,
+            FromSourceLocation location,
+            String message,
+            String... additionalEventIdParts
+    ) {
+        return createEvent(Severity.ERROR, shape, location, message, additionalEventIdParts);
     }
 
-    protected final ValidationEvent danger(Shape shape, String message) {
-        return createEvent(Severity.DANGER, shape, shape.getSourceLocation(), message);
+    protected final ValidationEvent danger(
+            Shape shape,
+            String message,
+            String... additionalEventIdParts
+    ) {
+        return createEvent(Severity.DANGER, shape, shape.getSourceLocation(), message, additionalEventIdParts);
     }
 
-    protected final ValidationEvent danger(Shape shape, FromSourceLocation location, String message) {
-        return createEvent(Severity.DANGER, shape, location, message);
+    protected final ValidationEvent danger(
+            Shape shape,
+            FromSourceLocation location,
+            String message,
+            String... additionalEventIdParts
+    ) {
+        return createEvent(Severity.DANGER, shape, location, message, additionalEventIdParts);
     }
 
-    protected final ValidationEvent warning(Shape shape, String message) {
-        return createEvent(Severity.WARNING, shape, shape.getSourceLocation(), message);
+    protected final ValidationEvent warning(
+            Shape shape,
+            String message,
+            String... additionalEventIdParts
+    ) {
+        return createEvent(Severity.WARNING, shape, shape.getSourceLocation(), message, additionalEventIdParts);
     }
 
-    protected final ValidationEvent warning(Shape shape, FromSourceLocation location, String message) {
-        return createEvent(Severity.WARNING, shape, location, message);
+    protected final ValidationEvent warning(
+            Shape shape,
+            FromSourceLocation location,
+            String message,
+            String... additionalEventIdParts
+    ) {
+        return createEvent(Severity.WARNING, shape, location, message, additionalEventIdParts);
     }
 
-    protected final ValidationEvent note(Shape shape, String message) {
-        return createEvent(Severity.NOTE, shape, shape.getSourceLocation(), message);
+    protected final ValidationEvent note(
+            Shape shape,
+            String message,
+            String... additionalEventIdParts
+    ) {
+        return createEvent(Severity.NOTE, shape, shape.getSourceLocation(), message, additionalEventIdParts);
     }
 
-    protected final ValidationEvent note(Shape shape, FromSourceLocation location, String message) {
-        return createEvent(Severity.NOTE, shape, location, message);
+    protected final ValidationEvent note(
+            Shape shape,
+            FromSourceLocation location,
+            String message,
+            String... additionalEventIdParts
+    ) {
+        return createEvent(Severity.NOTE, shape, location, message, additionalEventIdParts);
     }
 
-    protected final ValidationEvent createEvent(Severity severity, Shape shape, String message) {
-        return createEvent(severity, shape, shape.getSourceLocation(), message);
+    protected final ValidationEvent createEvent(
+            Severity severity,
+            Shape shape,
+            String message,
+            String... additionalEventIdParts
+    ) {
+        return createEvent(severity, shape, shape.getSourceLocation(), message, additionalEventIdParts);
     }
 
-    protected final ValidationEvent createEvent(Severity severity, Shape shape, FromSourceLocation loc, String msg) {
-        return createEvent(ValidationEvent.builder().severity(severity).message(msg)
-                                   .shapeId(shape.getId()).sourceLocation(loc.getSourceLocation()));
+    protected final ValidationEvent createEvent(
+            Severity severity,
+            Shape shape,
+            FromSourceLocation loc,
+            String msg,
+            String... additionalEventIdParts
+    ) {
+        return ValidationEvent.builder()
+                .severity(severity)
+                .message(msg)
+                .shapeId(shape.getId())
+                .sourceLocation(loc.getSourceLocation())
+                .id(assembleFullEventId(additionalEventIdParts))
+                .build();
     }
 
-    private ValidationEvent createEvent(ValidationEvent.Builder builder) {
-        return builder.id(getName()).build();
+    protected final String assembleFullEventId(String... additionalEventIdParts) {
+        String eventId = getName();
+        if (additionalEventIdParts.length > 0) {
+            eventId += "." + String.join(".", additionalEventIdParts);
+        }
+        return eventId;
     }
 }

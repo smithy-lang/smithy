@@ -58,6 +58,10 @@ public final class NoninclusiveTermsValidator extends AbstractValidator {
         }
     }
 
+    private static final String TRAIT = "TRAIT";
+    private static final String SHAPE = "SHAPE";
+    private static final String NAMESPACE = "NAMESPACE";
+
     /**
      * NoninclusiveTermsValidator configuration.
      */
@@ -121,7 +125,7 @@ public final class NoninclusiveTermsValidator extends AbstractValidator {
     /**
      * Generates zero or more @see ValidationEvents and returns them in a collection.
      *
-     * @param occurrence text occurrence found in the body of the model
+     * @param instance text occurrence found in the body of the model
      */
     private Collection<ValidationEvent> getValidationEvents(TextInstance instance) {
         final Collection<ValidationEvent> events = new ArrayList<>();
@@ -130,68 +134,77 @@ public final class NoninclusiveTermsValidator extends AbstractValidator {
             final int startIndex = instance.getText().toLowerCase().indexOf(termLower);
             if (startIndex != -1) {
                 final String matchedText = instance.getText().substring(startIndex, startIndex + termLower.length());
-                switch (instance.getLocationType()) {
-                    case NAMESPACE:
-                        //Cannot use any warning() overloads because there is no shape associated with the event.
-                        events.add(ValidationEvent.builder()
-                                .sourceLocation(SourceLocation.none())
-                                .id(this.getClass().getSimpleName().replaceFirst("Validator$", ""))
-                                .severity(Severity.WARNING)
-                                .message(formatNonInclusiveTermsValidationMessage(termEntry, matchedText, instance))
-                                .build());
-                        break;
-                    case APPLIED_TRAIT:
-                        events.add(warning(instance.getShape(),
-                                instance.getTrait().getSourceLocation(),
-                                formatNonInclusiveTermsValidationMessage(termEntry, matchedText, instance)));
-                        break;
-                    case SHAPE:
-                    default:
-                        events.add(warning(instance.getShape(),
-                                instance.getShape().getSourceLocation(),
-                                formatNonInclusiveTermsValidationMessage(termEntry, matchedText, instance)));
-                }
+                events.add(constructValidationEvent(instance, termEntry.getValue(), matchedText));
             }
         }
         return events;
     }
 
-    private static String formatNonInclusiveTermsValidationMessage(
-            Map.Entry<String, List<String>> termEntry,
-            String matchedText,
-            TextInstance instance
+    /**
+     * Creates a single ValidationEvent.
+     * @param instance TextInstance where the noninclusive term was found
+     * @param replacements List of suggested replacements for the noninclusive term
+     * @param matchedText the noninclusive term that was used
+     * @return the constructed ValidationEvent
+     */
+    private ValidationEvent constructValidationEvent(
+            final TextInstance instance,
+            final List<String> replacements,
+            final String matchedText
     ) {
-        final List<String> caseCorrectedEntryValue = termEntry.getValue().stream()
-            .map(replacement -> Character.isUpperCase(matchedText.charAt(0))
-                  ? StringUtils.capitalize(replacement)
-                  : StringUtils.uncapitalize(replacement))
-            .collect(Collectors.toList());
-        String replacementAddendum = !termEntry.getValue().isEmpty()
-                ? String.format(" Consider using one of the following terms instead: %s",
-                    ValidationUtils.tickedList(caseCorrectedEntryValue))
-                : "";
+        final String replacementAddendum = getReplacementAddendum(matchedText, replacements);
         switch (instance.getLocationType()) {
-            case SHAPE:
-                return String.format("%s shape uses a non-inclusive term `%s`.%s",
-                        StringUtils.capitalize(instance.getShape().getType().toString()),
-                        matchedText, replacementAddendum);
             case NAMESPACE:
-                return String.format("%s namespace uses a non-inclusive term `%s`.%s",
-                        instance.getText(), matchedText, replacementAddendum);
+                //Cannot use any warning() overloads because there is no shape associated with the event.
+                return ValidationEvent.builder()
+                        .severity(Severity.WARNING)
+                        .sourceLocation(SourceLocation.none())
+                        .id(assembleFullEventId(NAMESPACE, instance.getText(), matchedText))
+                        .message(String.format("%s namespace uses a non-inclusive term `%s`.%s",
+                                instance.getText(), matchedText, replacementAddendum))
+                        .build();
             case APPLIED_TRAIT:
+                final ValidationEvent validationEvent =
+                        warning(instance.getShape(), instance.getTrait().getSourceLocation(), "");
+                final String idiomaticTraitName = Trait.getIdiomaticTraitName(instance.getTrait());
                 if (instance.getTraitPropertyPath().isEmpty()) {
-                    return String.format("'%s' trait has a value that contains a non-inclusive term `%s`.%s",
-                            Trait.getIdiomaticTraitName(instance.getTrait()), matchedText,
-                            replacementAddendum);
+                    return validationEvent.toBuilder()
+                            .message(String.format("'%s' trait has a value that contains a non-inclusive term `%s`.%s",
+                                    idiomaticTraitName, matchedText, replacementAddendum))
+                            .id(assembleFullEventId(TRAIT, idiomaticTraitName, matchedText))
+                            .build();
                 } else {
-                    String valuePropertyPathFormatted = formatPropertyPath(instance.getTraitPropertyPath());
-                    return String.format("'%s' trait value at path {%s} contains a non-inclusive term `%s`.%s",
-                            Trait.getIdiomaticTraitName(instance.getTrait()), valuePropertyPathFormatted,
-                            matchedText, replacementAddendum);
+                    final String valuePropertyPathFormatted = formatPropertyPath(instance.getTraitPropertyPath());
+                    return validationEvent.toBuilder()
+                            .message(String.format(
+                                    "'%s' trait value at path {%s} contains a non-inclusive term `%s`.%s",
+                                    idiomaticTraitName, valuePropertyPathFormatted, matchedText, replacementAddendum))
+                            .id(assembleFullEventId(
+                                    TRAIT, idiomaticTraitName, valuePropertyPathFormatted, matchedText))
+                            .build();
                 }
+            case SHAPE:
             default:
-                throw new IllegalStateException();
+                return warning(instance.getShape(),
+                        instance.getShape().getSourceLocation(),
+                        String.format("%s shape uses a non-inclusive term `%s`.%s",
+                                StringUtils.capitalize(instance.getShape().getType().toString()),
+                                matchedText, replacementAddendum),
+                        SHAPE, matchedText);
         }
+    }
+
+    private static String getReplacementAddendum(String matchedText, List<String> replacements) {
+        final List<String> caseCorrectedEntryValue = replacements.stream()
+                .map(replacement -> Character.isUpperCase(matchedText.charAt(0))
+                        ? StringUtils.capitalize(replacement)
+                        : StringUtils.uncapitalize(replacement))
+                .collect(Collectors.toList());
+        String replacementAddendum = !replacements.isEmpty()
+                ? String.format(" Consider using one of the following terms instead: %s",
+                ValidationUtils.tickedList(caseCorrectedEntryValue))
+                : "";
+        return replacementAddendum;
     }
 
     private static String formatPropertyPath(List<String> traitPropertyPath) {

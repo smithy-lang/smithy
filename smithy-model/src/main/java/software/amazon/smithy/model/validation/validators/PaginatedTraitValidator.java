@@ -61,6 +61,9 @@ public final class PaginatedTraitValidator extends AbstractValidator {
     private static final Set<ShapeType> TOKEN_SHAPES = SetUtils.of(ShapeType.STRING, ShapeType.MAP);
     private static final Set<ShapeType> DANGER_TOKEN_SHAPES = SetUtils.of(ShapeType.MAP);
     private static final Pattern PATH_PATTERN = Pattern.compile("\\.");
+    private static final String DEEPLY_NESTED = "DEEPLY_NESTED";
+    private static final String SHOULD_NOT_BE_REQUIRED = "SHOULD_NOT_BE_REQUIRED";
+    private static final String WRONG_SHAPE_TYPE = "WRONG_SHAPE_TYPE";
 
     @Override
     public List<ValidationEvent> validate(Model model) {
@@ -91,9 +94,14 @@ public final class PaginatedTraitValidator extends AbstractValidator {
         events.addAll(validateMember(opIndex, model, null, operation, trait, pageSizeValidator));
         pageSizeValidator.getMember(model, opIndex, operation, trait)
                 .filter(MemberShape::isRequired)
-                .ifPresent(member -> events.add(warning(operation, trait, String.format(
-                        "paginated trait `%s` member `%s` should not be required",
-                        pageSizeValidator.propertyName(), member.getMemberName()))));
+                .ifPresent(member -> events.add(warning(
+                        operation,
+                        trait,
+                        String.format(
+                            "paginated trait `%s` member `%s` should not be required",
+                            pageSizeValidator.propertyName(), member.getMemberName()),
+                        pageSizeValidator.propertyName(), member.getMemberName(), SHOULD_NOT_BE_REQUIRED)
+                ));
 
         // Validate output.
         events.addAll(validateMember(opIndex, model, null, operation, trait, new OutputTokenValidator()));
@@ -165,20 +173,25 @@ public final class PaginatedTraitValidator extends AbstractValidator {
             if (validator.dangerTargets().contains(target.getType())) {
                 Set<ShapeType> preferredTargets = new TreeSet<>(validator.validTargets());
                 preferredTargets.removeAll(validator.dangerTargets());
+                final String traitName = validator.propertyName();
+                final String memberName = member.getId().getName();
+                final String targetType = target.getType().toString();
                 events.add(danger(operation, trait, String.format(
-                        "%spaginated trait `%s` member `%s` targets a %s shape, but this is not recommended. "
-                                + "One of [%s] SHOULD be targeted.",
-                        prefix, validator.propertyName(), member.getId().getName(), target.getType(),
-                        ValidationUtils.tickedList(preferredTargets))));
+                            "%spaginated trait `%s` member `%s` targets a %s shape, but this is not recommended. "
+                                    + "One of [%s] SHOULD be targeted.",
+                            prefix, traitName, memberName, targetType, ValidationUtils.tickedList(preferredTargets)),
+                        traitName, memberName, WRONG_SHAPE_TYPE, targetType
+                ));
             }
         }
 
         if (validator.pathsAllowed() && PATH_PATTERN.split(memberPath).length > 2) {
             events.add(warning(operation, trait, String.format(
-                    "%spaginated trait `%s` contains a path with more than two parts, which can make your API "
-                    + "cumbersome to use",
-                    prefix, validator.propertyName()
-            )));
+                        "%spaginated trait `%s` contains a path with more than two parts, which can make your API "
+                        + "cumbersome to use",
+                        prefix, validator.propertyName()),
+                    validator.propertyName(), DEEPLY_NESTED
+            ));
         }
 
         return events;

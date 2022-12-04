@@ -99,8 +99,8 @@ public final class SmithyTestCase {
      * <p>The validation events encountered while validating a model are
      * compared against the expected validation events. An actual event (A) is
      * considered a match with an expected event (E) if A and E target the
-     * same shape, use the same validation event ID, have the same severity,
-     * and the message of E starts with the suppression reason or message
+     * same shape, have the same severity, the eventId of A contains the eventId
+     * of E, and the message of E starts with the suppression reason or message
      * of A.
      *
      * @param validatedResult Result of creating and validating the model.
@@ -135,7 +135,7 @@ public final class SmithyTestCase {
 
         String comparedMessage = expected.getMessage().replace("\n", "\\n").replace("\r", "\\n");
         return expected.getSeverity() == actual.getSeverity()
-               && expected.getId().equals(actual.getId())
+               && actual.containsId(expected.getId())
                && expected.getShapeId().equals(actual.getShapeId())
                // Normalize new lines.
                && normalizedActualMessage.startsWith(comparedMessage);

@@ -29,7 +29,6 @@ import software.amazon.smithy.model.traits.IdempotentTrait;
 import software.amazon.smithy.model.traits.ReadonlyTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
-import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.utils.MapUtils;
 
 /**
@@ -97,27 +96,30 @@ public final class HttpMethodSemanticsValidator extends AbstractValidator {
         HttpMethodSemantics semantics = EXPECTED.get(method);
 
         if (semantics.warningWhenModeled != null) {
-            events.add(warning(shape, trait, semantics.warningWhenModeled));
+            events.add(warning(shape, trait, semantics.warningWhenModeled, method));
         }
 
         boolean isReadonly = shape.getTrait(ReadonlyTrait.class).isPresent();
         if (semantics.isReadonly != null && semantics.isReadonly != isReadonly) {
             events.add(warning(shape, trait, String.format(
                     "This operation uses the `%s` method in the `http` trait, but %s marked with the readonly trait",
-                    method, isReadonly ? "is" : "is not")));
+                        method, isReadonly ? "is" : "is not"),
+                    method, ReadonlyTrait.ID.toString()));
         }
 
         boolean isIdempotent = shape.getTrait(IdempotentTrait.class).isPresent();
         if (semantics.isIdempotent != null && semantics.isIdempotent != isIdempotent) {
             events.add(warning(shape, trait, String.format(
                     "This operation uses the `%s` method in the `http` trait, but %s marked with the idempotent trait",
-                    method, isIdempotent ? "is" : "is not")));
+                        method, isIdempotent ? "is" : "is not"),
+                    method, IdempotentTrait.ID.toString()));
         }
 
         List<HttpBinding> payloadBindings = bindingIndex.getRequestBindings(shape, HttpBinding.Location.PAYLOAD);
         List<HttpBinding> documentBindings = bindingIndex.getRequestBindings(shape, HttpBinding.Location.DOCUMENT);
         if (semantics.allowsRequestPayload != null && !semantics.allowsRequestPayload) {
             if (!payloadBindings.isEmpty()) {
+                final String payloadMember = payloadBindings.get(0).getMemberName();
                 events.add(danger(shape, trait, String.format(
                         "This operation uses the `%s` method in the `http` trait, but the `%s` member is sent as the "
                             + "payload of the request because it is marked with the `httpPayload` trait. Many HTTP "
@@ -125,19 +127,23 @@ public final class HttpMethodSemanticsValidator extends AbstractValidator {
                             + "other parts of the HTTP request such as a query string parameter using the `httpQuery` "
                             + "trait, a header using the `httpHeader` trait, or a path segment using the `httpLabel` "
                             + "trait.",
-                        method, payloadBindings.get(0).getMemberName()
-                )));
+                            method, payloadMember),
+                        method, payloadMember)
+                );
             } else if (!documentBindings.isEmpty()) {
-                events.add(danger(shape, trait, String.format(
+                for (HttpBinding payloadMember : documentBindings) {
+                    events.add(danger(shape, trait, String.format(
                         "This operation uses the `%s` method in the `http` trait, but the following members "
-                            + "are sent as part of the payload of the request: %s. These members are sent as part "
+                            + "are sent as part of the payload of the request: `%s`. These members are sent as part "
                             + "of the payload because they are not explicitly configured to be sent in headers, in the "
                             + "query string, or in a URI segment. Many HTTP clients do not support payloads with %1$s "
                             + "requests. Consider binding these members to other parts of the HTTP request such as "
                             + "query string parameters using the `httpQuery` trait, headers using the `httpHeader` "
                             + "trait, or URI segments using the `httpLabel` trait.",
-                        method, ValidationUtils.tickedList(documentBindings.stream().map(HttpBinding::getMemberName))
-                )));
+                        method, payloadMember.getMemberName()),
+                        method, payloadMember.getMemberName()
+                    ));
+                }
             }
         }
 
