@@ -51,7 +51,27 @@ public enum EnvironmentVariable {
     },
 
     /** The current version of the CLI. This is set automatically by the CLI. */
-    SMITHY_VERSION;
+    SMITHY_VERSION,
+
+    /**
+     * If set to any value, disable ANSI colors in the output.
+     */
+    NO_COLOR,
+
+    /**
+     * If set to any value, force enables the support of ANSI colors in the output.
+     */
+    FORCE_COLOR,
+
+    /**
+     * Used to detect if ANSI colors are supported.
+     *
+     * <ul>
+     *     <li>If set to "dumb" colors are disabled.</li>
+     *     <li>If not set and the operating system is detected as Windows, colors are disabled.</li>
+     * </ul>
+     */
+    TERM;
 
     /**
      * Gets a system property or environment variable by name, in that order.

@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.cli;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
@@ -31,12 +33,8 @@ public final class Cli {
 
     private static final Logger LOGGER = Logger.getLogger(Cli.class.getName());
 
-    // Delegate to the stdout consumer by default since this can change.
-    private CliPrinter stdoutPrinter = new CliPrinter.ConsumerPrinter(str -> System.out.print(str));
-
-    // Don't use a method reference in case System.err is changed after initialization.
-    private CliPrinter stdErrPrinter = new CliPrinter.ConsumerPrinter(str -> System.err.print(str));
-
+    private CliPrinter stdoutPrinter;
+    private CliPrinter stderrPrinter;
     private final ClassLoader classLoader;
     private final Command command;
 
@@ -63,37 +61,63 @@ public final class Cli {
         StandardOptions standardOptions = new StandardOptions();
         arguments.addReceiver(standardOptions);
 
-        // Use or disable ANSI escapes in the printers.
-        CliPrinter out = new CliPrinter.ColorPrinter(stdoutPrinter, standardOptions);
-        CliPrinter err = new CliPrinter.ColorPrinter(stdErrPrinter, standardOptions);
+        if (stdoutPrinter == null || stderrPrinter == null) {
+            Ansi ansi = Ansi.detect();
+            if (stdoutPrinter == null) {
+                stdout(CliPrinter.fromOutputStream(ansi, System.out));
+            }
+            if (stderrPrinter == null) {
+                stderr(CliPrinter.fromOutputStream(ansi, System.err));
+            }
+        }
 
         // Setup logging after parsing all arguments.
         arguments.onComplete((opts, positional) -> {
-            LoggingUtil.configureLogging(opts.getReceiver(StandardOptions.class), err);
+            LoggingUtil.configureLogging(opts.getReceiver(StandardOptions.class), stderrPrinter);
             LOGGER.fine(() -> "Running CLI command: " + Arrays.toString(args));
         });
 
         try {
-            return command.execute(arguments, new Command.Env(out, err, classLoader));
-        } catch (Exception e) {
-            err.printException(e, standardOptions.stackTrace());
-            throw CliError.wrap(e);
-        } finally {
             try {
-                LoggingUtil.restoreLogging();
-            } catch (RuntimeException e) {
-                // Show the error, but don't fail the CLI since most invocations are one-time use.
-                err.println(err.style("Unable to restore logging to previous settings", Style.RED));
-                err.printException(e, standardOptions.stackTrace());
+                Command.Env env = new Command.Env(stdoutPrinter, stderrPrinter, classLoader);
+                return command.execute(arguments, env);
+            } catch (Exception e) {
+                printException(e, standardOptions.stackTrace());
+                throw CliError.wrap(e);
+            } finally {
+                try {
+                    LoggingUtil.restoreLogging();
+                } catch (RuntimeException e) {
+                    // Show the error, but don't fail the CLI since most invocations are one-time use.
+                    printException(e, standardOptions.stackTrace());
+                }
             }
+        } finally {
+            stdoutPrinter.flush();
+            stderrPrinter.flush();
         }
     }
 
-    public void stdout(CliPrinter printer) {
-        stdoutPrinter = printer;
+    public void stdout(CliPrinter stdoutPrinter) {
+        this.stdoutPrinter = stdoutPrinter;
     }
 
-    public void stderr(CliPrinter printer) {
-        stdErrPrinter = printer;
+    public void stderr(CliPrinter stderrPrinter) {
+        this.stderrPrinter = stderrPrinter;
+    }
+
+    private void printException(Throwable e, boolean stacktrace) {
+        if (!stacktrace) {
+            stderrPrinter.println(e.getMessage(), Style.RED);
+        } else {
+            try (CliPrinter.Buffer buffer = stderrPrinter.buffer()) {
+                StringWriter writer = new StringWriter();
+                e.printStackTrace(new PrintWriter(writer));
+                String result = writer.toString();
+                int positionOfName = result.indexOf(':');
+                buffer.print(result.substring(0, positionOfName), Style.RED, Style.UNDERLINE);
+                buffer.println(result.substring(positionOfName));
+            }
+        }
     }
 }
