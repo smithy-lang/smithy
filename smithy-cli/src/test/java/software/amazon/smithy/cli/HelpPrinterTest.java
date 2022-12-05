@@ -204,24 +204,4 @@ public class HelpPrinterTest {
                 + "    --foo, -f\n"
                 + "        The foo value\n"));
     }
-
-    private static final class BufferPrinter implements CliPrinter {
-        private final StringBuilder builder = new StringBuilder();
-
-        @Override
-        public void println(String text) {
-            builder.append(text);
-        }
-
-        @Override
-        public String style(String text, Style... styles) {
-            return text;
-        }
-
-        @Override
-        public String toString() {
-            // normalize line endings for tests.
-            return builder.toString().replace("\r\n", "\n").replace("\r", "\n");
-        }
-    }
 }

@@ -61,7 +61,5 @@ public interface ArgumentReceiver {
      *
      * @param printer Printer to modify.
      */
-    default void registerHelp(HelpPrinter printer) {
-        // do nothing by default.
-    }
+    default void registerHelp(HelpPrinter printer) {}
 }

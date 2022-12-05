@@ -21,7 +21,7 @@ import java.util.StringTokenizer;
 import software.amazon.smithy.utils.StringUtils;
 
 /**
- * Generates and prints structured help output to a {@link CliPrinter}.
+ * Generates and prints structured help output.
  */
 public final class HelpPrinter {
     private final String name;
@@ -128,7 +128,7 @@ public final class HelpPrinter {
         LineWrapper builder = new LineWrapper(maxWidth);
 
         builder.appendWithinLine("Usage: ")
-                .appendWithinLine(printer.style(name, Style.BRIGHT_WHITE, Style.UNDERLINE))
+                .appendWithinLine(printer.ansi().style(name, Style.BRIGHT_WHITE, Style.UNDERLINE))
                 .space();
 
         // Calculate the column manually to account for possible styles interfering with the current column number.
@@ -166,14 +166,15 @@ public final class HelpPrinter {
     }
 
     private void writeArgHelp(CliPrinter printer, LineWrapper builder, Arg arg) {
+        Ansi ansi = printer.ansi();
         if (arg.longName != null) {
-            builder.appendWithinLine(printer.style(arg.longName, Style.YELLOW));
+            builder.appendWithinLine(ansi.style(arg.longName, Style.YELLOW));
             if (arg.shortName != null) {
                 builder.appendWithinLine(", ");
             }
         }
         if (arg.shortName != null) {
-            builder.appendWithinLine(printer.style(arg.shortName, Style.YELLOW));
+            builder.appendWithinLine(ansi.style(arg.shortName, Style.YELLOW));
         }
         if (arg.exampleValue != null) {
             builder.space().appendWithinLine(arg.exampleValue);
@@ -209,16 +210,17 @@ public final class HelpPrinter {
         }
 
         String toShortArgs(CliPrinter printer) {
+            Ansi ansi = printer.ansi();
             StringBuilder builder = new StringBuilder();
             builder.append('[');
             if (longName != null) {
-                builder.append(printer.style(longName, Style.YELLOW));
+                builder.append(ansi.style(longName, Style.YELLOW));
                 if (shortName != null) {
                     builder.append(" | ");
                 }
             }
             if (shortName != null) {
-                builder.append(printer.style(shortName, Style.YELLOW));
+                builder.append(ansi.style(shortName, Style.YELLOW));
             }
             if (exampleValue != null) {
                 builder.append(' ').append(exampleValue);
