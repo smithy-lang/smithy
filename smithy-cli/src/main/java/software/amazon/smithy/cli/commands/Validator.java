@@ -16,6 +16,7 @@
 package software.amazon.smithy.cli.commands;
 
 import java.util.StringJoiner;
+import software.amazon.smithy.cli.Ansi;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
 import software.amazon.smithy.cli.Style;
@@ -38,12 +39,13 @@ final class Validator {
         int shapeCount = result.getResult().isPresent() ? result.getResult().get().toSet().size() : 0;
         boolean isFailed = errors > 0 || dangers > 0;
         boolean hasEvents = warnings > 0 || notes > 0 || isFailed;
+        Ansi ansi = printer.ansi();
 
         StringBuilder output = new StringBuilder();
         if (isFailed) {
-            output.append(printer.style("FAILURE: ", Style.RED, Style.BOLD));
+            output.append(ansi.style("FAILURE: ", Style.RED, Style.BOLD));
         } else {
-            output.append(printer.style("SUCCESS: ", Style.GREEN, Style.BOLD));
+            output.append(ansi.style("SUCCESS: ", Style.GREEN, Style.BOLD));
         }
         output.append("Validated ").append(shapeCount).append(" shapes");
 
@@ -51,21 +53,21 @@ final class Validator {
             output.append(' ').append('(');
             StringJoiner joiner = new StringJoiner(", ");
             if (errors > 0) {
-                appendSummaryCount(joiner, printer, "ERROR", errors, Style.BRIGHT_RED);
+                appendSummaryCount(joiner, ansi, "ERROR", errors, Style.BRIGHT_RED);
             }
 
             if (dangers > 0) {
-                appendSummaryCount(joiner, printer, "DANGER", dangers, Style.RED);
+                appendSummaryCount(joiner, ansi, "DANGER", dangers, Style.RED);
             }
 
             if (warnings > 0) {
-                appendSummaryCount(joiner, printer, "WARNING", warnings, Style.YELLOW);
+                appendSummaryCount(joiner, ansi, "WARNING", warnings, Style.YELLOW);
             }
 
             if (notes > 0) {
-                appendSummaryCount(joiner, printer, "NOTE", notes, Style.WHITE);
+                appendSummaryCount(joiner, ansi, "NOTE", notes, Style.WHITE);
             }
-            output.append(joiner.toString());
+            output.append(joiner);
             output.append(')');
         }
 
@@ -76,13 +78,7 @@ final class Validator {
         }
     }
 
-    private static void appendSummaryCount(
-            StringJoiner joiner,
-            CliPrinter printer,
-            String label,
-            int count,
-            Style color
-    ) {
-        joiner.add(printer.style(label, color) + ": " + count);
+    private static void appendSummaryCount(StringJoiner joiner, Ansi ansi, String label, int count, Style color) {
+        joiner.add(ansi.style(label, color) + ": " + count);
     }
 }

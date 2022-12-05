@@ -163,8 +163,12 @@
         <module name="RightCurly">
             <property name="id" value="RightCurlyAlone"/>
             <property name="option" value="alone"/>
-            <property name="tokens"
-                      value="CLASS_DEF, METHOD_DEF, LITERAL_FOR, LITERAL_WHILE, STATIC_INIT, INSTANCE_INIT"/>
+            <property name="tokens" value="LITERAL_FOR, LITERAL_WHILE, STATIC_INIT, INSTANCE_INIT"/>
+        </module>
+        <module name="RightCurly">
+            <property name="id" value="RightCurlyAloneOrSingle"/>
+            <property name="option" value="alone_or_singleline"/>
+            <property name="tokens" value="CLASS_DEF, METHOD_DEF"/>
         </module>
 
         <!-- Checks for common coding problems               -->
