@@ -17,13 +17,19 @@ package software.amazon.smithy.cli;
 
 public final class CliUtils {
 
+    // Run Smithy with colors disabled by default.
     public static Result runSmithy(String... args) {
-        return run(SmithyCli.create().createCli(), args);
+        try {
+            EnvironmentVariable.NO_COLOR.set("true");
+            return run(SmithyCli.create().createCli(), args);
+        } finally {
+            EnvironmentVariable.NO_COLOR.clear();
+        }
     }
 
-    public static Result run(Cli cli, String... args) {
-        CapturedPrinter stdout = new CapturedPrinter();
-        CapturedPrinter stderr = new CapturedPrinter();
+    private static Result run(Cli cli, String... args) {
+        CliPrinter stdout = new BufferPrinter();
+        CliPrinter stderr = new BufferPrinter();
         cli.stdout(stdout);
         cli.stderr(stderr);
         int result;
@@ -35,16 +41,7 @@ public final class CliUtils {
             result = e.code;
         }
 
-        return new Result(result, stdout.result.toString(), stderr.result.toString());
-    }
-
-    private static class CapturedPrinter implements CliPrinter {
-        private final StringBuilder result = new StringBuilder();
-
-        @Override
-        public synchronized void println(String text) {
-            result.append(text).append(System.lineSeparator());
-        }
+        return new Result(result, stdout.toString(), stderr.toString());
     }
 
     public static final class Result {

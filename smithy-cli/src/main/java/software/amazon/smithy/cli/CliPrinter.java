@@ -15,14 +15,59 @@
 
 package software.amazon.smithy.cli;
 
+import java.io.BufferedWriter;
+import java.io.Flushable;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.function.Consumer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Handles text output of the CLI.
  */
-public interface CliPrinter {
+@FunctionalInterface
+public interface CliPrinter extends Flushable {
+
+    /**
+     * Create a new CliPrinter from a PrintWriter.
+     *
+     * @param ansi Ansi color settings to use.
+     * @param printWriter PrintWriter to write to.
+     * @return Returns the created CliPrinter.
+     */
+    static CliPrinter fromPrintWriter(Ansi ansi, PrintWriter printWriter) {
+        return new CliPrinter() {
+            @Override
+            public void println(String text) {
+                printWriter.println(text);
+            }
+
+            @Override
+            public Ansi ansi() {
+                return ansi;
+            }
+
+            @Override
+            public void flush() {
+                printWriter.flush();
+            }
+        };
+    }
+
+    /**
+     * Create a new CliPrinter from an OutputStream.
+     *
+     * @param ansi Ansi color settings to use.
+     * @param stream OutputStream to write to.
+     * @return Returns the created CliPrinter.
+     */
+    static CliPrinter fromOutputStream(Ansi ansi, OutputStream stream) {
+        Charset charset = StandardCharsets.UTF_8;
+        PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(stream, charset)), false);
+        return fromPrintWriter(ansi, writer);
+    }
+
     /**
      * Prints text to the writer and appends a new line.
      *
@@ -31,86 +76,111 @@ public interface CliPrinter {
     void println(String text);
 
     /**
-     * Styles the given text using ANSI escape sequences.
+     * Prints a styled line of text using ANSI colors.
      *
-     * <p>It is strongly recommended to use the constants defined in
-     * {@link Style} to provide valid combinations of ANSI color escape
-     * codes.
-     *
-     * @param text Text to style.
-     * @param styles ANSI escape codes.
-     * @return Returns the styled text.
+     * @param text Text to style and write.
+     * @param styles Styles to apply.
      */
-    default String style(String text, Style... styles) {
-        return Style.format(text, styles);
+    default void println(String text, Style... styles) {
+        println(ansi().style(text, styles));
     }
 
     /**
-     * Print an exception to the printer.
+     * Flushes any buffers in the printer.
+     */
+    default void flush() {}
+
+    /**
+     * Gets the ANSI color style setting used by the printer.
      *
-     * @param e Exception to print.
-     * @param stacktrace Whether to include a stack trace.
+     * @return Returns the ANSI color style.
      */
-    default void printException(Throwable e, boolean stacktrace) {
-        if (!stacktrace) {
-            println(style(e.getMessage(), Style.RED));
-        } else {
-            StringWriter writer = new StringWriter();
-            e.printStackTrace(new PrintWriter(writer));
-            String result = writer.toString();
-            int positionOfName = result.indexOf(':');
-            result = style(result.substring(0, positionOfName), Style.RED, Style.UNDERLINE)
-                     + result.substring(positionOfName);
-            println(result);
-        }
+    default Ansi ansi() {
+        return Ansi.AUTO;
     }
 
     /**
-     * CliPrinter that calls a Consumer that accepts a CharSequence.
+     * Creates a {@link Buffer} used to build up a long string of text.
+     *
+     * @return Returns the buffer. Call {@link Buffer#close()} or use try-with-resources to write to the printer.
      */
-    final class ConsumerPrinter implements CliPrinter {
-        private final Consumer<CharSequence> consumer;
-
-        public ConsumerPrinter(Consumer<CharSequence> consumer) {
-            this.consumer = consumer;
-        }
-
-        @Override
-        public void println(String text) {
-            consumer.accept(text + System.lineSeparator());
-        }
+    default Buffer buffer() {
+        return new Buffer(this);
     }
 
     /**
-     * A CliPrinter that prints ANSI colors if able and allowed.
+     * A buffer associated with a {@link CliPrinter} used to build up a string of ANSI color stylized text.
+     *
+     * <p>This class is not thread safe; it's a convenient way to build up a long string of text that uses ANSI styles
+     * before ultimately calling {@link #close()}, which writes it to the attached printer.
      */
-    final class ColorPrinter implements CliPrinter {
-        private final CliPrinter delegate;
-        private final StandardOptions options;
-        private final boolean ansiSupported;
+    final class Buffer implements Appendable, AutoCloseable {
+        private final CliPrinter printer;
+        private final StringBuilder builder = new StringBuilder();
 
-        public ColorPrinter(CliPrinter delegate, StandardOptions options) {
-            this.delegate = delegate;
-            this.options = options;
-            this.ansiSupported = isAnsiColorSupported();
-        }
-
-        private static boolean isAnsiColorSupported() {
-            return System.console() != null && System.getenv().get("TERM") != null;
+        private Buffer(CliPrinter printer) {
+            this.printer = printer;
         }
 
         @Override
-        public void println(String text) {
-            delegate.println(text);
+        public String toString() {
+            return builder.toString();
         }
 
         @Override
-        public String style(String text, Style... styles) {
-            if (options.forceColor() || (!options.noColor() && ansiSupported)) {
-                return delegate.style(text, styles);
-            } else {
-                return text;
-            }
+        public Buffer append(CharSequence csq) {
+            builder.append(csq);
+            return this;
+        }
+
+        @Override
+        public Buffer append(CharSequence csq, int start, int end) {
+            builder.append(csq, start, end);
+            return this;
+        }
+
+        @Override
+        public Buffer append(char c) {
+            builder.append(c);
+            return this;
+        }
+
+        /**
+         * Writes styled text to the builder using the CliPrinter's Ansi settings.
+         *
+         * @param text Text to write.
+         * @param styles Styles to apply to the text.
+         * @return Returns self.
+         */
+        public Buffer print(String text, Style... styles) {
+            printer.ansi().style(this, text, styles);
+            return this;
+        }
+
+        /**
+         * Prints a line of styled text to the buffer.
+         *
+         * @param text Text to print.
+         * @param styles Styles to apply.
+         * @return Returns self.
+         */
+        public Buffer println(String text, Style... styles) {
+            return print(text, styles).println();
+        }
+
+        /**
+         * Writes a system-dependent new line.
+         *
+         * @return Returns the buffer.
+         */
+        public Buffer println() {
+            return append(System.lineSeparator());
+        }
+
+        @Override
+        public void close() {
+            printer.println(builder.toString());
+            builder.setLength(0);
         }
     }
 }

@@ -122,13 +122,14 @@ final class DiffCommand extends ClasspathCommand {
 
         // Print the "framing" style output to stderr only if !quiet.
         if (!standardOptions.quiet()) {
-            CliPrinter stderr = env.stderr();
-            if (hasDanger) {
-                stderr.println(stderr.style("Smithy diff detected danger", Style.BRIGHT_RED, Style.BOLD));
-            } else if (hasWarning) {
-                stderr.println(stderr.style("Smithy diff detected warnings", Style.BRIGHT_YELLOW, Style.BOLD));
-            } else {
-                stderr.println(stderr.style("Smithy diff complete", Style.BRIGHT_GREEN, Style.BOLD));
+            try (CliPrinter.Buffer buffer = env.stderr().buffer()) {
+                if (hasDanger) {
+                    buffer.println("Smithy diff detected danger", Style.BRIGHT_RED, Style.BOLD);
+                } else if (hasWarning) {
+                    buffer.println("Smithy diff detected warnings", Style.BRIGHT_YELLOW, Style.BOLD);
+                } else {
+                    buffer.println("Smithy diff complete", Style.BRIGHT_GREEN, Style.BOLD);
+                }
             }
         }
 
