@@ -37,7 +37,7 @@ final class LoggingUtil {
 
     private LoggingUtil() {}
 
-    static void configureLogging(StandardOptions options, CliPrinter printer) {
+    static void configureLogging(StandardOptions options, ColorFormatter colors, CliPrinter printer) {
         // Don't try to configure logging more than once.
         if (!RESTORE_FUNCTIONS.isEmpty()) {
             return;
@@ -65,7 +65,7 @@ final class LoggingUtil {
         }
 
         // Add the CLI's custom CLI handler to output CLI-friendly messages to stderr.
-        addCliHandler(options.debug(), level, rootLogger, printer);
+        addCliHandler(options.debug(), level, rootLogger, colors, printer);
     }
 
     static void restoreLogging() {
@@ -75,12 +75,17 @@ final class LoggingUtil {
         RESTORE_FUNCTIONS.clear();
     }
 
-    private static void addCliHandler(boolean debug, Level level, Logger rootLogger, CliPrinter printer) {
+    private static void addCliHandler(
+            boolean debug,
+            Level level,
+            Logger rootLogger,
+            ColorFormatter colors,
+            CliPrinter printer) {
         if (level != Level.OFF) {
             Handler handler = debug
                     // Debug ignores the given logging level and just logs everything.
-                    ? new CliLogHandler(new DebugFormatter(), printer)
-                    : new CliLogHandler(new BasicFormatter(), printer);
+                    ? new CliLogHandler(new DebugFormatter(), colors, printer)
+                    : new CliLogHandler(new BasicFormatter(), colors, printer);
             handler.setLevel(level);
             rootLogger.addHandler(handler);
             RESTORE_FUNCTIONS.add(() -> rootLogger.removeHandler(handler));
@@ -120,10 +125,12 @@ final class LoggingUtil {
      */
     private static final class CliLogHandler extends Handler {
         private final Formatter formatter;
+        private final ColorFormatter colors;
         private final CliPrinter printer;
 
-        CliLogHandler(Formatter formatter, CliPrinter printer) {
+        CliLogHandler(Formatter formatter, ColorFormatter colors, CliPrinter printer) {
             this.formatter = formatter;
+            this.colors = colors;
             this.printer = printer;
         }
 
@@ -132,9 +139,9 @@ final class LoggingUtil {
             if (isLoggable(record)) {
                 String formatted = formatter.format(record);
                 if (record.getLevel().equals(Level.SEVERE)) {
-                    printer.println(formatted, Style.RED);
+                    colors.println(printer, formatted, Style.RED);
                 } else if (record.getLevel().equals(Level.WARNING)) {
-                    printer.println(formatted, Style.YELLOW);
+                    colors.println(printer, formatted, Style.YELLOW);
                 } else {
                     printer.println(formatted);
                 }

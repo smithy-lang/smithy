@@ -16,7 +16,7 @@
 package software.amazon.smithy.cli;
 
 /**
- * ANSI color codes and styles for use with {@link Ansi} or {@link CliPrinter}.
+ * Colors and styles for use with {@link AnsiColorFormatter} or {@link CliPrinter}.
  */
 public enum Style {
     BOLD(1),
@@ -60,14 +60,13 @@ public enum Style {
     BG_BRIGHT_CYAN(106),
     BG_BRIGHT_WHITE(107);
 
-    private final String code;
+    private final String ansiColorCode;
 
-    Style(int code) {
-        this.code = String.valueOf(code);
+    Style(int ansiColorCode) {
+        this.ansiColorCode = String.valueOf(ansiColorCode);
     }
 
-    @Override
-    public String toString() {
-        return code;
+    public String getAnsiColorCode() {
+        return ansiColorCode;
     }
 }

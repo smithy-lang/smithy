@@ -18,6 +18,7 @@ package software.amazon.smithy.cli;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 /**
@@ -33,10 +34,12 @@ public final class Cli {
 
     private static final Logger LOGGER = Logger.getLogger(Cli.class.getName());
 
+    private ColorFormatter colorFormatter;
     private CliPrinter stdoutPrinter;
     private CliPrinter stderrPrinter;
     private final ClassLoader classLoader;
     private final Command command;
+    private final StandardOptions standardOptions = new StandardOptions();
 
     /**
      * Creates a new CLI with the given name.
@@ -58,28 +61,31 @@ public final class Cli {
      */
     public int run(String[] args) {
         Arguments arguments = new Arguments(args);
-        StandardOptions standardOptions = new StandardOptions();
         arguments.addReceiver(standardOptions);
 
-        if (stdoutPrinter == null || stderrPrinter == null) {
-            Ansi ansi = Ansi.detect();
-            if (stdoutPrinter == null) {
-                stdout(CliPrinter.fromOutputStream(ansi, System.out));
-            }
-            if (stderrPrinter == null) {
-                stderr(CliPrinter.fromOutputStream(ansi, System.err));
-            }
+        if (colorFormatter == null) {
+            // CLI arguments haven't been parsed yet, so the CLI doesn't know if --force-color or --no-color
+            // was passed. Defer the color setting implementation by asking StandardOptions before each write.
+            colorFormatter(createDelegatedColorFormatter(standardOptions::colorSetting));
+        }
+
+        if (stdoutPrinter == null) {
+            stdout(CliPrinter.fromOutputStream(System.out));
+        }
+
+        if (stderrPrinter == null) {
+            stderr(CliPrinter.fromOutputStream(System.err));
         }
 
         // Setup logging after parsing all arguments.
         arguments.onComplete((opts, positional) -> {
-            LoggingUtil.configureLogging(opts.getReceiver(StandardOptions.class), stderrPrinter);
+            LoggingUtil.configureLogging(opts.getReceiver(StandardOptions.class), colorFormatter, stderrPrinter);
             LOGGER.fine(() -> "Running CLI command: " + Arrays.toString(args));
         });
 
         try {
             try {
-                Command.Env env = new Command.Env(stdoutPrinter, stderrPrinter, classLoader);
+                Command.Env env = new Command.Env(colorFormatter, stdoutPrinter, stderrPrinter, classLoader);
                 return command.execute(arguments, env);
             } catch (Exception e) {
                 printException(e, standardOptions.stackTrace());
@@ -98,6 +104,10 @@ public final class Cli {
         }
     }
 
+    public void colorFormatter(ColorFormatter colorFormatter) {
+        this.colorFormatter = colorFormatter;
+    }
+
     public void stdout(CliPrinter stdoutPrinter) {
         this.stdoutPrinter = stdoutPrinter;
     }
@@ -108,9 +118,9 @@ public final class Cli {
 
     private void printException(Throwable e, boolean stacktrace) {
         if (!stacktrace) {
-            stderrPrinter.println(e.getMessage(), Style.RED);
+            colorFormatter.println(stderrPrinter, e.getMessage(), Style.RED);
         } else {
-            try (CliPrinter.Buffer buffer = stderrPrinter.buffer()) {
+            try (ColorFormatter.PrinterBuffer buffer = colorFormatter.printerBuffer(stderrPrinter)) {
                 StringWriter writer = new StringWriter();
                 e.printStackTrace(new PrintWriter(writer));
                 String result = writer.toString();
@@ -119,5 +129,19 @@ public final class Cli {
                 buffer.println(result.substring(positionOfName));
             }
         }
+    }
+
+    private static ColorFormatter createDelegatedColorFormatter(Supplier<ColorFormatter> delegateSupplier) {
+        return new ColorFormatter() {
+            @Override
+            public String style(String text, Style... styles) {
+                return delegateSupplier.get().style(text, styles);
+            }
+
+            @Override
+            public void style(Appendable appendable, String text, Style... styles) {
+                delegateSupplier.get().style(appendable, text, styles);
+            }
+        };
     }
 }

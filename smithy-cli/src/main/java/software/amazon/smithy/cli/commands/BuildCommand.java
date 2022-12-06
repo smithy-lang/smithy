@@ -34,6 +34,7 @@ import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
+import software.amazon.smithy.cli.ColorFormatter;
 import software.amazon.smithy.cli.HelpPrinter;
 import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.cli.Style;
@@ -120,19 +121,19 @@ final class BuildCommand extends ClasspathCommand {
         // Register sources with the builder.
         models.forEach(path -> smithyBuild.registerSources(Paths.get(path)));
 
-        ResultConsumer resultConsumer = new ResultConsumer(env.stderr(), standardOptions.quiet());
+        ResultConsumer resultConsumer = new ResultConsumer(env.colors(), env.stderr(), standardOptions.quiet());
         smithyBuild.build(resultConsumer, resultConsumer);
 
         if (!standardOptions.quiet()) {
             Style ansiColor = resultConsumer.failedProjections.isEmpty()
                               ? Style.BRIGHT_GREEN
                               : Style.BRIGHT_YELLOW;
-            env.stderr().println(
-                    String.format("Smithy built %s projection(s), %s plugin(s), and %s artifacts",
-                                  resultConsumer.projectionCount,
-                                  resultConsumer.pluginCount,
-                                  resultConsumer.artifactCount),
-                    Style.BOLD, ansiColor);
+            env.colors().println(env.stderr(),
+                                 String.format("Smithy built %s projection(s), %s plugin(s), and %s artifacts",
+                                               resultConsumer.projectionCount,
+                                               resultConsumer.pluginCount,
+                                               resultConsumer.artifactCount),
+                                 Style.BOLD, ansiColor);
         }
 
         // Throw an exception if any errors occurred.
@@ -153,9 +154,11 @@ final class BuildCommand extends ClasspathCommand {
         private final AtomicInteger pluginCount = new AtomicInteger();
         private final AtomicInteger projectionCount = new AtomicInteger();
         private final boolean quiet;
+        private final ColorFormatter colors;
         private final CliPrinter printer;
 
-        ResultConsumer(CliPrinter stderr, boolean quiet) {
+        ResultConsumer(ColorFormatter colors, CliPrinter stderr, boolean quiet) {
+            this.colors = colors;
             this.printer = stderr;
             this.quiet = quiet;
         }
@@ -166,17 +169,17 @@ final class BuildCommand extends ClasspathCommand {
             StringWriter writer = new StringWriter();
             writer.write(String.format("%nProjection %s failed: %s%n", name, exception.toString()));
             exception.printStackTrace(new PrintWriter(writer));
-            printer.println(writer.toString(), Style.RED);
+            colors.println(printer, writer.toString(), Style.RED);
         }
 
         @Override
         public void accept(ProjectionResult result) {
-            try (CliPrinter.Buffer buffer = printer.buffer()) {
+            try (ColorFormatter.PrinterBuffer buffer = colors.printerBuffer(printer)) {
                 printProjectionResult(buffer, result);
             }
         }
 
-        private void printProjectionResult(CliPrinter.Buffer buffer, ProjectionResult result) {
+        private void printProjectionResult(ColorFormatter.PrinterBuffer buffer, ProjectionResult result) {
             if (result.isBroken()) {
                 // Write out validation errors as they occur.
                 failedProjections.add(result.getProjectionName());

@@ -27,6 +27,10 @@ public final class CliUtils {
         }
     }
 
+    public static Result runSmithyWithAutoColors(String... args) {
+        return run(SmithyCli.create().createCli(), args);
+    }
+
     private static Result run(Cli cli, String... args) {
         CliPrinter stdout = new BufferPrinter();
         CliPrinter stderr = new BufferPrinter();

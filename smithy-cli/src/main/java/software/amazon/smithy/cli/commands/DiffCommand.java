@@ -24,7 +24,7 @@ import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
-import software.amazon.smithy.cli.CliPrinter;
+import software.amazon.smithy.cli.ColorFormatter;
 import software.amazon.smithy.cli.HelpPrinter;
 import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.cli.Style;
@@ -122,7 +122,7 @@ final class DiffCommand extends ClasspathCommand {
 
         // Print the "framing" style output to stderr only if !quiet.
         if (!standardOptions.quiet()) {
-            try (CliPrinter.Buffer buffer = env.stderr().buffer()) {
+            try (ColorFormatter.PrinterBuffer buffer = env.colors().printerBuffer(env.stderr())) {
                 if (hasDanger) {
                     buffer.println("Smithy diff detected danger", Style.BRIGHT_RED, Style.BOLD);
                 } else if (hasWarning) {
