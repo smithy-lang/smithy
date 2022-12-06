@@ -26,6 +26,7 @@ import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliPrinter;
+import software.amazon.smithy.cli.ColorFormatter;
 import software.amazon.smithy.cli.HelpPrinter;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.model.Model;
@@ -55,7 +56,7 @@ final class SelectCommand extends ClasspathCommand {
     }
 
     @Override
-    public String getDocumentation(CliPrinter printer) {
+    public String getDocumentation(ColorFormatter colors) {
         return "By default, each matching shape ID is printed to stdout on a new line. Pass --vars to print out a "
                + "JSON array that contains a 'shape' and 'vars' property, where the 'vars' property is a map of "
                + "each variable that was captured when the shape was matched.";

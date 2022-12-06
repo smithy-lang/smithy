@@ -18,10 +18,10 @@ package software.amazon.smithy.cli.commands;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import software.amazon.smithy.cli.Ansi;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
+import software.amazon.smithy.cli.ColorFormatter;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.EnvironmentVariable;
 import software.amazon.smithy.cli.SmithyCli;
@@ -58,10 +58,9 @@ public final class SmithyCommand implements Command {
     }
 
     @Override
-    public void printHelp(Arguments arguments, CliPrinter printer) {
-        Ansi ansi = printer.ansi();
+    public void printHelp(Arguments arguments, ColorFormatter colors, CliPrinter printer) {
         printer.println(String.format("Usage: %s [-h | --help] [--version] <command> [<args>]",
-                                      ansi.style("smithy", Style.BRIGHT_WHITE, Style.UNDERLINE)));
+                                      colors.style("smithy", Style.BRIGHT_WHITE, Style.UNDERLINE)));
         printer.println("");
         printer.println("Available commands:");
 
@@ -77,7 +76,7 @@ public final class SmithyCommand implements Command {
         for (Command command : commands) {
             if (!command.isHidden()) {
                 printer.println(String.format("    %-" + longestName + "s %s",
-                                              ansi.style(command.getName(), Style.YELLOW),
+                                              colors.style(command.getName(), Style.YELLOW),
                                               command.getSummary()));
             }
         }
@@ -99,13 +98,13 @@ public final class SmithyCommand implements Command {
             StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
 
             if (standardOptions.help()) {
-                printHelp(arguments, env.stdout());
+                printHelp(arguments, env.colors(), env.stdout());
                 return 0;
             } else if (standardOptions.version()) {
                 env.stdout().println(SmithyCli.getVersion());
                 return 0;
             } else {
-                printHelp(arguments, env.stderr());
+                printHelp(arguments, env.colors(), env.stderr());
                 return 1;
             }
         }
