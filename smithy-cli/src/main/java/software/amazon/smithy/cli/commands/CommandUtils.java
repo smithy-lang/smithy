@@ -25,6 +25,7 @@ import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
+import software.amazon.smithy.cli.ColorFormatter;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.EnvironmentVariable;
 import software.amazon.smithy.cli.StandardOptions;
@@ -55,6 +56,7 @@ final class CommandUtils {
         StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
         BuildOptions buildOptions = arguments.getReceiver(BuildOptions.class);
         Severity minSeverity = buildOptions.severity(standardOptions);
+        ColorFormatter colors = env.colors();
 
         assembler.validationEventListener(event -> {
             // Only log events that are >= --severity. Note that setting --quiet inherently
@@ -62,10 +64,10 @@ final class CommandUtils {
             if (event.getSeverity().ordinal() >= minSeverity.ordinal()) {
                 if (event.getSeverity() == Severity.WARNING) {
                     // Only log warnings when not quiet
-                    printer.println(formatter.format(event), Style.YELLOW);
+                    colors.println(printer, formatter.format(event), Style.YELLOW);
                 } else if (event.getSeverity() == Severity.DANGER || event.getSeverity() == Severity.ERROR) {
                     // Always output error and danger events, even when quiet.
-                    printer.println(formatter.format(event), Style.RED);
+                    colors.println(printer, formatter.format(event), Style.RED);
                 } else {
                     printer.println(formatter.format(event));
                 }
@@ -79,7 +81,7 @@ final class CommandUtils {
         config.getImports().forEach(assembler::addImport);
 
         ValidatedResult<Model> result = assembler.assemble();
-        Validator.validate(quietValidation, env.stderr(), result);
+        Validator.validate(quietValidation, colors, env.stderr(), result);
         return result.getResult().orElseThrow(() -> new RuntimeException("Expected Validator to throw"));
     }
 

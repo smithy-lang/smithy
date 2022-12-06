@@ -12,11 +12,6 @@ final class BufferPrinter implements CliPrinter {
     }
 
     @Override
-    public Ansi ansi() {
-        return Ansi.NO_COLOR;
-    }
-
-    @Override
     public String toString() {
         // normalize line endings for tests.
         return builder.toString().replace("\r\n", "\n").replace("\r", "\n");

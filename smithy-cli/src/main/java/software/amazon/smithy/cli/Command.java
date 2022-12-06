@@ -47,10 +47,10 @@ public interface Command {
     /**
      * Gets the long description of the command.
      *
-     * @param printer Printer used to style strings.
+     * @param colors Color formatter to use for styling help.
      * @return Returns the long description.
      */
-    default String getDocumentation(CliPrinter printer) {
+    default String getDocumentation(ColorFormatter colors) {
         return "";
     }
 
@@ -58,9 +58,10 @@ public interface Command {
      * Prints help output.
      *
      * @param arguments Arguments that have been parsed so far.
+     * @param colors Color formatter to use.
      * @param printer Where to write help.
      */
-    void printHelp(Arguments arguments, CliPrinter printer);
+    void printHelp(Arguments arguments, ColorFormatter colors, CliPrinter printer);
 
     /**
      * Executes the command using the provided arguments.
@@ -78,12 +79,18 @@ public interface Command {
 
         private final CliPrinter stdout;
         private final CliPrinter stderr;
+        private final ColorFormatter colors;
         private final ClassLoader classLoader;
 
-        public Env(CliPrinter stdout, CliPrinter stderr, ClassLoader classLoader) {
+        public Env(ColorFormatter colors, CliPrinter stdout, CliPrinter stderr, ClassLoader classLoader) {
+            this.colors = colors;
             this.stdout = stdout;
             this.stderr = stderr;
             this.classLoader = classLoader;
+        }
+
+        public ColorFormatter colors() {
+            return colors;
         }
 
         public CliPrinter stdout() {
@@ -99,7 +106,7 @@ public interface Command {
         }
 
         public Env withClassLoader(ClassLoader classLoader) {
-            return classLoader == this.classLoader ? this : new Env(stdout, stderr, classLoader);
+            return classLoader == this.classLoader ? this : new Env(colors, stdout, stderr, classLoader);
         }
     }
 }

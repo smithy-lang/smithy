@@ -22,24 +22,7 @@ import java.util.Objects;
 /**
  * Styles text using ANSI color codes.
  */
-public enum Ansi {
-
-    /**
-     * Writes using ANSI colors if it detects that the environment supports color.
-     */
-    AUTO {
-        private final Ansi delegate = Ansi.detect();
-
-        @Override
-        public String style(String text, Style... styles) {
-            return delegate.style(text, styles);
-        }
-
-        @Override
-        public void style(Appendable appendable, String text, Style... styles) {
-            delegate.style(appendable, text, styles);
-        }
-    },
+public enum AnsiColorFormatter implements ColorFormatter {
 
     /**
      * Does not write any color.
@@ -74,53 +57,56 @@ public enum Ansi {
         @Override
         public void style(Appendable appendable, String text, Style... styles) {
             try {
-                appendable.append("\033[");
-                boolean isAfterFirst = false;
-                for (Style style : styles) {
-                    if (isAfterFirst) {
-                        appendable.append(';');
+                if (styles.length == 0) {
+                    appendable.append(text);
+                } else {
+                    appendable.append("\033[");
+                    boolean isAfterFirst = false;
+                    for (Style style : styles) {
+                        if (isAfterFirst) {
+                            appendable.append(';');
+                        }
+                        appendable.append(style.getAnsiColorCode());
+                        isAfterFirst = true;
                     }
-                    appendable.append(style.toString());
-                    isAfterFirst = true;
+                    appendable.append('m');
+                    appendable.append(text);
+                    appendable.append("\033[0m");
                 }
-                appendable.append('m');
-                appendable.append(text);
-                appendable.append("\033[0m");
             } catch (IOException e) {
                 throw new CliError("Error writing output", 2, e);
             }
+        }
+    },
+
+    /**
+     * Writes using ANSI colors if it detects that the environment supports color.
+     */
+    AUTO {
+        private final AnsiColorFormatter delegate = AnsiColorFormatter.detect();
+
+        @Override
+        public String style(String text, Style... styles) {
+            return delegate.style(text, styles);
+        }
+
+        @Override
+        public void style(Appendable appendable, String text, Style... styles) {
+            delegate.style(appendable, text, styles);
         }
     };
 
     /**
      * Detects if ANSI colors are supported and returns the appropriate Ansi enum variant.
      *
-     * <p>This method differs from using the {@link Ansi#AUTO} variant directly because it will detect any changes
-     * to the environment that might enable or disable colors.
+     * <p>This method differs from using the {@link AnsiColorFormatter#AUTO} variant directly because it will
+     * detect any changes to the environment that might enable or disable colors.
      *
      * @return Returns the detected ANSI color enum variant.
      */
-    public static Ansi detect() {
+    public static AnsiColorFormatter detect() {
         return isAnsiEnabled() ? FORCE_COLOR : NO_COLOR;
     }
-
-    /**
-     * Styles text using ANSI color codes.
-     *
-     * @param text Text to style.
-     * @param styles Styles to apply.
-     * @return Returns the styled text.
-     */
-    public abstract String style(String text, Style... styles);
-
-    /**
-     * Styles text using ANSI color codes and writes it to an Appendable.
-     *
-     * @param appendable Where to write styled text.
-     * @param text Text to write.
-     * @param styles Styles to apply.
-     */
-    public abstract void style(Appendable appendable, String text, Style... styles);
 
     private static boolean isAnsiEnabled() {
         if (EnvironmentVariable.FORCE_COLOR.isSet()) {
