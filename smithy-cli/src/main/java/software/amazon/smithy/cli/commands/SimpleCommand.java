@@ -21,6 +21,7 @@ import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
+import software.amazon.smithy.cli.ColorFormatter;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.HelpPrinter;
 import software.amazon.smithy.cli.StandardOptions;
@@ -59,7 +60,7 @@ abstract class SimpleCommand implements Command {
         }
 
         if (options.help()) {
-            printHelp(arguments, env.stdout());
+            printHelp(arguments, env.colors(), env.stdout());
             return 0;
         }
 
@@ -68,12 +69,12 @@ abstract class SimpleCommand implements Command {
     }
 
     @Override
-    public void printHelp(Arguments arguments, CliPrinter printer) {
+    public void printHelp(Arguments arguments, ColorFormatter colors, CliPrinter printer) {
         String name = StringUtils.isEmpty(parentCommandName) ? getName() : parentCommandName + " " + getName();
         HelpPrinter.fromArguments(name, arguments)
                 .summary(getSummary())
-                .documentation(getDocumentation(printer))
-                .print(printer);
+                .documentation(getDocumentation(colors))
+                .print(colors, printer);
     }
 
     /**

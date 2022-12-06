@@ -63,4 +63,18 @@ public class CliTest {
         assertThat(result.code(), equalTo(0));
         assertThat(result.stderr(), containsString("Running CLI command"));
     }
+
+    @Test
+    public void canForceColors() {
+        CliUtils.Result result = CliUtils.runSmithyWithAutoColors("--force-color", "--help");
+
+        assertThat(result.stdout(), containsString("[0m"));
+    }
+
+    @Test
+    public void canForceDisableColors() {
+        CliUtils.Result result = CliUtils.runSmithyWithAutoColors("--no-color", "--help");
+
+        assertThat(result.stdout(), not(containsString("[0m")));
+    }
 }
