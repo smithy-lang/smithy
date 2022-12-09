@@ -33,6 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,6 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
@@ -495,6 +498,27 @@ public class ModelAssemblerTest {
             assertThat(model.getShape(shapeId).get().getSourceLocation().getFilename(),
                        startsWith("jar:file:"));
         }
+    }
+
+    @Test
+    public void canLoadTraitFromJarMultipleTimes() {
+        URL jar = getClass().getResource("jar-traits-import.jar");
+        URL file = getClass().getResource("loads-jar-traits.smithy");
+
+        Supplier<Model> modelSupplier = () -> {
+            URLClassLoader urlClassLoader = new URLClassLoader(new URL[] {jar});
+             return Model.assembler(urlClassLoader)
+                    .discoverModels(urlClassLoader)
+                    .addImport(file)
+                    .assemble()
+                    .unwrap();
+        };
+
+        Model model = modelSupplier.get();
+        assertTrue(model.getShape(ShapeId.from("smithy.test#test")).isPresent());
+
+        Model reloadedModel = modelSupplier.get();
+        assertTrue(reloadedModel.getShape(ShapeId.from("smithy.test#test")).isPresent());
     }
 
     @Test
