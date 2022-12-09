@@ -43,7 +43,7 @@ public class IdentityClassCacheTest {
         String key = "key";
         Type associatedClass = new Type() {};
         String storedInstance = "value";
-        cache.getForClass("key", associatedClass, () -> storedInstance);
+        cache.getForClass(key, associatedClass, () -> storedInstance);
 
         Type newAssociatedClass = new Type() {};
         String newStoredInstance = "newValue";
