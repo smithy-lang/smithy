@@ -18,7 +18,6 @@ use smithy.test#httpResponseTests
             "Accept": "application/*",
         },
         params: {},
-        body: "{}",
         method: "GET",
         appliesTo: "server",
     },
@@ -30,7 +29,6 @@ use smithy.test#httpResponseTests
             "Accept": "*/*",
         },
         params: {},
-        body: "{}",
         method: "GET",
         appliesTo: "server",
     }
