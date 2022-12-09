@@ -170,6 +170,46 @@ public class CreateDedicatedInputAndOutputTest {
     }
 
     @Test
+    public void removesDisconnectedSharedShape() {
+        Model result = compareTransform("removes-disconnected-shared-shape", model ->
+                ModelTransformer.create().createDedicatedInputAndOutput(model, "Input", "Output")
+        );
+
+        assertThat(result.getShapeIds(), Matchers.not(Matchers.hasItem(ShapeId.from("smithy.example#MyGetFooOutput"))));
+
+        result.expectShape(ShapeId.from("smithy.example#GetFooInput")).expectTrait(InputTrait.class);
+        result.expectShape(ShapeId.from("smithy.example#GetFooOutput")).expectTrait(OutputTrait.class);
+
+        assertThat(result.expectShape(ShapeId.from("smithy.example#GetFooInput"))
+                            .expectTrait(OriginalShapeIdTrait.class)
+                            .getOriginalId(),
+                Matchers.equalTo(ShapeId.from("smithy.example#MyGetFooOutput")));
+
+        assertThat(result.expectShape(ShapeId.from("smithy.example#GetFooOutput"))
+                        .expectTrait(OriginalShapeIdTrait.class)
+                        .getOriginalId(),
+                Matchers.equalTo(ShapeId.from("smithy.example#MyGetFooOutput")));
+    }
+
+    @Test
+    public void createsDedicatedHeuristicForSharedShape() {
+        Model result = compareTransform("creates-dedicated-heuristic-for-shared", model ->
+                ModelTransformer.create().createDedicatedInputAndOutput(model, "Input", "Output")
+        );
+
+        result.expectShape(ShapeId.from("smithy.example#GetFooInput")).expectTrait(InputTrait.class);
+        result.expectShape(ShapeId.from("smithy.example#GetFooOutput")).expectTrait(OutputTrait.class);
+
+        assertThat(result.expectShape(ShapeId.from("smithy.example#GetFooInput"))
+                            .expectTrait(OriginalShapeIdTrait.class)
+                            .getOriginalId(),
+                Matchers.equalTo(ShapeId.from("smithy.example#GetFooOutput")));
+
+        assertThat(result.expectShape(ShapeId.from("smithy.example#GetFooOutput"))
+                        .getTrait(OriginalShapeIdTrait.class), Matchers.equalTo(Optional.empty()));
+    }
+
+    @Test
     public void detectsConflictResolverLoop() {
         Assertions.assertThrows(ModelTransformException.class, () -> {
             Model before = Model.assembler()
