@@ -167,12 +167,13 @@ string support defined in :rfc:`7405`.
 .. rubric:: Shapes
 
 .. productionlist:: smithy
-    ShapeSection            :[`NamespaceStatement` `UseSection` `ShapeStatements`]
+    ShapeSection            :[`NamespaceStatement` `UseSection` [`ShapeStatements`]]
     NamespaceStatement      :%s"namespace" `SP` `Namespace` `BR`
     UseSection              :*(`UseStatement`)
     UseStatement            :%s"use" `SP` `AbsoluteRootShapeId` `BR`
-    ShapeStatements         :*(`ShapeStatement` / `ApplyStatement`)
-    ShapeStatement          :`TraitStatements` `ShapeBody` `BR`
+    ShapeStatements         :`ShapeOrApplyStatement` *(`BR` `ShapeOrApplyStatement`)
+    ShapeOrApplyStatement   :`ShapeStatement` / `ApplyStatement`
+    ShapeStatement          :`TraitStatements` `ShapeBody`
     ShapeBody               :`SimpleShapeStatement`
                             :/ `EnumShapeStatement`
                             :/ `ListStatement`
@@ -193,12 +194,12 @@ string support defined in :rfc:`7405`.
     EnumShapeMembers        :"{" *`WS` 1*(`TraitStatements` `Identifier` [`ValueAssignment`] `*WS`) "}"
     ValueAssignment         :*`SP` "=" *`SP` `NodeValue` `BR`
     ListStatement           :%s"list" `SP` `Identifier` [`Mixins`] *`WS` `ListMembers`
-    ListMembers             :"{" *`WS` `ListMember` *`WS` "}"
+    ListMembers             :"{" *`WS` [`ListMember`] *`WS` "}"
     ListMember              :`TraitStatements` (`ElidedListMember` / `ExplicitListMember`)
     ElidedListMember        :%s"$member"
     ExplicitListMember      :%s"member" *`SP` ":" *`SP` `ShapeId`
     MapStatement            :%s"map" `SP` `Identifier` [`Mixins`] *`WS` `MapMembers`
-    MapMembers              :"{" *`WS` `MapKey` `WS` `MapValue` *`WS` "}"
+    MapMembers              :"{" *`WS` [`MapKey` `WS` `MapValue`] *`WS` "}"
     MapKey                  :`TraitStatements` (`ElidedMapKey` / `ExplicitMapKey`)
     MapValue                :`TraitStatements` (`ElidedMapValue` / `ExplicitMapValue`)
     ElidedMapKey            :%s"$key"
@@ -237,9 +238,9 @@ string support defined in :rfc:`7405`.
     TraitBodyValue          :`TraitStructure` / `NodeValue`
     TraitStructure          :`TraitStructureKvp` *(*`WS` `TraitStructureKvp`)
     TraitStructureKvp       :`NodeObjectKey` *`WS` ":" *`WS` `NodeValue`
-    ApplyStatement          :(`ApplyStatementSingular` / `ApplyStatementBlock`)
-    ApplyStatementSingular  :%s"apply" `SP` `ShapeId` `WS` `Trait` `BR`
-    ApplyStatementBlock     :%s"apply" `SP` `ShapeId` `WS` "{" `TraitStatements` "}" `BR`
+    ApplyStatement          :`ApplyStatementSingular` / `ApplyStatementBlock`
+    ApplyStatementSingular  :%s"apply" `SP` `ShapeId` `WS` `Trait`
+    ApplyStatementBlock     :%s"apply" `SP` `ShapeId` `WS` "{" `TraitStatements` "}"
 
 .. rubric:: Shape ID
 
