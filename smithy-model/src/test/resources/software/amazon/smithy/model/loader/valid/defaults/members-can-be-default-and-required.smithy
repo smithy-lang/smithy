@@ -6,3 +6,4 @@ structure Foo {
     @required
     bar: Integer = 0
 }
+

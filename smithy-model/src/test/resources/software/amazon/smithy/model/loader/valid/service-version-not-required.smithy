@@ -1,3 +1,6 @@
 namespace smithy.example
 
-service MyService {}
+service MyService {
+
+}
+

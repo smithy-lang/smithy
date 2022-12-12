@@ -18,11 +18,10 @@ enum MixedEnum {
 intEnum MixedIntEnum {
     @enumValue(1)
     FOO
-
     /// Docs
     @enumValue(2)
     BAR
-
     @enumValue(3)
     BAZ
 }
+

@@ -11,4 +11,7 @@ structure PrivateMixin {
     foo: String
 }
 
-structure PublicShape with [PrivateMixin] {}
+structure PublicShape with [PrivateMixin] {
+
+}
+

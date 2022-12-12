@@ -7,7 +7,6 @@ namespace smithy.example
 @private
 enum BaseEnum {
     FOO
-
     /// Documentation
     BAR
 }
@@ -26,7 +25,6 @@ enum MixedEnum with [BaseEnum] {
 intEnum BaseIntEnum {
     @enumValue(1)
     FOO
-
     /// Documentation
     @enumValue(2)
     BAR
@@ -37,7 +35,7 @@ intEnum BaseIntEnum {
 intEnum MixedIntEnum with [BaseIntEnum] {
     /// Docs
     BAR
-
     @enumValue(3)
     BAZ
 }
+

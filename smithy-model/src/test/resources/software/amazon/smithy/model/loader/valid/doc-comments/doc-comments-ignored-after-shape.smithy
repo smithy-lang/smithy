@@ -4,15 +4,21 @@
 // would not only be invalid, it would also cause a conflict with its actual
 // documentation trait.
 $version: "2.0"
+
 namespace smithy.example
 
 @enum([
     /// Invalid!
-    { name: "X", value: "X"}
-]) string Features
+    {
+        name: "X"
+        value: "X"
+    }
+])
+string Features
 
 @documentation("X")
 map Foo {
-    key: Features,
+    key: Features
     value: Boolean
 }
+

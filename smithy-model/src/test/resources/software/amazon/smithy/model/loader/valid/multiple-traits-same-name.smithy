@@ -7,7 +7,10 @@ string DeprecatedString1
 string DeprecatedString2
 
 @trait(selector: "*")
-structure deprecated {}
+structure deprecated {
+
+}
 
 @deprecated
 string DeprecatedString3
+

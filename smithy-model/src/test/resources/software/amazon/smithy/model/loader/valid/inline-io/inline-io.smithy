@@ -6,22 +6,20 @@ operation DerivedNames {
     input := {
         id: String
     }
-
     output := {
         id: String
     }
 }
 
 operation UsesTraits {
-    input := @sensitive {
+    input := @sensitive
+     {
         id: String
     }
-
-    output :=
-        @sensitive
-        {
-            id: String
-        }
+    output := @sensitive
+     {
+        id: String
+    }
 }
 
 @mixin
@@ -33,42 +31,44 @@ operation UsesMixins {
     input := with [NameBearer] {
         id: String
     }
-
     output := with [NameBearer] {
         id: String
     }
 }
 
 operation UsesTraitsAndMixins {
-    input :=
-        @sensitive
-        with [NameBearer] {
-            id: String
-        }
-
-    output :=
-        @sensitive
-        with [NameBearer] {
-            id: String
-        }
+    input := @sensitive
+     with [NameBearer] {
+        id: String
+    }
+    output := @sensitive
+     with [NameBearer] {
+        id: String
+    }
 }
 
 operation EmptyShapes {
-    input := {}
-    output := {}
+    input := {
+    }
+    output := {
+    }
 }
 
 operation HasDocComments {
-    input :=
-        /// The trait parser automagically handles these
-        {}
-
-    output :=
-        /// Here too
-        {}
+    input :=/// The trait parser automagically handles these
+     {
+    }
+    output :=/// Here too
+     {
+    }
 }
 
 operation DuplicateTrait {
-    input := @input {}
-    output := @output {}
+    input := @input
+     {
+    }
+    output := @output
+     {
+    }
 }
+

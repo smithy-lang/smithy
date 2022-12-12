@@ -9,9 +9,13 @@ structure MixinError {
     message: ShapeToRename
 }
 
-operation MixinOperation {}
+operation MixinOperation {
 
-resource MixinResource {}
+}
+
+resource MixinResource {
+
+}
 
 @internal
 @mixin
@@ -25,4 +29,7 @@ service MixinService {
     resources: [MixinResource]
 }
 
-service MixedService with [MixinService] {}
+service MixedService  with [MixinService]{
+
+}
+

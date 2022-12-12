@@ -7,3 +7,4 @@ structure MixedStructure {
     @internal
     redefineable: String
 }
+

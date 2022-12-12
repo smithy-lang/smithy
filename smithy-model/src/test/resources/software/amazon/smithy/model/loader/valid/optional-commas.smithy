@@ -1,15 +1,9 @@
 $version: "2.0"
+
 namespace example.weather
 
 // Commas are whitespace.
-,,,,,,
-
-/// Provides weather forecasts.
-@paginated(
-    inputToken: "nextToken"
-    outputToken: "nextToken"
-    pageSize: "pageSize"
-)
+@paginated(inputToken: "nextToken", outputToken: "nextToken", pageSize: "pageSize")
 service Weather {
     version: "2006-03-01"
     resources: [City]
@@ -17,14 +11,18 @@ service Weather {
 }
 
 resource City {
-    identifiers: { cityId: CityId }
+    identifiers: {
+        cityId: CityId
+    }
     read: GetCity
     list: ListCities
     resources: [Forecast]
 }
 
 resource Forecast {
-    identifiers: { cityId: CityId }
+    identifiers: {
+        cityId: CityId
+    }
     read: GetForecast
 }
 
@@ -51,7 +49,6 @@ structure GetCityOutput {
     // will always provide a value for the member.
     @required
     name: String
-
     @required
     coordinates: CityCoordinates
 }
@@ -60,7 +57,6 @@ structure GetCityOutput {
 structure CityCoordinates {
     @required
     latitude: Float
-
     @required
     longitude: Float
 }
@@ -89,7 +85,6 @@ structure ListCitiesInput {
 
 structure ListCitiesOutput {
     nextToken: String
-
     @required
     items: CitySummaries
 }
@@ -100,11 +95,12 @@ list CitySummaries {
 }
 
 // CitySummary contains a reference to a City.
-@references([{resource: City}])
+@references([{
+    resource: City
+}])
 structure CitySummary {
     @required
     cityId: CityId
-
     @required
     name: String
 }
@@ -135,3 +131,4 @@ structure GetForecastInput {
 structure GetForecastOutput {
     chanceOfRain: Float
 }
+

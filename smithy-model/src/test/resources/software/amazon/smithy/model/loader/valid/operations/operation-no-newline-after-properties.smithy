@@ -1,10 +1,19 @@
 $version: "2.0"
+
 namespace smithy.example
 
-operation GetFoo { input: GetFooInput, output: GetFooOutput }
+operation GetFoo {
+    input: GetFooInput
+    output: GetFooOutput
+}
 
 @input
-structure GetFooInput {}
+structure GetFooInput {
+
+}
 
 @output
-structure GetFooOutput {}
+structure GetFooOutput {
+
+}
+

@@ -5,6 +5,9 @@ $operationOutputSuffix: "Response"
 namespace com.example
 
 operation Operation {
-    input := {}
-    output := {}
+    input := {
+    }
+    output := {
+    }
 }
+

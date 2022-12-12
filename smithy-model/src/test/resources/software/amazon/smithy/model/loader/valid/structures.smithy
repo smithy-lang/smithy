@@ -1,57 +1,73 @@
 namespace com.foo
 
-structure A {}
+structure A {
+
+}
+
 structure B {
+
 }
 
-structure C
-{}
+structure C {
 
-structure D
-{
 }
 
-structure E     {      }
+structure D {
+
+}
+
+structure E {
+
+}
 
 @deprecated
-structure F {}
+structure F {
+
+}
 
 @deprecated
 @documentation("foo")
-structure G {}
+structure G {
+
+}
 
 structure H {
-  foo: E
+    foo: E
 }
 
 structure I {
-  foo: E,
-  baz: H
+    foo: E
+    baz: H
 }
 
 structure J {
-  @deprecated
-  foo: E,
-  baz: H
+    @deprecated
+    foo: E
+    baz: H
 }
 
 structure K {
-  @deprecated @since("2.0")
-  foo: E,
-  @deprecated
-  baz: H
+    @deprecated
+    @since("2.0")
+    foo: E
+    @deprecated
+    baz: H
 }
 
 structure L {
-  @deprecated @since("2.0") foo: E,
-  @deprecated baz: H
+    @deprecated
+    @since("2.0")
+    foo: E
+    @deprecated
+    baz: H
 }
 
 @documentation("abc")
 structure M {
-  @deprecated
-  @since("2.0")
-  foo:E,
-  @deprecated
-  baz:H
+    @deprecated
+    @since("2.0")
+    foo: E
+    @deprecated
+    baz: H
 }
+

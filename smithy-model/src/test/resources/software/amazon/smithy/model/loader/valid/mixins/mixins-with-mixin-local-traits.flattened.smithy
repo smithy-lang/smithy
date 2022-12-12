@@ -6,3 +6,4 @@ namespace smithy.example
 structure PublicShape {
     foo: String
 }
+

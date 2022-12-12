@@ -1,21 +1,25 @@
 namespace example.weather
 
 service Weather {
-  version: "2006-03-01",
-  resources: [City],
-  operations: [GetCurrentTime]
+    version: "2006-03-01"
+    resources: [City]
+    operations: [GetCurrentTime]
 }
 
 resource City {
-  identifiers: { cityId: CityId },
-  read: GetCity,
-  list: ListCities,
-  resources: [Forecast]
+    identifiers: {
+        cityId: CityId
+    }
+    read: GetCity
+    list: ListCities
+    resources: [Forecast]
 }
 
 resource Forecast {
-  identifiers: { cityId: CityId },
-  read: GetForecast
+    identifiers: {
+        cityId: CityId
+    }
+    read: GetForecast
 }
 
 // Pattern is a trait.
@@ -28,79 +32,93 @@ operation GetCurrentTime {
 }
 
 structure GetCurrentTimeOutput {
-  time: smithy.api#Timestamp
+    time: smithy.api#Timestamp
 }
 
 @readonly
 operation GetForecast {
-    input: GetForecastInput,
-    output: GetForecastOutput,
+    input: GetForecastInput
+    output: GetForecastOutput
     errors: [NoSuchResource]
 }
 
 structure GetForecastInput {
-  @required cityId: CityId
+    @required
+    cityId: CityId
 }
 
 structure GetForecastOutput {
-  @required chanceOfRain: smithy.api#Float,
-  @required low: smithy.api#Integer,
-  @required high: smithy.api#Integer
+    @required
+    chanceOfRain: smithy.api#Float
+    @required
+    low: smithy.api#Integer
+    @required
+    high: smithy.api#Integer
 }
 
 @readonly
 operation GetCity {
-    input: GetCityInput,
-    output: GetCityOutput,
+    input: GetCityInput
+    output: GetCityOutput
     errors: [NoSuchResource]
 }
 
 structure GetCityInput {
-  @required cityId: CityId
+    @required
+    cityId: CityId
 }
 
 structure GetCityOutput {
-  @required name: smithy.api#String,
-  @required coordinates: CityCoordinates
+    @required
+    name: smithy.api#String
+    @required
+    coordinates: CityCoordinates
 }
 
 @readonly
-@paginated(inputToken: "nextToken", outputToken: "nextToken",
-           pageSize: "pageSize", items: "items")
+@paginated(inputToken: "nextToken", outputToken: "nextToken", pageSize: "pageSize", items: "items")
 operation ListCities {
-    input: ListCitiesInput,
+    input: ListCitiesInput
     output: ListCitiesOutput
 }
 
 structure ListCitiesInput {
-  nextToken: smithy.api#String,
-  pageSize: smithy.api#Integer
+    nextToken: smithy.api#String
+    pageSize: smithy.api#Integer
 }
 
 // Traits can be applied outside of the definition.
 apply ListCitiesInput @documentation("hello!")
-
 structure ListCitiesOutput {
-  nextToken: smithy.api#String,
-  @required items: CitySummaries
+    nextToken: smithy.api#String
+    @required
+    items: CitySummaries
 }
 
 structure CityCoordinates {
-  @required latitude: smithy.api#Float,
-  @required longitude: smithy.api#Float
+    @required
+    latitude: smithy.api#Float
+    @required
+    longitude: smithy.api#Float
 }
 
 @error("client")
 structure NoSuchResource {
-  @required resourceType: smithy.api#String
+    @required
+    resourceType: smithy.api#String
 }
 
 list CitySummaries {
-  member: CitySummary
+    member: CitySummary
 }
 
-@references([{resource: City}])
+@references([{
+    resource: City
+}])
 structure CitySummary {
-  @required cityId: CityId,
-  @required name: smithy.api#String
+    @required
+    cityId: CityId
+    @required
+    name: smithy.api#String
 }
+

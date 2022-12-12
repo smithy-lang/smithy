@@ -2,9 +2,13 @@ $version: "2.0"
 
 namespace smithy.example
 
-structure B {}
+structure B {
 
-structure F {}
+}
+
+structure F {
+
+}
 
 blob MixedBlob
 
@@ -41,8 +45,15 @@ map MixedMap {
     value: String
 }
 
-service MixedService {}
+service MixedService {
 
-resource MixedResource {}
+}
 
-operation MixedOperation {}
+resource MixedResource {
+
+}
+
+operation MixedOperation {
+
+}
+

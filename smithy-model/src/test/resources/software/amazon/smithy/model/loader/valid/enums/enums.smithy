@@ -11,10 +11,8 @@ enum EnumWithoutValueTraits {
 enum EnumWithValueTraits {
     @enumValue("foo")
     FOO
-
     @enumValue("bar")
     BAR
-
     @enumValue("baz")
     BAZ
 }
@@ -22,10 +20,9 @@ enum EnumWithValueTraits {
 intEnum IntEnum {
     @enumValue(1)
     FOO
-
     @enumValue(2)
     BAR
-
     @enumValue(3)
     BAZ
 }
+

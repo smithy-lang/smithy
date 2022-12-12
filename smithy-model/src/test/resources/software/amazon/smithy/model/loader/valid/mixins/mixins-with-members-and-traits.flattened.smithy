@@ -11,21 +11,17 @@ namespace smithy.example
 @tags(["a"])
 structure F {
     /// I've changed
-    a: String,
-
+    a: String
     /// B.b
-    b: String,
-
+    b: String
     /// I've changed
     @internal
-    c: String,
-
+    c: String
     /// D.d
-    d: String,
-
+    d: String
     /// E.e
-    e: String,
-
+    e: String
     /// F.f
-    f: String,
+    f: String
 }
+

@@ -3,7 +3,7 @@ $version: "1.0"
 namespace smithy.example
 
 service TestService {
-    version: "1",
+    version: "1"
     operations: [Example]
 }
 
@@ -18,4 +18,7 @@ structure ExampleOutput {
 }
 
 // This shape does not conflict with the implicit Unit shape.
-structure Unit {}
+structure Unit {
+
+}
+

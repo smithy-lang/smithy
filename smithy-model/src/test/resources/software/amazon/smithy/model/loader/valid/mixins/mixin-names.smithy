@@ -16,6 +16,11 @@ integer NotPrefixed
 @mixin
 integer iiiiiii
 
-integer MixedInt with [NotPrefixed integerPrefixed iiiiiii]
+integer MixedInt with [
+    NotPrefixed,
+    integerPrefixed,
+    iiiiiii
+]
 
 integer SafeInt
+

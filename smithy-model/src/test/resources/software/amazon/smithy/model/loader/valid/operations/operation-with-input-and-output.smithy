@@ -1,4 +1,5 @@
 $version: "2.0"
+
 namespace smithy.example
 
 operation GetFoo {
@@ -7,7 +8,12 @@ operation GetFoo {
 }
 
 @input
-structure GetFooInput {}
+structure GetFooInput {
+
+}
 
 @output
-structure GetFooOutput {}
+structure GetFooOutput {
+
+}
+

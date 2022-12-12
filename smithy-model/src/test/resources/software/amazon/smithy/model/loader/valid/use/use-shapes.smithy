@@ -8,7 +8,7 @@ use smithy.api#Long
 use foo.example#Widget
 
 list MyList {
-    member: String,
+    member: String
 }
 
 list Widgets {
@@ -16,6 +16,7 @@ list Widgets {
 }
 
 structure Struct {
-    a: Integer,
-    b: Long,
+    a: Integer
+    b: Long
 }
+

@@ -30,3 +30,4 @@ structure E with [D] {
 structure F with [B, E] {
     f: String
 }
+

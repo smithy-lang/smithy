@@ -5,8 +5,9 @@ namespace smithy.example
 structure Foo {
     a: String = ""
     b: Boolean = true
-    c: StringList     =     []
-    d: Document = {}
+    c: StringList = []
+    d: Document = {
+    }
     e: Document = "hi"
     f: Document = true
     g: Document = false
@@ -18,8 +19,10 @@ structure Foo {
     m: Integer = 10
     n: Long = 100
     o: Float = 0
-    p: Double= 0
-    q: StringMap = {} // comment
+    p: Double = 0
+    q: StringMap = {
+    }
+    // comment
     r: BigInteger = 0
     s: BigDecimal = 0
 }
@@ -32,3 +35,4 @@ map StringMap {
     key: String
     value: String
 }
+

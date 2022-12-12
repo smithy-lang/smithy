@@ -3,20 +3,32 @@ $version: "2.0"
 namespace smithy.example
 
 @mixin
-structure A {}
+structure A {
 
-structure B with [A] {}
+}
 
-@mixin
-structure C {}
+structure B with [A] {
 
-@mixin
-structure D with [C] {}
+}
 
 @mixin
-structure E with [D] {}
+structure C {
 
-structure F with [A, E] {}
+}
+
+@mixin
+structure D with [C] {
+
+}
+
+@mixin
+structure E with [D] {
+
+}
+
+structure F with [A, E] {
+
+}
 
 @mixin
 blob MixinBlob
@@ -88,7 +100,9 @@ list MixinList {
     member: String
 }
 
-list MixedList with [MixinList] {}
+list MixedList with [MixinList] {
+
+}
 
 @mixin
 map MixinMap {
@@ -96,19 +110,34 @@ map MixinMap {
     value: String
 }
 
-map MixedMap with [MixinMap] {}
+map MixedMap with [MixinMap] {
+
+}
 
 @mixin
-service MixinService {}
+service MixinService {
 
-service MixedService with [MixinService] {}
+}
+
+service MixedService  with [MixinService]{
+
+}
 
 @mixin
-resource MixinResource {}
+resource MixinResource {
 
-resource MixedResource with [MixinResource] {}
+}
+
+resource MixedResource  with [MixinResource]{
+
+}
 
 @mixin
-operation MixinOperation {}
+operation MixinOperation {
 
-operation MixedOperation with [MixinOperation] {}
+}
+
+operation MixedOperation  with [MixinOperation]{
+
+}
+

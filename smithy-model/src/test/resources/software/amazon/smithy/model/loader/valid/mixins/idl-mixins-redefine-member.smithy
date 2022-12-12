@@ -15,3 +15,4 @@ structure MixedStructure with [MixinStructure] {
     @required
     redefineable: String
 }
+

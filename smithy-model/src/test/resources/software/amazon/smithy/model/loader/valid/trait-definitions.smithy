@@ -1,7 +1,9 @@
 namespace example.namespace
 
 @trait
-structure customTrait {}
+structure customTrait {
+
+}
 
 // Overrides the prelude documentation shape.
 @trait(selector: "*")
@@ -24,3 +26,4 @@ string MyString3
 
 @numeric(10)
 string MyString4
+

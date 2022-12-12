@@ -1,31 +1,25 @@
 namespace com.example
 
 // Single trait
-
 @sensitive
 string A
 
 // Multiple traits same lines
-
-@sensitive @deprecated
+@sensitive
+@deprecated
 string B
 
 // Multiple traits separate lines
-
 @sensitive
 @deprecated
 string C
 
 // Multiple spaces between.
-
 @sensitive
-
 @deprecated
-
 string D
 
 // String
-
 @documentation("Hello!")
 string E
 
@@ -40,68 +34,82 @@ Is this a backslash? \"\\\".")
 string F
 
 // Unquoted string resolves to a shape ID
-
 @documentation(H)
 string H
 
 // Unquoted string array
-
-@references([{resource: Foo}, {resource: Foo, rel: "baz"}])
+@references([{
+    resource: Foo
+}, {
+    resource: Foo
+    rel: "baz"
+}])
 string I
+
 resource Foo {
-  identifiers: { abc: smithy.api#String },
+    identifiers: {
+        abc: smithy.api#String
+    }
 }
 
 // Quoted string array
-
-@references([{ "resource": "com.example#Foo" }, { "resource": "com.example#Foo", "rel": "baz" }])
+@references([{
+    "resource": "com.example#Foo"
+}, {
+    "resource": "com.example#Foo"
+    "rel": "baz"
+}])
 string J
 
 // Empty object
-
 @deprecated()
 string K
 
 // Empty list
-
 @tags([])
 string L
 
 // List with values
+@tags([
 
-@tags(["a", "b", "c"])
+    "a"
+    "b"
+    "c"
+])
 string M
 
 // List with values and trailing comma
+@tags([
 
-@tags(["a", "b", "c", ])
+    "a"
+    "b"
+    "c"
+])
 string N
 
 // List with quoted values.
+@tags([
 
-@tags(["a", "b", "c"])
+    "a"
+    "b"
+    "c"
+])
 string O
 
 // List with quoted values spanning multiple lines.
+@tags([
 
-@tags(
-[
-"a"
-,
-"b"
-,
-"c"
-]
-)
+    "a"
+    "b"
+    "c"
+])
 string P
 
 // Boolean
-
 @sensitive
 string Q
 
 // Number
-
 @trait
 integer numeric
 
@@ -117,7 +125,6 @@ string S
 string T
 
 // Long strings
-
 @documentation("""
     This is a
     string defined on multiple lines.
@@ -131,7 +138,6 @@ string T
 string U
 
 apply E @deprecated
-
 @documentation("")
 string V
 
@@ -155,3 +161,4 @@ bigInteger bInteger
 
 @com.example#bInteger(9223372036854775808)
 string ZA
+

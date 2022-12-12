@@ -10,5 +10,6 @@ structure Struct {
     @required
     @internal
     @deprecated
-    a: String,
+    a: String
 }
+

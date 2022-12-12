@@ -1,13 +1,27 @@
 $version: "2.0"
+
 namespace smithy.example
 
-enum A { FOO BAR BAZ }
-enum B { FOO, BAR, BAZ // Test
-       }
+enum A {
+    FOO
+    BAR
+    BAZ
+}
 
-enum C { FOO }
+enum B {
+    FOO
+    BAR
+    BAZ
+    // Test
+}
 
-enum D { FOO
-         /// BAR
-         BAR = "bar"
-       }
+enum C {
+    FOO
+}
+
+enum D {
+    FOO
+    /// BAR
+    BAR = "bar"
+}
+

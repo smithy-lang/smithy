@@ -49,7 +49,6 @@ structure MixedResourceWithPropertiesStructure for MyResource with [MixinStructu
 structure MixedResourceStructureWithTraits for MyResource with [MixinStructure] {
     @pattern(".*")
     $id
-
     @pattern(".*")
     $foo
 }
@@ -101,6 +100,7 @@ operation ThrowAway {
         id: String
         property: String
     }
-    output := {}
+    output := {
+    }
 }
 

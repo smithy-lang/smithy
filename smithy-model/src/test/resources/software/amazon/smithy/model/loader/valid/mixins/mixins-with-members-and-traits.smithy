@@ -37,7 +37,6 @@ structure D with [C] {
 // Override traits on the inherited member.
 apply D$c @internal
 apply D$c @documentation("I've changed")
-
 /// E
 @since("X")
 @mixin
