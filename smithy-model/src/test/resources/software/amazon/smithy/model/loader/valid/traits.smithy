@@ -121,8 +121,8 @@ string T
 @documentation("""
     This is a
     string defined on multiple lines.
-    It \
-    can \
+    It \\
+    can \\
     span
     a
     great

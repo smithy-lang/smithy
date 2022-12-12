@@ -19,8 +19,8 @@ string TrailingNewlineString
 string NoTrailingNewlineString
 
 @documentation("""
-    Hi \
-    there \
+    Hi \\
+    there \\
     bye""")
 string EscapedNewlineString
 
@@ -50,5 +50,5 @@ string EmptyLinesAreIncidentalWs
 string SingleCharacterTextBlock
 
 @documentation("""
-    "Hi\"""")
+    \"Hi\"""")
 string EmbeddedQuotesTextBlock
