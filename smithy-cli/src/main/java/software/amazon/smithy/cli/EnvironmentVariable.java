@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.cli;
 
+import java.util.logging.Logger;
+
 /**
  * Environment variables used by the Smithy CLI.
  */
@@ -41,12 +43,28 @@ public enum EnvironmentVariable {
      *     <li>forbid: forbids dependencies from being declared and will fail the CLI if dependencies are declared.</li>
      *     <li>standard: the assumed default, will automatically resolve dependencies using Apache Maven.</li>
      * </ul>
+     *
+     * <p>If the CLI detects that Gradle is calling the CLI, dependency resolution is disabled and defaults to
+     * {@code ignore}. You can explicitly enable dependency resolution by setting {@code SMITHY_DEPENDENCY_MODE} to
+     * {@code standard}.
      */
     SMITHY_DEPENDENCY_MODE {
         @Override
         public String get() {
             String result = super.get();
-            return result == null ? "standard" : result;
+            if (result != null) {
+                return result;
+            } else if (System.getProperty("org.gradle.appname") != null) {
+                // Maintainer's note: Ideally this would just be in the Gradle plugin itself; however, previous
+                // versions of the Gradle plugin can use newer versions of Smithy. This means that even if Gradle is
+                // updated to disable dependency resolution, previous versions could inadvertently use it.
+                LOGGER.info("Detected that the Smithy CLI is running in Gradle, so dependency resolution is disabled. "
+                            + "This can be overridden by setting SMITHY_DEPENDENCY_MODE environment variable to "
+                            + "'standard'.");
+                return "ignore";
+            } else {
+                return "standard";
+            }
         }
     },
 
@@ -72,6 +90,8 @@ public enum EnvironmentVariable {
      * </ul>
      */
     TERM;
+
+    private static final Logger LOGGER = Logger.getLogger(EnvironmentVariable.class.getName());
 
     /**
      * Gets a system property or environment variable by name, in that order.
