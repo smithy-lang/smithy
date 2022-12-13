@@ -89,7 +89,9 @@ public final class RestXmlTrait extends AwsProtocolTrait {
 
         @Override
         public RestXmlTrait createTrait(ShapeId target, Node value) {
-            return builder().sourceLocation(value).fromNode(value).build();
+            RestXmlTrait result = builder().fromNode(value).build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 }

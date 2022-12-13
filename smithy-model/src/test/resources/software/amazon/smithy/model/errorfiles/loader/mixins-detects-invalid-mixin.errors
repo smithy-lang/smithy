@@ -1,0 +1,1 @@
+[ERROR] smithy.example#B: Attempted to use smithy.example#A as a mixin, but it is not marked with the mixin trait | Target

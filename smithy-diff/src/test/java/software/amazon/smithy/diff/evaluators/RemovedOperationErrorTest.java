@@ -39,12 +39,17 @@ public class RemovedOperationErrorTest {
                 .id("foo.baz#E2")
                 .addTrait(new ErrorTrait("client"))
                 .build();
-        OperationShape operation1 = OperationShape.builder().id("foo.baz#Operation").build();
-        Shape operation2 = operation1.toBuilder().addError(e1.getId()).addError(e2.getId()).build();
-        Model modelA = Model.assembler().addShapes(operation2, e1, e2).assemble().unwrap();
-        Model modelB = Model.assembler().addShapes(operation1, e1, e2).assemble().unwrap();
+        OperationShape operation1 = OperationShape.builder()
+                .id("foo.baz#Operation")
+                .addError(e1)
+                .addError(e2)
+                .build();
+        Shape operation2 = operation1.toBuilder().clearErrors().build();
+        Model modelA = Model.assembler().addShapes(operation1, e1, e2).assemble().unwrap();
+        Model modelB = Model.assembler().addShapes(operation2, e1, e2).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
+        // Emits an event for each removal.
         assertThat(TestHelper.findEvents(events, "RemovedOperationError").size(), equalTo(2));
     }
 }

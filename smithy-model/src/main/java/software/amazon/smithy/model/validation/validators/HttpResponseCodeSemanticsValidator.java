@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.HttpBindingIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
@@ -39,7 +40,7 @@ public final class HttpResponseCodeSemanticsValidator extends AbstractValidator 
         List<ValidationEvent> events = new ArrayList<>();
 
         for (OperationShape operation : model.getOperationShapesWithTrait(HttpTrait.class)) {
-            validateOperationsWithHttpTrait(operation).ifPresent(events::add);
+            validateOperationsWithHttpTrait(model, operation).ifPresent(events::add);
         }
 
         for (StructureShape structure : model.getStructureShapesWithTrait(ErrorTrait.class)) {
@@ -49,10 +50,19 @@ public final class HttpResponseCodeSemanticsValidator extends AbstractValidator 
         return events;
     }
 
-    private Optional<ValidationEvent> validateOperationsWithHttpTrait(OperationShape operation) {
+    private Optional<ValidationEvent> validateOperationsWithHttpTrait(Model model, OperationShape operation) {
         HttpTrait trait = operation.expectTrait(HttpTrait.class);
         if (trait.getCode() < 200 || trait.getCode() >= 300) {
             return Optional.of(invalidOperation(operation, trait));
+        }
+
+        if (trait.getCode() == 204 || trait.getCode() == 205) {
+            if (HttpBindingIndex.of(model).hasResponseBody(operation)) {
+                return Optional.of(warning(operation, String.format(
+                        "The HTTP %d status code does not allow a response body. To use this status code, all output "
+                        + "members need to be bound to @httpHeader, @httpPrefixHeaders, @httpResponseCode, etc.",
+                        trait.getCode())));
+            }
         }
 
         return Optional.empty();

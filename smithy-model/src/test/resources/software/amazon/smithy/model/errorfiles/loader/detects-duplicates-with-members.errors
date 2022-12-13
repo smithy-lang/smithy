@@ -1,1 +1,1 @@
-[ERROR] -: Conflicting shape definition for `foo.baz#Foo` found at | Model
+[ERROR] foo.baz#Foo: Conflicting shape definition for `foo.baz#Foo` found at | Model

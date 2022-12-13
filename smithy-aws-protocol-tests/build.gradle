@@ -14,7 +14,7 @@
  */
 
 plugins {
-    id "software.amazon.smithy" version "0.5.3"
+    id "software.amazon.smithy" version "0.6.0"
 }
 
 description = "Defines protocol tests for AWS HTTP protocols."
@@ -28,4 +28,5 @@ dependencies {
     implementation project(":smithy-cli")
     implementation project(":smithy-protocol-test-traits")
     implementation project(":smithy-aws-traits")
+    api project(":smithy-validation-model")
 }

@@ -1,0 +1,110 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "ns.foo#ValidNoName": {
+            "type": "string",
+            "traits": {
+                "smithy.api#enum": [
+                    {
+                        "value": "foo"
+                    },
+                    {
+                        "value": "bar"
+                    }
+                ]
+            }
+        },
+        "ns.foo#ValidFullDefinition": {
+            "type": "string",
+            "traits": {
+                "smithy.api#enum": [
+                    {
+                        "value": "foo",
+                        "name": "FOO",
+                        "documentation": "foo",
+                        "tags": [
+                            "a",
+                            "b"
+                        ]
+                    },
+                    {
+                        "value": "bar",
+                        "name": "BAR",
+                        "documentation": "bar",
+                        "tags": [
+                            "a",
+                            "b"
+                        ]
+                    }
+                ]
+            }
+        },
+        "ns.foo#Warn1": {
+            "type": "string",
+            "traits": {
+                "smithy.api#enum": [
+                    {
+                        "value": "bar",
+                        "name": "_bar"
+                    },
+                    {
+                        "value": "baz",
+                        "name": "baz"
+                    }
+                ]
+            }
+        },
+        "ns.foo#Invalid1": {
+            "type": "string",
+            "traits": {
+                "smithy.api#enum": [
+                    {
+                        "value": "foo"
+                    },
+                    {
+                        "value": "bar",
+                        "name": "BAR",
+                        "documentation": "bar",
+                        "tags": [
+                            "a",
+                            "b"
+                        ]
+                    }
+                ]
+            }
+        },
+        "ns.foo#Invalid2": {
+            "type": "string",
+            "traits": {
+                "smithy.api#enum": [
+                    {"value": "foo", "name": "invalid!"},
+                    {"value": "bar", "name": "invalid2!"}
+                ]
+            }
+        },
+        "ns.foo#Invalid3": {
+            "type": "string",
+            "traits": {
+                "smithy.api#enum": [
+                    {"value": "a", "name": "a"},
+                    {"value": "b", "name": "a"}
+                ]
+            }
+        },
+        "ns.foo#Invalid4": {
+            "type": "string",
+            "traits": {
+                "smithy.api#enum": [
+                    {
+                        "name": "A",
+                        "value": "a"
+                    },
+                    {
+                        "name": "B",
+                        "value": "a"
+                    }
+                ]
+            }
+        }
+    }
+}

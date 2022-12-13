@@ -1,6 +1,6 @@
 // This file defines test cases that serialize unions.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restjson
 
@@ -442,4 +442,225 @@ apply JsonUnions @httpResponseTests([
             }
         }
     },
+])
+
+
+/// This operation defines a union with a Unit member.
+@http(uri: "/PostPlayerAction", method: "POST")
+operation PostPlayerAction {
+    input: PostPlayerActionInput,
+    output: PostPlayerActionOutput
+}
+
+@input
+structure PostPlayerActionInput {
+    action: PlayerAction
+}
+
+@output
+structure PostPlayerActionOutput {
+    @required
+    action: PlayerAction
+}
+
+union PlayerAction {
+    /// Quit the game.
+    quit: Unit
+}
+
+apply PostPlayerAction @httpRequestTests([
+    {
+        id: "RestJsonInputUnionWithUnitMember",
+        documentation: "Unit types in unions are serialized like normal structures in requests.",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/PostPlayerAction",
+        body: """
+            {
+                "action": {
+                    "quit": {}
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            action: {
+                quit: {}
+            }
+        }
+    }
+])
+
+apply PostPlayerAction @httpResponseTests([
+    {
+        id: "RestJsonOutputUnionWithUnitMember",
+        documentation: "Unit types in unions are serialized like normal structures in responses.",
+        protocol: restJson1,
+        code: 200,
+        body: """
+            {
+                "action": {
+                    "quit": {}
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            action: {
+                quit: {}
+            }
+        }
+    }
+])
+
+
+/// This operation defines a union that uses jsonName on some members.
+@http(uri: "/PostUnionWithJsonName", method: "POST")
+operation PostUnionWithJsonName {
+    input: PostUnionWithJsonNameInput,
+    output: PostUnionWithJsonNameOutput
+}
+
+@input
+structure PostUnionWithJsonNameInput {
+    value: UnionWithJsonName
+}
+
+@output
+structure PostUnionWithJsonNameOutput {
+    @required
+    value: UnionWithJsonName
+}
+
+union UnionWithJsonName {
+    @jsonName("FOO")
+    foo: String,
+
+    bar: String,
+
+    @jsonName("_baz")
+    baz: String
+}
+
+apply PostUnionWithJsonName @httpRequestTests([
+    {
+        id: "PostUnionWithJsonNameRequest1",
+        documentation: "Tests that jsonName works with union members.",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/PostUnionWithJsonName",
+        body: """
+            {
+                "value": {
+                    "FOO": "hi"
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            value: {
+                foo: "hi"
+            }
+        }
+    },
+    {
+        id: "PostUnionWithJsonNameRequest2",
+        documentation: "Tests that jsonName works with union members.",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/PostUnionWithJsonName",
+        body: """
+            {
+                "value": {
+                    "_baz": "hi"
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            value: {
+                baz: "hi"
+            }
+        }
+    },
+    {
+        id: "PostUnionWithJsonNameRequest3",
+        documentation: "Tests that jsonName works with union members.",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/PostUnionWithJsonName",
+        body: """
+            {
+                "value": {
+                    "bar": "hi"
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            value: {
+                bar: "hi"
+            }
+        }
+    }
+])
+
+apply PostUnionWithJsonName @httpResponseTests([
+    {
+        id: "PostUnionWithJsonNameResponse1",
+        documentation: "Tests that jsonName works with union members.",
+        protocol: restJson1,
+        code: 200,
+        body: """
+            {
+                "value": {
+                    "FOO": "hi"
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            value: {
+                foo: "hi"
+            }
+        }
+    },
+    {
+        id: "PostUnionWithJsonNameResponse2",
+        documentation: "Tests that jsonName works with union members.",
+        protocol: restJson1,
+        code: 200,
+        body: """
+            {
+                "value": {
+                    "_baz": "hi"
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            value: {
+                baz: "hi"
+            }
+        }
+    },
+    {
+        id: "PostUnionWithJsonNameResponse3",
+        documentation: "Tests that jsonName works with union members.",
+        protocol: restJson1,
+        code: 200,
+        body: """
+            {
+                "value": {
+                    "bar": "hi"
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            value: {
+                bar: "hi"
+            }
+        }
+    }
 ])

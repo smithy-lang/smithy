@@ -15,8 +15,6 @@
 
 package software.amazon.smithy.model.validation.node;
 
-import java.util.function.BiConsumer;
-import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -35,7 +33,7 @@ public enum TimestampValidationStrategy implements NodeValidatorPlugin {
      */
     FORMAT {
         @Override
-        public void apply(Shape shape, Node value, Context context, BiConsumer<FromSourceLocation, String> emitter) {
+        public void apply(Shape shape, Node value, Context context, Emitter emitter) {
             new TimestampFormatPlugin().apply(shape, value, context, emitter);
         }
     },
@@ -46,7 +44,7 @@ public enum TimestampValidationStrategy implements NodeValidatorPlugin {
      */
     EPOCH_SECONDS {
         @Override
-        public void apply(Shape shape, Node value, Context context, BiConsumer<FromSourceLocation, String> emitter) {
+        public void apply(Shape shape, Node value, Context context, Emitter emitter) {
             if (isTimestampMember(context.model(), shape) && !value.isNumberNode()) {
                 emitter.accept(shape, "Invalid " + value.getType() + " value provided for timestamp, `"
                                       + shape.getId() + "`. Expected a number that contains epoch "

@@ -26,7 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
+import java.util.StringJoiner;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -60,9 +60,15 @@ public final class ValidationUtils {
      * @return Returns the string.
      */
     public static String orderedTickedList(Collection<?> values) {
-        return values.size() == 0
-               ? ""
-               : "`" + values.stream().map(Objects::toString).collect(Collectors.joining("`, `")) + "`";
+        if (values.size() == 0) {
+            return "";
+        }
+
+        StringJoiner joiner = new StringJoiner("`, `", "`", "`");
+        for (Object value : values) {
+            joiner.add(value.toString());
+        }
+        return joiner.toString();
     }
 
     /**
@@ -80,26 +86,15 @@ public final class ValidationUtils {
     }
 
     public static String tickedList(Stream<?> values) {
-        return tickedList(values.map(Object::toString).sorted().collect(Collectors.toList()));
+        return values.map(Object::toString).sorted().collect(Collectors.joining("`, `", "`", "`"));
     }
 
-    /**
-     * Find shape IDs in a collection that do not have case-insensitively
-     * unique member names.
-     *
-     * <p>The returned map is sorted by the conflicting name, and the list of
-     * conflicting shape values is also sorted to ensure that validation
-     * events can just print the map directly with consistent error messages.
-     *
-     * @param shapes Shapes collection to check.
-     * @param <T> The type of shape being checked.
-     * @return Returns a map that only contains the conflicting shapes.
-     */
+    @Deprecated
     public static <T extends ToShapeId> Map<String, List<ShapeId>> findDuplicateShapeNames(Collection<T> shapes) {
         return shapes.stream()
                 .map(ToShapeId::toShapeId)
                 // Exclude IDs with members since these need to be validated separately.
-                .filter(id -> !id.getMember().isPresent())
+                .filter(id -> !id.hasMember())
                 // Group by the lowercase name of each shape, and collect the shape IDs as strings.
                 .collect(groupingBy(id -> id.getName().toLowerCase(Locale.US)))
                 .entrySet().stream()

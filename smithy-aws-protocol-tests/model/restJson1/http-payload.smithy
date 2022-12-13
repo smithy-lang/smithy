@@ -1,7 +1,7 @@
 // This file defines test cases that test HTTP payload bindings.
-// See: https://awslabs.github.io/smithy/1.0/spec/http.html#httppayload-trait
+// See: https://smithy.io/2.0/spec/http-bindings.html#httppayload-trait
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restjson
 
@@ -56,6 +56,46 @@ apply HttpPayloadTraits @httpRequestTests([
             foo: "Foo"
         }
     },
+    {
+        id: "RestJsonHttpPayloadTraitsWithBlobAcceptsAllContentTypes",
+        documentation: """
+            Servers must accept any content type for blob inputs
+            without the media type trait.""",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/HttpPayloadTraits",
+        body: "This is definitely a jpeg",
+        bodyMediaType: "application/octet-stream",
+        headers: {
+            "X-Foo": "Foo",
+            "Content-Type": "image/jpeg"
+        },
+        params: {
+            foo: "Foo",
+            blob: "This is definitely a jpeg"
+        },
+        appliesTo: "server",
+    },
+    {
+        id: "RestJsonHttpPayloadTraitsWithBlobAcceptsAllAccepts",
+        documentation: """
+            Servers must accept any accept header for blob inputs
+            without the media type trait.""",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/HttpPayloadTraits",
+        body: "This is definitely a jpeg",
+        bodyMediaType: "application/octet-stream",
+        headers: {
+            "X-Foo": "Foo",
+            "Accept": "image/jpeg"
+        },
+        params: {
+            foo: "Foo",
+            blob: "This is definitely a jpeg"
+        },
+        appliesTo: "server",
+    },
 ])
 
 apply HttpPayloadTraits @httpResponseTests([
@@ -87,7 +127,7 @@ apply HttpPayloadTraits @httpResponseTests([
         params: {
             foo: "Foo"
         }
-    }
+    },
 ])
 
 structure HttpPayloadTraitsInputOutput {

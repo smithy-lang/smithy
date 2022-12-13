@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -35,10 +35,10 @@ import software.amazon.smithy.model.shapes.Shape;
  * containing shape rather than the member.
  */
 final class RemoveShapes {
-    private final Collection<Shape> toRemove;
+    private final Collection<? extends Shape> toRemove;
     private final List<ModelTransformerPlugin> plugins;
 
-    RemoveShapes(Collection<Shape> toRemove, List<ModelTransformerPlugin> plugins) {
+    RemoveShapes(Collection<? extends Shape> toRemove, List<ModelTransformerPlugin> plugins) {
         this.toRemove = toRemove;
         this.plugins = plugins;
     }

@@ -32,7 +32,7 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 public final class AwsV4Converter implements SecuritySchemeConverter<SigV4Trait> {
     private static final String AUTH_HEADER = "Authorization";
     private static final Set<String> REQUEST_HEADERS = SetUtils.of(
-            AUTH_HEADER, "Date", "X-Amz-Date", "X-Amz-Target", "X-Amz-Security-Token");
+            AUTH_HEADER, "Date", "Host", "X-Amz-Content-Sha256", "X-Amz-Date", "X-Amz-Target", "X-Amz-Security-Token");
 
     @Override
     public Class<SigV4Trait> getAuthSchemeType() {

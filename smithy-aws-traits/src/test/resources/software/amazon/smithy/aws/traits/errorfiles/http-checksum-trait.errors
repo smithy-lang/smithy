@@ -1,0 +1,5 @@
+[SUPPRESSED] smithy.example#NoBehavior: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
+[SUPPRESSED] smithy.example#NoModeForResponse: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
+[SUPPRESSED] smithy.example#NoOutputForResponse: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
+[ERROR] smithy.example#NoBehavior: The `httpChecksum` trait must define at least one of the `request` or `response` checksum behaviors. | HttpChecksumTrait
+[ERROR] smithy.example#NoModeForResponse: The `httpChecksum` trait must model the `requestValidationModeMember` property to support response checksum behavior. | HttpChecksumTrait

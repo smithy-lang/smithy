@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.knowledge.NullableIndex;
@@ -31,7 +32,6 @@ import software.amazon.smithy.model.shapes.BigIntegerShape;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
-import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.FloatShape;
@@ -43,7 +43,6 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
@@ -54,8 +53,10 @@ import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.validation.node.NodeValidatorPlugin;
 import software.amazon.smithy.model.validation.node.TimestampValidationStrategy;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Validates {@link Node} values provided for {@link Shape} definitions.
@@ -73,18 +74,20 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
     private final Model model;
     private final TimestampValidationStrategy timestampValidationStrategy;
-    private final boolean allowBoxedNull;
+    private final boolean allowOptionalNull;
     private String eventId;
     private Node value;
     private ShapeId eventShapeId;
     private String startingContext;
     private NodeValidatorPlugin.Context validationContext;
+    private final NullableIndex nullableIndex;
 
     private NodeValidationVisitor(Builder builder) {
         this.model = SmithyBuilder.requiredState("model", builder.model);
-        this.validationContext = new NodeValidatorPlugin.Context(model);
+        this.nullableIndex = NullableIndex.of(model);
+        this.validationContext = new NodeValidatorPlugin.Context(model, builder.features.copy());
         this.timestampValidationStrategy = builder.timestampValidationStrategy;
-        this.allowBoxedNull = builder.allowBoxedNull;
+        this.allowOptionalNull = builder.allowOptionalNull;
         setValue(SmithyBuilder.requiredState("value", builder.value));
         setStartingContext(builder.contextText);
         setValue(builder.value);
@@ -92,12 +95,27 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         setEventId(builder.eventId);
     }
 
+    /**
+     * Features to use when validating.
+     */
+    // TODO Move other features here like allowOptionalNull.
+    public enum Feature {
+        /**
+         * Emit a warning when a range trait is incompatible with a default value of 0.
+         *
+         * <p>This was a common pattern in Smithy 1.0 and earlier. It implies that the value is effectively
+         * required. However, chaning the type of the value by un-boxing it or adjusting the range trait would
+         * be a lossy tranformation when migrating a model from 1.0 to 2.0.
+         */
+        RANGE_TRAIT_ZERO_VALUE_WARNING
+    }
+
     public static Builder builder() {
         return new Builder();
     }
 
     /**
-     * Changes the Node value the the visitor will evaluate.
+     * Changes the Node value the visitor will evaluate.
      *
      * @param value Value to set.
      */
@@ -140,7 +158,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         builder.model(model);
         builder.startingContext(startingContext.isEmpty() ? segment : (startingContext + "." + segment));
         builder.timestampValidationStrategy(timestampValidationStrategy);
-        builder.allowBoxedNull(allowBoxedNull);
+        builder.allowOptionalNull(allowOptionalNull);
         NodeValidationVisitor visitor = new NodeValidationVisitor(builder);
         // Use the same validation context.
         visitor.validationContext = this.validationContext;
@@ -211,7 +229,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
     @Override
     public List<ValidationEvent> floatShape(FloatShape shape) {
-        return value.isNumberNode()
+        return value.isNumberNode() || value.isStringNode()
                ? applyPlugins(shape)
                : invalidShape(shape, NodeType.NUMBER);
     }
@@ -224,7 +242,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
     @Override
     public List<ValidationEvent> doubleShape(DoubleShape shape) {
-        return value.isNumberNode()
+        return value.isNumberNode() || value.isStringNode()
                ? applyPlugins(shape)
                : invalidShape(shape, NodeType.NUMBER);
     }
@@ -250,17 +268,9 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
     @Override
     public List<ValidationEvent> listShape(ListShape shape) {
-        return processCollection(shape, shape.getMember());
-    }
-
-    @Override
-    public List<ValidationEvent> setShape(SetShape shape) {
-        return processCollection(shape, shape.getMember());
-    }
-
-    private List<ValidationEvent> processCollection(CollectionShape shape, MemberShape member) {
         return value.asArrayNode()
                 .map(array -> {
+                    MemberShape member = shape.getMember();
                     List<ValidationEvent> events = applyPlugins(shape);
                     // Each element creates a context with a numeric index (e.g., "foo.0.baz", "foo.1.baz", etc.).
                     for (int i = 0; i < array.getElements().size(); i++) {
@@ -306,10 +316,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
                     }
 
                     for (MemberShape member : members.values()) {
-                        if (member.isRequired()
-                                && !object.getMember(member.getMemberName()).isPresent()
-                                // Ignore missing required primitive members because they have a default value.
-                                && !isMemberPrimitive(member)) {
+                        if (member.isRequired() && !object.getMember(member.getMemberName()).isPresent()) {
                             events.add(event(String.format(
                                     "Missing required structure member `%s` for `%s`",
                                     member.getMemberName(), shape.getId())));
@@ -318,10 +325,6 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
                     return events;
                 })
                 .orElseGet(() -> invalidShape(shape, NodeType.OBJECT));
-    }
-
-    private boolean isMemberPrimitive(MemberShape member) {
-        return !NullableIndex.of(model).isNullable(member);
     }
 
     @Override
@@ -374,9 +377,12 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
     }
 
     private List<ValidationEvent> invalidShape(Shape shape, NodeType expectedType) {
-        // Boxed shapes allow null values.
-        if (allowBoxedNull && value.isNullNode() && NullableIndex.of(model).isNullable(shape)) {
-            return Collections.emptyList();
+        // Nullable shapes allow null values.
+        if (allowOptionalNull && value.isNullNode()) {
+            // Non-members are nullable. Members are nullable based on context.
+            if (!shape.isMemberShape() || shape.asMemberShape().filter(nullableIndex::isMemberNullable).isPresent()) {
+                return Collections.emptyList();
+            }
         }
 
         String message = String.format(
@@ -416,13 +422,13 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
     private List<ValidationEvent> applyPlugins(Shape shape) {
         List<ValidationEvent> events = new ArrayList<>();
-        timestampValidationStrategy.apply(shape, value, validationContext, (location, message) -> {
-            events.add(event(message, Severity.ERROR, location.getSourceLocation()));
+        timestampValidationStrategy.apply(shape, value, validationContext, (location, severity, message) -> {
+            events.add(event(message, severity, location.getSourceLocation()));
         });
 
         for (NodeValidatorPlugin plugin : BUILTIN) {
-            plugin.apply(shape, value, validationContext, (location, message) -> {
-                events.add(event(message, Severity.ERROR, location.getSourceLocation()));
+            plugin.apply(shape, value, validationContext, (location, severity, message) -> {
+                events.add(event(message, severity, location.getSourceLocation()));
             });
         }
 
@@ -439,7 +445,8 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         private Node value;
         private Model model;
         private TimestampValidationStrategy timestampValidationStrategy = TimestampValidationStrategy.FORMAT;
-        private boolean allowBoxedNull;
+        private boolean allowOptionalNull;
+        private final BuilderRef<Set<Feature>> features = BuilderRef.forUnorderedSet();
 
         Builder() {}
 
@@ -515,17 +522,34 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
             return this;
         }
 
+        @Deprecated
+        public Builder allowBoxedNull(boolean allowBoxedNull) {
+            return allowOptionalNull(allowBoxedNull);
+        }
+
         /**
          * Configure how null values are handled when they are provided for
-         * boxed types.
+         * optional types.
          *
-         * <p>By default, null values are not allowed for boxed types.
+         * <p>By default, null values are not allowed for optional types.
          *
-         * @param allowBoxedNull Set to true to allow null values for boxed shapes.
+         * @param allowOptionalNull Set to true to allow null values for optional shapes.
          * @return Returns the builder.
          */
-        public Builder allowBoxedNull(boolean allowBoxedNull) {
-            this.allowBoxedNull = allowBoxedNull;
+        public Builder allowOptionalNull(boolean allowOptionalNull) {
+            this.allowOptionalNull = allowOptionalNull;
+            return this;
+        }
+
+        /**
+         * Adds a feature flag to the validator.
+         *
+         * @param feature Feature to set.
+         * @return Returns the builder.
+         */
+        @SmithyInternalApi
+        public Builder addFeature(Feature feature) {
+            this.features.get().add(feature);
             return this;
         }
 

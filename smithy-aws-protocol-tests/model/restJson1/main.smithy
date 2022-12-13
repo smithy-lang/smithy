@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restjson
 
@@ -21,6 +21,7 @@ service RestJson {
         NoInputAndNoOutput,
         NoInputAndOutput,
         EmptyInputAndEmptyOutput,
+        UnitInputAndOutput,
 
         // @httpHeader tests
         InputAndOutputWithHeaders,
@@ -33,6 +34,8 @@ service RestJson {
         HttpRequestWithLabels,
         HttpRequestWithLabelsAndTimestampFormat,
         HttpRequestWithGreedyLabelInPath,
+        HttpRequestWithFloatLabels,
+        HttpRequestWithRegexLiteral,
 
         // @httpQuery and @httpQueryParams tests
         AllQueryStringTypes,
@@ -46,7 +49,7 @@ service RestJson {
 
         // @httpPrefixHeaders tests
         HttpPrefixHeaders,
-        HttpPrefixHeadersResponse,
+        HttpPrefixHeadersInResponse,
 
         // @httpPayload tests
         HttpPayloadTraits,
@@ -70,6 +73,7 @@ service RestJson {
         SimpleScalarProperties,
         JsonTimestamps,
         JsonEnums,
+        JsonIntEnums,
         RecursiveShapes,
         JsonLists,
         JsonMaps,
@@ -81,9 +85,57 @@ service RestJson {
 
         // Unions
         JsonUnions,
+        PostPlayerAction,
+        PostUnionWithJsonName,
 
         // @endpoint and @hostLabel trait tests
         EndpointOperation,
         EndpointWithHostLabelOperation,
+
+        // custom endpoints with paths
+        HostWithPathOperation,
+
+        // checksum(s)
+        HttpChecksumRequired,
+
+        // malformed request tests
+        MalformedRequestBody,
+        MalformedInteger,
+        MalformedUnion,
+        MalformedBoolean,
+        MalformedList,
+        MalformedMap,
+        MalformedBlob,
+        MalformedByte,
+        MalformedShort,
+        MalformedLong,
+        MalformedFloat,
+        MalformedDouble,
+        MalformedString,
+        MalformedTimestampPathDefault,
+        MalformedTimestampPathHttpDate,
+        MalformedTimestampPathEpoch,
+        MalformedTimestampQueryDefault,
+        MalformedTimestampQueryHttpDate,
+        MalformedTimestampQueryEpoch,
+        MalformedTimestampHeaderDefault,
+        MalformedTimestampHeaderDateTime,
+        MalformedTimestampHeaderEpoch,
+        MalformedTimestampBodyDefault,
+        MalformedTimestampBodyDateTime,
+        MalformedTimestampBodyHttpDate,
+        MalformedContentTypeWithoutBody,
+        MalformedContentTypeWithBody,
+        MalformedContentTypeWithPayload,
+        MalformedContentTypeWithGenericString,
+        MalformedAcceptWithBody,
+        MalformedAcceptWithPayload,
+        MalformedAcceptWithGenericString,
+
+        // request body and content-type handling
+        TestBodyStructure,
+        TestPayloadStructure,
+        TestPayloadBlob,
+        TestNoPayload,
     ]
 }

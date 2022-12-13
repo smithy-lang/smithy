@@ -9,7 +9,10 @@ software.amazon.smithy.aws.traits.auth.UnsignedPayloadTrait$Provider
 software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientEndpointDiscoveryTrait$Provider
 software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientEndpointDiscoveryIdTrait$Provider
 software.amazon.smithy.aws.traits.clientendpointdiscovery.ClientDiscoveredEndpointTrait$Provider
+software.amazon.smithy.aws.traits.customizations.S3UnwrappedXmlOutputTrait$Provider
+software.amazon.smithy.aws.traits.HttpChecksumTrait$Provider
 software.amazon.smithy.aws.traits.protocols.AwsQueryErrorTrait$Provider
+software.amazon.smithy.aws.traits.protocols.AwsQueryCompatibleTrait$Provider
 software.amazon.smithy.aws.traits.protocols.AwsQueryTrait$Provider
 software.amazon.smithy.aws.traits.protocols.Ec2QueryNameTrait$Provider
 software.amazon.smithy.aws.traits.protocols.Ec2QueryTrait$Provider
@@ -18,3 +21,5 @@ software.amazon.smithy.aws.traits.protocols.RestXmlTrait$Provider
 software.amazon.smithy.aws.traits.protocols.AwsJson1_0Trait$Provider
 software.amazon.smithy.aws.traits.protocols.AwsJson1_1Trait$Provider
 software.amazon.smithy.aws.traits.auth.SigV4Trait$Provider
+software.amazon.smithy.aws.traits.tagging.TagEnabledTrait$Provider
+software.amazon.smithy.aws.traits.tagging.TaggableTrait$Provider

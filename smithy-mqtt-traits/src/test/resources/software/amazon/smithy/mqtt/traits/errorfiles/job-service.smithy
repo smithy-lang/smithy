@@ -1,3 +1,5 @@
+$version: "2.0"
+
 namespace aws.iotjobs
 
 use smithy.mqtt#mqttJson
@@ -49,45 +51,34 @@ structure RejectedError {
   executionState: JobExecutionState,
 }
 
-@enum([
-  {
-    name: "INVALID_TOPIC",
-    value: "InvalidTopic",
-  },
-  {
-    name: "INVALID_JSON",
-    value: "InvalidJson",
-  },
-  {
-    name: "INVALID_REQUEST",
-    value: "InvalidRequest",
-  },
-  {
-    name: "INVALID_STATE_TRANSITION",
-    value: "InvalidStateTransition",
-  },
-  {
-    name: "RESOURCE_NOT_FOUND",
-    value: "ResourceNotFound",
-  },
-  {
-    name: "VERSION_MISMATCH",
-    value: "VersionMismatch",
-  },
-  {
-    name: "INTERNAL_ERROR",
-    value: "InternalError",
-  },
-  {
-    name: "REQUEST_THROTTLED",
-    value: "RequestThrottled",
-  },
-  {
-    name: "TERMINAL_STATE_REACHED",
-    value: "TerminalStateReached",
-  },
-])
-string RejectedErrorCode
+enum RejectedErrorCode {
+    @enumValue("InvalidTopic")
+    INVALID_TOPIC
+
+    @enumValue("InvalidJson")
+    INVALID_JSON
+
+    @enumValue("InvalidRequest")
+    INVALID_REQUEST
+
+    @enumValue("InvalidStateTransition")
+    INVALID_STATE_TRANSITION
+
+    @enumValue("ResourceNotFound")
+    RESOURCE_NOT_FOUND
+
+    @enumValue("VersionMismatch")
+    VERSION_MISMATCH
+
+    @enumValue("InternalError")
+    INTERNAL_ERROR
+
+    @enumValue("RequestThrottled")
+    REQUEST_THROTTLED
+
+    @enumValue("TerminalStateReached")
+    TERMINAL_STATE_REACHED
+}
 
 // ------ GetPendingJobExecutions -------
 
@@ -229,41 +220,16 @@ structure JobExecutionData {
   executionNumber: smithy.api#Long,
 }
 
-@enum([
-  {
-    name: "QUEUED",
-    value: "QUEUED",
-  },
-  {
-    name: "IN_PROGRESS",
-    value: "IN_PROGRESS",
-  },
-  {
-    name: "TIMED_OUT",
-    value: "TIMED_OUT",
-  },
-  {
-    name: "FAILED",
-    value: "FAILED",
-  },
-  {
-    name: "SUCCEEDED",
-    value: "SUCCEEDED",
-  },
-  {
-    name: "CANCELED",
-    value: "CANCELED",
-  },
-  {
-    name: "REJECTED",
-    value: "REJECTED",
-  },
-  {
-    name: "REMOVED",
-    value: "REMOVED",
-  },
-])
-string JobStatus
+enum JobStatus {
+    QUEUED
+    IN_PROGRESS
+    TIMED_OUT
+    FAILED
+    SUCCEEDED
+    CANCELED
+    REJECTED
+    REMOVED
+}
 
 
 // ------- DescribeJobExecution ----------

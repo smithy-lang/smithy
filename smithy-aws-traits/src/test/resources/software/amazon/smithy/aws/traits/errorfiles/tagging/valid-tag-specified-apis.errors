@@ -1,0 +1,3 @@
+[WARNING] example.weather#Weather: Service marked `aws.api#TagEnabled` is missing an operation named 'ListTagsForResource.' | ServiceTagging
+[WARNING] example.weather#Weather: Service marked `aws.api#TagEnabled` is missing an operation named 'TagResource.' | ServiceTagging
+[WARNING] example.weather#Weather: Service marked `aws.api#TagEnabled` is missing an operation named 'UntagResource.' | ServiceTagging

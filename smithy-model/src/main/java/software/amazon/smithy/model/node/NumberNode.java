@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.node;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -31,7 +32,7 @@ import software.amazon.smithy.model.SourceLocation;
 public final class NumberNode extends Node {
 
     private final Number value;
-    private String stringCache;
+    private final String stringCache;
 
     public NumberNode(Number value, SourceLocation sourceLocation) {
         super(sourceLocation);
@@ -92,6 +93,38 @@ public final class NumberNode extends Node {
     @Override
     public Optional<NumberNode> asNumberNode() {
         return Optional.of(this);
+    }
+
+    /**
+     * Returns true if the value of the number contained in the number node is zero,
+     * accounting for float, double, bigInteger, bigDecimal, and other numeric types
+     * (e.g., 0, 0.0, etc).
+     *
+     * <p>Note that -0 and +0 are considered 0. However, NaN is not considered zero.
+     * When unknown number types are encountered, this method will return true if the
+     * toString of the given number returns "0", or "0.0". Other kinds of unknown
+     * number types will be treated like a double.
+     *
+     * <p>Double and float comparisons to zero are exact and use no rounding. The majority
+     * of values seen by this method come from models that use "0" or "0.0". However,
+     * we can improve this in the future with some kind of epsilon if the need arises.
+     *
+     * @return Returns true if set to zero.
+     */
+    public boolean isZero() {
+        // Do a cheap test based on the serialized value of the number first.
+        // This test covers byte, short, integer, and long.
+        if (toString().equals("0") || toString().equals("0.0")) {
+            return true;
+        } else if (value instanceof BigDecimal) {
+            return value.equals(BigDecimal.ZERO);
+        } else if (value instanceof BigInteger) {
+            return value.equals(BigInteger.ZERO);
+        } else if (value instanceof Float) {
+            return value.floatValue() == 0f;
+        } else {
+            return value.doubleValue() == 0d;
+        }
     }
 
     @Override

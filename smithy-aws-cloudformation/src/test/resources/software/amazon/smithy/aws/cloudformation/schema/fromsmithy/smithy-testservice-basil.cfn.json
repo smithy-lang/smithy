@@ -25,7 +25,6 @@
     }
   },
   "readOnlyProperties": [
-    "/properties/BarId",
     "/properties/BazId",
     "/properties/BazImplicitReadProperty"
   ],
@@ -33,11 +32,29 @@
     "/properties/BazImplicitWriteProperty"
   ],
   "createOnlyProperties": [
+    "/properties/BarId",
     "/properties/BazImplicitCreateProperty"
   ],
   "primaryIdentifier": [
     "/properties/BarId",
     "/properties/BazId"
   ],
+  "handlers": {
+    "create": {
+      "permissions": [
+        "testservice:CreateBazOperation"
+      ]
+    },
+    "read": {
+      "permissions": [
+        "testservice:GetBazOperation"
+      ]
+    },
+    "update": {
+      "permissions": [
+        "testservice:UpdateBazOperation"
+      ]
+    }
+  },
   "additionalProperties": false
 }

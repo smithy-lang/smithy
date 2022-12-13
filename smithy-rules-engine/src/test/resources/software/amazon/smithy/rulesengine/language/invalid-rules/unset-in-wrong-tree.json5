@@ -1,0 +1,44 @@
+// when parsing endpoint ruleset
+// while typechecking
+//   at invalid-rules/unset-in-wrong-tree.json5:36
+// while typechecking the endpoint
+//   at invalid-rules/unset-in-wrong-tree.json5:38
+// while checking the URL
+// while typechecking "{region}.amazonaws.com"
+// while typechecking the template `"{region}.amazonaws.com"`
+//   at invalid-rules/unset-in-wrong-tree.json5:39
+// Expected string but found Option<String>. hint: use `assign` in a condition or `isSet` to prove that this value is non-null
+{
+  "version": "1.2",
+  "parameters": {
+    "region": {
+      "type": "string",
+      "builtIn": "AWS::Region"
+    }
+  },
+  "rules": [
+    {
+      "conditions": [
+        {
+          "fn": "isSet",
+          "argv": [
+            {
+              "ref": "region"
+            }
+          ]
+        }
+      ],
+      "endpoint": {
+        "url": "{region}.amazonaws.com"
+      },
+      "type": "endpoint"
+    },
+    {
+      "conditions": [],
+      "endpoint": {
+        "url": "{region}.amazonaws.com"
+      },
+      "type": "endpoint"
+    }
+  ]
+}

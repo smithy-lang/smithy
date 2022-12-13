@@ -7,7 +7,7 @@
 // a language implementing these tests may choose to implement a
 // query body parser that understands query maps and/or lists.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.query
 
@@ -32,13 +32,7 @@ apply QueryMaps @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=QueryMaps
-              &Version=2020-01-08
-              &MapArg.entry.1.key=bar
-              &MapArg.entry.1.value=Bar
-              &MapArg.entry.2.key=foo
-              &MapArg.entry.2.value=Foo""",
+        body: "Action=QueryMaps&Version=2020-01-08&MapArg.entry.1.key=bar&MapArg.entry.1.value=Bar&MapArg.entry.2.key=foo&MapArg.entry.2.value=Foo",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             MapArg: {
@@ -56,11 +50,7 @@ apply QueryMaps @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=QueryMaps
-              &Version=2020-01-08
-              &Foo.entry.1.key=foo
-              &Foo.entry.1.value=Foo""",
+        body: "Action=QueryMaps&Version=2020-01-08&Foo.entry.1.key=foo&Foo.entry.1.value=Foo",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             RenamedMapArg: {
@@ -77,13 +67,7 @@ apply QueryMaps @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=QueryMaps
-              &Version=2020-01-08
-              &ComplexMapArg.entry.1.key=bar
-              &ComplexMapArg.entry.1.value.hi=Bar
-              &ComplexMapArg.entry.2.key=foo
-              &ComplexMapArg.entry.2.value.hi=Foo""",
+        body: "Action=QueryMaps&Version=2020-01-08&ComplexMapArg.entry.1.key=bar&ComplexMapArg.entry.1.value.hi=Bar&ComplexMapArg.entry.2.key=foo&ComplexMapArg.entry.2.value.hi=Foo",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             ComplexMapArg: {
@@ -105,9 +89,7 @@ apply QueryMaps @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=QueryMaps
-              &Version=2020-01-08""",
+        body: "Action=QueryMaps&Version=2020-01-08",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             MapArg: {}
@@ -122,13 +104,7 @@ apply QueryMaps @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=QueryMaps
-              &Version=2020-01-08
-              &MapWithXmlMemberName.entry.1.K=bar
-              &MapWithXmlMemberName.entry.1.V=Bar
-              &MapWithXmlMemberName.entry.2.K=foo
-              &MapWithXmlMemberName.entry.2.V=Foo""",
+        body: "Action=QueryMaps&Version=2020-01-08&MapWithXmlMemberName.entry.1.K=bar&MapWithXmlMemberName.entry.1.V=Bar&MapWithXmlMemberName.entry.2.K=foo&MapWithXmlMemberName.entry.2.V=Foo",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             MapWithXmlMemberName: {
@@ -146,13 +122,7 @@ apply QueryMaps @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=QueryMaps
-              &Version=2020-01-08
-              &FlattenedMap.1.key=bar
-              &FlattenedMap.1.value=Bar
-              &FlattenedMap.2.key=foo
-              &FlattenedMap.2.value=Foo""",
+        body: "Action=QueryMaps&Version=2020-01-08&FlattenedMap.1.key=bar&FlattenedMap.1.value=Bar&FlattenedMap.2.key=foo&FlattenedMap.2.value=Foo",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             FlattenedMap: {
@@ -170,13 +140,7 @@ apply QueryMaps @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=QueryMaps
-              &Version=2020-01-08
-              &Hi.1.K=bar
-              &Hi.1.V=Bar
-              &Hi.2.K=foo
-              &Hi.2.V=Foo""",
+        body: "Action=QueryMaps&Version=2020-01-08&Hi.1.K=bar&Hi.1.V=Bar&Hi.2.K=foo&Hi.2.V=Foo",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             FlattenedMapWithXmlName: {
@@ -194,20 +158,32 @@ apply QueryMaps @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=QueryMaps
-              &Version=2020-01-08
-              &MapOfLists.entry.1.key=bar
-              &MapOfLists.entry.1.value.member.1=C
-              &MapOfLists.entry.1.value.member.2=D
-              &MapOfLists.entry.2.key=foo
-              &MapOfLists.entry.2.value.member.1=A
-              &MapOfLists.entry.2.value.member.2=B""",
+        body: "Action=QueryMaps&Version=2020-01-08&MapOfLists.entry.1.key=bar&MapOfLists.entry.1.value.member.1=C&MapOfLists.entry.1.value.member.2=D&MapOfLists.entry.2.key=foo&MapOfLists.entry.2.value.member.1=A&MapOfLists.entry.2.value.member.2=B",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             MapOfLists: {
                 bar: ["C", "D"],
                 foo: ["A", "B"],
+            }
+        }
+    },
+    {
+        id: "QueryNestedStructWithMap",
+        documentation: "Serializes nested struct with map member",
+        protocol: awsQuery,
+        method: "POST",
+        uri: "/",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "Action=QueryMaps&Version=2020-01-08&NestedStructWithMap.MapArg.entry.1.key=bar&NestedStructWithMap.MapArg.entry.1.value=Bar&NestedStructWithMap.MapArg.entry.2.key=foo&NestedStructWithMap.MapArg.entry.2.value=Foo",
+        bodyMediaType: "application/x-www-form-urlencoded",
+        params: {
+            NestedStructWithMap: {
+                MapArg: {
+                    bar: "Bar",
+                    foo: "Foo",
+                }
             }
         }
     },
@@ -231,6 +207,8 @@ structure QueryMapsInput {
     FlattenedMapWithXmlName: MapWithXmlName,
 
     MapOfLists: MapOfLists,
+
+    NestedStructWithMap: NestedStructWithMap,
 }
 
 map ComplexMap {
@@ -249,4 +227,8 @@ map MapWithXmlName {
 map MapOfLists {
     key: String,
     value: StringList,
+}
+
+structure NestedStructWithMap {
+    MapArg: StringMap
 }

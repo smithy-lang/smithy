@@ -28,10 +28,7 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidatorService;
 
-/**
- * Validates that structure members and union member names do not
- * stutter their shape name as prefixes of their member or tag names.
- */
+@Deprecated
 public final class StutteredShapeNameValidator extends AbstractValidator {
 
     public static final class Provider extends ValidatorService.Provider {

@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#FooService": {
             "type": "service",
@@ -34,6 +34,9 @@
                 "Identifiers": {
                     "target": "ns.foo#Identifiers"
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#Identifiers": {
@@ -74,6 +77,9 @@
                         "smithy.api#required": {}
                     }
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#GetObjectOutput": {
@@ -82,6 +88,9 @@
                 "Object": {
                     "target": "smithy.api#Blob"
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#InvalidEndpointError": {

@@ -1,0 +1,104 @@
+---------------------------
+Default value serialization
+---------------------------
+
+.. include:: aws-default-zero-value.rst.template
+
+
+---------------------
+Request serialization
+---------------------
+
+Requests SHALL be sent to the root URL (``/``). Requests SHALL use a POST
+request and a body that contains input parameters serialized with a
+Content-Type of ``application/x-www-form-urlencoded``. All keys and
+values MUST be encoded according to :rfc:`3986`. Requests SHALL contain
+a Content-Length header; this protocol does not support chunked
+Transfer-Encoding.
+
+Requests MUST include the following key value pairs in the serialized body:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 30 70
+
+    * - Key
+      - Value
+    * - ``Action``
+      - The :token:`shape name <smithy:Identifier>` of the operation's :ref:`shape-id`.
+    * - ``Version``
+      - The value of the :ref:`"version" property of the service <service>`.
+
+These, along with other input members, are serialized in the request body,
+concatenated with the following rules:
+
+* "&" is used to separate member key-value pairs.
+* "=" is used to separate member keys from values.
+* "." is used to separate member name segments within keys.
+
+
+x-www-form-urlencoded shape serialization
+-----------------------------------------
+
+Simple shapes are serialized according to the following rules:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 25 75
+
+    * - Smithy type
+      - Request entity
+    * - ``blob``
+      - Text value that is base64 encoded.
+    * - ``boolean``
+      - Text value of either "true" or "false".
+    * - ``byte``
+      - Text value of the number.
+    * - ``short``
+      - Text value of the number.
+    * - ``integer``
+      - Text value of the number.
+    * - ``long``
+      - Text value of the number.
+    * - ``float``
+      - Text value of the number.
+    * - ``double``
+      - Text value of the number.
+    * - ``bigDecimal``
+      - Text value of the number, using scientific notation if an exponent is
+        needed. Unfortunately, many parsers will either truncate the value or be
+        unable to parse numbers that exceed the size of a double.
+    * - ``bigInteger``
+      - Text value of the number, using scientific notation if an exponent is
+        needed. Unfortunately, many parsers will either truncate the value or be
+        unable to parse numbers that exceed the size of a double.
+    * - ``string``
+      - UTF-8 value of the string. Empty strings are serialized as empty
+        values, meaning a ``Foo`` member set to an empty string would be
+        serialized as "&Foo=".
+    * - ``timestamp``
+      - Text value of the timestamp. This protocol uses ``date-time`` as the
+        default serialization. However, the :ref:`timestampFormat <timestampFormat-trait>`
+        MAY be used to customize timestamp serialization.
+    * - ``document``
+      - Undefined. Document shapes are not supported in this protocol.
+
+Aggregate shapes are serialized with additional segments for members appended
+to the input's key.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 25 75
+
+    * - Smithy type
+      - Request entity
+    * - ``list``
+      - |query list text|
+    * - ``map``
+      - |query map text|
+    * - ``structure``
+      - |query aggregate text|
+    * - ``union``
+      - A union is serialized identically to a ``structure`` shape, but only a
+        single member can be set to a non-null value.
+

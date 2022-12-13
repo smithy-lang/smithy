@@ -45,7 +45,8 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public final class ProtocolHttpPayloadValidator extends AbstractValidator {
     private static final Set<ShapeType> VALID_HTTP_PAYLOAD_TYPES = SetUtils.of(
-            ShapeType.STRUCTURE, ShapeType.UNION, ShapeType.DOCUMENT, ShapeType.BLOB, ShapeType.STRING
+            ShapeType.STRUCTURE, ShapeType.UNION, ShapeType.DOCUMENT, ShapeType.BLOB, ShapeType.STRING,
+            ShapeType.ENUM
     );
 
     @Override
@@ -95,8 +96,8 @@ public final class ProtocolHttpPayloadValidator extends AbstractValidator {
     private Optional<ValidationEvent> validateBindings(Model model, Collection<HttpBinding> payloadBindings) {
         for (HttpBinding binding : payloadBindings) {
             if (!payloadBoundToValidType(model, binding.getMember().getTarget())) {
-                return Optional.of(error(binding.getMember(), "AWS Protocols do not support applying the httpPayload "
-                        + "trait to members that target sets, lists, or maps."));
+                return Optional.of(error(binding.getMember(), "AWS Protocols only support binding the "
+                        + "following shape types to the payload: string, blob, structure, union, and document"));
             }
         }
         return Optional.empty();

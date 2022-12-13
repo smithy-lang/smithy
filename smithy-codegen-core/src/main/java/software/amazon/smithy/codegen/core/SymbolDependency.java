@@ -75,7 +75,7 @@ public final class SymbolDependency extends TypedPropertiesBag
     private final String version;
 
     private SymbolDependency(Builder builder) {
-        super(builder.properties);
+        super(builder);
         this.dependencyType = builder.dependencyType == null ? "" : builder.dependencyType;
         this.packageName = SmithyBuilder.requiredState("packageName", builder.packageName);
         this.version = SmithyBuilder.requiredState("version", builder.version);

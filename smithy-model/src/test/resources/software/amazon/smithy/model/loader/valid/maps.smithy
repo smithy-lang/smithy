@@ -19,24 +19,24 @@ map D { key : String ,value: String }
 @deprecated
 @since("1.0")
 map E {
-  @sensitive @since("1.1") key: String ,
+  @internal @since("1.1") key: String ,
   value:String, // trailing comma
 }
 
 @deprecated @since("1.0")
 map F {
-  @sensitive
+  @internal
   @since("1.1")
   key: String,
 
-  @sensitive
+  @internal
   @since("1.1")
   value: String
 }
 
 @deprecated @since("1.0")
 map G {
-@sensitive
+@internal
 @since("1.1")
 key: String
 ,

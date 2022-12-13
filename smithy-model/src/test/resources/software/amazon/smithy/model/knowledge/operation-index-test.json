@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#MyService": {
             "type": "service",
@@ -10,6 +10,14 @@
                 },
                 {
                     "target": "ns.foo#B"
+                }
+            ],
+            "errors": [
+                {
+                    "target": "ns.foo#CommonError1"
+                },
+                {
+                    "target": "ns.foo#CommonError2"
                 }
             ]
         },
@@ -52,6 +60,18 @@
             }
         },
         "ns.foo#Error2": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#error": "server"
+            }
+        },
+        "ns.foo#CommonError1": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#error": "server"
+            }
+        },
+        "ns.foo#CommonError2": {
             "type": "structure",
             "traits": {
                 "smithy.api#error": "server"

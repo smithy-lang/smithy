@@ -21,13 +21,13 @@ list D {
 @deprecated
 @since("1.0")
 list E {
-  @sensitive @since("1.1")
+  @internal @since("1.1")
   member: String
 }
 
 @deprecated @since("1.0")
 list F {
-  @sensitive
+  @internal
   @since("1.1")
   member: String
 }
@@ -35,7 +35,7 @@ list F {
 @deprecated @since("1.0")
 list G
 {
-@sensitive
+@internal
 @since("1.1")
 member: String
 }
@@ -58,15 +58,15 @@ set K {
 
 @deprecated
 @since("1.0")
-set L {@sensitive @since("1.1") member: String}
+set L {@internal @since("1.1") member: String}
 
 @deprecated @since("1.0")
-set M {@sensitive @since("1.1") member: String }
+set M {@internal @since("1.1") member: String }
 
 @deprecated @since("1.0")
 set N
 {
-@sensitive
+@internal
 @since("1.1")
 member: String
 }

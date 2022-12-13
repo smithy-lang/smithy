@@ -73,9 +73,8 @@ public class InvalidSmithyModelLoaderRunnerTest {
     }
 
     public static Collection<String> data() throws Exception {
-        try {
-            Stream<Path> paths = Files.walk(Paths.get(
-                    ValidSmithyModelLoaderRunnerTest.class.getResource("invalid").toURI()));
+        try (Stream<Path> paths = Files.walk(Paths.get(
+                    ValidSmithyModelLoaderRunnerTest.class.getResource("invalid").toURI()))) {
             return paths
                     .filter(Files::isRegularFile)
                     .filter(file -> file.toString().endsWith(".smithy"))

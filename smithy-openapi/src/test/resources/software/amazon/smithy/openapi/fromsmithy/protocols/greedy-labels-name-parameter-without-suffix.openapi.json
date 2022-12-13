@@ -28,7 +28,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Operation response"
+            "description": "Operation 200 response"
           }
         }
       }

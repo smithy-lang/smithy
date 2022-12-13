@@ -1,0 +1,2 @@
+[WARNING] smithy.example#OperationNumber: This shape applies a trait that is unstable: smithy.rules#staticContextParams | UnstableTrait
+[ERROR] smithy.example#OperationNumber: The operation `smithy.example#OperationNumber` is marked with `smithy.rules#staticContextParams` which contains a key `numberParam` with an unsupported document type value `number`. | StaticContextParamsTrait

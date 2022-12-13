@@ -4,4 +4,5 @@ software.amazon.smithy.model.transform.plugins.CleanResourceReferences
 software.amazon.smithy.model.transform.plugins.CleanServiceRenames
 software.amazon.smithy.model.transform.plugins.CleanStructureAndUnionMembers
 software.amazon.smithy.model.transform.plugins.CleanTraitDefinitions
+software.amazon.smithy.model.transform.plugins.RemoveMixins
 software.amazon.smithy.model.transform.plugins.RemoveTraits

@@ -53,13 +53,15 @@ public final class DefineConditionKeysTrait extends AbstractTrait implements ToS
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            Builder builder = builder();
+            Builder builder = builder().sourceLocation(value);
             for (Map.Entry<StringNode, Node> entry : value.expectObjectNode().getMembers().entrySet()) {
                 ConditionKeyDefinition definition = ConditionKeyDefinition.fromNode(
                         entry.getValue().expectObjectNode());
                 builder.putConditionKey(entry.getKey().getValue(), definition);
             }
-            return builder.build();
+            DefineConditionKeysTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 
@@ -87,7 +89,8 @@ public final class DefineConditionKeysTrait extends AbstractTrait implements ToS
         return conditionKeys.entrySet().stream()
                 .map(entry -> new AbstractMap.SimpleImmutableEntry<>(
                         Node.from(entry.getKey()), entry.getValue().toNode()))
-                .collect(ObjectNode.collect(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(ObjectNode.collect(Map.Entry::getKey, Map.Entry::getValue))
+                .toBuilder().sourceLocation(getSourceLocation()).build();
     }
 
     @Override

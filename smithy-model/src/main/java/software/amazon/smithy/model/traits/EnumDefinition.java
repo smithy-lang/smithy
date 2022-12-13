@@ -33,12 +33,6 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  */
 public final class EnumDefinition implements ToNode, ToSmithyBuilder<EnumDefinition>, Tagged {
 
-    public static final String VALUE = "value";
-    public static final String NAME = "name";
-    public static final String DOCUMENTATION = "documentation";
-    public static final String TAGS = "tags";
-    public static final String DEPRECATED = "deprecated";
-
     private final String value;
     private final String documentation;
     private final List<String> tags;
@@ -76,35 +70,29 @@ public final class EnumDefinition implements ToNode, ToSmithyBuilder<EnumDefinit
     @Override
     public Node toNode() {
         ObjectNode.Builder builder = Node.objectNodeBuilder();
-        builder.withMember(EnumDefinition.VALUE, getValue())
-                .withOptionalMember(EnumDefinition.NAME, getName().map(Node::from))
-                .withOptionalMember(EnumDefinition.DOCUMENTATION, getDocumentation().map(Node::from));
+        builder.withMember("value", getValue())
+                .withOptionalMember("name", getName().map(Node::from))
+                .withOptionalMember("documentation", getDocumentation().map(Node::from));
 
         if (!tags.isEmpty()) {
-            builder.withMember(EnumDefinition.TAGS, Node.fromStrings(getTags()));
+            builder.withMember("tags", Node.fromStrings(getTags()));
         }
 
         if (isDeprecated()) {
-            builder.withMember(EnumDefinition.DEPRECATED, true);
+            builder.withMember("deprecated", true);
         }
 
         return builder.build();
     }
 
     public static EnumDefinition fromNode(Node node) {
-        ObjectNode value = node.expectObjectNode();
-        EnumDefinition.Builder builder = EnumDefinition.builder()
-                .value(value.expectStringMember(EnumDefinition.VALUE).getValue())
-                .name(value.getStringMember(EnumDefinition.NAME).map(StringNode::getValue).orElse(null))
-                .documentation(value.getStringMember(EnumDefinition.DOCUMENTATION)
-                                       .map(StringNode::getValue)
-                                       .orElse(null))
-                .deprecated(value.getBooleanMemberOrDefault(EnumDefinition.DEPRECATED));
-
-        value.getMember(EnumDefinition.TAGS).ifPresent(tags -> {
-            builder.tags(Node.loadArrayOfString(EnumDefinition.TAGS, tags));
-        });
-
+        EnumDefinition.Builder builder = EnumDefinition.builder();
+        node.expectObjectNode()
+                .expectStringMember("value", builder::value)
+                .getStringMember("name", builder::name)
+                .getStringMember("documentation", builder::documentation)
+                .getBooleanMember("deprecated", builder::deprecated)
+                .getArrayMember("tags", StringNode::getValue, builder::tags);
         return builder.build();
     }
 
@@ -194,3 +182,4 @@ public final class EnumDefinition implements ToNode, ToSmithyBuilder<EnumDefinit
         }
     }
 }
+

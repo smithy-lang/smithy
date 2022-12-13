@@ -18,7 +18,7 @@ package software.amazon.smithy.model.selector;
 /**
  * Exception thrown when a selector expression is invalid.
  */
-public final class SelectorSyntaxException extends RuntimeException {
+public final class SelectorSyntaxException extends SelectorException {
     SelectorSyntaxException(String message, String expression, int pos, int line, int column) {
         super(createMessage(message, expression, pos, line, column));
     }

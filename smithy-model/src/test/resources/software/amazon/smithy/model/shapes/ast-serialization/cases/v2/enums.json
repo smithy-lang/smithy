@@ -1,0 +1,54 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#StringEnum": {
+            "type": "enum",
+            "members": {
+                "FOO": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "foo"
+                    }
+                },
+                "BAR": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "bar"
+                    }
+                }
+            }
+        },
+        "smithy.example#StringEnumFromTrait": {
+            "type": "string",
+            "traits": {
+                "smithy.api#enum": [
+                    {
+                        "value": "footrait",
+                        "name": "FOOTRAIT"
+                    },
+                    {
+                        "value": "bartrait",
+                        "name": "BARTRAIT"
+                    }
+                ]
+            }
+        },
+        "smithy.example#IntEnum": {
+            "type": "intEnum",
+            "members": {
+                "FOO": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": 1
+                    }
+                },
+                "BAR": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": 2
+                    }
+                }
+            }
+        }
+    }
+}

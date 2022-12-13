@@ -1,0 +1,13 @@
+[WARNING] ns.foo#MyMasterService: Service shape uses a non-inclusive term `Master`. Consider using one of the following terms instead: `Main`, `Parent`, `Primary` | NoninclusiveTerms
+[WARNING] ns.foo#BlackListThings: Operation shape uses a non-inclusive term `BlackList`. Consider using one of the following terms instead: `DenyList` | NoninclusiveTerms
+[WARNING] ns.foo#MyWhitelistTrait: Structure shape uses a non-inclusive term `Whitelist`. Consider using one of the following terms instead: `AllowList` | NoninclusiveTerms
+[WARNING] ns.foo#AInput$master_member_name: Member shape uses a non-inclusive term `master`. Consider using one of the following terms instead: `main`, `parent`, `primary` | NoninclusiveTerms
+[WARNING] ns.foo#NestedTraitStructure$master_key_violation: Member shape uses a non-inclusive term `master`. Consider using one of the following terms instead: `main`, `parent`, `primary` | NoninclusiveTerms
+[WARNING] ns.foo#AInput$foo: 'ns.foo#MySimpleValueTrait' trait has a value that contains a non-inclusive term `slave`. Consider using one of the following terms instead: `child`, `clone`, `replica`, `secondary` | NoninclusiveTerms
+[WARNING] ns.foo#AOutput: 'ns.foo#MyWhitelistTrait' trait value at path {document/foo/0/bar} contains a non-inclusive term `whitelist`. Consider using one of the following terms instead: `allowList` | NoninclusiveTerms
+[WARNING] ns.foo#AOutput: 'ns.foo#MyWhitelistTrait' trait value at path {nested/master_key_violation} contains a non-inclusive term `whitelist`. Consider using one of the following terms instead: `allowList` | NoninclusiveTerms
+[WARNING] ns.foo#AOutput: 'ns.foo#MyWhitelistTrait' trait value at path {string_value} contains a non-inclusive term `whitelist`. Consider using one of the following terms instead: `allowList` | NoninclusiveTerms
+[WARNING] ns.foo#AOutput: 'ns.foo#MyWhitelistTrait' trait value at path {document/whitelist_doc_key_violation_1} contains a non-inclusive term `whitelist`. Consider using one of the following terms instead: `allowList` | NoninclusiveTerms
+[WARNING] ns.foo#AOutput: 'ns.foo#MyWhitelistTrait' trait value at path {collection/2/key} contains a non-inclusive term `whitelist`. Consider using one of the following terms instead: `allowList` | NoninclusiveTerms
+[WARNING] ns.foo#AOutput: 'ns.foo#MyWhitelistTrait' trait value at path {collection/1/blacklist_key} contains a non-inclusive term `blacklist`. Consider using one of the following terms instead: `denyList` | NoninclusiveTerms
+[WARNING] ns.foo#MyUnionTrait$int_whitelist: Member shape uses a non-inclusive term `whitelist`. Consider using one of the following terms instead: `allowList` | NoninclusiveTerms

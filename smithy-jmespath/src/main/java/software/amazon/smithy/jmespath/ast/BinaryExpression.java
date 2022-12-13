@@ -52,9 +52,11 @@ public abstract class BinaryExpression extends JmespathExpression {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
+        if (o == null) {
+            return false;
+        } else if (this == o) {
             return true;
-        } else if (!(o instanceof BinaryExpression) || o.getClass() != o.getClass()) {
+        } else if (!o.getClass().equals(getClass())) {
             return false;
         }
         BinaryExpression that = (BinaryExpression) o;
@@ -63,7 +65,7 @@ public abstract class BinaryExpression extends JmespathExpression {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getLeft(), getRight());
+        return Objects.hash(getClass().getSimpleName(), getLeft(), getRight());
     }
 
     @Override

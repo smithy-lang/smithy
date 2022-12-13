@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
@@ -32,6 +33,7 @@ import java.util.function.Predicate;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.NodePointer;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
 import software.amazon.smithy.model.shapes.BlobShape;
@@ -60,6 +62,7 @@ import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.PatternTrait;
 import software.amazon.smithy.model.traits.PrivateTrait;
 import software.amazon.smithy.model.traits.RangeTrait;
+import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.traits.TitleTrait;
 import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.utils.IoUtils;
@@ -111,6 +114,39 @@ public class JsonSchemaConverterTest {
 
         assertThat(document1.getDefinitions().keySet(), containsInAnyOrder("#/definitions/ReferencedA"));
         assertThat(document2.getDefinitions().keySet(), containsInAnyOrder("#/definitions/ReferencedB"));
+    }
+
+    @Test
+    public void canConvertShapesThatHaveConflictsOutsideOfClosure() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("multiple-closures-with-conflicting-shapes.json"))
+                .assemble()
+                .unwrap();
+        JsonSchemaConfig config1 = new JsonSchemaConfig();
+        config1.setService(ShapeId.from("com.foo#ServiceA"));
+        SchemaDocument document1 = JsonSchemaConverter.builder()
+                .model(model)
+                .rootShape(ShapeId.from("com.foo#ServiceA"))
+                .config(config1)
+                .build()
+                .convert();
+
+        JsonSchemaConfig config2 = new JsonSchemaConfig();
+        config2.setService(ShapeId.from("com.bar#ServiceB"));
+        SchemaDocument document2 = JsonSchemaConverter.builder()
+                .model(model)
+                .rootShape(ShapeId.from("com.bar#ServiceB"))
+                .config(config2)
+                .build()
+                .convert();
+
+        Schema string1Def = document1.getDefinitions().get("#/definitions/ConflictString");
+        assertNotNull(string1Def);
+        assertThat(string1Def.getEnumValues().get(), containsInAnyOrder("y", "z"));
+
+        Schema string2Def = document2.getDefinitions().get("#/definitions/ConflictString");
+        assertNotNull(string2Def);
+        assertThat(string2Def.getEnumValues().get(), containsInAnyOrder("a", "b"));
     }
 
     @Test
@@ -234,6 +270,25 @@ public class JsonSchemaConverterTest {
     }
 
     @Test
+    public void convertsIntegersWhenConfigSet() {
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setUseIntegerType(true);
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("integer-types.smithy"))
+                .assemble()
+                .unwrap();
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .model(model)
+                .config(config)
+                .build()
+                .convert();
+
+        Node expected = Node.parse(
+                IoUtils.toUtf8String(getClass().getResourceAsStream("integer-types.jsonschema.json")));
+        Node.assertEquals(document.toNode(), expected);
+    }
+
+    @Test
     public void supportsRangeTrait() {
         IntegerShape shape = IntegerShape.builder()
                 .id("smithy.example#Number")
@@ -272,6 +327,7 @@ public class JsonSchemaConverterTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void supportsListAndSetLengthTrait() {
         StringShape string = StringShape.builder().id("smithy.api#String").build();
         MemberShape member = MemberShape.builder()
@@ -392,6 +448,7 @@ public class JsonSchemaConverterTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void supportsEnum() {
         StringShape string = StringShape.builder()
                 .id("smithy.api#String")
@@ -517,6 +574,24 @@ public class JsonSchemaConverterTest {
     }
 
     @Test
+    public void sensitiveTraitHasNoImpact() {
+        StringShape string1 = StringShape.builder()
+                .id("smithy.api#String")
+                .addTrait(new SensitiveTrait())
+                .build();
+        Model model1 = Model.builder().addShapes(string1).build();
+        SchemaDocument document1 = JsonSchemaConverter.builder().model(model1).build().convertShape(string1);
+
+        StringShape string2 = StringShape.builder()
+                .id("smithy.api#String")
+                .build();
+        Model model2 = Model.builder().addShapes(string2).build();
+        SchemaDocument document2 = JsonSchemaConverter.builder().model(model2).build().convertShape(string2);
+
+        assertThat(document1, equalTo(document2));
+    }
+
+    @Test
     public void convertingToBuilderGivesSameResult() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("test-service.json"))
@@ -570,5 +645,43 @@ public class JsonSchemaConverterTest {
         public void setBaz(String baz) {
             this.baz = baz;
         }
+    }
+
+    @Test
+    public void removesMixins() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("model-with-mixins.smithy"))
+                .assemble()
+                .unwrap();
+        JsonSchemaConverter converter = JsonSchemaConverter.builder()
+                .model(model)
+                .build();
+
+        NodePointer mixin = NodePointer.parse("/definitions/Mixin");
+        NodePointer properties = NodePointer.parse("/definitions/UsesMixin/properties");
+        SchemaDocument document = converter.convert();
+
+        // Mixin isn't there.
+        assertThat(mixin.getValue(document.toNode()), equalTo(Node.nullNode()));
+
+        // The mixin was flattened.
+        assertThat(properties.getValue(document.toNode()).expectObjectNode().getStringMap().keySet(),
+                   containsInAnyOrder("foo", "baz"));
+    }
+
+    @Test
+    public void appliesDefaults() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("default-values.smithy"))
+                .assemble()
+                .unwrap();
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .model(model)
+                .build()
+                .convert();
+
+        Node expected = Node.parse(
+                IoUtils.toUtf8String(getClass().getResourceAsStream("default-values.jsonschema.json")));
+        Node.assertEquals(document.toNode(), expected);
     }
 }

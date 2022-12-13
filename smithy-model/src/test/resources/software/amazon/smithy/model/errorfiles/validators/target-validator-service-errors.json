@@ -1,0 +1,35 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "ns.foo#InvalidService1": {
+            "type": "service",
+            "version": "x",
+            "errors": [
+                {
+                    "target": "ns.foo#NotFound"
+                }
+            ]
+        },
+        "ns.foo#InvalidService2": {
+            "type": "service",
+            "version": "x",
+            "errors": [
+                {
+                    "target": "smithy.api#String"
+                }
+            ]
+        },
+        "ns.foo#InvalidService3": {
+            "type": "service",
+            "version": "x",
+            "errors": [
+                {
+                    "target": "ns.foo#NotError"
+                }
+            ]
+        },
+        "ns.foo#NotError": {
+            "type": "structure"
+        }
+    }
+}

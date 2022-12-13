@@ -1,30 +1,26 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace ns.foo
 
 structure StructureWithMembers {
-    a: String,
-    b: String,
+    a: String
+    b: String
 }
 
 structure StructureWithoutMembers {}
 
 union Union {
-    byte: Byte,
-    double: Double,
+    byte: Byte
+    double: Double
 }
 
 list List {
-    member: String,
-}
-
-set Set {
-    member: String,
+    member: String
 }
 
 map Map {
-    key: String,
-    value: String,
+    key: String
+    value: String
 }
 
 bigDecimal BigDecimal

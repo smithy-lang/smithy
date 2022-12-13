@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#String": {
             "type": "string"
@@ -96,6 +96,9 @@
                 "otherMemberName": {
                     "target": "ns.foo#Integer"
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#OperationAOutput": {
@@ -104,6 +107,9 @@
                 "b": {
                     "target": "ns.foo#Map"
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#OperationErrorA": {
@@ -133,6 +139,9 @@
                         "smithy.api#required": {}
                     }
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#UtcTimestamp": {
@@ -400,14 +409,21 @@
                 "id": "ignored",
                 "name": "EmitEachSelector",
                 "configuration": {
-                    "selector": "[foo]"
+                    "selector": "[trait|notRealTrait|notFound]"
                 }
             },
             {
                 "id": "ignored",
                 "name": "EmitEachSelector",
                 "configuration": {
-                    "selector": "[foo=baz]"
+                    "selector": "[var|notRealVar|notFound]"
+                }
+            },
+            {
+                "id": "ignored",
+                "name": "EmitEachSelector",
+                "configuration": {
+                    "selector": "[trait|error|nesting|into|things|is|tolerated]"
                 }
             },
             {

@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace smithy.example
 
@@ -22,8 +22,10 @@ resource AdditionalSchemasDeconflictedResource {
 
 operation CreateAdditionalSchemasDeconflictedResource {
     input: CreateAdditionalSchemasDeconflictedResourceRequest,
+    output: CreateAdditionalSchemasDeconflictedResourceResponse
 }
 
+@input
 structure CreateAdditionalSchemasDeconflictedResourceRequest {
     @cfnExcludeProperty
     bar: String,
@@ -32,3 +34,6 @@ structure CreateAdditionalSchemasDeconflictedResourceRequest {
 structure AdditionalSchemasDeconflictedProperties {
     bar: Boolean,
 }
+
+@output
+structure CreateAdditionalSchemasDeconflictedResourceResponse {}

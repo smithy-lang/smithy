@@ -1,6 +1,6 @@
 // This file defines test cases that serialize inline documents.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.json
 
@@ -32,7 +32,10 @@ apply PutAndGetInlineDocuments @httpRequestTests([
                   "inlineDocument": {"foo": "bar"}
               }""",
         bodyMediaType: "application/json",
-        headers: {"Content-Type": "application/x-amz-json-1.1"},
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.PutAndGetInlineDocuments",
+        },
         requireHeaders: [
             "Content-Length"
         ],

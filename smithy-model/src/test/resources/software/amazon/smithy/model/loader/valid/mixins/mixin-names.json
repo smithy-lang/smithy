@@ -1,0 +1,40 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#integerPrefixed": {
+            "type": "integer",
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#NotPrefixed": {
+            "type": "integer",
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#iiiiiii": {
+            "type": "integer",
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MixedInt": {
+            "type": "integer",
+            "mixins": [
+                {
+                    "target": "smithy.example#NotPrefixed"
+                },
+                {
+                    "target": "smithy.example#integerPrefixed"
+                },
+                {
+                    "target": "smithy.example#iiiiiii"
+                }
+            ]
+        },
+        "smithy.example#SafeInt": {
+            "type": "integer"
+        }
+    }
+}

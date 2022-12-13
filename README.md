@@ -1,4 +1,4 @@
-# Smithy
+# <img alt="Smithy" src="docs/_static/favicon.png" width="28"> Smithy
 [![Build Status](https://github.com/awslabs/smithy/workflows/ci/badge.svg)](https://github.com/awslabs/smithy/actions/workflows/ci.yml)
 
 Smithy defines and generates clients, services, and documentation for
@@ -16,22 +16,24 @@ Smithy models define a service as a collection of resources, operations, and
 shapes.
 
 ```
+$version: "2"
+
 namespace example.weather
 
 service Weather {
-    version: "2006-03-01",
-    resources: [City],
+    version: "2006-03-01"
+    resources: [City]
     operations: [GetCurrentTime]
 }
 
 resource City {
-    identifiers: { cityId: CityId },
-    read: GetCity,
-    list: ListCities,
-    resources: [Forecast],
+    identifiers: { cityId: CityId }
+    read: GetCity
+    list: ListCities
+    resources: [Forecast]
 }
 
-// See the full example at https://awslabs.github.io/smithy/quickstart.html#complete-example
+// See the full example at https://smithy.io/2.0/quickstart.html#complete-example
 ```
 
 Find out more about modeling a service with Smithy in the [Quick Start
@@ -54,13 +56,15 @@ Then, apply the Smithy Gradle Plugin in your `build.gradle.kts` file and run
 
 ```kotlin
 plugins {
-   id("software.amazon.smithy").version("0.5.3")
+   id("software.amazon.smithy").version("0.6.0")
 }
 ```
 
 Finally, create your first model `model/main.smithy`:
 
 ```
+$version: "2"
+
 namespace com.example
 
 service ExampleService {
@@ -77,10 +81,10 @@ of the Smithy Gradle Plugin repository.
 
 This library is licensed under the Apache 2.0 License.
 
-[docs]: https://awslabs.github.io/smithy/
-[specs]: https://awslabs.github.io/smithy/1.0/spec/
-[javadocs]: https://awslabs.github.io/smithy/javadoc/latest/
-[quickstart]: https://awslabs.github.io/smithy/quickstart.html
+[docs]: https://smithy.io/
+[specs]: https://smithy.io/2.0/spec/
+[javadocs]: https://smithy.io/javadoc/latest/
+[quickstart]: https://smithy.io/2.0/quickstart.html
 [Smithy Gradle Plugin]: https://github.com/awslabs/smithy-gradle-plugin/
-[`smithy-build.json`]: https://awslabs.github.io/smithy/guides/building-models/build-config.html#using-smithy-build-json
-[building]: https://awslabs.github.io/smithy/guides/building-models/index.html
+[`smithy-build.json`]: https://smithy.io/2.0/guides/building-models/build-config.html#using-smithy-build-json
+[building]: https://smithy.io/2.0/guides/building-models/index.html

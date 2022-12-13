@@ -33,17 +33,22 @@ public final class ShortShape extends NumberShape implements ToSmithyBuilder<Sho
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this);
+        return updateBuilder(builder());
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.shortShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.shortShape(this);
     }
 
     @Override
     public Optional<ShortShape> asShortShape() {
         return Optional.of(this);
+    }
+
+    @Override
+    public ShapeType getType() {
+        return ShapeType.SHORT;
     }
 
     /**

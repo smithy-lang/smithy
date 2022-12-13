@@ -1,0 +1,2 @@
+[WARNING] smithy.example#OperationArray: This shape applies a trait that is unstable: smithy.rules#staticContextParams | UnstableTrait
+[ERROR] smithy.example#OperationArray: The operation `smithy.example#OperationArray` is marked with `smithy.rules#staticContextParams` which contains a key `arrayParam` with an unsupported document type value `array`. | StaticContextParamsTrait

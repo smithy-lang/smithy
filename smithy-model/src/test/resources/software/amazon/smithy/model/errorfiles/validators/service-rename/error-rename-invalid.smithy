@@ -1,3 +1,5 @@
+$version: "2.0"
+
 namespace smithy.example
 
 service MyService {
@@ -11,8 +13,16 @@ service MyService {
 }
 
 operation SayHello {
+    input: SayHelloInput,
+    output: SayHelloOutput,
     errors: [BadGreeting]
 }
+
+@input
+structure SayHelloInput {}
+
+@output
+structure SayHelloOutput {}
 
 @error("client")
 structure BadGreeting {}

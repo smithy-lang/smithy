@@ -1,0 +1,6 @@
+#. To avoid information disclosure, serializers SHOULD omit the default
+   value of structure members that are marked with the :ref:`internal-trait`.
+#. Client deserializers SHOULD attempt to error correct structures that
+   omit a ``@required`` member by filling in a default zero value for the
+   member. Error correction allows clients to continue to function while the
+   server is in error.

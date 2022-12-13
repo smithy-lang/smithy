@@ -88,20 +88,11 @@ public final class HostLabelTraitValidator extends AbstractValidator {
         // Validate the host prefix SHOULD end in a period if it has labels.
         validateTrailingPeriod(operation, endpoint).ifPresent(events::add);
 
-        // If the operation has labels then it must also have input.
-        if (!operation.getInput().isPresent() && !endpoint.getHostPrefix().getLabels().isEmpty()) {
-            events.add(error(operation, endpoint, format(
-                    "`endpoint` trait hostPrefix contains labels (%s), but operation has no input.",
-                    ValidationUtils.tickedList(endpoint.getHostPrefix().getLabels().stream()
-                            .map(SmithyPattern.Segment::getContent).collect(Collectors.toSet())))));
-        } else {
-            // Only validate the bindings if the input is a structure. Typing
-            // validation of the input is handled elsewhere.
-            operation.getInput()
-                    .flatMap(model::getShape)
-                    .flatMap(Shape::asStructureShape)
-                    .ifPresent(input -> events.addAll(validateBindings(operation, endpoint, input)));
-        }
+        // Only validate the bindings if the input is a structure. Typing
+        // validation of the input is handled elsewhere.
+        model.getShape(operation.getInputShape())
+                .flatMap(Shape::asStructureShape)
+                .ifPresent(input -> events.addAll(validateBindings(operation, endpoint, input)));
 
         return events;
     }
@@ -135,10 +126,10 @@ public final class HostLabelTraitValidator extends AbstractValidator {
         }
 
         if (!labels.isEmpty()) {
-            events.add(error(input, format(
-                    "This structure is used as the input for the `%s` operation, but the following host labels "
-                    + "found in the operation's `endpoint` trait do not have a corresponding member marked with the "
-                    + "`hostLabel` trait: %s", operation.getId(), ValidationUtils.tickedList(labels))));
+            events.add(error(operation, format(
+                    "This operation uses %s as input, but the following host labels found in the operation's "
+                    + "`endpoint` trait do not have a corresponding member marked with the `hostLabel` trait: %s",
+                    input.getId(), ValidationUtils.tickedList(labels))));
         }
 
         return events;

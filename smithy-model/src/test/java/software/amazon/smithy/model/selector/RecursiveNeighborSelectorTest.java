@@ -70,7 +70,7 @@ public class RecursiveNeighborSelectorTest {
                 .getResult() // ignore built-in errors
                 .get();
 
-        // This is a slightly less efficient variation of of a similar
+        // This is a slightly less efficient variation of a similar
         // test in SelectorTest because it doesn't use a temporary
         // variable to store the recursive neighbors.
         Set<String> ids = SelectorTest.exampleIds(model,

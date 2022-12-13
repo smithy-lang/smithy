@@ -1,7 +1,7 @@
 // This file defines test cases that test HTTP response code bindings.
-// See: https://awslabs.github.io/smithy/1.0/spec/core/http-traits.html#httpresponsecode-trait
+// See: https://smithy.io/2.0/spec/http-bindings.html#httpresponsecode-trait
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restjson
 
@@ -18,6 +18,28 @@ structure HttpResponseCodeOutput {
     @httpResponseCode
     Status: Integer
 }
+
+@readonly
+@http(method: "GET", uri: "/responseCodeRequired", code: 200)
+operation ResponseCodeRequired {
+    output: ResponseCodeRequiredOutput,
+}
+
+@output
+structure ResponseCodeRequiredOutput {
+    @required
+    @httpResponseCode
+    responseCode: Integer,
+}
+
+@readonly
+@http(method: "GET", uri: "/responseCodeHttpFallback", code: 201)
+operation ResponseCodeHttpFallback {
+    input: ResponseCodeHttpFallbackInputOutput,
+    output: ResponseCodeHttpFallbackInputOutput,
+}
+
+structure ResponseCodeHttpFallbackInputOutput {}
 
 apply HttpResponseCode @httpResponseTests([
     {
@@ -40,6 +62,25 @@ apply HttpResponseCode @httpResponseTests([
         }
     },
     {
+        id: "RestJsonHttpResponseCodeDefaultsToModeledCode",
+        documentation: """
+                Binds the http response code to the http trait's code if the
+                code isn't explicitly set. A client would be parsing the
+                http response code, so this would always be present, but
+                a server doesn't require it to be set to serialize a request.""",
+        protocol: restJson1,
+        code: 200,
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: "{}",
+        bodyMediaType: "application/json",
+        // A client would parse the http response code, and so for clients it
+        // will always be present, but a server doesn't require it to be set.
+        params: {},
+        appliesTo: "server"
+    },
+    {
         id: "RestJsonHttpResponseCodeWithNoPayload",
         documentation: """
                 This test ensures that clients gracefully handle cases where
@@ -53,4 +94,40 @@ apply HttpResponseCode @httpResponseTests([
         },
         appliesTo: "client"
     },
+])
+
+apply ResponseCodeRequired @httpResponseTests([
+    {
+        id: "RestJsonHttpResponseCodeRequired",
+        documentation: """
+                This test ensures that servers handle @httpResponseCode being @required.""",
+        protocol: restJson1,
+        code: 201,
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: "{}",
+        bodyMediaType: "application/json",
+        params: {
+            responseCode: 201,
+        },
+        appliesTo: "server"
+    }
+])
+
+apply ResponseCodeHttpFallback @httpResponseTests([
+    {
+        id: "RestJsonHttpResponseCodeNotSetFallsBackToHttpCode",
+        documentation: """
+                This test ensures that servers fall back to the code set
+                by @http if @httpResponseCode is not set.""",
+        protocol: restJson1,
+        code: 201,
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: "{}",
+        bodyMediaType: "application/json",
+        appliesTo: "server"
+    }
 ])

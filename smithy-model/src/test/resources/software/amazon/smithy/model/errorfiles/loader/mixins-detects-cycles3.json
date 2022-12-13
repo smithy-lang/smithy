@@ -1,0 +1,65 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#Mixin1A": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#mixin": {}
+            },
+            "mixins": [
+                {"target": "smithy.example#BadA"}
+            ]
+        },
+        "smithy.example#Mixin2A": {
+            "type": "structure",
+            "mixins": [
+                {"target": "smithy.example#Mixin1A"}
+            ]
+        },
+        "smithy.example#Mixin3A": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#mixin": {}
+            },
+            "mixins": [
+                {"target": "smithy.example#Mixin2A"}
+            ]
+        },
+        "smithy.example#BadA": {
+            "type": "structure",
+            "mixins": [
+                {"target": "smithy.example#Mixin3A"}
+            ]
+        },
+        "smithy.example#Mixin1B": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#mixin": {}
+            },
+            "mixins": [
+                {"target": "smithy.example#BadB"}
+            ]
+        },
+        "smithy.example#Mixin2B": {
+            "type": "structure",
+            "mixins": [
+                {"target": "smithy.example#Mixin1B"}
+            ]
+        },
+        "smithy.example#Mixin3B": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#mixin": {}
+            },
+            "mixins": [
+                {"target": "smithy.example#Mixin2B"}
+            ]
+        },
+        "smithy.example#BadB": {
+            "type": "structure",
+            "mixins": [
+                {"target": "smithy.example#Mixin3B"}
+            ]
+        }
+    }
+}

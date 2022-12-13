@@ -1,7 +1,7 @@
 // This file defines tests to ensure that implementations support the endpoint
 // trait and other features that modify the host.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.json
 
@@ -18,6 +18,10 @@ use smithy.test#httpRequestTests
         method: "POST",
         uri: "/",
         body: "{}",
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.EndpointOperation",
+        },
         host: "example.com",
         resolvedHost: "foo.example.com",
     }
@@ -38,6 +42,10 @@ operation EndpointOperation {}
         uri: "/",
         body: "{\"label\": \"bar\"}",
         bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.EndpointWithHostLabelOperation",
+        },
         host: "example.com",
         resolvedHost: "foo.bar.example.com",
         params: {

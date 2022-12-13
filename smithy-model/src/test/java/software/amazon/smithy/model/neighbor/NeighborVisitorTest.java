@@ -19,12 +19,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.BooleanShape;
+import software.amazon.smithy.model.shapes.EnumShape;
+import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -37,8 +42,14 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.DeprecatedTrait;
+import software.amazon.smithy.model.traits.EnumValueTrait;
+import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.IdempotentTrait;
+import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.model.traits.ReadonlyTrait;
+import software.amazon.smithy.model.traits.SensitiveTrait;
+import software.amazon.smithy.model.traits.UnitTypeTrait;
 
 public class NeighborVisitorTest {
 
@@ -50,6 +61,26 @@ public class NeighborVisitorTest {
         List<Relationship> relationships = shape.accept(neighborVisitor);
 
         assertThat(relationships, empty());
+    }
+
+    @Test
+    public void findsMixinsOnThingsOtherThanStructAndUnion() {
+        Shape blobMixin = BlobShape.builder().id("smithy.example#BlobMixin")
+                .addTrait(MixinTrait.builder().build())
+                .build();
+        Shape shape = BlobShape.builder()
+                .id("ns.foo#name")
+                .addMixin(blobMixin)
+                .build();
+        Model model = Model.builder().addShapes(shape, blobMixin).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
+        List<Relationship> relationships = shape.accept(neighborVisitor);
+
+        List<RelationshipType> types = relationships.stream()
+                .map(Relationship::getRelationshipType)
+                .collect(Collectors.toList());
+
+        assertThat(types, contains(RelationshipType.MIXIN));
     }
 
     @Test
@@ -70,6 +101,42 @@ public class NeighborVisitorTest {
         List<Relationship> relationships = shape.accept(neighborVisitor);
 
         assertThat(relationships, empty());
+    }
+
+    @Test
+    public void enumShape() {
+        EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#name");
+        EnumShape shape = builder
+                .addMember("foo", "bar")
+                .addMember("baz", "bam")
+                .build();
+        MemberShape member1Target = shape.getMember("foo").get();
+        MemberShape member2Target = shape.getMember("baz").get();
+        Model model = Model.builder().addShape(shape).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
+        List<Relationship> relationships = shape.accept(neighborVisitor);
+
+        assertThat(relationships, containsInAnyOrder(
+                Relationship.create(shape, RelationshipType.ENUM_MEMBER, member1Target),
+                Relationship.create(shape, RelationshipType.ENUM_MEMBER, member2Target)));
+    }
+
+    @Test
+    public void intEnumShape() {
+        IntEnumShape.Builder builder = (IntEnumShape.Builder) IntEnumShape.builder().id("ns.foo#name");
+        IntEnumShape shape = builder
+                .addMember("foo", 1)
+                .addMember("baz", 2)
+                .build();
+        MemberShape member1Target = shape.getMember("foo").get();
+        MemberShape member2Target = shape.getMember("baz").get();
+        Model model = Model.builder().addShape(shape).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
+        List<Relationship> relationships = shape.accept(neighborVisitor);
+
+        assertThat(relationships, containsInAnyOrder(
+                Relationship.create(shape, RelationshipType.INT_ENUM_MEMBER, member1Target),
+                Relationship.create(shape, RelationshipType.INT_ENUM_MEMBER, member2Target)));
     }
 
     @Test
@@ -156,6 +223,34 @@ public class NeighborVisitorTest {
     }
 
     @Test
+    public void structureShapeWithMixins() {
+        StringShape string = StringShape.builder().id("smithy.example#String").build();
+        StructureShape mixin1 = StructureShape.builder()
+                .id("smithy.example#TestMixin1")
+                .addTrait(MixinTrait.builder().build())
+                .addTrait(DeprecatedTrait.builder().build())
+                .addMember("a", string.getId(), builder -> builder.addTrait(new SensitiveTrait()))
+                .addMember("b", string.getId())
+                .build();
+        StructureShape concrete = StructureShape.builder()
+                .id("smithy.example#Concrete")
+                .addTrait(new SensitiveTrait())
+                .addMixin(mixin1)
+                .addMember("b", string.getId(), builder -> builder.addTrait(DeprecatedTrait.builder().build()))
+                .addMember("c", string.getId())
+                .build();
+        Model model = Model.builder().addShapes(mixin1, concrete, string).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
+        List<Relationship> relationships = concrete.accept(neighborVisitor);
+
+        assertThat(relationships, containsInAnyOrder(
+                Relationship.create(concrete, RelationshipType.STRUCTURE_MEMBER, concrete.getMember("a").get()),
+                Relationship.create(concrete, RelationshipType.STRUCTURE_MEMBER, concrete.getMember("b").get()),
+                Relationship.create(concrete, RelationshipType.STRUCTURE_MEMBER, concrete.getMember("c").get()),
+                Relationship.create(concrete, RelationshipType.MIXIN, mixin1)));
+    }
+
+    @Test
     public void unionShape() {
         Shape variant1Shape = StringShape.builder().id("ns.foo#V1String").build();
         Shape variant2Shape = StringShape.builder().id("ns.foo#V2String").build();
@@ -211,6 +306,25 @@ public class NeighborVisitorTest {
     }
 
     @Test
+    public void serviceErrors() {
+        ServiceShape service = ServiceShape.builder()
+                .id("ns.foo#Svc")
+                .version("2017-01-17")
+                .addError("ns.foo#Common1")
+                .build();
+        StructureShape errorShape = StructureShape.builder()
+                .id("ns.foo#Common1")
+                .addTrait(new ErrorTrait("client"))
+                .build();
+        Model model = Model.builder().addShapes(service, errorShape).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
+        List<Relationship> relationships = service.accept(neighborVisitor);
+
+        assertThat(relationships, contains(
+                Relationship.create(service, RelationshipType.ERROR, errorShape)));
+    }
+
+    @Test
     public void resourceShape() {
         ServiceShape parent = ServiceShape.builder()
                 .id("ns.foo#Svc")
@@ -220,6 +334,7 @@ public class NeighborVisitorTest {
         ResourceShape resource = ResourceShape.builder()
                 .id("ns.foo#Resource")
                 .addIdentifier("id", "ns.foo#ResourceIdentifier")
+                .addProperty("fooProperty", "ns.foo#ResourceProperty")
                 .put(ShapeId.from("ns.foo#Put"))
                 .create(ShapeId.from("ns.foo#Create"))
                 .read(ShapeId.from("ns.foo#Get"))
@@ -231,6 +346,7 @@ public class NeighborVisitorTest {
                 .addResource("ns.foo#Child1")
                 .build();
         StringShape identifier = StringShape.builder().id("ns.foo#ResourceIdentifier").build();
+        StringShape property = StringShape.builder().id("ns.foo#ResourceProperty").build();
         OperationShape createOperation = OperationShape.builder().id("ns.foo#Create").build();
         OperationShape getOperation = OperationShape.builder()
                 .id("ns.foo#Get")
@@ -257,7 +373,7 @@ public class NeighborVisitorTest {
         ResourceShape child1 = ResourceShape.builder().id("ns.foo#Child1").addResource("ns.foo#Child2").build();
         ResourceShape child2 = ResourceShape.builder().id("ns.foo#Child2").build();
         Model model = Model.builder()
-                .addShapes(parent, resource, identifier, child1, child2)
+                .addShapes(parent, resource, identifier, property, child1, child2)
                 .addShapes(createOperation, getOperation, updateOperation, deleteOperation, listOperation)
                 .addShapes(namedOperation, collectionOperation, putOperation)
                 .build();
@@ -266,9 +382,9 @@ public class NeighborVisitorTest {
 
         assertThat(relationships, containsInAnyOrder(
                 Relationship.create(parent, RelationshipType.RESOURCE, resource),
-
                 Relationship.create(resource, RelationshipType.BOUND, parent),
                 Relationship.create(resource, RelationshipType.IDENTIFIER, identifier),
+                Relationship.create(resource, RelationshipType.PROPERTY, property),
                 Relationship.create(resource, RelationshipType.CREATE, createOperation),
                 Relationship.create(resource, RelationshipType.READ, getOperation),
                 Relationship.create(resource, RelationshipType.UPDATE, updateOperation),
@@ -325,6 +441,43 @@ public class NeighborVisitorTest {
                 Relationship.create(method, RelationshipType.INPUT, input),
                 Relationship.create(method, RelationshipType.OUTPUT, output),
                 Relationship.create(method, RelationshipType.ERROR, error)));
+    }
+
+    @Test
+    public void operationShapeDoesNotEmitUnitRelationships() {
+        OperationShape method = OperationShape.builder().id("ns.foo#Foo").build();
+        Model model = Model.builder().addShapes(method).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
+        List<Relationship> relationships = method.accept(neighborVisitor);
+
+        assertThat(relationships, empty());
+    }
+
+    @Test
+    public void unitTypeRelsNotEmittedFromEnums() {
+        MemberShape member = MemberShape.builder()
+                .id("smithy.api#Example$foo")
+                .target(UnitTypeTrait.UNIT)
+                .addTrait(EnumValueTrait.builder().stringValue("hi").build())
+                .build();
+        EnumShape enumShape = EnumShape.builder()
+                .id("smithy.api#Example")
+                .addMember(member)
+                .build();
+
+        Model model = Model.builder().addShapes(enumShape).build();
+        NeighborVisitor neighborVisitor = new NeighborVisitor(model);
+
+        List<Relationship> enumRelationships = enumShape.accept(neighborVisitor);
+        List<Relationship> enumMemberRelationships = member.accept(neighborVisitor);
+
+        assertThat(enumRelationships, hasSize(1));
+        assertThat(enumRelationships.get(0),
+                   equalTo(Relationship.create(enumShape, RelationshipType.ENUM_MEMBER, member)));
+
+        assertThat(enumMemberRelationships, hasSize(1));
+        assertThat(enumMemberRelationships.get(0),
+                   equalTo(Relationship.create(member, RelationshipType.MEMBER_CONTAINER, enumShape)));
     }
 
     @Test

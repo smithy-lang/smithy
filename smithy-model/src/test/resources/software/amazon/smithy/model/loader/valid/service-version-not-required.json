@@ -1,0 +1,8 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "smithy.example#MyService": {
+            "type": "service"
+        }
+    }
+}

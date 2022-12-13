@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#Blob": {
             "type": "blob"
@@ -7,26 +7,38 @@
         "ns.foo#StreamingOperation": {
             "type": "operation",
             "input": {
-                "target": "ns.foo#StreamingInput"
+                "target": "ns.foo#StreamingOperationInput"
             },
             "output": {
-                "target": "ns.foo#StreamingOutput"
+                "target": "ns.foo#StreamingOperationOutput"
             }
         },
-        "ns.foo#StreamingInput": {
+        "ns.foo#StreamingOperationInput": {
             "type": "structure",
             "members": {
                 "Body": {
-                    "target": "ns.foo#StreamingBlob"
+                    "target": "ns.foo#StreamingBlob",
+                    "traits": {
+                        "smithy.api#default": ""
+                    }
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
-        "ns.foo#StreamingOutput": {
+        "ns.foo#StreamingOperationOutput": {
             "type": "structure",
             "members": {
                 "Body": {
-                    "target": "ns.foo#StreamingBlob"
+                    "target": "ns.foo#StreamingBlob",
+                    "traits": {
+                        "smithy.api#default": ""
+                    }
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#StreamingBlob": {
@@ -35,29 +47,128 @@
                 "smithy.api#streaming": {}
             }
         },
-        "ns.foo#InvalidStreamingOperation": {
+        "ns.foo#MixedStreamingOperation": {
             "type": "operation",
-            "output": {
-                "target": "ns.foo#InvalidStreamingOutput"
+            "input": {
+                "target": "ns.foo#MixedStreamingOperationInput"
             }
         },
-        "ns.foo#InvalidStreamingOutput": {
+        "ns.foo#MixedStreamingOperationInput": {
+            "type": "structure",
+            "members": {},
+            "mixins": [
+                {
+                    "target": "ns.foo#MixinStream"
+                }
+            ],
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#MixinStream": {
+            "type": "structure",
+            "members": {
+                "Body": {
+                    "target": "ns.foo#StreamingBlob",
+                    "traits": {
+                        "smithy.api#default": ""
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "ns.foo#InvalidStreamingOperation": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#InvalidStreamingOperationInput"
+            },
+            "output": {
+                "target": "ns.foo#InvalidStreamingOperationOutput"
+            }
+        },
+        "ns.foo#InvalidStreamingOperationInput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#InvalidStreamingOperationOutput": {
             "type": "structure",
             "members": {
                 "StreamingBlob1": {
-                    "target": "ns.foo#StreamingBlob"
+                    "target": "ns.foo#StreamingBlob",
+                    "traits": {
+                        "smithy.api#default": ""
+                    }
                 },
                 "StreamingBlob2": {
-                    "target": "ns.foo#StreamingBlob"
+                    "target": "ns.foo#StreamingBlob",
+                    "traits": {
+                        "smithy.api#default": ""
+                    }
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#InvalidNestedStream": {
             "type": "structure",
             "members": {
                 "NestedStream": {
-                    "target": "ns.foo#StreamingInput"
+                    "target": "ns.foo#NestedStreamContainer"
                 }
+            },
+            "mixins": [
+                {
+                    "target": "ns.foo#NestedMixinStream"
+                }
+            ]
+        },
+        "ns.foo#NestedMixinStream": {
+            "type": "structure",
+            "members": {
+                "Body": {
+                    "target": "ns.foo#NestedStreamContainer"
+                }
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "ns.foo#NestedStreamContainer": {
+            "type": "structure",
+            "members": {
+                "nested": {
+                    "target": "ns.foo#StreamingBlob",
+                    "traits": {
+                        "smithy.api#default": ""
+                    }
+                }
+            }
+        },
+        "ns.foo#BadOperation": {
+            "type": "operation",
+            "errors": [
+                {
+                    "target": "ns.foo#BadError"
+                }
+            ]
+        },
+        "ns.foo#BadError": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "ns.foo#StreamingBlob",
+                    "traits": {
+                        "smithy.api#default": ""
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#error": "client"
             }
         }
     }

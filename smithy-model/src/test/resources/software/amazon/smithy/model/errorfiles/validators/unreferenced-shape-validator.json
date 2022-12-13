@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#MyService": {
             "type": "service",
@@ -33,6 +33,9 @@
                 "int": {
                     "target": "ns.foo#ReferencedInteger"
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#ReferencedOperationOutput": {
@@ -41,6 +44,9 @@
                 "float": {
                     "target": "ns.foo#ReferencedFloat"
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#ReferencedInteger": {

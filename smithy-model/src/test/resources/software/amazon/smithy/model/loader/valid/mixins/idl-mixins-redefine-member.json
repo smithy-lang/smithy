@@ -1,0 +1,33 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#MixinStructure": {
+            "type": "structure",
+            "members": {
+                "redefineable": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#internal": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MixedStructure": {
+            "type": "structure",
+            "members": {
+                "redefineable": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "mixins": [{
+                "target": "smithy.example#MixinStructure"
+            }]
+        }
+    }
+}

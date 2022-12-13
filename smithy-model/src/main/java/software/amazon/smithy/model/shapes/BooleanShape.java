@@ -33,17 +33,22 @@ public final class BooleanShape extends SimpleShape implements ToSmithyBuilder<B
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this);
+        return updateBuilder(builder());
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.booleanShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.booleanShape(this);
     }
 
     @Override
     public Optional<BooleanShape> asBooleanShape() {
         return Optional.of(this);
+    }
+
+    @Override
+    public ShapeType getType() {
+        return ShapeType.BOOLEAN;
     }
 
     /**

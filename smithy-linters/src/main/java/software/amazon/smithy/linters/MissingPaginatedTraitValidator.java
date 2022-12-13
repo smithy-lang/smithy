@@ -183,27 +183,21 @@ public final class MissingPaginatedTraitValidator extends AbstractValidator {
                     + "`paginated` trait. %s", verb, DISCLAIMER)));
         }
 
-        if (operationIndex.getInput(operation.getId()).isPresent()) {
-            StructureShape input = operationIndex.getInput(operation.getId()).get();
-            Optional<String> member = findMember(
-                    input.getAllMembers().keySet(), config.getInputMembersRequirePagination());
-            if (member.isPresent()) {
-                return Stream.of(danger(operation, format(
-                        "This operation contains an input member, `%s`, that requires that the operation is "
-                        + "marked with the `paginated` trait. %s", member.get(), DISCLAIMER)));
-            }
+        StructureShape input = operationIndex.expectInputShape(operation.getId());
+        Optional<String> member = findMember(
+                input.getAllMembers().keySet(), config.getInputMembersRequirePagination());
+        if (member.isPresent()) {
+            return Stream.of(danger(operation, format(
+                    "This operation contains an input member, `%s`, that requires that the operation is "
+                    + "marked with the `paginated` trait. %s", member.get(), DISCLAIMER)));
         }
 
-        if (operationIndex.getOutput(operation.getId()).isPresent()) {
-            StructureShape output = operationIndex.getOutput(operation.getId()).get();
-            return findMember(output.getAllMembers().keySet(), config.getOutputMembersRequirePagination())
-                    .map(member -> Stream.of(danger(operation, format(
-                            "This operation contains an output member, `%s`, that requires that the "
-                            + "operation is marked with the `paginated` trait. %s", member, DISCLAIMER))))
-                    .orElseGet(() -> suggestPagination(verb, operation, output, model));
-        }
-
-        return Stream.empty();
+        StructureShape output = operationIndex.expectOutputShape(operation.getId());
+        return findMember(output.getAllMembers().keySet(), config.getOutputMembersRequirePagination())
+                .map(outputMember -> Stream.of(danger(operation, format(
+                        "This operation contains an output member, `%s`, that requires that the "
+                        + "operation is marked with the `paginated` trait. %s", outputMember, DISCLAIMER))))
+                .orElseGet(() -> suggestPagination(verb, operation, output, model));
     }
 
     private Stream<ValidationEvent> suggestPagination(

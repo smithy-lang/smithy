@@ -1,7 +1,7 @@
 // This file defines test cases that test HTTP streaming bindings.
-// See: https://awslabs.github.io/smithy/1.0/spec/core/stream-traits.html?highlight=streaming#streaming-trait
+// See: https://smithy.io/2.0/spec/streaming.html
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restjson
 
@@ -92,7 +92,7 @@ structure StreamingTraitsInputOutput {
     foo: String,
 
     @httpPayload
-    blob: StreamingBlob,
+    blob: StreamingBlob = "",
 }
 
 @streaming
@@ -105,8 +105,7 @@ blob StreamingBlob
 /// not a structure or a union type.
 @http(uri: "/StreamingTraitsRequireLength", method: "POST")
 operation StreamingTraitsRequireLength {
-    input: StreamingTraitsRequireLengthInputOutput,
-    output: StreamingTraitsRequireLengthInputOutput
+    input: StreamingTraitsRequireLengthInput
 }
 
 apply StreamingTraitsRequireLength @httpRequestTests([
@@ -147,48 +146,13 @@ apply StreamingTraitsRequireLength @httpRequestTests([
     },
 ])
 
-apply StreamingTraitsRequireLength @httpResponseTests([
-    {
-        id: "RestJsonStreamingTraitsRequireLengthWithBlob",
-        documentation: "Serializes a blob in the HTTP payload with a required length",
-        protocol: restJson1,
-        code: 200,
-        body: "blobby blob blob",
-        bodyMediaType: "application/octet-stream",
-        headers: {
-            "X-Foo": "Foo",
-            "Content-Type": "application/octet-stream"
-        },
-        requireHeaders: [
-            "Content-Length"
-        ],
-        params: {
-            foo: "Foo",
-            blob: "blobby blob blob"
-        }
-    },
-    {
-        id: "RestJsonStreamingTraitsRequireLengthWithNoBlobBody",
-        documentation: "Serializes an empty blob in the HTTP payload",
-        protocol: restJson1,
-        code: 200,
-        body: "",
-        bodyMediaType: "application/octet-stream",
-        headers: {
-            "X-Foo": "Foo"
-        },
-        params: {
-            foo: "Foo"
-        }
-    }
-])
-
-structure StreamingTraitsRequireLengthInputOutput {
+@input
+structure StreamingTraitsRequireLengthInput {
     @httpHeader("X-Foo")
     foo: String,
 
     @httpPayload
-    blob: FiniteStreamingBlob,
+    blob: FiniteStreamingBlob = "",
 }
 
 @streaming
@@ -249,7 +213,7 @@ structure StreamingTraitsWithMediaTypeInputOutput {
     foo: String,
 
     @httpPayload
-    blob: StreamingTextPlainBlob,
+    blob: StreamingTextPlainBlob = ""
 }
 
 @streaming

@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#InvalidTrait": {
             "type": "string",
@@ -38,6 +38,40 @@
                 "smithy.api#trait": {}
             }
         },
+        "ns.bar#upperStructureTrait": {
+            "type": "structure",
+            "members": {
+                "UpperCamelCase": {
+                    "target": "ns.foo#Foo"
+                },
+                "SecondUpperCamelCase": {
+                    "target": "ns.foo#Foo"
+                },
+                "lowerCamelCase": {
+                    "target": "ns.foo#Foo"
+                }
+            },
+            "traits": {
+                "smithy.api#trait": {}
+            }
+        },
+        "ns.baz#lowerStructureTrait": {
+            "type": "structure",
+            "members": {
+                "lowerCamelCase": {
+                    "target": "ns.foo#Foo"
+                },
+                "secondLowerCamelCase": {
+                    "target": "ns.foo#Foo"
+                },
+                "UpperCamelCase": {
+                    "target": "ns.foo#Foo"
+                }
+            },
+            "traits": {
+                "smithy.api#trait": {}
+            }
+        },
         "ns.foo#Foo": {
             "type": "string"
         },
@@ -59,8 +93,17 @@
                 "UpperCamelCase": {
                     "target": "ns.foo#Foo"
                 },
-                "snake_case": {
+                "SecondUpperCamelCase": {
                     "target": "ns.foo#Foo"
+                },
+                "ThirdUpperCamelCase": {
+                    "target": "ns.foo#BazBar"
+                },
+                "FourthUpperCamelCase": {
+                    "target": "ns.foo#bam"
+                },
+                "snake_case": {
+                    "target": "ns.foo#snake_case"
                 }
             }
         },
@@ -95,20 +138,66 @@
                 },
                 "smithy.api#authDefinition": {}
             }
+        },
+        "ns.foo#MyService": {
+            "type": "service",
+            "operations": [
+                {
+                    "target": "ns.foo#MyOperation"
+                }
+            ]
+        },
+        "ns.foo#MyOperation": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#Structure"
+            },
+            "output": {
+                "target": "ns.foo#Structure"
+            }
+        },
+        "ns.foo#Enum": {
+            "type": "enum",
+            "members": {
+                "NAME": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "foo"
+                    }
+                }
+            }
+        },
+        "ns.foo#IntEnum": {
+            "type": "intEnum",
+            "members": {
+                "NAME": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": 1
+                    }
+                }
+            }
         }
     },
     "metadata": {
         "validators": [
             {
                 "name": "CamelCase",
-                "id": "DefaultCamelCase"
+                "id": "LowerCamelCase",
+                "configuration": {
+                    "memberNames": "lower"
+                }
             },
             {
                 "name": "CamelCase",
-                "id": "OppositeOfDefaults",
+                "id": "UpperCamelCase",
                 "configuration": {
                     "memberNames": "upper"
                 }
+            },
+            {
+                "name": "CamelCase",
+                "id": "DefaultCamelCase"
             }
         ]
     }

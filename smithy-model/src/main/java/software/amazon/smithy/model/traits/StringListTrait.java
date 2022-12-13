@@ -17,7 +17,6 @@ package software.amazon.smithy.model.traits;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -26,6 +25,7 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.BuilderRef;
 
 /**
  * Contains abstract functionality to build traits that contain a list
@@ -83,7 +83,7 @@ public abstract class StringListTrait extends AbstractTrait {
     public abstract static class Builder<TRAIT extends StringListTrait, BUILDER extends Builder>
             extends AbstractTraitBuilder<TRAIT, BUILDER> {
 
-        private final List<String> values = new ArrayList<>();
+        private final BuilderRef<List<String>> values = BuilderRef.forList();
 
         /**
          * Gets the values set in the builder.
@@ -91,7 +91,7 @@ public abstract class StringListTrait extends AbstractTrait {
          * @return Returns the set values.
          */
         public List<String> getValues() {
-            return Collections.unmodifiableList(values);
+            return values.copy();
         }
 
         /**
@@ -102,7 +102,7 @@ public abstract class StringListTrait extends AbstractTrait {
          */
         @SuppressWarnings("unchecked")
         public BUILDER addValue(String value) {
-            values.add(Objects.requireNonNull(value));
+            values.get().add(Objects.requireNonNull(value));
             return (BUILDER) this;
         }
 
@@ -115,7 +115,7 @@ public abstract class StringListTrait extends AbstractTrait {
         @SuppressWarnings("unchecked")
         public BUILDER values(Collection<String> values) {
             clearValues();
-            this.values.addAll(values);
+            this.values.get().addAll(values);
             return (BUILDER) this;
         }
 
@@ -127,7 +127,7 @@ public abstract class StringListTrait extends AbstractTrait {
          */
         @SuppressWarnings("unchecked")
         public BUILDER removeValue(String value) {
-            this.values.remove(value);
+            this.values.get().remove(value);
             return (BUILDER) this;
         }
 
@@ -161,7 +161,9 @@ public abstract class StringListTrait extends AbstractTrait {
         @Override
         public T createTrait(ShapeId id, Node value) {
             List<String> values = Node.loadArrayOfString(id.toString(), value);
-            return traitFactory.apply(values, value.getSourceLocation());
+            T result = traitFactory.apply(values, value.getSourceLocation());
+            result.setNodeCache(value);
+            return result;
         }
     }
 }

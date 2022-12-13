@@ -1,3 +1,5 @@
+$version: "2.0"
+
 namespace smithy.example
 
 use smithy.test#httpRequestTests
@@ -19,9 +21,14 @@ structure testProtocol {}
     }
 ])
 operation HasTime {
-    input: HasTimeInput
+    input: HasTimeInput,
+    output: HasTimeOutput
 }
 
+@input
 structure HasTimeInput {
     time: Timestamp,
 }
+
+@output
+structure HasTimeOutput {}

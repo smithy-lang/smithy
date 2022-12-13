@@ -1,0 +1,74 @@
+.. list-table::
+    :header-rows: 1
+    :widths: 25 75
+
+    * - Smithy type
+      - XML entity
+    * - ``blob``
+      - XML text node with a value that is base64 encoded.
+    * - ``boolean``
+      - XML text node with a value either "true" or "false".
+    * - ``byte``
+      - XML text node with a value of the number.
+    * - ``short``
+      - XML text node with a value of the number.
+    * - ``integer``
+      - XML text node with a value of the number.
+    * - ``long``
+      - XML text node with a value of the number.
+    * - ``float``
+      - XML text node with a value of the number.
+    * - ``double``
+      - XML text node with a value of the number.
+    * - ``bigDecimal``
+      - XML text node with a value of the number, using scientific notation if
+        an exponent is needed. Unfortunately, many XML parsers will either
+        truncate the value or be unable to parse numbers that exceed the size
+        of a double.
+    * - ``bigInteger``
+      - XML text node with a value of the number, using scientific notation if
+        an exponent is needed. Unfortunately, many XML parsers will either
+        truncate the value or be unable to parse numbers that exceed the size
+        of a double.
+    * - ``string``
+      - XML text node with an XML-safe, UTF-8 value of the string.
+    * - ``timestamp``
+      - XML text node with a value of the timestamp. This protocol uses
+        ``date-time`` as the default serialization. However, the
+        :ref:`timestampFormat <timestampFormat-trait>` MAY be used to
+        customize timestamp serialization.
+    * - ``document``
+      - Undefined. Document shapes are not supported in this protocol.
+    * - ``list``
+      - XML element. Each value provided in the list is serialized as a nested
+        XML element with the name ``member``. The :ref:`xmlName-trait` can be
+        used to serialize a property using a custom name. The
+        :ref:`xmlFlattened-trait` can be used to unwrap the values into a
+        containing structure or union, with the value XML element using the
+        structure or union member name. See :ref:`xml-list-serialization`
+        for more.
+    * - ``map``
+      - XML element. Each key-value pair provided in the map is serialized in
+        a nested XML element with the name ``entry`` that contains nested
+        elements ``key`` and ``value`` for the pair. The :ref:`xmlName-trait`
+        can be used to serialize key or value properties using a custom name,
+        it cannot be used to influence the ``entry`` name. The
+        :ref:`xmlFlattened-trait` can be used to unwrap the entries into a
+        containing structure or union, with the entry XML element using the
+        structure or union member name. See :ref:`xml-map-serialization` for
+        more.
+    * - ``structure``
+      - XML element. Each member value provided for the structure is
+        serialized as a nested XML element where the element name is the
+        same as the member name. The :ref:`xmlName-trait` can be used to
+        serialize a property using a custom name. The :ref:`xmlAttribute-trait`
+        can be used to serialize a property in an attribute of the containing
+        element. See :ref:`xml-structure-and-union-serialization` for more.
+    * - ``union``
+      - XML element. A union is serialized identically to a ``structure``
+        shape, but only a single member can be set to a non-null value.
+
+.. important::
+
+    See :ref:`xml-bindings` for comprehensive documentation,
+    including examples and behaviors when using multiple XML traits.

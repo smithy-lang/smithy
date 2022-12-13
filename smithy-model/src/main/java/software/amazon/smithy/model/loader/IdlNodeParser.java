@@ -15,10 +15,6 @@
 
 package software.amazon.smithy.model.loader;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -41,17 +37,20 @@ final class IdlNodeParser {
     private IdlNodeParser() {}
 
     static Node parseNode(IdlModelParser parser) {
+        return parseNode(parser, parser.currentLocation());
+    }
+
+    static Node parseNode(IdlModelParser parser, SourceLocation location) {
         char c = parser.peek();
         switch (c) {
             case '{':
-                return parseObjectNode(parser, "object node");
+                return parseObjectNode(parser, "object node", location);
             case '[':
-                return parseArrayNode(parser);
+                return parseArrayNode(parser, location);
             case '"': {
                 if (peekTextBlock(parser)) {
-                    return parseTextBlock(parser);
+                    return parseTextBlock(parser, location);
                 } else {
-                    SourceLocation location = parser.currentLocation();
                     return new StringNode(IdlTextParser.parseQuotedString(parser), location);
                 }
             }
@@ -66,9 +65,8 @@ final class IdlNodeParser {
             case '8':
             case '9':
             case '-':
-                return parser.parseNumberNode();
+                return parser.parseNumberNode(location);
             default: {
-                SourceLocation location = parser.currentLocation();
                 return parseNodeTextWithKeywords(parser, location, ParserUtils.parseShapeId(parser));
             }
         }
@@ -88,9 +86,9 @@ final class IdlNodeParser {
                 // not be able to be resolved until after the entire model is loaded.
                 Pair<StringNode, Consumer<String>> pair = StringNode.createLazyString(text, location);
                 Consumer<String> consumer = pair.right;
-                parser.modelFile.addForwardReference(text, (id, typeFunction) -> {
-                    if (typeFunction.apply(id) == null) {
-                        parser.modelFile.events().add(ValidationEvent.builder()
+                parser.addForwardReference(text, (id, typeProvider) -> {
+                    if (typeProvider.apply(id) == null) {
+                        parser.emit(ValidationEvent.builder()
                                 .id(SYNTACTIC_SHAPE_ID_TARGET)
                                 .severity(Severity.DANGER)
                                 .message(String.format("Syntactic shape ID `%s` does not resolve to a valid shape ID: "
@@ -111,8 +109,7 @@ final class IdlNodeParser {
                && parser.peek(2) == '"';
     }
 
-    static Node parseTextBlock(IdlModelParser parser) {
-        SourceLocation location = parser.currentLocation();
+    static Node parseTextBlock(IdlModelParser parser, SourceLocation location) {
         parser.expect('"');
         parser.expect('"');
         parser.expect('"');
@@ -120,9 +117,13 @@ final class IdlNodeParser {
     }
 
     static ObjectNode parseObjectNode(IdlModelParser parser, String parent) {
+        return parseObjectNode(parser, parent, parser.currentLocation());
+    }
+
+    static ObjectNode parseObjectNode(IdlModelParser parser, String parent, SourceLocation location) {
         parser.increaseNestingLevel();
-        SourceLocation location = parser.currentLocation();
-        Map<StringNode, Node> entries = new LinkedHashMap<>();
+        ObjectNode.Builder builder = ObjectNode.builder()
+                .sourceLocation(location);
         parser.expect('{');
         parser.ws();
 
@@ -135,26 +136,24 @@ final class IdlNodeParser {
                 String key = parseNodeObjectKey(parser);
                 parser.ws();
                 parser.expect(':');
+                if (parser.peek() == '=') {
+                    throw parser.syntax("The `:=` syntax may only be used when defining inline operation input and "
+                            + "output shapes.");
+                }
                 parser.ws();
                 Node value = parseNode(parser);
                 StringNode keyNode = new StringNode(key, keyLocation);
-                Node previous = entries.put(keyNode, value);
-                if (previous != null) {
+                if (builder.hasMember(key)) {
                     throw parser.syntax("Duplicate member of " + parent + ": '" + keyNode.getValue() + '\'');
                 }
+                builder.withMember(keyNode, value);
                 parser.ws();
-                if (parser.peek() == ',') {
-                    parser.skip();
-                    parser.ws();
-                } else {
-                    break;
-                }
             }
         }
 
         parser.expect('}');
         parser.decreaseNestingLevel();
-        return new ObjectNode(entries, location);
+        return builder.build();
     }
 
     static String parseNodeObjectKey(IdlModelParser parser) {
@@ -165,10 +164,10 @@ final class IdlNodeParser {
         }
     }
 
-    private static ArrayNode parseArrayNode(IdlModelParser parser) {
+    private static ArrayNode parseArrayNode(IdlModelParser parser, SourceLocation location) {
         parser.increaseNestingLevel();
-        SourceLocation location = parser.currentLocation();
-        List<Node> items = new ArrayList<>();
+        ArrayNode.Builder builder = ArrayNode.builder()
+                .sourceLocation(location);
         parser.expect('[');
         parser.ws();
 
@@ -177,19 +176,13 @@ final class IdlNodeParser {
             if (c == ']') {
                 break;
             } else {
-                items.add(parseNode(parser));
+                builder.withValue(parseNode(parser));
                 parser.ws();
-                if (parser.peek() == ',') {
-                    parser.skip();
-                    parser.ws();
-                } else {
-                    break;
-                }
             }
         }
 
         parser.expect(']');
         parser.decreaseNestingLevel();
-        return new ArrayNode(items, location);
+        return builder.build();
     }
 }

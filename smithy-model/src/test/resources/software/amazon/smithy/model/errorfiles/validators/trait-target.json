@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#String": {
             "type": "string",
@@ -14,6 +14,9 @@
             "type": "operation",
             "input": {
                 "target": "ns.foo#InvokeInput"
+            },
+            "output": {
+                "target": "ns.foo#InvokeOutput"
             }
         },
         "ns.foo#InvokeInput": {
@@ -25,6 +28,15 @@
                         "ns.foo#test": {}
                     }
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#InvokeOutput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#Invalid": {

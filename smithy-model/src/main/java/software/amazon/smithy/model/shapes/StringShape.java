@@ -21,9 +21,9 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 /**
  * Represents a {@code string} shape.
  */
-public final class StringShape extends SimpleShape implements ToSmithyBuilder<StringShape> {
+public class StringShape extends SimpleShape implements ToSmithyBuilder<StringShape> {
 
-    private StringShape(Builder builder) {
+    StringShape(Builder builder) {
         super(builder);
     }
 
@@ -33,12 +33,12 @@ public final class StringShape extends SimpleShape implements ToSmithyBuilder<St
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this);
+        return updateBuilder(builder());
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.stringShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.stringShape(this);
     }
 
     @Override
@@ -46,10 +46,15 @@ public final class StringShape extends SimpleShape implements ToSmithyBuilder<St
         return Optional.of(this);
     }
 
+    @Override
+    public ShapeType getType() {
+        return ShapeType.STRING;
+    }
+
     /**
      * Builder used to create a {@link StringShape}.
      */
-    public static final class Builder extends AbstractShapeBuilder<Builder, StringShape> {
+    public static class Builder extends AbstractShapeBuilder<Builder, StringShape> {
         @Override
         public StringShape build() {
             return new StringShape(this);

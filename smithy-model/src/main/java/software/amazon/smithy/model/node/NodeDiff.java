@@ -32,10 +32,11 @@ final class NodeDiff {
 
     static List<String> diff(ToNode actual, ToNode expected) {
         return new NodeDiff().findDifferences(actual.toNode(), expected.toNode(), "")
+                .sorted()
                 .collect(Collectors.toList());
     }
 
-    Stream<String> findDifferences(Node actual, Node expected, String prefix) {
+    private Stream<String> findDifferences(Node actual, Node expected, String prefix) {
         if (actual.equals(expected)) {
             return Stream.empty();
         }

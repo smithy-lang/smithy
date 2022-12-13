@@ -239,12 +239,14 @@ public final class PaginatedTrait extends AbstractTrait implements ToSmithyBuild
         @Override
         public PaginatedTrait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
-            ObjectNode members = value.expectObjectNode();
-            builder.pageSize(members.getStringMemberOrDefault("pageSize", null));
-            builder.items(members.getStringMemberOrDefault("items", null));
-            builder.inputToken(members.getStringMemberOrDefault("inputToken", null));
-            builder.outputToken(members.getStringMemberOrDefault("outputToken", null));
-            return builder.build();
+            value.expectObjectNode()
+                    .getStringMember("pageSize", builder::pageSize)
+                    .getStringMember("items", builder::items)
+                    .getStringMember("inputToken", builder::inputToken)
+                    .getStringMember("outputToken", builder::outputToken);
+            PaginatedTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 }

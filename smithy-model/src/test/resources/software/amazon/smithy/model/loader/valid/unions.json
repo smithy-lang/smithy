@@ -12,8 +12,8 @@
         "com.foo#B": {
             "type": "union",
             "members": {
-                "a": {
-                    "target": "com.foo#A"
+                "str": {
+                    "target": "smithy.api#String"
                 }
             }
         },

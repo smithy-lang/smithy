@@ -10,7 +10,7 @@
         "operationId": "Operation1",
         "responses": {
           "200": {
-            "description": "Operation1 response"
+            "description": "Operation1 200 response"
           }
         },
         "security": [
@@ -25,7 +25,7 @@
     "securitySchemes": {
       "api_key": {
         "type": "apiKey",
-        "description": "X-Api-Key authentication",
+        "description": "API key authentication via the 'x-api-key' header",
         "name": "x-api-key",
         "in": "header"
       }

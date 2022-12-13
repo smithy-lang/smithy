@@ -1,12 +1,16 @@
+$version: "2.0"
+
 namespace smithy.example
 
 @smithy.mqtt#publish("foo")
 operation Publish {
-    input: PublishInput
+    input: PublishInput,
+    output: Unit
 }
 
+@input
 structure PublishInput {
-  messages: EventStream,
+    messages: EventStream,
 }
 
 @streaming

@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#Service1": {
             "type": "service",
@@ -73,7 +73,6 @@
             "type": "operation",
             "traits": {
                 "aws.apigateway#mockIntegration": {
-                    "type": "aws",
                     "requestTemplates": {
                         "application/json": "#set ($root=$input.path('$')) { \"stage\": \"$root.name\", \"user-id\": \"$root.key\" }",
                         "application/xml": "#set ($root=$input.path('$')) <stage>$root.name</stage> "
@@ -107,6 +106,24 @@
                         }
                     }
                 }
+            },
+            "input": {
+                "target": "ns.foo#OperationInput"
+            },
+            "output": {
+                "target": "ns.foo#OperationOutput"
+            }
+        },
+        "ns.foo#OperationInput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#OperationOutput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#output": {}
             }
         }
     }

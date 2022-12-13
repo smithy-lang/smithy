@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restxml
 
@@ -31,6 +31,7 @@ service RestXml {
         HttpRequestWithLabels,
         HttpRequestWithLabelsAndTimestampFormat,
         HttpRequestWithGreedyLabelInPath,
+        HttpRequestWithFloatLabels,
 
         // @httpQuery and @httpQueryParams tests
         AllQueryStringTypes,
@@ -70,6 +71,7 @@ service RestXml {
         XmlBlobs,
         XmlTimestamps,
         XmlEnums,
+        XmlIntEnums,
         RecursiveShapes,
         XmlLists,
         XmlMaps,

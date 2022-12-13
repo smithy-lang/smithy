@@ -1,0 +1,58 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "ns.foo#Structure": {
+            "type": "structure", 
+            "members": {
+                "AnchoredMember": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#pattern": "^[a-z]$"
+                    }
+                },
+                "WithoutAnchorsMember": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#pattern": "[a-z]"
+                    }
+                },
+                "WithoutLeadingAnchorMember": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#pattern": "[a-z]$"
+                    }
+                },
+                "WithoutTrailingAnchorMember": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#pattern": "^[a-z]"
+                    }
+                }
+            }
+        },
+        "ns.foo#Anchored": {
+            "type": "string",
+            "traits": {
+                "smithy.api#pattern": "^[a-z]$"
+            }
+        },
+        "ns.foo#WithoutAnchors": {
+            "type": "string",
+            "traits": {
+                "smithy.api#pattern": "[a-z]"
+            }
+        },
+        "ns.foo#WithoutLeadingAnchor": {
+            "type": "string",
+            "traits": {
+                "smithy.api#pattern": "[a-z]$"
+            }
+        },
+        "ns.foo#WithoutTrailingAnchor": {
+            "type": "string",
+            "traits": {
+                "smithy.api#pattern": "^[a-z]"
+            }
+        }
+    }
+}

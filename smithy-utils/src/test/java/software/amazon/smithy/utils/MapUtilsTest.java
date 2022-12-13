@@ -18,8 +18,10 @@ package software.amazon.smithy.utils;
 import static java.util.function.Function.identity;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anEmptyMap;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collections;
@@ -182,12 +184,29 @@ public class MapUtilsTest {
     }
 
     @Test
-    public void buildsFromEntries() {
+    public void buildsFromTwoEntries() {
         Map<String, String> map = MapUtils.ofEntries(
                 MapUtils.entry("1", "A"),
                 MapUtils.entry("2", "B"));
+
         assertThat(map, hasEntry("1", "A"));
         assertThat(map, hasEntry("2", "B"));
+        assertThat(map.entrySet(), hasSize(2));
+    }
+
+    @Test
+    public void buildsFromEntriesSingleEntry() {
+        Map<String, String> map = MapUtils.ofEntries(MapUtils.entry("1", "A"));
+
+        assertThat(map, hasEntry("1", "A"));
+        assertThat(map.entrySet(), hasSize(1));
+    }
+
+    @Test
+    public void buildsFromEntriesEmpty() {
+        Map<String, String> map = MapUtils.ofEntries();
+
+        assertThat(map.entrySet(), empty());
     }
 
     @Test

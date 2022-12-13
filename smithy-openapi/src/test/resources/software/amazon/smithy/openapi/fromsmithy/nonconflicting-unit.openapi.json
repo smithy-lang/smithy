@@ -1,0 +1,68 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "RestService",
+        "version": "1"
+    },
+    "paths": {
+        "/ping": {
+            "post": {
+                "operationId": "Ping",
+                "responses": {
+                    "200": {
+                        "description": "Ping 200 response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PingResponseContent"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ping2": {
+            "post": {
+                "operationId": "Ping2",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Ping2RequestContent"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Ping2 200 response"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Ping2RequestContent": {
+                "type": "object",
+                "properties": {
+                    "unit": {
+                        "$ref": "#/components/schemas/Unit"
+                    }
+                }
+            },
+            "PingResponseContent": {
+                "type": "object",
+                "properties": {
+                    "unit": {
+                        "$ref": "#/components/schemas/Unit"
+                    }
+                }
+            },
+            "Unit": {
+                "type": "object"
+            }
+        }
+    }
+}

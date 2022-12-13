@@ -1,7 +1,7 @@
 // This file defines test cases that test HTTP payload bindings.
-// See: https://awslabs.github.io/smithy/1.0/spec/http.html#httppayload-trait
+// See: https://smithy.io/2.0/spec/http-bindings.html#httppayload-trait
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restxml
 

@@ -18,6 +18,7 @@ package software.amazon.smithy.aws.traits;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import software.amazon.smithy.model.SourceException;
@@ -70,13 +71,15 @@ public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<Arn
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            Builder builder = builder();
             ObjectNode objectNode = value.expectObjectNode();
+            Builder builder = builder().sourceLocation(value);
             builder.template(objectNode.expectStringMember(TEMPLATE).getValue());
             builder.absolute(objectNode.getBooleanMemberOrDefault(ABSOLUTE));
             builder.noRegion(objectNode.getBooleanMemberOrDefault(NO_REGION));
             builder.noAccount(objectNode.getBooleanMemberOrDefault(NO_ACCOUNT));
-            return builder.build();
+            ArnTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 
@@ -133,11 +136,13 @@ public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<Arn
 
     @Override
     protected Node createNode() {
-        return Node.objectNode()
+        return Node.objectNodeBuilder()
+                .sourceLocation(getSourceLocation())
                 .withMember(TEMPLATE, Node.from(getTemplate()))
                 .withMember(ABSOLUTE, Node.from(isAbsolute()))
                 .withMember(NO_ACCOUNT, Node.from(isNoAccount()))
-                .withMember(NO_REGION, Node.from(isNoRegion()));
+                .withMember(NO_REGION, Node.from(isNoRegion()))
+                .build();
     }
 
     @Override
@@ -147,6 +152,28 @@ public final class ArnTrait extends AbstractTrait implements ToSmithyBuilder<Arn
                 .noRegion(isNoRegion())
                 .noAccount(isNoAccount())
                 .template(getTemplate());
+    }
+
+    // Due to the defaulting of this trait, equals has to be overridden
+    // so that inconsequential differences in toNode do not effect equality.
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof ArnTrait)) {
+            return false;
+        } else if (other == this) {
+            return true;
+        } else {
+            ArnTrait oa = (ArnTrait) other;
+            return template.equals(oa.template)
+                    && absolute == oa.absolute
+                    && noAccount == oa.noAccount
+                    && noRegion == oa.noRegion;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(toShapeId(), template, absolute, noAccount, noRegion);
     }
 
     /** Builder for {@link ArnTrait}. */

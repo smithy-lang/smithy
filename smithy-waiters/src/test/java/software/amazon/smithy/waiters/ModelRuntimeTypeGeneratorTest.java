@@ -63,8 +63,6 @@ public class ModelRuntimeTypeGeneratorTest {
         return Arrays.asList(new Object[][] {
                 {"StringList", Arrays.asList("aa", "aa")},
                 {"SizedStringList", Arrays.asList("aa", "aa", "aa", "aa", "aa")},
-                {"StringSet", Arrays.asList("aa", "aa")},
-                {"SizedStringSet", Arrays.asList("aa", "aa", "aa", "aa", "aa")},
                 {"StringListMap", stringListMap},
                 {"SizedStringListMap", sizedStringListMap},
                 {"SizedString1", "aaaa"},

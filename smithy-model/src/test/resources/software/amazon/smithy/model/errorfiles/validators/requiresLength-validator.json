@@ -1,0 +1,52 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "ns.foo#Blob": {
+            "type": "blob"
+        },
+        "ns.foo#InvalidStreamingOperation": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#InvalidStreamingOperationInput"
+            },
+            "output": {
+                "target": "ns.foo#InvalidStreamingOperationOutput"
+            }
+        },
+        "ns.foo#InvalidStreamingOperationInput": {
+            "type": "structure",
+            "members": {
+                "Body": {
+                    "target": "ns.foo#StreamingBlob",
+                    "traits": {
+                        "smithy.api#default": ""
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#InvalidStreamingOperationOutput": {
+            "type": "structure",
+            "members": {
+                "Body": {
+                    "target": "ns.foo#StreamingBlob",
+                    "traits": {
+                        "smithy.api#default": ""
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#output": {}
+            }
+        },
+        "ns.foo#StreamingBlob": {
+            "type": "blob",
+            "traits": {
+                "smithy.api#streaming": {},
+                "smithy.api#requiresLength": {}
+            }
+        }
+    }
+}

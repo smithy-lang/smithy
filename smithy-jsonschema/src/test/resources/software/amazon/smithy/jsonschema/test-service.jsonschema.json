@@ -4,7 +4,9 @@
       "type": "object",
       "properties": {
         "abc": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
         },
         "def": {
           "type": "number"
@@ -64,7 +66,8 @@
     "Map": {
       "type": "object",
       "additionalProperties": {
-        "type": "string"
+        "type": "string",
+        "pattern": "^[a-z]+$"
       },
       "propertyNames": {
         "type": "string",
@@ -114,7 +117,6 @@
       "oneOf": [
         {
           "type": "object",
-          "title": "a",
           "required": [
             "a"
           ],
@@ -122,11 +124,11 @@
             "a": {
               "type": "string"
             }
-          }
+          },
+          "title": "a"
         },
         {
           "type": "object",
-          "title": "b",
           "required": [
             "b"
           ],
@@ -134,9 +136,25 @@
             "b": {
               "type": "string"
             }
-          }
+          },
+          "title": "b"
+        },
+        {
+          "type": "object",
+          "required": [
+            "c"
+          ],
+          "properties": {
+            "c": {
+              "$ref": "#/definitions/Unit"
+            }
+          },
+          "title": "c"
         }
       ]
+    },
+    "Unit": {
+      "type": "object"
     }
   }
 }

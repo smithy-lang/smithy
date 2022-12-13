@@ -45,13 +45,12 @@ public final class DeprecatedTrait extends AbstractTrait implements ToSmithyBuil
         @Override
         public Trait createTrait(ShapeId target, Node value) {
             DeprecatedTrait.Builder builder = builder().sourceLocation(value);
-            ObjectNode objectNode = value.expectObjectNode();
-            String sinceValue = objectNode.getMember("since")
-                    .map(v -> v.expectStringNode().getValue()).orElse(null);
-            String messageValue = objectNode.getMember("message")
-                    .map(v -> v.expectStringNode().getValue()).orElse(null);
-            builder.since(sinceValue).message(messageValue);
-            return builder.build();
+            value.expectObjectNode()
+                    .getStringMember("since", builder::since)
+                    .getStringMember("message", builder::message);
+            DeprecatedTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 

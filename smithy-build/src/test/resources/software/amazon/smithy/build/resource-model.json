@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#MyService": {
             "type": "service",
@@ -40,7 +40,7 @@
                     "target": "ns.foo#MyResourceId",
                     "traits": {
                         "smithy.api#required": {},
-                        "smithy.api#sensitive": {}
+                        "smithy.api#pattern": "^[a-z]+$"
                     }
                 }
             }

@@ -16,8 +16,6 @@
 package software.amazon.smithy.model.validation.node;
 
 import java.nio.charset.StandardCharsets;
-import java.util.function.BiConsumer;
-import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -35,13 +33,7 @@ final class BlobLengthPlugin extends MemberAndShapeTraitPlugin<BlobShape, String
     }
 
     @Override
-    protected void check(
-            Shape shape,
-            LengthTrait trait,
-            StringNode node,
-            Context context,
-            BiConsumer<FromSourceLocation, String> emitter
-    ) {
+    protected void check(Shape shape, LengthTrait trait, StringNode node, Context context, Emitter emitter) {
         String value = node.getValue();
         int size = value.getBytes(StandardCharsets.UTF_8).length;
 

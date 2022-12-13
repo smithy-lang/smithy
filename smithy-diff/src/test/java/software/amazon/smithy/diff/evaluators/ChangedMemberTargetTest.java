@@ -147,7 +147,7 @@ public class ChangedMemberTargetTest {
                    equalTo("The shape targeted by the member `foo.baz#List$member` changed from "
                            + "`foo.baz#String1` (string) to `foo.baz#String2` (string). The `smithy.api#enum` trait "
                            + "was found on the target, so the name of the targeted shape matters for codegen. "
-                           + "The targeted shape no longer has the the following traits: [smithy.api#enum]."));
+                           + "The targeted shape no longer has the following traits: [smithy.api#enum]."));
     }
 
     @Test
@@ -217,26 +217,6 @@ public class ChangedMemberTargetTest {
     }
 
     @Test
-    public void detectsAcceptableSetMemberChangesInNestedTargets() {
-        Model modelA = Model.assembler()
-                .addImport(getClass().getResource("changed-member-target-valid-nested2-a.smithy"))
-                .assemble()
-                .unwrap();
-        Model modelB = Model.assembler()
-                .addImport(getClass().getResource("changed-member-target-valid-nested2-b.smithy"))
-                .assemble()
-                .unwrap();
-        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
-
-        assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").size(), equalTo(1));
-        assertThat(TestHelper.findEvents(events, Severity.WARNING).size(), equalTo(1));
-        assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").get(0).getMessage(),
-                   equalTo("The shape targeted by the member `smithy.example#A$member` changed from "
-                           + "`smithy.example#B1` (set) to `smithy.example#B2` (set). This was determined "
-                           + "backward compatible."));
-    }
-
-    @Test
     public void detectsInvalidListMemberChangesInNestedTargets() {
         Model modelA = Model.assembler()
                 .addImport(getClass().getResource("changed-member-target-invalid-nested1-a.smithy"))
@@ -255,7 +235,7 @@ public class ChangedMemberTargetTest {
                    equalTo("The shape targeted by the member `smithy.example#A$member` changed from "
                            + "`smithy.example#B1` (list) to `smithy.example#B2` (list). Both the old and new "
                            + "shapes are a list, but their members have differing traits. The newly targeted "
-                           + "shape now has the following additional traits: [smithy.api#sensitive]."));
+                           + "shape now has the following additional traits: [smithy.api#pattern]."));
     }
 
     @Test

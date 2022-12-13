@@ -36,7 +36,9 @@ public final class CfnConfig extends JsonSchemaConfig {
     /** The JSON pointer to where CloudFormation schema shared resource properties should be written. */
     public static final String SCHEMA_COMPONENTS_POINTER = "#/definitions";
 
+    private boolean disableHandlerPermissionGeneration = false;
     private boolean disableDeprecatedPropertyGeneration = false;
+    private boolean disableRequiredPropertyGeneration = false;
     private boolean disableCapitalizedProperties = false;
     private List<String> externalDocs = ListUtils.of(
             "Documentation Url", "DocumentationUrl", "API Reference", "User Guide",
@@ -74,6 +76,10 @@ public final class CfnConfig extends JsonSchemaConfig {
         // https://github.com/aws-cloudformation/cloudformation-cli/blob/master/src/rpdk/core/data/schema/provider.definition.schema.v1.json#L210
         // https://github.com/aws-cloudformation/cloudformation-cli/blob/master/src/rpdk/core/data/schema/provider.definition.schema.v1.json#L166
         super.setUnionStrategy(UnionStrategy.ONE_OF);
+
+        // @cfnResource's additionalSchemas property references shapes that aren't in the service closure
+        // so conversions must be able to reference those shapes
+        super.setEnableOutOfServiceReferences(true);
     }
 
     @Override
@@ -86,6 +92,25 @@ public final class CfnConfig extends JsonSchemaConfig {
             throw new CfnException("CloudFormation Resource Schemas MUST use alphanumeric only "
                     + "references. `alphanumericOnlyRefs` value of `false` was provided.");
         }
+    }
+
+    public boolean getDisableHandlerPermissionGeneration() {
+        return disableHandlerPermissionGeneration;
+    }
+
+    /**
+     * Set to true to disable generating {@code handler} property's {@code permissions}
+     * lists for Resource Schemas.
+     *
+     * <p>By default, handler permissions are automatically added to the {@code handler}
+     * property's {@code permissions} list. This includes the lifecycle operation used
+     * and any permissions listed in the {@code aws.iam#requiredActions} trait.
+     *
+     * @param disableHandlerPermissionGeneration True to disable handler {@code permissions}
+     *   generation
+     */
+    public void setDisableHandlerPermissionGeneration(boolean disableHandlerPermissionGeneration) {
+        this.disableHandlerPermissionGeneration = disableHandlerPermissionGeneration;
     }
 
     public boolean getDisableDeprecatedPropertyGeneration() {
@@ -103,6 +128,23 @@ public final class CfnConfig extends JsonSchemaConfig {
      */
     public void setDisableDeprecatedPropertyGeneration(boolean disableDeprecatedPropertyGeneration) {
         this.disableDeprecatedPropertyGeneration = disableDeprecatedPropertyGeneration;
+    }
+
+    public boolean getDisableRequiredPropertyGeneration() {
+        return disableRequiredPropertyGeneration;
+    }
+
+    /**
+     * Set to true to disable generating {@code required} for Resource Schemas.
+     *
+     * <p>By default, required members are automatically added to the
+     * {@code required} schema property.
+     *
+     * @param disableRequiredPropertyGeneration True to disable {@code required}
+     *   generation, false otherwise.
+     */
+    public void setDisableRequiredPropertyGeneration(boolean disableRequiredPropertyGeneration) {
+        this.disableRequiredPropertyGeneration = disableRequiredPropertyGeneration;
     }
 
     public boolean getDisableCapitalizedProperties() {

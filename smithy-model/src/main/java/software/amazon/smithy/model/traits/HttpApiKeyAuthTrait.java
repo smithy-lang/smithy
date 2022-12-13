@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.model.traits;
 
+import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -29,6 +30,7 @@ public final class HttpApiKeyAuthTrait extends AbstractTrait implements ToSmithy
 
     public static final ShapeId ID = ShapeId.from("smithy.api#httpApiKeyAuth");
 
+    private final String scheme;
     private final String name;
     private final Location in;
 
@@ -36,6 +38,11 @@ public final class HttpApiKeyAuthTrait extends AbstractTrait implements ToSmithy
         super(ID, builder.getSourceLocation());
         name = SmithyBuilder.requiredState("name", builder.name);
         in = SmithyBuilder.requiredState("in", builder.in);
+        scheme = builder.scheme;
+    }
+
+    public Optional<String> getScheme() {
+        return Optional.ofNullable(scheme);
     }
 
     public String getName() {
@@ -50,16 +57,19 @@ public final class HttpApiKeyAuthTrait extends AbstractTrait implements ToSmithy
     public Builder toBuilder() {
         return builder()
                 .sourceLocation(getSourceLocation())
+                .scheme(getScheme().orElse(null))
                 .name(getName())
                 .in(getIn());
     }
 
     @Override
     protected Node createNode() {
-        return Node.objectNodeBuilder()
+        ObjectNode.Builder builder = Node.objectNodeBuilder()
+                .sourceLocation(getSourceLocation())
                 .withMember("name", getName())
                 .withMember("in", getIn().toString())
-                .build();
+                .withOptionalMember("scheme", getScheme().map(Node::from));
+        return builder.build();
     }
 
     public static Builder builder() {
@@ -98,15 +108,19 @@ public final class HttpApiKeyAuthTrait extends AbstractTrait implements ToSmithy
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            ObjectNode objectNode = value.expectObjectNode();
             Builder builder = builder().sourceLocation(value.getSourceLocation());
-            builder.name(objectNode.expectStringMember("name").getValue());
-            builder.in(Location.from(objectNode.expectStringMember("in").expectOneOf("header", "query")));
-            return builder.build();
+            value.expectObjectNode()
+                    .getStringMember("scheme", builder::scheme)
+                    .expectStringMember("name", builder::name)
+                    .getStringMember("in", s -> builder.in(Location.from(s)));
+            HttpApiKeyAuthTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 
     public static final class Builder extends AbstractTraitBuilder<HttpApiKeyAuthTrait, Builder> {
+        private String scheme;
         private String name;
         private Location in;
 
@@ -115,6 +129,11 @@ public final class HttpApiKeyAuthTrait extends AbstractTrait implements ToSmithy
         @Override
         public HttpApiKeyAuthTrait build() {
             return new HttpApiKeyAuthTrait(this);
+        }
+
+        public Builder scheme(String scheme) {
+            this.scheme = scheme;
+            return this;
         }
 
         public Builder name(String name) {

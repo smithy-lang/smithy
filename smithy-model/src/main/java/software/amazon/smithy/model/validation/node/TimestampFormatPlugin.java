@@ -17,14 +17,13 @@ package software.amazon.smithy.model.validation.node;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.function.BiConsumer;
 import java.util.logging.Logger;
-import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
+import software.amazon.smithy.model.validation.Severity;
 
 /**
  * Validates that timestamp shapes contain values that are compatible with their
@@ -38,7 +37,7 @@ final class TimestampFormatPlugin implements NodeValidatorPlugin {
     private static final Logger LOGGER = Logger.getLogger(TimestampFormatPlugin.class.getName());
 
     @Override
-    public void apply(Shape shape, Node value, Context context, BiConsumer<FromSourceLocation, String> emitter) {
+    public void apply(Shape shape, Node value, Context context, Emitter emitter) {
         if (shape instanceof TimestampShape) {
             validate(shape, shape.getTrait(TimestampFormatTrait.class).orElse(null), value, emitter);
         } else if (shape instanceof MemberShape && shape.getTrait(TimestampFormatTrait.class).isPresent()) {
@@ -48,12 +47,7 @@ final class TimestampFormatPlugin implements NodeValidatorPlugin {
         }
     }
 
-    private void validate(
-            Shape shape,
-            TimestampFormatTrait trait,
-            Node value,
-            BiConsumer<FromSourceLocation, String> emitter
-    ) {
+    private void validate(Shape shape, TimestampFormatTrait trait, Node value, Emitter emitter) {
         if (trait == null) {
             defaultValidation(shape, value, emitter);
         } else {
@@ -64,7 +58,7 @@ final class TimestampFormatPlugin implements NodeValidatorPlugin {
                 case TimestampFormatTrait.EPOCH_SECONDS:
                     // Accepts any number including floats.
                     if (!value.isNumberNode()) {
-                        emitter.accept(value, String.format(
+                        emitter.accept(value, Severity.ERROR, String.format(
                                 "Invalid %s value provided for a timestamp with a `%s` format.",
                                 value.getType(), trait.getValue()));
                     }
@@ -79,11 +73,7 @@ final class TimestampFormatPlugin implements NodeValidatorPlugin {
         }
     }
 
-    private void defaultValidation(
-            Shape shape,
-            Node value,
-            BiConsumer<FromSourceLocation, String> emitter
-    ) {
+    private void defaultValidation(Shape shape, Node value, Emitter emitter) {
         // If no timestampFormat trait is present, then the shape is validated by checking
         // that the value is either a number or a string that matches the date-time format.
         if (!value.isNumberNode()) {
@@ -98,7 +88,7 @@ final class TimestampFormatPlugin implements NodeValidatorPlugin {
         }
     }
 
-    private void validateDatetime(Shape shape, Node value, BiConsumer<FromSourceLocation, String> emitter) {
+    private void validateDatetime(Shape shape, Node value, Emitter emitter) {
         if (!value.isStringNode()) {
             emitter.accept(value, "Expected a string value for a date-time timestamp "
                                   + "(e.g., \"1985-04-12T23:20:50.52Z\")");
@@ -116,13 +106,13 @@ final class TimestampFormatPlugin implements NodeValidatorPlugin {
         }
     }
 
-    private void validateHttpDate(Node value, BiConsumer<FromSourceLocation, String> emitter) {
+    private void validateHttpDate(Node value, Emitter emitter) {
         if (!value.asStringNode().isPresent()) {
-            emitter.accept(value, createInvalidHttpDateMessage(value.getType().toString()));
+            emitter.accept(value, Severity.ERROR, createInvalidHttpDateMessage(value.getType().toString()));
         } else {
             String dateValue = value.asStringNode().get().getValue();
             if (!isValidFormat(dateValue, HTTP_DATE) || !dateValue.endsWith("GMT")) {
-                emitter.accept(value, createInvalidHttpDateMessage(dateValue));
+                emitter.accept(value, Severity.ERROR, createInvalidHttpDateMessage(dateValue));
             }
         }
     }

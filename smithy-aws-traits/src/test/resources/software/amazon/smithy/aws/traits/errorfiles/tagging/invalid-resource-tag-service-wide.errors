@@ -1,0 +1,2 @@
+[WARNING] example.weather#Forecast: Resource is likely missing `aws.api#taggable` trait. | TaggableResource
+[ERROR] example.weather#City: Resource is taggable only via service-wide tag operations. It must use the `aws.api@arn` trait. | TaggableResource

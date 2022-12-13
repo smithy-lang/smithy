@@ -17,9 +17,9 @@ package software.amazon.smithy.model.validation.validators;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -35,7 +35,6 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.EndpointTrait;
 import software.amazon.smithy.model.traits.HostLabelTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
@@ -206,14 +205,13 @@ public final class HttpUriConflictValidator extends AbstractValidator {
     }
 
     private Map<String, Pattern> getHostLabelPatterns(Model model, OperationShape operation) {
-        Optional<StructureShape> input = OperationIndex.of(model).getInput(operation);
-        return input.map(structureShape -> structureShape.members().stream()
-                .filter(member -> member.hasTrait(HostLabelTrait.class))
-                .filter(member -> member.hasTrait(PatternTrait.class))
-                .collect(Collectors.toMap(
-                        MemberShape::getMemberName,
-                        shape -> shape.expectTrait(PatternTrait.class).getPattern())))
-                .orElse(Collections.emptyMap());
+        Map<String, Pattern> result = new HashMap<>();
+        for (MemberShape member : OperationIndex.of(model).expectInputShape(operation).getAllMembers().values()) {
+            if (member.hasTrait(HostLabelTrait.class) && member.hasTrait(PatternTrait.class)) {
+                result.put(member.getMemberName(), member.expectTrait(PatternTrait.class).getPattern());
+            }
+        }
+        return result;
     }
 
     private String formatConflicts(UriPattern pattern, List<Pair<ShapeId, UriPattern>> conflicts) {

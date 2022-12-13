@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#Service": {
             "type": "service",
@@ -26,6 +26,20 @@
             "type": "operation",
             "traits": {
                 "smithy.api#idempotent": {}
+            },
+            "input": {"target":  "ns.foo#PutValidResourceInput"},
+            "output": {"target":  "ns.foo#PutValidResourceOutput"}
+        },
+        "ns.foo#PutValidResourceInput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#PutValidResourceOutput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#InvalidResource": {

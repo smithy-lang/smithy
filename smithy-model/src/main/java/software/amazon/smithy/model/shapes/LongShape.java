@@ -33,17 +33,22 @@ public final class LongShape extends NumberShape implements ToSmithyBuilder<Long
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this);
+        return updateBuilder(builder());
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.longShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.longShape(this);
     }
 
     @Override
     public Optional<LongShape> asLongShape() {
         return Optional.of(this);
+    }
+
+    @Override
+    public ShapeType getType() {
+        return ShapeType.LONG;
     }
 
     /**

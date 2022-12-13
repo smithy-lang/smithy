@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace smithy.example
 
@@ -108,6 +108,7 @@ resource BarResource {
 }
 
 @idempotent
+@aws.iam#requiredActions(["otherservice:DescribeDependencyComponent"])
 operation PutBarOperation {
     input: PutBarRequest,
 }

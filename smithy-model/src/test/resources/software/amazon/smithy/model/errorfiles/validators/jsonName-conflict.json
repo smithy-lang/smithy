@@ -1,0 +1,45 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "ns.foo#A": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#jsonName": "b"
+                    }
+                },
+                "b": {
+                    "target": "smithy.api#String"
+                },
+                "c": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#jsonName": "a"
+                    }
+                }
+            }
+        },
+        "ns.foo#B": {
+            "type": "union",
+            "members": {
+                "a": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#jsonName": "b"
+                    }
+                },
+                "b": {
+                    "target": "smithy.api#String"
+                },
+                "c": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#jsonName": "a"
+                    }
+                }
+            }
+        }
+    }
+}

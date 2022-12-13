@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,12 +15,10 @@
 
 package software.amazon.smithy.cli.commands;
 
-import static java.lang.String.format;
-
-import java.util.Set;
-import java.util.function.Consumer;
-import software.amazon.smithy.cli.Cli;
+import java.util.StringJoiner;
 import software.amazon.smithy.cli.CliError;
+import software.amazon.smithy.cli.CliPrinter;
+import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
@@ -32,40 +30,59 @@ final class Validator {
 
     private Validator() {}
 
-    /**
-     * Validation features.
-     */
-    enum Feature {
-        /** Shows validation events, but does not show the summary. */
-        QUIET,
+    static void validate(boolean quiet, CliPrinter printer, ValidatedResult<Model> result) {
+        int notes = result.getValidationEvents(Severity.NOTE).size();
+        int warnings = result.getValidationEvents(Severity.WARNING).size();
+        int errors = result.getValidationEvents(Severity.ERROR).size();
+        int dangers = result.getValidationEvents(Severity.DANGER).size();
+        int shapeCount = result.getResult().isPresent() ? result.getResult().get().toSet().size() : 0;
+        boolean isFailed = errors > 0 || dangers > 0;
+        boolean hasEvents = warnings > 0 || notes > 0 || isFailed;
 
-        /** Writes validation events to STDOUT instead of stderr. */
-        STDOUT
-    }
+        StringBuilder output = new StringBuilder();
+        if (isFailed) {
+            output.append(printer.style("FAILURE: ", Style.RED, Style.BOLD));
+        } else {
+            output.append(printer.style("SUCCESS: ", Style.GREEN, Style.BOLD));
+        }
+        output.append("Validated ").append(shapeCount).append(" shapes");
 
-    static void validate(ValidatedResult<Model> result, Set<Feature> features) {
-        boolean quiet = features.contains(Feature.QUIET);
-        boolean stdout = features.contains(Feature.STDOUT);
-        Consumer<String> writer = stdout ? Cli.getStdout() : Cli.getStderr();
+        if (hasEvents) {
+            output.append(' ').append('(');
+            StringJoiner joiner = new StringJoiner(", ");
+            if (errors > 0) {
+                appendSummaryCount(joiner, printer, "ERROR", errors, Style.BRIGHT_RED);
+            }
 
-        long errors = result.getValidationEvents(Severity.ERROR).size();
-        long dangers = result.getValidationEvents(Severity.DANGER).size();
+            if (dangers > 0) {
+                appendSummaryCount(joiner, printer, "DANGER", dangers, Style.RED);
+            }
 
-        if (!quiet) {
-            String line = format(
-                    "Validation result: %s ERROR(s), %d DANGER(s), %d WARNING(s), %d NOTE(s)",
-                    errors, dangers, result.getValidationEvents(Severity.WARNING).size(),
-                    result.getValidationEvents(Severity.NOTE).size());
-            writer.accept(line);
+            if (warnings > 0) {
+                appendSummaryCount(joiner, printer, "WARNING", warnings, Style.YELLOW);
+            }
 
-            result.getResult().ifPresent(model -> {
-                writer.accept(String.format("Validated %d shapes in model", model.shapes().count()));
-            });
+            if (notes > 0) {
+                appendSummaryCount(joiner, printer, "NOTE", notes, Style.WHITE);
+            }
+            output.append(joiner.toString());
+            output.append(')');
         }
 
         if (!result.getResult().isPresent() || errors + dangers > 0) {
-            // Show the error and danger severity events.
-            throw new CliError(format("The model is invalid: %s ERROR(s), %d DANGER(s)", errors, dangers));
+            throw new CliError(output.toString());
+        } else if (!quiet) {
+            printer.println(output.toString());
         }
+    }
+
+    private static void appendSummaryCount(
+            StringJoiner joiner,
+            CliPrinter printer,
+            String label,
+            int count,
+            Style color
+    ) {
+        joiner.add(printer.style(label, color) + ": " + count);
     }
 }

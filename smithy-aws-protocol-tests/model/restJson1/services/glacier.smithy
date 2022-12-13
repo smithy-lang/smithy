@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 metadata suppressions = [{
     id: "HttpMethodSemantics",
@@ -66,6 +66,7 @@ service Glacier {
         params: {
             accountId: "foo",
             vaultName: "bar",
+            body: "hello world"
         },
         appliesTo: "client",
     },
@@ -111,7 +112,7 @@ operation UploadArchive {
         id: "GlacierMultipartChecksums",
         documentation: "Glacier requires checksum headers that are cumbersome to provide.",
         protocol: restJson1,
-        method: "POST",
+        method: "PUT",
         uri: "/foo/vaults/bar/multipart-uploads/baz",
         headers: {
             "X-Amz-Glacier-Version": "2012-06-01",
@@ -123,6 +124,7 @@ operation UploadArchive {
             accountId: "foo",
             vaultName: "bar",
             uploadId: "baz",
+            body: "hello world"
         },
         appliesTo: "client",
     }
@@ -205,7 +207,7 @@ structure UploadArchiveInput {
     @httpHeader("x-amz-sha256-tree-hash")
     checksum: string,
     @httpPayload
-    body: Stream,
+    body: Stream = "",
 }
 
 structure UploadMultipartPartInput {
@@ -223,7 +225,7 @@ structure UploadMultipartPartInput {
     @httpHeader("Content-Range")
     range: string,
     @httpPayload
-    body: Stream,
+    body: Stream = "",
 }
 
 structure UploadMultipartPartOutput {

@@ -1,0 +1,4 @@
+[WARNING] smithy.example#Test$foo1: Member targets a deprecated shape, smithy.example#Foo1 | DeprecatedShape
+[WARNING] smithy.example#Test$foo2: Member targets a deprecated shape, smithy.example#Foo2 (since 2.0) | DeprecatedShape
+[WARNING] smithy.example#Test$foo3: Member targets a deprecated shape, smithy.example#Foo3. hello (since 2.0) | DeprecatedShape
+[WARNING] smithy.example#Test: Applies a deprecated mixin, smithy.example#DeprecatedMixin | DeprecatedShape

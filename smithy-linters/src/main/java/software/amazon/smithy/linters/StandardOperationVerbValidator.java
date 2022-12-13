@@ -37,7 +37,7 @@ import software.amazon.smithy.utils.OptionalUtils;
 /**
  * <p>Validates that operation shape names start with standard verbs.
  *
- * <p>Looks at each operation shape name name and determines if the first
+ * <p>Looks at each operation shape name and determines if the first
  * word in the shape name is one of the pre-defined allowed verbs.
  *
  * <p>If the verb is a key in the map of verbs that have recommended

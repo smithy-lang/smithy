@@ -1,0 +1,43 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#MyService": {
+            "type": "service",
+            "version": "2017-02-11",
+            "operations": [
+                {
+                    "target": "smithy.example#GetSomething"
+                }
+            ],
+            "errors": [
+                {
+                    "target": "smithy.example#MyError"
+                }
+            ],
+            "traits": {
+                "aws.protocols#restJson1": {}
+            }
+        },
+        "smithy.example#GetSomething": {
+            "type": "operation",
+            "output": {
+                "target": "smithy.example#GetSomethingOutput"
+            },
+            "traits": {
+                "smithy.api#http": {
+                    "method": "GET",
+                    "uri": "/"
+                }
+            }
+        },
+        "smithy.example#GetSomethingOutput": {
+            "type": "structure"
+        },
+        "smithy.example#MyError": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#error": "client"
+            }
+        }
+    }
+}

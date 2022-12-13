@@ -23,7 +23,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
- * Indicates that the the data stored in the shape is very large and should
+ * Indicates that the data stored in the shape is very large and should
  * not be stored in memory, or that the size of the data stored in the
  * shape is unknown at the start of a request.
  */

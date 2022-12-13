@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#MyService": {
             "type": "service",
@@ -66,6 +66,9 @@
                 "structureConflict2": {"target": "another.ns#Baz"},
                 "unionConflict1": {"target": "ns.foo#Qux"},
                 "unionConflict2": {"target": "another.ns#Qux"}
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#ListA": {

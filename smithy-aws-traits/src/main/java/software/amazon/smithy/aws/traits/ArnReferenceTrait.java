@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.aws.traits;
 
+import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -54,7 +55,7 @@ public final class ArnReferenceTrait extends AbstractTrait implements ToSmithyBu
         @Override
         public Trait createTrait(ShapeId target, Node value) {
             ObjectNode objectNode = value.expectObjectNode();
-            Builder builder = builder();
+            Builder builder = builder().sourceLocation(value);
             objectNode.getStringMember(TYPE)
                     .map(StringNode::getValue)
                     .ifPresent(builder::type);
@@ -64,7 +65,9 @@ public final class ArnReferenceTrait extends AbstractTrait implements ToSmithyBu
             objectNode.getStringMember(RESOURCE)
                     .map(stringNode -> stringNode.expectShapeId(target.getNamespace()))
                     .ifPresent(builder::resource);
-            return builder.build();
+            ArnReferenceTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 
@@ -110,10 +113,33 @@ public final class ArnReferenceTrait extends AbstractTrait implements ToSmithyBu
 
     @Override
     protected Node createNode() {
-        return Node.objectNode()
+        return Node.objectNodeBuilder()
+                .sourceLocation(getSourceLocation())
                 .withOptionalMember(TYPE, getType().map(Node::from))
                 .withOptionalMember(SERVICE, getService().map(ShapeId::toString).map(Node::from))
-                .withOptionalMember(RESOURCE, getResource().map(ShapeId::toString).map(Node::from));
+                .withOptionalMember(RESOURCE, getResource().map(ShapeId::toString).map(Node::from))
+                .build();
+    }
+
+    // Due to the defaulting of this trait, equals has to be overridden
+    // so that inconsequential differences in toNode do not effect equality.
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof ArnReferenceTrait)) {
+            return false;
+        } else if (other == this) {
+            return true;
+        } else {
+            ArnReferenceTrait ot = (ArnReferenceTrait) other;
+            return Objects.equals(type, ot.type)
+                    && Objects.equals(service, ot.service)
+                    && Objects.equals(resource, ot.resource);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(toShapeId(), type, service, resource);
     }
 
     /** Builder for {@link ArnReferenceTrait}. */

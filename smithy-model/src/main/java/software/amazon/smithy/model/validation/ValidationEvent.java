@@ -25,7 +25,6 @@ import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -85,12 +84,29 @@ public final class ValidationEvent implements Comparable<ValidationEvent>, ToNod
      * @return Returns a created validation event with an ID of Model.
      */
     public static ValidationEvent fromSourceException(SourceException exception, String prefix) {
+        // Extract shape IDs from exceptions that implement ToShapeId.
+        ShapeId id = (exception instanceof ToShapeId)
+                ? ((ToShapeId) exception).toShapeId()
+                : null;
+        return fromSourceException(exception, prefix, id);
+    }
+
+    /**
+     * Creates a new ValidationEvent from a {@link SourceException}.
+     *
+     * @param exception Exception to use to create the event.
+     * @param prefix Prefix string to add to the message.
+     * @param shapeId ShapeId to associate with the event.
+     * @return Returns a created validation event with an ID of Model.
+     */
+    public static ValidationEvent fromSourceException(SourceException exception, String prefix, ShapeId shapeId) {
         // Get the message without source location since it's in the event.
         return ValidationEvent.builder()
                 .id(MODEL_ERROR)
                 .severity(ERROR)
                 .message(prefix + exception.getMessageWithoutLocation())
                 .sourceLocation(exception.getSourceLocation())
+                .shapeId(shapeId)
                 .build();
     }
 
@@ -183,22 +199,12 @@ public final class ValidationEvent implements Comparable<ValidationEvent>, ToNod
                 objectNode.expectStringMember("filename").getValue(),
                 objectNode.getNumberMemberOrDefault("line", 0).intValue(),
                 objectNode.getNumberMemberOrDefault("column", 0).intValue());
-
-        // Set required properties.
-        Builder builder = builder()
-                .id(objectNode.expectStringMember("id").getValue())
-                .severity(Severity.valueOf(objectNode.expectStringMember("severity").getValue()))
-                .message(objectNode.expectStringMember("message").getValue())
-                .sourceLocation(location);
-
-        // Set optional properties.
-        objectNode.getStringMember("suppressionReason").map(StringNode::getValue)
-                .ifPresent(builder::suppressionReason);
-        objectNode.getStringMember("shapeId")
-                .map(StringNode::getValue)
-                .map(ShapeId::from)
-                .ifPresent(builder::shapeId);
-
+        Builder builder = builder().sourceLocation(location);
+        objectNode.expectStringMember("id", builder::id)
+                .expectMember("severity", Severity::fromNode, builder::severity)
+                .expectStringMember("message", builder::message)
+                .getStringMember("suppressionReason", builder::suppressionReason)
+                .getMember("shapeId", ShapeId::fromNode, builder::shapeId);
         return builder.build();
     }
 
@@ -233,6 +239,31 @@ public final class ValidationEvent implements Comparable<ValidationEvent>, ToNod
      */
     public String getEventId() {
         return getId();
+    }
+
+    /**
+     * Tests if the event ID hierarchically contains the given ID.
+     *
+     * <p>Event IDs that contain dots (.) are hierarchical. An event ID of
+     * {@code "Foo.Bar"} contains the ID {@code "Foo"} and {@code "Foo.Bar"}.
+     * However, an event ID of {@code "Foo"} does not contain the ID
+     * {@code "Foo.Bar"} as {@code "Foo.Bar"} is more specific than {@code "Foo"}.
+     * If an event ID exactly matches the given {@code id}, then it also contains
+     * the ID (for example, {@code "Foo.Bar."} contains {@code "Foo.Bar."}.
+     *
+     * @param id ID to test.
+     * @return Returns true if the event's event ID contains the given {@code id}.
+     */
+    public boolean containsId(String id) {
+        int eventLength = eventId.length();
+        int suppressionLength = id.length();
+        if (suppressionLength == eventLength) {
+            return id.equals(eventId);
+        } else if (suppressionLength > eventLength) {
+            return false;
+        } else {
+            return eventId.startsWith(id) && eventId.charAt(id.length()) == '.';
+        }
     }
 
     /**

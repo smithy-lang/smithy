@@ -1,7 +1,7 @@
 // This file defines test cases that test the basics of empty input and
 // output shape serialization.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restxml
 

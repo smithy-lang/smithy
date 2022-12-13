@@ -29,6 +29,7 @@ dependencies {
     api project(":smithy-build")
     api project(":smithy-jsonschema")
     api project(":smithy-aws-cloudformation-traits")
+    api project(":smithy-aws-iam-traits")
     api project(":smithy-aws-traits")
 
     // For use in validating schemas used in tests against the supplied

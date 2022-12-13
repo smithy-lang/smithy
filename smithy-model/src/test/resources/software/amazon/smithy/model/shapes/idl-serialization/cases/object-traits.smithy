@@ -1,37 +1,37 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace ns.foo
 
 @trait
 map MapTrait {
-    key: String,
-    value: String,
+    key: String
+    value: String
 }
 
 @trait
 structure StructureTrait {
-    collectionMember: StringList,
-    nestedMember: NestedMember,
-    shapeIdMember: ShapeId,
-    staticMember: String,
+    collectionMember: StringList
+    nestedMember: NestedMember
+    shapeIdMember: ShapeId
+    staticMember: String
 }
 
 @trait
 union UnionTrait {
-    boolean: Boolean,
-    string: String,
+    boolean: Boolean
+    string: String
 }
 
 structure NestedMember {
-    shapeIds: ShapeIdList,
+    shapeIds: ShapeIdList
 }
 
 list ShapeIdList {
-    member: ShapeId,
+    member: ShapeId
 }
 
 list StringList {
-    member: String,
+    member: String
 }
 
 @MapTrait
@@ -39,29 +39,29 @@ list StringList {
 string EmptyBody
 
 @MapTrait(
-    bar: "baz",
-    foo: "bar",
-    "must be quoted": "bam1",
-    "must.be.quoted": "bam2",
-    "must.be#quoted": "bam3",
-    "must.be#quoted$too": "bam4",
+    bar: "baz"
+    foo: "bar"
+    "must be quoted": "bam1"
+    "must.be.quoted": "bam2"
+    "must.be#quoted": "bam3"
+    "must.be#quoted$too": "bam4"
 )
 @StructureTrait(
     collectionMember: [
-        "foo",
-        "bar",
-    ],
+        "foo"
+        "bar"
+    ]
     nestedMember: {
         shapeIds: [
-            String,
-            EmptyBody,
-        ],
-    },
-    shapeIdMember: UnionTrait,
-    staticMember: "Foo",
+            String
+            EmptyBody
+        ]
+    }
+    shapeIdMember: UnionTrait
+    staticMember: "Foo"
 )
 @UnionTrait(
-    boolean: false,
+    boolean: false
 )
 string NonEmptyBody
 

@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace smithy.example
 
@@ -22,11 +22,16 @@ resource LifecycleConflictResource {
 
 operation CreateLifecycleConflictResource {
     input: CreateLifecycleConflictResourceRequest,
+    output: CreateLifecycleConflictResourceResponse
 }
 
+@input
 structure CreateLifecycleConflictResourceRequest {
     bar: String,
 }
+
+@output
+structure CreateLifecycleConflictResourceResponse {}
 
 @readonly
 operation GetLifecycleConflictResource {
@@ -34,11 +39,13 @@ operation GetLifecycleConflictResource {
     output: GetLifecycleConflictResourceResponse,
 }
 
+@input
 structure GetLifecycleConflictResourceRequest {
     @required
     fooId: String,
 }
 
+@output
 structure GetLifecycleConflictResourceResponse {
     bar: Boolean,
 }

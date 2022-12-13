@@ -1,7 +1,7 @@
 // This file defines test cases that test HTTP header bindings.
-// See: https://awslabs.github.io/smithy/1.0/spec/http.html#httpheader-trait
+// See: https://smithy.io/2.0/spec/http-bindings.html#httpheader-trait
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restxml
 
@@ -120,6 +120,54 @@ apply InputAndOutputWithHeaders @httpRequestTests([
             headerEnumList: ["Foo", "Bar", "Baz"],
         }
     },
+    {
+        id: "RestXmlSupportsNaNFloatHeaderInputs",
+        documentation: "Supports handling NaN float header values.",
+        protocol: restXml,
+        method: "POST",
+        uri: "/InputAndOutputWithHeaders",
+        body: "",
+        headers: {
+            "X-Float": "NaN",
+            "X-Double": "NaN",
+        },
+        params: {
+            headerFloat: "NaN",
+            headerDouble: "NaN",
+        }
+    },
+    {
+        id: "RestXmlSupportsInfinityFloatHeaderInputs",
+        documentation: "Supports handling Infinity float header values.",
+        protocol: restXml,
+        method: "POST",
+        uri: "/InputAndOutputWithHeaders",
+        body: "",
+        headers: {
+            "X-Float": "Infinity",
+            "X-Double": "Infinity",
+        },
+        params: {
+            headerFloat: "Infinity",
+            headerDouble: "Infinity",
+        }
+    },
+    {
+        id: "RestXmlSupportsNegativeInfinityFloatHeaderInputs",
+        documentation: "Supports handling -Infinity float header values.",
+        protocol: restXml,
+        method: "POST",
+        uri: "/InputAndOutputWithHeaders",
+        body: "",
+        headers: {
+            "X-Float": "-Infinity",
+            "X-Double": "-Infinity",
+        },
+        params: {
+            headerFloat: "-Infinity",
+            headerDouble: "-Infinity",
+        }
+    },
 ])
 
 apply InputAndOutputWithHeaders @httpResponseTests([
@@ -208,6 +256,51 @@ apply InputAndOutputWithHeaders @httpResponseTests([
         params: {
             headerEnum: "Foo",
             headerEnumList: ["Foo", "Bar", "Baz"],
+        }
+    },
+    {
+        id: "RestXmlSupportsNaNFloatHeaderOutputs",
+        documentation: "Supports handling NaN float header values.",
+        protocol: restXml,
+        code: 200,
+        headers: {
+            "X-Float": "NaN",
+            "X-Double": "NaN",
+        },
+        body: "",
+        params: {
+            headerFloat: "NaN",
+            headerDouble: "NaN",
+        }
+    },
+    {
+        id: "RestXmlSupportsInfinityFloatHeaderOutputs",
+        documentation: "Supports handling Infinity float header values.",
+        protocol: restXml,
+        code: 200,
+        headers: {
+            "X-Float": "Infinity",
+            "X-Double": "Infinity",
+        },
+        body: "",
+        params: {
+            headerFloat: "Infinity",
+            headerDouble: "Infinity",
+        }
+    },
+    {
+        id: "RestXmlSupportsNegativeInfinityFloatHeaderOutputs",
+        documentation: "Supports handling -Infinity float header values.",
+        protocol: restXml,
+        code: 200,
+        headers: {
+            "X-Float": "-Infinity",
+            "X-Double": "-Infinity",
+        },
+        body: "",
+        params: {
+            headerFloat: "-Infinity",
+            headerDouble: "-Infinity",
         }
     },
 ])

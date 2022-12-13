@@ -1,0 +1,1 @@
+[ERROR] smithy.example#Foo$bar: The @default value of a list must be an empty list | DefaultTrait

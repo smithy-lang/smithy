@@ -45,7 +45,7 @@ import software.amazon.smithy.model.traits.Trait;
  * <h2>@smithy.mqtt#publish topics</h2>
  *
  * Operations marked with {@code @smithy.mqtt#publish} resolve to a single topic that
- * is defined by topic topic property of the trait.
+ * is defined by topic property of the trait.
  *
  * <h2>subscribe topics</h2>
  *
@@ -133,9 +133,20 @@ public final class TopicBinding<T extends Trait> {
      * Gets the input shape related to this operation.
      *
      * @return Returns the optional input shape.
+     * @deprecated Use getInputShape instead.
      */
+    @Deprecated
     public Optional<StructureShape> getInput() {
         return Optional.ofNullable(input);
+    }
+
+    /**
+     * Gets the input shape related to this operation.
+     *
+     * @return Returns the input shape.
+     */
+    public StructureShape getInputShape() {
+        return input;
     }
 
     /**

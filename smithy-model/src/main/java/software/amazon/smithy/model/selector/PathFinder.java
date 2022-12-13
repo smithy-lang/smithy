@@ -19,12 +19,13 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
@@ -38,6 +39,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
+import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.ListUtils;
 
 /**
@@ -64,6 +66,7 @@ public final class PathFinder {
 
     private final Model model;
     private final NeighborProvider reverseProvider;
+    private Predicate<Relationship> filter = FunctionalUtils.alwaysTrue();
 
     private PathFinder(Model model) {
         this.model = model;
@@ -78,6 +81,15 @@ public final class PathFinder {
      */
     public static PathFinder create(Model model) {
         return new PathFinder(model);
+    }
+
+    /**
+     * Sets a predicate function to prevents traversing specific relationships.
+     *
+     * @param predicate Predicate that must return true in order to continue traversing relationships.
+     */
+    public void relationshipFilter(Predicate<Relationship> predicate) {
+        this.filter = predicate;
     }
 
     /**
@@ -118,7 +130,7 @@ public final class PathFinder {
         if (shape == null || candidates.isEmpty()) {
             return ListUtils.of();
         } else {
-            return new Search(reverseProvider, shape, candidates).execute();
+            return new Search(reverseProvider, shape, candidates, filter).execute();
         }
     }
 
@@ -165,11 +177,8 @@ public final class PathFinder {
             return Optional.empty();
         }
 
-        Optional<ShapeId> structId = rel == RelationshipType.INPUT ? operation.getInput() : operation.getOutput();
-        StructureShape struct = structId
-                .flatMap(model::getShape)
-                .flatMap(Shape::asStructureShape)
-                .orElse(null);
+        ShapeId structId = rel == RelationshipType.INPUT ? operation.getInputShape() : operation.getOutputShape();
+        StructureShape struct = model.getShape(structId).flatMap(Shape::asStructureShape).orElse(null);
 
         if (struct == null) {
             return Optional.empty();
@@ -187,35 +196,82 @@ public final class PathFinder {
             return Optional.empty();
         }
 
-        List<Relationship> relationships = new ArrayList<>();
-        relationships.add(Relationship.create(operation, rel, struct));
-        relationships.add(Relationship.create(struct, RelationshipType.STRUCTURE_MEMBER, member));
-        relationships.add(Relationship.create(member, RelationshipType.MEMBER_TARGET, target));
-        return Optional.of(new Path(relationships));
+        Path path = new Path(Relationship.create(member, RelationshipType.MEMBER_TARGET, target), null);
+        path = new Path(Relationship.create(struct, RelationshipType.STRUCTURE_MEMBER, member), path);
+        path = new Path(Relationship.create(operation, rel, struct), path);
+        return Optional.of(path);
     }
 
     /**
      * An immutable {@code Relationship} path from a starting shape to an end shape.
      */
     public static final class Path extends AbstractList<Relationship> {
-        private final List<Relationship> relationships;
+        private final Relationship value;
+        private Path next;
+        private final int size;
 
         public Path(List<Relationship> relationships) {
             if (relationships.isEmpty()) {
                 throw new IllegalArgumentException("Relationships cannot be empty!");
             }
 
-            this.relationships = relationships;
+            this.size = relationships.size();
+            this.value = relationships.get(0);
+
+            if (relationships.size() == 1) {
+                next = null;
+            } else {
+                Path current = this;
+                for (int i = 1; i < relationships.size(); i++) {
+                    current.next = new Path(relationships.get(i), null);
+                    current = current.next;
+                }
+            }
+        }
+
+        private Path(Relationship value, Path next) {
+            this.value = value;
+            this.next = next;
+            this.size = 1 + ((next == null) ? 0 : next.size);
         }
 
         @Override
         public int size() {
-            return relationships.size();
+            return size;
         }
 
         @Override
         public Relationship get(int index) {
-            return relationships.get(index);
+            Path current = this;
+            for (int i = 0; i < index; i++) {
+                current = current.next;
+                if (current == null) {
+                    throw new IndexOutOfBoundsException("Invalid index " + index + "; size " + size());
+                }
+            }
+            return current.value;
+        }
+
+        @Override
+        public Iterator<Relationship> iterator() {
+            return new Iterator<Relationship>() {
+                private Path current = Path.this;
+
+                @Override
+                public boolean hasNext() {
+                    return current != null;
+                }
+
+                @Override
+                public Relationship next() {
+                    if (current == null) {
+                        throw new NoSuchElementException();
+                    }
+                    Relationship result = current.value;
+                    current = current.next;
+                    return result;
+                }
+            };
         }
 
         /**
@@ -228,14 +284,17 @@ public final class PathFinder {
          * @return Returns the list of shapes.
          */
         public List<Shape> getShapes() {
-            List<Shape> results = relationships.stream()
-                    .map(Relationship::getShape)
-                    .collect(Collectors.toList());
-            Relationship last = relationships.get(relationships.size() - 1);
-            if (last.getNeighborShape().isPresent()) {
-                results.add(last.getNeighborShape().get());
+            List<Shape> results = new ArrayList<>(size());
+            Iterator<Relationship> iterator = iterator();
+            for (int i = 0; i < size(); i++) {
+                Relationship rel = iterator.next();
+                results.add(rel.getShape());
+                // Add the shape pointed to by the tail to the result set if present
+                // without need to get the tail after iterating (an O(N) operation).
+                if (i == size() - 1) {
+                    rel.getNeighborShape().ifPresent(results::add);
+                }
             }
-
             return results;
         }
 
@@ -245,7 +304,7 @@ public final class PathFinder {
          * @return Returns the starting shape of the Path.
          */
         public Shape getStartShape() {
-            return relationships.get(0).getShape();
+            return value.getShape();
         }
 
         /**
@@ -257,10 +316,18 @@ public final class PathFinder {
          * @throws SourceException if the last relationship is invalid.
          */
         public Shape getEndShape() {
-            Relationship last = relationships.get(relationships.size() - 1);
+            Relationship last = tail();
             return last.getNeighborShape().orElseThrow(() -> new SourceException(
                     "Relationship points to a shape that is invalid: " + last,
                     last.getShape()));
+        }
+
+        private Relationship tail() {
+            Path current = this;
+            while (current.next != null) {
+                current = current.next;
+            }
+            return current.value;
         }
 
         /**
@@ -273,7 +340,7 @@ public final class PathFinder {
             StringBuilder result = new StringBuilder();
             result.append("[id|").append(getStartShape().getId()).append("]");
 
-            for (Relationship rel : relationships) {
+            for (Relationship rel : this) {
                 if (rel.getRelationshipType() == RelationshipType.MEMBER_TARGET) {
                     result.append(" > ");
                 } else {
@@ -294,49 +361,48 @@ public final class PathFinder {
         private final NeighborProvider provider;
         private final Collection<Shape> candidates;
         private final List<Path> results = new ArrayList<>();
+        private final Predicate<Relationship> filter;
 
-        Search(NeighborProvider provider, Shape startingShape, Collection<Shape> candidates) {
+        Search(
+                NeighborProvider provider,
+                Shape startingShape,
+                Collection<Shape> candidates,
+                Predicate<Relationship> filter
+        ) {
             this.startingShape = startingShape;
             this.candidates = candidates;
             this.provider = provider;
+            this.filter = filter;
         }
 
         List<Path> execute() {
+            Set<ShapeId> visited = new HashSet<>();
             for (Shape candidate : candidates) {
-                traverseUp(candidate, new LinkedList<>(), new HashSet<>());
+                traverseUp(candidate, null, visited);
             }
 
             return results;
         }
 
-        private void traverseUp(Shape current, List<Relationship> path, Set<ShapeId> visited) {
-            if (!path.isEmpty() && current.getId().equals(startingShape.getId())) {
+        private void traverseUp(Shape current, Path path, Set<ShapeId> visited) {
+            if (path != null && current.getId().equals(startingShape.getId())) {
                 // Add the path to the result set if the target shape was reached.
                 // But, don't add the path if no nodes have been traversed.
-                results.add(new Path(path));
+                results.add(path);
                 return;
             }
 
-            // Short circuit any possible recursion. While it's not possible
-            // to enter a recursive path with the built-in NeighborProvider
-            // implementations and the bottom-up traversal, it is possible
-            // that a custom neighbor provider has a different behavior, so
-            // this check remains just in case.
-            if (visited.contains(current.getId())) {
-                return;
-            }
-
-            Set<ShapeId> newVisited = new HashSet<>(visited);
-            newVisited.add(current.getId());
-
-            for (Relationship relationship : provider.getNeighbors(current)) {
-                // Don't traverse up through containers.
-                if (relationship.getDirection() == RelationshipDirection.DIRECTED) {
-                    List<Relationship> newPath = new ArrayList<>(path.size() + 1);
-                    newPath.add(relationship);
-                    newPath.addAll(path);
-                    traverseUp(relationship.getShape(), newPath, newVisited);
+            // Short-circuit recursion.
+            if (visited.add(current.getId())) {
+                for (Relationship relationship : provider.getNeighbors(current)) {
+                    if (relationship.getDirection() == RelationshipDirection.DIRECTED) {
+                        if (filter.test(relationship)) {
+                            traverseUp(relationship.getShape(), new Path(relationship, path), visited);
+                        }
+                    }
                 }
+                // Let the less recursive addition remove the entry from the set.
+                visited.remove(current.getId());
             }
         }
     }

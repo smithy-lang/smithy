@@ -45,7 +45,7 @@ final class MapShapes {
                     if (mapped.equals(shape)) {
                         return Stream.empty();
                     } else if (!mapped.getId().equals(shape.getId())) {
-                        throw new RuntimeException(String.format(
+                        throw new ModelTransformException(String.format(
                                 "Mapped shapes must have the same shape ID. Expected %s, but found %s",
                                 shape.getId(), mapped.getId()));
                     } else {

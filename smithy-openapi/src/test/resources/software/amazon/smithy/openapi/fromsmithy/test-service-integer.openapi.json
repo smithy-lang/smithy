@@ -173,6 +173,16 @@
           }
         }
       }
+    },
+    "/ping": {
+      "post": {
+        "operationId": "Ping",
+        "responses": {
+          "200": {
+            "description": "Ping 200 response"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -182,7 +192,9 @@
         "properties": {
           "abc": {
             "type": "string",
-            "format": "password"
+            "format": "password",
+            "minLength": 1,
+            "maxLength": 100
           },
           "def": {
             "type": "integer",
@@ -259,7 +271,8 @@
         "type": "object",
         "additionalProperties": {
           "type": "string",
-          "format": "password"
+          "format": "password",
+          "pattern": "^[a-z]+$"
         }
       },
       "PutPayloadInputPayload": {
@@ -310,8 +323,23 @@
             "required": [
               "b"
             ]
+          },
+          {
+            "type": "object",
+            "title": "c",
+            "properties": {
+              "c": {
+                "$ref": "#/components/schemas/Unit"
+              }
+            },
+            "required": [
+              "c"
+            ]
           }
         ]
+      },
+      "Unit": {
+        "type": "object"
       }
     }
   }

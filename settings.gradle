@@ -1,6 +1,7 @@
 pluginManagement {
     repositories {
         mavenLocal()
+        mavenCentral()
         gradlePluginPortal()
     }
 }
@@ -26,3 +27,5 @@ include ':smithy-jmespath'
 include ":smithy-waiters"
 include ":smithy-aws-cloudformation-traits"
 include ":smithy-aws-cloudformation"
+include ":smithy-validation-model"
+include ":smithy-rules-engine"

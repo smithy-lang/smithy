@@ -1,9 +1,9 @@
 #!/bin/bash
 # This script updates the documentation hosted at
-# http://awslabs.github.io/smithy/. There is a y/n prompt before a publish
+# https://smithy.io/. There is a y/n prompt before a publish
 # is performed to allow for a spot-check of the changes.
 #
-# This script will run `pip install -r requirements.txt` in the docs
+# This script will run `pip3 install -r requirements.txt` in the docs
 # directory. If you don't want to globally install dependencies, ensure that
 # you are first in a virtual environment of some kind before running this
 # script.
@@ -25,7 +25,7 @@ fi
 
 # Clone a copy of smithy into a staging directory
 rm -rf /tmp/_smithy-docs
-git clone https://github.com/awslabs/smithy.git --branch gh-pages --single-branch /tmp/_smithy-docs
+git clone git@github.com:awslabs/smithy.git --branch gh-pages --single-branch /tmp/_smithy-docs
 cd /tmp/_smithy-docs
 git checkout gh-pages
 cd -
@@ -52,7 +52,7 @@ EOF
 #### Build Sphinx docs ####
 
 cd docs
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 make clean && make html
 cp -R build/html/* /tmp/_smithy-docs
 
@@ -63,6 +63,7 @@ rm /tmp/_smithy-docs/objects.inv || true
 cd -
 
 cd /tmp/_smithy-docs
+git add -A
 git status
 
 #### Deploy the docs ####
@@ -73,14 +74,13 @@ read -p "Show full diff? [y/n]" -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
-    git diff
+    git diff origin/gh-pages
 fi
 
 read -p "Publish docs? [y/n]" -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
-    git add -A
     git commit -m 'Update documentation'
     git push origin gh-pages
     echo "Documentation has been published"

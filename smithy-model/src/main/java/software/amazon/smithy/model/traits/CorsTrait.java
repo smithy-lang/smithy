@@ -19,12 +19,9 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.MapUtils;
@@ -36,10 +33,6 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
 
     private static final String DEFAULT_ORIGIN = "*";
     private static final int DEFAULT_MAX_AGE = 600;
-    private static final String ORIGIN_MEMBER_ID = "origin";
-    private static final String MAX_AGE_MEMBER_ID = "maxAge";
-    private static final String ALLOWED_HEADERS_MEMBER_ID = "additionalAllowedHeaders";
-    private static final String EXPOSED_HEADERS_MEMBER_ID = "additionalExposedHeaders";
 
     private final String origin;
     private final int maxAge;
@@ -83,18 +76,39 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
     @Override
     protected Node createNode() {
         return new ObjectNode(MapUtils.of(), getSourceLocation())
-                .withOptionalMember(ORIGIN_MEMBER_ID, Optional.of(origin)
+                .withOptionalMember("origin", Optional.of(origin)
                         .filter(val -> !val.equals(DEFAULT_ORIGIN))
                         .map(Node::from))
-                .withOptionalMember(MAX_AGE_MEMBER_ID, Optional.of(maxAge)
+                .withOptionalMember("maxAge", Optional.of(maxAge)
                         .filter(val -> !val.equals(DEFAULT_MAX_AGE))
                         .map(Node::from))
-                .withOptionalMember(ALLOWED_HEADERS_MEMBER_ID, Optional.of(additionalAllowedHeaders)
+                .withOptionalMember("additionalAllowedHeaders", Optional.of(additionalAllowedHeaders)
                         .filter(FunctionalUtils.not(Set::isEmpty))
                         .map(Node::fromStrings))
-                .withOptionalMember(EXPOSED_HEADERS_MEMBER_ID, Optional.of(additionalExposedHeaders)
+                .withOptionalMember("additionalExposedHeaders", Optional.of(additionalExposedHeaders)
                         .filter(FunctionalUtils.not(Set::isEmpty))
                         .map(Node::fromStrings));
+    }
+
+    // Avoid inconsequential equality issues due to empty vs not empty sets.
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof CorsTrait)) {
+            return false;
+        } else if (other == this) {
+            return true;
+        } else {
+            CorsTrait trait = (CorsTrait) other;
+            return origin.equals(trait.origin)
+                    && maxAge == trait.maxAge
+                    && additionalAllowedHeaders.equals(trait.additionalAllowedHeaders)
+                    && additionalExposedHeaders.equals(trait.additionalExposedHeaders);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(toShapeId(), origin, maxAge, additionalAllowedHeaders, additionalExposedHeaders);
     }
 
     public static Builder builder() {
@@ -121,12 +135,12 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
         }
 
         public Builder additionalAllowedHeaders(Set<String> additionalAllowedHeaders) {
-            this.additionalAllowedHeaders = new HashSet<>(Objects.requireNonNull(additionalAllowedHeaders));
+            this.additionalAllowedHeaders = SetUtils.caseInsensitiveCopyOf(additionalAllowedHeaders);
             return this;
         }
 
         public Builder additionalExposedHeaders(Set<String> additionalExposedHeaders) {
-            this.additionalExposedHeaders = new HashSet<>(Objects.requireNonNull(additionalExposedHeaders));
+            this.additionalExposedHeaders = SetUtils.caseInsensitiveCopyOf(additionalExposedHeaders);
             return this;
         }
 
@@ -145,29 +159,24 @@ public final class CorsTrait extends AbstractTrait implements ToSmithyBuilder<Co
         @Override
         public CorsTrait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
-            ObjectNode node = value.expectObjectNode();
-            node.getStringMember(ORIGIN_MEMBER_ID)
-                    .map(StringNode::getValue)
-                    .ifPresent(builder::origin);
-            node.getNumberMember(MAX_AGE_MEMBER_ID)
-                    .map(NumberNode::getValue)
-                    .map(Number::intValue)
-                    .ifPresent(builder::maxAge);
-            node.getArrayMember(ALLOWED_HEADERS_MEMBER_ID)
-                    .map(Provider::stringSetFromNode)
-                    .ifPresent(builder::additionalAllowedHeaders);
-            node.getArrayMember(EXPOSED_HEADERS_MEMBER_ID)
-                    .map(Provider::stringSetFromNode)
-                    .ifPresent(builder::additionalExposedHeaders);
-            return builder.build();
+            value.expectObjectNode()
+                    .getStringMember("origin", builder::origin)
+                    .getNumberMember("maxAge", n -> builder.maxAge(n.intValue()))
+                    .getMember("additionalAllowedHeaders", Node::expectArrayNode,
+                              a -> builder.additionalAllowedHeaders(stringSetFromNode(a)))
+                    .getMember("additionalExposedHeaders", Node::expectArrayNode,
+                              a -> builder.additionalExposedHeaders(stringSetFromNode(a)));
+            CorsTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
 
         private static Set<String> stringSetFromNode(ArrayNode node) {
-            return node.getElements()
-                    .stream()
-                    .map(Node::expectStringNode)
-                    .map(StringNode::getValue)
-                    .collect(Collectors.toSet());
+            Set<String> result = new HashSet<>(node.size());
+            for (Node value : node.getElements()) {
+                result.add(value.expectStringNode().getValue());
+            }
+            return result;
         }
     }
 }

@@ -1,4 +1,4 @@
-// Parse error at line 4, column 1 near `string`: Expected: ']', but found 's'
+// Parse error at line 5, column 1 near `[EOF]`: Expected: ']', but found '[EOF]' | Model
 namespace com.foo
 @tags(["foo", "bar"
 string MyString

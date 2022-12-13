@@ -1,0 +1,1 @@
+[ERROR] smithy.example#Foo$bar: The @default value of a map must be an empty map | DefaultTrait

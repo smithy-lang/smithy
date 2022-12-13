@@ -17,6 +17,7 @@ package software.amazon.smithy.model.traits;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -26,13 +27,11 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.validators.ReferencesTraitValidator;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
-import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -75,7 +74,7 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
 
     @Override
     protected Node createNode() {
-        return references.stream().map(Reference::toNode).collect(ArrayNode.collect());
+        return references.stream().map(Reference::toNode).collect(ArrayNode.collect(getSourceLocation()));
     }
 
     @Override
@@ -83,6 +82,24 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
         Builder builder = new Builder().sourceLocation(getSourceLocation());
         references.forEach(builder::addReference);
         return builder;
+    }
+
+    // Ignore inconsequential toNode differences.
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof ReferencesTrait)) {
+            return false;
+        } else if (other == this) {
+            return true;
+        } else {
+            ReferencesTrait trait = (ReferencesTrait) other;
+            return references.equals(trait.references);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(toShapeId(), references);
     }
 
     /**
@@ -96,7 +113,7 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
      * Builder use to create the references trait.
      */
     public static final class Builder extends AbstractTraitBuilder<ReferencesTrait, Builder> {
-        private List<Reference> references = new ArrayList<>();
+        private final List<Reference> references = new ArrayList<>();
 
         public Builder addReference(Reference reference) {
             references.add(Objects.requireNonNull(reference));
@@ -124,10 +141,10 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
      * Reference to a resource.
      */
     public static final class Reference implements ToSmithyBuilder<Reference>, ToNode {
-        private ShapeId resource;
-        private Map<String, String> ids;
-        private ShapeId service;
-        private String rel;
+        private final ShapeId resource;
+        private final Map<String, String> ids;
+        private final ShapeId service;
+        private final String rel;
 
         private Reference(Builder builder) {
             resource = SmithyBuilder.requiredState("resource", builder.resource);
@@ -265,27 +282,25 @@ public final class ReferencesTrait extends AbstractTrait implements ToSmithyBuil
             for (ObjectNode member : refs.getElementsAs(ObjectNode.class)) {
                 builder.addReference(referenceFromNode(member));
             }
-            return builder.build();
+            ReferencesTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
 
         private static Reference referenceFromNode(ObjectNode referenceProperties) {
-            return Reference.builder()
-                    .resource(referenceProperties.expectStringMember("resource").expectShapeId())
-                    .ids(referenceProperties.getObjectMember("ids")
-                                 .map(obj -> obj.getMembers().entrySet().stream()
-                                         .map(entry -> Pair.of(
-                                                 entry.getKey().getValue(),
-                                                 entry.getValue().expectStringNode().getValue()))
-                                         .collect(Collectors.toMap(Pair::getLeft, Pair::getRight)))
-                                 .orElseGet(Collections::emptyMap))
-                    .service(referenceProperties
-                                     .getStringMember("service")
-                                     .map(StringNode::expectShapeId)
-                                     .orElse(null))
-                    .rel(referenceProperties.getStringMember("rel")
-                                 .map(StringNode::getValue)
-                                 .orElse(null))
-                    .build();
+            Reference.Builder builder = Reference.builder();
+            referenceProperties.expectObjectNode()
+                    .expectMember("resource", ShapeId::fromNode, builder::resource)
+                    .getObjectMember("ids", object -> {
+                        Map<String, String> result = new LinkedHashMap<>(object.size());
+                        object.getStringMap().forEach((k, v) -> {
+                            result.put(k, v.expectStringNode().getValue());
+                        });
+                        builder.ids(result);
+                    })
+                    .getMember("service", ShapeId::fromNode, builder::service)
+                    .getStringMember("rel", builder::rel);
+            return builder.build();
         }
     }
 }

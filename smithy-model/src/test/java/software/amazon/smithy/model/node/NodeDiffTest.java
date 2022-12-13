@@ -2,7 +2,6 @@ package software.amazon.smithy.model.node;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 
 import org.junit.jupiter.api.Test;
@@ -73,10 +72,9 @@ public class NodeDiffTest {
         Node actual = Node.fromStrings("fizz", "buzz");
         Node expected = Node.fromStrings("snap", "crackle", "pop");
 
-        assertThat(NodeDiff.diff(actual, expected), contains(
-                "[]: Expected element (position 2) not encountered in list: \"pop\"",
-                "[[0]]: Expected `\"snap\"` but found `\"fizz\"`",
-                "[[1]]: Expected `\"crackle\"` but found `\"buzz\"`"));
+        assertThat(NodeDiff.diff(actual, expected), contains("[[0]]: Expected `\"snap\"` but found `\"fizz\"`",
+                "[[1]]: Expected `\"crackle\"` but found `\"buzz\"`",
+                "[]: Expected element (position 2) not encountered in list: \"pop\""));
     }
 
     @Test
@@ -111,7 +109,7 @@ public class NodeDiffTest {
         Node actual = Node.objectNode().withMember("foo", Node.from("bar")).withMember("snap", Node.from("crackle"));
         Node expected = Node.objectNode().withMember("foo", Node.from("baz")).withMember("fizz", Node.from("buzz"));
 
-        assertThat(NodeDiff.diff(actual, expected), containsInAnyOrder(
+        assertThat(NodeDiff.diff(actual, expected), contains(
                 "[/foo]: Expected `\"baz\"` but found `\"bar\"`",
                 "[]: Expected key `fizz` not present.",
                 "[]: Extra key `snap` encountered with content: \"crackle\""));

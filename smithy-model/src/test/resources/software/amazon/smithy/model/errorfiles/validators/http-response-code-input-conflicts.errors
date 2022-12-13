@@ -1,0 +1,1 @@
+[ERROR] ns.foo#HttpOperationInput$Int: Trait `httpResponseCode` cannot be applied to `ns.foo#HttpOperationInput$Int`. This trait may only be applied to shapes that match the following selector: structure :not([trait|input]) > member :test(> integer) | TraitTarget

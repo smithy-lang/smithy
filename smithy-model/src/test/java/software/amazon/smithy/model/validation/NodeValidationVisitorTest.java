@@ -56,11 +56,11 @@ public class NodeValidationVisitorTest {
     public void nodeValidationVisitorTest(String target, String value, String[] errors) {
         ShapeId targetId = ShapeId.from(target);
         Node nodeValue = Node.parse(value);
-        NodeValidationVisitor cases = NodeValidationVisitor.builder()
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
                 .value(nodeValue)
                 .model(MODEL)
                 .build();
-        List<ValidationEvent> events = MODEL.expectShape(targetId).accept(cases);
+        List<ValidationEvent> events = MODEL.expectShape(targetId).accept(visitor);
 
         if (errors != null) {
             List<String> messages = events.stream().map(ValidationEvent::getMessage).collect(Collectors.toList());
@@ -140,15 +140,29 @@ public class NodeValidationVisitorTest {
 
                 // float
                 {"ns.foo#Float", "10", null},
+                {"smithy.api#Float", "\"NaN\"", null},
+                {"ns.foo#Float", "\"NaN\"", new String[] {"Value provided for `ns.foo#Float` must be a number because the `smithy.api#range` trait is applied, but found \"NaN\""}},
+                {"smithy.api#Float", "\"Infinity\"", null},
+                {"smithy.api#Float", "\"-Infinity\"", null},
+                {"smithy.api#Float", "\"+Infinity\"", new String[] {"Value for `smithy.api#Float` must either be numeric or one of the following strings: [\"NaN\", \"Infinity\", \"-Infinity\"], but was \"+Infinity\""}},
                 {"ns.foo#Float", "true", new String[] {"Expected number value for float shape, `ns.foo#Float`; found boolean value, `true`"}},
                 {"ns.foo#Float", "21", new String[] {"Value provided for `ns.foo#Float` must be less than or equal to 20, but found 21"}},
+                {"ns.foo#Float", "\"Infinity\"", new String[] {"Value provided for `ns.foo#Float` must be less than or equal to 20, but found \"Infinity\""}},
                 {"ns.foo#Float", "9", new String[] {"Value provided for `ns.foo#Float` must be greater than or equal to 10, but found 9"}},
+                {"ns.foo#Float", "\"-Infinity\"", new String[] {"Value provided for `ns.foo#Float` must be greater than or equal to 10, but found \"-Infinity\""}},
 
                 // double
                 {"ns.foo#Double", "10", null},
+                {"smithy.api#Double", "\"NaN\"", null},
+                {"ns.foo#Double", "\"NaN\"", new String[] {"Value provided for `ns.foo#Double` must be a number because the `smithy.api#range` trait is applied, but found \"NaN\""}},
+                {"smithy.api#Double", "\"Infinity\"", null},
+                {"smithy.api#Double", "\"-Infinity\"", null},
+                {"smithy.api#Double", "\"+Infinity\"", new String[] {"Value for `smithy.api#Double` must either be numeric or one of the following strings: [\"NaN\", \"Infinity\", \"-Infinity\"], but was \"+Infinity\""}},
                 {"ns.foo#Double", "true", new String[] {"Expected number value for double shape, `ns.foo#Double`; found boolean value, `true`"}},
                 {"ns.foo#Double", "21", new String[] {"Value provided for `ns.foo#Double` must be less than or equal to 20, but found 21"}},
+                {"ns.foo#Double", "\"Infinity\"", new String[] {"Value provided for `ns.foo#Double` must be less than or equal to 20, but found \"Infinity\""}},
                 {"ns.foo#Double", "9", new String[] {"Value provided for `ns.foo#Double` must be greater than or equal to 10, but found 9"}},
+                {"ns.foo#Double", "\"-Infinity\"", new String[] {"Value provided for `ns.foo#Double` must be greater than or equal to 10, but found \"-Infinity\""}},
 
                 // bigInteger
                 {"ns.foo#BigInteger", "10", null},
@@ -183,7 +197,7 @@ public class NodeValidationVisitorTest {
                 {"ns.foo#String3", "\"foo\"", null},
                 {"ns.foo#String3", "\"bar\"", null},
                 {"ns.foo#String4", "\"ABC\"", null},
-                {"ns.foo#String4", "\"abc\"", new String[] {"String value provided for `ns.foo#String4` must match regular expression: [A-Z]+"}},
+                {"ns.foo#String4", "\"abc\"", new String[] {"String value provided for `ns.foo#String4` must match regular expression: ^[A-Z]+$"}},
 
                 // list
                 {"ns.foo#List", "[\"a\"]", null},
@@ -192,14 +206,6 @@ public class NodeValidationVisitorTest {
                 {"ns.foo#List", "[\"a\", \"b\", \"c\"]", new String[] {"Value provided for `ns.foo#List` must have no more than 2 elements, but the provided value has 3 elements"}},
                 {"ns.foo#List", "[10]", new String[] {"0: Expected string value for string shape, `ns.foo#String`; found number value, `10`"}},
                 {"ns.foo#List", "10", new String[] {"Expected array value for list shape, `ns.foo#List`; found number value, `10`"}},
-
-                // set
-                {"ns.foo#Set", "[\"a\"]", null},
-                {"ns.foo#Set", "[\"a\", \"b\"]", null},
-                {"ns.foo#Set", "[]", new String[] {"Value provided for `ns.foo#Set` must have at least 1 elements, but the provided value only has 0 elements"}},
-                {"ns.foo#Set", "[\"a\", \"b\", \"c\"]", new String[] {"Value provided for `ns.foo#Set` must have no more than 2 elements, but the provided value has 3 elements"}},
-                {"ns.foo#Set", "[10]", new String[] {"0: Expected string value for string shape, `ns.foo#String`; found number value, `10`"}},
-                {"ns.foo#Set", "10", new String[] {"Expected array value for set shape, `ns.foo#Set`; found number value, `10`"}},
 
                 // map
                 {"ns.foo#Map", "{\"a\":[\"b\"]}", null},
@@ -265,67 +271,61 @@ public class NodeValidationVisitorTest {
                 {"ns.foo#Structure2", "{\"b\": \"12345678910\"}", null},
                 {"ns.foo#Structure2", "{\"b\": \"123\"}", new String[] {"b: String value provided for `ns.foo#Structure2$b` must be >= 10 characters, but the provided value is only 3 characters."}},
                 {"ns.foo#Structure2", "{\"c\": 11}", null},
-                {"ns.foo#Structure2", "{\"c\": 5}", new String[] {"c: Value provided for `ns.foo#Structure2$c` must be greater than or equal to 10, but found 5"}},
-
-                // Boxed members
-                {"ns.foo#Structure3", "{\"requiredInt\": 1, \"optionalInt\": 1, \"requiredInt2\": 2}", null},
-                {"ns.foo#Structure3", "{\"requiredInt\": 1, \"requiredInt2\": 2}", null},
-                {"ns.foo#Structure3", "{\"requiredInt2\": 2}", null},
-                {"ns.foo#Structure3", "{}", new String[] {"Missing required structure member `requiredInt2` for `ns.foo#Structure3`"}},
+                {"ns.foo#Structure2", "{\"c\": 5}", new String[] {"c: Value provided for `ns.foo#Structure2$c` must be greater than or equal to 10, but found 5"}}
         });
     }
 
     @Test
     public void canSuccessfullyValidateTimestampsAsUnixTimestamps() {
-        NodeValidationVisitor cases = NodeValidationVisitor.builder()
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
                 .value(Node.from(1234))
                 .model(MODEL)
                 .timestampValidationStrategy(TimestampValidationStrategy.EPOCH_SECONDS)
                 .build();
         List<ValidationEvent> events = MODEL
                 .expectShape(ShapeId.from("ns.foo#TimestampList$member"))
-                .accept(cases);
+                .accept(visitor);
 
         assertThat(events, empty());
     }
 
     @Test
     public void canUnsuccessfullyValidateTimestampsAsUnixTimestamps() {
-        NodeValidationVisitor cases = NodeValidationVisitor.builder()
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
                 .value(Node.from("foo"))
                 .model(MODEL)
                 .timestampValidationStrategy(TimestampValidationStrategy.EPOCH_SECONDS)
                 .build();
         List<ValidationEvent> events = MODEL
                 .expectShape(ShapeId.from("ns.foo#TimestampList$member"))
-                .accept(cases);
+                .accept(visitor);
 
         assertThat(events, not(empty()));
     }
 
     @Test
     public void doesNotAllowNullByDefault() {
-        NodeValidationVisitor cases = NodeValidationVisitor.builder()
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
                 .value(Node.nullNode())
                 .model(MODEL)
                 .build();
         List<ValidationEvent> events = MODEL
                 .expectShape(ShapeId.from("smithy.api#String"))
-                .accept(cases);
+                .accept(visitor);
 
         assertThat(events, not(empty()));
     }
 
     @Test
     public void canConfigureToSupportNull() {
-        NodeValidationVisitor cases = NodeValidationVisitor.builder()
+        NodeValidationVisitor visitor = NodeValidationVisitor.builder()
                 .value(Node.nullNode())
                 .model(MODEL)
-                .allowBoxedNull(true)
+                .allowOptionalNull(true)
                 .build();
         List<ValidationEvent> events = MODEL
                 .expectShape(ShapeId.from("smithy.api#String"))
-                .accept(cases);
+                .accept(visitor);
 
         assertThat(events, empty());
     }

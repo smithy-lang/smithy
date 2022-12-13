@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.waiters;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -27,7 +26,7 @@ import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.Tagged;
@@ -58,11 +57,11 @@ public final class Waiter implements Tagged, ToNode, ToSmithyBuilder<Waiter> {
 
     private Waiter(Builder builder) {
         this.documentation = builder.documentation;
-        this.acceptors = ListUtils.copyOf(builder.acceptors);
+        this.acceptors = builder.acceptors.copy();
         this.minDelay = builder.minDelay;
         this.maxDelay = builder.maxDelay;
         this.deprecated = builder.deprecated;
-        this.tags = ListUtils.copyOf(builder.tags);
+        this.tags = builder.tags.copy();
     }
 
     public static Builder builder() {
@@ -207,11 +206,11 @@ public final class Waiter implements Tagged, ToNode, ToSmithyBuilder<Waiter> {
     public static final class Builder implements SmithyBuilder<Waiter> {
 
         private String documentation;
-        private final List<Acceptor> acceptors = new ArrayList<>();
+        private final BuilderRef<List<Acceptor>> acceptors = BuilderRef.forList();
         private int minDelay = DEFAULT_MIN_DELAY;
         private int maxDelay = DEFAULT_MAX_DELAY;
         private boolean deprecated = false;
-        private final List<String> tags = new ArrayList<>();
+        private final BuilderRef<List<String>> tags = BuilderRef.forList();
 
         private Builder() {}
 
@@ -237,7 +236,7 @@ public final class Waiter implements Tagged, ToNode, ToSmithyBuilder<Waiter> {
         }
 
         public Builder addAcceptor(Acceptor acceptor) {
-            this.acceptors.add(Objects.requireNonNull(acceptor));
+            this.acceptors.get().add(Objects.requireNonNull(acceptor));
             return this;
         }
 
@@ -263,7 +262,7 @@ public final class Waiter implements Tagged, ToNode, ToSmithyBuilder<Waiter> {
         }
 
         public Builder addTag(String tag) {
-            this.tags.add(Objects.requireNonNull(tag));
+            this.tags.get().add(Objects.requireNonNull(tag));
             return this;
         }
 

@@ -1,7 +1,7 @@
 // This file defines test cases that test the basics of empty input and
 // output shape serialization.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.json10
 
@@ -147,6 +147,7 @@ apply NoInputAndOutput @httpResponseTests([
     }
 ])
 
+@output
 structure NoInputAndOutputOutput {}
 
 /// The example tests how requests and responses are serialized when there's
@@ -155,7 +156,7 @@ structure NoInputAndOutputOutput {}
 /// be rare, code generators must support this.
 operation EmptyInputAndEmptyOutput {
     input: EmptyInputAndEmptyOutputInput,
-    output: EmptyInputAndEmptyOutputInput
+    output: EmptyInputAndEmptyOutputOutput
 }
 
 apply EmptyInputAndEmptyOutput @httpRequestTests([
@@ -188,4 +189,8 @@ apply EmptyInputAndEmptyOutput @httpResponseTests([
     },
 ])
 
+@input
 structure EmptyInputAndEmptyOutputInput {}
+
+@output
+structure EmptyInputAndEmptyOutputOutput {}

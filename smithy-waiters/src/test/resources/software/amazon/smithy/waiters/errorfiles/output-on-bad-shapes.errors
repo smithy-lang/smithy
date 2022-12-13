@@ -1,1 +1,1 @@
-[ERROR] smithy.example#A: Waiter `A`, acceptor 0: output path used on operation with no output | WaitableTrait
+[DANGER] smithy.example#A: Waiter `A`, acceptor 0: Problem found in JMESPath expression (foo == 'hey'): Object field 'foo' does not exist in object with properties [] (1:1) | WaitableTraitJmespathProblem

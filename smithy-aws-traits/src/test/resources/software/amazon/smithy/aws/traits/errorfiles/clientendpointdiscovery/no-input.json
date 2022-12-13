@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#FooService": {
             "type": "service", 
@@ -41,16 +41,22 @@
             }
         }, 
         "ns.foo#DescribeEndpointsInput": {
-            "type": "structure"
-        }, 
+            "type": "structure",
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
         "ns.foo#DescribeEndpointsOutput": {
             "type": "structure", 
             "members": {
                 "Endpoints": {
                     "target": "ns.foo#Endpoints"
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
-        }, 
+        },
         "ns.foo#Endpoints": {
             "type": "list", 
             "member": {
@@ -96,16 +102,22 @@
                         "smithy.api#required": {}
                     }
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
-        }, 
+        },
         "ns.foo#GetObjectOutput": {
             "type": "structure", 
             "members": {
                 "Object": {
                     "target": "smithy.api#Blob"
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
-        }, 
+        },
         "ns.foo#PutObject": {
             "type": "operation", 
             "input": {
@@ -134,8 +146,11 @@
                 "Object": {
                     "target": "smithy.api#Blob"
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
-        }, 
+        },
         "ns.foo#InvalidEndpointError": {
             "type": "structure", 
             "traits": {

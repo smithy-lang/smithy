@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#Service2": {
             "type": "service",
@@ -13,10 +13,10 @@
         "ns.foo#MapTokens": {
             "type": "operation",
             "input": {
-                "target": "ns.foo#MapTokenInputOutput"
+                "target": "ns.foo#MapTokensInput"
             },
             "output": {
-                "target": "ns.foo#MapTokenInputOutput"
+                "target": "ns.foo#MapTokensOutput"
             },
             "traits": {
                 "smithy.api#readonly": {},
@@ -26,12 +26,26 @@
                 }
             }
         },
-        "ns.foo#MapTokenInputOutput": {
+        "ns.foo#MapTokensInput": {
             "type": "structure",
             "members": {
                 "nextToken": {
                     "target": "ns.foo#StringMap"
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#MapTokensOutput": {
+            "type": "structure",
+            "members": {
+                "nextToken": {
+                    "target": "ns.foo#StringMap"
+                }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#StringMap": {

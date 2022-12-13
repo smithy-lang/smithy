@@ -1,3 +1,5 @@
+$version: "2.0"
+
 namespace smithy.example
 
 @paginated(inputToken: "token", outputToken: "token", items: "things", pageSize: "maxResults")

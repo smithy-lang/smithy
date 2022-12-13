@@ -1,11 +1,11 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace smithy.example
 
 use aws.api#service
 use aws.cloudformation#cfnResource
 
-@service(sdkId: "Some Thing", cloudFormationName: "SomeThing")
+@service(sdkId: "Some Thing", cloudFormationName: "SomeThing", arnNamespace: "something")
 service TestService {
     version: "2020-07-02",
     resources: [
@@ -28,8 +28,11 @@ resource FooResource {
     create: CreateFooOperation,
     read: GetFooOperation,
     update: UpdateFooOperation,
+    delete: DeleteFooOperation,
+    list: ListFoosOperation
 }
 
+@aws.iam#requiredActions(["otherservice:DescribeDependencyComponent"])
 operation CreateFooOperation {
     input: CreateFooRequest,
     output: CreateFooResponse,
@@ -98,6 +101,40 @@ structure UpdateFooResponse {
     @deprecated(message: "Use the `fooValidFullyMutableProperty` property.")
     fooDeprecatedMutableProperty: String,
 
+    fooValidFullyMutableProperty: ComplexProperty,
+}
+
+@idempotent
+operation DeleteFooOperation {
+    input: DeleteFooRequest,
+    output: DeleteFooResponse,
+}
+
+structure DeleteFooRequest {
+    @required
+    fooId: FooId,
+}
+
+structure DeleteFooResponse {}
+
+@readonly
+operation ListFoosOperation {
+    input: ListFoosRequest,
+    output: ListFoosResult,
+}
+
+structure ListFoosRequest {}
+
+structure ListFoosResult {
+    foos: FooSummaryList,
+}
+
+list FooSummaryList {
+    member: FooSummary
+}
+
+structure FooSummary {
+    fooId: FooId,
     fooValidFullyMutableProperty: ComplexProperty,
 }
 

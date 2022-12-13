@@ -37,6 +37,6 @@ public class ClientEndpointDiscoveryTraitTest {
         ClientEndpointDiscoveryTrait trait = service.getTrait(ClientEndpointDiscoveryTrait.class).get();
 
         assertEquals(trait.getOperation(), ShapeId.from("ns.foo#DescribeEndpoints"));
-        assertEquals(trait.getError(), ShapeId.from("ns.foo#InvalidEndpointError"));
+        assertEquals(trait.getOptionalError().get(), ShapeId.from("ns.foo#InvalidEndpointError"));
     }
 }

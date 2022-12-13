@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#MyService": {
             "type": "service",
@@ -191,7 +191,7 @@
                 "Id": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#pattern": "foo",
+                        "smithy.api#pattern": "^.*foo.*$",
                         "smithy.api#httpLabel": {},
                         "smithy.api#required": {}
                     }
@@ -225,13 +225,13 @@
         "ns.foo#FooPatternString": {
             "type": "string",
             "traits": {
-                "smithy.api#pattern": "foo"
+                "smithy.api#pattern": "^.*foo.*$"
             }
         },
         "ns.foo#BarPatternString": {
             "type": "string",
             "traits": {
-                "smithy.api#pattern": "bar"
+                "smithy.api#pattern": "^.*bar.*$"
             }
         },
         "ns.foo#NestedAllowableConflicts": {
@@ -393,7 +393,7 @@
                     "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#hostLabel": {},
-                        "smithy.api#pattern": "foo",
+                        "smithy.api#pattern": "^.*foo.*$",
                         "smithy.api#required": {}
                     }
                 }

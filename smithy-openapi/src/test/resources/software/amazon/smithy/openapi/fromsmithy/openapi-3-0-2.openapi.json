@@ -1,0 +1,77 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Example",
+    "version": "2022-07-10"
+  },
+  "paths": {
+    "/test": {
+      "put": {
+        "operationId": "FooBar",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FooBarRequestContent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "FooBar 200 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FooBarResponseContent"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "FooBarError 400 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FooBarErrorResponseContent"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "FooBarErrorResponseContent": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "number"
+          }
+        }
+      },
+      "FooBarRequestContent": {
+        "type": "object",
+        "properties": {
+          "foo": {
+            "type": "number"
+          },
+          "file": {
+            "type": "string",
+            "format": "byte"
+          }
+        }
+      },
+      "FooBarResponseContent": {
+        "type": "object",
+        "properties": {
+          "bar": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  }
+}

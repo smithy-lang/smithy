@@ -9,7 +9,7 @@
 [ERROR] ns.foo#InvalidListMemberResource$member: Members cannot target resource shapes, but found (resource: `ns.foo#MyResource`) | Target
 [ERROR] ns.foo#InvalidListMemberService$member: Members cannot target service shapes, but found (service: `ns.foo#MyService`) | Target
 [ERROR] ns.foo#InvalidMapType: Map key member targets (structure: `ns.foo#ValidInput`), but is expected to target a string | Target
-[ERROR] ns.foo#InvalidOperationBadErrorTraits: Operation error targets an invalid structure, `ns.foo#ValidInput`, that is not marked with the `error` trait. | Target
+[ERROR] ns.foo#InvalidOperationBadErrorTraits: `ns.foo#ValidInput` cannot be bound as an error because it is not marked with the `error` trait. | Target
 [ERROR] ns.foo#InvalidOperationBadErrorTraits: Operation input targets an invalid structure `ns.foo#ValidError` that is marked with the `error` trait. | Target
 [ERROR] ns.foo#InvalidOperationBadErrorTraits: Operation output targets an invalid structure `ns.foo#ValidError` that is marked with the `error` trait. | Target
 [ERROR] ns.foo#InvalidResourceBindingReference: resource shape has a `resource` relationship to an unresolved shape `ns.foo#NotFound` | Target

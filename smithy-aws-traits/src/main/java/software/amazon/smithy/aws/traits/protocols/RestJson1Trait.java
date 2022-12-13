@@ -50,7 +50,9 @@ public final class RestJson1Trait extends AwsProtocolTrait {
 
         @Override
         public RestJson1Trait createTrait(ShapeId target, Node value) {
-            return builder().sourceLocation(value).fromNode(value).build();
+            RestJson1Trait result = builder().fromNode(value).build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 }

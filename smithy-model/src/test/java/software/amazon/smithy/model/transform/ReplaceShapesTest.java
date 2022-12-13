@@ -16,20 +16,23 @@
 package software.amazon.smithy.model.transform;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
+import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
@@ -41,13 +44,56 @@ import software.amazon.smithy.model.traits.SensitiveTrait;
 public class ReplaceShapesTest {
 
     @Test
-    public void cannotChangeShapeTypes() {
-        Assertions.assertThrows(RuntimeException.class, () -> {
+    public void cannotChangeComplexShapeTypes() {
+        ModelTransformException ex = assertThrows(ModelTransformException.class, () -> {
             ShapeId shapeId = ShapeId.from("ns.foo#id1");
             StringShape shape = StringShape.builder().id(shapeId).build();
-            Model model = Model.builder().addShape(shape).build();
+            Model model = Model.builder()
+                    .addShape(shape)
+                    .addShape(LongShape.builder().id("ns.foo#id2").build())
+                    .build();
             ModelTransformer transformer = ModelTransformer.create();
-            transformer.mapShapes(model, s -> IntegerShape.builder().id(shapeId).build());
+            transformer.mapShapes(model, s -> {
+                if (s.getId().equals(shapeId)) {
+                    return StructureShape.builder()
+                        .id(shapeId)
+                        .addMember(
+                                MemberShape.builder()
+                                        .id(ShapeId.from("ns.foo#id1$member1"))
+                                        .target("ns.foo#id2")
+                                        .build()
+                        ).build();
+                }
+                return s;
+            });
+        });
+
+        assertEquals("Cannot change the type of ns.foo#id1 from string to structure", ex.getMessage());
+    }
+
+    @Test
+    public void canChangeSimpleShapeTypes() {
+        ShapeId shapeId = ShapeId.from("ns.foo#id1");
+        IntegerShape shape = IntegerShape.builder().id(shapeId).build();
+        Model model = Model.builder().addShape(shape).build();
+        ModelTransformer transformer = ModelTransformer.create();
+        transformer.mapShapes(model, s -> LongShape.builder().id(shapeId).build());
+    }
+
+    @Test
+    public void canExchangeSimilarListCollectionTypes() {
+        ShapeId shapeId = ShapeId.from("ns.foo#id1");
+        ListShape shape = ListShape.builder().id(shapeId).member(ShapeId.from("smithy.api#Long")).build();
+        Model model = Model.builder()
+                .addShape(shape)
+                .addShape(LongShape.builder().id(ShapeId.from("smithy.api#Long")).build())
+                .build();
+        ModelTransformer transformer = ModelTransformer.create();
+        transformer.mapShapes(model, s -> {
+            if (s.getId().equals(shapeId)) {
+                return SetShape.builder().id(shapeId).member(ShapeId.from("smithy.api#Long")).build();
+            }
+            return s;
         });
     }
 

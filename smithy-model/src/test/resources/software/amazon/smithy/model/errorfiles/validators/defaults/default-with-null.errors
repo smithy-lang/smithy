@@ -1,0 +1,1 @@
+[ERROR] smithy.example#NullableInteger: The @default trait can be set to null only on members | DefaultTrait

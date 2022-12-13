@@ -66,7 +66,7 @@ public final class ExternalDocumentationTrait extends AbstractTrait
 
     @Override
     protected Node createNode() {
-        return ObjectNode.fromStringMap(urls);
+        return ObjectNode.fromStringMap(urls).toBuilder().sourceLocation(getSourceLocation()).build();
     }
 
     @Override
@@ -122,7 +122,9 @@ public final class ExternalDocumentationTrait extends AbstractTrait
             value.expectObjectNode().getMembers().forEach((k, v) -> {
                 builder.addUrl(k.expectStringNode().getValue(), v.expectStringNode().getValue());
             });
-            return builder.build();
+            ExternalDocumentationTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 }

@@ -1,0 +1,24 @@
+{
+    "definitions": {
+        "Foo": {
+            "type": "object",
+            "properties": {
+                "bam": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "default": []
+                },
+                "bar": {
+                    "type": "number",
+                    "default": 0
+                },
+                "baz": {
+                    "type": "string",
+                    "default": ""
+                }
+            }
+        }
+    }
+}

@@ -29,14 +29,12 @@ public final class ChangedOperationInput extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.changedShapes(OperationShape.class)
-                .filter(change -> change.getOldShape().getInput().isPresent()
-                                  && change.getNewShape().getInput().isPresent()
-                                  && !change.getOldShape().getInput().equals(change.getNewShape().getInput()))
+                .filter(change -> !change.getOldShape().getInputShape().equals(change.getNewShape().getInputShape()))
                 .map(change -> error(change.getNewShape(), String.format(
-                        "Input shape of `%s` changed from `%s` to `%s`",
+                        "Changed operation input of `%s` from `%s` to `%s`",
                         change.getShapeId(),
-                        change.getOldShape().getInput().get(),
-                        change.getNewShape().getInput().get())))
+                        change.getOldShape().getInputShape(),
+                        change.getNewShape().getInputShape())))
                 .collect(Collectors.toList());
     }
 }

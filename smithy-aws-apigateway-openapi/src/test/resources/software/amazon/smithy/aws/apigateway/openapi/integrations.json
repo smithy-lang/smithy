@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "smithy.example#Service": {
             "type": "service",
@@ -31,7 +31,6 @@
                         "integration.request.querystring.provider": "method.request.querystring.vendor"
                     },
                     "cacheNamespace": "cache namespace",
-                    "cacheKeyParameters": [],
                     "passThroughBehavior": "never",
                     "payloadFormatVersion": "1.0",
                     "responses": {
@@ -189,6 +188,12 @@
                         "smithy.api#httpQuery": "version",
                         "smithy.api#required": {}
                     }
+                },
+                "connectionType": {
+                    "target": "smithy.example#ConnectionType",
+                    "traits": {
+                        "smithy.api#httpHeader": "x-amz-connection-type"
+                    }
                 }
             }
         },
@@ -201,6 +206,21 @@
                         "smithy.api#httpHeader": "requestId"
                     }
                 }
+            }
+        },
+        "smithy.example#ConnectionType": {
+            "type": "string",
+            "traits": {
+                "smithy.api#enum": [
+                    {
+                        "value": "a",
+                        "name": "A"
+                    },
+                    {
+                        "value": "c",
+                        "name": "C"
+                    }
+                ]
             }
         }
     }

@@ -1,0 +1,21 @@
+{
+    "version": "2.0",
+    "projections": {
+        "foo": {
+            "transforms": [
+                {
+                    "name": "excludeMetadata",
+                    "args": {
+                        "keys": ["validators"]
+                    }
+                },
+                {
+                    "name": "filterSuppressions",
+                    "args": {
+                        "removeUnused": true
+                    }
+                }
+            ]
+        }
+    }
+}

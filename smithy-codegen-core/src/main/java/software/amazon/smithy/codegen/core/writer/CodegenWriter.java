@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -19,12 +19,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.logging.Logger;
+import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolContainer;
 import software.amazon.smithy.codegen.core.SymbolDependency;
 import software.amazon.smithy.codegen.core.SymbolDependencyContainer;
 import software.amazon.smithy.codegen.core.SymbolReference;
+import software.amazon.smithy.utils.AbstractCodeWriter;
 import software.amazon.smithy.utils.CodeWriter;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -63,14 +66,30 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * }
  * }</pre>
  *
+ *
+ * <h2>Formatting symbols with "T"</h2>
+ *
+ * <p>{@code CodegenWriter} registers a default formatter for "T" that writes
+ * {@link Symbol}s and {@link SymbolReference}s. Imports needed by these types
+ * are automatically registered with {@link #addUseImports} for a {@code Symbol}
+ * and {@link #addImport} for a {@code SymbolReference}. Programming languages
+ * that have a concept of namespaces can use {@link #setRelativizeSymbols} to
+ * the namespace of the CodegenWriter, and then the default symbol formatter
+ * will relativize symbols against that namespace using {@link Symbol#relativize}
+ * when writing the symbol as a string.
+ *
  * @param <T> The concrete type, used to provide a fluent interface.
  * @param <U> The import container used by the writer to manage imports.
+ * @deprecated prefer {@link software.amazon.smithy.codegen.core.SymbolWriter}.
+ * This will be removed in a future release.
  */
 @SmithyUnstableApi
+@Deprecated
 public class CodegenWriter<T extends CodegenWriter<T, U>, U extends ImportContainer>
         extends CodeWriter implements SymbolDependencyContainer {
 
     private static final Logger LOGGER = Logger.getLogger(CodegenWriter.class.getName());
+    private static final String RELATIVIZE_SYMBOLS = "__CodegenWriterRelativizeSymbols";
 
     private final List<SymbolDependency> dependencies = new ArrayList<>();
     private final DocumentationWriter<T> documentationWriter;
@@ -83,6 +102,70 @@ public class CodegenWriter<T extends CodegenWriter<T, U>, U extends ImportContai
     public CodegenWriter(DocumentationWriter<T> documentationWriter, U importContainer) {
         this.documentationWriter = documentationWriter;
         this.importContainer = importContainer;
+
+        // Register T by default. This can be overridden as needed.
+        putFormatter('T', new DefaultSymbolFormatter());
+    }
+
+    /**
+     * The default implementation for formatting Symbols in CodegenWriter.
+     */
+    private final class DefaultSymbolFormatter implements BiFunction<Object, String, String> {
+        @Override
+        public String apply(Object type, String indent) {
+            if (type instanceof Symbol) {
+                Symbol typeSymbol = (Symbol) type;
+                addUseImports(typeSymbol);
+                String relativizeSymbols = getContext(RELATIVIZE_SYMBOLS, String.class);
+                if (relativizeSymbols != null) {
+                    return typeSymbol.relativize(relativizeSymbols);
+                } else {
+                    return typeSymbol.toString();
+                }
+            } else if (type instanceof SymbolReference) {
+                SymbolReference typeSymbol = (SymbolReference) type;
+                addImport(typeSymbol.getSymbol(), typeSymbol.getAlias(), SymbolReference.ContextOption.USE);
+                return typeSymbol.getAlias();
+            } else {
+                throw new CodegenException("Invalid type provided to $T. Expected a Symbol or SymbolReference, "
+                                           + "but found `" + type + "`");
+            }
+        }
+    }
+
+    /**
+     * Sets a string used to relativize Symbols formatted using the default {@code T}
+     * implementation used by {@code CodegenWriter} in the <em>current state</em>.
+     *
+     * <p>In many programming languages, when referring to types in the same namespace as
+     * the current scope of a CodegenWriter, the symbols written in that scope don't need
+     * to be fully-qualified. They can just reference the unqualified type name. By setting
+     * a value for {@code relativizeSymbols}, if the result of {@link Symbol#getNamespace()}
+     * is equal to {@code relativizeSymbols}, then the unqualified name of the symbol is
+     * written to the {@code CodegenWriter} when the default implementation of {@code T}
+     * is written. Symbols that refer to types in other namespaces will write the fully
+     * qualified type.
+     *
+     * <p><strong>Note:</strong> This method may have no effect if a programming language
+     * does not use namespaces or concepts like namespaces or if {@code T} has been
+     * overridden with another implementation.
+     *
+     * @param relativizeSymbols The package name, namespace, etc to relativize symbols with.
+     * @return Returns the CodegenWriter.
+     */
+    @SuppressWarnings("unchecked")
+    public T setRelativizeSymbols(String relativizeSymbols) {
+        putContext(RELATIVIZE_SYMBOLS, relativizeSymbols);
+        return (T) this;
+    }
+
+    /**
+     * Gets the documentation writer.
+     *
+     * @return Returns the documentation writer.
+     */
+    public final DocumentationWriter<T> getDocumentationWriter() {
+        return documentationWriter;
     }
 
     /**
@@ -232,7 +315,7 @@ public class CodegenWriter<T extends CodegenWriter<T, U>, U extends ImportContai
      *
      * <p>This method <em>does not</em> automatically escape the expression
      * start character ("$" by default). Write calls made by the Runnable
-     * should either use {@link CodeWriter#writeWithNoFormatting} or escape
+     * should either use {@link AbstractCodeWriter#writeWithNoFormatting} or escape
      * the expression start character manually.
      *
      * <p>This method may be overridden as needed.

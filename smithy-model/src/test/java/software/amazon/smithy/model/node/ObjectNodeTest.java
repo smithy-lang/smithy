@@ -22,6 +22,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -31,8 +32,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.SourceLocation;
@@ -372,5 +375,138 @@ public class ObjectNodeTest {
         Assertions.assertThrows(ExpectationNotMetException.class, () -> {
             EXPECTATION_NODE.expectStringMember("object");
         });
+    }
+
+    @Test
+    public void failsWhenRequiredMemberMissing() {
+        Node value = Node.objectNode();
+
+        Assertions.assertThrows(ExpectationNotMetException.class, () -> {
+            value.expectObjectNode().expectMember("foo", Function.identity(), v -> {});
+        });
+    }
+
+    @Test
+    public void failsWhenOptionalStringMemberIsWrongType() {
+        ObjectNode value = Node.objectNode().withMember("foo", Node.from(true));
+
+        Assertions.assertThrows(ExpectationNotMetException.class, () -> {
+            value.getStringMember("foo", v -> {});
+        });
+    }
+
+    @Test
+    public void failsWhenRequiredBooleanMemberIsWrongType() {
+        ObjectNode value = Node.objectNode().withMember("foo", Node.from("hi"));
+
+        Assertions.assertThrows(ExpectationNotMetException.class, () -> {
+            value.expectBooleanMember("foo", v -> {});
+        });
+    }
+
+    @Test
+    public void failsWhenOptionalBooleanMemberIsWrongType() {
+        ObjectNode value = Node.objectNode().withMember("foo", Node.from("hi"));
+
+        Assertions.assertThrows(ExpectationNotMetException.class, () -> {
+            value.getBooleanMember("foo", v -> {});
+        });
+    }
+
+    @Test
+    public void failsWhenOptionalNumberMemberIsWrongType() {
+        ObjectNode value = Node.objectNode().withMember("foo", Node.from("hi"));
+
+        Assertions.assertThrows(ExpectationNotMetException.class, () -> {
+            value.getNumberMember("foo", v -> {});
+        });
+    }
+
+    @Test
+    public void failsWhenRequiredNumberMemberIsWrongType() {
+        ObjectNode value = Node.objectNode().withMember("foo", Node.from("hi"));
+
+        Assertions.assertThrows(ExpectationNotMetException.class, () -> {
+            value.expectNumberMember("foo", v -> {});
+        });
+    }
+
+    @Test
+    public void failsWhenExpectedList() {
+        ObjectNode value = Node.objectNode().withMember("foo", Node.from("hi"));
+
+        Assertions.assertThrows(ExpectationNotMetException.class, () -> {
+            value.expectArrayMember("foo", Function.identity(), v -> {});
+        });
+    }
+
+    @Test
+    public void failsWhenExpectedListOfString() {
+        ObjectNode value = Node.objectNode().withMember("foo", Node.arrayNode(Node.from(true)));
+
+        Assertions.assertThrows(ExpectationNotMetException.class, () -> {
+            value.expectArrayMember("foo", StringNode::getValue, v -> {});
+        });
+    }
+
+    @Test
+    public void successfullyConsumesTypes() {
+        ObjectNode value = Node.objectNodeBuilder()
+                .withMember("number1", Node.from(1))
+                .withMember("number2", Node.from(2))
+                .withMember("string1", Node.from("a"))
+                .withMember("string2", Node.from("b"))
+                .withMember("boolean1", Node.from(true))
+                .withMember("boolean2", Node.from(false))
+                .withMember("array1", Node.fromNodes(Node.from("a")))
+                .withMember("array2", Node.fromNodes(Node.from("b")))
+                .withMember("null1", Node.nullNode())
+                .withMember("object1", Node.objectNode())
+                .withMember("object2", Node.objectNode())
+                .withMember("mapper", Node.objectNode().withMember("a", Node.from("hello")))
+                .build();
+
+        Map<String, Object> result = new HashMap<>();
+        value.expectObjectNode()
+                .getNumberMember("number1", v -> result.put("number1", v))
+                .expectNumberMember("number2", v -> result.put("number2", v))
+                .getNumberMember("number3", v -> result.put("number3", v))
+                .getStringMember("string1", v -> result.put("string1", v))
+                .expectStringMember("string2", v -> result.put("string2", v))
+                .getStringMember("string3", v -> result.put("string3", v))
+                .getBooleanMember("boolean1", v -> result.put("boolean1", v))
+                .expectBooleanMember("boolean2", v -> result.put("boolean2", v))
+                .getBooleanMember("boolean3", v -> result.put("boolean3", v))
+                .getArrayMember("array1", StringNode::getValue, v -> result.put("array1", v))
+                .expectArrayMember("array2", StringNode::getValue, v -> result.put("array2", v))
+                .getArrayMember("array3", StringNode::getValue, v -> result.put("array3", v))
+                .getMember("null1", Node::expectNullNode, v -> result.put("null1", null))
+                .getObjectMember("object1", v -> result.put("object1", v))
+                .expectObjectMember("object2", v -> result.put("object2", v))
+                .expectMember("mapper", Mapper::fromNode, v -> result.put("mapper", v));
+
+        assertThat(result.keySet(), Matchers.equalTo(value.getStringMap().keySet()));
+        assertThat(result.get("number1"), Matchers.equalTo(1));
+        assertThat(result.get("number2"), Matchers.equalTo(2));
+        assertThat(result.get("string1"), Matchers.equalTo("a"));
+        assertThat(result.get("string2"), Matchers.equalTo("b"));
+        assertThat(result.get("boolean1"), Matchers.equalTo(true));
+        assertThat(result.get("boolean2"), Matchers.equalTo(false));
+        assertThat(result.get("array1"), Matchers.equalTo(Collections.singletonList("a")));
+        assertThat(result.get("array2"), Matchers.equalTo(Collections.singletonList("b")));
+        assertThat(result.get("null1"), nullValue());
+        assertThat(result.get("object1"), Matchers.equalTo(Node.objectNode()));
+        assertThat(result.get("object2"), Matchers.equalTo(Node.objectNode()));
+        assertThat(result.get("mapper"), Matchers.instanceOf(Mapper.class));
+    }
+
+    private static final class Mapper {
+        String a;
+
+        public static Mapper fromNode(Node node) {
+            Mapper mapper = new Mapper();
+            node.expectObjectNode().expectStringMember("a", value -> mapper.a = value);
+            return mapper;
+        }
     }
 }

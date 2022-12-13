@@ -1,0 +1,2 @@
+[ERROR] smithy.example#badList: Invalid trait breakingChanges element 0, '/foo', at segment 'foo': Evaluated shape `smithy.example#badList`, a list, has no member named `foo` | TraitBreakingChanges
+[ERROR] smithy.example#badSet: Invalid trait breakingChanges element 0, '/foo', at segment 'foo': Evaluated shape `smithy.example#badSet`, a list, has no member named `foo` | TraitBreakingChanges

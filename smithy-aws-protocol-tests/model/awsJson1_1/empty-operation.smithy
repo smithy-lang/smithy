@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.json
 
@@ -11,6 +11,10 @@ use smithy.test#httpResponseTests
         id: "sends_requests_to_slash",
         protocol: awsJson1_1,
         documentation: "Sends requests to /",
+        headers: {
+            "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.EmptyOperation",
+        },
         method: "POST",
         uri: "/",
     },
@@ -39,6 +43,7 @@ use smithy.test#httpResponseTests
         bodyMediaType: "application/json",
         headers: {
             "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.EmptyOperation",
         },
         method: "POST",
         uri: "/"
@@ -55,6 +60,7 @@ use smithy.test#httpResponseTests
         body: "",
         headers: {
             "Content-Type": "application/x-amz-json-1.1",
+            "X-Amz-Target": "JsonProtocol.EmptyOperation",
         },
         method: "POST",
         uri: "/",

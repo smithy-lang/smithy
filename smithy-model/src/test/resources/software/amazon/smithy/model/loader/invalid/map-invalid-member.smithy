@@ -1,4 +1,4 @@
-// Parse error at line 7, column 7 near `: `: Unexpected member of com.foo#MyMap: 'fuzz'
+// Parse error at line 7, column 3 near `fuzz`: Expected: '}', but found 'f' | Model
 namespace com.foo
 
 map MyMap {

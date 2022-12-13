@@ -1,7 +1,7 @@
 // This file defines test cases that test the basics of empty input and
 // output shape serialization.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.ec2
 
@@ -27,9 +27,7 @@ apply NoInputAndOutput @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=NoInputAndOutput
-              &Version=2020-01-08""",
+        body: "Action=NoInputAndOutput&Version=2020-01-08",
         bodyMediaType: "application/x-www-form-urlencoded"
     }
 ])
@@ -73,9 +71,7 @@ apply EmptyInputAndEmptyOutput @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=EmptyInputAndEmptyOutput
-              &Version=2020-01-08""",
+        body: "Action=EmptyInputAndEmptyOutput&Version=2020-01-08",
         bodyMediaType: "application/x-www-form-urlencoded"
     },
 ])

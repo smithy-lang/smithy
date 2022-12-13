@@ -1,3 +1,5 @@
+$version: "2.0"
+
 metadata foo = 10
 metadata foo = ["hi"]
 metadata baz = [10]

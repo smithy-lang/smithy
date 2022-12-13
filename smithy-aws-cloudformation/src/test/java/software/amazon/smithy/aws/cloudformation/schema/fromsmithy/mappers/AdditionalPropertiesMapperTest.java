@@ -28,7 +28,7 @@ public class AdditionalPropertiesMapperTest {
     @Test
     public void setsAdditionalPropertiesFalse() {
         Model model = Model.assembler()
-                .addImport(JsonAddTest.class.getResource("simple.smithy"))
+                .addImport(AdditionalPropertiesMapperTest.class.getResource("simple.smithy"))
                 .discoverModels()
                 .assemble()
                 .unwrap();

@@ -1,12 +1,13 @@
 // This file defines test cases that serialize lists in XML documents.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.ec2
 
 use aws.protocols#ec2Query
 use aws.protocoltests.shared#BooleanList
 use aws.protocoltests.shared#FooEnumList
+use aws.protocoltests.shared#IntegerEnumList
 use aws.protocoltests.shared#IntegerList
 use aws.protocoltests.shared#NestedStringList
 use aws.protocoltests.shared#StringList
@@ -61,6 +62,10 @@ apply XmlLists @httpResponseTests([
                       <member>Foo</member>
                       <member>0</member>
                   </enumList>
+                  <intEnumList>
+                      <member>1</member>
+                      <member>2</member>
+                  </intEnumList>
                   <nestedStringList>
                       <member>
                           <member>foo</member>
@@ -107,6 +112,7 @@ apply XmlLists @httpResponseTests([
             booleanList: [true, false],
             timestampList: [1398796238, 1398796238],
             enumList: ["Foo", "0"],
+            intEnumList: [1, 2],
             nestedStringList: [["foo", "bar"], ["baz", "qux"]],
             renamedListMembers: ["foo", "bar"],
             flattenedList: ["hi", "bye"],
@@ -169,6 +175,8 @@ structure XmlListsOutput {
     timestampList: TimestampList,
 
     enumList: FooEnumList,
+
+    intEnumList :IntegerEnumList,
 
     nestedStringList: NestedStringList,
 

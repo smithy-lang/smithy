@@ -11,7 +11,7 @@
         "tags": ["baz", "foo"],
         "responses": {
           "200": {
-            "description": "Operation1 response"
+            "description": "Operation1 200 response"
           }
         }
       }
@@ -21,7 +21,7 @@
         "operationId": "Operation2",
         "responses": {
           "200": {
-            "description": "Operation2 response"
+            "description": "Operation2 200 response"
           }
         }
       }
@@ -31,7 +31,7 @@
         "operationId": "Operation3",
         "responses": {
           "200": {
-            "description": "Operation3 response"
+            "description": "Operation3 200 response"
           }
         }
       }

@@ -1,0 +1,31 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#Service": {
+            "type": "service",
+            "version": "2006-03-01",
+            "operations": [
+                {
+                    "target": "smithy.example#Operation"
+                }
+            ],
+            "traits": {
+                "aws.protocols#restJson1": {},
+                "smithy.api#httpApiKeyAuth": {
+                    "name": "Authorization",
+                    "in": "header",
+                    "scheme": "whatever-scheme-we-want"
+                }
+            }
+        },
+        "smithy.example#Operation": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/",
+                    "method": "GET"
+                }
+            }
+        }
+    }
+}

@@ -111,4 +111,41 @@
         <Class name="software.amazon.smithy.model.knowledge.HttpBindingIndex"/>
         <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
     </Match>
+
+    <!-- current is used to create an internal linked list's next value from a list -->
+    <Match>
+        <Class name="software.amazon.smithy.model.selector.PathFinder$Path"/>
+        <Bug pattern="UC_USELESS_OBJECT"/>
+    </Match>
+
+    <Match>
+        <Class name="software.amazon.smithy.cli.Arguments"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- Spotbugs for some reason isn't seeing that Objects.requireNonNull prevents a null return.
+         this is used when dereferencing a WeakReference to the Model. -->
+    <Match>
+        <Class name="software.amazon.smithy.model.knowledge.NullableIndex"/>
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+    </Match>
+
+    <!-- Spotbugs for some reason isn't seeing that Objects.requireNonNull prevents a null return.
+         this is used when dereferencing a WeakReference to the Model. -->
+    <Match>
+        <Class name="software.amazon.smithy.model.knowledge.PropertyBindingIndex"/>
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+    </Match>
+
+    <!-- This is a false positive. The value is guarded behind an Objects.requireNonNull -->
+    <Match>
+        <Class name="software.amazon.smithy.rulesengine.traits.ContextIndex"/>
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+    </Match>
+
+    <!-- We don't care about the return value of putIfAbsent in this cache -->
+    <Match>
+        <Class name="software.amazon.smithy.model.shapes.ShapeId$ShapeIdFactory"/>
+        <Bug pattern="RV_RETURN_VALUE_OF_PUTIFABSENT_IGNORED"/>
+    </Match>
 </FindBugsFilter>

@@ -1,16 +1,41 @@
-[DANGER] ns.foo#Structure$UpperCamelCase: Member shape member name, `UpperCamelCase`, is not lower camel case | DefaultCamelCase
-[DANGER] ns.foo#Structure$lowerCamelCase: Member shape member name, `lowerCamelCase`, is not upper camel case | OppositeOfDefaults
-[DANGER] ns.foo#Structure$snake_case: Member shape member name, `snake_case`, is not lower camel case | DefaultCamelCase
-[DANGER] ns.foo#Structure$snake_case: Member shape member name, `snake_case`, is not upper camel case | OppositeOfDefaults
-[DANGER] ns.foo#bam: string shape name, `bam`, is not upper camel case | DefaultCamelCase
-[DANGER] ns.foo#bam: string shape name, `bam`, is not upper camel case | OppositeOfDefaults
-[DANGER] ns.foo#snake_case: string shape name, `snake_case`, is not upper camel case | DefaultCamelCase
-[DANGER] ns.foo#snake_case: string shape name, `snake_case`, is not upper camel case | OppositeOfDefaults
+[DANGER] ns.foo#bam: string shape name, `bam`, is not upper camel case | LowerCamelCase
+[DANGER] ns.foo#snake_case: string shape name, `snake_case`, is not upper camel case | LowerCamelCase
+[DANGER] ns.foo#InvalidTrait: string trait definition, `InvalidTrait`, is not lower camel case | LowerCamelCase
+[DANGER] ns.foo#upperStructureTrait$UpperCamelCase: Member shape member name, `UpperCamelCase`, is not lower camel case; members in the ns.foo namespace must all use lower camel case. | LowerCamelCase
+[DANGER] ns.bar#upperStructureTrait$UpperCamelCase: Member shape member name, `UpperCamelCase`, is not lower camel case; members in the ns.bar namespace must all use lower camel case. | LowerCamelCase
+[DANGER] ns.bar#upperStructureTrait$SecondUpperCamelCase: Member shape member name, `SecondUpperCamelCase`, is not lower camel case; members in the ns.bar namespace must all use lower camel case. | LowerCamelCase
+[DANGER] ns.foo#upperStructureTrait$snake_case: Member shape member name, `snake_case`, is not lower camel case; members in the ns.foo namespace must all use lower camel case. | LowerCamelCase
+[DANGER] ns.baz#lowerStructureTrait$UpperCamelCase: Member shape member name, `UpperCamelCase`, is not lower camel case; members in the ns.baz namespace must all use lower camel case. | LowerCamelCase
+[DANGER] ns.foo#Structure$UpperCamelCase: Member shape member name, `UpperCamelCase`, is not lower camel case; members in the MyService must all use lower camel case. | LowerCamelCase
+[DANGER] ns.foo#Structure$SecondUpperCamelCase: Member shape member name, `SecondUpperCamelCase`, is not lower camel case; members in the MyService must all use lower camel case. | LowerCamelCase
+[DANGER] ns.foo#Structure$ThirdUpperCamelCase: Member shape member name, `ThirdUpperCamelCase`, is not lower camel case; members in the MyService must all use lower camel case. | LowerCamelCase
+[DANGER] ns.foo#Structure$FourthUpperCamelCase: Member shape member name, `FourthUpperCamelCase`, is not lower camel case; members in the MyService must all use lower camel case. | LowerCamelCase
+[DANGER] ns.foo#Structure$snake_case: Member shape member name, `snake_case`, is not lower camel case; members in the MyService must all use lower camel case. | LowerCamelCase
+
+
+[DANGER] ns.foo#InvalidTrait: string trait definition, `InvalidTrait`, is not lower camel case | UpperCamelCase
+[DANGER] ns.foo#bam: string shape name, `bam`, is not upper camel case | UpperCamelCase
+[DANGER] ns.foo#snake_case: string shape name, `snake_case`, is not upper camel case | UpperCamelCase
+[DANGER] ns.foo#lowerStructureTrait$lowerCamelCase: Member shape member name, `lowerCamelCase`, is not upper camel case; members in the ns.foo namespace must all use upper camel case. | UpperCamelCase
+[DANGER] ns.foo#upperStructureTrait$snake_case: Member shape member name, `snake_case`, is not upper camel case; members in the ns.foo namespace must all use upper camel case. | UpperCamelCase
+[DANGER] ns.bar#upperStructureTrait$lowerCamelCase: Member shape member name, `lowerCamelCase`, is not upper camel case; members in the ns.bar namespace must all use upper camel case. | UpperCamelCase
+[DANGER] ns.baz#lowerStructureTrait$lowerCamelCase: Member shape member name, `lowerCamelCase`, is not upper camel case; members in the ns.baz namespace must all use upper camel case. | UpperCamelCase
+[DANGER] ns.baz#lowerStructureTrait$secondLowerCamelCase: Member shape member name, `secondLowerCamelCase`, is not upper camel case; members in the ns.baz namespace must all use upper camel case. | UpperCamelCase
+[DANGER] ns.foo#Structure$snake_case: Member shape member name, `snake_case`, is not upper camel case; members in the MyService must all use upper camel case. | UpperCamelCase
+[DANGER] foo.protocols#fooJson1_1$foo: Member shape member name, `foo`, is not upper camel case; members in the foo.protocols namespace must all use upper camel case. | UpperCamelCase
+[DANGER] foo.auth#v1_1$name: Member shape member name, `name`, is not upper camel case; members in the foo.auth namespace must all use upper camel case. | UpperCamelCase
+[DANGER] ns.foo#Structure$lowerCamelCase: Member shape member name, `lowerCamelCase`, is not upper camel case; members in the MyService must all use upper camel case. | UpperCamelCase
+
+
 [DANGER] ns.foo#InvalidTrait: string trait definition, `InvalidTrait`, is not lower camel case | DefaultCamelCase
-[DANGER] ns.foo#InvalidTrait: string trait definition, `InvalidTrait`, is not lower camel case | OppositeOfDefaults
-[DANGER] ns.foo#upperStructureTrait$UpperCamelCase: Member shape member name, `UpperCamelCase`, is not lower camel case | DefaultCamelCase
-[DANGER] ns.foo#upperStructureTrait$snake_case: Member shape member name, `snake_case`, is not lower camel case | DefaultCamelCase
-[DANGER] ns.foo#upperStructureTrait$snake_case: Member shape member name, `snake_case`, is not upper camel case | OppositeOfDefaults
-[DANGER] ns.foo#lowerStructureTrait$lowerCamelCase: Member shape member name, `lowerCamelCase`, is not upper camel case | OppositeOfDefaults
-[DANGER] foo.protocols#fooJson1_1$foo: Member shape member name, `foo`, is not upper camel case | OppositeOfDefaults
-[DANGER] foo.auth#v1_1$name: Member shape member name, `name`, is not upper camel case | OppositeOfDefaults
+[DANGER] ns.foo#bam: string shape name, `bam`, is not upper camel case | DefaultCamelCase
+[DANGER] ns.foo#snake_case: string shape name, `snake_case`, is not upper camel case | DefaultCamelCase
+[DANGER] ns.foo#upperStructureTrait$snake_case: Member shape member name, `snake_case`, is not lower camel case; members in the ns.foo namespace must all use lower camel case. | DefaultCamelCase
+[DANGER] ns.foo#upperStructureTrait$UpperCamelCase: Member shape member name, `UpperCamelCase`, is not lower camel case; members in the ns.foo namespace must all use lower camel case. | DefaultCamelCase
+[DANGER] ns.bar#upperStructureTrait$lowerCamelCase: Member shape member name, `lowerCamelCase`, is not upper camel case; members in the ns.bar namespace must all use upper camel case. | DefaultCamelCase
+[DANGER] ns.baz#lowerStructureTrait$UpperCamelCase: Member shape member name, `UpperCamelCase`, is not lower camel case; members in the ns.baz namespace must all use lower camel case. | DefaultCamelCase
+[DANGER] ns.foo#Structure$lowerCamelCase: Member shape member name, `lowerCamelCase`, is not upper camel case; members in the MyService must all use upper camel case. | DefaultCamelCase
+[DANGER] ns.foo#Structure$snake_case: Member shape member name, `snake_case`, is not upper camel case; members in the MyService must all use upper camel case. | DefaultCamelCase
+
+[NOTE] ns.foo#Enum: The enum shape is not connected to from any service shape. | UnreferencedShape
+[NOTE] ns.foo#IntEnum: The intEnum shape is not connected to from any service shape. | UnreferencedShape

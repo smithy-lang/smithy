@@ -1,0 +1,1 @@
+[ERROR] smithy.example#Foo$bar: Error validating @default trait: Value provided for `smithy.example#StringMap` must have at least 1 entries, but the provided value only has 0 entries | DefaultTrait

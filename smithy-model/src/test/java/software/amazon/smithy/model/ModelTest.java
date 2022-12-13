@@ -38,6 +38,7 @@ import software.amazon.smithy.model.knowledge.KnowledgeIndex;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -45,6 +46,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 
 public class ModelTest {
 
@@ -205,6 +207,16 @@ public class ModelTest {
     }
 
     @Test
+    public void toSetWithTypeRespectsSubclassing() {
+        StringShape a = StringShape.builder().id("ns.foo#a").build();
+        EnumShape.Builder enumBuilder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#b");
+        EnumShape b = enumBuilder.addMember("FOO", "foo").build();
+        Model model = Model.builder().addShapes(a, b).build();
+
+        assertThat(model.toSet(StringShape.class), containsInAnyOrder(a, b));
+    }
+
+    @Test
     public void addsMembersAutomatically() {
         StringShape string = StringShape.builder().id("ns.foo#a").build();
         ListShape list = ListShape.builder()
@@ -233,6 +245,20 @@ public class ModelTest {
 
         assertThat(shapes, hasSize(1));
         assertThat(shapes, contains(string));
+    }
+
+    @Test
+    public void syntheticTraitsCanBeQueriedLikeNormalTraits() {
+        ShapeId originalId = ShapeId.from("com.foo.nested#Str");
+        StringShape stringShape = StringShape.builder()
+                .id("com.foo#Str")
+                .addTrait(new OriginalShapeIdTrait(originalId))
+                .build();
+        Model model = Model.builder()
+                .addShape(stringShape)
+                .build();
+
+        assertThat(model.getShapesWithTrait(OriginalShapeIdTrait.class), contains(stringShape));
     }
 
     /**

@@ -27,9 +27,11 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.UnitTypeTrait;
 
 public class OperationIndexTest {
 
@@ -49,11 +51,17 @@ public class OperationIndexTest {
     }
 
     @Test
-    public void indexesEmptyOperations() {
+    public void indexesUnitOperations() {
         OperationIndex opIndex = OperationIndex.of(model);
 
         assertThat(opIndex.getInput(ShapeId.from("ns.foo#A")), is(Optional.empty()));
+        assertThat(opIndex.getInputShape(ShapeId.from("ns.foo#A")).map(Shape::getId),
+                   equalTo(Optional.of(UnitTypeTrait.UNIT)));
+        assertThat(opIndex.expectInputShape(ShapeId.from("ns.foo#A")).getId(), equalTo(UnitTypeTrait.UNIT));
         assertThat(opIndex.getOutput(ShapeId.from("ns.foo#A")), is(Optional.empty()));
+        assertThat(opIndex.getOutputShape(ShapeId.from("ns.foo#A")).map(Shape::getId),
+                   equalTo(Optional.of(UnitTypeTrait.UNIT)));
+        assertThat(opIndex.expectOutputShape(ShapeId.from("ns.foo#A")).getId(), equalTo(UnitTypeTrait.UNIT));
         assertThat(opIndex.getErrors(ShapeId.from("ns.foo#A")), empty());
     }
 
@@ -62,12 +70,9 @@ public class OperationIndexTest {
         OperationIndex opIndex = OperationIndex.of(model);
         Shape input = model.getShape(ShapeId.from("ns.foo#Input")).get();
         Shape output = model.getShape(ShapeId.from("ns.foo#Output")).get();
-        Shape error1 = model.getShape(ShapeId.from("ns.foo#Error1")).get();
-        Shape error2 = model.getShape(ShapeId.from("ns.foo#Error2")).get();
 
         assertThat(opIndex.getInput(ShapeId.from("ns.foo#B")), is(Optional.of(input)));
         assertThat(opIndex.getOutput(ShapeId.from("ns.foo#B")), is(Optional.of(output)));
-        assertThat(opIndex.getErrors(ShapeId.from("ns.foo#B")), containsInAnyOrder(error1, error2));
     }
 
     @Test
@@ -106,5 +111,23 @@ public class OperationIndexTest {
 
         assertThat(opIndex.isOutputStructure(output), is(true));
         assertThat(opIndex.isOutputStructure(input), is(false));
+    }
+
+    @Test
+    public void getsOperationErrorsAndInheritedErrors() {
+        OperationIndex opIndex = OperationIndex.of(model);
+        ShapeId a = ShapeId.from("ns.foo#A");
+        ShapeId b = ShapeId.from("ns.foo#B");
+        ServiceShape service = model.expectShape(ShapeId.from("ns.foo#MyService"), ServiceShape.class);
+        StructureShape error1 = model.expectShape(ShapeId.from("ns.foo#Error1"), StructureShape.class);
+        StructureShape error2 = model.expectShape(ShapeId.from("ns.foo#Error2"), StructureShape.class);
+        StructureShape common1 = model.expectShape(ShapeId.from("ns.foo#CommonError1"), StructureShape.class);
+        StructureShape common2 = model.expectShape(ShapeId.from("ns.foo#CommonError2"), StructureShape.class);
+
+        assertThat(opIndex.getErrors(service), containsInAnyOrder(common1, common2));
+        assertThat(opIndex.getErrors(a), empty());
+        assertThat(opIndex.getErrors(service, a), containsInAnyOrder(common1, common2));
+        assertThat(opIndex.getErrors(b), containsInAnyOrder(error1, error2));
+        assertThat(opIndex.getErrors(service, b), containsInAnyOrder(error1, error2, common1, common2));
     }
 }

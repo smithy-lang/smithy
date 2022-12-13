@@ -21,9 +21,9 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 /**
  * Represents an {@code integer} shape.
  */
-public final class IntegerShape extends NumberShape implements ToSmithyBuilder<IntegerShape> {
+public class IntegerShape extends NumberShape implements ToSmithyBuilder<IntegerShape> {
 
-    private IntegerShape(Builder builder) {
+    IntegerShape(Builder builder) {
         super(builder);
     }
 
@@ -33,12 +33,12 @@ public final class IntegerShape extends NumberShape implements ToSmithyBuilder<I
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this);
+        return updateBuilder(builder());
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.integerShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.integerShape(this);
     }
 
     @Override
@@ -46,10 +46,15 @@ public final class IntegerShape extends NumberShape implements ToSmithyBuilder<I
         return Optional.of(this);
     }
 
+    @Override
+    public ShapeType getType() {
+        return ShapeType.INTEGER;
+    }
+
     /**
      * Builder used to create a {@link IntegerShape}.
      */
-    public static final class Builder extends AbstractShapeBuilder<Builder, IntegerShape> {
+    public static class Builder extends AbstractShapeBuilder<Builder, IntegerShape> {
         @Override
         public IntegerShape build() {
             return new IntegerShape(this);

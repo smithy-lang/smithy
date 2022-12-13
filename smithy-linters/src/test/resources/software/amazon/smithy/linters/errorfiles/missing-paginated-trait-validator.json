@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#String": {
             "type": "string"
@@ -15,12 +15,29 @@
         },
         "ns.foo#ListFoos": {
             "type": "operation",
+            "input": {"target": "ns.foo#ListFoosInput"},
+            "output": {"target": "ns.foo#ListFoosOutput"},
             "traits": {
                 "smithy.api#readonly": {}
             }
         },
+        "ns.foo#ListFoosInput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#ListFoosOutput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#output": {}
+            }
+        },
         "ns.foo#IgnoreMe": {
             "type": "operation",
+            "input": {
+                "target": "ns.foo#IgnoreMeInput"
+            },
             "output": {
                 "target": "ns.foo#IgnoreMeOutput"
             },
@@ -28,8 +45,17 @@
                 "smithy.api#readonly": {}
             }
         },
+        "ns.foo#IgnoreMeInput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
         "ns.foo#IgnoreMeOutput": {
-            "type": "structure"
+            "type": "structure",
+            "traits": {
+                "smithy.api#output": {}
+            }
         },
         "ns.foo#IgnoreMeToo": {
             "type": "operation",
@@ -58,6 +84,9 @@
                 "maxResults": {
                     "target": "ns.foo#Integer"
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#IgnoreMeTooOutput": {
@@ -72,6 +101,9 @@
                         "smithy.api#required": {}
                     }
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#A": {
@@ -89,6 +121,9 @@
                 "nextToken": {
                     "target": "ns.foo#String"
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#B": {
@@ -106,6 +141,9 @@
                 "marker": {
                     "target": "ns.foo#String"
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#GetFoos": {
@@ -126,6 +164,9 @@
                         "smithy.api#required": {}
                     }
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#GetBars": {
@@ -139,7 +180,10 @@
         },
         "ns.foo#GetBarsOutput": {
             "type": "structure",
-            "members": {}
+            "members": {},
+            "traits": {
+                "smithy.api#output": {}
+            }
         },
         "ns.foo#SchwiftyFoos": {
             "type": "operation",
@@ -165,6 +209,9 @@
                         "smithy.api#required": {}
                     }
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#SomeOperation": {
@@ -182,6 +229,9 @@
                 "fizz": {
                     "target": "ns.foo#String"
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#SomeOtherOperation": {
@@ -199,6 +249,9 @@
                 "buzz": {
                     "target": "ns.foo#String"
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         }
     },

@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#SomeService": {
             "type": "service",
@@ -18,7 +18,9 @@
                         "credentials": "arn:foo:bar",
                         "identitySource": "mapping.expression",
                         "identityValidationExpression": "[A-Z]+",
-                        "resultTtlInSeconds": 100
+                        "resultTtlInSeconds": 100,
+                        "authorizerPayloadFormatVersion": "2.0",
+                        "enableSimpleResponses": true
                     }
                 }
             }

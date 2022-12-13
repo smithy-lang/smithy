@@ -1,0 +1,1 @@
+[WARNING] smithy.example#someSet: Set shapes are deprecated and have been removed in Smithy IDL v2. Use a list shape with the @uniqueItems trait instead. | ModelDeprecation

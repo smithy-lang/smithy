@@ -27,7 +27,10 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * closing documentation comment (i.e., star (*) followed by a forward slash
  * (/)). This should also work for JavaScript, PHP, and other languages that
  * use Java-style comments.
+ *
+ * @deprecated this class uses CodeWriter, which is deprecated.
  */
+@Deprecated
 @SmithyUnstableApi
 public final class JavaStyleDocumentationWriterBuilder {
 
@@ -75,6 +78,7 @@ public final class JavaStyleDocumentationWriterBuilder {
             writer.writeWithNoFormatting("/**");
             writer.setNewlinePrefix(" * ");
             runnable.run();
+            writer.ensureNewline();
             writer.popState();
             writer.writeWithNoFormatting(" */");
 

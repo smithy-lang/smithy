@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -27,12 +28,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collector;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Represents an array of nodes.
  */
-public final class ArrayNode extends Node implements Iterable<Node> {
+public final class ArrayNode extends Node implements Iterable<Node>, ToSmithyBuilder<ArrayNode> {
     static final ArrayNode EMPTY = new ArrayNode(ListUtils.of(), SourceLocation.none(), false);
 
     /**
@@ -57,6 +61,20 @@ public final class ArrayNode extends Node implements Iterable<Node> {
         this.elements = defensiveCopy
                 ? ListUtils.copyOf(elements)
                 : Collections.unmodifiableList(elements);
+    }
+
+    private ArrayNode(Builder builder) {
+        super(builder.sourceLocation);
+        this.elements = builder.values.copy();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    @Override
+    public SmithyBuilder<ArrayNode> toBuilder() {
+        return new Builder().sourceLocation(getSourceLocation()).merge(this);
     }
 
     @Override
@@ -188,17 +206,21 @@ public final class ArrayNode extends Node implements Iterable<Node> {
                 String message = e.getMessage();
                 Matcher matcher = CAST_PATTERN_TYPE.matcher(message);
                 String formatted = matcher.matches()
-                        ? String.format(
-                                "Expected ArrayNode element %d to be a `%s` but found a `%s`.",
-                                i, matcher.group(1), elements.get(i).getClass().getSimpleName())
-                        : String.format(
-                                "ArrayNode element at position %d is an invalid type `%s`: %s",
-                                i, elements.get(i).getClass().getSimpleName(), e.getMessage());
+                        ? String.format("Expected array element %d to be a %s but found %s.", i,
+                                        nodeClassToSimpleTypeName(matcher.group(1)),
+                                        nodeClassToSimpleTypeName(elements.get(i).getClass().getSimpleName()))
+                        : String.format("Array element at position %d is an invalid type `%s`: %s", i,
+                                        nodeClassToSimpleTypeName(elements.get(i).getClass().getSimpleName()),
+                                        e.getMessage());
                 throw new ExpectationNotMetException(formatted, elements.get(i));
             }
         }
 
         return result;
+    }
+
+    private static String nodeClassToSimpleTypeName(String className) {
+        return className.replace("Node", "").toLowerCase(Locale.ENGLISH);
     }
 
     /**
@@ -253,5 +275,55 @@ public final class ArrayNode extends Node implements Iterable<Node> {
     @Override
     public int hashCode() {
         return getType().hashCode() * 7 + elements.hashCode();
+    }
+
+    /**
+     * Builder used to efficiently create an ArrayNode.
+     */
+    public static final class Builder implements SmithyBuilder<ArrayNode> {
+        private final BuilderRef<List<Node>> values = BuilderRef.forList();
+        private SourceLocation sourceLocation = SourceLocation.NONE;
+
+        Builder() {}
+
+        @Override
+        public ArrayNode build() {
+            return new ArrayNode(this);
+        }
+
+        public Builder sourceLocation(SourceLocation sourceLocation) {
+            this.sourceLocation = Objects.requireNonNull(sourceLocation);
+            return this;
+        }
+
+        public <T extends ToNode> Builder withValue(T value) {
+            values.get().add(value.toNode());
+            return this;
+        }
+
+        public Builder withValue(String value) {
+            return withValue(from(value));
+        }
+
+        public Builder withValue(boolean value) {
+            return withValue(from(value));
+        }
+
+        public Builder withValue(Number value) {
+            return withValue(from(value));
+        }
+
+        @SuppressWarnings("SuspiciousMethodCalls")
+        public Builder withoutValue(Object value) {
+            values.get().remove(value);
+            return this;
+        }
+
+        public Builder merge(ArrayNode other) {
+            for (Node value : other.getElements()) {
+                withValue(value);
+            }
+            return this;
+        }
     }
 }

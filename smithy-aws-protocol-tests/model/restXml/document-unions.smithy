@@ -1,7 +1,7 @@
 // This file defines test cases that serialize synthesized XML documents
 // in the payload of HTTP requests and responses.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restxml
 
@@ -108,7 +108,7 @@ apply XmlUnions @httpRequestTests([
     },
     {
         id: "XmlUnionsWithUnionMember",
-        documentation: "Serializes union union member",
+        documentation: "Serializes union member",
         protocol: restXml,
         method: "PUT",
         uri: "/XmlUnions",
@@ -222,7 +222,7 @@ apply XmlUnions @httpResponseTests([
     },
     {
         id: "XmlUnionsWithUnionMember",
-        documentation: "Serializes union union member",
+        documentation: "Serializes union member",
         protocol: restXml,
         code: 200,
         body: """

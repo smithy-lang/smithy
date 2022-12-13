@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 metadata suppressions = [
     {
@@ -15,8 +15,10 @@ namespace com.amazonaws.s3
 
 use aws.api#service
 use aws.auth#sigv4
+use aws.customizations#s3UnwrappedXmlOutput
 use aws.protocols#restXml
 use smithy.test#httpRequestTests
+use smithy.test#httpResponseTests
 
 @service(
     sdkId: "S3",
@@ -39,6 +41,7 @@ service AmazonS3 {
     version: "2006-03-01",
     operations: [
         ListObjectsV2,
+        GetBucketLocation,
     ],
 }
 
@@ -268,8 +271,41 @@ operation ListObjectsV2 {
     ],
 }
 
+
+@httpResponseTests([{
+        id: "GetBucketLocationUnwrappedOutput",
+        documentation: """
+            S3 clients should use the @s3UnwrappedXmlOutput trait to determine
+            that the response shape is not wrapped in a restxml operation-level XML node.
+        """,
+        code: 200,
+        body: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<LocationConstraint xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">us-west-2</LocationConstraint>",
+        params: {
+            "LocationConstraint": "us-west-2"
+        },
+        protocol: restXml
+}])
+@http(uri: "/{Bucket}?location", method: "GET")
+@s3UnwrappedXmlOutput
+operation GetBucketLocation {
+    input: GetBucketLocationRequest,
+    output: GetBucketLocationOutput,
+}
+
+
 structure CommonPrefix {
     Prefix: Prefix,
+}
+
+structure GetBucketLocationRequest {
+    @httpLabel
+    @required
+    Bucket: BucketName,
+}
+
+@xmlName("LocationConstraint")
+structure GetBucketLocationOutput {
+    LocationConstraint: BucketLocationConstraint,
 }
 
 structure ListObjectsV2Request {
@@ -372,13 +408,10 @@ string Delimiter
 
 string DisplayName
 
-@enum([
-    {
-        value: "url",
-        name: "url",
-    },
-])
-string EncodingType
+enum EncodingType {
+    @suppress(["EnumShape"])
+    url
+}
 
 string ETag
 
@@ -401,54 +434,31 @@ string NextToken
 )
 string ObjectKey
 
-@enum([
-    {
-        value: "STANDARD",
-        name: "STANDARD",
-    },
-    {
-        value: "REDUCED_REDUNDANCY",
-        name: "REDUCED_REDUNDANCY",
-    },
-    {
-        value: "GLACIER",
-        name: "GLACIER",
-    },
-    {
-        value: "STANDARD_IA",
-        name: "STANDARD_IA",
-    },
-    {
-        value: "ONEZONE_IA",
-        name: "ONEZONE_IA",
-    },
-    {
-        value: "INTELLIGENT_TIERING",
-        name: "INTELLIGENT_TIERING",
-    },
-    {
-        value: "DEEP_ARCHIVE",
-        name: "DEEP_ARCHIVE",
-    },
-    {
-        value: "OUTPOSTS",
-        name: "OUTPOSTS",
-    },
-])
-string ObjectStorageClass
+enum ObjectStorageClass {
+    STANDARD
+    REDUCED_REDUNDANCY
+    GLACIER
+    STANDARD_IA
+    ONEZONE_IA
+    INTELLIGENT_TIERING
+    DEEP_ARCHIVE
+    OUTPOSTS
+}
 
 string Prefix
 
-@enum([
-    {
-        value: "requester",
-        name: "requester",
-    },
-])
-string RequestPayer
+enum RequestPayer {
+    @suppress(["EnumShape"])
+    requester
+}
 
 integer Size
 
 string StartAfter
 
 string Token
+
+enum BucketLocationConstraint {
+    @suppress(["EnumShape"])
+    us_west_2 = "us-west-2"
+}

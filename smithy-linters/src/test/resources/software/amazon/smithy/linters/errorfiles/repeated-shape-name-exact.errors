@@ -1,0 +1,2 @@
+[WARNING] smithy.example#RepeatingStructure$repeatingStructure: The `RepeatingStructure` structure shape repeats its name in the member `repeatingStructure`; structure member names should not be equal to the structure name. | RepeatedShapeName
+[WARNING] smithy.example#RepeatingUnion$repeatingUnion: The `RepeatingUnion` union shape repeats its name in the member `repeatingUnion`; union member names should not be equal to the union name. | RepeatedShapeName

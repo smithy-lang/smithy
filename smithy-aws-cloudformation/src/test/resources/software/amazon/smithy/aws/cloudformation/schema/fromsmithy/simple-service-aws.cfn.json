@@ -54,5 +54,33 @@
   "primaryIdentifier": [
     "/properties/FooId"
   ],
+  "handlers": {
+    "create": {
+      "permissions": [
+        "otherservice:DescribeDependencyComponent",
+        "something:CreateFooOperation"
+      ]
+    },
+    "read": {
+      "permissions": [
+        "something:GetFooOperation"
+      ]
+    },
+    "update": {
+      "permissions": [
+        "something:UpdateFooOperation"
+      ]
+    },
+    "delete": {
+      "permissions": [
+        "something:DeleteFooOperation"
+      ]
+    },
+    "list": {
+      "permissions": [
+        "something:ListFoosOperation"
+      ]
+    }
+  },
   "additionalProperties": false
 }

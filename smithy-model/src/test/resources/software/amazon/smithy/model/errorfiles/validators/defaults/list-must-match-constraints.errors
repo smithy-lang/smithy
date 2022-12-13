@@ -1,0 +1,1 @@
+[ERROR] smithy.example#Foo$bar: Error validating @default trait: Value provided for `smithy.example#StringList` must have at least 1 elements, but the provided value only has 0 elements | DefaultTrait

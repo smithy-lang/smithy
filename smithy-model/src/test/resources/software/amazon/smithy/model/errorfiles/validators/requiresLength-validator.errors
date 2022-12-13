@@ -1,0 +1,1 @@
+[ERROR] ns.foo#InvalidStreamingOperationOutput: Structures that contain a reference to a stream marked with the @requiresLength trait can only be used as operation inputs, but this structure is referenced from `ns.foo#InvalidStreamingOperation` as output | StreamingTrait

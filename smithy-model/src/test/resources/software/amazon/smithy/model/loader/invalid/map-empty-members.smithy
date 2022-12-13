@@ -1,4 +1,4 @@
-// Parse error at line 4, column 12 near `}\n`: Missing required members of shape `com.foo#MyMap`: [`key`, `value`] | Model
+// Missing required member of shape `com.foo#MyMap`: key
 namespace com.foo
 
 map MyMap {}

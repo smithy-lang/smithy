@@ -99,5 +99,17 @@
       "/properties/Arn"
     ]
   ],
+  "handlers": {
+    "create": {
+      "permissions": [
+        "testservice:CreateQueue"
+      ]
+    },
+    "update": {
+      "permissions": [
+        "testservice:CreateQueue"
+      ]
+    }
+  },
   "additionalProperties": false
 }

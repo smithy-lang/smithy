@@ -1,0 +1,34 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#PrimitiveDouble": {
+            "type": "double",
+            "traits":  {
+                "smithy.api#default": 0
+            }
+        },
+        "smithy.example#BoxDouble": {
+            "type": "double"
+        },
+        "smithy.example#Struct": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "smithy.example#PrimitiveDouble",
+                    "traits": {
+                        "smithy.api#default": 0
+                    }
+                },
+                "bar": {
+                    "target": "smithy.example#BoxDouble"
+                },
+                "boxed": {
+                    "target": "smithy.example#PrimitiveDouble",
+                    "traits": {
+                        "smithy.api#default": null
+                    }
+                }
+            }
+        }
+    }
+}

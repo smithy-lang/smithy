@@ -42,7 +42,7 @@ import software.amazon.smithy.model.loader.ModelAssembler;
 public final class SmithyTestSuite {
     private static final String DEFAULT_TEST_CASE_LOCATION = "errorfiles";
 
-    private List<SmithyTestCase> cases = new ArrayList<>();
+    private final List<SmithyTestCase> cases = new ArrayList<>();
     private Supplier<ModelAssembler> modelAssemblerFactory = ModelAssembler::new;
 
     private SmithyTestSuite() {}
@@ -57,7 +57,7 @@ public final class SmithyTestSuite {
     }
 
     /**
-     * Factory method used to easily created a JUnit 5 {@code ParameterizedTest}
+     * Factory method used to easily create a JUnit 5 {@code ParameterizedTest}
      * {@code MethodSource} based on the given {@code Class}.
      *
      * <p>This method assumes that there is a resource named {@code errorfiles}
@@ -139,8 +139,8 @@ public final class SmithyTestSuite {
      * @see SmithyTestCase#fromModelFile
      */
     public SmithyTestSuite addTestCasesFromDirectory(Path modelDirectory) {
-        try {
-            Files.walk(modelDirectory)
+        try (Stream<Path> files = Files.walk(modelDirectory)) {
+            files
                     .filter(Files::isRegularFile)
                     .filter(file -> {
                         String filename = file.toString();

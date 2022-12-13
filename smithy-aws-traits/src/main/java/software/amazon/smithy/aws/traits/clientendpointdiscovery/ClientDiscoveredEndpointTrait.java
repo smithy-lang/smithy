@@ -56,12 +56,15 @@ public final class ClientDiscoveredEndpointTrait extends AbstractTrait
 
     @Override
     protected Node createNode() {
-        return Node.objectNode().withMember(REQUIRED, Node.from(isRequired()));
+        return Node.objectNodeBuilder()
+                .sourceLocation(getSourceLocation())
+                .withMember(REQUIRED, Node.from(isRequired()))
+                .build();
     }
 
     @Override
     public SmithyBuilder<ClientDiscoveredEndpointTrait> toBuilder() {
-        return builder().required(required);
+        return builder().sourceLocation(getSourceLocation()).required(required);
     }
 
     /** Builder for {@link ClientDiscoveredEndpointTrait}. */
@@ -89,9 +92,12 @@ public final class ClientDiscoveredEndpointTrait extends AbstractTrait
         @Override
         public ClientDiscoveredEndpointTrait createTrait(ShapeId target, Node value) {
             ObjectNode objectNode = value.expectObjectNode();
-            return builder()
+            ClientDiscoveredEndpointTrait result = builder()
+                    .sourceLocation(value)
                     .required(objectNode.getBooleanMemberOrDefault(REQUIRED, true))
                     .build();
+            result.setNodeCache(objectNode);
+            return result;
         }
     }
 }

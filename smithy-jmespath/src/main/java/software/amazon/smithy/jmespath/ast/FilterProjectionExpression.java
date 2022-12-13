@@ -27,13 +27,15 @@ import software.amazon.smithy.jmespath.JmespathExpression;
  * a {@link ComparatorExpression}, and yields any value from the comparison
  * expression that returns {@code true} to the right AST expression.
  *
+ * <p>Note: while this expression does have a comparator expression, it is
+ * still considered a binary expression because it has a left hand side and
+ * a right hand side.
+ *
  * @see <a href="https://jmespath.org/specification.html#filter-expressions">Filter Expressions</a>
  */
-public final class FilterProjectionExpression extends JmespathExpression {
+public final class FilterProjectionExpression extends BinaryExpression {
 
     private final JmespathExpression comparison;
-    private final JmespathExpression left;
-    private final JmespathExpression right;
 
     public FilterProjectionExpression(
             JmespathExpression left,
@@ -50,18 +52,8 @@ public final class FilterProjectionExpression extends JmespathExpression {
             int line,
             int column
     ) {
-        super(line, column);
-        this.left = left;
-        this.right = right;
+        super(left, right, line, column);
         this.comparison = comparison;
-    }
-
-    public JmespathExpression getLeft() {
-        return left;
-    }
-
-    public JmespathExpression getRight() {
-        return right;
     }
 
     public JmespathExpression getComparison() {
@@ -95,7 +87,7 @@ public final class FilterProjectionExpression extends JmespathExpression {
     public String toString() {
         return "FilterProjectionExpression{"
                + "comparison=" + comparison
-               + ", left=" + left
-               + ", right=" + right + '}';
+               + ", left=" + getLeft()
+               + ", right=" + getRight() + '}';
     }
 }

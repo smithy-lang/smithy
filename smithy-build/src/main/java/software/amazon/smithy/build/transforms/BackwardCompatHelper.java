@@ -15,10 +15,12 @@
 
 package software.amazon.smithy.build.transforms;
 
+import java.util.List;
 import java.util.logging.Logger;
 import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Helper class used to allow older versions of smithy-build.json files to
@@ -108,11 +110,24 @@ abstract class BackwardCompatHelper<T> extends ConfigurableProjectionTransformer
     abstract String getBackwardCompatibleNameMapping();
 
     @Override
-    public final Model transform(TransformContext context) {
+    public Model transform(TransformContext context) {
+        return super.transform(updateContextIfNecessary(context));
+    }
+
+    @Override
+    public List<String> getAdditionalProjections(TransformContext context) {
+        return getAdditionalProjectionsFunction()
+                // short-circuit updating the context if additional projections are not supported
+                .map(unused -> super.getAdditionalProjections(updateContextIfNecessary(context)))
+                .orElseGet(ListUtils::of);
+
+    }
+
+    private TransformContext updateContextIfNecessary(TransformContext context) {
         ObjectNode original = context.getSettings();
 
         if (!original.getMember(ARGS).isPresent()) {
-            return super.transform(context);
+            return context;
         }
 
         LOGGER.warning(() -> String.format(
@@ -124,6 +139,6 @@ abstract class BackwardCompatHelper<T> extends ConfigurableProjectionTransformer
                 .withoutMember(ARGS)
                 .build();
 
-        return super.transform(context.toBuilder().settings(updated).build());
+        return context.toBuilder().settings(updated).build();
     }
 }

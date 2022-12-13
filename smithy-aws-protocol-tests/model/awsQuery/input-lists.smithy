@@ -1,6 +1,6 @@
 // This file defines test cases that test list query serialization.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.query
 
@@ -26,14 +26,7 @@ apply QueryLists @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=QueryLists
-              &Version=2020-01-08
-              &ListArg.member.1=foo
-              &ListArg.member.2=bar
-              &ListArg.member.3=baz
-              &ComplexListArg.member.1.hi=hello
-              &ComplexListArg.member.2.hi=hola""",
+        body: "Action=QueryLists&Version=2020-01-08&ListArg.member.1=foo&ListArg.member.2=bar&ListArg.member.3=baz&ComplexListArg.member.1.hi=hello&ComplexListArg.member.2.hi=hola",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             ListArg: ["foo", "bar", "baz"],
@@ -49,16 +42,14 @@ apply QueryLists @httpRequestTests([
     },
     {
         id: "EmptyQueryLists",
-        documentation: "Does not serialize empty query lists",
+        documentation: "Serializes empty query lists",
         protocol: awsQuery,
         method: "POST",
         uri: "/",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=QueryLists
-              &Version=2020-01-08""",
+        body: "Action=QueryLists&Version=2020-01-08&ListArg=",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             ListArg: []
@@ -73,11 +64,7 @@ apply QueryLists @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=QueryLists
-              &Version=2020-01-08
-              &FlattenedListArg.1=A
-              &FlattenedListArg.2=B""",
+        body: "Action=QueryLists&Version=2020-01-08&FlattenedListArg.1=A&FlattenedListArg.2=B",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             FlattenedListArg: ["A", "B"]
@@ -92,11 +79,7 @@ apply QueryLists @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=QueryLists
-              &Version=2020-01-08
-              &ListArgWithXmlNameMember.item.1=A
-              &ListArgWithXmlNameMember.item.2=B""",
+        body: "Action=QueryLists&Version=2020-01-08&ListArgWithXmlNameMember.item.1=A&ListArgWithXmlNameMember.item.2=B",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             ListArgWithXmlNameMember: ["A", "B"]
@@ -111,14 +94,27 @@ apply QueryLists @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=QueryLists
-              &Version=2020-01-08
-              &Hi.1=A
-              &Hi.2=B""",
+        body: "Action=QueryLists&Version=2020-01-08&Hi.1=A&Hi.2=B",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             FlattenedListArgWithXmlName: ["A", "B"]
+        }
+    },
+    {
+        id: "QueryNestedStructWithList",
+        documentation: "Nested structure with a list member",
+        protocol: awsQuery,
+        method: "POST",
+        uri: "/",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "Action=QueryLists&Version=2020-01-08&NestedWithList.ListArg.member.1=A&NestedWithList.ListArg.member.2=B",
+        bodyMediaType: "application/x-www-form-urlencoded",
+        params: {
+            NestedWithList: {
+                ListArg: ["A", "B"]
+            }
         }
     },
 ])
@@ -136,9 +132,15 @@ structure QueryListsInput {
     @xmlFlattened
     @xmlName("Hi")
     FlattenedListArgWithXmlName: ListWithXmlName,
+
+    NestedWithList: NestedStructWithList
 }
 
 list ListWithXmlName {
     @xmlName("item")
     member: String
+}
+
+structure NestedStructWithList {
+    ListArg: StringList
 }

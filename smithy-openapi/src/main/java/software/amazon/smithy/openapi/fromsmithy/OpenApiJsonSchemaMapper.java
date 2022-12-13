@@ -28,7 +28,6 @@ import software.amazon.smithy.jsonschema.JsonSchemaMapper;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
@@ -58,37 +57,29 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
                 .map(ExternalDocumentation::toNode)
                 .ifPresent(docs -> builder.putExtension("externalDocs", docs));
 
-        if (shape.hasTrait(BoxTrait.class)) {
-            builder.putExtension("nullable", Node.from(true));
-        }
-
         if (shape.hasTrait(DeprecatedTrait.class)) {
             builder.putExtension("deprecated", Node.from(true));
         }
 
-        // Handle OpenAPI's custom "integer" type.
-        // https://swagger.io/specification/#data-types
-        if (shape.isByteShape() || shape.isShortShape() || shape.isIntegerShape() || shape.isLongShape()) {
-            if (config instanceof OpenApiConfig && ((OpenApiConfig) config).getUseIntegerType()) {
-                builder.type("integer");
-            }
-        }
+        boolean useOpenApiIntegerType = config instanceof OpenApiConfig
+                && ((OpenApiConfig) config).getUseIntegerType();
 
         // Don't overwrite an existing format setting.
         if (!builder.getFormat().isPresent()) {
-            if (shape.isIntegerShape()) {
+            // Only apply the int32/int64 formats if we map the type
+            // to "integer" as those are not valid for "number" type.
+            // See https://swagger.io/specification/#data-types
+            if (useOpenApiIntegerType && shape.isIntegerShape()) {
                 builder.format("int32");
-            } else if (shape.isLongShape()) {
+            } else if (useOpenApiIntegerType && shape.isLongShape()) {
                 builder.format("int64");
             } else if (shape.isFloatShape()) {
-                builder.format("float");
+                updateFloatFormat(builder, config, "float");
             } else if (shape.isDoubleShape()) {
-                builder.format("double");
-            } else if (shape.isBlobShape()) {
-                if (config instanceof OpenApiConfig) {
-                    String blobFormat = ((OpenApiConfig) config).getDefaultBlobFormat();
-                    return builder.format(blobFormat);
-                }
+                updateFloatFormat(builder, config, "double");
+            } else if (shape.isBlobShape() && config instanceof OpenApiConfig) {
+                handleFormatKeyword(builder, (OpenApiConfig) config);
+                return builder;
             } else if (shape.isTimestampShape()) {
                 // Add the "double" format when epoch-seconds is used
                 // to account for optional millisecond precision.
@@ -104,6 +95,31 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
         UNSUPPORTED_KEYWORD_DIRECTIVES.forEach(builder::disableProperty);
 
         return builder;
+    }
+
+    private void handleFormatKeyword(Schema.Builder builder, OpenApiConfig config) {
+        String blobFormat = config.getDefaultBlobFormat();
+        if (config.getVersion().supportsContentEncodingKeyword()) {
+            builder.contentEncoding(blobFormat);
+        } else {
+            builder.format(blobFormat);
+        }
+    }
+
+    private void updateFloatFormat(Schema.Builder builder, JsonSchemaConfig config, String format) {
+        if (config.getSupportNonNumericFloats()) {
+            List<Schema> newOneOf = new ArrayList<>();
+            for (Schema schema : builder.build().getOneOf()) {
+                if (schema.getType().isPresent() && schema.getType().get().equals("number")) {
+                    newOneOf.add(schema.toBuilder().format(format).build());
+                } else {
+                    newOneOf.add(schema);
+                }
+            }
+            builder.oneOf(newOneOf);
+        } else {
+            builder.format(format);
+        }
     }
 
     static Optional<ExternalDocumentation> getResolvedExternalDocs(Shape shape, JsonSchemaConfig config) {

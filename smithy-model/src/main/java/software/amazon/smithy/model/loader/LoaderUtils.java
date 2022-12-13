@@ -17,6 +17,7 @@ package software.amazon.smithy.model.loader;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
@@ -36,32 +37,23 @@ final class LoaderUtils {
      * @param node Node to check.
      * @param shape Shape to associate with the error.
      * @param properties Properties to allow.
+     * @return Returns an optionally created event.
      */
-    static void checkForAdditionalProperties(
+    static Optional<ValidationEvent> checkForAdditionalProperties(
             ObjectNode node,
-            ShapeId shape, Collection<String> properties,
-            List<ValidationEvent> events
+            ShapeId shape, Collection<String> properties
     ) {
         try {
             node.expectNoAdditionalProperties(properties);
+            return Optional.empty();
         } catch (ExpectationNotMetException e) {
             ValidationEvent event = ValidationEvent.fromSourceException(e)
                     .toBuilder()
                     .shapeId(shape)
                     .severity(Severity.WARNING)
                     .build();
-            events.add(event);
+            return Optional.of(event);
         }
-    }
-
-    /**
-     * Checks if the given version string is supported.
-     *
-     * @param versionString Version string to check (e.g., 1, 1.0).
-     * @return Returns true if this is a supported model version.
-     */
-    static boolean isVersionSupported(String versionString) {
-        return versionString.equals("1") || versionString.equals("1.0");
     }
 
     /**
@@ -70,15 +62,20 @@ final class LoaderUtils {
      * @param id Shape ID in conflict.
      * @param a The first location of this shape.
      * @param b The second location of this shape.
+     * @param message Message to append.
      * @return Returns the created validation event.
      */
-    static ValidationEvent onShapeConflict(ShapeId id, SourceLocation a, SourceLocation b) {
+    static ValidationEvent onShapeConflict(ShapeId id, SourceLocation a, SourceLocation b, String message) {
+        String formatted = String.format("Conflicting shape definition for `%s` found at `%s` and `%s`", id, a, b);
+        if (message != null) {
+            formatted += ". " + message;
+        }
         return ValidationEvent.builder()
                 .id(Validator.MODEL_ERROR)
                 .severity(Severity.ERROR)
                 .sourceLocation(b)
                 .shapeId(id)
-                .message(String.format("Conflicting shape definition for `%s` found at `%s` and `%s`", id, a, b))
+                .message(formatted)
                 .build();
     }
 

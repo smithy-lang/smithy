@@ -37,7 +37,7 @@ public class HttpResponseTestsOutputValidator extends ProtocolTestCaseValidator<
 
     @Override
     StructureShape getStructure(Shape shape, OperationIndex operationIndex) {
-        return operationIndex.getOutput(shape).orElse(null);
+        return operationIndex.getOutputShape(shape).orElse(null);
     }
 
     @Override

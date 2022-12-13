@@ -1,0 +1,18 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#MixinResource": {
+            "type": "resource",
+            "traits": {
+                "smithy.api#mixin": {},
+                "smithy.api#internal": {}
+            }
+        },
+        "smithy.example#MixedResource": {
+            "type": "resource",
+            "mixins": [{
+                "target": "smithy.example#MixinResource"
+            }]
+        }
+    }
+}

@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#FooService": {
             "type": "service",
@@ -49,6 +49,9 @@
                 "Identifiers": {
                     "target": "ns.foo#Identifiers"
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#Identifiers": {
@@ -66,6 +69,9 @@
                 "Endpoints": {
                     "target": "ns.foo#Endpoints"
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#Endpoints": {
@@ -114,6 +120,9 @@
                         "smithy.api#required": {}
                     }
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#GetObjectOutput": {
@@ -122,12 +131,18 @@
                 "Object": {
                     "target": "smithy.api#Blob"
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#PutObject": {
             "type": "operation",
             "input": {
                 "target": "ns.foo#PutObjectInput"
+            },
+            "output": {
+                "target": "ns.foo#PutObjectOutput"
             },
             "errors": [
                 {
@@ -153,6 +168,15 @@
                 "Object": {
                     "target": "smithy.api#Blob"
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#PutObjectOutput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#InvalidEndpointError": {

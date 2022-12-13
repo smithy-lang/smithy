@@ -44,7 +44,7 @@
                 ],
                 "responses": {
                     "204": {
-                        "description": "DeletePayload response"
+                        "description": "DeletePayload 204 response"
                     }
                 },
                 "x-amazon-apigateway-integration": {
@@ -118,9 +118,7 @@
                         "name": "query",
                         "in": "query",
                         "schema": {
-                            "type": "number",
-                            "format": "int32",
-                            "nullable": true
+                            "type": "number"
                         }
                     },
                     {
@@ -140,7 +138,7 @@
                 ],
                 "responses": {
                     "201": {
-                        "description": "PutPayload response"
+                        "description": "PutPayload 201 response"
                     }
                 },
                 "x-amazon-apigateway-integration": {

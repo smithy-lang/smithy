@@ -15,8 +15,11 @@
 
 package software.amazon.smithy.model.shapes;
 
+import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.SourceException;
+import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -36,13 +39,21 @@ public final class MemberShape extends Shape implements ToSmithyBuilder<MemberSh
         this.memberName = getId().getMember().orElse("");
     }
 
+    @Override
+    protected void validateMixins(Map<ShapeId, Shape> mixins, Map<ShapeId, Trait> introducedTraits) {
+        // This can only happen by manipulating the semantic model in code.
+        if (mixins.size() > 1) {
+            throw new SourceException("Members must not have more than one mixin: " + getId(), this);
+        }
+    }
+
     public static Builder builder() {
         return new Builder();
     }
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this).target(target);
+        return updateBuilder(builder()).target(target);
     }
 
     /**
@@ -55,13 +66,18 @@ public final class MemberShape extends Shape implements ToSmithyBuilder<MemberSh
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.memberShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.memberShape(this);
     }
 
     @Override
     public Optional<MemberShape> asMemberShape() {
         return Optional.of(this);
+    }
+
+    @Override
+    public ShapeType getType() {
+        return ShapeType.MEMBER;
     }
 
     /**
@@ -94,6 +110,22 @@ public final class MemberShape extends Shape implements ToSmithyBuilder<MemberSh
      */
     public boolean isOptional() {
         return !isRequired();
+    }
+
+    /**
+     * @return Returns true if the member has a default set explicitly to null.
+     */
+    public boolean hasNullDefault() {
+        DefaultTrait defaultTrait = getTrait(DefaultTrait.class).orElse(null);
+        return defaultTrait != null && defaultTrait.toNode().isNullNode();
+    }
+
+    /**
+     * @return Returns true if the member has a default not set to null.
+     */
+    public boolean hasNonNullDefault() {
+        DefaultTrait defaultTrait = getTrait(DefaultTrait.class).orElse(null);
+        return defaultTrait != null && !defaultTrait.toNode().isNullNode();
     }
 
     @Override
@@ -154,6 +186,13 @@ public final class MemberShape extends Shape implements ToSmithyBuilder<MemberSh
          */
         public Builder target(String shapeId) {
             return target(ShapeId.from(shapeId));
+        }
+
+        /**
+         * @return Returns the target currently set on the member.
+         */
+        public ShapeId getTarget() {
+            return target;
         }
     }
 }

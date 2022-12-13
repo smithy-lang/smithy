@@ -1,5 +1,6 @@
 // awsQuery does not support inline documents. Because an inline document is
 // used in the closure of InvalidExample, this model creates a DANGER event.
+$version: "2.0"
 
 namespace smithy.example
 
@@ -15,10 +16,15 @@ service InvalidExample {
 
 operation Operation1 {
     input: Operation1Input,
+    output: Operation1Output
 }
 
+@input
 structure Operation1Input {
     foo: InlineDocument,
 }
 
 document InlineDocument
+
+@output
+structure Operation1Output {}

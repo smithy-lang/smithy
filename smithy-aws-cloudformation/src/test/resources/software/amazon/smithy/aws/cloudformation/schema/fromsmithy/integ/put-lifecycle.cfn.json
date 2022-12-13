@@ -21,5 +21,17 @@
   "primaryIdentifier": [
     "/properties/FooId"
   ],
+  "handlers": {
+    "create": {
+      "permissions": [
+        "testservice:PutFoo"
+      ]
+    },
+    "update": {
+      "permissions": [
+        "testservice:PutFoo"
+      ]
+    }
+  },
   "additionalProperties": false
 }

@@ -15,9 +15,13 @@
 
 package software.amazon.smithy.aws.apigateway.openapi;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import software.amazon.smithy.utils.ListUtils;
+import java.util.Set;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * API Gateway OpenAPI configuration.
@@ -55,7 +59,7 @@ public final class ApiGatewayConfig {
 
     private ApiType apiGatewayType = ApiType.REST;
     private boolean disableCloudFormationSubstitution;
-    private List<String> additionalAllowedCorsHeaders = ListUtils.of("amz-sdk-invocation-id", "amz-sdk-request");
+    private Set<String> additionalAllowedCorsHeaders = Collections.emptySet();
 
     /**
      * @return Returns true if CloudFormation substitutions are disabled.
@@ -94,21 +98,26 @@ public final class ApiGatewayConfig {
     }
 
     /**
-     * @return the list of additional allowed CORS headers.
+     * @deprecated Use {@link ApiGatewayConfig#getAdditionalAllowedCorsHeadersSet}
      */
+    @Deprecated
     public List<String> getAdditionalAllowedCorsHeaders() {
+        return new ArrayList<>(additionalAllowedCorsHeaders);
+    }
+
+    /**
+     * @return the set of additional allowed CORS headers.
+     */
+    public Set<String> getAdditionalAllowedCorsHeadersSet() {
         return additionalAllowedCorsHeaders;
     }
 
     /**
-     * Sets the list of additional allowed CORS headers.
-     *
-     * <p>If not set, this value defaults to setting "amz-sdk-invocation-id" and
-     * "amz-sdk-request" as the additional allowed CORS headers.</p>
+     * Sets the additional allowed CORS headers.
      *
      * @param additionalAllowedCorsHeaders additional cors headers to be allowed.
      */
-    public void setAdditionalAllowedCorsHeaders(List<String> additionalAllowedCorsHeaders) {
-        this.additionalAllowedCorsHeaders = Objects.requireNonNull(additionalAllowedCorsHeaders);
+    public void setAdditionalAllowedCorsHeaders(Collection<String> additionalAllowedCorsHeaders) {
+        this.additionalAllowedCorsHeaders = SetUtils.caseInsensitiveCopyOf(additionalAllowedCorsHeaders);
     }
 }

@@ -33,8 +33,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import software.amazon.smithy.model.FromSourceLocation;
@@ -65,6 +63,7 @@ final class DefaultNodeSerializers {
                 return null;
             }
 
+            // TODO: make sure every instance of `toNode` is setting this
             return value.toNode();
         }
     };
@@ -251,13 +250,13 @@ final class DefaultNodeSerializers {
      */
     private static final class ClassInfo {
         // Cache previously evaluated objects.
-        private static final ConcurrentMap<Class, ClassInfo> CACHE = new ConcurrentHashMap<>();
+        private static final IdentityClassCache<Class, ClassInfo> CACHE = new IdentityClassCache<>();
 
         // Methods aren't returned normally in any particular order, so give them an order.
         final Map<String, Method> getters = new TreeMap<>();
 
-        static ClassInfo fromClass(Class<?> type) {
-            return CACHE.computeIfAbsent(type, klass -> {
+        static ClassInfo fromClass(Class<?> klass) {
+            return CACHE.getForClass(klass, klass, () -> {
                 ClassInfo info = new ClassInfo();
                 Set<String> transientFields = getTransientFields(klass);
                 // Determine which methods are getters that aren't backed by transient properties.
@@ -362,7 +361,13 @@ final class DefaultNodeSerializers {
             // multiple times (like in a List<T>).
             serializedObjects.remove(value);
 
-            return new ObjectNode(mappings, SourceLocation.NONE);
+            // Pass on the source location if it is present.
+            SourceLocation sourceLocation = SourceLocation.NONE;
+            if (value instanceof FromSourceLocation) {
+                sourceLocation = ((FromSourceLocation) value).getSourceLocation();
+            }
+
+            return new ObjectNode(mappings, sourceLocation);
         }
 
         private boolean canSerialize(NodeMapper mapper, Node value) {
@@ -374,6 +379,8 @@ final class DefaultNodeSerializers {
                 if (value.isObjectNode() && value.expectObjectNode().isEmpty()) {
                     return false;
                 } else if (value.isArrayNode() && value.expectArrayNode().isEmpty()) {
+                    return false;
+                } else if (value.isBooleanNode() && !value.expectBooleanNode().getValue()) {
                     return false;
                 }
             }

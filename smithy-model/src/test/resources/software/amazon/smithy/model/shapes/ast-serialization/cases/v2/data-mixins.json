@@ -1,0 +1,291 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#A": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#B": {
+            "type": "structure",
+            "members": {},
+            "mixins": [
+                {"target": "smithy.example#A"}
+            ]
+        },
+        "smithy.example#C": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#D": {
+            "type": "structure",
+            "members": {},
+            "mixins": [
+                {"target": "smithy.example#C"}
+            ],
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#E": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#mixin": {}
+            },
+            "mixins": [
+                {"target": "smithy.example#D"}
+            ]
+        },
+        "smithy.example#F": {
+            "type": "structure",
+            "members": {},
+            "mixins": [
+                {"target": "smithy.example#A"},
+                {"target": "smithy.example#E"}
+            ]
+        },
+        "smithy.example#MixinBlob": {
+            "type": "blob",
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MixedBlob": {
+            "type": "blob",
+            "mixins": [{
+                "target": "smithy.example#MixinBlob"
+            }]
+        },
+        "smithy.example#MixinBoolean": {
+            "type": "boolean",
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MixedBoolean": {
+            "type": "boolean",
+            "mixins": [{
+                "target": "smithy.example#MixinBoolean"
+            }]
+        },
+        "smithy.example#MixinString": {
+            "type": "string",
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MixedString": {
+            "type": "string",
+            "mixins": [{
+                "target": "smithy.example#MixinString"
+            }]
+        },
+        "smithy.example#MixinByte": {
+            "type": "byte",
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MixedByte": {
+            "type": "byte",
+            "mixins": [{
+                "target": "smithy.example#MixinByte"
+            }]
+        },
+        "smithy.example#MixinShort": {
+            "type": "short",
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MixedShort": {
+            "type": "short",
+            "mixins": [{
+                "target": "smithy.example#MixinShort"
+            }]
+        },
+        "smithy.example#MixinInteger": {
+            "type": "integer",
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MixedInteger": {
+            "type": "integer",
+            "mixins": [{
+                "target": "smithy.example#MixinInteger"
+            }]
+        },
+        "smithy.example#MixinLong": {
+            "type": "long",
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MixedLong": {
+            "type": "long",
+            "mixins": [{
+                "target": "smithy.example#MixinLong"
+            }]
+        },
+        "smithy.example#MixinFloat": {
+            "type": "float",
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MixedFloat": {
+            "type": "float",
+            "mixins": [{
+                "target": "smithy.example#MixinFloat"
+            }]
+        },
+        "smithy.example#MixinDouble": {
+            "type": "double",
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MixedDouble": {
+            "type": "double",
+            "mixins": [{
+                "target": "smithy.example#MixinDouble"
+            }]
+        },
+        "smithy.example#MixinBigInt": {
+            "type": "bigInteger",
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MixedBigInt": {
+            "type": "bigInteger",
+            "mixins": [{
+                "target": "smithy.example#MixinBigInt"
+            }]
+        },
+        "smithy.example#MixinBigDecimal": {
+            "type": "bigDecimal",
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MixedBigDecimal": {
+            "type": "bigDecimal",
+            "mixins": [{
+                "target": "smithy.example#MixinBigDecimal"
+            }]
+        },
+        "smithy.example#MixinTimestamp": {
+            "type": "timestamp",
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MixedTimestamp": {
+            "type": "timestamp",
+            "mixins": [{
+                "target": "smithy.example#MixinTimestamp"
+            }]
+        },
+        "smithy.example#MixinDocument": {
+            "type": "document",
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MixedDocument": {
+            "type": "document",
+            "mixins": [{
+                "target": "smithy.example#MixinDocument"
+            }]
+        },
+        "smithy.example#MixinList": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String"
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MixedList": {
+            "type": "list",
+            "mixins": [{
+                "target": "smithy.example#MixinList"
+            }]
+        },
+        "smithy.example#MixinSet": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String"
+            },
+            "traits": {
+                "smithy.api#mixin": {},
+                "smithy.api#uniqueItems": {}
+            }
+        },
+        "smithy.example#MixedSet": {
+            "type": "list",
+            "mixins": [{
+                "target": "smithy.example#MixinSet"
+            }]
+        },
+        "smithy.example#MixinMap": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String"
+            },
+            "value": {
+                "target": "smithy.api#String"
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MixedMap": {
+            "type": "map",
+            "mixins": [{
+                "target": "smithy.example#MixinMap"
+            }]
+        },
+        "smithy.example#PrimitiveInteger": {
+            "type": "integer",
+            "traits": {
+                "smithy.api#default": 0
+            }
+        },
+        "smithy.example#Struct": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "smithy.example#PrimitiveInteger",
+                    "traits": {
+                        "smithy.api#default": 0
+                    }
+                },
+                "bar": {
+                    "target": "smithy.example#PrimitiveInteger",
+                    "traits": {
+                        "smithy.api#default": null
+                    }
+                },
+                "baz": {
+                    "target": "smithy.example#MixedInteger"
+                },
+                "bam": {
+                    "target": "smithy.example#MixedInteger",
+                    "traits": {
+                        "smithy.api#default": 1
+                    }
+                }
+            }
+        }
+    }
+}

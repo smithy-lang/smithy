@@ -1,0 +1,139 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#Foo": {
+            "type": "structure",
+            "members": {
+                "a": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#default": ""
+                    }
+                },
+                "b": {
+                    "target": "smithy.api#Boolean",
+                    "traits": {
+                        "smithy.api#default": true
+                    }
+                },
+                "c": {
+                    "target": "smithy.example#StringList",
+                    "traits": {
+                        "smithy.api#default": []
+                    }
+                },
+                "d": {
+                    "target": "smithy.api#Document",
+                    "traits": {
+                        "smithy.api#default": {}
+                    }
+                },
+                "e": {
+                    "target": "smithy.api#Document",
+                    "traits": {
+                        "smithy.api#default": "hi"
+                    }
+                },
+                "f": {
+                    "target": "smithy.api#Document",
+                    "traits": {
+                        "smithy.api#default": true
+                    }
+                },
+                "g": {
+                    "target": "smithy.api#Document",
+                    "traits": {
+                        "smithy.api#default": false
+                    }
+                },
+                "h": {
+                    "target": "smithy.api#Document",
+                    "traits": {
+                        "smithy.api#default": []
+                    }
+                },
+                "i": {
+                    "target": "smithy.api#Timestamp",
+                    "traits": {
+                        "smithy.api#default": 0
+                    }
+                },
+                "j": {
+                    "target": "smithy.api#Blob",
+                    "traits": {
+                        "smithy.api#default": ""
+                    }
+                },
+                "k": {
+                    "target": "smithy.api#Byte",
+                    "traits": {
+                        "smithy.api#default": 1
+                    }
+                },
+                "l": {
+                    "target": "smithy.api#Short",
+                    "traits": {
+                        "smithy.api#default": 1
+                    }
+                },
+                "m": {
+                    "target": "smithy.api#Integer",
+                    "traits": {
+                        "smithy.api#default": 10
+                    }
+                },
+                "n": {
+                    "target": "smithy.api#Long",
+                    "traits": {
+                        "smithy.api#default": 100
+                    }
+                },
+                "o": {
+                    "target": "smithy.api#Float",
+                    "traits": {
+                        "smithy.api#default": 0
+                    }
+                },
+                "p": {
+                    "target": "smithy.api#Double",
+                    "traits": {
+                        "smithy.api#default": 0
+                    }
+                },
+                "q": {
+                    "target": "smithy.example#StringMap",
+                    "traits": {
+                        "smithy.api#default": {}
+                    }
+                },
+                "r": {
+                    "target": "smithy.api#BigInteger",
+                    "traits": {
+                        "smithy.api#default": 0
+                    }
+                },
+                "s": {
+                    "target": "smithy.api#BigDecimal",
+                    "traits": {
+                        "smithy.api#default": 0
+                    }
+                }
+            }
+        },
+        "smithy.example#StringList": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String"
+            }
+        },
+        "smithy.example#StringMap": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String"
+            },
+            "value": {
+                "target": "smithy.api#String"
+            }
+        }
+    }
+}

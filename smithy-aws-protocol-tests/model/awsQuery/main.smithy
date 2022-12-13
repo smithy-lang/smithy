@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.query
 
@@ -47,6 +47,7 @@ service AwsQuery {
         XmlBlobs,
         XmlTimestamps,
         XmlEnums,
+        XmlIntEnums,
         RecursiveXmlShapes,
         RecursiveXmlShapes,
         IgnoresWrappingXmlName,
@@ -58,5 +59,8 @@ service AwsQuery {
         // @endpoint and @hostLabel trait tests
         EndpointOperation,
         EndpointWithHostLabelOperation,
+
+        // custom endpoints with paths
+        HostWithPathOperation,
     ]
 }

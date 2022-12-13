@@ -1,2 +1,0 @@
-[WARNING] smithy.example#Foo$baz: Members marked with the `sensitive` trait should not target shapes that represent concrete data types | SensitiveTrait
-[WARNING] smithy.example#Foo$qux: Redundant `sensitive` trait found on member that targets a `sensitive` shape | SensitiveTrait

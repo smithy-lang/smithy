@@ -18,7 +18,6 @@ package software.amazon.smithy.model.traits;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -85,11 +84,11 @@ public final class RecommendedTrait extends AbstractTrait implements ToSmithyBui
 
         @Override
         public RecommendedTrait createTrait(ShapeId target, Node value) {
-            ObjectNode objectNode = value.expectObjectNode();
-            String reason = objectNode.getStringMember("reason")
-                    .map(StringNode::getValue)
-                    .orElse(null);
-            return builder().sourceLocation(value).reason(reason).build();
+            Builder builder = builder().sourceLocation(value.getSourceLocation());
+            value.expectObjectNode().getStringMember("reason", builder::reason);
+            RecommendedTrait result = builder().build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 }

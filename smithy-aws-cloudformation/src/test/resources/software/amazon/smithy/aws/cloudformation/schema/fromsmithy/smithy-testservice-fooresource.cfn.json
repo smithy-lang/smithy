@@ -92,5 +92,22 @@
   "primaryIdentifier": [
     "/properties/FooId"
   ],
+  "handlers": {
+    "create": {
+      "permissions": [
+        "testservice:CreateFooOperation"
+      ]
+    },
+    "read": {
+      "permissions": [
+        "testservice:GetFooOperation"
+      ]
+    },
+    "update": {
+      "permissions": [
+        "testservice:UpdateFooOperation"
+      ]
+    }
+  },
   "additionalProperties": false
 }

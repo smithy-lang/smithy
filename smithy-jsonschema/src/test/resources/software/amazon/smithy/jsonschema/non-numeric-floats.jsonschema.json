@@ -1,0 +1,39 @@
+{
+    "definitions": {
+        "MyOperationInput": {
+            "type": "object",
+            "properties": {
+                "doubleMember": {
+                    "oneOf": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "string",
+                            "enum": [
+                                "NaN",
+                                "Infinity",
+                                "-Infinity"
+                            ]
+                        }
+                    ]
+                },
+                "floatMember": {
+                    "oneOf": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "string",
+                            "enum": [
+                                "NaN",
+                                "Infinity",
+                                "-Infinity"
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

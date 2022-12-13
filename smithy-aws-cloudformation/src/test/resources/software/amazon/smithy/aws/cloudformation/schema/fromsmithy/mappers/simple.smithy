@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace smithy.example
 
@@ -28,6 +28,7 @@ resource FooResource {
     update: UpdateFooOperation,
 }
 
+@aws.iam#requiredActions(["otherservice:DescribeDependencyComponent"])
 operation CreateFooOperation {
     input: CreateFooRequest,
     output: CreateFooResponse,
@@ -36,6 +37,9 @@ operation CreateFooOperation {
 structure CreateFooRequest {
     fooValidCreateProperty: String,
 
+    @required
+    fooRequiredProperty: String,
+
     @deprecated(message: "Use the `fooValidFullyMutableProperty` property.")
     fooDeprecatedMutableProperty: String,
     fooValidFullyMutableProperty: ComplexProperty,
@@ -43,6 +47,8 @@ structure CreateFooRequest {
 
 structure CreateFooResponse {
     fooId: FooId,
+
+    fooRequiredProperty: String,
 
     @deprecated(message: "Use the `fooValidFullyMutableProperty` property.")
     fooDeprecatedMutableProperty: String,
@@ -63,6 +69,7 @@ structure GetFooRequest {
 structure GetFooResponse {
     fooId: FooId,
 
+    fooRequiredProperty: String,
     fooValidReadProperty: String,
 
     @deprecated(message: "Use the `fooValidFullyMutableProperty` property.")
@@ -80,6 +87,7 @@ structure UpdateFooRequest {
     @required
     fooId: FooId,
 
+    fooRequiredProperty: String,
     fooValidWriteProperty: String,
 
     @deprecated(message: "Use the `fooValidFullyMutableProperty` property.")

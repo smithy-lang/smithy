@@ -47,7 +47,7 @@ public class SmithyTestSuiteTest {
                 .run();
 
         assertThat(result.getFailedResults().size(), is(0));
-        assertThat(result.getSuccessCount(), is(3));
+        assertThat(result.getSuccessCount(), is(4));
     }
 
     @Test

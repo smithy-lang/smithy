@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#Service2": {
             "type": "service",
@@ -52,6 +52,9 @@
                 "pageSize": {
                     "target": "smithy.api#Integer"
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#ListResourcesOutput": {
@@ -63,6 +66,9 @@
                 "items": {
                     "target": "ns.foo#StringList"
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#StringList": {

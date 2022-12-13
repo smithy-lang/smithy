@@ -18,11 +18,17 @@ package software.amazon.smithy.linters;
 import static java.lang.String.format;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.AuthDefinitionTrait;
 import software.amazon.smithy.model.traits.ProtocolDefinitionTrait;
@@ -42,12 +48,12 @@ public final class CamelCaseValidator extends AbstractValidator {
      * CamelCase configuration settings.
      */
     public static final class Config {
-        private MemberNameHandling memberNames = MemberNameHandling.LOWER;
+        private MemberNameHandling memberNames = MemberNameHandling.AUTO;
 
         /**
          * Gets how member names are to be cased.
          *
-         * <p>One of "upper" or "lower" (default).
+         * <p>One of "upper", "lower", or "auto" (default).
          *
          * @return returns member name casing.
          */
@@ -86,6 +92,21 @@ public final class CamelCaseValidator extends AbstractValidator {
             @Override
             public String toString() {
                 return "lower";
+            }
+        },
+
+        /**
+         * Member names are serialized using either all lower camel or all upper camel, but not a mixture.
+         */
+        AUTO {
+            Pattern getRegex() {
+                // No Pattern associated with auto setting
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "auto";
             }
         };
 
@@ -135,14 +156,81 @@ public final class CamelCaseValidator extends AbstractValidator {
                         shape.getType(), shape.getId().getName())))
                 .forEach(events::add);
 
-        Pattern isValidMemberName = config.getMemberNames().getRegex();
-        model.shapes(MemberShape.class)
-                .filter(shape -> !isValidMemberName.matcher(shape.getMemberName()).find())
-                .map(shape -> danger(shape, format(
-                        "Member shape member name, `%s`, is not %s camel case",
-                        shape.getMemberName(), config.getMemberNames())))
-                .forEach(events::add);
+        // First validate each service's closure's member shape member names
+        Set<MemberShape> seenShapes = new HashSet<>();
+        for (ServiceShape serviceShape : model.getServiceShapes()) {
+            Set<Shape> serviceClosure = new HashSet<>();
+            Walker walker = new Walker(model);
+            walker.iterateShapes(serviceShape).forEachRemaining(serviceClosure::add);
+            List<MemberShape> memberShapes = serviceClosure.stream()
+                    .filter(Shape::isMemberShape)
+                    .map(shape -> (MemberShape) shape)
+                    .collect(Collectors.toList());
+            events.addAll(validateCamelCasing(model, memberShapes, serviceShape.getId().getName()));
+            seenShapes.addAll(memberShapes);
+        }
+
+        // Next get all other member shapes (ex. trait shape members) and validate per namespace grouping
+        Map<String, List<MemberShape>> memberShapesByNamespace = model.toSet(MemberShape.class).stream()
+                .filter(memberShape -> !seenShapes.contains(memberShape))
+                .collect(Collectors.groupingBy(
+                        memberShape -> memberShape.getContainer().getNamespace()));
+
+        for (Map.Entry<String, List<MemberShape>> memberShapeGrouping : memberShapesByNamespace.entrySet()) {
+            events.addAll(validateCamelCasing(model, memberShapeGrouping.getValue(),
+                    memberShapeGrouping.getKey() + " namespace"));
+        }
 
         return events;
+    }
+
+    private List<ValidationEvent> validateCamelCasing(Model model, List<MemberShape> memberShapes, String scope) {
+        int upperCamelMemberNamesCount = 0;
+        int lowerCamelMemberNamesCount = 0;
+        Set<MemberShape> nonUpperCamelMemberShapes = new HashSet<>();
+        Set<MemberShape> nonLowerCamelMemberShapes = new HashSet<>();
+
+        for (MemberShape memberShape : memberShapes) {
+            // Exclude members of enums from CamelCase validation,
+            // as they're intended to be CAPS_SNAKE.
+            Shape container = model.expectShape(memberShape.getContainer());
+            if (!container.isEnumShape() && !container.isIntEnumShape()) {
+                if (MemberNameHandling.UPPER.getRegex().matcher(memberShape.getMemberName()).find()) {
+                    upperCamelMemberNamesCount++;
+                } else {
+                    nonUpperCamelMemberShapes.add(memberShape);
+                }
+                if (MemberNameHandling.LOWER.getRegex().matcher(memberShape.getMemberName()).find()) {
+                    lowerCamelMemberNamesCount++;
+                } else {
+                    nonLowerCamelMemberShapes.add(memberShape);
+                }
+            }
+        }
+
+        // Member shapes are expected to be either upper or lower, depending on the config (and in AUTO mode, the model)
+        Set<MemberShape> violatingMemberShapes = new HashSet<>();
+        String memberNameHandling = config.getMemberNames().toString();
+        if (MemberNameHandling.AUTO.equals(config.getMemberNames())) {
+            if (upperCamelMemberNamesCount > lowerCamelMemberNamesCount) {
+                violatingMemberShapes = nonUpperCamelMemberShapes;
+                memberNameHandling = MemberNameHandling.UPPER.toString();
+            } else {
+                violatingMemberShapes = nonLowerCamelMemberShapes;
+                memberNameHandling = MemberNameHandling.LOWER.toString();
+            }
+        } else if (MemberNameHandling.UPPER.equals(config.getMemberNames())) {
+            violatingMemberShapes = nonUpperCamelMemberShapes;
+        } else if (MemberNameHandling.LOWER.equals(config.getMemberNames())) {
+            violatingMemberShapes = nonLowerCamelMemberShapes;
+        }
+
+        String finalMemberNameHandling = memberNameHandling;
+        return violatingMemberShapes.stream()
+                .map(shape -> danger(shape, format(
+                        "Member shape member name, `%s`, is not %s camel case;"
+                                + " members in the %s must all use %s camel case.",
+                        shape.getMemberName(), finalMemberNameHandling, scope, finalMemberNameHandling)))
+                .collect(Collectors.toList());
     }
 }

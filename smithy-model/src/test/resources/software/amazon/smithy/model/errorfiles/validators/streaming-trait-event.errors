@@ -1,2 +1,2 @@
 [ERROR] ns.foo#InvalidUnion: Each member of an event stream union must target a structure shape, but the following union members do not: [b, c] | StreamingTrait
-[ERROR] ns.foo#InvalidEventStreamTargeting$member: This shape has an invalid `MEMBER_TARGET` relationship to a structure, `ns.foo#EventStreamReferencesInvalidMultiEventShapeInput`, that contains a stream | StreamingTrait
+[ERROR] ns.foo#InvalidEventStreamTargeting$member: Members cannot target structures that contain a stream, but this member targets ns.foo#EventStreamReferencesInvalidMultiEventShapeInput | StreamingTrait

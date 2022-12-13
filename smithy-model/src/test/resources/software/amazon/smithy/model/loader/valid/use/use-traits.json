@@ -7,7 +7,7 @@
                 "a": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#sensitive": {},
+                        "smithy.api#internal": {},
                         "smithy.api#deprecated": {},
                         "smithy.api#required": {}
                     }

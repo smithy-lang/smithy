@@ -20,7 +20,10 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.openapi.OpenApiConfig;
 
 /**
- * API Gateway does not allow characters like "_".
+ * Disables OpenAPI and JSON Schema features not supported by API Gateway.
+ *
+ * <p>API Gateway does not allow characters like "_". API Gateway
+ * doesn't support the "default" trait.
  */
 final class AddDefaultConfigSettings implements ApiGatewayMapper {
     @Override
@@ -31,5 +34,6 @@ final class AddDefaultConfigSettings implements ApiGatewayMapper {
     @Override
     public void updateDefaultSettings(Model model, OpenApiConfig config) {
         config.setAlphanumericOnlyRefs(true);
+        config.getDisableFeatures().add("default");
     }
 }

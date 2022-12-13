@@ -23,7 +23,7 @@
 //
 // See: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-api-responses.html#sqs-api-error-response-structure
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.query
 
@@ -127,7 +127,6 @@ apply ComplexError @httpResponseTests([
                  <Error>
                     <Type>Sender</Type>
                     <Code>ComplexError</Code>
-                    <Message>Hi</Message>
                     <TopLevel>Top level</TopLevel>
                     <Nested>
                         <Foo>bar</Foo>

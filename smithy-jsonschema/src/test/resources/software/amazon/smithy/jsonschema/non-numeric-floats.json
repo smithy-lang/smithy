@@ -1,0 +1,37 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "example.smithy#MyService": {
+            "type": "service",
+            "version": "2006-03-01",
+            "operations": [
+                {
+                    "target": "example.smithy#MyOperation"
+                }
+            ]
+        },
+        "example.smithy#MyOperation": {
+            "type": "operation",
+            "input": {
+                "target": "example.smithy#MyOperationInput"
+            },
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/foo",
+                    "method": "POST"
+                }
+            }
+        },
+        "example.smithy#MyOperationInput": {
+            "type": "structure",
+            "members": {
+                "floatMember": {
+                    "target": "smithy.api#Float"
+                },
+                "doubleMember": {
+                    "target": "smithy.api#Double"
+                }
+            }
+        }
+    }
+}

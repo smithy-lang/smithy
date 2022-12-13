@@ -107,7 +107,13 @@ public final class LiteralExpression extends JmespathExpression {
         } else if (!(o instanceof LiteralExpression)) {
             return false;
         } else {
-            return Objects.equals(value, ((LiteralExpression) o).value);
+            LiteralExpression other = (LiteralExpression) o;
+            // Compare all numbers as doubles to remove conflicts between integers, floats, and doubles.
+            if (value instanceof Number && other.getValue() instanceof Number) {
+                return ((Number) value).doubleValue() == ((Number) other.getValue()).doubleValue();
+            } else {
+                return Objects.equals(value, ((LiteralExpression) o).value);
+            }
         }
     }
 

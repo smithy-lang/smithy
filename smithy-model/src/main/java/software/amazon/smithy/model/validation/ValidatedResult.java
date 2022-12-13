@@ -16,6 +16,7 @@
 package software.amazon.smithy.model.validation;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,9 +40,14 @@ public final class ValidatedResult<T> {
      * @param result Value to set.
      * @param events Events to set.
      */
-    public ValidatedResult(T result, Collection<ValidationEvent> events) {
+    public ValidatedResult(T result, List<ValidationEvent> events) {
         this.result = result;
-        this.events = ListUtils.copyOf(events);
+        this.events = Collections.unmodifiableList(events);
+    }
+
+    @Deprecated
+    public ValidatedResult(T result, Collection<ValidationEvent> events) {
+        this(result, ListUtils.copyOf(events));
     }
 
     /**
@@ -52,8 +58,13 @@ public final class ValidatedResult<T> {
      * @param <T> The type of value in the result.
      * @return Returns the created ValidatedResult.
      */
-    public static <T> ValidatedResult<T> fromErrors(Collection<ValidationEvent> events) {
+    public static <T> ValidatedResult<T> fromErrors(List<ValidationEvent> events) {
         return new ValidatedResult<>(null, events);
+    }
+
+    @Deprecated
+    public static <T> ValidatedResult<T> fromErrors(Collection<ValidationEvent> events) {
+        return fromErrors(ListUtils.copyOf(events));
     }
 
     /**
@@ -141,6 +152,11 @@ public final class ValidatedResult<T> {
      * @return Returns true if there are errors or unsuppressed dangers.
      */
     public boolean isBroken() {
-        return !getValidationEvents(Severity.ERROR).isEmpty() || !getValidationEvents(Severity.DANGER).isEmpty();
+        for (ValidationEvent event : events) {
+            if (event.getSeverity() == Severity.ERROR || event.getSeverity() == Severity.DANGER) {
+                return true;
+            }
+        }
+        return false;
     }
 }

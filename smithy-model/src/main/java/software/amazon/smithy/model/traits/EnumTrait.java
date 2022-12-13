@@ -15,31 +15,43 @@
 
 package software.amazon.smithy.model.traits;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Constrains string values to one of the predefined enum constants.
+ *
+ * <p>This trait is deprecated, use an {@link EnumShape} instead.
+ *
+ * <p>There is also the {@link SyntheticEnumTrait}, which is a synthetic variant of this
+ * trait used exclusively to assist in making {@link EnumShape} as backwards compatible
+ * as possible.
  */
-public final class EnumTrait extends AbstractTrait implements ToSmithyBuilder<EnumTrait> {
+@Deprecated
+public class EnumTrait extends AbstractTrait implements ToSmithyBuilder<EnumTrait> {
     public static final ShapeId ID = ShapeId.from("smithy.api#enum");
 
     private final List<EnumDefinition> definitions;
 
-    private EnumTrait(Builder builder) {
-        super(ID, builder.sourceLocation);
-        this.definitions = ListUtils.copyOf(builder.definitions);
+    protected EnumTrait(ShapeId id, Builder builder) {
+        super(id, builder.sourceLocation);
+        this.definitions = builder.definitions.copy();
         if (definitions.isEmpty()) {
             throw new SourceException("enum must have at least one entry", getSourceLocation());
         }
+    }
+
+    private EnumTrait(Builder builder) {
+        this(ID, builder);
     }
 
     /**
@@ -74,7 +86,7 @@ public final class EnumTrait extends AbstractTrait implements ToSmithyBuilder<En
 
     @Override
     protected Node createNode() {
-        return definitions.stream().map(EnumDefinition::toNode).collect(ArrayNode.collect());
+        return definitions.stream().map(EnumDefinition::toNode).collect(ArrayNode.collect(getSourceLocation()));
     }
 
     @Override
@@ -94,21 +106,21 @@ public final class EnumTrait extends AbstractTrait implements ToSmithyBuilder<En
     /**
      * Builder used to create the enum trait.
      */
-    public static final class Builder extends AbstractTraitBuilder<EnumTrait, Builder> {
-        private final List<EnumDefinition> definitions = new ArrayList<>();
+    public static class Builder extends AbstractTraitBuilder<EnumTrait, Builder> {
+        private final BuilderRef<List<EnumDefinition>> definitions = BuilderRef.forList();
 
         public Builder addEnum(EnumDefinition value) {
-            definitions.add(value);
+            definitions.get().add(value);
             return this;
         }
 
         public Builder removeEnum(String value) {
-            definitions.removeIf(def -> def.getValue().equals(value));
+            definitions.get().removeIf(def -> def.getValue().equals(value));
             return this;
         }
 
         public Builder removeEnumByName(String name) {
-            definitions.removeIf(def -> def.getName().filter(n -> n.equals(name)).isPresent());
+            definitions.get().removeIf(def -> def.getName().filter(n -> n.equals(name)).isPresent());
             return this;
         }
 
@@ -135,7 +147,9 @@ public final class EnumTrait extends AbstractTrait implements ToSmithyBuilder<En
             for (ObjectNode definition : value.expectArrayNode().getElementsAs(ObjectNode.class)) {
                 builder.addEnum(EnumDefinition.fromNode(definition));
             }
-            return builder.build();
+            EnumTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 }

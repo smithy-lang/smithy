@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.utils;
 
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -24,6 +25,8 @@ public final class FunctionalUtils {
 
     @SuppressWarnings("rawtypes")
     private static final Predicate ALWAYS_TRUE = x -> true;
+
+    private static final Function<Object, Object> IDENTITY = value -> value;
 
     private FunctionalUtils() {}
 
@@ -47,5 +50,16 @@ public final class FunctionalUtils {
     @SuppressWarnings("unchecked")
     public static <T> Predicate<T> alwaysTrue() {
         return (Predicate<T>) ALWAYS_TRUE;
+    }
+
+    /**
+     * Returns an identity function that always returns the given value.
+     *
+     * @param <T> Type of value to return.
+     * @return Returns the identity function.
+     */
+    @SuppressWarnings("unchecked")
+    static <T> Function<T, T> identity() {
+        return (Function<T, T>) IDENTITY;
     }
 }

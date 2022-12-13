@@ -1,1 +1,0 @@
-[ERROR] smithy.example#A: Waiter `A`, acceptor 0: inputOutput path used on operation with no output | WaitableTrait

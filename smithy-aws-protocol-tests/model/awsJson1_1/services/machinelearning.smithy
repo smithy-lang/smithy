@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace com.amazonaws.machinelearning
 
@@ -42,7 +42,7 @@ service AmazonML_20141212 {
         uri: "/",
         host: "example.com",
         resolvedHost: "custom.example.com",
-        body: "{\"MLModelId\": \"foo\", \"Record\": {}, \"PredictEndpoint\": \"https://custom.example.com\"}",
+        body: "{\"MLModelId\": \"foo\", \"Record\": {}, \"PredictEndpoint\": \"https://custom.example.com/\"}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
@@ -85,6 +85,7 @@ structure LimitExceededException {
     code: ErrorCode,
 }
 
+@input
 structure PredictInput {
     @required
     MLModelId: EntityId,
@@ -107,6 +108,7 @@ structure PredictorNotMountedException {
     message: ErrorMessage,
 }
 
+@output
 structure PredictOutput {
     Prediction: Prediction,
 }
@@ -133,17 +135,10 @@ map ScoreValuePerLabelMap {
     value: ScoreValue,
 }
 
-@enum([
-    {
-        value: "PredictiveModelType",
-        name: "PREDICTIVE_MODEL_TYPE",
-    },
-    {
-        value: "Algorithm",
-        name: "ALGORITHM",
-    },
-])
-string DetailsAttributes
+enum DetailsAttributes {
+    PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+    ALGORITHM = "Algorithm"
+}
 
 @length(
     min: 1,
@@ -154,7 +149,7 @@ string DetailsValue
     min: 1,
     max: 64,
 )
-@pattern("[a-zA-Z0-9_.-]+")
+@pattern("^[a-zA-Z0-9_.-]+$")
 string EntityId
 
 integer ErrorCode
@@ -165,7 +160,6 @@ integer ErrorCode
 )
 string ErrorMessage
 
-@box
 float floatLabel
 
 @length(

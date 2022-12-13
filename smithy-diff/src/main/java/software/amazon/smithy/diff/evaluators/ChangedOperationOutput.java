@@ -29,14 +29,12 @@ public final class ChangedOperationOutput extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.changedShapes(OperationShape.class)
-                .filter(change -> change.getOldShape().getOutput().isPresent()
-                                  && change.getNewShape().getOutput().isPresent()
-                                  && !change.getOldShape().getOutput().equals(change.getNewShape().getOutput()))
+                .filter(change -> !change.getOldShape().getOutputShape().equals(change.getNewShape().getOutputShape()))
                 .map(change -> error(change.getNewShape(), String.format(
-                        "Output shape of `%s` changed from `%s` to `%s`",
+                        "Changed operation output of `%s` from `%s` to `%s`",
                         change.getShapeId(),
-                        change.getOldShape().getOutput().get(),
-                        change.getNewShape().getOutput().get())))
+                        change.getOldShape().getOutputShape(),
+                        change.getNewShape().getOutputShape())))
                 .collect(Collectors.toList());
     }
 }

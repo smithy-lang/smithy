@@ -22,13 +22,12 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 /**
  * Contains the imports associated with a specific file.
  *
- * <p>The only required method is {@link #importSymbol}, but implementations
- * are expected to also override {@link #toString()} so that it contains the
- * formatted imports that can be written as code to a file. Other methods
- * can, and should, be added to make working with language specific imports
- * easier too.
+ * <p>This class is deprecated and will be removed in a future release.
+ *
+ * <p>Use {@link software.amazon.smithy.codegen.core.ImportContainer} instead.
  */
 @SmithyUnstableApi
+@Deprecated
 public interface ImportContainer {
     /**
      * Adds an import for the given symbol if and only if the "namespace" of the

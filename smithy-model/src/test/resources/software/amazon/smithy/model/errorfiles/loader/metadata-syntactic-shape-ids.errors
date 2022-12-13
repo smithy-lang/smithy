@@ -1,0 +1,1 @@
+[DANGER] -: Syntactic shape ID `smithy.example#enum` does not resolve to a valid shape ID: `smithy.example#enum`. Did you mean to quote this string? Are you missing a model file? | SyntacticShapeIdTarget

@@ -27,11 +27,14 @@ import software.amazon.smithy.aws.cloudformation.schema.CfnConfig;
 import software.amazon.smithy.aws.cloudformation.schema.CfnException;
 import software.amazon.smithy.aws.cloudformation.schema.model.Property;
 import software.amazon.smithy.aws.cloudformation.schema.model.ResourceSchema;
+import software.amazon.smithy.aws.cloudformation.schema.model.Tagging;
 import software.amazon.smithy.aws.cloudformation.traits.CfnNameTrait;
 import software.amazon.smithy.aws.cloudformation.traits.CfnResource;
 import software.amazon.smithy.aws.cloudformation.traits.CfnResourceIndex;
 import software.amazon.smithy.aws.cloudformation.traits.CfnResourceTrait;
 import software.amazon.smithy.aws.traits.ServiceTrait;
+import software.amazon.smithy.aws.traits.tagging.AwsTagIndex;
+import software.amazon.smithy.aws.traits.tagging.TaggableTrait;
 import software.amazon.smithy.jsonschema.JsonSchemaConverter;
 import software.amazon.smithy.jsonschema.JsonSchemaMapper;
 import software.amazon.smithy.jsonschema.PropertyNamingStrategy;
@@ -41,18 +44,20 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.DocumentationTrait;
+import software.amazon.smithy.model.traits.PropertyTrait;
 import software.amazon.smithy.model.traits.StringTrait;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.StringUtils;
 
 public final class CfnConverter {
-
+    private static final String DEFAULT_TAGS_NAME = "Tags";
     private ClassLoader classLoader = CfnConverter.class.getClassLoader();
     private CfnConfig config = new CfnConfig();
     private final List<Smithy2CfnExtension> extensions = new ArrayList<>();
@@ -87,7 +92,8 @@ public final class CfnConverter {
      * Sets a {@link ClassLoader} to use to discover {@link Smithy2CfnExtension}
      * service providers through SPI.
      *
-     * <p>The {@code CfnConverter} will use its own ClassLoader by default.
+     * <p>
+     * The {@code CfnConverter} will use its own ClassLoader by default.
      *
      * @param classLoader ClassLoader to use.
      * @return Returns the converter.
@@ -102,13 +108,15 @@ public final class CfnConverter {
      * JSON/Node representations of CloudFormation Resource Schemas using the
      * given Smithy model.
      *
-     * <p>The result of this method may differ from the result of calling
+     * <p>
+     * The result of this method may differ from the result of calling
      * {@link ResourceSchema#toNode()} because this method will pass the Node
      * representation of the ResourceSchema through the {@link CfnMapper#updateNode}
      * method of each registered {@link CfnMapper}.
      *
      * @param model Smithy model to convert.
-     * @return A map of CloudFormation resource type names to their converted schema nodes.
+     * @return A map of CloudFormation resource type names to their converted schema
+     *         nodes.
      */
     public Map<String, ObjectNode> convertToNodes(Model model) {
         List<ConversionEnvironment> environments = createConversionEnvironments(model);
@@ -225,9 +233,16 @@ public final class CfnConverter {
     private PropertyNamingStrategy getPropertyNamingStrategy() {
         return (containingShape, member, config) -> {
             // The cfnName trait's value takes precedence, even over any settings.
-            Optional<CfnNameTrait> trait = member.getTrait(CfnNameTrait.class);
-            if (trait.isPresent()) {
-                return trait.get().getValue();
+            Optional<CfnNameTrait> cfnNameTrait = member.getTrait(CfnNameTrait.class);
+            if (cfnNameTrait.isPresent()) {
+                return cfnNameTrait.get().getValue();
+            }
+            // The property trait's name value takes next precedence.
+            Optional<PropertyTrait> propertyTrait = member.getTrait(PropertyTrait.class);
+            if (propertyTrait.isPresent() && propertyTrait.flatMap(PropertyTrait::getName).isPresent()) {
+                return this.config.getDisableCapitalizedProperties()
+                        ? StringUtils.capitalize(propertyTrait.get().getName().get())
+                        : propertyTrait.get().getName().get();
             }
 
             // Otherwise, respect the property capitalization setting.
@@ -246,8 +261,7 @@ public final class CfnConverter {
 
         private ConversionEnvironment(
                 Context context,
-                List<CfnMapper> mappers
-        ) {
+                List<CfnMapper> mappers) {
             this.context = context;
             this.mappers = mappers;
         }
@@ -292,6 +306,20 @@ public final class CfnConverter {
             builder.addDefinition(definitionName, definition.getValue());
         }
 
+        if (resourceShape.hasTrait(TaggableTrait.class)) {
+            AwsTagIndex tagsIndex = AwsTagIndex.of(environment.context.getModel());
+            TaggableTrait trait = resourceShape.expectTrait(TaggableTrait.class);
+            Tagging.Builder tagBuilder = Tagging.builder()
+                    .taggable(true)
+                    .tagOnCreate(tagsIndex.isResourceTagOnCreate(resourceShape.getId()))
+                    .tagProperty(getTagsProperty(resourceShape))
+                    .cloudFormationSystemTags(!trait.getDisableSystemTags())
+                    // Unless tag-on-create is supported, Smithy tagging means
+                    .tagUpdatable(true);
+
+            builder.tagging(tagBuilder.build());
+        }
+
         // Apply all the mappers' after methods.
         ResourceSchema resourceSchema = builder.build();
         for (CfnMapper mapper : environment.mappers) {
@@ -303,8 +331,7 @@ public final class CfnConverter {
 
     private String resolveResourceTypeName(
             ConversionEnvironment environment,
-            CfnResourceTrait resourceTrait
-    ) {
+            CfnResourceTrait resourceTrait) {
         CfnConfig config = environment.context.getConfig();
         ServiceShape serviceShape = environment.context.getModel().expectShape(config.getService(), ServiceShape.class);
         Optional<ServiceTrait> serviceTrait = serviceShape.getTrait(ServiceTrait.class);
@@ -315,8 +342,8 @@ public final class CfnConverter {
             // "AWS" organization instead of requiring the configuration value.
             organizationName = serviceTrait
                     .map(t -> "AWS")
-                    .orElseThrow(() ->
-                            new CfnException("cloudformation is missing required property, `organizationName`"));
+                    .orElseThrow(
+                            () -> new CfnException("cloudformation is missing required property, `organizationName`"));
         }
 
         String serviceName = config.getServiceName();
@@ -364,6 +391,49 @@ public final class CfnConverter {
                 builder.addMember(name, definition.getShapeId());
             }
         });
+
+        injectTagsIfNecessary(builder, model, resource, cfnResource);
+
         return builder.build();
+    }
+
+    private String getTagsProperty(ResourceShape resource) {
+        return resource.getTrait(TaggableTrait.class)
+                .flatMap(TaggableTrait::getProperty)
+                .map(property -> {
+                    if (config.getDisableCapitalizedProperties()) {
+                        return property;
+                    }
+                    return StringUtils.capitalize(property);
+                })
+                .orElse(DEFAULT_TAGS_NAME);
+    }
+
+    private void injectTagsIfNecessary(
+        StructureShape.Builder builder,
+        Model model,
+        ResourceShape resource,
+        CfnResource cfnResource
+    ) {
+        String tagPropertyName = getTagsProperty(resource);
+        if (resource.hasTrait(TaggableTrait.class)) {
+            AwsTagIndex tagIndex = AwsTagIndex.of(model);
+            TaggableTrait trait = resource.expectTrait(TaggableTrait.class);
+            if (!trait.getProperty().isPresent() || !cfnResource.getProperties()
+                    .containsKey(trait.getProperty().get())) {
+                if (trait.getProperty().isPresent()) {
+                    ShapeId definition = resource.getProperties().get(trait.getProperty().get());
+                    builder.addMember(tagPropertyName, definition);
+                } else {
+                    // Taggability must be through service-wide TagResource operation
+                    OperationShape tagResourceOp = model.expectShape(
+                        tagIndex.getTagResourceOperation(resource.getId()).get(), OperationShape.class);
+                    // A valid TagResource operation certainly has a single tags input member
+                    MemberShape member = AwsTagIndex.getTagsMember(model, tagResourceOp).get();
+                    member = member.toBuilder().id(builder.getId().withMember(tagPropertyName)).build();
+                    builder.addMember(member);
+                }
+            }
+        }
     }
 }

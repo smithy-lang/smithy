@@ -2,6 +2,7 @@ package software.amazon.smithy.jsonschema;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static software.amazon.smithy.utils.FunctionalUtils.alwaysTrue;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ public class DeconflictingStrategyTest {
 
         PropertyNamingStrategy propertyNamingStrategy = PropertyNamingStrategy.createDefaultStrategy();
         RefStrategy strategy = RefStrategy
-                .createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy);
+                .createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy, alwaysTrue());
         assertThat(strategy.toPointer(a.getId()), equalTo("#/definitions/Page"));
         assertThat(strategy.toPointer(b.getId()), equalTo("#/definitions/PageComFoo"));
     }
@@ -39,7 +40,7 @@ public class DeconflictingStrategyTest {
         PropertyNamingStrategy propertyNamingStrategy = PropertyNamingStrategy.createDefaultStrategy();
 
         Assertions.assertThrows(ConflictingShapeNameException.class, () -> {
-            RefStrategy.createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy);
+            RefStrategy.createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy, alwaysTrue());
         });
     }
 
@@ -48,8 +49,42 @@ public class DeconflictingStrategyTest {
         Model model = Model.builder().build();
         PropertyNamingStrategy propertyNamingStrategy = PropertyNamingStrategy.createDefaultStrategy();
         RefStrategy strategy = RefStrategy
-                .createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy);
+                .createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy, alwaysTrue());
 
         assertThat(strategy.toPointer(ShapeId.from("com.foo#Nope")), equalTo("#/definitions/Nope"));
+    }
+
+    @Test
+    public void detectsUnitConflictsWhenPreludeUnitIsNotFiltered() {
+        StructureShape a = StructureShape.builder().id("com.foo#Unit").build();
+        Model model = Model.assembler().addShapes(a).assemble().unwrap();
+        PropertyNamingStrategy propertyNamingStrategy = PropertyNamingStrategy.createDefaultStrategy();
+
+        Assertions.assertThrows(ConflictingShapeNameException.class, () -> {
+            RefStrategy.createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy, alwaysTrue());
+        });
+    }
+
+    @Test
+    public void doesNotDetectUnitConflictsWhenPreludeUnitIsFiltered() {
+        StructureShape a = StructureShape.builder().id("com.foo#Unit").build();
+        Model model = Model.assembler().addShapes(a).assemble().unwrap();
+        PropertyNamingStrategy propertyNamingStrategy = PropertyNamingStrategy.createDefaultStrategy();
+
+        RefStrategy.createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy,
+                new JsonSchemaConverter.FilterPreludeUnit(false));
+    }
+
+    @Test
+    public void detectsUnitConflictsWithNonPreludeUnitsNoMatterWhat() {
+        StructureShape a = StructureShape.builder().id("com.foo#Unit").build();
+        StructureShape b = StructureShape.builder().id("com.bar#Unit").build();
+        Model model = Model.assembler().addShapes(a, b).assemble().unwrap();
+        PropertyNamingStrategy propertyNamingStrategy = PropertyNamingStrategy.createDefaultStrategy();
+
+        Assertions.assertThrows(ConflictingShapeNameException.class, () -> {
+            RefStrategy.createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy,
+                    new JsonSchemaConverter.FilterPreludeUnit(false));
+        });
     }
 }

@@ -1,0 +1,17 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#A": {
+            "type": "structure"
+        },
+        "smithy.example#B": {
+            "type": "structure",
+            "mixins": [
+                {"target": "smithy.example#A"}
+            ],
+            "traits": {
+                "smithy.api#documentation": "This documentation does not raise a validation error even though smithy.example#B cannot be built."
+            }
+        }
+    }
+}

@@ -425,7 +425,7 @@ public final class BuildParameterBuilder {
         public final String classpath;
 
         /**
-         * Smithy build discovery classpath string string.
+         * Smithy build discovery classpath string.
          *
          * <p>This is the classpath that is also specified in the arguments list and
          * is used for model discovery. The value is a colon (:) separate string.
@@ -446,15 +446,15 @@ public final class BuildParameterBuilder {
             } else {
                 this.discoveryClasspath = discoveryClasspath;
                 if (!discoveryClasspath.isEmpty()) {
-                    args.add(SmithyCli.DISCOVER_CLASSPATH);
+                    args.add("--discover-classpath");
                     args.add(discoveryClasspath);
                 } else {
-                    args.add(SmithyCli.DISCOVER);
+                    args.add("--discover");
                 }
             }
 
             if (builder.allowUnknownTraits) {
-                args.add(SmithyCli.ALLOW_UNKNOWN_TRAITS);
+                args.add("--allow-unknown-traits");
             }
 
             builder.configs.forEach(config -> {

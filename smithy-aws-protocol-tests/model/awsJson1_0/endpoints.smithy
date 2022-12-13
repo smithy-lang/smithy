@@ -1,7 +1,7 @@
 // This file defines tests to ensure that implementations support the endpoint
 // trait and other features that modify the host.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.json10
 
@@ -47,10 +47,11 @@ operation EndpointOperation {}
 ])
 @endpoint(hostPrefix: "foo.{label}.")
 operation EndpointWithHostLabelOperation {
-    input: HostLabelInput,
+    input: EndpointWithHostLabelOperationInput,
 }
 
-structure HostLabelInput {
+@input
+structure EndpointWithHostLabelOperationInput {
     @required
     @hostLabel
     label: String,

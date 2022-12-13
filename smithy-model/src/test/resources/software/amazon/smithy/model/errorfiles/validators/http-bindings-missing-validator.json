@@ -1,6 +1,34 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
+        "ns.foo#restProtocol": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "service"
+                },
+                "smithy.api#protocolDefinition": {
+                    "traits": [
+                        "smithy.api#cors",
+                        "smithy.api#endpoint",
+                        "smithy.api#hostLabel",
+                        "smithy.api#http",
+                        "smithy.api#httpError",
+                        "smithy.api#httpHeader",
+                        "smithy.api#httpLabel",
+                        "smithy.api#httpPayload",
+                        "smithy.api#httpPrefixHeaders",
+                        "smithy.api#httpQuery",
+                        "smithy.api#httpQueryParams",
+                        "smithy.api#httpResponseCode",
+                        "smithy.api#jsonName",
+                        "smithy.api#timestampFormat"
+                    ]
+                },
+                "smithy.api#documentation": "A simple clone of AWS restJson1."
+            }
+        },
         "ns.foo#MyService": {
             "type": "service",
             "version": "2017-01-17",
@@ -14,10 +42,15 @@
                 {
                     "target": "ns.foo#MissingBindings2"
                 }
-            ]
+            ],
+            "traits": {
+                "ns.foo#restProtocol": {}
+            }
         },
         "ns.foo#HasBindings": {
             "type": "operation",
+            "input": {"target": "ns.foo#HasBindingsInput"},
+            "output": {"target": "ns.foo#HasBindingsOutput"},
             "traits": {
                 "smithy.api#readonly": {},
                 "smithy.api#http": {
@@ -26,16 +59,56 @@
                 }
             }
         },
+        "ns.foo#HasBindingsInput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#HasBindingsOutput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#output": {}
+            }
+        },
         "ns.foo#MissingBindings1": {
             "type": "operation",
+            "input": {"target":  "ns.foo#MissingBindings1Input"},
+            "output": {"target":  "ns.foo#MissingBindings1Output"},
             "traits": {
                 "smithy.api#readonly": {}
             }
         },
+        "ns.foo#MissingBindings1Input": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#MissingBindings1Output": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#output": {}
+            }
+        },
         "ns.foo#MissingBindings2": {
             "type": "operation",
+            "input": {"target":  "ns.foo#MissingBindings2Input"},
+            "output": {"target":  "ns.foo#MissingBindings2Output"},
             "traits": {
                 "smithy.api#readonly": {}
+            }
+        },
+        "ns.foo#MissingBindings2Input": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#MissingBindings2Output": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#output": {}
             }
         }
     }

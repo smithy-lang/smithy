@@ -1,6 +1,6 @@
 // This file defines test cases that test error serialization.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.json10
 
@@ -18,10 +18,17 @@ use smithy.test#httpResponseTests
 /// properly deserialize successful and error responses.
 @idempotent
 operation GreetingWithErrors {
+    input: GreetingWithErrorsInput,
     output: GreetingWithErrorsOutput,
     errors: [InvalidGreeting, ComplexError, FooError]
 }
 
+@input
+structure GreetingWithErrorsInput {
+    greeting: String,
+}
+
+@output
 structure GreetingWithErrorsOutput {
     greeting: String,
 }
@@ -61,7 +68,7 @@ structure ComplexError {
 }
 
 structure ComplexNestedErrorData {
-    @jsonName("Fooooo")
+    @jsonName("Fooooo") // Even if this trait it present, it does not affect serialization for this protocol
     Foo: String,
 }
 
@@ -85,7 +92,7 @@ apply ComplexError @httpResponseTests([
                   "__type": "aws.protocoltests.json10#ComplexError",
                   "TopLevel": "Top level",
                   "Nested": {
-                      "Fooooo": "bar"
+                      "Foo": "bar"
                   }
               }""",
         bodyMediaType: "application/json",

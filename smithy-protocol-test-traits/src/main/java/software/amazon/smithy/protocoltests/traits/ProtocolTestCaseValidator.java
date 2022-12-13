@@ -15,13 +15,20 @@
 
 package software.amazon.smithy.protocoltests.traits;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.OperationIndex;
+import software.amazon.smithy.model.loader.ModelSyntaxException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -33,29 +40,55 @@ import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.NodeValidationVisitor;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.node.TimestampValidationStrategy;
+import software.amazon.smithy.utils.MediaType;
 
+/**
+ * Validates the following:
+ *
+ * <ul>
+ *     <li>XML and JSON bodyMediaTypes contain valid content.</li>
+ *     <li>vendorParamsShape is a valid shape.</li>
+ *     <li>Vendor params are compatible with any referenced shape.</li>
+ *     <li>Params for a test case are valid for the model.</li>
+ * </ul>
+ *
+ * @param <T> Type of test case to validate.
+ */
 abstract class ProtocolTestCaseValidator<T extends Trait> extends AbstractValidator {
 
     private final Class<T> traitClass;
     private final ShapeId traitId;
     private final String descriptor;
+    private final DocumentBuilderFactory documentBuilderFactory;
 
     ProtocolTestCaseValidator(ShapeId traitId, Class<T> traitClass, String descriptor) {
         this.traitId = traitId;
         this.traitClass = traitClass;
         this.descriptor = descriptor;
+        documentBuilderFactory = DocumentBuilderFactory.newInstance();
+
+        // Disallow loading DTDs and more for protocol test contents.
+        try {
+            documentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            documentBuilderFactory.setXIncludeAware(false);
+            documentBuilderFactory.setExpandEntityReferences(false);
+            documentBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            documentBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public List<ValidationEvent> validate(Model model) {
         OperationIndex operationIndex = OperationIndex.of(model);
 
-        return Stream.concat(model.shapes(OperationShape.class), model.shapes(StructureShape.class))
-                .filter(shape -> shape.hasTrait(traitClass))
-                .flatMap(shape -> {
-                    return validateOperation(model, operationIndex, shape, shape.expectTrait(traitClass)).stream();
-                })
-                .collect(Collectors.toList());
+        List<ValidationEvent> events = new ArrayList<>();
+        for (Shape shape : model.getShapesWithTrait(traitClass)) {
+            events.addAll(validateShape(model, operationIndex, shape, shape.expectTrait(traitClass)));
+        }
+
+        return events;
     }
 
     abstract StructureShape getStructure(Shape shape, OperationIndex operationIndex);
@@ -66,7 +99,7 @@ abstract class ProtocolTestCaseValidator<T extends Trait> extends AbstractValida
         return shape instanceof OperationShape;
     }
 
-    private List<ValidationEvent> validateOperation(
+    private List<ValidationEvent> validateShape(
             Model model,
             OperationIndex operationIndex,
             Shape shape,
@@ -77,6 +110,9 @@ abstract class ProtocolTestCaseValidator<T extends Trait> extends AbstractValida
 
         for (int i = 0; i < testCases.size(); i++) {
             HttpMessageTestCase testCase = testCases.get(i);
+
+            // Validate the syntax of known media types like XML and JSON.
+            events.addAll(validateMediaType(shape, trait, testCase));
 
             // Validate the vendorParams for the test case if we have a shape defined.
             Optional<ShapeId> vendorParamsShapeOptional = testCase.getVendorParamsShape();
@@ -124,7 +160,62 @@ abstract class ProtocolTestCaseValidator<T extends Trait> extends AbstractValida
                 .startingContext(traitId + "." + position + contextSuffix)
                 .eventId(getName())
                 .timestampValidationStrategy(TimestampValidationStrategy.EPOCH_SECONDS)
-                .allowBoxedNull(true)
+                .allowOptionalNull(true)
                 .build();
+    }
+
+    private List<ValidationEvent> validateMediaType(Shape shape, Trait trait, HttpMessageTestCase test) {
+        // Only validate the body if it's a non-empty string. Some protocols
+        // require a content-type header even with no payload.
+        if (!test.getBody().filter(s -> !s.isEmpty()).isPresent()) {
+            return Collections.emptyList();
+        }
+
+        String rawMediaType = test.getBodyMediaType().orElse("application/octet-stream");
+        MediaType mediaType = MediaType.from(rawMediaType);
+        List<ValidationEvent> events = new ArrayList<>();
+        if (isXml(mediaType)) {
+            validateXml(shape, trait, test).ifPresent(events::add);
+        } else if (isJson(mediaType)) {
+            validateJson(shape, trait, test).ifPresent(events::add);
+        }
+
+        return events;
+    }
+
+    private boolean isXml(MediaType mediaType) {
+        return mediaType.getSubtype().equals("xml") || mediaType.getSuffix().orElse("").equals("xml");
+    }
+
+    private boolean isJson(MediaType mediaType) {
+        return mediaType.getSubtype().equals("json") || mediaType.getSuffix().orElse("").equals("json");
+    }
+
+    private Optional<ValidationEvent> validateXml(Shape shape, Trait trait, HttpMessageTestCase test) {
+        try {
+            DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
+            builder.parse(new InputSource(new StringReader(test.getBody().orElse(""))));
+            return Optional.empty();
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            return Optional.of(emitMediaTypeError(shape, trait, test, e));
+        }
+    }
+
+    private Optional<ValidationEvent> validateJson(Shape shape, Trait trait, HttpMessageTestCase test) {
+        try {
+            Node.parse(test.getBody().orElse(""));
+            return Optional.empty();
+        } catch (ModelSyntaxException e) {
+            return Optional.of(emitMediaTypeError(shape, trait, test, e));
+        }
+    }
+
+    private ValidationEvent emitMediaTypeError(Shape shape, Trait trait, HttpMessageTestCase test, Throwable e) {
+        return danger(shape, trait, String.format(
+                "Invalid %s content in `%s` protocol test case `%s`: %s",
+                test.getBodyMediaType().orElse(""),
+                trait.toShapeId(),
+                test.getId(),
+                e.getMessage()));
     }
 }

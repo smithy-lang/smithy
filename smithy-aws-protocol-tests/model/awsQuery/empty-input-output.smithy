@@ -1,7 +1,7 @@
 // This file defines test cases that test the basics of empty input and
 // output shape serialization.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.query
 
@@ -25,9 +25,7 @@ apply NoInputAndNoOutput @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-            Action=NoInputAndNoOutput
-            &Version=2020-01-08""",
+        body: "Action=NoInputAndNoOutput&Version=2020-01-08",
         bodyMediaType: "application/x-www-form-urlencoded"
     }
 ])
@@ -46,7 +44,8 @@ apply NoInputAndNoOutput @httpResponseTests([
 ///
 /// While this should be rare, code generators must support this.
 operation NoInputAndOutput {
-    input: NoInputAndOutputOutput
+    input: NoInputAndOutputInput,
+    output: NoInputAndOutputOutput
 }
 
 apply NoInputAndOutput @httpRequestTests([
@@ -59,9 +58,7 @@ apply NoInputAndOutput @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=NoInputAndOutput
-              &Version=2020-01-08""",
+        body: "Action=NoInputAndOutput&Version=2020-01-08",
         bodyMediaType: "application/x-www-form-urlencoded"
     }
 ])
@@ -75,6 +72,10 @@ apply NoInputAndOutput @httpResponseTests([
     }
 ])
 
+@input
+structure NoInputAndOutputInput {}
+
+@output
 structure NoInputAndOutputOutput {}
 
 /// The example tests how requests and responses are serialized when there's
@@ -96,9 +97,7 @@ apply EmptyInputAndEmptyOutput @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=EmptyInputAndEmptyOutput
-              &Version=2020-01-08""",
+        body: "Action=EmptyInputAndEmptyOutput&Version=2020-01-08",
         bodyMediaType: "application/x-www-form-urlencoded"
     },
 ])

@@ -16,10 +16,8 @@
 package software.amazon.smithy.openapi.fromsmithy.protocols;
 
 import software.amazon.smithy.jsonschema.Schema;
-import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StringShape;
@@ -50,19 +48,10 @@ final class HeaderSchemaVisitor<T extends Trait> extends ShapeVisitor.Default<Sc
         return schema;
     }
 
+    // Rewrite collections in case the members contain timestamps, blobs, etc.
     @Override
     public Schema listShape(ListShape shape) {
-        return collection(shape);
-    }
-
-    @Override
-    public Schema setShape(SetShape shape) {
-        return collection(shape);
-    }
-
-    // Rewrite collections in case the members contain timestamps, blobs, etc.
-    private Schema collection(CollectionShape collection) {
-        MemberShape collectionMember = collection.getMember();
+        MemberShape collectionMember = shape.getMember();
         Shape collectionTarget = context.getModel().expectShape(collectionMember.getTarget());
         // Recursively change the items schema and its targets as needed.
         Schema refSchema = context.inlineOrReferenceSchema(collectionMember);

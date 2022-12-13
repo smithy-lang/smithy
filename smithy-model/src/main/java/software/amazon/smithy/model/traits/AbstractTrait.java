@@ -30,6 +30,19 @@ import software.amazon.smithy.model.shapes.ShapeId;
  * that equality for traits that extend from this type are not based on the
  * concrete class, but rather the trait name and the trait's {@link ToNode}
  * representation.
+ *
+ * <p>The Node value of a trait can be provided when the trait is created
+ * using {@link #setNodeCache(Node)}. Note that when setting the node cache,
+ * the equality and hashcode of the trait are impacted because they are by
+ * default based on the{@link #toNode()} value of a trait. This typically
+ * isn't an issue until model transformations are performed that modify a
+ * trait. In these cases, the original node value of the trait might differ
+ * from the updated trait even if they are semantically the same value (for
+ * example, if the only change to the trait is modifying its source location,
+ * or if a property of the trait was explicitly set to false, but false is
+ * omitted when serializing the updated trait to a node value). If this use
+ * case needs to be accounted for, you must override equals and hashCode of
+ * the trait.
  */
 public abstract class AbstractTrait implements Trait {
 
@@ -46,6 +59,15 @@ public abstract class AbstractTrait implements Trait {
         this.traitId = Objects.requireNonNull(id, "id was not set on trait");
         this.traitSourceLocation = Objects.requireNonNull(sourceLocation, "sourceLocation was not set on trait")
                 .getSourceLocation();
+    }
+
+    /**
+     * @param id ID of the trait.
+     * @param nodeValue The node representation of the shape, if known and trusted.
+     */
+    public AbstractTrait(ShapeId id, Node nodeValue) {
+        this(id, nodeValue.getSourceLocation());
+        setNodeCache(nodeValue);
     }
 
     @Override
@@ -65,12 +87,16 @@ public abstract class AbstractTrait implements Trait {
 
     @Override
     public boolean equals(Object other) {
-        if (!(other instanceof Trait)) {
+        if (other == this) {
+            return true;
+        } else if (!(other instanceof Trait)) {
             return false;
+        } else if (hashCode() != other.hashCode()) { // take advantage of hashcode caching
+            return false;
+        } else {
+            Trait b = (Trait) other;
+            return toShapeId().equals(b.toShapeId()) && toNode().equals(b.toNode());
         }
-
-        Trait b = (Trait) other;
-        return this == other || (toShapeId().equals(b.toShapeId()) && toNode().equals(b.toNode()));
     }
 
     @Override
@@ -84,7 +110,7 @@ public abstract class AbstractTrait implements Trait {
     @Override
     public final Node toNode() {
         if (nodeCache == null) {
-            nodeCache = createNode();
+            setNodeCache(createNode());
         }
         return nodeCache;
     }
@@ -97,6 +123,19 @@ public abstract class AbstractTrait implements Trait {
      * @return Returns the trait as a node.
      */
     protected abstract Node createNode();
+
+    /**
+     * Sets the node cache of the trait up front, if known.
+     *
+     * <p>This is useful for maintaining a trait value exactly as provided in
+     * a model file, allowing for validation to detect extraneous properties,
+     * and removing the need to create the node again when calling createNode.
+     *
+     * @param value Value to set.
+     */
+    protected final void setNodeCache(Node value) {
+        this.nodeCache = value;
+    }
 
     /**
      * Basic provider implementation that returns the name of the

@@ -10,9 +10,10 @@ service Example {
 @http(method: "POST", uri: "/foo")
 operation Foo {
     input: FooRequest,
-    output: FooRequest
+    output: FooResponse
 }
 
+@input
 @xmlName("CustomFooRequest")
 structure FooRequest {
     @xmlFlattened
@@ -21,3 +22,6 @@ structure FooRequest {
     @xmlFlattened
     mapVal: MapOfInteger
 }
+
+@output
+structure FooResponse {}

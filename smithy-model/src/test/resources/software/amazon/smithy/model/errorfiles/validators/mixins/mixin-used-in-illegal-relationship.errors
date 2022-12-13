@@ -1,0 +1,1 @@
+[ERROR] smithy.example#Baz$invalid: Illegal MEMBER_TARGET reference to mixin `smithy.example#Foo`; shapes marked with the mixin trait can only be referenced to apply them as a mixin. | Target

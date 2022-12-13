@@ -98,5 +98,22 @@
       "/properties/FooAlias"
     ]
   ],
+  "handlers": {
+    "create": {
+      "permissions": [
+        "testservice:CreateFoo"
+      ]
+    },
+    "read": {
+      "permissions": [
+        "testservice:GetFoo"
+      ]
+    },
+    "update": {
+      "permissions": [
+        "testservice:UpdateFoo"
+      ]
+    }
+  },
   "additionalProperties": false
 }

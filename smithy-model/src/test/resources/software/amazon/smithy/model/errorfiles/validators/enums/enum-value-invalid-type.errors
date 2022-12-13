@@ -1,0 +1,5 @@
+[ERROR] smithy.example#IntEnum$FLOAT: intEnum members do not support floating point values: 1.1 | EnumShape
+[ERROR] smithy.example#IntEnum$ARRAY: intEnum members require integer values, but found: [1] | EnumShape
+[ERROR] smithy.example#IntEnum$MAP: intEnum members require integer values, but found: {"foo":"bar"} | EnumShape
+[ERROR] smithy.example#IntEnum$NULL: intEnum members require integer values, but found: null | EnumShape
+[ERROR] smithy.example#IntEnum$BOOLEAN: intEnum members require integer values, but found: true | EnumShape

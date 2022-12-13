@@ -5,7 +5,7 @@ union A {
 }
 
 union B {
-  a: A
+  str: String
 }
 
 union C
@@ -55,10 +55,7 @@ union L {
 union M {
   @deprecated
   @since("2.0")
-  foo:
-  E,
+  foo:E,
   @deprecated
-  baz
-  :
-  H
+  baz:H
 }

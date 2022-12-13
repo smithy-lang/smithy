@@ -15,15 +15,14 @@
 
 package software.amazon.smithy.build.model;
 
-import java.util.ArrayList;
+import java.nio.file.Path;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import software.amazon.smithy.build.SmithyBuildException;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -37,10 +36,10 @@ public final class ProjectionConfig implements ToSmithyBuilder<ProjectionConfig>
     private final Map<String, ObjectNode> plugins;
 
     private ProjectionConfig(Builder builder) {
-        this.imports = ListUtils.copyOf(builder.imports);
-        this.transforms = ListUtils.copyOf(builder.transforms);
+        this.imports = builder.imports.copy();
+        this.transforms = builder.transforms.copy();
         this.isAbstract = builder.isAbstract;
-        this.plugins = MapUtils.copyOf(builder.plugins);
+        this.plugins = builder.plugins.copy();
 
         if (isAbstract && (!plugins.isEmpty() || !imports.isEmpty())) {
             throw new SmithyBuildException("Abstract projections must not define plugins or imports");
@@ -58,6 +57,25 @@ public final class ProjectionConfig implements ToSmithyBuilder<ProjectionConfig>
                 .plugins(plugins)
                 .transforms(transforms)
                 .setAbstract(isAbstract);
+    }
+
+    public static ProjectionConfig fromNode(Node node) {
+        return fromNode(node, SmithyBuildUtils.getBasePathFromSourceLocation(node));
+    }
+
+    static ProjectionConfig fromNode(Node node, Path basePath) {
+        Builder builder = ProjectionConfig.builder();
+        node.expectObjectNode()
+                .getBooleanMember("abstract", builder::setAbstract)
+                .getArrayMember("imports", s -> SmithyBuildUtils.resolveImportPath(basePath, s),
+                                builder::imports)
+                .getArrayMember("transforms", TransformConfig::fromNode, builder::transforms)
+                .getObjectMember("plugins", plugins -> {
+                    for (Map.Entry<String, Node> entry : plugins.getStringMap().entrySet()) {
+                        builder.plugins.get().put(entry.getKey(), entry.getValue().expectObjectNode());
+                    }
+                });
+        return builder.build();
     }
 
     /**
@@ -90,16 +108,14 @@ public final class ProjectionConfig implements ToSmithyBuilder<ProjectionConfig>
         return imports;
     }
 
-
-
     /**
      * Builds a {@link ProjectionConfig}.
      */
     public static final class Builder implements SmithyBuilder<ProjectionConfig> {
         private boolean isAbstract;
-        private final List<String> imports = new ArrayList<>();
-        private final List<TransformConfig> transforms = new ArrayList<>();
-        private final Map<String, ObjectNode> plugins = new HashMap<>();
+        private final BuilderRef<List<String>> imports = BuilderRef.forList();
+        private final BuilderRef<List<TransformConfig>> transforms = BuilderRef.forList();
+        private final BuilderRef<Map<String, ObjectNode>> plugins = BuilderRef.forOrderedMap();
 
         private Builder() {}
 
@@ -126,38 +142,38 @@ public final class ProjectionConfig implements ToSmithyBuilder<ProjectionConfig>
         }
 
         /**
-         * Sets the imports of the projection.
+         * Replaces the imports of the projection.
          *
          * @param imports Imports to set.
          * @return Returns the builder.
          */
         public Builder imports(Collection<String> imports) {
             this.imports.clear();
-            this.imports.addAll(imports);
+            this.imports.get().addAll(imports);
             return this;
         }
 
         /**
-         * Sets the transforms of the projection.
+         * Replaces the transforms of the projection.
          *
          * @param transforms Transform to set.
          * @return Returns the builder.
          */
         public Builder transforms(Collection<TransformConfig> transforms) {
             this.transforms.clear();
-            this.transforms.addAll(transforms);
+            this.transforms.get().addAll(transforms);
             return this;
         }
 
         /**
-         * Sets the plugins of the projection.
+         * Replaces the plugins of the projection.
          *
          * @param plugins Map of plugin name to plugin settings.
          * @return Returns the builder.
          */
         public Builder plugins(Map<String, ObjectNode> plugins) {
             this.plugins.clear();
-            this.plugins.putAll(plugins);
+            this.plugins.get().putAll(plugins);
             return this;
         }
     }

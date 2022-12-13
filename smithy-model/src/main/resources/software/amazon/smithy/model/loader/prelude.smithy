@@ -1,8 +1,5 @@
-$version: "1.0"
-
+$version: "2.0"
 namespace smithy.api
-
-// ------ Prelude shapes
 
 string String
 
@@ -16,81 +13,131 @@ timestamp Timestamp
 
 document Document
 
-@box
 boolean Boolean
 
-boolean PrimitiveBoolean
-
-@box
 byte Byte
 
-byte PrimitiveByte
-
-@box
 short Short
 
-short PrimitiveShort
-
-@box
 integer Integer
 
-integer PrimitiveInteger
-
-@box
 long Long
 
-long PrimitiveLong
-
-@box
 float Float
 
-float PrimitiveFloat
-
-@box
 double Double
 
+@unitType
+structure Unit {}
+
+@default(false)
+boolean PrimitiveBoolean
+
+@default(0)
+byte PrimitiveByte
+
+@default(0)
+short PrimitiveShort
+
+@default(0)
+integer PrimitiveInteger
+
+@default(0)
+long PrimitiveLong
+
+@default(0)
+float PrimitiveFloat
+
+@default(0)
 double PrimitiveDouble
 
-// ------ Prelude traits
-
 /// Makes a shape a trait.
-@trait(selector: ":is(simpleType, list, map, set, structure, union)")
-@tags(["diff.error.add", "diff.error.remove"])
+@trait(
+    selector: ":is(simpleType, list, map, structure, union)",
+    breakingChanges: [
+        {change: "presence"},
+        {path: "/structurallyExclusive", change: "any"},
+        {path: "/conflicts", change: "update", severity: "NOTE", message:
+            "Adding more conflicts to a trait could cause previously written models to fail validation."}
+    ]
+)
 structure trait {
     /// The valid places in a model that the trait can be applied.
     selector: String,
 
-    /// Whether or not only a single member in a structure can have this trait.
+    /// Whether or not only a single member in a shape can have this trait.
     structurallyExclusive: StructurallyExclusive,
 
     /// The traits that this trait conflicts with.
     conflicts: NonEmptyStringList,
+
+    /// Defines the backward compatibility rules of the trait.
+    breakingChanges: TraitDiffRules
 }
 
 @private
-@enum([
-    {
-        name: "MEMBER",
-        value: "member",
-        documentation: "Only a single member of a structure can be marked with the trait."
-    },
-    {
-        name: "TARGET",
-        value: "target",
-        documentation: "Only a single member of a structure can target a shape marked with this trait."
-    }
-])
-string StructurallyExclusive
+@length(min: 1)
+list TraitDiffRules {
+    member: TraitDiffRule
+}
 
-/// Indicates that a shape is boxed.
-///
-/// When a boxed shape is the target of a member, the member
-/// may or may not contain a value, and the member has no default value.
-@trait(selector: """
-    :test(boolean, byte, short, integer, long, float, double,
-          member > :test(boolean, byte, short, integer, long, float, double))""")
-@tags(["diff.error.const"])
-structure box {}
+@private
+structure TraitDiffRule {
+    /// Defines a JSON Pointer to the value to evaluate.
+    path: String,
+
+    /// Defines the type of change that is not allowed.
+    @required
+    change: TraitChangeType,
+
+    /// Defines the severity of the change. Defaults to ERROR if not defined.
+    severity: TraitChangeSeverity = "ERROR",
+
+    /// Provides a reason why the change is potentially backward incompatible.
+    message: String
+}
+
+@private
+enum TraitChangeType {
+    /// Emit when a trait already existed, continues to exist, but it is modified.
+    UPDATE = "update"
+
+    /// Emit when a trait or value is added that previously did not exist
+    ADD = "add"
+
+    /// Emit when a trait or value is removed.
+    REMOVE = "remove"
+
+    /// Emit when a trait is added or removed.
+    PRESENCE = "presence"
+
+    /// Emit when any change occurs.
+    ANY = "any"
+}
+
+@private
+enum TraitChangeSeverity {
+    /// A minor infraction occurred.
+    NOTE
+
+    /// An infraction occurred that needs attention.
+    WARNING
+
+    /// An infraction occurred that must be resolved.
+    DANGER
+
+    /// An unrecoverable infraction occurred.
+    ERROR
+}
+
+@private
+enum StructurallyExclusive {
+    /// Only a single member of a shape can be marked with the trait.
+    MEMBER = "member"
+
+    /// Only a single member of a shape can target a shape marked with this trait.
+    TARGET = "target"
+}
 
 /// Marks a shape or member as deprecated.
 @trait
@@ -101,6 +148,18 @@ structure deprecated {
     /// A description of when the shape was deprecated (e.g., a date or version).
     since: String,
 }
+
+/// Used only in Smithy 1.0 to indicate that a shape is boxed.
+/// This trait cannot be used in Smithy 2.0 models.
+///
+/// When a boxed shape is the target of a member, the member
+/// may or may not contain a value, and the member has no default value.
+@trait(
+    selector: """
+        :test(boolean, byte, short, integer, long, float, double,
+            member > :test(boolean, byte, short, integer, long, float, double))"""
+)
+structure box {}
 
 /// Adds documentation to a shape or member using CommonMark syntax.
 @trait
@@ -130,15 +189,17 @@ string AuthTraitReference
 ///
 /// The targeted trait must only be applied to service shapes, must be a
 /// structure, and must have the `trait` trait.
-@trait(selector: "structure[trait|trait]")
-@tags(["diff.error.add", "diff.error.remove"])
+@trait(
+    selector: "structure[trait|trait]",
+    breakingChanges: [{change: "presence"}]
+)
 structure protocolDefinition {
     /// Defines a list of traits that protocol implementations must
     /// understand in order to successfully use the protocol.
     traits: TraitShapeIdList,
 
     /// Set to true if inline documents are not supported by this protocol.
-    noInlineDocumentSupport: PrimitiveBoolean,
+    noInlineDocumentSupport: Boolean,
 }
 
 @private
@@ -154,8 +215,10 @@ string TraitShapeId
 ///
 /// The targeted trait must only be applied to service shapes or operation
 /// shapes, must be a structure, and must have the `trait` trait.
-@trait(selector: "structure[trait|trait]")
-@tags(["diff.error.add", "diff.error.remove"])
+@trait(
+    selector: "structure[trait|trait]",
+    breakingChanges: [{change: "presence"}]
+)
 structure authDefinition {
     /// Defines a list of traits that auth implementations must
     /// understand in order to successfully use the scheme.
@@ -164,28 +227,40 @@ structure authDefinition {
 
 /// Enables HTTP Basic Authentication as defined in RFC 2617
 /// on a service or operation.
-@trait(selector: "service")
+@trait(
+    selector: "service",
+    breakingChanges: [{change: "remove"}]
+)
 @authDefinition
 @externalDocumentation("RFC 2617": "https://tools.ietf.org/html/rfc2617.html")
 structure httpBasicAuth {}
 
 /// Enables HTTP Digest Authentication as defined in RFC 2617
 /// on a service or operation.
-@trait(selector: "service")
+@trait(
+    selector: "service",
+    breakingChanges: [{change: "remove"}]
+)
 @authDefinition
 @externalDocumentation("RFC 2617": "https://tools.ietf.org/html/rfc2617.html")
 structure httpDigestAuth {}
 
 /// Enables HTTP Bearer Authentication as defined in RFC 6750
 /// on a service or operation.
-@trait(selector: "service")
+@trait(
+    selector: "service",
+    breakingChanges: [{change: "remove"}]
+)
 @authDefinition
 @externalDocumentation("RFC 6750": "https://tools.ietf.org/html/rfc6750.html")
 structure httpBearerAuth {}
 
 /// An HTTP-specific authentication scheme that sends an arbitrary
 /// API key in a header or query string parameter.
-@trait(selector: "service")
+@trait(
+    selector: "service",
+    breakingChanges: [{change: "remove"}]
+)
 @authDefinition
 structure httpApiKeyAuth {
     /// Defines the name of the HTTP header or query string parameter
@@ -197,23 +272,46 @@ structure httpApiKeyAuth {
     /// can be set to `"header"` or `"query"`.
     @required
     in: HttpApiKeyLocations,
+
+    /// Defines the security scheme to use on the ``Authorization`` header value
+    /// This can only be set if the "in" property is set to ``header``.
+    scheme: NonEmptyString,
 }
 
+/// Provides a structure member with a default value. When added to root level shapes, requires that every
+/// targeting structure member defines the same default value on the member or sets a default of null.
+///
+/// This trait can currently only be used in Smithy 2.0 models.
+@trait(
+    selector: ":is(simpleType, list, map, structure > member :test(> :is(simpleType, list, map)))"
+)
+document default
+
+/// Indicates that the default trait was added to a member.
+@trait(
+    selector: "structure > member [trait|default]",
+    breakingChanges: [
+        {change: "remove"}
+    ]
+)
+structure addedDefault {}
+
+/// Requires that non-authoritative generators like clients treat a structure member as
+/// nullable regardless of if the member is also marked with the required trait.
+@trait(selector: "structure > member")
+structure clientOptional {}
+
 @private
-@enum([
-    {
-        name: "HEADER",
-        value: "header",
-    },
-    {
-        name: "QUERY",
-        value: "query",
-    },
-])
-string HttpApiKeyLocations
+enum HttpApiKeyLocations {
+    HEADER = "header"
+    QUERY = "query"
+}
 
 /// Indicates that an operation can be called without authentication.
-@trait(selector: "operation")
+@trait(
+    selector: "operation",
+    breakingChanges: [{change: "remove"}]
+)
 structure optionalAuth {}
 
 /// Provides example inputs and outputs for operations.
@@ -231,77 +329,117 @@ structure Example {
 
     input: Document,
 
-    output: Document
+    output: Document,
+
+    error: ExampleError,
+}
+
+@private
+structure ExampleError {
+    @idRef(selector: "structure[trait|error]")
+    shapeId: String,
+
+    content: Document,
 }
 
 /// Indicates that a structure shape represents an error.
 ///
 /// All shapes referenced by the errors list of an operation MUST be
 /// targeted with this trait.
-@trait(selector: "structure", conflicts: [trait])
-@tags(["diff.error.const"])
-@enum([
-    {value: "client", name: "CLIENT"},
-    {value: "server", name: "SERVER"}])
-string error
+@trait(
+    selector: "structure",
+    conflicts: [trait],
+    breakingChanges: [{change: "any"}]
+)
+enum error {
+    CLIENT = "client"
+    SERVER = "server"
+}
 
 /// Indicates that an error MAY be retried by the client.
-@trait(selector: "structure[trait|error]")
+@trait(
+    selector: "structure[trait|error]",
+    breakingChanges: [{change: "remove"}]
+)
 structure retryable {
     /// Classifies the retry as throttling.
     throttling: Boolean,
 }
 
 /// Indicates that an operation is effectively read-only.
-@trait(selector: "operation", conflicts: [idempotent])
+@trait(
+    selector: "operation",
+    conflicts: [idempotent],
+    breakingChanges: [{change: "remove"}]
+)
 structure readonly {}
 
 /// Indicates that the intended effect on the server of multiple identical
 /// requests with an operation is the same as the effect for a single
 /// such request.
-@trait(selector: "operation", conflicts: [readonly])
-@tags(["diff.error.remove"])
+@trait(
+    selector: "operation",
+    conflicts: [readonly],
+    breakingChanges: [{change: "remove"}]
+)
 structure idempotent {}
 
 /// Defines the input member of an operation that is used by the server to
 /// identify and discard replayed requests.
-@trait(selector: "structure > :test(member > string)",
-       structurallyExclusive: "member")
-@tags(["diff.error.remove"])
+@trait(
+    selector: "structure > :test(member > string)",
+    structurallyExclusive: "member",
+    breakingChanges: [{change: "remove"}]
+)
+@notProperty
 structure idempotencyToken {}
 
 /// Shapes marked with the internal trait are meant only for internal use and
 /// must not be exposed to customers.
-@trait
+@trait(breakingChanges: [{
+    change: "remove",
+    severity: "WARNING",
+    message: "Removing the @internal trait makes a shape externally visible."}
+])
 structure internal {}
 
 /// The jsonName trait allows a serialized object property name to differ
 /// from a structure member name used in the model.
-@trait(selector: "structure > member")
-@tags(["diff.error.const"])
+@trait(
+    selector: ":is(structure, union) > member",
+    breakingChanges: [{change: "any"}]
+)
 string jsonName
 
 /// Serializes an object property as an XML attribute rather than a nested XML element.
-@trait(selector: "structure > :test(member > :test(boolean, number, string, timestamp))",
-        conflicts: [xmlNamespace])
-@tags(["diff.error.const"])
+@trait(
+    selector: "structure > :test(member > :test(boolean, number, string, timestamp))",
+    conflicts: [xmlNamespace],
+    breakingChanges: [{change: "any"}]
+)
 structure xmlAttribute {}
 
 /// Unwraps the values of a list, set, or map into the containing structure/union.
-@trait(selector: ":is(structure, union) > :test(member > :test(collection, map))")
-@tags(["diff.error.const"])
+@trait(
+    selector: ":is(structure, union) > :test(member > :test(list, map))",
+    breakingChanges: [{change: "any"}]
+)
 structure xmlFlattened {}
 
 /// Changes the serialized element or attribute name of a structure, union, or member.
-@trait(selector: ":is(structure, union, member)")
-@tags(["diff.error.const"])
+@trait(
+    selector: ":is(structure, union, member)",
+    breakingChanges: [{change: "any"}]
+)
 @pattern("^[a-zA-Z_][a-zA-Z_0-9-]*(:[a-zA-Z_][a-zA-Z_0-9-]*)?$")
 string xmlName
 
 /// Adds an xmlns namespace definition URI to an XML element.
-@trait(selector: ":is(service, member, simpleType, collection, map, structure, union)",
-       conflicts: [xmlAttribute])
-@tags(["diff.error.const"])
+@trait(
+    selector: ":is(service, member, simpleType, list, map, structure, union)",
+    conflicts: [xmlAttribute],
+    breakingChanges: [{change: "any"}]
+)
 structure xmlNamespace {
     /// The namespace URI for scoping this XML element.
     @required
@@ -323,8 +461,10 @@ structure noReplace {}
 
 /// Describes the contents of a blob shape using a media type as defined by
 /// RFC 6838 (e.g., "video/quicktime").
-@trait(selector: ":is(blob, string)")
-@tags(["diff.error.remove"])
+@trait(
+    selector: ":is(blob, string)",
+    breakingChanges: [{change: "remove"}]
+)
 string mediaType
 
 /// Defines the resource shapes that are referenced by a string shape or a
@@ -366,17 +506,20 @@ map NonEmptyStringMap {
 }
 
 /// Indicates that the targeted structure member provides an identifier for a resource.
-@trait(selector: "structure > :test(member[trait|required] > string)")
-@tags(["diff.error.remove"])
+@trait(
+    selector: "structure > :test(member[trait|required] > string)",
+    breakingChanges: [{change: "remove"}]
+)
 @length(min: 1)
+@notProperty
 string resourceIdentifier
 
 /// Prevents models defined in a different namespace from referencing the targeted shape.
 @trait
 structure private {}
 
-/// Indicates that the data stored in the shape or member is sensitive and MUST be handled with care.
-@trait(selector: ":not(:test(service, operation, resource))")
+/// Indicates that the data stored in the shape is sensitive and MUST be handled with care.
+@trait(selector: ":not(:test(service, operation, resource, member))")
 structure sensitive {}
 
 /// Defines the version or date in which a shape or member was added to the model.
@@ -387,13 +530,18 @@ string since
 /// be stored in memory, or that the size of the data stored in the shape is
 /// unknown at the start of a request. If the target is a union then the shape
 /// represents a stream of events.
-@trait(selector: ":is(blob, union)", structurallyExclusive: "target")
-@tags(["diff.error.const"])
+@trait(
+    selector: ":is(blob, union)",
+    structurallyExclusive: "target",
+    breakingChanges: [{change: "any"}]
+)
 structure streaming {}
 
 /// Indicates that the streaming blob must be finite and has a known size.
-@trait(selector: "blob[trait|streaming]")
-@tags(["diff.error.const"])
+@trait(
+    selector: "blob[trait|streaming]",
+    breakingChanges: [{change: "presence"}]
+)
 structure requiresLength {}
 
 /// Tags a shape with arbitrary tag names that can be used to filter and
@@ -413,9 +561,16 @@ string title
 
 /// Constrains the acceptable values of a string to a fixed set
 /// of constant values.
-@trait(selector: "string")
-@tags(["diff.error.add", "diff.error.remove"])
+@trait(
+    selector: "string :not(enum)",
+    // It's a breaking change to change values or enums or the ordering of enums,
+    // but that validation happens in code to provide better error messages.
+    breakingChanges: [
+        {change: "presence"}
+    ]
+)
 @length(min: 1)
+@deprecated(message: "The enum trait is replaced by the enum shape in Smithy 2.0", since: "2.0")
 list enum {
     member: EnumDefinition
 }
@@ -437,7 +592,7 @@ structure EnumDefinition {
     tags: NonEmptyStringList,
 
     /// Whether the enum value should be considered deprecated.
-    deprecated: PrimitiveBoolean,
+    deprecated: Boolean,
 }
 
 /// The optional name or label of the enum constant value.
@@ -448,8 +603,13 @@ structure EnumDefinition {
 @pattern("^[a-zA-Z_]+[a-zA-Z_0-9]*$")
 string EnumConstantBodyName
 
+/// Defines the value of an enum member.
+@trait(selector: ":is(enum, intEnum) > member")
+@tags(["diff.error.const"])
+document enumValue
+
 /// Constrains a shape to minimum and maximum number of elements or size.
-@trait(selector: ":test(collection, map, string, blob, member > :is(collection, map, string, blob))")
+@trait(selector: ":test(list, map, string, blob, member > :is(list, map, string, blob))")
 structure length {
     /// Integer value that represents the minimum inclusive length of a shape.
     min: Long,
@@ -470,13 +630,54 @@ structure range {
 }
 
 /// Restricts string shape values to a specified regular expression.
-@trait(selector: ":test(string, member > string)")
+@trait(
+    selector: ":test(string, member > string)",
+    breakingChanges: [
+        {
+            change: "add",
+            severity: "WARNING",
+            message: "The @pattern trait should only be added if the string already had adhered to the pattern."
+        },
+        {
+            change: "update",
+            severity: "NOTE",
+            message: "Changes to the @pattern trait should generally make the string more permissive, not less."
+        }
+    ]
+)
 string pattern
 
 /// Marks a structure member as required, meaning a value for the member MUST be present.
 @trait(selector: "structure > member")
-@tags(["diff.error.add"])
 structure required {}
+
+/// Configures a structure member's resource property mapping behavior.
+@trait(
+    selector: "structure > member",
+    conflicts: [resourceIdentifier],
+    breakingChanges: [{change: "remove"}, {change: "update"}]
+)
+structure property {
+    name: String
+}
+
+/// Explicitly excludes a member from resource property mapping or
+/// enables another trait to carry the same implied meaning.
+@trait(
+    selector: ":is(operation -[input, output]-> structure > member, [trait|trait])",
+    breakingChanges: [{change: "add"}]
+)
+@notProperty
+structure notProperty {}
+
+/// Adjusts the resource property mapping of a lifecycle operation to the targeted member.
+@trait(
+    selector: "operation -[input, output]-> structure > member :test(> structure)"
+    structurallyExclusive: "member"
+    breakingChanges: [{change: "any"}]
+)
+@notProperty
+structure nestedProperties {}
 
 /// Indicates that a structure member SHOULD be set.
 @trait(selector: "structure > member", conflicts: [required])
@@ -486,30 +687,44 @@ structure recommended {
 }
 
 /// Marks a list or map as sparse.
-@trait(selector: ":is(list, map)")
-@tags(["diff.error.const"])
+@trait(
+    selector: ":is(list, map)",
+    breakingChanges: [{change: "presence"}]
+)
 structure sparse {}
 
 /// Indicates that the items in a list MUST be unique.
-@trait(selector: "list")
+@trait(
+    selector: "list :not(> member ~> :is(float, double, document))",
+    conflicts: [sparse],
+    breakingChanges: [{change: "presence", severity: "WARNING"}]
+)
 structure uniqueItems {}
 
 /// Indicates that the shape is unstable and could change in the future.
-@trait()
+@trait
 structure unstable {}
 
 /// The paginated trait indicates that an operation intentionally limits the number
 /// of results returned in a single response and that multiple invocations might be
 /// necessary to retrieve all results.
-@trait(selector: ":is(service, operation)")
-@tags(["diff.error.remove", "diff.contents"])
+@trait(
+    selector: ":is(service, operation)",
+    breakingChanges: [
+        {change: "remove"},
+        {path: "/inputToken",  change: "update"},
+        {path: "/outputToken", change: "update"},
+        {path: "/items",       change: "any"},
+        {path: "/pageSize",    change: "update"},
+        {path: "/pageSize",    change: "remove"},
+    ]
+)
 structure paginated {
     /// The name of the operation input member that represents the continuation token.
     ///
     /// When this value is provided as operation input, the service returns results
     /// from where the previous response left off. This input member MUST NOT be
     /// required and MUST target a string shape.
-    @tags(["diff.error.update"])
     inputToken: NonEmptyString,
 
     /// The name of the operation output member that represents the continuation token.
@@ -518,26 +733,31 @@ structure paginated {
     /// results to retrieve. To get the next page of results, the client uses the output
     /// token as the input token of the next request. This output member MUST NOT be
     /// required and MUST target a string shape.
-    @tags(["diff.error.update"])
     outputToken: NonEmptyString,
 
     /// The name of a top-level output member of the operation that is the data
     /// that is being paginated across many responses.
     ///
     /// The named output member, if specified, MUST target a list or map.
-    @tags(["diff.error.const"])
     items: NonEmptyString,
 
     /// The name of an operation input member that limits the maximum number of
     /// results to include in the operation output. This input member MUST NOT be
     /// required and MUST target an integer shape.
-    @tags(["diff.error.update", "diff.error.remove"])
     pageSize: NonEmptyString,
 }
 
 /// Configures the HTTP bindings of an operation.
-@trait(selector: "operation")
-@tags(["diff.error.remove"])
+@trait(
+    selector: "operation",
+    breakingChanges: [
+        {change: "remove"},
+        {path: "/method", change: "update"},
+        {path: "/uri", change: "update"},
+        {path: "/code", change: "update"},
+        {path: "/code", change: "presence", severity: "DANGER", message: "Adding or removing is backward compatible only if the value is the default value of 200"}
+    ]
+)
 structure http {
     /// The HTTP method of the operation.
     @required
@@ -551,90 +771,105 @@ structure http {
     uri: NonEmptyString,
 
     /// The HTTP status code of a successful response.
-    ///
-    /// Defaults to 200 if not provided.
-    code: PrimitiveInteger,
+    @range(min: 100, max: 999)
+    code: Integer = 200,
 }
 
 /// Binds an operation input structure member to an HTTP label.
-@trait(selector: "structure > member[trait|required] :test(> :test(string, number, boolean, timestamp))",
-        conflicts: [httpHeader, httpQuery, httpPrefixHeaders, httpPayload, httpResponseCode, httpQueryParams])
-@tags(["diff.error.const"])
+@trait(
+    selector: "structure > member[trait|required] :test(> :test(string, number, boolean, timestamp))",
+    conflicts: [httpHeader, httpQuery, httpPrefixHeaders, httpPayload, httpResponseCode, httpQueryParams],
+    breakingChanges: [{change: "presence"}]
+)
 structure httpLabel {}
 
 /// Binds an operation input structure member to a query string parameter.
-@trait(selector: """
+@trait(
+    selector: """
         structure > member
         :test(> :test(string, number, boolean, timestamp),
-              > collection > member > :test(string, number, boolean, timestamp))""",
-        conflicts: [httpLabel, httpHeader, httpPrefixHeaders, httpPayload, httpResponseCode, httpQueryParams])
+              > list > member > :test(string, number, boolean, timestamp))""",
+    conflicts: [httpLabel, httpHeader, httpPrefixHeaders, httpPayload, httpResponseCode, httpQueryParams],
+    breakingChanges: [{change: "any"}]
+)
 @length(min: 1)
-@tags(["diff.error.const"])
 string httpQuery
 
 /// Binds an operation input structure member to the HTTP query string.
-@trait(selector: """
+@trait(
+    selector: """
         structure > member
-        :test(> map > member[id|member=value] > :test(string, collection > member > string))""",
+        :test(> map > member[id|member=value] > :test(string, list > member > string))""",
         structurallyExclusive: "member",
-        conflicts: [httpLabel, httpQuery, httpHeader, httpPayload, httpResponseCode, httpPrefixHeaders])
-@tags(["diff.error.const"])
+    conflicts: [httpLabel, httpQuery, httpHeader, httpPayload, httpResponseCode, httpPrefixHeaders],
+    breakingChanges: [{change: "any"}]
+)
 structure httpQueryParams {}
 
 /// Binds a structure member to an HTTP header.
-@trait(selector: """
+@trait(
+    selector: """
         structure > :test(member > :test(boolean, number, string, timestamp,
-                collection > member > :test(boolean, number, string, timestamp)))""",
-        conflicts: [httpLabel, httpQuery, httpPrefixHeaders, httpPayload, httpResponseCode, httpQueryParams])
+                list > member > :test(boolean, number, string, timestamp)))""",
+    conflicts: [httpLabel, httpQuery, httpPrefixHeaders, httpPayload, httpResponseCode, httpQueryParams],
+    breakingChanges: [{change: "any"}]
+)
 @length(min: 1)
-@tags(["diff.error.const"])
 string httpHeader
 
 /// Binds a map of key-value pairs to prefixed HTTP headers.
-@trait(selector: """
+@trait(
+    selector: """
         structure > member
-        :test(> map > member[id|member=value] > :test(string, collection > member > string))""",
-        structurallyExclusive: "member",
-        conflicts: [httpLabel, httpQuery, httpHeader, httpPayload, httpResponseCode, httpQueryParams])
-@tags(["diff.error.const"])
+        :test(> map :not([trait|sparse]) > member[id|member=value] > string)""",
+    structurallyExclusive: "member",
+    conflicts: [httpLabel, httpQuery, httpHeader, httpPayload, httpResponseCode, httpQueryParams],
+    breakingChanges: [{change: "any"}]
+)
 string httpPrefixHeaders
 
 /// Binds a single structure member to the body of an HTTP request.
-@trait(selector: "structure > :test(member > :test(string, blob, structure, union, document, list, set, map))",
-        conflicts: [httpLabel, httpQuery, httpHeader, httpPrefixHeaders, httpResponseCode, httpQueryParams],
-        structurallyExclusive: "member")
-@tags(["diff.error.const"])
+@trait(
+    selector: "structure > :test(member > :test(string, blob, structure, union, document, list, map))",
+    conflicts: [httpLabel, httpQuery, httpHeader, httpPrefixHeaders, httpResponseCode, httpQueryParams],
+    structurallyExclusive: "member",
+    breakingChanges: [{change: "presence"}]
+)
 structure httpPayload {}
 
 /// Defines an HTTP response code for an operation error.
-@trait(selector: "structure[trait|error]")
-@tags(["diff.error.const"])
+@trait(
+    selector: "structure[trait|error]",
+    breakingChanges: [{change: "any"}]
+)
 integer httpError
 
 /// Indicates that the structure member represents the HTTP response
 /// status code. The value MAY differ from the HTTP status code provided
 /// on the response.
-@trait(selector: "structure > member :test(> integer)",
-        structurallyExclusive: "member",
-        conflicts: [httpLabel, httpQuery, httpHeader, httpPrefixHeaders, httpPayload, httpQueryParams])
-@tags(["diff.error.const"])
+@trait(
+    selector: "structure :not([trait|input]) > member :test(> integer)",
+    structurallyExclusive: "member",
+    conflicts: [httpLabel, httpQuery, httpHeader, httpPrefixHeaders, httpPayload, httpQueryParams],
+    breakingChanges: [{change: "any"}]
+)
 structure httpResponseCode {}
 
 /// Defines how a service supports cross-origin resource sharing.
-@trait(selector: "service")
-@tags(["diff.error.remove"])
+@trait(
+    selector: "service",
+    breakingChanges: [{change: "remove"}]
+)
 structure cors {
     /// The origin from which browser script-originating requests will be allowed.
-    ///
-    /// Defaults to *.
-    origin: NonEmptyString,
+    origin: NonEmptyString = "*",
 
     /// The maximum number of seconds for which browsers are allowed to cache
     /// the results of a preflight OPTIONS request.
     ///
     /// Defaults to 600, the maximum age permitted by several browsers.
     /// Set to -1 to disable caching entirely.
-    maxAge: Integer,
+    maxAge: Integer = 600,
 
     /// The names of headers that should be included in the
     /// Access-Control-Allow-Headers header in responses to preflight OPTIONS
@@ -658,18 +893,22 @@ list NonEmptyStringList {
 }
 
 /// Marks a member as the payload of an event.
-@trait(selector: "structure > :test(member > :test(blob, string, structure, union))",
-        conflicts: [eventHeader],
-        structurallyExclusive: "member")
-@tags(["diff.error.const"])
+@trait(
+    selector: "structure > :test(member > :test(blob, string, structure, union))",
+    conflicts: [eventHeader],
+    structurallyExclusive: "member",
+    breakingChanges: [{change: "any"}]
+)
 structure eventPayload {}
 
 /// Marks a member as a header of an event.
-@trait(selector: """
+@trait(
+    selector: """
         structure >
         :test(member > :test(boolean, byte, short, integer, long, blob, string, timestamp))""",
-        conflicts: [eventPayload])
-@tags(["diff.error.const"])
+    conflicts: [eventPayload],
+    breakingChanges: [{change: "any"}]
+)
 structure eventHeader {}
 
 /// Indicates that a string value MUST contain a valid shape ID.
@@ -681,13 +920,11 @@ structure eventHeader {}
 @trait(selector: ":test(string, member > string)")
 structure idRef {
     /// Defines the selector that the resolved shape, if found, MUST match.
-    ///
-    /// selector defaults to * when not defined.
-    selector: String,
+    selector: String = "*",
 
     /// When set to `true`, the shape ID MUST target a shape that can be
     /// found in the model.
-    failWhenMissing: PrimitiveBoolean,
+    failWhenMissing: Boolean,
 
     /// Defines a custom error message to use when the shape ID cannot be
     /// found or does not match the selector.
@@ -696,37 +933,31 @@ structure idRef {
     errorMessage: String,
 }
 
-@trait(selector: ":test(timestamp, member > timestamp)")
-@tags(["diff.error.const"])
-@enum([
-    {
-        value: "date-time",
-        name: "DATE_TIME",
-        documentation: """
-            Date time as defined by the date-time production in RFC3339 section 5.6
-            with no UTC offset (for example, 1985-04-12T23:20:50.52Z)."""
-    },
-    {
-        value: "epoch-seconds",
-        name: "EPOCH_SECONDS",
-        documentation: """
-            Also known as Unix time, the number of seconds that have elapsed since
-            00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970,
-            with decimal precision (for example, 1515531081.1234)."""
-    },
-    {
-        value: "http-date",
-        name: "HTTP_DATE",
-        documentation: """
-            An HTTP date as defined by the IMF-fixdate production in
-            RFC 7231#section-7.1.1.1 (for example, Tue, 29 Apr 2014 18:30:38 GMT)."""
-    }
-])
-string timestampFormat
+@trait(
+    selector: ":test(timestamp, member > timestamp)",
+    breakingChanges: [{change: "any"}]
+)
+enum timestampFormat {
+
+    /// Date time as defined by the date-time production in RFC3339 section 5.6
+    /// with no UTC offset (for example, 1985-04-12T23:20:50.52Z).
+    DATE_TIME = "date-time"
+
+    /// Also known as Unix time, the number of seconds that have elapsed since
+    /// 00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970,
+    /// with decimal precision (for example, 1515531081.1234).
+    EPOCH_SECONDS = "epoch-seconds"
+
+    /// An HTTP date as defined by the IMF-fixdate production in
+    /// RFC 7231#section-7.1.1.1 (for example, Tue, 29 Apr 2014 18:30:38 GMT).
+    HTTP_DATE = "http-date"
+}
 
 /// Configures a custom operation endpoint.
-@trait(selector: "operation")
-@tags(["diff.error.const"])
+@trait(
+    selector: "operation",
+    breakingChanges: [{change: "any"}]
+)
 structure endpoint {
     /// A host prefix pattern for the operation.
     ///
@@ -738,14 +969,15 @@ structure endpoint {
 
 /// Binds a top-level operation input structure member to a label
 /// in the hostPrefix of an endpoint trait.
-@trait(selector: "structure > :test(member[trait|required] > string)")
-@tags(["diff.error.const"])
+@trait(
+    selector: "structure > :test(member[trait|required] > string)",
+    breakingChanges: [{change: "any"}]
+)
 structure hostLabel {}
 
 /// Suppresses validation events by ID for a given shape.
 @trait
 list suppress {
-    @pattern("^[_a-zA-Z][A-Za-z0-9]*$")
     @length(min: 1)
     member: String
 }
@@ -756,3 +988,45 @@ list suppress {
 @unstable
 @trait(selector: "operation")
 structure httpChecksumRequired {}
+
+/// Specializes a structure for use only as the input of a single operation.
+@trait(
+    selector: "structure",
+    conflicts: [output, error],
+    breakingChanges: [{change: "presence"}]
+)
+structure input {}
+
+/// Specializes a structure for use only as the output of a single operation.
+@trait(
+    selector: "structure",
+    conflicts: [input, error],
+    breakingChanges: [{change: "presence"}]
+)
+structure output {}
+
+/// Specializes a structure as a unit type that has no meaningful value.
+/// This trait can only be applied to smithy.api#Unit, which ensures that
+/// only a single Unit shape can be created.
+@trait(selector: "[id=smithy.api#Unit]")
+structure unitType {}
+
+/// Makes a structure or union a mixin.
+@trait(selector: ":not(member)")
+structure mixin {
+    localTraits: LocalMixinTraitList
+}
+
+@private
+list LocalMixinTraitList {
+    member: LocalMixinTrait
+}
+
+@idRef(
+    selector: "[trait|trait]",
+    failWhenMissing: true,
+    errorMessage: """
+            Strings provided to the localTraits property of a mixin trait
+            must target a valid trait.""")
+@private
+string LocalMixinTrait

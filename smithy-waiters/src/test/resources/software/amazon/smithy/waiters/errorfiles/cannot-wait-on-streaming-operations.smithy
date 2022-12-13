@@ -1,3 +1,5 @@
+$version: "2.0"
+
 namespace smithy.example
 
 use smithy.waiters#waitable
@@ -14,10 +16,11 @@ use smithy.waiters#waitable
     }
 )
 operation StreamingInput {
-    input: StreamingInputOutput
+    input: StreamingInputInput
 }
 
-structure StreamingInputOutput {
+@input
+structure StreamingInputInput {
     messages: Messages,
 }
 
@@ -40,5 +43,10 @@ structure SuccessMessage {}
     }
 )
 operation StreamingOutput {
-    input: StreamingInputOutput
+    output: StreamingOutputOutput
+}
+
+@output
+structure StreamingOutputOutput {
+    messages: Messages,
 }

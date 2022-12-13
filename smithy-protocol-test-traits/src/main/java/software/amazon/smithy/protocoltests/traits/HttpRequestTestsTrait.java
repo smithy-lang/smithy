@@ -51,7 +51,9 @@ public final class HttpRequestTestsTrait extends AbstractTrait {
         public Trait createTrait(ShapeId target, Node value) {
             ArrayNode values = value.expectArrayNode();
             List<HttpRequestTestCase> testCases = values.getElementsAs(HttpRequestTestCase::fromNode);
-            return new HttpRequestTestsTrait(value.getSourceLocation(), testCases);
+            HttpRequestTestsTrait result = new HttpRequestTestsTrait(value.getSourceLocation(), testCases);
+            result.setNodeCache(value);
+            return result;
         }
     }
 
@@ -78,6 +80,6 @@ public final class HttpRequestTestsTrait extends AbstractTrait {
 
     @Override
     protected Node createNode() {
-        return getTestCases().stream().collect(ArrayNode.collect());
+        return getTestCases().stream().collect(ArrayNode.collect(getSourceLocation()));
     }
 }

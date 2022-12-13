@@ -1,0 +1,2 @@
+[WARNING] smithy.example#Example$a: Invalid box trait found on a union member. The box trait on union members has no effect because union members are implicitly nullable. | Union
+[NOTE] smithy.example#Example$a: This union member targets `smithy.api#PrimitiveInteger`, a shape with a default value of `0`. Note that default values are only applicable to structures and ignored in tagged unions. It is a best practice for union members to target shapes with no default value (for example, instead of targeting PrimitiveInteger, target Integer). | Union

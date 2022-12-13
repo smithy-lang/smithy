@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#MyService": {
             "type": "service",
@@ -14,6 +14,9 @@
             "type": "operation",
             "input": {
                 "target": "ns.foo#SayHelloInput"
+            },
+            "output": {
+                "target": "ns.foo#SayHelloOutput"
             },
             "traits": {
                 "smithy.api#http": {
@@ -31,6 +34,15 @@
                         "smithy.api#httpHeader": "Not valid!"
                     }
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#SayHelloOutput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#output": {}
             }
         }
     }

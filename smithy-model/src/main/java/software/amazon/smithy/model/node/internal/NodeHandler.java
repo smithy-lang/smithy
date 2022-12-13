@@ -18,10 +18,6 @@ package software.amazon.smithy.model.node.internal;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
@@ -33,7 +29,7 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
-public final class NodeHandler extends JsonHandler<List<Node>, Map<StringNode, Node>> {
+public final class NodeHandler extends JsonHandler<ArrayNode.Builder, ObjectNode.Builder> {
 
     private Node value;
 
@@ -81,8 +77,9 @@ public final class NodeHandler extends JsonHandler<List<Node>, Map<StringNode, N
             double doubleValue = Double.parseDouble(string);
             if (Double.isFinite(doubleValue)) {
                 value = new NumberNode(doubleValue, location);
+            } else {
+                value = new NumberNode(new BigDecimal(string), location);
             }
-            value = new NumberNode(new BigDecimal(string), location);
         } else {
             try {
                 value = new NumberNode(Long.parseLong(string), location);
@@ -94,33 +91,33 @@ public final class NodeHandler extends JsonHandler<List<Node>, Map<StringNode, N
     }
 
     @Override
-    List<Node> startArray() {
-        return new ArrayList<>();
+    ArrayNode.Builder startArray() {
+        return ArrayNode.builder();
     }
 
     @Override
-    void endArrayValue(List<Node> array) {
-        array.add(value);
+    void endArrayValue(ArrayNode.Builder builder) {
+        builder.withValue(value);
     }
 
     @Override
-    void endArray(List<Node> array, SourceLocation location) {
-        value = new ArrayNode(array, location);
+    void endArray(ArrayNode.Builder builder, SourceLocation location) {
+        value = builder.sourceLocation(location).build();
     }
 
     @Override
-    Map<StringNode, Node> startObject() {
-        return new LinkedHashMap<>();
+    ObjectNode.Builder startObject() {
+        return ObjectNode.builder();
     }
 
     @Override
-    void endObjectValue(Map<StringNode, Node> object, String name, SourceLocation keyLocation) {
+    void endObjectValue(ObjectNode.Builder object, String name, SourceLocation keyLocation) {
         StringNode key = new StringNode(name, keyLocation);
-        object.put(key, value);
+        object.withMember(key, value);
     }
 
     @Override
-    void endObject(Map<StringNode, Node> object, SourceLocation location) {
-        value = new ObjectNode(object, location);
+    void endObject(ObjectNode.Builder object, SourceLocation location) {
+        value = object.sourceLocation(location).build();
     }
 }

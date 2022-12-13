@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "example.rest#RestService": {
             "type": "service",
@@ -13,7 +13,11 @@
                 },
                 {
                     "target": "example.rest#CreateFoo"
+                },
+                {
+                    "target": "example.rest#Ping"
                 }
+
             ],
             "traits": {
                 "aws.protocols#restJson1": {}
@@ -133,9 +137,12 @@
                     }
                 },
                 "abc": {
-                    "target": "example.rest#String",
+                    "target": "example.rest#SensitiveString",
                     "traits": {
-                        "smithy.api#sensitive": {}
+                        "smithy.api#length": {
+                            "min": 1,
+                            "max": 100
+                        }
                     }
                 },
                 "def": {
@@ -222,6 +229,21 @@
             }
 
         },
+        "example.rest#Ping": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.api#Unit"
+            },
+            "output": {
+                "target": "smithy.api#Unit"
+            },
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/ping",
+                    "method": "POST"
+                }
+            }
+        },
         "example.rest#Blob": {
             "type": "blob"
         },
@@ -232,6 +254,12 @@
             "type": "list",
             "member": {
                 "target": "example.rest#String"
+            }
+        },
+        "example.rest#SensitiveString": {
+            "type": "string",
+            "traits": {
+                "smithy.api#sensitive": {}
             }
         },
         "example.rest#Integer": {
@@ -249,9 +277,9 @@
                 }
             },
             "value": {
-                "target": "example.rest#String",
+                "target": "example.rest#SensitiveString",
                 "traits": {
-                    "smithy.api#sensitive": {}
+                    "smithy.api#pattern": "^[a-z]+$"
                 }
             }
         },
@@ -327,6 +355,9 @@
                 },
                 "b": {
                     "target": "example.rest#String"
+                },
+                "c": {
+                    "target": "smithy.api#Unit"
                 }
             }
         }

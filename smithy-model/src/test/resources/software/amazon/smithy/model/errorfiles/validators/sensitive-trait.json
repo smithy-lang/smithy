@@ -1,12 +1,30 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#Operation": {
-            "type": "operation", 
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#OperationInput"
+            },
+            "output": {
+                "target": "ns.foo#OperationOutput"
+            },
             "traits": {
                 "smithy.api#sensitive": {}
             }
-        }, 
+        },
+        "ns.foo#OperationInput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#OperationOutput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#output": {}
+            }
+        },
         "ns.foo#Structure": {
             "type": "structure", 
             "members": {

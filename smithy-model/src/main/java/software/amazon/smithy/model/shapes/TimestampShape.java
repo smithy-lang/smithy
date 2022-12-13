@@ -32,17 +32,22 @@ public final class TimestampShape extends SimpleShape implements ToSmithyBuilder
 
     @Override
     public Builder toBuilder() {
-        return builder().from(this);
+        return updateBuilder(builder());
     }
 
     @Override
-    public <R> R accept(ShapeVisitor<R> cases) {
-        return cases.timestampShape(this);
+    public <R> R accept(ShapeVisitor<R> visitor) {
+        return visitor.timestampShape(this);
     }
 
     @Override
     public Optional<TimestampShape> asTimestampShape() {
         return Optional.of(this);
+    }
+
+    @Override
+    public ShapeType getType() {
+        return ShapeType.TIMESTAMP;
     }
 
     /**

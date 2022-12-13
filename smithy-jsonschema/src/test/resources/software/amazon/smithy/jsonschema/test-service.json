@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "example.rest#RestService": {
             "type": "service",
@@ -116,7 +116,10 @@
                 "abc": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#sensitive":  {}
+                        "smithy.api#length":  {
+                            "min": 1,
+                            "max": 100
+                        }
                     }
                 },
                 "def": {
@@ -173,7 +176,7 @@
             "value": {
                 "target": "smithy.api#String",
                 "traits": {
-                    "smithy.api#sensitive":  {}
+                    "smithy.api#pattern": "^[a-z]+$"
                 }
             }
         },
@@ -237,6 +240,9 @@
                 },
                 "b": {
                     "target": "smithy.api#String"
+                },
+                "c": {
+                    "target": "smithy.api#Unit"
                 }
             }
         }

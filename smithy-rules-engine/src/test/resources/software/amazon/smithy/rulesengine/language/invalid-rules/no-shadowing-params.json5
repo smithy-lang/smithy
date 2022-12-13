@@ -1,0 +1,30 @@
+// when parsing endpoint ruleset
+//   at invalid-rules/no-shadowing-params.json5:23
+// Invalid shadowing of `Region` (first declared on line 7)
+{
+  "version": "1.2",
+  "parameters": {
+    "Region": {
+      "type": "string",
+      "builtIn": "AWS::Region",
+      "required": false
+    }
+  },
+  "rules": [
+    {
+      "documentation": "base rule",
+      "conditions": [
+        {
+          "fn": "booleanEquals",
+          "argv": [
+            true,
+            true
+          ],
+          "assign": "Region"
+        }
+      ],
+      "error": "invalid ruleset",
+      "type": "error"
+    }
+  ]
+}

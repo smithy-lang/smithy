@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#A": {
             "type": "operation",
@@ -120,6 +120,9 @@
                         "smithy.api#httpPayload": {}
                     }
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#L": {
@@ -150,6 +153,9 @@
                         "smithy.api#required": {}
                     }
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#M": {
@@ -171,6 +177,39 @@
                 "payload": {
                     "target": "smithy.api#String"
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#N": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "method": "PATCH",
+                    "uri": "/E"
+                },
+                "smithy.api#idempotent": {}
+            }
+        },
+        "ns.foo#Options": {
+            "type": "operation",
+            "traits": {
+                "smithy.api#http": {
+                    "method": "OPTIONS",
+                    "uri": "/options"
+                },
+                "smithy.api#readonly": {}
+            },
+            "input": {
+                "target": "ns.foo#OptionsInput"
+            }
+        },
+        "ns.foo#OptionsInput": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#input": {}
             }
         }
     }

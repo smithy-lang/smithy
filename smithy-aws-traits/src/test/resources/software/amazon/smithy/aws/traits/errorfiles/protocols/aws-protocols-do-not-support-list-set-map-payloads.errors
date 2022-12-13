@@ -1,3 +1,3 @@
-[ERROR] smithy.example#InvalidBindingInput$listBinding: AWS Protocols do not support applying the httpPayload trait to members that target sets, lists, or maps. | ProtocolHttpPayload
-[ERROR] smithy.example#InvalidBindingOutput$mapBinding: AWS Protocols do not support applying the httpPayload trait to members that target sets, lists, or maps. | ProtocolHttpPayload
-[ERROR] smithy.example#InvalidBindingError$setBinding: AWS Protocols do not support applying the httpPayload trait to members that target sets, lists, or maps. | ProtocolHttpPayload
+[ERROR] smithy.example#InvalidBindingOperationInput$listBinding: AWS Protocols only support binding the following shape types to the payload: string, blob, structure, union, and document | ProtocolHttpPayload
+[ERROR] smithy.example#InvalidBindingOperationOutput$mapBinding: AWS Protocols only support binding the following shape types to the payload: string, blob, structure, union, and document | ProtocolHttpPayload
+[ERROR] smithy.example#InvalidBindingError$setBinding: AWS Protocols only support binding the following shape types to the payload: string, blob, structure, union, and document | ProtocolHttpPayload

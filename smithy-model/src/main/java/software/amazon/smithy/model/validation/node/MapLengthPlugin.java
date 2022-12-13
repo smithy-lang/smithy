@@ -15,8 +15,6 @@
 
 package software.amazon.smithy.model.validation.node;
 
-import java.util.function.BiConsumer;
-import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -34,13 +32,7 @@ final class MapLengthPlugin extends MemberAndShapeTraitPlugin<MapShape, ObjectNo
     }
 
     @Override
-    protected void check(
-            Shape shape,
-            LengthTrait trait,
-            ObjectNode node,
-            Context context,
-            BiConsumer<FromSourceLocation, String> emitter
-    ) {
+    protected void check(Shape shape, LengthTrait trait, ObjectNode node, Context context, Emitter emitter) {
         trait.getMin().ifPresent(min -> {
             if (node.size() < min) {
                 emitter.accept(node, String.format(

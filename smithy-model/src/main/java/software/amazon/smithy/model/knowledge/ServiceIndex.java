@@ -205,7 +205,7 @@ public final class ServiceIndex implements KnowledgeIndex {
 
         AuthTrait authTrait = subject.expectTrait(AuthTrait.class);
         Map<ShapeId, Trait> result = new LinkedHashMap<>();
-        for (ShapeId value : authTrait.getValues()) {
+        for (ShapeId value : authTrait.getValueSet()) {
             service.findTrait(value).ifPresent(trait -> result.put(value, trait));
         }
 

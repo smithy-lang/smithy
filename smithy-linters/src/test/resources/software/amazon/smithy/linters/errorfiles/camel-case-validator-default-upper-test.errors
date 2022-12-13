@@ -1,0 +1,4 @@
+[DANGER] smithy.example#UpperOperationResponse$lowerCamel: Member shape member name, `lowerCamel`, is not upper camel case; members in the UpperService must all use upper camel case. | DefaultCamelCase
+[DANGER] smithy.example#LowerOperationResponse$UpperCamel: Member shape member name, `UpperCamel`, is not lower camel case; members in the LowerService must all use lower camel case. | DefaultCamelCase
+[DANGER] smithy.example#MyStructure$snake_case: Member shape member name, `snake_case`, is not lower camel case; members in the LowerService must all use lower camel case. | DefaultCamelCase
+[DANGER] smithy.example#MyStructure$snake_case: Member shape member name, `snake_case`, is not upper camel case; members in the UpperService must all use upper camel case. | DefaultCamelCase

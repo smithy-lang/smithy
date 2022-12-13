@@ -18,6 +18,8 @@ package software.amazon.smithy.model.neighbor;
 import java.util.Optional;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.selector.Selector;
+import software.amazon.smithy.model.shapes.EnumShape;
+import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -118,6 +120,12 @@ public enum RelationshipType {
     IDENTIFIER("identifier", RelationshipDirection.DIRECTED),
 
     /**
+     * Relationships that exist between a {@link ResourceShape member} and
+     * the shapes that are referenced by its properties property.
+     */
+    PROPERTY("property", RelationshipDirection.DIRECTED),
+
+    /**
      * Relationships exist on {@link MemberShape member} shapes. The subject
      * of the relationship is the member shape, and the neighbor is the
      * aggregate shape that contains the member.
@@ -153,6 +161,18 @@ public enum RelationshipType {
     ERROR("error", RelationshipDirection.DIRECTED),
 
     /**
+     * Relationships that exist on {@link EnumShape enum} shapes to their
+     * {@link MemberShape member shapes}.
+     */
+    ENUM_MEMBER("member", RelationshipDirection.DIRECTED),
+
+    /**
+     * Relationships that exist on {@link IntEnumShape intEnum} shapes to their
+     * {@link MemberShape member shapes}.
+     */
+    INT_ENUM_MEMBER("member", RelationshipDirection.DIRECTED),
+
+    /**
      * Relationships that exist on {@link ListShape list} shapes to their
      * {@link MemberShape member shapes}.
      */
@@ -162,6 +182,7 @@ public enum RelationshipType {
      * Relationships that exist on {@link SetShape set} shapes to their
      * {@link MemberShape member shapes}.
      */
+    @Deprecated
     SET_MEMBER("member", RelationshipDirection.DIRECTED),
 
     /**
@@ -201,7 +222,13 @@ public enum RelationshipType {
      * with {@link NeighborProvider#withTraitRelationships(Model, NeighborProvider)}
      * in order to yield trait relationships.
      */
-    TRAIT("trait", RelationshipDirection.DIRECTED);
+    TRAIT("trait", RelationshipDirection.DIRECTED),
+
+    /**
+     * Relationship that exists between a structure or union and a mixin applied
+     * to the shape.
+     */
+    MIXIN("mixin", RelationshipDirection.DIRECTED);
 
     private String selectorLabel;
     private RelationshipDirection direction;

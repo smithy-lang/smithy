@@ -311,7 +311,7 @@ public class TypeCheckerTest {
         assertThat(check("length(`null` == `null` && 'hi')"), empty());
         assertThat(check("length(`null` != `null` || 'hi')"), empty());
         assertThat(check("length(`null` != `null` && 'hi')"), contains(
-                "[ERROR] length function argument 0 error: Expected one of [string, array, object], but found null (1:25)"));
+                "[ERROR] length function argument 0 error: Expected one of [string, array, object], but found boolean (1:25)"));
         assertThat(check("length(`null` > `null` && 'hi')"), containsInAnyOrder(
                 "[WARNING] Invalid comparator '>' for null (1:17)",
                 "[ERROR] length function argument 0 error: Expected one of [string, array, object], but found null (1:24)"));
@@ -336,7 +336,7 @@ public class TypeCheckerTest {
         assertThat(check("length(`[1,2]` == `[1,2]` && 'hi')"), empty());
         assertThat(check("length(`[1]` != `[1,2]` && 'hi')"), empty());
         assertThat(check("length(`[1]` != `[1]` && 'hi')"), contains(
-                "[ERROR] length function argument 0 error: Expected one of [string, array, object], but found null (1:23)"));
+                "[ERROR] length function argument 0 error: Expected one of [string, array, object], but found boolean (1:23)"));
         assertThat(check("length(`[1]` > `[2]` && 'hi')"), containsInAnyOrder(
                 "[WARNING] Invalid comparator '>' for array (1:16)",
                 "[ERROR] length function argument 0 error: Expected one of [string, array, object], but found null (1:22)"));
@@ -356,7 +356,7 @@ public class TypeCheckerTest {
         assertThat(check("length(`{}` == `{}` && 'hi')"), empty());
         assertThat(check("length(`{\"foo\":true}` != `{}` && 'hi')"), empty());
         assertThat(check("length(`[1]` != `[1]` && 'hi')"), contains(
-                "[ERROR] length function argument 0 error: Expected one of [string, array, object], but found null (1:23)"));
+                "[ERROR] length function argument 0 error: Expected one of [string, array, object], but found boolean (1:23)"));
         assertThat(check("length(`{\"foo\":true}` > `{}` && 'hi')"), containsInAnyOrder(
                 "[WARNING] Invalid comparator '>' for object (1:25)",
                 "[ERROR] length function argument 0 error: Expected one of [string, array, object], but found null (1:30)"));
@@ -369,5 +369,19 @@ public class TypeCheckerTest {
         assertThat(check("length(`{\"foo\":true}` <= `{}` && 'hi')"), containsInAnyOrder(
                 "[WARNING] Invalid comparator '<=' for object (1:26)",
                 "[ERROR] length function argument 0 error: Expected one of [string, array, object], but found null (1:31)"));
+    }
+
+    @Test
+    public void falseyLhsIsReturnedFromAnd() {
+        assertThat(check("ceil(`[]` && `0.9`)"), contains(
+                "[ERROR] ceil function argument 0 error: Expected argument to be number, but found array (1:11)"));
+        assertThat(check("ceil(`{}` && `0.9`)"), contains(
+                "[ERROR] ceil function argument 0 error: Expected argument to be number, but found object (1:11)"));
+        assertThat(check("ceil(`\"\"` && `0.9`)"), contains(
+                "[ERROR] ceil function argument 0 error: Expected argument to be number, but found string (1:11)"));
+        assertThat(check("ceil(`false` && `0.9`)"), contains(
+                "[ERROR] ceil function argument 0 error: Expected argument to be number, but found boolean (1:14)"));
+        assertThat(check("ceil(`null` && `0.9`)"), contains(
+                "[ERROR] ceil function argument 0 error: Expected argument to be number, but found null (1:13)"));
     }
 }

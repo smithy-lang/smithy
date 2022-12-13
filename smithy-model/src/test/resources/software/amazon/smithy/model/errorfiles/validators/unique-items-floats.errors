@@ -1,0 +1,4 @@
+[ERROR] smithy.example#Floats: Trait `uniqueItems` cannot be applied to `smithy.example#Floats`. This trait may only be applied to | TraitTarget
+[ERROR] smithy.example#Doubles: Trait `uniqueItems` cannot be applied to `smithy.example#Doubles`. This trait may only be applied to | TraitTarget
+[ERROR] smithy.example#Structures: Trait `uniqueItems` cannot be applied to `smithy.example#Structures`. This trait may only be applied to | TraitTarget
+[ERROR] smithy.example#Documents: Trait `uniqueItems` cannot be applied to `smithy.example#Documents`. This trait may only be applied to | TraitTarget

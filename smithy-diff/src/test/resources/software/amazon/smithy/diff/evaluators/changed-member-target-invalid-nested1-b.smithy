@@ -1,4 +1,6 @@
 // See ChangedMemberTargetTest
+$version: "2.0"
+
 namespace smithy.example
 
 list A {
@@ -6,7 +8,7 @@ list A {
 }
 
 list B2 {
-    @sensitive
+    @pattern("^[a-z]+$")
     member: MyString
 }
 

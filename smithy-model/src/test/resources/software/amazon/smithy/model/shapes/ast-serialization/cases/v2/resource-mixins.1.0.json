@@ -1,0 +1,11 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "smithy.example#MixedResource": {
+            "type": "resource",
+            "traits": {
+                "smithy.api#internal": {}
+            }
+        }
+    }
+}

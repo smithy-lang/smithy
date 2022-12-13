@@ -22,7 +22,6 @@ import java.util.Optional;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.validators.ExamplesTraitValidator;
@@ -100,12 +99,14 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
         private final String documentation;
         private final ObjectNode input;
         private final ObjectNode output;
+        private final ErrorExample error;
 
         private Example(Builder builder) {
             this.title = Objects.requireNonNull(builder.title, "Example title must not be null");
             this.documentation = builder.documentation;
             this.input = builder.input;
             this.output = builder.output;
+            this.error = builder.error;
         }
 
         /**
@@ -136,11 +137,19 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
             return output;
         }
 
+        /**
+         * @return Gets the error example.
+         */
+        public Optional<ErrorExample> getError() {
+            return Optional.ofNullable(error);
+        }
+
         @Override
         public Node toNode() {
             ObjectNode.Builder builder = Node.objectNodeBuilder()
                     .withMember("title", Node.from(title))
-                    .withOptionalMember("documentation", getDocumentation().map(Node::from));
+                    .withOptionalMember("documentation", getDocumentation().map(Node::from))
+                    .withOptionalMember("error", getError().map(ErrorExample::toNode));
 
             if (!input.isEmpty()) {
                 builder.withMember("input", input);
@@ -154,7 +163,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
 
         @Override
         public Builder toBuilder() {
-            return new Builder().documentation(documentation).title(title).input(input).output(output);
+            return new Builder().documentation(documentation).title(title).input(input).output(output).error(error);
         }
 
         public static Builder builder() {
@@ -169,6 +178,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
             private String documentation;
             private ObjectNode input = Node.objectNode();
             private ObjectNode output = Node.objectNode();
+            private ErrorExample error;
 
             @Override
             public Example build() {
@@ -194,6 +204,80 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
                 this.output = output;
                 return this;
             }
+
+            public Builder error(ErrorExample error) {
+                this.error = error;
+                return this;
+            }
+        }
+    }
+
+    public static final class ErrorExample implements ToNode, ToSmithyBuilder<ErrorExample> {
+        private final ShapeId shapeId;
+        private final ObjectNode content;
+
+        public ErrorExample(Builder builder) {
+            this.shapeId = builder.shapeId;
+            this.content = builder.content;
+        }
+
+        public static ErrorExample fromNode(Node node) {
+            ErrorExample.Builder builder = builder();
+            node.expectObjectNode()
+                    .expectMember("shapeId", ShapeId::fromNode, builder::shapeId)
+                    .expectObjectMember("content", builder::content);
+            return builder.build();
+        }
+
+        /**
+         * @return Gets the error shape id for the example.
+         */
+        public ShapeId getShapeId() {
+            return shapeId;
+        }
+
+        /**
+         * @return Gets the error object.
+         */
+        public ObjectNode getContent() {
+            return content;
+        }
+
+        @Override
+        public Node toNode() {
+            return ObjectNode.objectNodeBuilder()
+                    .withMember("shapeId", shapeId.toString())
+                    .withMember("content", content)
+                    .build();
+        }
+
+        @Override
+        public SmithyBuilder<ErrorExample> toBuilder() {
+            return builder().content(content).shapeId(shapeId);
+        }
+
+        public static Builder builder() {
+            return new Builder();
+        }
+
+        public static final class Builder implements SmithyBuilder<ErrorExample> {
+            private ShapeId shapeId;
+            private ObjectNode content = Node.objectNode();
+
+            @Override
+            public ErrorExample build() {
+                return new ErrorExample(this);
+            }
+
+            public Builder shapeId(ShapeId shapeId) {
+                this.shapeId = shapeId;
+                return this;
+            }
+
+            public Builder content(ObjectNode content) {
+                this.content = content;
+                return this;
+            }
         }
     }
 
@@ -205,20 +289,21 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
 
         public ExamplesTrait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value);
-            value.expectArrayNode().getElements().stream()
-                    .map(Node::expectObjectNode)
-                    .map(Provider::exampleFromNode)
-                    .forEach(builder::addExample);
-            return builder.build();
+            value.expectArrayNode().getElementsAs(Provider::exampleFromNode).forEach(builder::addExample);
+            ExamplesTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
 
         private static Example exampleFromNode(ObjectNode node) {
-            return Example.builder()
-                    .title(node.expectStringMember("title").getValue())
-                    .documentation(node.getStringMember("documentation").map(StringNode::getValue).orElse(null))
-                    .input(node.getMember("input").map(Node::expectObjectNode).orElseGet(Node::objectNode))
-                    .output(node.getMember("output").map(Node::expectObjectNode).orElseGet(Node::objectNode))
-                    .build();
+            Example.Builder builder = Example.builder();
+            node.expectObjectNode()
+                    .getStringMember("title", builder::title)
+                    .getStringMember("documentation", builder::documentation)
+                    .getObjectMember("input", builder::input)
+                    .getObjectMember("output", builder::output)
+                    .getMember("error", ErrorExample::fromNode, builder::error);
+            return builder.build();
         }
     }
 }

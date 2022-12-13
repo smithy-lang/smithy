@@ -1,2 +1,1 @@
 [ERROR] smithy.example#InvalidStruct: Trait `sparse` cannot be applied to `smithy.example#InvalidStruct` | TraitTarget
-[ERROR] smithy.example#MySet: Trait `sparse` cannot be applied to `smithy.example#MySet` | TraitTarget

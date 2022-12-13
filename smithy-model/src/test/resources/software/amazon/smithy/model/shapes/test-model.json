@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#AnotherService": {
             "type": "service",
@@ -164,12 +164,13 @@
             }
         },
         "ns.foo#ASet": {
-            "type": "set",
+            "type": "list",
             "member": {
                 "target": "ns.foo#MyString"
             },
             "traits": {
-                "smithy.api#documentation": "abc"
+                "smithy.api#documentation": "abc",
+                "smithy.api#uniqueItems": {}
             }
         },
         "ns.foo#Map": {
@@ -340,9 +341,12 @@
             }
         },
         "ns.shapes#Set": {
-            "type": "set",
+            "type": "list",
             "member": {
                 "target": "ns.shapes#Long"
+            },
+            "traits": {
+                "smithy.api#uniqueItems": {}
             }
         },
         "ns.shapes#Map": {

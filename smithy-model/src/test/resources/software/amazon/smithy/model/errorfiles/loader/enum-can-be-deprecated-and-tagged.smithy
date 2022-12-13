@@ -1,3 +1,5 @@
+$version: "2.0"
+
 namespace smithy.example
 
 // This example is taken from the specification to ensure that

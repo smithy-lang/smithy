@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.json10
 
@@ -16,6 +16,7 @@ service JsonRpc10 {
         NoInputAndNoOutput,
         NoInputAndOutput,
         EmptyInputAndEmptyOutput,
+        SimpleScalarProperties,
 
         // Errors
         GreetingWithErrors,
@@ -24,5 +25,8 @@ service JsonRpc10 {
         // @endpoint and @hostLabel trait tests
         EndpointOperation,
         EndpointWithHostLabelOperation,
+
+        // custom endpoints with paths
+        HostWithPathOperation,
     ]
 }

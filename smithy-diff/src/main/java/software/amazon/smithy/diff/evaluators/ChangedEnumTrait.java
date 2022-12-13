@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.diff.evaluators;
 
+import static software.amazon.smithy.diff.evaluators.ChangedShapeType.expectedStringToEnumChange;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,28 +26,47 @@ import software.amazon.smithy.diff.Differences;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
+import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.Pair;
 
 /**
- * Emits a NOTE when a new enum value is added, emits an ERROR when an
- * enum value is removed, and emits an ERROR when an enum name changes.
+ * Emits a NOTE when a new enum value is appended, emits an ERROR when an
+ * enum value is removed, emits an ERROR when an enum name changes, and
+ * emits an ERROR when a new enum value is inserted before the end of the
+ * list of existing values.
  */
 public final class ChangedEnumTrait extends AbstractDiffEvaluator {
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.changedShapes()
-                .flatMap(change -> OptionalUtils.stream(change.getChangedTrait(EnumTrait.class))
+                .flatMap(change -> OptionalUtils.stream(getChangedEnumTraitPair(change))
                         .map(p -> Pair.of(change, p)))
                 .flatMap(pair -> validateEnum(pair.getLeft(), pair.getRight()).stream())
                 .collect(Collectors.toList());
+    }
+
+    private Optional<Pair<EnumTrait, EnumTrait>> getChangedEnumTraitPair(ChangedShape<Shape> change) {
+        // Change between two enum traits
+        Optional<Pair<EnumTrait, EnumTrait>> changedEnumTrait = change.getChangedTrait(EnumTrait.class);
+        if (changedEnumTrait.isPresent()) {
+            return changedEnumTrait;
+        }
+        // Change between enum trait in old model and enum shape synthetic enum trait in new model
+        if (expectedStringToEnumChange(change)) {
+            return Optional.of(Pair.of(
+                    change.getOldShape().expectTrait(EnumTrait.class),
+                    change.getNewShape().expectTrait(SyntheticEnumTrait.class)));
+        }
+        return Optional.empty();
     }
 
     private List<ValidationEvent> validateEnum(ChangedShape<Shape> change, Pair<EnumTrait, EnumTrait> trait) {
         EnumTrait oldTrait = trait.getLeft();
         EnumTrait newTrait = trait.getRight();
         List<ValidationEvent> events = new ArrayList<>();
+        int oldEndPosition = oldTrait.getValues().size() - 1;
 
         for (EnumDefinition definition : oldTrait.getValues()) {
             Optional<EnumDefinition> maybeNewValue = newTrait.getValues().stream()
@@ -55,6 +76,7 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
             if (!maybeNewValue.isPresent()) {
                 events.add(error(change.getNewShape(), String.format(
                         "Enum value `%s` was removed", definition.getValue())));
+                oldEndPosition--;
             } else {
                 EnumDefinition newValue = maybeNewValue.get();
                 if (!newValue.getName().equals(definition.getName())) {
@@ -67,11 +89,21 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
             }
         }
 
+        int newPosition = 0;
         for (EnumDefinition definition : newTrait.getValues()) {
             if (!oldTrait.getEnumDefinitionValues().contains(definition.getValue())) {
-                events.add(note(change.getNewShape(), String.format(
-                        "Enum value `%s` was added", definition.getValue())));
+                if (newPosition <= oldEndPosition) {
+                    events.add(error(change.getNewShape(), String.format(
+                            "Enum value `%s` was inserted before the end of the list of existing values. This can "
+                                    + "cause compatibility issues when ordinal values are used for iteration, "
+                                    + "serialization, etc.", definition.getValue())));
+                } else {
+                    events.add(note(change.getNewShape(), String.format(
+                            "Enum value `%s` was appended", definition.getValue())));
+                }
             }
+
+            newPosition++;
         }
 
         return events;

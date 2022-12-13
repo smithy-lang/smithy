@@ -1,5 +1,7 @@
-[ERROR] ns.foo#Operation2: Input parameters provided for operation with no input structure members: `Testing 3` | ExamplesTrait
-[ERROR] ns.foo#Operation2: Output parameters provided for operation with no output structure members: `Testing 3` | ExamplesTrait
+[WARNING] ns.foo#Operation2: Example input of `Testing 3`: Invalid structure member `foo` found for `smithy.api#Unit` | ExamplesTrait
+[WARNING] ns.foo#Operation2: Example output of `Testing 3`: Invalid structure member `bam` found for `smithy.api#Unit` | ExamplesTrait
+[ERROR] ns.foo#Operation2: Error parameters provided for operation without the `ns.foo#OperationError` error: `Testing 3` | ExamplesTrait
 [ERROR] ns.foo#Operation: Example input of `Testing 2`: Missing required structure member `foo` for `ns.foo#OperationInput` | ExamplesTrait
 [WARNING] ns.foo#Operation: Example output of `Testing 2`: Invalid structure member `additional` found for `ns.foo#OperationOutput` | ExamplesTrait
 [ERROR] ns.foo#Operation: Example output of `Testing 2`: Missing required structure member `bam` for `ns.foo#OperationOutput` | ExamplesTrait
+[WARNING] ns.foo#Operation: Example error of `Testing 1`: Invalid structure member `extra` found for `ns.foo#OperationError` | ExamplesTrait

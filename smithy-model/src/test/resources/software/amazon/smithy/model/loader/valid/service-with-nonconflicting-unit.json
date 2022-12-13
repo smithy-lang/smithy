@@ -1,0 +1,38 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "smithy.example#Example": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.api#Unit"
+            },
+            "output": {
+                "target": "smithy.example#ExampleOutput"
+            }
+        },
+        "smithy.example#ExampleOutput": {
+            "type": "structure",
+            "members": {
+                "unit": {
+                    "target": "smithy.example#Unit"
+                }
+            },
+            "traits": {
+                "smithy.api#output": {}
+            }
+        },
+        "smithy.example#TestService": {
+            "type": "service",
+            "version": "1",
+            "operations": [
+                {
+                    "target": "smithy.example#Example"
+                }
+            ]
+        },
+        "smithy.example#Unit": {
+            "type": "structure",
+            "members": {}
+        }
+    }
+}

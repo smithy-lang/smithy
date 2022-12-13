@@ -1,3 +1,5 @@
+$version: "2.0"
+
 namespace smithy.example
 
 use smithy.test#httpResponseTests
@@ -36,9 +38,14 @@ structure testScheme {}
     }
 ])
 operation GetFoo {
+    input: GetFooInput,
     output: GetFooOutput
 }
 
+@input
+structure GetFooInput {}
+
+@output
 structure GetFooOutput {
     @httpPayload
     bar: String,

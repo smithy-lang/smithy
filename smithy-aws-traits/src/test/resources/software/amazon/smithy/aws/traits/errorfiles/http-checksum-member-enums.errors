@@ -1,0 +1,10 @@
+[SUPPRESSED] smithy.example#InvalidEnums: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
+[SUPPRESSED] smithy.example#ValidEnums: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
+[SUPPRESSED] smithy.example#NoEnums: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
+[SUPPRESSED] smithy.example#NoMember: This shape applies a trait that is unstable: aws.protocols#httpChecksum | UnstableTrait
+[ERROR] smithy.example#InvalidEnums: The `requestAlgorithmMember` property of the `httpChecksum` trait targets a member with an `enum` trait that contains unsupported values: `SHA2` | HttpChecksumTrait
+[ERROR] smithy.example#InvalidEnums: The `requestValidationModeMember` property of the `httpChecksum` trait targets a member with an `enum` trait that contains unsupported values: `DISABLED` | HttpChecksumTrait
+[ERROR] smithy.example#NoEnums: The `requestAlgorithmMember` property of the `httpChecksum` trait targets a member that does not resolve an `enum` trait. | HttpChecksumTrait
+[ERROR] smithy.example#NoEnums: The `requestValidationModeMember` property of the `httpChecksum` trait targets a member that does not resolve an `enum` trait. | HttpChecksumTrait
+[ERROR] smithy.example#NoMember: The `requestAlgorithmMember` property of the `httpChecksum` trait targets a member that does not exist. | HttpChecksumTrait
+[ERROR] smithy.example#NoMember: The `requestValidationModeMember` property of the `httpChecksum` trait targets a member that does not exist. | HttpChecksumTrait

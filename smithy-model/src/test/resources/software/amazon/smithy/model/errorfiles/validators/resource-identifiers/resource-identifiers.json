@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#Valid1": {
             "type": "resource",
@@ -36,6 +36,32 @@
                 },
                 "b": {
                     "target": "ns.foo#MyString"
+                }
+            }
+        },
+        "ns.foo#Invalid3": {
+            "type": "resource",
+            "identifiers": {
+                "c": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "properties": {
+                "c": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
+        "ns.foo#Invalid4": {
+            "type": "resource",
+            "identifiers": {
+                "d": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "properties": {
+                "D": {
+                    "target": "smithy.api#String"
                 }
             }
         },

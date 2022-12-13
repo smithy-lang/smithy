@@ -1,0 +1,21 @@
+{
+    "definitions": {
+        "Integers": {
+            "type": "object",
+            "properties": {
+                "byte": {
+                    "type": "integer"
+                },
+                "int": {
+                    "type": "integer"
+                },
+                "long": {
+                    "type": "integer"
+                },
+                "short": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}

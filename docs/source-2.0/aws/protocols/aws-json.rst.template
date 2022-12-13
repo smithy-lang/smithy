@@ -1,0 +1,210 @@
+----------------
+Supported traits
+----------------
+
+The |quoted shape name| protocol supports the following traits
+that affect serialization:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 20 80
+
+    * - Trait
+      - Description
+    * - :ref:`cors <cors-trait>`
+      - Indicates that the service supports CORS.
+    * - :ref:`endpoint <endpoint-trait>`
+      - Configures a custom operation endpoint.
+    * - :ref:`hostLabel <hostLabel-trait>`
+      - Binds a top-level operation input structure member to a label in
+        the hostPrefix of an endpoint trait.
+    * - :ref:`timestampFormat <timestampFormat-trait>`
+      - Defines a custom timestamp serialization format.
+
+
+------------------
+Protocol Behaviors
+------------------
+
+Every request for the |quoted shape name| protocol MUST be sent to the
+root URL (``/``) using the HTTP "POST" method.
+
+The |quoted shape name| protocol does not support custom HTTP bindings.
+:ref:`HTTP binding traits <http-traits>` MUST be ignored if they are present.
+
+The |quoted shape name| protocol uses the following headers:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 20 20 80
+
+    * - Header
+      - Required
+      - Description
+    * - ``Content-Type``
+      - true
+      - This header has a static value of |protocol content type|.
+    * - ``Content-Length``
+      - true
+      - The standard ``Content-Length`` header defined by
+        :rfc:`7230#section-3.3.2`.
+    * - ``X-Amz-Target``
+      - true for requests
+      - The value of this header is the :token:`shape name <smithy:Identifier>` of the
+        service's :ref:`shape-id` joined to the
+        :token:`shape name <smithy:Identifier>` of the operation's :ref:`shape-id`,
+        separated by a single period (``.``) character.
+
+        For example, the value for the operation ``ns.example#MyOp`` of the
+        service ``ns.example#MyService`` is ``MyService.MyOp``.
+
+
+---------------------------
+Default value serialization
+---------------------------
+
+.. include:: aws-default-zero-value.rst.template
+
+
+-------------------
+Shape serialization
+-------------------
+
+The |quoted shape name| protocol serializes all shapes into a JSON
+document body with no HTTP bindings supported. The following table shows how
+to convert each shape type:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 25 75
+
+    * - Smithy type
+      - JSON type
+    * - ``blob``
+      - JSON ``string`` value that is base64 encoded.
+    * - ``boolean``
+      - JSON boolean
+    * - ``byte``
+      - JSON number
+    * - ``short``
+      - JSON number
+    * - ``integer``
+      - JSON number
+    * - ``long``
+      - JSON number
+    * - ``float``
+      - JSON number for numeric values. JSON strings for ``NaN``, ``Infinity``,
+        and ``-Infinity``.
+    * - ``double``
+      - JSON number for numeric values. JSON strings for ``NaN``, ``Infinity``,
+        and ``-Infinity``
+    * - ``bigDecimal``
+      - JSON number. Unfortunately, this protocol serializes bigDecimal
+        shapes as a normal JSON number. Many JSON parsers will either
+        truncate the value or be unable to parse numbers that exceed the
+        size of a double.
+    * - ``bigInteger``
+      - JSON number. Unfortunately, this protocol serializes bigInteger
+        shapes as a normal JSON number. Many JSON parsers will either
+        truncate the value or be unable to parse numbers that exceed the
+        size of a double.
+    * - ``string``
+      - JSON string
+    * - ``timestamp``
+      - JSON number (default). This protocol uses ``epoch-seconds``, also
+        known as Unix timestamps, in JSON payloads represented as a double.
+        However, the :ref:`timestampFormat <timestampFormat-trait>` MAY be
+        used to customize timestamp serialization.
+    * - ``document``
+      - Any JSON value
+    * - ``list``
+      - JSON array
+    * - ``map``
+      - JSON object
+    * - ``structure``
+      - JSON object. Each member value provided for the structure is
+        serialized as a JSON property where the property name is the same
+        as the member name. The :ref:`jsonName-trait` can be used to serialize
+        a property using a custom name.
+    * - ``union``
+      - JSON object. A union is serialized identically as a ``structure``
+        shape, but only a single member can be set to a non-null value.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~
+Empty body serialization
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+When an operation has no modeled input or if no input parameters are provided,
+a client MUST send an empty JSON object (``{}``) as the request body. Server
+implementations MUST also accept empty request bodies.
+
+When an operation has no modeled output or no output parameters are provided,
+server implementations SHOULD send an empty response body. The server MUST
+still send the protocol's ``Content-Type`` header in this case. Clients MUST
+also accept an empty JSON object as the response body.
+
+
+.. include:: non-numeric-floats.rst.template
+
+
+-----------------------------
+Operation error serialization
+-----------------------------
+
+Error responses in the |quoted shape name| protocol are serialized identically to
+standard responses with one additional component to distinguish which error
+is contained. New server-side protocol implementations SHOULD use a body field
+named ``__type``. The component MUST be one of the following: an additional
+header with the name ``X-Amzn-Errortype``, a body field with the name ``code``,
+or a body field named ``__type``.  The value of this component SHOULD contain
+the error's |protocol error type contents|.
+
+Legacy server-side protocol implementations sometimes include different
+information in this value. All client-side implementations SHOULD support
+sanitizing the value to retrieve the disambiguated error type using the
+following steps:
+
+1. If a ``:`` character is present, then take only the contents **before** the
+   first ``:`` character in the value.
+2. If a ``#`` character is present, then take only the contents **after** the
+   first ``#`` character in the value.
+
+All of the following error values resolve to ``FooError``:
+
+* ``FooError``
+* ``FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/``
+* ``aws.protocoltests.restjson#FooError``
+* ``aws.protocoltests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/``
+
+
+-----------------------------------------------------
+Differences between ``awsJson1_0`` and ``awsJson1_1``
+-----------------------------------------------------
+
+There are two difference between :ref:`awsJson1_0 <aws.protocols#awsJson1_0-trait>` and
+:ref:`awsJson1_1 <aws.protocols#awsJson1_1-trait>`. First, the static value of the
+``Content-Type`` header is different. In ``awsJson1_0`` it MUST be
+``application/x-amz-json-1.0`` and in ``awsJson1_1`` it MUST be
+``application/x-amz-json-1.1``.
+
+Second, error type serialization is different. In ``awsJson1_0``, servers SHOULD
+send the error shape's full :ref:`shape-id` in the ``__type`` field of the body.
+In ``awsJson1_1``, servers SHOULD only send the error's
+:token:`shape name <smithy:Identifier>`. However, clients MUST accept either behavior
+for both protocols. See `Operation error serialization`_ for full details on how to
+deserialize errors for |quoted shape name|.
+
+
+-------------------------
+Protocol compliance tests
+-------------------------
+
+A full compliance test suite is provided and SHALL be considered a normative
+reference: |protocol test link|
+
+These compliance tests define a model that is used to define test cases and
+the expected serialized HTTP requests and responses for each case.
+
+*TODO: Add event stream handling specifications.*
+

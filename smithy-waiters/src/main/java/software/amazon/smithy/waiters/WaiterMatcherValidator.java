@@ -58,37 +58,21 @@ final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEve
 
     @Override
     public List<ValidationEvent> visitOutput(Matcher.OutputMember outputPath) {
-        StructureShape struct = OperationIndex.of(model).getOutput(operation).orElse(null);
-        if (struct == null) {
-            addEvent(Severity.ERROR, NON_SUPPRESSABLE_ERROR, "output path used on operation with no output");
-        } else {
-            validatePathMatcher(createCurrentNodeFromShape(struct), outputPath.getValue());
-        }
+        StructureShape struct = OperationIndex.of(model).expectOutputShape(operation);
+        validatePathMatcher(createCurrentNodeFromShape(struct), outputPath.getValue());
         return events;
     }
 
     @Override
     public List<ValidationEvent> visitInputOutput(Matcher.InputOutputMember inputOutputMember) {
         OperationIndex index = OperationIndex.of(model);
-
-        StructureShape input = index.getInput(operation).orElse(null);
-        if (input == null) {
-            addEvent(Severity.ERROR, NON_SUPPRESSABLE_ERROR, "inputOutput path used on operation with no input");
-        }
-
-        StructureShape output = index.getOutput(operation).orElse(null);
-        if (output == null) {
-            addEvent(Severity.ERROR, NON_SUPPRESSABLE_ERROR, "inputOutput path used on operation with no output");
-        }
-
-        if (input != null && output != null) {
-            Map<String, Object> composedMap = new LinkedHashMap<>();
-            composedMap.put("input", createCurrentNodeFromShape(input).expectObjectValue());
-            composedMap.put("output", createCurrentNodeFromShape(output).expectObjectValue());
-            LiteralExpression composedData = new LiteralExpression(composedMap);
-            validatePathMatcher(composedData, inputOutputMember.getValue());
-        }
-
+        StructureShape input = index.expectInputShape(operation);
+        StructureShape output = index.expectOutputShape(operation);
+        Map<String, Object> composedMap = new LinkedHashMap<>();
+        composedMap.put("input", createCurrentNodeFromShape(input).expectObjectValue());
+        composedMap.put("output", createCurrentNodeFromShape(output).expectObjectValue());
+        LiteralExpression composedData = new LiteralExpression(composedMap);
+        validatePathMatcher(composedData, inputOutputMember.getValue());
         return events;
     }
 

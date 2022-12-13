@@ -15,18 +15,17 @@
 
 package software.amazon.smithy.codegen.core;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.BuilderRef;
 
 class TypedPropertiesBag {
 
     private final Map<String, Object> properties;
 
-    TypedPropertiesBag(Map<String, Object> properties) {
-        this.properties = MapUtils.copyOf(properties);
+    TypedPropertiesBag(Builder<?> bagBuilder) {
+        this.properties = bagBuilder.properties.copy();
     }
 
     /**
@@ -117,8 +116,8 @@ class TypedPropertiesBag {
     /**
      * Builds a SymbolReference.
      */
-    abstract static class Builder<T extends Builder> {
-        Map<String, Object> properties = new HashMap<>();
+    abstract static class Builder<T extends Builder<T>> {
+        BuilderRef<Map<String, Object>> properties = BuilderRef.forOrderedMap();
 
         /**
          * Sets a specific custom property.
@@ -129,7 +128,7 @@ class TypedPropertiesBag {
          */
         @SuppressWarnings("unchecked")
         public T putProperty(String key, Object value) {
-            properties.put(key, value);
+            properties.get().put(key, value);
             return (T) this;
         }
 
@@ -141,7 +140,7 @@ class TypedPropertiesBag {
          */
         @SuppressWarnings("unchecked")
         public T removeProperty(String key) {
-            properties.remove(key);
+            properties.get().remove(key);
             return (T) this;
         }
 
@@ -154,7 +153,7 @@ class TypedPropertiesBag {
         @SuppressWarnings("unchecked")
         public T properties(Map<String, Object> properties) {
             this.properties.clear();
-            this.properties.putAll(properties);
+            this.properties.get().putAll(properties);
             return (T) this;
         }
     }

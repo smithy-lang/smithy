@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "smithy.example#MyList": {
             "type": "list",
@@ -16,6 +16,12 @@
                 "b": {
                     "target": "smithy.api#Long"
                 }
+            }
+        },
+        "smithy.example#Widgets": {
+            "type": "list",
+            "member": {
+                "target": "foo.example#Widget"
             }
         }
     }

@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.jsonschema;
 
+import java.util.function.Predicate;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -70,14 +71,16 @@ interface RefStrategy {
      * @param model Model being converted.
      * @param config Conversion configuration.
      * @param propertyNamingStrategy Property naming strategy.
+     * @param shapePredicate a predicate to use to filter shapes in model when determining conflicts.
      * @return Returns the created strategy.
      */
     static RefStrategy createDefaultStrategy(
             Model model,
             JsonSchemaConfig config,
-            PropertyNamingStrategy propertyNamingStrategy
+            PropertyNamingStrategy propertyNamingStrategy,
+            Predicate<Shape> shapePredicate
     ) {
         RefStrategy delegate = new DefaultRefStrategy(model, config, propertyNamingStrategy);
-        return new DeconflictingStrategy(model, delegate);
+        return new DeconflictingStrategy(model, delegate, shapePredicate);
     }
 }

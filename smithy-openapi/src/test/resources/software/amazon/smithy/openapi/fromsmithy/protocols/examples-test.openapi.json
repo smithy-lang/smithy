@@ -1,0 +1,490 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Banking",
+    "version": "2022-06-26"
+  },
+  "paths": {
+    "/account/withdraw": {
+      "patch": {
+        "operationId": "Withdraw",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WithdrawRequestContent"
+              },
+              "examples": {
+                "Withdraw_example1": {
+                  "summary": "Withdraw valid example",
+                  "description": "withdrawTestDoc",
+                  "value": {
+                    "time": "Tue, 29 Apr 2014 18:30:38 GMT",
+                    "withdrawAmount": "-35",
+                    "withdrawOption": "ATM"
+                  }
+                },
+                "Withdraw_example2": {
+                  "summary": "Withdraw invalid username example",
+                  "description": "withdrawTestDoc2",
+                  "value": {
+                    "withdrawAmount": "-450",
+                    "withdrawOption": "Venmo"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "withdrawParams",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "$ref": "#/components/schemas/ExampleMap"
+            },
+            "examples": {
+              "Withdraw_example1": {
+                "summary": "Withdraw valid example",
+                "description": "withdrawTestDoc",
+                "value": {
+                  "location": "Denver",
+                  "bankName": "Chase"
+                }
+              },
+              "Withdraw_example2": {
+                "summary": "Withdraw invalid username example",
+                "description": "withdrawTestDoc2",
+                "value": {
+                  "location": "Seoul",
+                  "bankName": "Chase"
+                }
+              }
+            }
+          },
+          {
+            "name": "accountNumber",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "Withdraw_example1": {
+                "summary": "Withdraw valid example",
+                "description": "withdrawTestDoc",
+                "value": "124634"
+              },
+              "Withdraw_example2": {
+                "summary": "Withdraw invalid username example",
+                "description": "withdrawTestDoc2",
+                "value": "231565"
+              }
+            }
+          },
+          {
+            "name": "username",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "Withdraw_example1": {
+                "summary": "Withdraw valid example",
+                "description": "withdrawTestDoc",
+                "value": "amazon"
+              },
+              "Withdraw_example2": {
+                "summary": "Withdraw invalid username example",
+                "description": "withdrawTestDoc2",
+                "value": "peccy"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Withdraw 200 response",
+            "headers": {
+              "branch": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "Withdraw_example1": {
+                    "summary": "Withdraw valid example",
+                    "description": "withdrawTestDoc",
+                    "value": "Denver-203"
+                  }
+                }
+              },
+              "result": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "examples": {
+                  "Withdraw_example1": {
+                    "summary": "Withdraw valid example",
+                    "description": "withdrawTestDoc",
+                    "value": [
+                      "34",
+                      "5",
+                      "-250"
+                    ]
+                  }
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WithdrawResponseContent"
+                },
+                "examples": {
+                  "Withdraw_example1": {
+                    "summary": "Withdraw valid example",
+                    "description": "withdrawTestDoc",
+                    "value": {
+                      "location": "Denver",
+                      "bankName": "Chase",
+                      "atmRecording": "dGVzdHZpZGVv"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "InvalidUsername 400 response",
+            "headers": {
+              "internalErrorCode": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "Withdraw_example2": {
+                    "summary": "Withdraw invalid username example",
+                    "description": "withdrawTestDoc2",
+                    "value": "8dfws-21"
+                  }
+                }
+              }
+            },
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidUsernameErrorPayload"
+                },
+                "examples": {
+                  "Withdraw_example2": {
+                    "summary": "Withdraw invalid username example",
+                    "description": "withdrawTestDoc2",
+                    "value": "ERROR: Invalid username."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/account/{username}": {
+      "put": {
+        "operationId": "Deposit",
+        "requestBody": {
+          "content": {
+            "text/plain": {
+              "schema": {
+                "$ref": "#/components/schemas/DepositInputPayload"
+              },
+              "examples": {
+                "Deposit_example1": {
+                  "summary": "Deposit valid example",
+                  "description": "depositTestDoc",
+                  "value": "200"
+                },
+                "Deposit_example2": {
+                  "summary": "Deposit invalid username example",
+                  "description": "depositTestDoc2",
+                  "value": "-200"
+                },
+                "Deposit_example3": {
+                  "summary": "Deposit invalid amount example",
+                  "description": "depositTestDoc3",
+                  "value": "-100"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "examples": {
+              "Deposit_example1": {
+                "summary": "Deposit valid example",
+                "description": "depositTestDoc",
+                "value": "sichanyoo"
+              },
+              "Deposit_example2": {
+                "summary": "Deposit invalid username example",
+                "description": "depositTestDoc2",
+                "value": "sichanyoo"
+              },
+              "Deposit_example3": {
+                "summary": "Deposit invalid amount example",
+                "description": "depositTestDoc3",
+                "value": "obidos"
+              }
+            }
+          },
+          {
+            "name": "accountHistory",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "explode": true,
+            "examples": {
+              "Deposit_example1": {
+                "summary": "Deposit valid example",
+                "description": "depositTestDoc",
+                "value": [
+                  "10",
+                  "-25",
+                  "50"
+                ]
+              },
+              "Deposit_example2": {
+                "summary": "Deposit invalid username example",
+                "description": "depositTestDoc2",
+                "value": [
+                  "-200",
+                  "200",
+                  "10"
+                ]
+              },
+              "Deposit_example3": {
+                "summary": "Deposit invalid amount example",
+                "description": "depositTestDoc3",
+                "value": [
+                  "2000",
+                  "50000",
+                  "100"
+                ]
+              }
+            }
+          },
+          {
+            "name": "accountNumber",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "Deposit_example1": {
+                "summary": "Deposit valid example",
+                "description": "depositTestDoc",
+                "value": "102935"
+              },
+              "Deposit_example3": {
+                "summary": "Deposit invalid amount example",
+                "description": "depositTestDoc3",
+                "value": "203952"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deposit 200 response",
+            "headers": {
+              "authenticationResult": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "examples": {
+                  "Deposit_example1": {
+                    "summary": "Deposit valid example",
+                    "description": "depositTestDoc",
+                    "value": [
+                      "pass1",
+                      "pass2",
+                      "pass3"
+                    ]
+                  }
+                }
+              },
+              "username": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "Deposit_example1": {
+                    "summary": "Deposit valid example",
+                    "description": "depositTestDoc",
+                    "value": "sichanyoo"
+                  }
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DepositResponseContent"
+                },
+                "examples": {
+                  "Deposit_example1": {
+                    "summary": "Deposit valid example",
+                    "description": "depositTestDoc",
+                    "value": {
+                      "textMessage": "You deposited 200-text",
+                      "emailMessage": "You deposited 200-email"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "InvalidUsername 400 response",
+            "headers": {
+              "internalErrorCode": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "Deposit_example2": {
+                    "summary": "Deposit invalid username example",
+                    "description": "depositTestDoc2",
+                    "value": "4gsw2-34"
+                  }
+                }
+              }
+            },
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidUsernameErrorPayload"
+                },
+                "examples": {
+                  "Deposit_example2": {
+                    "summary": "Deposit invalid username example",
+                    "description": "depositTestDoc2",
+                    "value": "ERROR: Invalid username."
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InvalidAmount 500 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidAmountResponseContent"
+                },
+                "examples": {
+                  "Deposit_example3": {
+                    "summary": "Deposit invalid amount example",
+                    "description": "depositTestDoc3",
+                    "value": {
+                      "errorMessage1": "ERROR: Invalid amount.",
+                      "errorMessage2": "2gdx4-34",
+                      "errorMessage3": "2gcbe-98"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DepositInputPayload": {
+        "type": "string"
+      },
+      "DepositResponseContent": {
+        "type": "object",
+        "properties": {
+          "textMessage": {
+            "type": "string"
+          },
+          "emailMessage": {
+            "type": "string"
+          }
+        }
+      },
+      "InvalidAmountResponseContent": {
+        "type": "object",
+        "properties": {
+          "errorMessage1": {
+            "type": "string"
+          },
+          "errorMessage2": {
+            "type": "string"
+          },
+          "errorMessage3": {
+            "type": "string"
+          }
+        }
+      },
+      "InvalidUsernameErrorPayload": {
+        "type": "string"
+      },
+      "WithdrawRequestContent": {
+        "type": "object",
+        "properties": {
+          "time": {
+            "type": "string"
+          },
+          "withdrawAmount": {
+            "type": "string"
+          },
+          "withdrawOption": {
+            "type": "string"
+          }
+        }
+      },
+      "WithdrawResponseContent": {
+        "type": "object",
+        "properties": {
+          "location": {
+            "type": "string"
+          },
+          "bankName": {
+            "type": "string"
+          },
+          "atmRecording": {
+            "type": "string",
+            "format": "byte"
+          }
+        }
+      },
+      "ExampleMap": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

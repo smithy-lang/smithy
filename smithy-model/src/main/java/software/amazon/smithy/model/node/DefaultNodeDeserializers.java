@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -58,18 +59,44 @@ import software.amazon.smithy.utils.StringUtils;
  */
 final class DefaultNodeDeserializers {
 
+    // These are the kinds of types that can come back.
+    // This was informed by various other mappers, including jackson-jr:
+    // https://github.com/FasterXML/jackson-jr/blob/ac845b88702a1f1b1b5a75a4791b08577f74e94d/jr-objects/src/main/java/com/fasterxml/jackson/jr/type/TypeResolver.java#L79
+    static Class<?> classFromType(Type type) {
+        if (type instanceof Class) {
+            return (Class<?>) type;
+        } else if (type instanceof ParameterizedType) {
+            return (Class<?>) ((ParameterizedType) type).getRawType();
+        } else if (type instanceof WildcardType) {
+            return classFromType(((WildcardType) type).getUpperBounds()[0]);
+        } else if (type instanceof TypeVariable<?>) {
+            // TODO: implement this to enable improved builder detection
+            throw new IllegalArgumentException("TypeVariable targets are not implemented: " + type);
+        } else if (type instanceof GenericArrayType) {
+            throw new IllegalArgumentException("GenericArrayType targets are not implemented: " + type);
+        } else {
+            return null;
+        }
+    }
+
     // Deserialize an exact type if it matches (i.e., the setter expects a Node value).
     private static final ObjectCreatorFactory EXACT_CREATOR_FACTORY = (nodeType, targetType, nodeMapper) -> {
-        return Node.class.isAssignableFrom(targetType) && targetType.isAssignableFrom(nodeType.getNodeClass())
-               ? (node, target, param, pointer, mapper) -> node
-               : null;
+        Class<?> targetClass = classFromType(targetType);
+        if (targetClass != null
+                && Node.class.isAssignableFrom(targetClass)
+                && targetClass.isAssignableFrom(nodeType.getNodeClass())) {
+            return (node, target, pointer, mapper) -> node;
+        } else {
+            return null;
+        }
     };
 
     // Creates booleans from BooleanNodes.
     private static final ObjectCreatorFactory BOOLEAN_CREATOR_FACTORY = (nodeType, targetType, nodeMapper) -> {
         if (nodeType == NodeType.BOOLEAN) {
-            if (targetType == Boolean.class || targetType == boolean.class || targetType == Object.class) {
-                return (node, target, param, pointer, mapper) -> node.expectBooleanNode().getValue();
+            Class<?> targetClass = classFromType(targetType);
+            if (targetClass == Boolean.class || targetClass == boolean.class || targetClass == Object.class) {
+                return (node, target, pointer, mapper) -> node.expectBooleanNode().getValue();
             }
         }
         return null;
@@ -78,24 +105,25 @@ final class DefaultNodeDeserializers {
     // Null nodes always return null values.
     private static final ObjectCreatorFactory NULL_CREATOR = (nodeType, targetType, nodeMapper) -> {
         if (nodeType == NodeType.NULL) {
-            return (node, target, param, pointer, mapper) -> null;
+            return (node, target, pointer, mapper) -> null;
         }
         return null;
     };
 
     // String nodes can create java.land.String or a Smithy ShapeId.
-    private static final ObjectCreatorFactory STRING_CREATOR = (nodeType, into, nodeMapper) -> {
+    private static final ObjectCreatorFactory STRING_CREATOR = (nodeType, targetType, nodeMapper) -> {
         if (nodeType == NodeType.STRING) {
-            if (into == String.class || into == Object.class) {
-                return (node, target, param, pointer, mapper) -> node.expectStringNode().getValue();
-            } else if (into == ShapeId.class) {
-                return (node, target, param, pointer, mapper) -> node.expectStringNode().expectShapeId();
+            Class<?> targetClass = classFromType(targetType);
+            if (targetClass == String.class || targetClass == Object.class) {
+                return (node, target, pointer, mapper) -> node.expectStringNode().getValue();
+            } else if (targetClass == ShapeId.class) {
+                return (node, target, pointer, mapper) -> node.expectStringNode().expectShapeId();
             }
         }
         return null;
     };
 
-    private static final Map<Class, Function<Number, Object>> NUMBER_MAPPERS = new HashMap<>();
+    private static final Map<Type, Function<Number, Object>> NUMBER_MAPPERS = new HashMap<>();
 
     static {
         NUMBER_MAPPERS.put(Object.class, n -> n);
@@ -118,10 +146,11 @@ final class DefaultNodeDeserializers {
     // Creates numbers from NumberNodes.
     private static final ObjectCreatorFactory NUMBER_CREATOR = (nodeType, targetType, nodeMapper) -> {
         if (nodeType == NodeType.NUMBER) {
-            if (NUMBER_MAPPERS.containsKey(targetType)) {
-                return (node, target, param, pointer, mapper) -> {
+            Class<?> targetClass = classFromType(targetType);
+            if (NUMBER_MAPPERS.containsKey(targetClass)) {
+                return (node, target, pointer, mapper) -> {
                     Number value = node.expectNumberNode().getValue();
-                    return NUMBER_MAPPERS.get(target).apply(value);
+                    return NUMBER_MAPPERS.get(targetClass).apply(value);
                 };
             }
         }
@@ -135,18 +164,17 @@ final class DefaultNodeDeserializers {
     // Deserialize an ArrayNode into a Collection.
     private static final ObjectCreatorFactory COLLECTION_CREATOR = new ObjectCreatorFactory() {
         @Override
-        public NodeMapper.ObjectCreator getCreator(NodeType nodeType, Class<?> target, NodeMapper nodeMapper) {
+        public NodeMapper.ObjectCreator getCreator(NodeType nodeType, Type target, NodeMapper nodeMapper) {
             if (nodeType != NodeType.ARRAY) {
                 return null;
             }
 
             ReflectiveSupplier<Collection<Object>> ctor = createSupplier(target);
-
             if (ctor == null) {
                 return null;
             }
 
-            return (node, targetType, param, pointer, mapper) -> {
+            return (node, targetType, pointer, mapper) -> {
                 Collection<Object> collection;
 
                 try {
@@ -156,30 +184,44 @@ final class DefaultNodeDeserializers {
                     throw NodeDeserializationException.fromReflectiveContext(targetType, pointer, node, e, message);
                 }
 
+                // Extract out the expected generic type of the collection.
+                Type memberType = Object.class;
+                if (targetType instanceof ParameterizedType) {
+                    Type[] genericTypes = ((ParameterizedType) targetType).getActualTypeArguments();
+                    if (genericTypes.length > 0) {
+                        memberType = genericTypes[0];
+                    }
+                }
+
                 int i = 0;
                 for (Node entry : node.expectArrayNode().getElements()) {
-                    Object nextValue = mapper.deserializeNext(
-                            entry, pointer + "/" + i++, param, Object.class, mapper);
+                    Object nextValue = mapper.deserializeNext(entry, pointer + "/" + i++, memberType, mapper);
                     collection.add(nextValue);
                 }
                 return collection;
             };
         }
 
-        private ReflectiveSupplier<Collection<Object>> createSupplier(Class<?> targetType) {
-            // Create an ArrayList for most cases of lists or iterables.
-            if (targetType.equals(List.class)
-                    || targetType.equals(Collection.class)
-                    || targetType.equals(Object.class)
-                    || targetType.equals(ArrayList.class)
-                    || targetType.equals(Iterable.class)) {
-                return ArrayList::new;
-            } else if (targetType.equals(Set.class) || targetType.equals(HashSet.class)) {
-                // Special casing for Set or HashSet.
-                return HashSet::new;
-            } else if (Collection.class.isAssignableFrom(targetType)) {
-                return createSupplierFromReflection(targetType);
+        private ReflectiveSupplier<Collection<Object>> createSupplier(Type targetType) {
+            Class<?> targetClass = classFromType(targetType);
+            if (targetClass != null) {
+                // Create an ArrayList for most cases of lists or iterables.
+                if (targetClass == List.class
+                        || targetClass == Collection.class
+                        || targetClass == Object.class
+                        || targetClass == ArrayList.class
+                        || targetClass == Iterable.class) {
+                    return ArrayList::new;
+                } else if (targetClass == Set.class
+                           || targetClass == HashSet.class
+                           || targetClass == LinkedHashSet.class) {
+                    // Special casing for Set or HashSet.
+                    return LinkedHashSet::new;
+                } else if (Collection.class.isAssignableFrom(targetClass)) {
+                    return createSupplierFromReflection(targetClass);
+                }
             }
+
             return null;
         }
 
@@ -187,8 +229,8 @@ final class DefaultNodeDeserializers {
         private ReflectiveSupplier<Collection<Object>> createSupplierFromReflection(Class<?> into) {
             try {
                 // Create the collection type by assuming it has a public, zero-arg constructor.
-                Class<Collection> collectionTarget = (Class<Collection>) into;
-                Constructor<Collection> classCtor = collectionTarget.getDeclaredConstructor();
+                Class<Collection<Object>> collectionTarget = (Class<Collection<Object>>) into;
+                Constructor<Collection<Object>> classCtor = collectionTarget.getDeclaredConstructor();
                 classCtor.setAccessible(true);
                 return classCtor::newInstance;
             } catch (NoSuchMethodException e) {
@@ -209,19 +251,19 @@ final class DefaultNodeDeserializers {
     // Deserialize an ObjectNode into a Map.
     private static final ObjectCreatorFactory MAP_CREATOR = new ObjectCreatorFactory() {
         @Override
-        public NodeMapper.ObjectCreator getCreator(NodeType nodeType, Class<?> target, NodeMapper nodeMapper) {
+        public NodeMapper.ObjectCreator getCreator(NodeType nodeType, Type target, NodeMapper nodeMapper) {
             if (nodeType != NodeType.OBJECT) {
                 return null;
             }
 
-            ReflectiveSupplier<Map<String, Object>> ctor = createSupplier(target);
+            ReflectiveSupplier<Map<Object, Object>> ctor = createSupplier(target);
 
             if (ctor == null) {
                 return null;
             }
 
-            return (node, targetType, param, pointer, mapper) -> {
-                Map<String, Object> map;
+            return (node, targetType, pointer, mapper) -> {
+                Map<Object, Object> map;
 
                 try {
                     map = ctor.get();
@@ -230,11 +272,26 @@ final class DefaultNodeDeserializers {
                     throw NodeDeserializationException.fromReflectiveContext(targetType, pointer, node, e, message);
                 }
 
+                // Extract out the expected generic types of the collection.
+                Type keyType = Object.class;
+                Type valueType = Object.class;
+                if (targetType instanceof ParameterizedType) {
+                    Type[] genericTypes = ((ParameterizedType) targetType).getActualTypeArguments();
+                    if (genericTypes.length > 0) {
+                        keyType = genericTypes[0];
+                    }
+                    if (genericTypes.length > 1) {
+                        valueType = genericTypes[1];
+                    }
+                }
+
                 ObjectNode objectNode = node.expectObjectNode();
-                for (Map.Entry<String, Node> entry : objectNode.getStringMap().entrySet()) {
-                    String key = entry.getKey();
+                for (Map.Entry<StringNode, Node> entry : objectNode.getMembers().entrySet()) {
+                    String keyValue = entry.getKey().getValue();
+                    Object key = mapper.deserializeNext(
+                            entry.getKey(), pointer + "/(key:" + keyValue + ")", keyType, mapper);
                     Object value = mapper.deserializeNext(
-                            entry.getValue(), pointer + "/" + key, param, Object.class, mapper);
+                            entry.getValue(), pointer + "/" + keyValue, valueType, mapper);
                     map.put(key, value);
                 }
 
@@ -242,21 +299,24 @@ final class DefaultNodeDeserializers {
             };
         }
 
-        private ReflectiveSupplier<Map<String, Object>> createSupplier(Class<?> into) {
-            if (into == Object.class || into == Map.class || into == HashMap.class) {
-                return HashMap::new;
-            } else if (Map.class.isAssignableFrom(into)) {
-                return createSupplierFromReflection(into);
+        private ReflectiveSupplier<Map<Object, Object>> createSupplier(Type into) {
+            Class<?> targetClass = classFromType(into);
+            if (targetClass != null) {
+                if (targetClass == Object.class || targetClass == Map.class || targetClass == HashMap.class) {
+                    return HashMap::new;
+                } else if (Map.class.isAssignableFrom(targetClass)) {
+                    return createSupplierFromReflection(targetClass);
+                }
             }
             return null;
         }
 
         @SuppressWarnings("unchecked")
-        private ReflectiveSupplier<Map<String, Object>> createSupplierFromReflection(Class<?> into) {
+        private ReflectiveSupplier<Map<Object, Object>> createSupplierFromReflection(Class<?> into) {
             try {
                 // Try to create the map from an empty constructor.
-                Class<Map<String, Object>> collectionTarget = (Class<Map<String, Object>>) into;
-                Constructor<Map<String, Object>> mapCtor = collectionTarget.getDeclaredConstructor();
+                Class<Map<Object, Object>> collectionTarget = (Class<Map<Object, Object>>) into;
+                Constructor<Map<Object, Object>> mapCtor = collectionTarget.getDeclaredConstructor();
                 return mapCtor::newInstance;
             } catch (NoSuchMethodException e) {
                 // We *could* pass here and try to let the next deserializer take a crack, but that would
@@ -270,14 +330,16 @@ final class DefaultNodeDeserializers {
 
     // Creates an object from any type of Node using the #fromNode factory method.
     private static final ObjectCreatorFactory FROM_NODE_CREATOR = (nodeType, target, nodeMapper) -> {
-        if (!nodeMapper.getDisableFromNode().contains(target)) {
-            for (Method method : target.getMethods()) {
+        Class<?> targetClass = classFromType(target);
+
+        if (targetClass != null && !nodeMapper.getDisableFromNode().contains(targetClass)) {
+            for (Method method : targetClass.getMethods()) {
                 if ((method.getName().equals("fromNode"))
-                        && target.isAssignableFrom(method.getReturnType())
+                        && targetClass.isAssignableFrom(method.getReturnType())
                         && method.getParameters().length == 1
                         && Node.class.isAssignableFrom(method.getParameters()[0].getType())
                         && Modifier.isStatic(method.getModifiers())) {
-                    return (node, targetType, paramType, pointer, mapper) -> {
+                    return (node, targetType, pointer, mapper) -> {
                         try {
                             return method.invoke(null, node);
                         } catch (ReflectiveOperationException e) {
@@ -293,47 +355,46 @@ final class DefaultNodeDeserializers {
     };
 
     static final class BeanMapper {
-        // Cache of Pair<types, member-name> to a Pair<Method, Parameterized type of input type>
-        private static final ConcurrentMap<Pair<Class<?>, String>, Pair<Method, Class>> SETTER_CACHE
-                = new ConcurrentHashMap<>();
+        // Cache of Pair<types, member-name> to a setter Method.
+        private static final ConcurrentMap<Pair<Class<?>, String>, Method> SETTER_CACHE = new ConcurrentHashMap<>();
 
         static void apply(
                 Object value,
                 Node node,
-                Class<?> target,
+                Type target,
                 String pointer,
                 NodeMapper mapper
         ) throws ReflectiveOperationException {
             for (Map.Entry<String, Node> entry : node.expectObjectNode().getStringMap().entrySet()) {
-                Pair<Method, Class> setterPair = findSetter(target, entry.getKey());
-                if (setterPair == null) {
+                Method setter = findSetter(target, entry.getKey());
+                if (setter == null) {
                     mapper.getWhenMissingSetter().handle(target, pointer, entry.getKey(), entry.getValue());
                 } else {
-                    Method method = setterPair.getLeft();
-                    Class parameterizedType = setterPair.getRight();
                     Object member = mapper.deserializeNext(
                             entry.getValue(),
                             pointer + "/" + entry.getKey(),
-                            method.getParameters()[0].getType(),
-                            parameterizedType,
+                            setter.getParameters()[0].getParameterizedType(),
                             mapper);
-                    method.invoke(value, member);
+                    setter.invoke(value, member);
                 }
             }
         }
 
-        // Return value is null or a pair of (the method to invoke, the generic collection parameter).
-        private static Pair<Method, Class> findSetter(Class<?> type, String memberName) {
-            return SETTER_CACHE.computeIfAbsent(Pair.of(type, memberName), pair -> {
+        // Return value is null or a setter method to invoke.
+        private static Method findSetter(Type type, String memberName) {
+            Class<?> targetType = classFromType(type);
+
+            if (targetType == null) {
+                return null;
+            }
+
+            return SETTER_CACHE.computeIfAbsent(Pair.of(targetType, memberName), pair -> {
                 String sanitized = sanitizePropertyName(pair.right);
-                if (sanitized == null) {
-                    return null;
-                }
-                Class target = pair.left;
-                for (Method method : target.getMethods()) {
-                    if (isBeanOrBuilderSetter(method, target, sanitized)) {
-                        Class parameterizedType = determineParameterizedType(method);
-                        return Pair.of(method, parameterizedType);
+                if (sanitized != null) {
+                    for (Method method : targetType.getMethods()) {
+                        if (isBeanOrBuilderSetter(method, targetType, sanitized)) {
+                            return method;
+                        }
                     }
                 }
                 return null;
@@ -374,7 +435,8 @@ final class DefaultNodeDeserializers {
             }
 
             // Must either return the target class itself (like a builder) or void.
-            if (method.getReturnType() != void.class && method.getReturnType() != type) {
+            // Ideally we should attempt to resolve any generics and make an assertion of the concrete type.
+            if (!(method.getReturnType() == void.class || method.getReturnType().isAssignableFrom(type))) {
                 return false;
             }
 
@@ -390,70 +452,23 @@ final class DefaultNodeDeserializers {
 
             return false;
         }
-
-        private static Class<?> determineParameterizedType(Method setter) {
-            Type genericParameters = setter.getGenericParameterTypes()[0];
-            Class<?> containingType = setter.getParameterTypes()[0];
-
-            if (genericParameters instanceof ParameterizedType) {
-                Type[] parameterArgTypes = ((ParameterizedType) genericParameters).getActualTypeArguments();
-                if (isSupportedCollectionType(containingType, parameterArgTypes)) {
-                    // Return the collection value type.
-                    return resolveClassFromType(parameterArgTypes[0]);
-                } else if (isSupportedMapType(containingType, parameterArgTypes)) {
-                    // Return the Map value type.
-                    return resolveClassFromType(parameterArgTypes[1]);
-                }
-            }
-
-            return Object.class;
-        }
-
-        private static boolean isSupportedCollectionType(Class<?> containingType, Type[] parameterArgTypes) {
-            return parameterArgTypes.length == 1
-                   && Collection.class.isAssignableFrom(containingType);
-        }
-
-        private static boolean isSupportedMapType(Class<?> containingType, Type[] parameterArgTypes) {
-            return parameterArgTypes.length == 2
-                   && Map.class.isAssignableFrom(containingType)
-                   && parameterArgTypes[0] == String.class;
-        }
-
-        // These are the kinds of types that can come back.
-        // This was informed by various other mappers, including jackson-jr:
-        // https://github.com/FasterXML/jackson-jr/blob/ac845b88702a1f1b1b5a75a4791b08577f74e94d/jr-objects/src/main/java/com/fasterxml/jackson/jr/type/TypeResolver.java#L79
-        private static Class<?> resolveClassFromType(Type type) {
-            if (type instanceof Class) {
-                return (Class) type;
-            } else if (type instanceof ParameterizedType) {
-                return (Class) ((ParameterizedType) type).getRawType();
-            } else if (type instanceof WildcardType) {
-                return resolveClassFromType(((WildcardType) type).getUpperBounds()[0]);
-            } else if (type instanceof TypeVariable<?>) {
-                throw new IllegalArgumentException("TypeVariable targets are not implemented: " + type);
-            } else if (type instanceof GenericArrayType) {
-                throw new IllegalArgumentException("GenericArrayType targets are not implemented: " + type);
-            } else {
-                throw new IllegalArgumentException("Unable to determine target Class from " + type);
-            }
-        }
     }
 
     // Creates an object from any type of Node using the #builder factory method.
     @SuppressWarnings("unchecked")
     private static final ObjectCreatorFactory FROM_BUILDER_CREATOR = (nodeType, target, nodeMapper) -> {
-        if (nodeType != NodeType.OBJECT) {
+        Class<?> targetClass = classFromType(target);
+        if (nodeType != NodeType.OBJECT || targetClass == null) {
             return null;
         }
 
-        for (Method method : target.getMethods()) {
+        for (Method method : targetClass.getMethods()) {
             if ((method.getName().equals("builder"))
                     && SmithyBuilder.class.isAssignableFrom(method.getReturnType())
                     && method.getParameters().length == 0
                     && Modifier.isStatic(method.getModifiers())) {
                 method.setAccessible(true);
-                return (node, targetType, paramType, pointer, mapper) -> {
+                return (node, targetType, pointer, mapper) -> {
                     try {
                         SmithyBuilder<Object> builder = ((SmithyBuilder<Object>) method.invoke(null));
                         BeanMapper.apply(builder, node, builder.getClass(), pointer, mapper);
@@ -471,29 +486,30 @@ final class DefaultNodeDeserializers {
 
     private static void applySourceLocation(Object object, FromSourceLocation sourceLocation)
             throws ReflectiveOperationException {
-        Pair<Method, Class> setter = BeanMapper.findSetter(object.getClass(), "sourceLocation");
+        Method setter = BeanMapper.findSetter(object.getClass(), "sourceLocation");
         if (setter != null) {
-            setter.left.invoke(object, sourceLocation.getSourceLocation());
+            setter.invoke(object, sourceLocation.getSourceLocation());
         }
     }
 
     // Attempts to create a Bean style POJO using a zero-value constructor.
     private static final ObjectCreatorFactory BEAN_CREATOR = (nodeType, target, nodeMapper) -> {
-        if (nodeType != NodeType.OBJECT) {
+        Class<?> targetClass = classFromType(target);
+        if (nodeType != NodeType.OBJECT || targetClass == null) {
             return null;
         }
 
         try {
             // TODO: we could potentially add support for this if it's not too complicated.
-            if (target.getEnclosingClass() != null && !Modifier.isStatic(target.getModifiers())) {
+            if (targetClass.getEnclosingClass() != null && !Modifier.isStatic(targetClass.getModifiers())) {
                 throw new NodeDeserializationException(
-                        "Cannot create non-static inner class: " + target.getCanonicalName(), SourceLocation.NONE);
+                        "Cannot create non-static inner class: " + targetClass.getCanonicalName(), SourceLocation.NONE);
             }
 
-            Constructor<?> ctor = target.getDeclaredConstructor();
+            Constructor<?> ctor = targetClass.getDeclaredConstructor();
             ctor.setAccessible(true);
 
-            return (node, targetType, parameterizedType, pointer, mapper) -> {
+            return (node, targetType, pointer, mapper) -> {
                 try {
                     Object value = ctor.newInstance();
                     BeanMapper.apply(value, node, targetType, pointer, mapper);
@@ -515,13 +531,15 @@ final class DefaultNodeDeserializers {
     // Mimic's Jackson's behavior when using READ_ENUMS_USING_TO_STRING
     // See https://github.com/FasterXML/jackson-databind/wiki/Deserialization-Features
     private static final ObjectCreatorFactory ENUM_CREATOR = (nodeType, target, nodeMapper) -> {
-        if (nodeType != NodeType.STRING || !Enum.class.isAssignableFrom(target)) {
+        Class<?> targetClass = classFromType(target);
+
+        if (nodeType != NodeType.STRING || targetClass == null || !Enum.class.isAssignableFrom(targetClass)) {
             return null;
         }
 
-        return (node, targetType, parameterizedType, pointer, mapper) -> {
+        return (node, targetType, pointer, mapper) -> {
             String name = node.expectStringNode().getValue();
-            for (Object constant : targetType.getEnumConstants()) {
+            for (Object constant : targetClass.getEnumConstants()) {
                 if (constant.toString().equals(name)) {
                     return constant;
                 }
@@ -529,11 +547,11 @@ final class DefaultNodeDeserializers {
 
             // Give an error message with suggestions.
             List<String> names = new ArrayList<>();
-            for (Object constant : targetType.getEnumConstants()) {
+            for (Object constant : targetClass.getEnumConstants()) {
                 names.add(constant.toString());
             }
 
-            throw NodeDeserializationException.fromContext(targetType, pointer, node, null,
+            throw NodeDeserializationException.fromContext(targetClass, pointer, node, null,
                     "Expected one of the following enum strings: " + names);
         };
     };
@@ -545,7 +563,7 @@ final class DefaultNodeDeserializers {
     // These types have special, built-in handling.
     // This mirrors the simpler behaviors allowed in Jackson.
     // See https://github.com/FasterXML/jackson-databind/blob/ab583fb2319ee33ef6b548b720afec84265d40a7/src/main/java/com/fasterxml/jackson/databind/deser/std/FromStringDeserializer.java
-    private static final Map<Class, FromStringClassFactory> FROM_STRING_CLASSES = MapUtils.of(
+    private static final Map<Type, FromStringClassFactory> FROM_STRING_CLASSES = MapUtils.of(
             URL.class, URL::new,
             URI.class, URI::new,
             Pattern.class, Pattern::compile,
@@ -559,13 +577,12 @@ final class DefaultNodeDeserializers {
         }
 
         FromStringClassFactory factory = FROM_STRING_CLASSES.get(target);
-        return (node, targetType, parameterizedType, pointer, mapper) -> {
+        return (node, targetType, pointer, mapper) -> {
             String value = node.expectStringNode().getValue();
             try {
                 return factory.create(value);
             } catch (Exception e) {
-                throw NodeDeserializationException.fromContext(
-                        targetType, pointer, node, e, e.getMessage());
+                throw NodeDeserializationException.fromContext(targetType, pointer, node, e, e.getMessage());
             }
         };
     };
@@ -604,11 +621,10 @@ final class DefaultNodeDeserializers {
 
     // Creates an ObjectCreatorFactory that caches the result of finding ObjectCreators.
     private static ObjectCreatorFactory cachedCreator(ObjectCreatorFactory delegate) {
-        ConcurrentMap<Pair<NodeType, Class>, NodeMapper.ObjectCreator> cache = new ConcurrentHashMap<>();
+        IdentityClassCache<String, NodeMapper.ObjectCreator> cache = new IdentityClassCache<>();
         return (nodeType, target, nodeMapper) -> {
-            return cache.computeIfAbsent(Pair.of(nodeType, target), pair -> {
-                return delegate.getCreator(pair.left, pair.right, nodeMapper);
-            });
+            String key = nodeType.getNodeClass() + ":" + target.getTypeName();
+            return cache.getForClass(key, target, () -> delegate.getCreator(nodeType, target, nodeMapper));
         };
     }
 

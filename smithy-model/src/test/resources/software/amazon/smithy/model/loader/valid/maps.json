@@ -49,7 +49,7 @@
             "key": {
                 "target": "com.example#String",
                 "traits": {
-                    "smithy.api#sensitive": {},
+                    "smithy.api#internal": {},
                     "smithy.api#since": "1.1"
                 }
             },
@@ -66,14 +66,14 @@
             "key": {
                 "target": "com.example#String",
                 "traits": {
-                    "smithy.api#sensitive": {},
+                    "smithy.api#internal": {},
                     "smithy.api#since": "1.1"
                 }
             },
             "value": {
                 "target": "com.example#String",
                 "traits": {
-                    "smithy.api#sensitive": {},
+                    "smithy.api#internal": {},
                     "smithy.api#since": "1.1"
                 }
             },
@@ -87,7 +87,7 @@
             "key": {
                 "target": "com.example#String",
                 "traits": {
-                    "smithy.api#sensitive": {},
+                    "smithy.api#internal": {},
                     "smithy.api#since": "1.1"
                 }
             },

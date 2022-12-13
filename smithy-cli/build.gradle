@@ -13,9 +13,11 @@
  * permissions and limitations under the License.
  */
 
+import org.apache.tools.ant.taskdefs.condition.Os
+
 plugins {
     id "application"
-    id "org.beryx.runtime" version "1.8.4"
+    id "org.beryx.runtime" version "1.12.7"
 }
 
 description = "This module implements the Smithy command line interface."
@@ -23,6 +25,35 @@ description = "This module implements the Smithy command line interface."
 ext {
     displayName = "Smithy :: CLI"
     moduleName = "software.amazon.smithy.cli"
+    imageJreVersion = "17"
+    correttoRoot = "https://corretto.aws/downloads/latest/amazon-corretto-${imageJreVersion}"
+}
+
+// Detect which OS and arch is running to create an application class data sharing
+// archive for the current platform.
+if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+    ext.set("imageOs", "win64")
+} else if (Os.isFamily(Os.FAMILY_MAC)) {
+    if (Os.isArch("aarch64")) {
+        ext.set("imageOs", "osx-aarch_64")
+    } else if (Os.isArch("x86_64")) {
+        ext.set("imageOs", "osx-x86_64")
+    } else {
+        println("No JDK for ${System.getProperty("os.arch")}")
+        ext.set("imageOs", "")
+    }
+} else if (Os.isFamily(Os.FAMILY_UNIX)) {
+    if (Os.isArch("aarch")) {
+        ext.set("imageOs", "linux-aarch_64")
+    } else if (Os.isArch("x86_64")) {
+        ext.set("imageOs", "linux-x86_64")
+    } else {
+        println("No JDK for ${System.getProperty("os.arch")}")
+        ext.set("imageOs", "")
+    }
+} else {
+    println("Unknown OS and arch: ${System.getProperty("os.name")}")
+    ext.set("imageOs", "")
 }
 
 dependencies {
@@ -35,16 +66,55 @@ dependencies {
 application {
     mainClass = "software.amazon.smithy.cli.SmithyCli"
     applicationName = "smithy"
-    applicationDefaultJvmArgs = ["-Xshare:auto"]
 }
 
 runtime {
     addOptions("--compress", "0", "--strip-debug", "--no-header-files", "--no-man-pages")
-    addModules("java.logging")
+    addModules("java.logging", "java.xml")
+
+    launcher {
+        jvmArgs = [
+            '-Xshare:auto',
+            '-XX:SharedArchiveFile={{BIN_DIR}}/../lib/smithy.jsa'
+        ]
+    }
+
+    targetPlatform("linux-x86_64") {
+        jdkHome = jdkDownload("${correttoRoot}-x64-linux-jdk.tar.gz")
+    }
+
+    targetPlatform("linux-aarch_64") {
+        jdkHome = jdkDownload("${correttoRoot}-aarch64-linux-jdk.tar.gz")
+    }
+
+    targetPlatform("osx-x86_64") {
+        jdkHome = jdkDownload("${correttoRoot}-x64-macos-jdk.tar.gz")
+    }
+
+    targetPlatform("osx-aarch_64") {
+        jdkHome = jdkDownload("${correttoRoot}-aarch64-macos-jdk.tar.gz")
+    }
+
+    targetPlatform("win64") {
+        jdkHome = jdkDownload("${correttoRoot}-x64-windows-jdk.zip")
+    }
 }
 
-tasks.register("optimizeCli", Exec) {
-    commandLine("${project.buildDir}/image/bin/java", "-Xshare:dump")
+// First, call validate with no args and create a class list to use application class data sharing.
+tasks.register("createClassList", Exec) {
+    environment("SMITHY_OPTS", "-XX:DumpLoadedClassList=${project.buildDir}/image/smithy-cli-${imageOs}/lib/smithy.lst")
+    commandLine("${project.buildDir}/image/smithy-cli-${imageOs}/bin/smithy", "validate")
 }
 
-tasks["runtime"].finalizedBy("optimizeCli")
+// Next, actually dump out the archive of the collected classes. This is platform specific,
+// so it can only be done for the current OS+architecture.
+tasks.register("dumpArchive", Exec) {
+    environment("SMITHY_OPTS", "-Xshare:dump -XX:SharedArchiveFile=${project.buildDir}/image/smithy-cli-${imageOs}/lib/smithy.jsa -XX:SharedClassListFile=${project.buildDir}/image/smithy-cli-${imageOs}/lib/smithy.lst")
+    commandLine("${project.buildDir}/image/smithy-cli-${imageOs}/bin/smithy", "validate")
+}
+
+// Can't do CDS if the OS and architecture is not one of our targets.
+if (!imageOs.isEmpty()) {
+    tasks["dumpArchive"].dependsOn("createClassList")
+    tasks["runtime"].finalizedBy("dumpArchive")
+}

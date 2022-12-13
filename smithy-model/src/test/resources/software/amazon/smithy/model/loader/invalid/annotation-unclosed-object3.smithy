@@ -1,4 +1,4 @@
-// Parse error at line 4, column 8 near `MyString`: Expected: ',', but found 'M'
+// Parse error at line 5, column 1 near `[EOF]`: Expected: ':', but found '[EOF]'
 namespace com.foo
 @foo(bar:
 string MyString

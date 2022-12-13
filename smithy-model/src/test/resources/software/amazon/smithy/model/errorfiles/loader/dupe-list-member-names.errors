@@ -1,1 +1,1 @@
-[ERROR] -: Parse error at line 5, column 11 near `: `: Duplicate member of com.foo#List: 'member' | Model
+[ERROR] -: Parse error at line 7, column 5 near `member`: Expected: '}', but found 'm' | Model

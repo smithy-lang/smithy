@@ -37,7 +37,9 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * }</pre>
  *
  * @param <T> The type of {@code CodegenWriter} being written to.
+ * @deprecated prefer {@link DocWriter}. This will be removed in a future release.
  */
+@Deprecated
 @FunctionalInterface
 @SmithyUnstableApi
 public interface DocumentationWriter<T extends CodeWriter> {

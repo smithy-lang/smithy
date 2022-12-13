@@ -1,7 +1,7 @@
 // This file defines test cases that test HTTP URI label bindings.
-// See: https://awslabs.github.io/smithy/1.0/spec/http.html#httplabel-trait
+// See: https://smithy.io/2.0/spec/http-bindings.html#httplabel-trait
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restjson
 
@@ -194,4 +194,85 @@ structure HttpRequestWithGreedyLabelInPathInput {
     @httpLabel
     @required
     baz: String,
+}
+
+apply HttpRequestWithFloatLabels @httpRequestTests([
+    {
+        id: "RestJsonSupportsNaNFloatLabels",
+        documentation: "Supports handling NaN float label values.",
+        protocol: restJson1,
+        method: "GET",
+        uri: "/FloatHttpLabels/NaN/NaN",
+        body: "",
+        params: {
+            float: "NaN",
+            double: "NaN",
+        }
+    },
+    {
+        id: "RestJsonSupportsInfinityFloatLabels",
+        documentation: "Supports handling Infinity float label values.",
+        protocol: restJson1,
+        method: "GET",
+        uri: "/FloatHttpLabels/Infinity/Infinity",
+        body: "",
+        params: {
+            float: "Infinity",
+            double: "Infinity",
+        }
+    },
+    {
+        id: "RestJsonSupportsNegativeInfinityFloatLabels",
+        documentation: "Supports handling -Infinity float label values.",
+        protocol: restJson1,
+        method: "GET",
+        uri: "/FloatHttpLabels/-Infinity/-Infinity",
+        body: "",
+        params: {
+            float: "-Infinity",
+            double: "-Infinity",
+        }
+    },
+])
+
+@readonly
+@http(method: "GET", uri: "/FloatHttpLabels/{float}/{double}")
+operation HttpRequestWithFloatLabels {
+    input: HttpRequestWithFloatLabelsInput
+}
+
+structure HttpRequestWithFloatLabelsInput {
+    @httpLabel
+    @required
+    float: Float,
+
+    @httpLabel
+    @required
+    double: Double,
+}
+
+apply HttpRequestWithRegexLiteral @httpRequestTests([
+    {
+        id: "RestJsonToleratesRegexCharsInSegments",
+        documentation: "Path matching is not broken by regex expressions in literal segments",
+        protocol: restJson1,
+        method: "GET",
+        uri: "/ReDosLiteral/abc/(a+)+",
+        body: "",
+        params: {
+            str: "abc"
+        }
+    },
+])
+
+@readonly
+@http(method: "GET", uri: "/ReDosLiteral/{str}/(a+)+")
+operation HttpRequestWithRegexLiteral {
+    input: HttpRequestWithRegexLiteralInput
+}
+
+structure HttpRequestWithRegexLiteralInput {
+    @httpLabel
+    @required
+    str: String
 }

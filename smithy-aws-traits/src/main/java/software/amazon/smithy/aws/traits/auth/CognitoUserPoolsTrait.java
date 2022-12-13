@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.aws.traits.auth;
 
-import java.util.ArrayList;
 import java.util.List;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
@@ -25,8 +24,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
@@ -41,7 +39,7 @@ public final class CognitoUserPoolsTrait extends AbstractTrait implements ToSmit
 
     private CognitoUserPoolsTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
-        this.providerArns = ListUtils.copyOf(SmithyBuilder.requiredState("providerArns", builder.providerArns));
+        this.providerArns = builder.providerArns.copy();
     }
 
     public static final class Provider extends AbstractTrait.Provider {
@@ -52,9 +50,12 @@ public final class CognitoUserPoolsTrait extends AbstractTrait implements ToSmit
         @Override
         public Trait createTrait(ShapeId target, Node value) {
             ObjectNode objectNode = value.expectObjectNode();
-            return builder()
+            CognitoUserPoolsTrait result = builder()
+                    .sourceLocation(value)
                     .providerArns(objectNode.expectArrayMember(PROVIDER_ARNS).getElementsAs(StringNode::getValue))
                     .build();
+            result.setNodeCache(objectNode);
+            return result;
         }
     }
 
@@ -76,18 +77,20 @@ public final class CognitoUserPoolsTrait extends AbstractTrait implements ToSmit
 
     @Override
     public Builder toBuilder() {
-        return builder().providerArns(providerArns);
+        return builder().sourceLocation(getSourceLocation()).providerArns(providerArns);
     }
 
     @Override
     protected Node createNode() {
-        return Node.objectNode()
-                .withMember(PROVIDER_ARNS, providerArns.stream().map(Node::from).collect(ArrayNode.collect()));
+        return Node.objectNodeBuilder()
+                .sourceLocation(getSourceLocation())
+                .withMember(PROVIDER_ARNS, providerArns.stream().map(Node::from).collect(ArrayNode.collect()))
+                .build();
     }
 
     /** Builder for {@link CognitoUserPoolsTrait}. */
     public static final class Builder extends AbstractTraitBuilder<CognitoUserPoolsTrait, Builder> {
-        private final List<String> providerArns = new ArrayList<>();
+        private final BuilderRef<List<String>> providerArns = BuilderRef.forList();
 
         private Builder() {}
 
@@ -104,7 +107,7 @@ public final class CognitoUserPoolsTrait extends AbstractTrait implements ToSmit
          */
         public Builder providerArns(List<String> providerArns) {
             clearProviderArns();
-            this.providerArns.addAll(providerArns);
+            this.providerArns.get().addAll(providerArns);
             return this;
         }
 
@@ -115,7 +118,7 @@ public final class CognitoUserPoolsTrait extends AbstractTrait implements ToSmit
          * @return Returns the builder.
          */
         public Builder addProviderArn(String arn) {
-            providerArns.add(arn);
+            providerArns.get().add(arn);
             return this;
         }
 

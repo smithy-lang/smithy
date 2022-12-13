@@ -51,10 +51,7 @@ structure L {
 structure M {
   @deprecated
   @since("2.0")
-  foo:
-  E,
+  foo:E,
   @deprecated
-  baz
-  :
-  H
+  baz:H
 }

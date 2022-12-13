@@ -1,0 +1,67 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "smithy.example#NotDocumented": {
+            "type": "string"
+        },
+        "smithy.example#MyString": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "Foo\nbaz\nBar!"
+            }
+        },
+        "smithy.example#MyStructure": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "Docs on member!"
+                    }
+                },
+                "baz": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": {},
+                        "smithy.api#documentation": "Docs on another member!"
+                    }
+                },
+                "bam": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Structure"
+            }
+        },
+        "smithy.example#MyTrait": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#documentation": "The documentation\nof this trait!",
+                "smithy.api#trait": {}
+            }
+        },
+        "smithy.example#MyOperation": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.example#MyOperationInput"
+            },
+            "output": {
+                "target": "smithy.example#MyOperationOutput"
+            }
+        },
+        "smithy.example#MyOperationInput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "smithy.example#MyOperationOutput": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#documentation": "These are not ignored because they come AFTER the walrus\noperator.",
+                "smithy.api#output": {}
+            }
+        }
+    }
+}

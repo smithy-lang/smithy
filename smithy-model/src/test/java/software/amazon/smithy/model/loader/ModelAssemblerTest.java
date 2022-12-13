@@ -33,6 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,6 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
@@ -54,22 +57,34 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.ModelSerializer;
+import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.BoxTrait;
+import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.DynamicTrait;
+import software.amazon.smithy.model.traits.InternalTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
+import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.traits.SuppressTrait;
+import software.amazon.smithy.model.traits.TagsTrait;
+import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
+import software.amazon.smithy.model.validation.ValidatedResultException;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.model.validation.ValidatorFactory;
+import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
 
 public class ModelAssemblerTest {
@@ -121,7 +136,6 @@ public class ModelAssemblerTest {
                                 .withMember("type", Node.from("string"))));
         ValidatedResult<Model> result = new ModelAssembler().addDocumentNode(node).assemble();
 
-        assertThat(result.getValidationEvents(), empty());
         assertTrue(result.unwrap().getShape(ShapeId.from("ns.foo#String")).isPresent());
     }
 
@@ -487,6 +501,27 @@ public class ModelAssemblerTest {
     }
 
     @Test
+    public void canLoadTraitFromJarMultipleTimes() {
+        URL jar = getClass().getResource("jar-traits-import.jar");
+        URL file = getClass().getResource("loads-jar-traits.smithy");
+
+        Supplier<Model> modelSupplier = () -> {
+            URLClassLoader urlClassLoader = new URLClassLoader(new URL[] {jar});
+             return Model.assembler(urlClassLoader)
+                    .discoverModels(urlClassLoader)
+                    .addImport(file)
+                    .assemble()
+                    .unwrap();
+        };
+
+        Model model = modelSupplier.get();
+        assertTrue(model.getShape(ShapeId.from("smithy.test#test")).isPresent());
+
+        Model reloadedModel = modelSupplier.get();
+        assertTrue(reloadedModel.getShape(ShapeId.from("smithy.test#test")).isPresent());
+    }
+
+    @Test
     public void canDisableValidation() {
         String document = "namespace foo.baz\n"
                           + "@idempotent\n" // < this is invalid
@@ -546,7 +581,7 @@ public class ModelAssemblerTest {
                            + "}\n";
         String document2 = "namespace foo.baz\n"
                            + "structure Foo {\n"
-                           + "    @sensitive\n"
+                           + "    @internal\n"
                            + "    foo: String,\n"
                            + "}\n";
         ValidatedResult<Model> result = new ModelAssembler()
@@ -560,7 +595,7 @@ public class ModelAssemblerTest {
         StructureShape shape = result.unwrap().expectShape(ShapeId.from("foo.baz#Foo"), StructureShape.class);
         assertTrue(shape.hasTrait(DeprecatedTrait.class));
         assertTrue(shape.getMember("foo").isPresent());
-        assertTrue(shape.getMember("foo").get().hasTrait(SensitiveTrait.class));
+        assertTrue(shape.getMember("foo").get().hasTrait(InternalTrait.class));
     }
 
     @Test
@@ -658,5 +693,471 @@ public class ModelAssemblerTest {
                 .unwrap();
 
         assertThat(collectedEvents, equalTo(toEmit));
+    }
+
+    // Synthetic traits are used to add information to shapes that's not persisted on the
+    // shape when serializing, and the trait might not be defined in the metamodel. This
+    // requires that validators ignore synthetic traits, and that the model assembler doesn't
+    // fail if an unknown synthetic trait is encountered.
+    //
+    // This validator ensures that synthetic traits don't trip up the assembler, and that
+    // built-in validators don't care that the trait isn't defined in the semantic model.
+    // They only need to be defined in code.
+    @Test
+    public void transientTraitsAreNotValidated() {
+        ShapeId originalId = ShapeId.from("com.foo.nested#Str");
+        StringShape stringShape = StringShape.builder()
+                .id("com.foo#Str")
+                .addTrait(new OriginalShapeIdTrait(originalId))
+                .build();
+        Model model = Model.assembler()
+                .addShape(stringShape)
+                .assemble()
+                .unwrap();
+
+        assertThat(model.expectShape(stringShape.getId()).expectTrait(OriginalShapeIdTrait.class).getOriginalId(),
+                   equalTo(originalId));
+    }
+
+    // Synthetic traits should not be parsed again. That will cause a
+    // failure, for instance, if we import a 1.0 model that has @enum
+    // traits. If we try to reparse them this will fail with an error
+    // Unable to resolve trait `smithy.synthetic#enum`
+    @Test
+    public void doesNotReParsesSyntheticTraits() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("does-not-reparses-synthetic-traits.smithy"))
+                .assemble()
+                .unwrap();
+
+        Model.assembler()
+                .addModel(model)
+                .addUnparsedModel("foo.smithy", "namespace smithy.example\napply Foo @sensitive\n")
+                .assemble()
+                .unwrap();
+    }
+
+    @Test
+    public void resetDoesNotBarf() {
+        ModelAssembler assembler = new ModelAssembler();
+        assembler.assemble();
+        assembler.reset();
+        assembler.assemble();
+    }
+
+    // reset() affects multiple properties of the ModelAssembler. The test asserts one of them (shapes).
+    @Test
+    public void reset() {
+        ModelAssembler assembler = new ModelAssembler();
+
+        StringShape shape = StringShape.builder().id("ns.foo#Bar").build();
+        assembler.addShape(shape);
+        ValidatedResult<Model> result = assembler.assemble();
+        assertThat(result.unwrap().getShape(ShapeId.from("ns.foo#Bar")), is(Optional.of(shape)));
+
+        assembler.reset();
+        result = assembler.assemble();
+        assertThat(result.unwrap().getShape(ShapeId.from("ns.foo#Bar")), is(Optional.empty()));
+    }
+
+    public void loadsMixinMembersInCorrectOrderAndWithTraits() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("mixins/mixins-can-override-traits.smithy"))
+                .assemble()
+                .unwrap();
+
+        StructureShape f = model.expectShape(ShapeId.from("smithy.example#F"), StructureShape.class);
+
+        assertThat(f.getMemberNames(), contains("a", "b", "c", "d", "e", "f"));
+        assertThat(f.getMember("a").get().expectTrait(DocumentationTrait.class).getValue(), equalTo("I've changed"));
+        assertThat(f.getMember("c").get().expectTrait(DocumentationTrait.class).getValue(), equalTo("I've changed"));
+        assertTrue(f.getMember("c").get().hasTrait(InternalTrait.class));
+    }
+
+    @Test
+    public void ignoresAcceptableMixinConflicts() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("mixins/mixin-conflict-acceptable-1.smithy"))
+                .addImport(getClass().getResource("mixins/mixin-conflict-acceptable-2.smithy"))
+                .assemble()
+                .unwrap();
+
+        StructureShape a = model.expectShape(ShapeId.from("smithy.example#A"), StructureShape.class);
+
+        assertThat(a.getMemberNames(), contains("b", "a"));
+    }
+
+    @Test
+    public void failsWhenMixinsConflictAndAreNotEquivalent() {
+        ValidatedResultException e = Assertions.assertThrows(ValidatedResultException.class, () -> {
+            Model.assembler()
+                    .addImport(getClass().getResource("mixins/mixin-conflict-acceptable-1.smithy"))
+                    .addImport(getClass().getResource("mixins/mixin-conflict-error.smithy"))
+                    .assemble()
+                    .unwrap();
+        });
+
+        assertThat(e.getMessage(), containsString("Conflicting shape definition for `smithy.example#A`"));
+    }
+
+    @Test
+    public void canLoadSetsUsingBuiltModel() {
+        SetShape set = SetShape.builder()
+                .id("smithy.example#Set")
+                .member(ShapeId.from("smithy.api#String"))
+                .build();
+        Model model = Model.assembler()
+                .addShape(set)
+                .assemble()
+                .unwrap();
+
+        Model.assembler().addModel(model).assemble().unwrap();
+    }
+
+    @Test
+    public void canIgnoreTraitConflictsWithBuiltShapes() {
+        StringShape string1 = StringShape.builder()
+                .id("smithy.example#String1")
+                .addTrait(new DocumentationTrait("hi"))
+                .build();
+        ModelAssembler assembler = Model.assembler();
+        assembler.addShape(string1);
+        assembler.addUnparsedModel("foo.smithy", "$version: \"2.0\"\n"
+                                                 + "namespace smithy.example\n\n"
+                                                 + "@documentation(\"hi\")\n"
+                                                 + "string String1\n");
+        Model result = assembler.assemble().unwrap();
+
+        assertThat(result.expectShape(string1.getId()).expectTrait(DocumentationTrait.class).getValue(), equalTo("hi"));
+    }
+
+    @Test
+    public void canMergeTraitConflictsWithBuiltShapes() {
+        StringShape string1 = StringShape.builder()
+                .id("smithy.example#String1")
+                .addTrait(TagsTrait.builder().addValue("a").build())
+                .build();
+        ModelAssembler assembler = Model.assembler();
+        assembler.addShape(string1);
+        assembler.addUnparsedModel("foo.smithy", "$version: \"2.0\"\n"
+                                                 + "namespace smithy.example\n\n"
+                                                 + "@tags([\"b\"])\n"
+                                                 + "string String1\n");
+        Model result = assembler.assemble().unwrap();
+
+        assertThat(result.expectShape(string1.getId()).getTags(), contains("a", "b"));
+    }
+
+    @Test
+    public void providesDiffWhenConflictsAreFound() {
+        String a = "$version: \"2\"\n"
+                   + "namespace foo.baz\n"
+                   + "integer Foo\n";
+        String b = "$version: \"2\"\n"
+                   + "namespace foo.baz\n"
+                   + "@default(0)\n"
+                   + "long Foo\n";
+        ValidatedResult<Model> result = new ModelAssembler()
+                .addUnparsedModel("1.smithy", a)
+                .addUnparsedModel("2.smithy", b)
+                .assemble();
+
+        assertTrue(result.isBroken());
+        assertThat(result.getValidationEvents().get(0).getMessage(), containsString("Left is long, right is integer"));
+    }
+
+    @Test
+    public void canRoundTripShapesWithMixinsThroughAssembler() {
+        StructureShape mixin = StructureShape.builder()
+                .id("smithy.example#Mixin")
+                .addTrait(MixinTrait.builder().build())
+                .build();
+        StructureShape struct = StructureShape.builder()
+                .id("smithy.example#Foo")
+                .addMixin(mixin)
+                .addMember("foo", ShapeId.from("smithy.api#String"))
+                .build();
+        Model model = Model.assembler().addShapes(mixin, struct).assemble().unwrap();
+
+        assertThat(model.expectShape(struct.getId()), equalTo(struct));
+        assertThat(model.expectShape(mixin.getId()), equalTo(mixin));
+    }
+
+    @Test
+    public void mixinShapesNoticeDependencyChanges() {
+        StructureShape mixin = StructureShape.builder()
+                .id("smithy.example#Mixin")
+                .addTrait(MixinTrait.builder().build())
+                .build();
+        StructureShape struct = StructureShape.builder()
+                .id("smithy.example#Foo")
+                .addMixin(mixin)
+                .addMember("foo", ShapeId.from("smithy.api#String"))
+                .build();
+        Model model = Model.assembler()
+                .addShapes(mixin, struct)
+                .addTrait(mixin.getId(), new SensitiveTrait())
+                .assemble()
+                .unwrap();
+
+        assertThat(model.expectShape(mixin.getId()).getAllTraits(), hasKey(SensitiveTrait.ID));
+        assertThat(model.expectShape(mixin.getId()).getIntroducedTraits(), hasKey(SensitiveTrait.ID));
+        assertThat(model.expectShape(struct.getId()).getAllTraits(), hasKey(SensitiveTrait.ID));
+        assertThat(model.expectShape(struct.getId()).getIntroducedTraits(), not(hasKey(SensitiveTrait.ID)));
+    }
+
+    @Test
+    public void nodeModelsDoNotInterfereWithManuallyAddedModels() {
+        StructureShape struct = StructureShape.builder()
+                .id("smithy.example#Foo")
+                .addMember("foo", ShapeId.from("smithy.api#Integer"))
+                .build();
+        // Create an object node with a source location of none.
+        ObjectNode node = Node.objectNodeBuilder()
+                .withMember(new StringNode("smithy", SourceLocation.NONE), new StringNode("1.0", SourceLocation.NONE))
+                .build();
+        Model model = Model.assembler()
+                .addShape(struct)
+                // Add a Node with a 1.0 version and a SourceLocation.none() value.
+                // This source location is the same as the manually given shape, but it should not
+                // cause the manually given shape to also think it's a 1.0 shape.
+                .addDocumentNode(node)
+                .assemble()
+                .unwrap();
+
+        // Ensure that the upgrade process did not add a Box trait to the manually created shape
+        // because it is not assumed to be a 1.0 shape.
+        ShapeId memberCheck = struct.getMember("foo").get().getId();
+        MemberShape createdMember = model.expectShape(memberCheck, MemberShape.class);
+
+        assertThat(createdMember.getAllTraits(), not(hasKey(BoxTrait.ID)));
+    }
+
+    @Test
+    public void canResolveTargetsWithoutPrelude() {
+        ValidatedResult<Model> model = Model.assembler()
+                .disablePrelude()
+                .addUnparsedModel("foo.smithy", "$version: \"2.0\"\n"
+                                                + "namespace smithy.example\n"
+                                                + "list Foo { member: String }\n")
+                .assemble();
+
+        assertThat(model.getValidationEvents(), hasSize(1));
+        assertThat(model.getValidationEvents().get(0).getMessage(), containsString("unresolved shape"));
+    }
+
+    @Test
+    public void findsBoxTraitOnPreludeShapes() {
+        Model model = Model.assembler().assemble().unwrap();
+
+        assertThat(model.expectShape(ShapeId.from("smithy.api#Boolean")).hasTrait(BoxTrait.class), is(true));
+        assertThat(model.expectShape(ShapeId.from("smithy.api#Byte")).hasTrait(BoxTrait.class), is(true));
+        assertThat(model.expectShape(ShapeId.from("smithy.api#Short")).hasTrait(BoxTrait.class), is(true));
+        assertThat(model.expectShape(ShapeId.from("smithy.api#Integer")).hasTrait(BoxTrait.class), is(true));
+        assertThat(model.expectShape(ShapeId.from("smithy.api#Long")).hasTrait(BoxTrait.class), is(true));
+        assertThat(model.expectShape(ShapeId.from("smithy.api#Float")).hasTrait(BoxTrait.class), is(true));
+        assertThat(model.expectShape(ShapeId.from("smithy.api#Double")).hasTrait(BoxTrait.class), is(true));
+    }
+
+    @Test
+    public void forwardReferencesAreOrdered() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("forward-references-are-ordered.smithy"))
+                .assemble()
+                .unwrap();
+
+        ShapeId service = ShapeId.from("smithy.example#Example");
+        assertThat(model.expectShape(service, ServiceShape.class).getErrors(),
+                   contains(ShapeId.from("smithy.example#Error1"),
+                            ShapeId.from("smithy.example#Error2"),
+                            ShapeId.from("smithy.example#Error3"),
+                            ShapeId.from("smithy.example#Error4"),
+                            ShapeId.from("smithy.example#Error5"),
+                            ShapeId.from("smithy.example#Error6")));
+    }
+
+    @Test
+    public void upgrades1_0_documentNodesToo() {
+        // Loads fine through import.
+        Model model1 = Model.assembler()
+                .addImport(getClass().getResource("needs-upgrade-document-node.json"))
+                .assemble()
+                .unwrap();
+
+        assertionChecksFor_upgradesAndDowngrades(model1);
+
+        // And through unparsed.
+        String contents = IoUtils.readUtf8Resource(getClass(), "needs-upgrade-document-node.json");
+        Model model2 = Model.assembler()
+                .addUnparsedModel("foo.json", contents)
+                .assemble()
+                .unwrap();
+
+        assertionChecksFor_upgradesAndDowngrades(model2);
+
+        // And through document node.
+        Node node = Node.parse(contents);
+        Model model3 = Model.assembler()
+                .addDocumentNode(node)
+                .assemble()
+                .unwrap();
+
+        assertionChecksFor_upgradesAndDowngrades(model3);
+
+        // Pathological case.
+        Model model4 = Model.assembler()
+                .addModel(model1)
+                .addModel(model2)
+                .addModel(model3)
+                .addDocumentNode(node)
+                .addUnparsedModel("foo.json", contents)
+                .assemble()
+                .unwrap();
+
+        assertionChecksFor_upgradesAndDowngrades(model4);
+
+        assertThat(model1, equalTo(model2));
+        assertThat(model1, equalTo(model3));
+        assertThat(model1, equalTo(model4));
+    }
+
+    private void assertionChecksFor_upgradesAndDowngrades(Model model) {
+        ShapeId boxDouble = ShapeId.from("smithy.example#BoxDouble");
+        ShapeId primitiveDouble = ShapeId.from("smithy.example#PrimitiveDouble");
+        ShapeId fooMember = ShapeId.from("smithy.example#Struct$foo");
+        ShapeId barMember = ShapeId.from("smithy.example#Struct$bar");
+        ShapeId boxedMember = ShapeId.from("smithy.example#Struct$boxed");
+        assertThat(model.expectShape(boxDouble).hasTrait(DefaultTrait.class), is(false));
+        assertThat(model.expectShape(primitiveDouble).hasTrait(DefaultTrait.class), is(true));
+        assertThat(model.expectShape(fooMember).hasTrait(DefaultTrait.class), is(true));
+        assertThat(model.expectShape(barMember).hasTrait(DefaultTrait.class), is(false));
+        assertThat(model.expectShape(boxedMember).hasTrait(DefaultTrait.class), is(true));
+        assertThat(model.expectShape(boxedMember).expectTrait(DefaultTrait.class).toNode(), equalTo(Node.nullNode()));
+        assertThat(model.expectShape(boxedMember).hasTrait(BoxTrait.class), is(true));
+    }
+
+    @Test
+    public void patches2_0_documentNodesToo() {
+        // Loads fine through import.
+        Model model1 = Model.assembler()
+                .addImport(getClass().getResource("needs-downgrade-document-node.json"))
+                .assemble()
+                .unwrap();
+
+        assertionChecksFor_upgradesAndDowngrades(model1);
+
+        // And through unparsed.
+        String contents = IoUtils.readUtf8Resource(getClass(), "needs-downgrade-document-node.json");
+        Model model2 = Model.assembler()
+                .addUnparsedModel("foo.json", contents)
+                .assemble()
+                .unwrap();
+
+        assertionChecksFor_upgradesAndDowngrades(model2);
+
+        // And through document node.
+        Node node = Node.parse(contents);
+        Model model3 = Model.assembler()
+                .addDocumentNode(node)
+                .assemble()
+                .unwrap();
+
+        assertionChecksFor_upgradesAndDowngrades(model3);
+
+        // Pathological case.
+        Model model4 = Model.assembler()
+                .addModel(model1)
+                .addModel(model2)
+                .addModel(model3)
+                .addDocumentNode(node)
+                .addUnparsedModel("foo.json", contents)
+                .assemble()
+                .unwrap();
+
+        assertionChecksFor_upgradesAndDowngrades(model4);
+
+        assertThat(model1, equalTo(model2));
+        assertThat(model1, equalTo(model3));
+        assertThat(model1, equalTo(model4));
+    }
+
+    @Test
+    public void syntheticBoxingResultsInSameModelBetween1and2() {
+        Model model1 = Model.assembler()
+                .addImport(getClass().getResource("synthetic-boxing-1.smithy"))
+                .assemble()
+                .unwrap();
+
+        Model model2 = Model.assembler()
+                .addImport(getClass().getResource("synthetic-boxing-2.smithy"))
+                .assemble()
+                .unwrap();
+
+        Model model3 = Model.assembler()
+                .addImport(getClass().getResource("synthetic-boxing-1.smithy"))
+                .addImport(getClass().getResource("synthetic-boxing-2.smithy"))
+                .addModel(model1)
+                .addModel(model2)
+                .assemble()
+                .unwrap();
+
+        assertThat(model1, equalTo(model2));
+        assertThat(model1, equalTo(model3));
+    }
+
+    @Test
+    public void appliesBoxTraitsToMixinsToo() {
+        Model model1 = Model.assembler()
+                .addImport(getClass().getResource("synthetic-boxing-mixins.smithy"))
+                .assemble()
+                .unwrap();
+
+        // MixedInteger and MixinInteger have synthetic box traits.
+        assertThat(model1.expectShape(ShapeId.from("smithy.example#MixinInteger")).hasTrait(BoxTrait.class), is(true));
+        assertThat(model1.expectShape(ShapeId.from("smithy.example#MixedInteger")).hasTrait(BoxTrait.class), is(true));
+
+        // MixinStruct$bar and MixedStruct$bar have synthetic box traits.
+        StructureShape mixinStruct = model1.expectShape(ShapeId.from("smithy.example#MixinStruct"),
+                                                        StructureShape.class);
+        StructureShape mixedStruct = model1.expectShape(ShapeId.from("smithy.example#MixedStruct"),
+                                                        StructureShape.class);
+        assertThat(mixinStruct.getAllMembers().get("bar").hasTrait(BoxTrait.class), is(true));
+        assertThat(mixinStruct.getAllMembers().get("bar").hasTrait(DefaultTrait.class), is(true));
+        assertThat(mixedStruct.getAllMembers().get("bar").hasTrait(BoxTrait.class), is(true));
+        assertThat(mixedStruct.getAllMembers().get("bar").hasTrait(DefaultTrait.class), is(true));
+
+        // Now ensure round-tripping results in the same model.
+        Node serialized = ModelSerializer.builder().build().serialize(model1);
+        Model model2 = Model.assembler().addDocumentNode(serialized).assemble().unwrap();
+
+        assertThat(model1, equalTo(model2));
+    }
+
+    @Test
+    public void versionTransformsAreAlwaysApplied() {
+        ValidatedResult<Model> result = Model.assembler()
+                .addImport(getClass().getResource("invalid-1.0-model-upgraded.smithy"))
+                .assemble();
+
+        // Ensure that the invalid trait caused the model to have errors.
+        assertThat(result.getValidationEvents(Severity.ERROR), not(empty()));
+
+        // Ensure that the model was created.
+        assertThat(result.getResult().isPresent(), is(true));
+
+        Model model = result.getResult().get();
+
+        // Ensure that the model upgrade transformations happened.
+        Shape myInteger = model.expectShape(ShapeId.from("smithy.example#MyInteger"));
+        Shape fooBaz = model.expectShape(ShapeId.from("smithy.example#Foo$baz"));
+        Shape fooBam = model.expectShape(ShapeId.from("smithy.example#Foo$bam"));
+
+        // These shapes have a default zero value so have a default trait for 2.0.
+        assertThat(myInteger.getAllTraits(), hasKey(DefaultTrait.ID));
+        assertThat(fooBaz.getAllTraits(), hasKey(DefaultTrait.ID));
+
+        // These members are considered boxed in 1.0.
+        assertThat(fooBam.getAllTraits(), hasKey(BoxTrait.ID));
+        assertThat(fooBam.expectTrait(DefaultTrait.class).toNode(), equalTo(Node.nullNode()));
     }
 }

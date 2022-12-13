@@ -242,7 +242,7 @@ public abstract class HttpMessageTestCase implements ToNode, Tagged {
                 .appliesTo(appliesTo);
     }
 
-    abstract static class Builder<B extends Builder, T extends HttpMessageTestCase> implements SmithyBuilder<T> {
+    abstract static class Builder<B extends Builder<?, ?>, T extends HttpMessageTestCase> implements SmithyBuilder<T> {
 
         private String id;
         private String documentation;

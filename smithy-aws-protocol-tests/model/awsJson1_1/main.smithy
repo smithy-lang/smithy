@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.json
 
@@ -22,6 +22,7 @@ service JsonProtocol {
     operations: [
         EmptyOperation,
         KitchenSinkOperation,
+        SimpleScalarProperties,
         OperationWithOptionalInputOutput,
         PutAndGetInlineDocuments,
         JsonEnums,
@@ -32,6 +33,9 @@ service JsonProtocol {
         // @endpoint and @hostLabel trait tests
         EndpointOperation,
         EndpointWithHostLabelOperation,
+
+        // custom endpoints with paths
+        HostWithPathOperation,
     ],
 }
 
@@ -41,8 +45,8 @@ structure SimpleStruct {
     Value: String,
 }
 
-structure StructWithLocationName {
-    @jsonName("RenamedMember")
+structure StructWithJsonName {
+    @jsonName("RenamedMember") // Even if this trait it present, it does not affect serialization for this protocol
     Value: String,
 }
 

@@ -19,7 +19,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -49,6 +51,12 @@ public final class SetUtils {
      */
     public static <T> Set<T> orderedCopyOf(Collection<? extends T> values) {
         return values.isEmpty() ? Collections.emptySet() : Collections.unmodifiableSet(new LinkedHashSet<>(values));
+    }
+
+    public static Set<String> caseInsensitiveCopyOf(Collection<? extends String> values) {
+        Set<String> caseInsensitiveSet = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        caseInsensitiveSet.addAll(Objects.requireNonNull(values));
+        return Collections.unmodifiableSet(caseInsensitiveSet);
     }
 
     /**

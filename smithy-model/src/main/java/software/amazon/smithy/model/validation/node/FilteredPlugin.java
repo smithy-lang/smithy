@@ -15,8 +15,6 @@
 
 package software.amazon.smithy.model.validation.node;
 
-import java.util.function.BiConsumer;
-import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 
@@ -31,11 +29,11 @@ abstract class FilteredPlugin<S extends Shape, N extends Node> implements NodeVa
 
     @Override
     @SuppressWarnings("unchecked")
-    public final void apply(Shape shape, Node value, Context context, BiConsumer<FromSourceLocation, String> emitter) {
+    public final void apply(Shape shape, Node value, Context context, Emitter emitter) {
         if (shapeClass.isInstance(shape) && nodeClass.isInstance(value)) {
             check((S) shape, (N) value, context, emitter);
         }
     }
 
-    abstract void check(S shape, N node, Context context, BiConsumer<FromSourceLocation, String> emitter);
+    abstract void check(S shape, N node, Context context, Emitter emitter);
 }

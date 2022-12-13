@@ -1,0 +1,2 @@
+[ERROR] smithy.example#Mixin: Unable to resolve mixins; cycles detected between this shape and [smithy.example#UsesMixin] | Model
+[ERROR] smithy.example#UsesMixin: Unable to resolve mixins; cycles detected between this shape and [smithy.example#Mixin] | Model

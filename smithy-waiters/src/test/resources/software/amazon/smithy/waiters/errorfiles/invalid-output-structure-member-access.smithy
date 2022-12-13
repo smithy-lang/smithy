@@ -1,3 +1,5 @@
+$version: "2.0"
+
 namespace smithy.example
 
 use smithy.waiters#waitable
@@ -23,10 +25,12 @@ operation A {
     output: AOutput,
 }
 
+@input
 structure AInput {
     foo: String,
 }
 
+@output
 structure AOutput {
     baz: String,
 }

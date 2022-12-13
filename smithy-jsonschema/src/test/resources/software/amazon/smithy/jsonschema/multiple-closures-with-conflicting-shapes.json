@@ -1,0 +1,81 @@
+{
+  "smithy": "2.0",
+  "shapes": {
+    "com.foo#ServiceA": {
+      "type": "service",
+      "version": "2006-03-01",
+      "operations": [
+        {
+          "target": "com.foo#OperationA"
+        }
+      ]
+    },
+    "com.foo#OperationA": {
+      "type": "operation",
+      "input": {
+        "target": "com.foo#StructureA"
+      }
+    },
+    "com.bar#ServiceB": {
+      "type": "service",
+      "version": "2006-03-01",
+      "operations": [
+        {
+          "target": "com.bar#OperationB"
+        }
+      ]
+    },
+    "com.bar#OperationB": {
+      "type": "operation",
+      "input": {
+        "target": "com.bar#StructureB"
+      }
+    },
+    "com.foo#StructureA": {
+      "type": "structure",
+      "members": {
+        "a": {
+          "target": "com.foo#ConflictString"
+        }
+      }
+    },
+    "com.foo#ConflictString": {
+      "type": "string",
+      "traits": {
+        "smithy.api#enum": [
+          {
+            "value": "y",
+            "name": "Y"
+          },
+          {
+            "value": "z",
+            "name": "Z"
+          }
+        ]
+      }
+    },
+    "com.bar#StructureB": {
+      "type": "structure",
+      "members": {
+        "a": {
+          "target": "com.bar#ConflictString"
+        }
+      }
+    },
+    "com.bar#ConflictString": {
+      "type": "string",
+      "traits": {
+        "smithy.api#enum": [
+          {
+            "value": "a",
+            "name": "A"
+          },
+          {
+            "value": "b",
+            "name": "B"
+          }
+        ]
+      }
+    }
+  }
+}

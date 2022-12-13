@@ -1,0 +1,157 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "smithy.example#BoxedInteger": {
+            "type": "integer",
+            "traits": {
+                "smithy.api#box": {}
+            }
+        },
+        "smithy.example#DefaultInteger": {
+            "type": "integer"
+        },
+        "smithy.example#BoxedBoolean": {
+            "type": "boolean",
+            "traits": {
+                "smithy.api#box": {}
+            }
+        },
+        "smithy.example#DefaultBoolean": {
+            "type": "boolean"
+        },
+        "smithy.example#BoxedByte": {
+            "type": "byte",
+            "traits": {
+                "smithy.api#box": {}
+            }
+        },
+        "smithy.example#DefaultByte": {
+            "type": "byte"
+        },
+        "smithy.example#BoxedShort": {
+            "type": "short",
+            "traits": {
+                "smithy.api#box": {}
+            }
+        },
+        "smithy.example#DefaultShort": {
+            "type": "short"
+        },
+        "smithy.example#BoxedLong": {
+            "type": "long",
+            "traits": {
+                "smithy.api#box": {}
+            }
+        },
+        "smithy.example#DefaultLong": {
+            "type": "long"
+        },
+        "smithy.example#BoxedFloat": {
+            "type": "float",
+            "traits": {
+                "smithy.api#box": {}
+            }
+        },
+        "smithy.example#DefaultFloat": {
+            "type": "float"
+        },
+        "smithy.example#BoxedDouble": {
+            "type": "double",
+            "traits": {
+                "smithy.api#box": {}
+            }
+        },
+        "smithy.example#DefaultDouble": {
+            "type": "double"
+        },
+        "smithy.example#Foo": {
+            "type": "structure",
+            "members": {
+                "BoxedInteger": {
+                    "target": "smithy.example#BoxedInteger",
+                    "traits": {
+                        "smithy.api#box": {}
+                    }
+                },
+                "DefaultInteger": {
+                    "target": "smithy.example#DefaultInteger",
+                    "traits": {
+                        "smithy.api#box": {}
+                    }
+                },
+                "BoxedBoolean": {
+                    "target": "smithy.example#BoxedBoolean",
+                    "traits": {
+                        "smithy.api#box": {}
+                    }
+                },
+                "DefaultBoolean": {
+                    "target": "smithy.example#DefaultBoolean",
+                    "traits": {
+                        "smithy.api#box": {}
+                    }
+                },
+                "BoxedByte": {
+                    "target": "smithy.example#BoxedByte",
+                    "traits": {
+                        "smithy.api#box": {}
+                    }
+                },
+                "DefaultByte": {
+                    "target": "smithy.example#DefaultByte",
+                    "traits": {
+                        "smithy.api#box": {}
+                    }
+                },
+                "BoxedShort": {
+                    "target": "smithy.example#BoxedShort",
+                    "traits": {
+                        "smithy.api#box": {}
+                    }
+                },
+                "DefaultShort": {
+                    "target": "smithy.example#DefaultShort",
+                    "traits": {
+                        "smithy.api#box": {}
+                    }
+                },
+                "BoxedLong": {
+                    "target": "smithy.example#BoxedLong",
+                    "traits": {
+                        "smithy.api#box": {}
+                    }
+                },
+                "DefaultLong": {
+                    "target": "smithy.example#DefaultLong",
+                    "traits": {
+                        "smithy.api#box": {}
+                    }
+                },
+                "BoxedFloat": {
+                    "target": "smithy.example#BoxedFloat",
+                    "traits": {
+                        "smithy.api#box": {}
+                    }
+                },
+                "DefaultFloat": {
+                    "target": "smithy.example#DefaultFloat",
+                    "traits": {
+                        "smithy.api#box": {}
+                    }
+                },
+                "BoxedDouble": {
+                    "target": "smithy.example#BoxedDouble",
+                    "traits": {
+                        "smithy.api#box": {}
+                    }
+                },
+                "DefaultDouble": {
+                    "target": "smithy.example#DefaultDouble",
+                    "traits": {
+                        "smithy.api#box": {}
+                    }
+                }
+            }
+        }
+    }
+}

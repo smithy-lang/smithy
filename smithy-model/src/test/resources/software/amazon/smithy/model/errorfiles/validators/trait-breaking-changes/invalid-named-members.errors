@@ -1,0 +1,2 @@
+[ERROR] smithy.example#a: Invalid trait breakingChanges element 0, '/foo/bar', at segment 'foo': Evaluated shape `smithy.example#a`, a structure, has no member named `foo` | TraitBreakingChanges
+[ERROR] smithy.example#b: Invalid trait breakingChanges element 0, '/foo/bar', at segment 'foo': Evaluated shape `smithy.example#b`, a union, has no member named `foo` | TraitBreakingChanges

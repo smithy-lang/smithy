@@ -27,7 +27,8 @@
         "schemas": {
             "StreamingOperationOutputPayload": {
                 "type": "string",
-                "format": "byte"
+                "format": "byte",
+                "default": ""
             }
         }
     }

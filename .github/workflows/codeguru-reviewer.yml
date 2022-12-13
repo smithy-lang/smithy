@@ -1,0 +1,60 @@
+
+# Runs CodeGuru Reviewer on push events,
+# and uploads recommendations to the GitHub Security tab.
+# For information on the setup see:
+# https://github.com/aws-samples/aws-codeguru-reviewer-cicd-cdk-sample
+
+name: Analyze with CodeGuru Reviewer
+on: [push]
+permissions:
+    id-token: write
+    contents: read
+    security-events: write 
+
+jobs:
+  CodeGuruReviewerScan:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Assume IAM Role
+      id: iam-role
+      continue-on-error: true
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: arn:aws:iam::048169001733:role/GuruGitHubCICDRole
+        aws-region: us-west-2
+
+    - uses: actions/checkout@v3
+      if: steps.iam-role.outcome == 'success'
+      with:
+        fetch-depth: 0
+
+    - name: Set up JDK 1.8
+      if: steps.iam-role.outcome == 'success'
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'zulu'
+        java-version: 8
+
+    - name: Compile
+      if: steps.iam-role.outcome == 'success'
+      run: ./gradlew compileJava -x test      
+    - name: Copy build artifacts
+      if: steps.iam-role.outcome == 'success'
+      run: |
+        mkdir -p class-files
+        cp -r smithy-*/build/classes/java/main/* class-files 
+
+    - name: Run CodeGuru Reviewer
+      id: guruscan
+      if: steps.iam-role.outcome == 'success'
+      continue-on-error: true
+      uses: aws-actions/codeguru-reviewer@v1.1
+      with:          
+        s3_bucket: codeguru-reviewer-github-profiler-demo-048169001733-uw2
+        build_path: ./class-files
+
+    - name: Upload review result
+      if: steps.iam-role.outcome == 'success' &&steps.guruscan.outcome == 'success'
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: codeguru-results.sarif.json

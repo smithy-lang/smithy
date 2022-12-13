@@ -1,0 +1,3 @@
+[ERROR] smithy.example#Foo$bar: Only members of a union, enum, or intEnum can reference smithy.api#Unit | UnitType
+[ERROR] smithy.example#Baz$member: Only members of a union, enum, or intEnum can reference smithy.api#Unit | UnitType
+[ERROR] smithy.example#Bam$value: Only members of a union, enum, or intEnum can reference smithy.api#Unit | UnitType

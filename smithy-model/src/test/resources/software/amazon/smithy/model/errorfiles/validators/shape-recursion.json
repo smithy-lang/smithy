@@ -1,16 +1,10 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#InvalidDirectlyRecursiveList": {
             "type": "list",
             "member": {
                 "target": "ns.foo#InvalidDirectlyRecursiveList"
-            }
-        },
-        "ns.foo#InvalidDirectlyRecursiveSet": {
-            "type": "set",
-            "member": {
-                "target": "ns.foo#InvalidDirectlyRecursiveSet"
             }
         },
         "ns.foo#InvalidDirectlyRecursiveMap": {
@@ -38,24 +32,6 @@
             "type": "list",
             "member": {
                 "target": "ns.foo#IndirectRecursiveList"
-            }
-        },
-        "ns.foo#IndirectRecursiveSet": {
-            "type": "set",
-            "member": {
-                "target": "ns.foo#IndirectRecursiveSetIntermediate1"
-            }
-        },
-        "ns.foo#IndirectRecursiveSetIntermediate1": {
-            "type": "set",
-            "member": {
-                "target": "ns.foo#IndirectRecursiveSetIntermediate2"
-            }
-        },
-        "ns.foo#IndirectRecursiveSetIntermediate2": {
-            "type": "set",
-            "member": {
-                "target": "ns.foo#IndirectRecursiveSet"
             }
         },
         "ns.foo#IndirectRecursiveMap": {

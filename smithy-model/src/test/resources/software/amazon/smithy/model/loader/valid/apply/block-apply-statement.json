@@ -1,0 +1,18 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#Foo": {
+            "type": "structure",
+            "members": {
+                "baz": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "Hi",
+                        "smithy.api#internal": {},
+                        "smithy.api#deprecated": {}
+                    }
+                }
+            }
+        }
+    }
+}

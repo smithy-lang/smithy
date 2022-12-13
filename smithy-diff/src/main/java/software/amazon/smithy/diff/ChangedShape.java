@@ -109,6 +109,36 @@ public final class ChangedShape<S extends Shape> implements FromSourceLocation {
     }
 
     /**
+     * Checks if the trait was added.
+     *
+     * @param trait Trait to check.
+     * @return Returns true if the trait was added.
+     */
+    public boolean isTraitAdded(ShapeId trait) {
+        return !oldShape.hasTrait(trait) && newShape.hasTrait(trait);
+    }
+
+    /**
+     * Checks if the trait was removed.
+     *
+     * @param trait Trait to check.
+     * @return Returns true if the trait was removed.
+     */
+    public boolean isTraitRemoved(ShapeId trait) {
+        return oldShape.hasTrait(trait) && !newShape.hasTrait(trait);
+    }
+
+    /**
+     * Checks if the given trait is in the old shape and new shape.
+     *
+     * @param trait Trait to check.
+     * @return Returns true if the trait is in the old and new shape.
+     */
+    public boolean isTraitInBoth(ShapeId trait) {
+        return oldShape.hasTrait(trait) && newShape.hasTrait(trait);
+    }
+
+    /**
      * Gets a changed trait of a specific type.
      *
      * @param traitType Type of trait to find.

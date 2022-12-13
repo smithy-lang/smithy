@@ -76,11 +76,20 @@ public final class AbbreviationNameValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         return model.shapes()
-                .flatMap(this::validateShapeName)
+                .flatMap(shape -> validateShapeName(model, shape))
                 .collect(Collectors.toList());
     }
 
-    private Stream<ValidationEvent> validateShapeName(Shape shape) {
+    private Stream<ValidationEvent> validateShapeName(Model model, Shape shape) {
+        // Exclude members of enums from AbbreviationName validation,
+        // as they're intended to be CAPS_SNAKE.
+        if (shape.isMemberShape()) {
+            Shape container = model.expectShape(shape.asMemberShape().get().getContainer());
+            if (container.isEnumShape() || container.isIntEnumShape()) {
+                return Stream.empty();
+            }
+        }
+
         String descriptor = shape.isMemberShape() ? "member" : "shape";
         String name = shape.asMemberShape()
                 .map(MemberShape::getMemberName)

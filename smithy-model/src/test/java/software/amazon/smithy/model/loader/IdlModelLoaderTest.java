@@ -17,15 +17,22 @@ package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -34,9 +41,12 @@ import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.StringShape;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.DynamicTrait;
 import software.amazon.smithy.model.traits.StringTrait;
+import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
@@ -65,6 +75,26 @@ public class IdlModelLoaderTest {
                 assertThat(shape.getSourceLocation().getColumn(), equalTo(1));
             }
         });
+    }
+
+    @Test
+    public void loadsAppropriateTraitSourceLocations() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("valid/trait-locations.smithy"))
+                .assemble()
+                .unwrap();
+
+        Shape shape = model.expectShape(ShapeId.from("com.example#TraitBearer"));
+
+        for (Trait trait : shape.getAllTraits().values()) {
+            assertThat(trait.getSourceLocation().getColumn(), equalTo(1));
+        }
+
+        for (MemberShape member : shape.members()) {
+            for (Trait trait : member.getAllTraits().values()) {
+                assertThat(trait.getSourceLocation().getColumn(), equalTo(5));
+            }
+        }
     }
 
     @Test
@@ -147,7 +177,8 @@ public class IdlModelLoaderTest {
     @Test
     public void warnsWhenInvalidSyntacticShapeIdIsFound() {
         ValidatedResult<Model> result = Model.assembler()
-                .addUnparsedModel("foo.smithy", "namespace smithy.example\n"
+                .addUnparsedModel("foo.smithy", "$version: \"2.0\"\n"
+                                                + "namespace smithy.example\n"
                                                 + "@tags([nonono])\n"
                                                 + "string Foo\n")
                 .assemble();
@@ -237,5 +268,49 @@ public class IdlModelLoaderTest {
         // Spot check for a specific "use" shape.
         assertThat(model.expectShape(ShapeId.from("smithy.example#MyService"), ServiceShape.class).getRename(),
                    equalTo(MapUtils.of(ShapeId.from("foo.example#Widget"), "FooWidget")));
+    }
+
+    @Test
+    public void loadsServicesWithNonconflictingUnitTypes() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("valid/__shared.json"))
+                .addImport(getClass().getResource("valid/service-with-nonconflicting-unit.smithy"))
+                .assemble()
+                .unwrap();
+
+        // Make sure we can find our Unit type
+        assertThat(model.expectShape(ShapeId.from("smithy.example#Unit")), Matchers.notNullValue());
+    }
+
+    @Test
+    public void emitsVersionWhenNotSet() {
+        List<LoadOperation> operations = new ArrayList<>();
+        IdlModelParser parser = new IdlModelParser("foo.smithy", "namespace smithy.example\n");
+        parser.parse(operations::add);
+
+        assertThat(operations, hasSize(1));
+        assertThat(operations.get(0), instanceOf(LoadOperation.ModelVersion.class));
+    }
+
+    @Test
+    public void defaultValueSugaringDoesNotEatSubsequentDocumentation() {
+        Model model = Model.assembler()
+            .addImport(getClass().getResource("default-subsequent-trait.smithy"))
+            .assemble()
+            .unwrap();
+
+        StructureShape testShape = model.expectShape(ShapeId.from("smithy.example#TestShape"), StructureShape.class);
+        MemberShape barMember = testShape.getMember("bar").orElseThrow(AssertionFailedError::new);
+
+        assertEquals("bar", barMember.expectTrait(DocumentationTrait.class).getValue());
+        assertEquals(3, barMember.getAllTraits().size());
+
+        MemberShape bazMember = testShape.getMember("baz").orElseThrow(AssertionFailedError::new);
+
+        assertEquals("baz", bazMember.expectTrait(DocumentationTrait.class).getValue());
+        assertEquals(2, bazMember.getAllTraits().size());
+
+        StringShape stringShape = model.expectShape(ShapeId.from("smithy.example#MyString"), StringShape.class);
+        assertEquals(0, stringShape.getAllTraits().size());
     }
 }

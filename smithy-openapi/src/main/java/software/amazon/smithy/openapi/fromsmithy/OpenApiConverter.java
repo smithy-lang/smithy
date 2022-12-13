@@ -47,6 +47,7 @@ import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.TitleTrait;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.OpenApiException;
@@ -173,6 +174,21 @@ public final class OpenApiConverter {
             throw new OpenApiException("openapi is missing required property, `service`");
         }
 
+        // Find the service shape.
+        ServiceShape service = model.getShape(serviceShapeId)
+                .orElseThrow(() -> new IllegalArgumentException(String.format(
+                        "Shape `%s` not found in model", serviceShapeId)))
+                .asServiceShape()
+                .orElseThrow(() -> new IllegalArgumentException(String.format(
+                        "Shape `%s` is not a service shape", serviceShapeId)));
+
+        // Copy service errors onto each operation to ensure that common errors are
+        // generated for each operation.
+        model = ModelTransformer.create().copyServiceErrorsToOperations(model, service);
+
+        // Remove mixins from the model.
+        model = ModelTransformer.create().flattenAndRemoveMixins(model);
+
         JsonSchemaConverter.Builder jsonSchemaConverterBuilder = JsonSchemaConverter.builder();
         jsonSchemaConverterBuilder.model(model);
 
@@ -186,14 +202,6 @@ public final class OpenApiConverter {
                 jsonSchemaConverterBuilder.addMapper(mapper);
             }
         }
-
-        // Find the service shape.
-        ServiceShape service = model.getShape(serviceShapeId)
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                        "Shape `%s` not found in model", serviceShapeId)))
-                .asServiceShape()
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                        "Shape `%s` is not a service shape", serviceShapeId)));
 
         Trait protocolTrait = loadOrDeriveProtocolTrait(model, service);
         OpenApiProtocol<Trait> openApiProtocol = loadOpenApiProtocol(service, protocolTrait, extensions);
@@ -297,7 +305,8 @@ public final class OpenApiConverter {
         Context<T> context = environment.context;
         OpenApiMapper mapper = environment.mapper;
         OpenApiProtocol<T> openApiProtocol = environment.context.getOpenApiProtocol();
-        OpenApi.Builder openapi = OpenApi.builder().openapi(OpenApiConfig.VERSION).info(createInfo(service));
+        String version = context.getConfig().getVersion().toString();
+        OpenApi.Builder openapi = OpenApi.builder().openapi(version).info(createInfo(service));
 
         mapper.before(context, openapi);
 
@@ -516,7 +525,7 @@ public final class OpenApiConverter {
         // If the operation explicitly removes authentication, ensure that "security" is set to an empty
         // list as opposed to simply being unset as unset will result in the operation inheriting global
         // configuration.
-        if (shape.getTrait(AuthTrait.class).map(trait -> trait.getValues().isEmpty()).orElse(false)) {
+        if (shape.getTrait(AuthTrait.class).map(trait -> trait.getValueSet().isEmpty()).orElse(false)) {
             builder.security(Collections.emptyList());
             return;
         }
@@ -613,19 +622,7 @@ public final class OpenApiConverter {
             OpenApiMapper plugin
     ) {
         Map<String, ResponseObject> newResponses = new LinkedHashMap<>();
-
-        // OpenAPI requires at least one response, so track the "original"
-        // responses vs new/mutated responses.
-        Map<String, ResponseObject> originalResponses = operation.getResponses();
-        if (operation.getResponses().isEmpty()) {
-            String code = context.getOpenApiProtocol().getOperationResponseStatusCode(context, shape);
-            String contextName = context.getService().getContextualName(shape);
-            originalResponses = MapUtils.of(code, ResponseObject.builder()
-                    .description(contextName + " response")
-                    .build());
-        }
-
-        for (Map.Entry<String, ResponseObject> entry : originalResponses.entrySet()) {
+        for (Map.Entry<String, ResponseObject> entry : operation.getResponses().entrySet()) {
             String status = entry.getKey();
             ResponseObject responseObject = plugin.updateResponse(
                     context, shape, status, methodName, path, entry.getValue());

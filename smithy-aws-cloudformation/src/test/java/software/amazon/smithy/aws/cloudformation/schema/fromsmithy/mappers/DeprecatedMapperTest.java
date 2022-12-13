@@ -31,7 +31,7 @@ public class DeprecatedMapperTest {
     @Test
     public void addsDeprecatedPropertiesByDefault() {
         Model model = Model.assembler()
-                .addImport(JsonAddTest.class.getResource("simple.smithy"))
+                .addImport(DeprecatedMapperTest.class.getResource("simple.smithy"))
                 .discoverModels()
                 .assemble()
                 .unwrap();
@@ -52,7 +52,7 @@ public class DeprecatedMapperTest {
     @Test
     public void canDisableDeprecatedPropertyGeneration() {
         Model model = Model.assembler()
-                .addImport(JsonAddTest.class.getResource("simple.smithy"))
+                .addImport(DeprecatedMapperTest.class.getResource("simple.smithy"))
                 .discoverModels()
                 .assemble()
                 .unwrap();

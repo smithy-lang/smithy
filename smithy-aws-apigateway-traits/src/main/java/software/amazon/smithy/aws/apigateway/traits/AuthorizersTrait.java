@@ -67,7 +67,9 @@ public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBui
                 AuthorizerDefinition authorizer = mapper.deserialize(node, AuthorizerDefinition.class);
                 builder.putAuthorizer(key.getValue(), authorizer);
             });
-            return builder.build();
+            AuthorizersTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 
@@ -91,7 +93,7 @@ public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBui
     }
 
     /**
-     * Gets an immuatable map of authorizer names to their definitions.
+     * Gets an immutable map of authorizer names to their definitions.
      *
      * @return Returns the authorizers.
      */
@@ -101,14 +103,15 @@ public final class AuthorizersTrait extends AbstractTrait implements ToSmithyBui
 
     @Override
     public Builder toBuilder() {
-        return builder().authorizers(authorizers);
+        return builder().sourceLocation(getSourceLocation()).authorizers(authorizers);
     }
 
     @Override
     protected Node createNode() {
         return authorizers.entrySet().stream()
                 .sorted(Comparator.comparing(Map.Entry::getKey))
-                .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(ObjectNode.collectStringKeys(Map.Entry::getKey, Map.Entry::getValue))
+                .toBuilder().sourceLocation(getSourceLocation()).build();
     }
 
     /**

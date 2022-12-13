@@ -1,0 +1,31 @@
+{
+    "version": "1.0",
+    "dependencies": [
+        {
+            "packageName": "Test1",
+            "version": "1",
+            "dependencyType": "test"
+        },
+        {
+            "packageName": "Test1",
+            "version": "1-prod",
+            "dependencyType": "runtime"
+        },
+        {
+            "packageName": "Test2",
+            "version": "2"
+        },
+        {
+            "packageName": "Test3",
+            "version": "3",
+            "dependencyType": "runtime",
+            "properties": {
+                "foo": true,
+                "bar": ["a"],
+                "baz": {
+                    "greeting": "hi"
+                }
+            }
+        }
+    ]
+}

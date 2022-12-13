@@ -1,19 +1,10 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
-        "ns.foo#Service": {
-            "type": "service",
-            "version": "2019-06-27",
-            "operations": [
-                {
-                    "target": "ns.foo#DeeplyNestedOutputOperation"
-                }
-            ]
-        },
-        "ns.foo#DeeplyNestedOutputOperation": {
+        "ns.foo#DeeplyNested": {
             "type": "operation",
             "input": {
-                "target": "ns.foo#ValidInput"
+                "target": "ns.foo#DeeplyNestedInput"
             },
             "output": {
                 "target": "ns.foo#DeeplyNestedOutput"
@@ -27,7 +18,7 @@
                 }
             }
         },
-        "ns.foo#ValidInput": {
+        "ns.foo#DeeplyNestedInput": {
             "type": "structure",
             "members": {
                 "nextToken": {
@@ -36,25 +27,31 @@
                 "pageSize": {
                     "target": "smithy.api#Integer"
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#DeeplyNestedOutput": {
             "type": "structure",
             "members": {
                 "output": {
-                    "target": "ns.foo#ValidWrappedOutput"
+                    "target": "ns.foo#WrappedOutput"
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
-        "ns.foo#ValidWrappedOutput": {
+        "ns.foo#WrappedOutput": {
             "type": "structure",
             "members": {
                 "result": {
-                    "target": "ns.foo#ValidOutput"
+                    "target": "ns.foo#InnerOutput"
                 }
             }
         },
-        "ns.foo#ValidOutput": {
+        "ns.foo#InnerOutput": {
             "type": "structure",
             "members": {
                 "nextToken": {

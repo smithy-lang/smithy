@@ -44,7 +44,7 @@ public class ClientEndpointDiscoveryIdTraitTest {
                 .expectShape(ShapeId.from("ns.foo#GetObject"))
                 .asOperationShape().get();
         MemberShape member = result
-                .getShape(operation.getInput().get()).get()
+                .getShape(operation.getInputShape()).get()
                 .asStructureShape().get()
                 .getMember("Id").get();
 

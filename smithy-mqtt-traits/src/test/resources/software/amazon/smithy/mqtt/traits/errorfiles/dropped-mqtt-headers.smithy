@@ -1,16 +1,16 @@
 // This test ensures that eventHeader bindings emit an error.
 // Event headers are not serialized for MQTT messages.
+$version: "2.0"
 
 namespace smithy.example
 
 @smithy.mqtt#subscribe("events")
 operation Foo {
-    input: FooInput,
+    input: Unit,
     output: FooOutput
 }
 
-structure FooInput {}
-
+@output
 structure FooOutput {
   messages: EventStream
 }

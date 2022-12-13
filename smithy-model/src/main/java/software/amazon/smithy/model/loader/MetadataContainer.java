@@ -35,14 +35,6 @@ final class MetadataContainer {
     private static final Logger LOGGER = Logger.getLogger(MetadataContainer.class.getName());
 
     private final Map<String, Node> data = new LinkedHashMap<>();
-    private final List<ValidationEvent> events;
-
-    /**
-     * @param events Mutable, by-reference list of validation events.
-     */
-    MetadataContainer(List<ValidationEvent> events) {
-        this.events = events;
-    }
 
     /**
      * Put metadata into the map.
@@ -54,8 +46,9 @@ final class MetadataContainer {
      *
      * @param key Metadata key to set.
      * @param value Value to set.
+     * @param events Where to add events as issues are encountered.
      */
-    void putMetadata(String key, Node value) {
+    void putMetadata(String key, Node value, List<ValidationEvent> events) {
         Node previous = data.putIfAbsent(key, value);
 
         if (previous == null) {

@@ -1,7 +1,7 @@
 // This file defines tests to ensure that implementations support the endpoint
 // trait and other features that modify the host.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.query
 
@@ -20,9 +20,7 @@ use smithy.test#httpRequestTests
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-            Action=EndpointOperation
-            &Version=2020-01-08""",
+        body: "Action=EndpointOperation&Version=2020-01-08",
         bodyMediaType: "application/x-www-form-urlencoded",
         host: "example.com",
         resolvedHost: "foo.example.com",
@@ -45,10 +43,7 @@ operation EndpointOperation {}
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-            Action=EndpointWithHostLabelOperation
-            &Version=2020-01-08
-            &label=bar""",
+        body: "Action=EndpointWithHostLabelOperation&Version=2020-01-08&label=bar",
         bodyMediaType: "application/x-www-form-urlencoded",
         host: "example.com",
         resolvedHost: "foo.bar.example.com",

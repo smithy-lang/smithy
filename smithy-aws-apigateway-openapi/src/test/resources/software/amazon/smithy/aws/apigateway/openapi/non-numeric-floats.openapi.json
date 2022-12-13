@@ -1,0 +1,69 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "MyService",
+        "version": "2006-03-01"
+    },
+    "paths": {
+        "/foo": {
+            "post": {
+                "operationId": "MyOperation",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MyOperationRequestContent"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "MyOperation 200 response"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "MyOperationRequestContent": {
+                "type": "object",
+                "properties": {
+                    "floatMember": {
+                        "oneOf": [
+                            {
+                                "type": "number",
+                                "format": "float"
+                            },
+                            {
+                                "type": "string",
+                                "enum": [
+                                    "NaN",
+                                    "Infinity",
+                                    "-Infinity"
+                                ]
+                            }
+                        ]
+                    },
+                    "doubleMember": {
+                        "oneOf": [
+                            {
+                                "type": "number",
+                                "format": "double"
+                            },
+                            {
+                                "type": "string",
+                                "enum": [
+                                    "NaN",
+                                    "Infinity",
+                                    "-Infinity"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

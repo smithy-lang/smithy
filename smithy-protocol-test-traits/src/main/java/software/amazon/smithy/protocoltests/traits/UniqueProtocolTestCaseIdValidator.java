@@ -32,9 +32,9 @@ import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
- * Validates that the "id" property of {@code smithy.test#httpRequestTests}
- * and {@code smithy.test#httpResponseTests} are unique across all test
- * cases.
+ * Validates that the "id" property of {@code smithy.test#httpRequestTests},
+ * {@code smithy.test#httpResponseTests}, and {@code smithy.test#httpMalformedRequestTests}
+ * are unique across all test cases.
  */
 @SmithyInternalApi
 public class UniqueProtocolTestCaseIdValidator extends AbstractValidator {
@@ -43,18 +43,24 @@ public class UniqueProtocolTestCaseIdValidator extends AbstractValidator {
     public List<ValidationEvent> validate(Model model) {
         Map<String, List<Shape>> requestIdsToTraits = new TreeMap<>();
         Map<String, List<Shape>> responseIdsToTraits = new TreeMap<>();
+        Map<String, List<Shape>> malformedRequestIdsToTraits = new TreeMap<>();
 
         Stream.concat(model.shapes(OperationShape.class), model.shapes(StructureShape.class)).forEach(shape -> {
             shape.getTrait(HttpRequestTestsTrait.class)
                     .ifPresent(trait -> addTestCaseIdsToMap(shape, trait.getTestCases(), requestIdsToTraits));
             shape.getTrait(HttpResponseTestsTrait.class)
                     .ifPresent(trait -> addTestCaseIdsToMap(shape, trait.getTestCases(), responseIdsToTraits));
+            // This deliberately uses the expanded, instead of parameterized test cases,
+            // in case someone does something wild with naming, like add _case0 to the end of the id
+            shape.getTrait(HttpMalformedRequestTestsTrait.class)
+                    .ifPresent(t -> addMalformedRequestTestCaseIdsToMap(shape, t.getTestCases(), responseIdsToTraits));
         });
 
         removeEntriesWithSingleValue(requestIdsToTraits);
         removeEntriesWithSingleValue(responseIdsToTraits);
+        removeEntriesWithSingleValue(malformedRequestIdsToTraits);
 
-        return collectEvents(requestIdsToTraits, responseIdsToTraits);
+        return collectEvents(requestIdsToTraits, responseIdsToTraits, malformedRequestIdsToTraits);
     }
 
     private void addTestCaseIdsToMap(
@@ -67,21 +73,33 @@ public class UniqueProtocolTestCaseIdValidator extends AbstractValidator {
         }
     }
 
+    private void addMalformedRequestTestCaseIdsToMap(
+            Shape shape,
+            List<HttpMalformedRequestTestCase> testCases,
+            Map<String, List<Shape>> map
+    ) {
+        for (HttpMalformedRequestTestCase testCase : testCases) {
+            map.computeIfAbsent(testCase.getId(), id -> new ArrayList<>()).add(shape);
+        }
+    }
+
     private void removeEntriesWithSingleValue(Map<String, List<Shape>> map) {
         map.keySet().removeIf(key -> map.get(key).size() == 1);
     }
 
     private List<ValidationEvent> collectEvents(
             Map<String, List<Shape>> requestIdsToTraits,
-            Map<String, List<Shape>> responseIdsToTraits
+            Map<String, List<Shape>> responseIdsToTraits,
+            Map<String, List<Shape>> malformedRequestIdsToTraits
     ) {
-        if (requestIdsToTraits.isEmpty() && responseIdsToTraits.isEmpty()) {
+        if (requestIdsToTraits.isEmpty() && responseIdsToTraits.isEmpty() && malformedRequestIdsToTraits.isEmpty()) {
             return Collections.emptyList();
         }
 
         List<ValidationEvent> mutableEvents = new ArrayList<>();
         addValidationEvents(requestIdsToTraits, mutableEvents, HttpRequestTestsTrait.ID);
         addValidationEvents(responseIdsToTraits, mutableEvents, HttpResponseTestsTrait.ID);
+        addValidationEvents(malformedRequestIdsToTraits, mutableEvents, HttpMalformedRequestTestsTrait.ID);
         return mutableEvents;
     }
 

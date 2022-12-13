@@ -5,17 +5,18 @@
 // structures or other test-case specific shapes should be defined closer to
 // the test case and in its same file.
 
-$version: "1.0"
+$version: "2.0"
 
-metadata suppressions = [{
-    id: "DeprecatedTrait",
-    namespace: "*",
-    reason: """
-        Some of the AWS protocols make use of deprecated traits, and some are
-        themselves deprecated traits. As this package is intended to test those
-        protocols, the warnings should be suppressed.
-        """
-}]
+metadata suppressions = [
+    {
+        id: "DeprecatedTrait",
+        namespace: "*",
+        reason: """
+            Some of the AWS protocols make use of deprecated traits, and some are
+            themselves deprecated traits. As this package is intended to test those
+            protocols, the warnings should be suppressed."""
+    }
+]
 
 namespace aws.protocoltests.shared
 
@@ -28,7 +29,8 @@ list SparseStringList {
     member: String
 }
 
-set StringSet {
+@uniqueItems
+list StringSet {
     member: String,
 }
 
@@ -57,7 +59,8 @@ list IntegerList {
     member: Integer,
 }
 
-set IntegerSet {
+@uniqueItems
+list IntegerSet {
     member: Integer,
 }
 
@@ -66,42 +69,27 @@ list DoubleList {
 }
 
 list BooleanList {
-    member: PrimitiveBoolean,
+    member: Boolean,
 }
 
 list TimestampList {
     member: Timestamp,
 }
 
-@enum([
-    {
-        name: "FOO",
-        value: "Foo",
-    },
-    {
-        name: "BAZ",
-        value: "Baz",
-    },
-    {
-        name: "BAR",
-        value: "Bar",
-    },
-    {
-        name: "ONE",
-        value: "1",
-    },
-    {
-        name: "ZERO",
-        value: "0",
-    },
-])
-string FooEnum
+enum FooEnum {
+    FOO = "Foo"
+    BAZ = "Baz"
+    BAR = "Bar"
+    ONE = "1"
+    ZERO = "0"
+}
 
 list FooEnumList {
     member: FooEnum,
 }
 
-set FooEnumSet {
+@uniqueItems
+list FooEnumSet {
     member: FooEnum,
 }
 
@@ -122,10 +110,33 @@ timestamp HttpDate
 @mediaType("text/plain")
 blob TextPlainBlob
 
+@mediaType("image/jpeg")
+blob JpegBlob
+
 structure GreetingStruct {
     hi: String,
 }
 
 list GreetingList {
     member: GreetingStruct
+}
+
+intEnum IntegerEnum {
+    A = 1
+    B = 2
+    C = 3
+}
+
+list IntegerEnumList {
+    member: IntegerEnum
+}
+
+@uniqueItems
+list IntegerEnumSet {
+     member: IntegerEnum
+}
+
+map IntegerEnumMap {
+     key: String,
+     value: IntegerEnum
 }

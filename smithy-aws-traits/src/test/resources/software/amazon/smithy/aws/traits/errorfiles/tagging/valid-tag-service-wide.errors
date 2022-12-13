@@ -1,0 +1,1 @@
+[WARNING] example.weather#Forecast: Resource is likely missing `aws.api#taggable` trait. | TaggableResource

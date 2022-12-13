@@ -64,7 +64,7 @@ public final class CleanClientDiscoveryTraitTransformer implements ModelTransfor
         Set<Shape> result = new HashSet<>();
         for (ServiceShape service : model.getServiceShapesWithTrait(ClientEndpointDiscoveryTrait.class)) {
             ClientEndpointDiscoveryTrait trait = service.expectTrait(ClientEndpointDiscoveryTrait.class);
-            if (removedOperations.contains(trait.getOperation()) || removedErrors.contains(trait.getError())) {
+            if (removedOperations.contains(trait.getOperation())) {
                 ServiceShape.Builder builder = service.toBuilder();
                 builder.removeTrait(ClientEndpointDiscoveryTrait.ID);
                 result.add(builder.build());
@@ -108,8 +108,7 @@ public final class CleanClientDiscoveryTraitTransformer implements ModelTransfor
                 // Filter out the ones which are having their endpoint discovery traits removed
                 .filter(operation -> !updatedOperations.contains(operation.getId()))
                 // Get the input shapes of those operations
-                .filter(operation -> operation.getInput().isPresent())
-                .map(operation -> model.getShape(operation.getInput().get()).flatMap(Shape::asStructureShape))
+                .map(operation -> model.getShape(operation.getInputShape()).flatMap(Shape::asStructureShape))
                 .filter(Optional::isPresent)
                 // Get the input members
                 .flatMap(input -> input.get().getAllMembers().values().stream())

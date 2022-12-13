@@ -81,9 +81,7 @@
                         "type": "string"
                     },
                     "def": {
-                        "type": "number",
-                        "format": "int32",
-                        "nullable": true
+                        "type": "number"
                     }
                 }
             },
@@ -91,9 +89,7 @@
                 "type": "object",
                 "properties": {
                     "def": {
-                        "type": "number",
-                        "format": "int32",
-                        "nullable": true
+                        "type": "number"
                     }
                 }
             },
@@ -104,9 +100,7 @@
                         "type": "string"
                     },
                     "def": {
-                        "type": "number",
-                        "format": "int32",
-                        "nullable": true
+                        "type": "number"
                     }
                 }
             }

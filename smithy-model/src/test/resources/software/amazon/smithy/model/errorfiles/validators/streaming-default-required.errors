@@ -1,0 +1,1 @@
+[ERROR] smithy.example#NeitherRequiredNorDefaultStream$payload: Members that target blobs marked with the `streaming` trait MUST also be marked with the `required` or `default` trait. | StreamingTrait

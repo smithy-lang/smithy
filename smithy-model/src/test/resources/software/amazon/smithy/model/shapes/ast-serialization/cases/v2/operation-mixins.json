@@ -1,0 +1,56 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#MixinError": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#error": "server",
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MixinOperation": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.api#Unit"
+            },
+            "output": {
+                "target": "smithy.api#Unit"
+            },
+            "errors": [{
+                "target": "smithy.example#ConcreteError"
+            }],
+            "traits": {
+                "smithy.api#mixin": {},
+                "smithy.api#internal": {}
+            }
+        },
+        "smithy.example#ConcreteError": {
+            "type": "structure",
+            "members": {},
+            "mixins": [
+                {
+                    "target": "smithy.example#MixinError"
+                }
+            ],
+            "traits": {
+                "smithy.api#error": "client"
+            }
+        },
+        "smithy.example#MixedOperation": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.api#Unit"
+            },
+            "output": {
+                "target": "smithy.api#Unit"
+            },
+            "errors": [{
+                "target": "smithy.example#ConcreteError"
+            }],
+            "mixins": [{
+                "target": "smithy.example#MixinOperation"
+            }]
+        }
+    }
+}

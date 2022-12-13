@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#MyService": {
             "type": "service",
@@ -33,6 +33,9 @@
             "type": "operation",
             "input": {
                 "target": "ns.foo#ValidResourceOperation1Input"
+            },
+            "output": {
+                "target": "ns.foo#ValidResourceOperation1Output"
             }
         },
         "ns.foo#ValidResourceOperation1Input": {
@@ -44,17 +47,38 @@
                         "smithy.api#required": {}
                     }
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#ValidResourceOperation1Output": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#ValidResourceOperation2": {
             "type": "operation",
             "input": {
                 "target": "ns.foo#ValidResourceOperation2Input"
+            },
+            "output": {
+                "target": "ns.foo#ValidResourceOperation2Output"
             }
         },
         "ns.foo#ValidResourceOperation2Input": {
             "type": "structure",
-            "members": {}
+            "members": {},
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#ValidResourceOperation2Output": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#output": {}
+            }
         },
         "ns.foo#InvalidResource": {
             "type": "resource",
@@ -76,16 +100,30 @@
             "type": "operation",
             "input": {
                 "target": "ns.foo#InvalidResourceOperation1Input"
+            },
+            "output": {
+                "target": "ns.foo#InvalidResourceOperation1Output"
             }
         },
         "ns.foo#InvalidResourceOperation1Input": {
             "type": "structure",
-            "members": {}
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#InvalidResourceOperation1Output": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#output": {}
+            }
         },
         "ns.foo#InvalidResourceOperation2": {
             "type": "operation",
             "input": {
                 "target": "ns.foo#InvalidResourceOperation2Input"
+            },
+            "output": {
+                "target": "ns.foo#InvalidResourceOperation2Output"
             }
         },
         "ns.foo#InvalidResourceOperation2Input": {
@@ -97,6 +135,15 @@
                         "smithy.api#required": {}
                     }
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "ns.foo#InvalidResourceOperation2Output": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#output": {}
             }
         }
     }

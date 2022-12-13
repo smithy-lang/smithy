@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -25,7 +25,9 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -45,50 +47,68 @@ public final class TraitTargetValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
-        Map<Selector, Set<Shape>> selectorCache = new HashMap<>();
+
+        // Group shapes to validate by duplicate selectors to ensure that the
+        // selector is only performed once.
+        Map<Selector, List<ShapeId>> selectorsToTraits = new HashMap<>();
 
         // Only validate trait targets for traits that are actually used.
         for (ShapeId traitId : model.getAppliedTraits()) {
-            model.getTraitDefinition(traitId).ifPresent(definition -> {
+            model.getShape(traitId).ifPresent(traitShape -> {
                 // Find all shapes that have the used trait applied to it.
                 Set<Shape> shapes = model.getShapesWithTrait(traitId);
-                validateTraitTargets(model, events, traitId, definition.getSelector(), shapes, selectorCache);
+                validateMixinsUsedAsTraits(traitShape, shapes, events);
+                traitShape.getTrait(TraitDefinition.class).ifPresent(definition -> {
+                    // Short circuit for traits that match everything.
+                    if (!definition.getSelector().toString().equals("*")) {
+                        selectorsToTraits
+                                .computeIfAbsent(definition.getSelector(), selector -> new ArrayList<>())
+                                .add(traitId);
+                    }
+                });
             });
         }
 
-        selectorCache.clear();
+        for (Map.Entry<Selector, List<ShapeId>> entry : selectorsToTraits.entrySet()) {
+            validateTraitTargets(model, events, entry.getKey(), entry.getValue());
+        }
+
         return events;
+    }
+
+    private void validateMixinsUsedAsTraits(Shape traitShape, Set<Shape> appliedTo, List<ValidationEvent> events) {
+        if (traitShape.hasTrait(MixinTrait.class)) {
+            for (Shape shape : appliedTo) {
+                events.add(error(shape, String.format(
+                        "Trait `%s` is a mixin and cannot be applied to `%s`.",
+                        Trait.getIdiomaticTraitName(traitShape.getId()),
+                        shape.getId())));
+            }
+        }
     }
 
     private void validateTraitTargets(
             Model model,
             List<ValidationEvent> events,
-            ShapeId trait,
             Selector selector,
-            Set<Shape> appliedTo,
-            Map<Selector, Set<Shape>> selectorCache
+            List<ShapeId> traits
     ) {
-        // Short circuit for shapes that match everything.
-        if (selector.toString().equals("*")) {
-            return;
-        }
+        Set<Shape> matches = selector.select(model);
 
-        // Find the shapes that this trait can be applied to.
-        // Many selectors are identical to other selectors, so use a cache
-        // to reduce the number of times the entire model is traversed.
-        Set<Shape> matches = selectorCache.computeIfAbsent(selector, s -> s.select(model));
-
-        for (Shape shape : appliedTo) {
-            // Emit events when a shape is applied to something that didn't match the selector.
-            if (!matches.contains(shape)) {
-                // Strip out newlines with successive spaces.
-                String sanitized = SANITIZE.matcher(selector.toString()).replaceAll(" ");
-                events.add(error(shape, shape.findTrait(trait).get(), String.format(
-                        "Trait `%s` cannot be applied to `%s`. This trait may only be applied "
-                        + "to shapes that match the following selector: %s",
-                        Trait.getIdiomaticTraitName(trait.toShapeId()),
-                        shape.getId(),
-                        sanitized)));
+        for (ShapeId traitId : traits) {
+            // Find all shapes that have the used trait applied to it.
+            for (Shape shape : model.getShapesWithTrait(traitId)) {
+                // Emit events when a shape is applied to something that didn't match the selector.
+                if (!matches.contains(shape)) {
+                    // Strip out newlines with successive spaces.
+                    String sanitized = SANITIZE.matcher(selector.toString()).replaceAll(" ");
+                    events.add(error(shape, shape.findTrait(traitId).get(), String.format(
+                            "Trait `%s` cannot be applied to `%s`. This trait may only be applied "
+                            + "to shapes that match the following selector: %s",
+                            Trait.getIdiomaticTraitName(traitId),
+                            shape.getId(),
+                            sanitized)));
+                }
             }
         }
     }

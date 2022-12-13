@@ -1,0 +1,250 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.example#MixedList": {
+            "type": "list",
+            "mixins": [
+                {
+                    "target": "smithy.example#MixinList"
+                }
+            ]
+        },
+        "smithy.example#MixedMap": {
+            "type": "map",
+            "mixins": [
+                {
+                    "target": "smithy.example#MixinMap"
+                }
+            ]
+        },
+        "smithy.example#MixedResourceStructure": {
+            "type": "structure",
+            "mixins": [
+                {
+                    "target": "smithy.example#MixinStructure"
+                }
+            ],
+            "members": {
+                "id": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
+        "smithy.example#MixedResourceStructureWithTraits": {
+            "type": "structure",
+            "mixins": [
+                {
+                    "target": "smithy.example#MixinStructure"
+                }
+            ],
+            "members": {
+                "id": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#pattern": ".*"
+                    }
+                }
+            }
+        },
+        "smithy.example#MixedResourceStructureWithTraits$foo": {
+            "type": "apply",
+            "traits": {
+                "smithy.api#pattern": ".*"
+            }
+        },
+        "smithy.example#MixedResourceWithPropertiesStructure": {
+            "type": "structure",
+            "mixins": [
+                {
+                    "target": "smithy.example#MixinStructure"
+                }
+            ],
+            "members": {
+                "id": {
+                    "target": "smithy.api#String"
+                },
+                "property": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
+        "smithy.example#MixedStructure": {
+            "type": "structure",
+            "mixins": [
+                {
+                    "target": "smithy.example#MixinStructure"
+                }
+            ],
+            "members": {}
+        },
+        "smithy.example#MixedStructureWhereMixinDefinesIdentifier": {
+            "type": "structure",
+            "mixins": [
+                {
+                    "target": "smithy.example#MixinThatDefinesIdentifier"
+                }
+            ],
+            "members": {}
+        },
+        "smithy.example#MixedStructureWhereMixinDefinesIdentifier$id": {
+            "type": "apply",
+            "traits": {
+                "smithy.api#pattern": ".*"
+            }
+        },
+        "smithy.example#MixedStructureWithTraits": {
+            "type": "structure",
+            "mixins": [
+                {
+                    "target": "smithy.example#MixinStructure"
+                }
+            ],
+            "members": {}
+        },
+        "smithy.example#MixedStructureWithTraits$foo": {
+            "type": "apply",
+            "traits": {
+                "smithy.api#pattern": ".*"
+            }
+        },
+        "smithy.example#MixedUnion": {
+            "type": "union",
+            "mixins": [
+                {
+                    "target": "smithy.example#MixinUnion"
+                }
+            ],
+            "members": {}
+        },
+        "smithy.example#MixinList": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String"
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MixinMap": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String"
+            },
+            "value": {
+                "target": "smithy.api#String"
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MixinStructure": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MixinThatDefinesIdentifier": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MixinUnion": {
+            "type": "union",
+            "members": {
+                "singleton": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.example#MyResource": {
+            "type": "resource",
+            "identifiers": {
+                "id": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "properties": {
+                "property": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "operations": [
+                {
+                    "target": "smithy.example#ThrowAway"
+                }
+            ]
+        },
+        "smithy.example#MyResourceIdentifiers": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
+        "smithy.example#MyResourceIdentifiersWithTraits": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#pattern": ".*"
+                    }
+                }
+            }
+        },
+        "smithy.example#ThrowAway": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.example#ThrowAwayInput"
+            },
+            "output": {
+                "target": "smithy.example#ThrowAwayOutput"
+            },
+            "traits": {
+                "smithy.api#documentation": "Operation needed to utilize property for validity"
+            }
+        },
+        "smithy.example#ThrowAwayInput": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": {}
+                    }
+                },
+                "property": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "smithy.example#ThrowAwayOutput": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#output": {}
+            }
+        }
+    }
+}

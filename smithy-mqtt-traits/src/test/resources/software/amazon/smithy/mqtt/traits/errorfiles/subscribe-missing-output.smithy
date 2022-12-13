@@ -1,4 +1,5 @@
-// Subscribe operations must define output structures.
+// Subscribe operations must define output structures that contain an event stream.
+$version: "2.0"
 
 namespace smithy.example
 

@@ -66,7 +66,10 @@ public final class CfnResourceProperty implements ToSmithyBuilder<CfnResourcePro
      * by the use of a trait instead of derived through its lifecycle
      * bindings within a resource.
      *
-     * @return Returns true if the mutability is explicitly defined by a trait.
+     * <p> Also returns true for identifiers, since their mutability is inherent
+     *
+     * @return Returns true if the mutability is explicitly defined by a trait or
+     * if property is an identifier
      *
      * @see CfnMutabilityTrait
      */

@@ -1,0 +1,19 @@
+{
+    "version": "2.0",
+    "ignoreMissingPlugins": true,
+    "plugins": {
+        "unknown1": {}
+    },
+    "projections": {
+        "a": {
+            "plugins": {
+                "unknown2": {}
+            }
+        },
+        "b": {
+            "plugins": {
+                "unknown3": {}
+            }
+        }
+    }
+}

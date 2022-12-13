@@ -2,6 +2,7 @@ package software.amazon.smithy.jsonschema;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static software.amazon.smithy.utils.FunctionalUtils.alwaysTrue;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
@@ -19,7 +20,7 @@ public class DefaultRefStrategyTest {
     @Test
     public void usesDefaultPointer() {
         RefStrategy ref = RefStrategy.createDefaultStrategy(
-                Model.builder().build(), new JsonSchemaConfig(), propertyNamingStrategy);
+                Model.builder().build(), new JsonSchemaConfig(), propertyNamingStrategy, alwaysTrue());
         String pointer = ref.toPointer(ShapeId.from("smithy.example#Foo"));
 
         assertThat(pointer, equalTo("#/definitions/Foo"));
@@ -30,7 +31,7 @@ public class DefaultRefStrategyTest {
         JsonSchemaConfig config = new JsonSchemaConfig();
         config.setDefinitionPointer("#/components/schemas");
         RefStrategy ref = RefStrategy
-                .createDefaultStrategy(Model.builder().build(), config, propertyNamingStrategy);
+                .createDefaultStrategy(Model.builder().build(), config, propertyNamingStrategy, alwaysTrue());
         String pointer = ref.toPointer(ShapeId.from("smithy.example#Foo"));
 
         assertThat(pointer, equalTo("#/components/schemas/Foo"));
@@ -41,7 +42,7 @@ public class DefaultRefStrategyTest {
         JsonSchemaConfig config = new JsonSchemaConfig();
         config.setDefinitionPointer("#/components/schemas");
         RefStrategy ref = RefStrategy
-                .createDefaultStrategy(Model.builder().build(), config, propertyNamingStrategy);
+                .createDefaultStrategy(Model.builder().build(), config, propertyNamingStrategy, alwaysTrue());
         String pointer = ref.toPointer(ShapeId.from("smithy.example#Foo"));
 
         assertThat(pointer, equalTo("#/components/schemas/Foo"));
@@ -52,7 +53,7 @@ public class DefaultRefStrategyTest {
         JsonSchemaConfig config = new JsonSchemaConfig();
         config.setAlphanumericOnlyRefs(true);
         RefStrategy ref = RefStrategy
-                .createDefaultStrategy(Model.builder().build(), config, propertyNamingStrategy);
+                .createDefaultStrategy(Model.builder().build(), config, propertyNamingStrategy, alwaysTrue());
         String pointer = ref.toPointer(ShapeId.from("smithy.example#Foo_Bar"));
 
         assertThat(pointer, equalTo("#/definitions/FooBar"));
@@ -71,7 +72,7 @@ public class DefaultRefStrategyTest {
                 .build();
         Model model = Model.builder().addShapes(string, list, member).build();
         RefStrategy ref = RefStrategy
-                .createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy);
+                .createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy, alwaysTrue());
         String pointer = ref.toPointer(member.getId());
 
         assertThat(pointer, equalTo("#/definitions/Scripts/items"));
@@ -95,7 +96,7 @@ public class DefaultRefStrategyTest {
                 .build();
         Model model = Model.builder().addShapes(string, map, key, value).build();
         RefStrategy ref = RefStrategy
-                .createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy);
+                .createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy, alwaysTrue());
 
         assertThat(ref.toPointer(key.getId()), equalTo("#/definitions/Scripts/propertyNames"));
         assertThat(ref.toPointer(value.getId()), equalTo("#/definitions/Scripts/additionalProperties"));
@@ -114,7 +115,7 @@ public class DefaultRefStrategyTest {
                 .build();
         Model model = Model.builder().addShapes(string, struct, member).build();
         RefStrategy ref = RefStrategy
-                .createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy);
+                .createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy, alwaysTrue());
 
         assertThat(ref.toPointer(struct.getId()), equalTo("#/definitions/Scripts"));
         assertThat(ref.toPointer(member.getId()), equalTo("#/definitions/Scripts/properties/pages"));
@@ -131,7 +132,7 @@ public class DefaultRefStrategyTest {
                 .build();
         Model model = Model.builder().addShapes(baz, bam).build();
         RefStrategy ref = RefStrategy
-                .createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy);
+                .createDefaultStrategy(model, new JsonSchemaConfig(), propertyNamingStrategy, alwaysTrue());
 
         assertThat(ref.toPointer(baz.getMember("bam").get().getId()), equalTo("#/definitions/Bam"));
     }
@@ -144,7 +145,7 @@ public class DefaultRefStrategyTest {
                 .unwrap();
         JsonSchemaConfig config = new JsonSchemaConfig();
         config.setService(ShapeId.from("smithy.example#MyService"));
-        RefStrategy ref = RefStrategy.createDefaultStrategy(model, config, propertyNamingStrategy);
+        RefStrategy ref = RefStrategy.createDefaultStrategy(model, config, propertyNamingStrategy, alwaysTrue());
 
         assertThat(ref.toPointer(ShapeId.from("smithy.example#Widget")), equalTo("#/definitions/Widget"));
         assertThat(ref.toPointer(ShapeId.from("foo.example#Widget")), equalTo("#/definitions/FooWidget"));

@@ -36,9 +36,6 @@ import software.amazon.smithy.utils.StringUtils;
  */
 public class OpenApiConfig extends JsonSchemaConfig {
 
-    /** The supported version of OpenAPI. */
-    public static final String VERSION = "3.0.2";
-
     /** Specifies what to do when the httpPrefixHeaders trait is found in a model. */
     public enum HttpPrefixHeadersStrategy {
         /** The default setting that causes the build to fail. */
@@ -85,7 +82,7 @@ public class OpenApiConfig extends JsonSchemaConfig {
     private Map<String, Node> jsonAdd = Collections.emptyMap();
     private List<String> externalDocs = ListUtils.of(
             "Homepage", "API Reference", "User Guide", "Developer Guide", "Reference", "Guide");
-    private boolean useIntegerType;
+    private OpenApiVersion version = OpenApiVersion.VERSION_3_0_2;
 
     public OpenApiConfig() {
         super();
@@ -313,21 +310,12 @@ public class OpenApiConfig extends JsonSchemaConfig {
         this.externalDocs = Objects.requireNonNull(externalDocs);
     }
 
-    public boolean getUseIntegerType() {
-        return useIntegerType;
+    public OpenApiVersion getVersion() {
+        return this.version;
     }
 
-    /**
-     * Set to true to use the "integer" type when converting {@code byte},
-     * {@code short}, {@code integer}, and {@code long} shapes to OpenAPI.
-     *
-     * <p>By default, these shape types are converted to OpenAPI with a type
-     * of "number".
-     *
-     * @param useIntegerType True to use "integer".
-     */
-    public void setUseIntegerType(boolean useIntegerType) {
-        this.useIntegerType = useIntegerType;
+    public void setVersion(OpenApiVersion version) {
+        this.version = Objects.requireNonNull(version);
     }
 
     /**

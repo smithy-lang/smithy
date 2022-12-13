@@ -1,0 +1,1 @@
+[DANGER] smithy.example#SayHello: Invalid application/json content in `smithy.test#httpRequestTests` protocol test case `foo1` | HttpRequestTestsInput

@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#Service": {
             "type": "service",
@@ -222,7 +222,7 @@
                 "target": "ns.foo#ValidInput"
             },
             "output": {
-                "target": "ns.foo#Invalid6Input"
+                "target": "ns.foo#Invalid6Output"
             },
             "traits": {
                 "smithy.api#readonly": {},
@@ -234,7 +234,7 @@
                 }
             }
         },
-        "ns.foo#Invalid6Input": {
+        "ns.foo#Invalid6Output": {
             "type": "structure",
             "members": {
                 "nextToken": {

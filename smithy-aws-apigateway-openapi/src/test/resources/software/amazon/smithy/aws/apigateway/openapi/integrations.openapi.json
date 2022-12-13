@@ -13,9 +13,7 @@
             "name": "vendor",
             "in": "query",
             "schema": {
-              "type": "number",
-              "format": "int32",
-              "nullable": true
+              "type": "number"
             },
             "required": true
           },
@@ -23,11 +21,16 @@
             "name": "version",
             "in": "query",
             "schema": {
-              "type": "number",
-              "format": "int32",
-              "nullable": true
+              "type": "number"
             },
             "required": true
+          },
+          {
+            "name": "x-amz-connection-type",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/ConnectionType"
+            }
           }
         ],
         "responses": {
@@ -113,9 +116,7 @@
             "name": "vendor",
             "in": "query",
             "schema": {
-              "type": "number",
-              "format": "int32",
-              "nullable": true
+              "type": "number"
             },
             "required": true
           },
@@ -123,11 +124,16 @@
             "name": "version",
             "in": "query",
             "schema": {
-              "type": "number",
-              "format": "int32",
-              "nullable": true
+              "type": "number"
             },
             "required": true
+          },
+          {
+            "name": "x-amz-connection-type",
+            "in": "header",
+            "schema": {
+              "$ref": "#/components/schemas/ConnectionType"
+            }
           }
         ],
         "responses": {
@@ -201,5 +207,15 @@
       }
     }
   },
-  "components": { }
+  "components": {
+    "schemas": {
+      "ConnectionType": {
+        "type": "string",
+        "enum": [
+          "a",
+          "c"
+        ]
+      }
+    }
+  }
 }

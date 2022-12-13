@@ -1,3 +1,5 @@
+$version: "2"
+
 namespace smithy.example
 
 // Does not match - :not(string) :(float)

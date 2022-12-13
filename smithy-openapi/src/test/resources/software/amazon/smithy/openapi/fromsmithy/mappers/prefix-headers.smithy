@@ -1,3 +1,5 @@
+$version: "2.0"
+
 namespace smithy.example
 
 @aws.protocols#restJson1
@@ -24,9 +26,5 @@ structure Output {
 
 map Headers {
     key: String,
-    value: StringList,
-}
-
-list StringList {
-    member: String
+    value: String
 }

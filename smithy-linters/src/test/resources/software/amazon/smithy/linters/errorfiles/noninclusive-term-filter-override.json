@@ -1,0 +1,60 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "ns.foo#MyMasterService": {
+            "type": "service",
+            "version": "2021-10-17",
+            "operations": [
+                {
+                    "target": "ns.foo#A"
+                },
+                {
+                    "target": "ns.foo#BlackListThings"
+                }
+            ]
+        },
+        "ns.foo#A": {
+            "type": "operation",
+            "input": {
+                "target": "ns.foo#AInput"
+            },
+            "output": {
+                "target": "ns.foo#AOutput"
+            },
+            "traits": {
+                "smithy.api#readonly": {}
+            }
+        },
+        "ns.foo#AInput": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "These docs are apples!"
+                    }
+                }
+            }
+        },
+        "ns.foo#AOutput": {
+            "type": "structure"
+        },
+        "ns.foo#BlackListThings": {
+            "type": "operation"
+        }
+    },
+    "metadata": {
+        "validators": [
+            {
+                "name": "NoninclusiveTerms",
+                "configuration": {
+                    "excludeDefaults": true,
+                    "terms": {
+                        "apple": ["banana"],
+                        "foo": ["bar"]
+                    }
+                }
+            }
+        ]
+    }
+}

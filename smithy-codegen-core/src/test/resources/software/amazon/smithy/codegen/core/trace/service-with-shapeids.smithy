@@ -1,3 +1,5 @@
+$version: "2.0"
+
 namespace example.weather
 
 /// Provides weather forecasts.

@@ -109,12 +109,13 @@ public final class LengthTrait extends AbstractTrait implements ToSmithyBuilder<
 
         @Override
         public LengthTrait createTrait(ShapeId target, Node value) {
-            ObjectNode objectNode = value.expectObjectNode();
-            Long minValue = objectNode.getMember("min")
-                    .map(v -> v.expectNumberNode().getValue().longValue()).orElse(null);
-            Long maxValue = objectNode.getMember("max")
-                    .map(v -> v.expectNumberNode().getValue().longValue()).orElse(null);
-            return builder().sourceLocation(value).min(minValue).max(maxValue).build();
+            LengthTrait.Builder builder = builder().sourceLocation(value.getSourceLocation());
+            value.expectObjectNode()
+                    .getNumberMember("min", n -> builder.min(n.longValue()))
+                    .getNumberMember("max", n -> builder.max(n.longValue()));
+            LengthTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 }

@@ -23,6 +23,8 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.diff.ModelDiff;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.ListShape;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.traits.PrivateTrait;
@@ -51,5 +53,19 @@ public class RemovedShapeTest {
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(TestHelper.findEvents(events, "RemovedShape"), empty());
+    }
+
+    @Test
+    public void doesNotEmitForMembersOfRemovedShapes() {
+        Shape string = StringShape.builder().id("foo.baz#Baz").build();
+        MemberShape member = MemberShape.builder().id("foo.baz#Bam$member").target(string).build();
+        ListShape list = ListShape.builder().id("foo.baz#Bam").addMember(member).build();
+        Model modelA = Model.assembler().addShapes(list, string).assemble().unwrap();
+        Model modelB = Model.assembler().addShapes(string).assemble().unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "RemovedShape").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, list.getId()).size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, Severity.ERROR).size(), equalTo(1));
     }
 }

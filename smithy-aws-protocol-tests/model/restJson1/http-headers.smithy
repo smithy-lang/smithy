@@ -1,7 +1,7 @@
 // This file defines test cases that test HTTP header bindings.
-// See: https://awslabs.github.io/smithy/1.0/spec/http.html#httpheader-trait
+// See: https://smithy.io/2.0/spec/http-bindings.html#httpheader-trait
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restjson
 
@@ -11,6 +11,8 @@ use aws.protocoltests.shared#DateTime
 use aws.protocoltests.shared#EpochSeconds
 use aws.protocoltests.shared#FooEnum
 use aws.protocoltests.shared#FooEnumList
+use aws.protocoltests.shared#IntegerEnum
+use aws.protocoltests.shared#IntegerEnumList
 use aws.protocoltests.shared#HttpDate
 use aws.protocoltests.shared#IntegerList
 use aws.protocoltests.shared#StringList
@@ -44,6 +46,20 @@ apply InputAndOutputWithHeaders @httpRequestTests([
             headerString: "Hello",
             headerStringList: ["a", "b", "c"],
             headerStringSet: ["a", "b", "c"],
+        }
+    },
+    {
+        id: "RestJsonInputAndOutputWithQuotedStringHeaders",
+        documentation: "Tests requests with string list header bindings that require quoting",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/InputAndOutputWithHeaders",
+        headers: {
+            "X-StringList": "\"b,c\", \"\\\"def\\\"\", a"
+        },
+        body: "",
+        params: {
+            headerStringList: ["b,c", "\"def\"", "a"]
         }
     },
     {
@@ -120,6 +136,71 @@ apply InputAndOutputWithHeaders @httpRequestTests([
             headerEnumList: ["Foo", "Bar", "Baz"],
         }
     },
+    {
+        id: "RestJsonInputAndOutputWithIntEnumHeaders",
+        documentation: "Tests requests with intEnum header bindings",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/InputAndOutputWithHeaders",
+        headers: {
+            "X-IntegerEnum": "1",
+            "X-IntegerEnumList": "1, 2, 3"
+        },
+        body: "",
+        params: {
+            headerIntegerEnum: 1,
+            headerIntegerEnumList: [1, 2, 3],
+        }
+    },
+
+    {
+        id: "RestJsonSupportsNaNFloatHeaderInputs",
+        documentation: "Supports handling NaN float header values.",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/InputAndOutputWithHeaders",
+        body: "",
+        headers: {
+            "X-Float": "NaN",
+            "X-Double": "NaN",
+        },
+        params: {
+            headerFloat: "NaN",
+            headerDouble: "NaN",
+        }
+    },
+    {
+        id: "RestJsonSupportsInfinityFloatHeaderInputs",
+        documentation: "Supports handling Infinity float header values.",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/InputAndOutputWithHeaders",
+        body: "",
+        headers: {
+            "X-Float": "Infinity",
+            "X-Double": "Infinity",
+        },
+        params: {
+            headerFloat: "Infinity",
+            headerDouble: "Infinity",
+        }
+    },
+    {
+        id: "RestJsonSupportsNegativeInfinityFloatHeaderInputs",
+        documentation: "Supports handling -Infinity float header values.",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/InputAndOutputWithHeaders",
+        body: "",
+        headers: {
+            "X-Float": "-Infinity",
+            "X-Double": "-Infinity",
+        },
+        params: {
+            headerFloat: "-Infinity",
+            headerDouble: "-Infinity",
+        }
+    },
 ])
 
 apply InputAndOutputWithHeaders @httpResponseTests([
@@ -137,6 +218,18 @@ apply InputAndOutputWithHeaders @httpResponseTests([
             headerString: "Hello",
             headerStringList: ["a", "b", "c"],
             headerStringSet: ["a", "b", "c"],
+        }
+    },
+    {
+        id: "RestJsonInputAndOutputWithQuotedStringHeaders",
+        documentation: "Tests responses with string list header bindings that require quoting",
+        protocol: restJson1,
+        code: 200,
+        headers: {
+            "X-StringList": "\"b,c\", \"\\\"def\\\"\", a"
+        },
+        params: {
+            headerStringList: ["b,c", "\"def\"", "a"]
         }
     },
     {
@@ -205,6 +298,62 @@ apply InputAndOutputWithHeaders @httpResponseTests([
             headerEnumList: ["Foo", "Bar", "Baz"],
         }
     },
+    {
+        id: "RestJsonInputAndOutputWithIntEnumHeaders",
+        documentation: "Tests responses with intEnum header bindings",
+        protocol: restJson1,
+        code: 200,
+        headers: {
+            "X-IntegerEnum": "1",
+            "X-IntegerEnumList": "1, 2, 3"
+        },
+        params: {
+            headerIntegerEnum: 1,
+            headerIntegerEnumList: [1, 2, 3],
+        }
+    },
+    {
+        id: "RestJsonSupportsNaNFloatHeaderOutputs",
+        documentation: "Supports handling NaN float header values.",
+        protocol: restJson1,
+        code: 200,
+        headers: {
+            "X-Float": "NaN",
+            "X-Double": "NaN",
+        },
+        params: {
+            headerFloat: "NaN",
+            headerDouble: "NaN",
+        }
+    },
+    {
+        id: "RestJsonSupportsInfinityFloatHeaderOutputs",
+        documentation: "Supports handling Infinity float header values.",
+        protocol: restJson1,
+        code: 200,
+        headers: {
+            "X-Float": "Infinity",
+            "X-Double": "Infinity",
+        },
+        params: {
+            headerFloat: "Infinity",
+            headerDouble: "Infinity",
+        }
+    },
+    {
+        id: "RestJsonSupportsNegativeInfinityFloatHeaderOutputs",
+        documentation: "Supports handling -Infinity float header values.",
+        protocol: restJson1,
+        code: 200,
+        headers: {
+            "X-Float": "-Infinity",
+            "X-Double": "-Infinity",
+        },
+        params: {
+            headerFloat: "-Infinity",
+            headerDouble: "-Infinity",
+        }
+    },
 ])
 
 structure InputAndOutputWithHeadersIO {
@@ -255,6 +404,12 @@ structure InputAndOutputWithHeadersIO {
 
     @httpHeader("X-EnumList")
     headerEnumList: FooEnumList,
+
+    @httpHeader("X-IntegerEnum")
+    headerIntegerEnum: IntegerEnum,
+
+    @httpHeader("X-IntegerEnumList")
+    headerIntegerEnumList: IntegerEnumList,
 }
 
 /// Null and empty headers are not sent over the wire.

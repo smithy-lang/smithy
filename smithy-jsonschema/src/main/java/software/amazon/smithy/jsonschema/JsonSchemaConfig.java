@@ -108,6 +108,9 @@ public class JsonSchemaConfig {
     private final ConcurrentHashMap<Class, Object> extensionCache = new ConcurrentHashMap<>();
     private final NodeMapper nodeMapper = new NodeMapper();
     private ShapeId service;
+    private boolean supportNonNumericFloats = false;
+    private boolean enableOutOfServiceReferences = false;
+    private boolean useIntegerType;
 
     public JsonSchemaConfig() {
         nodeMapper.setWhenMissingSetter(NodeMapper.WhenMissing.INGORE);
@@ -228,7 +231,7 @@ public class JsonSchemaConfig {
     }
 
     /**
-     * Disables OpenAPI features by their property name name (e.g., "allOf").
+     * Disables OpenAPI features by their property name (e.g., "allOf").
      *
      * @param disableFeatures Feature names to disable.
      */
@@ -346,5 +349,58 @@ public class JsonSchemaConfig {
                     .orElseGet(() -> getDefaultTimestampFormat().toString()));
         }
         return Optional.empty();
+    }
+
+    public boolean getSupportNonNumericFloats() {
+        return supportNonNumericFloats;
+    }
+
+    /**
+     * Set to true to add support for NaN, Infinity, and -Infinity in float
+     * and double shapes. These values will be serialized as strings. The
+     * OpenAPI document will be updated to refer to them as a "oneOf" of number
+     * and string.
+     *
+     * <p>By default, non-numeric values are not supported.
+     *
+     * @param supportNonNumericFloats True if non-numeric float values should be supported.
+     */
+    public void setSupportNonNumericFloats(boolean supportNonNumericFloats) {
+        this.supportNonNumericFloats = supportNonNumericFloats;
+    }
+
+    public boolean isEnableOutOfServiceReferences() {
+        return enableOutOfServiceReferences;
+    }
+
+    /**
+     * Set to true to enable references to shapes outside the service closure.
+     *
+     * Setting this to true means that all the shapes in the model must not conflict, whereas
+     * leaving it at the default, false, means that only the shapes connected to the configured
+     * service via {@link #setService(ShapeId)} must not conflict.
+     *
+     * @param enableOutOfServiceReferences true if out-of-service references should be allowed. default: false
+     */
+    public void setEnableOutOfServiceReferences(boolean enableOutOfServiceReferences) {
+        this.enableOutOfServiceReferences = enableOutOfServiceReferences;
+    }
+
+
+    public boolean getUseIntegerType() {
+        return useIntegerType;
+    }
+
+    /**
+     * Set to true to use the "integer" type when converting {@code byte},
+     * {@code short}, {@code integer}, and {@code long} shapes to Json Schema.
+     *
+     * <p>By default, these shape types are converted to Json Schema with a type
+     * of "number".
+     *
+     * @param useIntegerType True to use "integer".
+     */
+    public void setUseIntegerType(boolean useIntegerType) {
+        this.useIntegerType = useIntegerType;
     }
 }

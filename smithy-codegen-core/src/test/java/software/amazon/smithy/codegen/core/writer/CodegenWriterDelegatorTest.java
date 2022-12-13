@@ -19,7 +19,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.Matchers.is;
 
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -33,15 +32,6 @@ import software.amazon.smithy.model.shapes.StringShape;
 
 public class CodegenWriterDelegatorTest {
 
-    private static final class OnUse implements UseShapeWriterObserver<MyWriter> {
-        private boolean onShapeWriterUseCalled;
-
-        @Override
-        public void observe(Shape shape, Symbol symbol, SymbolProvider symbolProvider, MyWriter writer) {
-            onShapeWriterUseCalled = true;
-        }
-    }
-
     @Test
     public void createsSymbolsAndFilesForShapeWriters() {
         MockManifest mockManifest = new MockManifest();
@@ -52,34 +42,10 @@ public class CodegenWriterDelegatorTest {
                 .build();
         CodegenWriterDelegator<MyWriter> delegator = new CodegenWriterDelegator<>(
                 mockManifest, provider, (f, n) -> new MyWriter(n));
-        OnUse observer = new OnUse();
-        delegator.setOnShaperWriterUseObserver(observer);
         Shape shape = StringShape.builder().id("com.foo#Baz").build();
         delegator.useShapeWriter(shape, writer -> { });
 
-        assertThat(observer.onShapeWriterUseCalled, is(true));
         assertThat(delegator.getWriters(), hasKey(Paths.get("com/foo/Baz.bam").toString()));
-    }
-
-    @Test
-    public void canObserveAndWriteBeforeEachFile() {
-        MockManifest mockManifest = new MockManifest();
-        SymbolProvider provider = (shape) -> Symbol.builder()
-                .namespace("com.foo", ".")
-                .name("Baz")
-                .definitionFile("com/foo/Baz.bam")
-                .build();
-        CodegenWriterDelegator<MyWriter> delegator = new CodegenWriterDelegator<>(
-                mockManifest, provider, (f, n) -> new MyWriter(n));
-        MyWriter.MyObserver observer = new MyWriter.MyObserver();
-        delegator.setOnShaperWriterUseObserver(observer);
-        Shape shape = StringShape.builder().id("com.foo#Baz").build();
-        delegator.useShapeWriter(shape, writer -> {
-            writer.write("Hello");
-        });
-
-        assertThat(delegator.getWriters().get(Paths.get("com/foo/Baz.bam").toString()).toString(),
-                   equalTo("/// Writing com.foo#Baz\nHello\n"));
     }
 
     @Test

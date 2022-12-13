@@ -1,29 +1,6 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
-        "ns.foo#_foo": {
-            "type": "structure",
-            "members": {
-                "bar": {
-                    "target": "ns.foo#String"
-                },
-                "long": {
-                    "target": "ns.foo#Long"
-                },
-                "bool": {
-                    "target": "ns.foo#Boolean"
-                },
-                "list": {
-                    "target": "ns.foo#List"
-                },
-                "timestamp": {
-                    "target": "ns.foo#UtcTimestamp"
-                },
-                "blob": {
-                    "target": "ns.foo#Blob"
-                }
-            }
-        },
         "ns.foo#String": {
             "type": "string"
         },
@@ -119,6 +96,9 @@
                 "fooShape": {
                     "target": "ns.foo#FooShape"
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#OperationAOutput": {
@@ -127,6 +107,9 @@
                 "b": {
                     "target": "ns.foo#Map"
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#OperationErrorA": {
@@ -156,12 +139,41 @@
                         "smithy.api#required": {}
                     }
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#_OperationBaz": {
             "type": "operation",
             "input": {
                 "target": "ns.foo#_foo"
+            }
+        },
+        "ns.foo#_foo": {
+            "type": "structure",
+            "members": {
+                "bar": {
+                    "target": "ns.foo#String"
+                },
+                "long": {
+                    "target": "ns.foo#Long"
+                },
+                "bool": {
+                    "target": "ns.foo#Boolean"
+                },
+                "list": {
+                    "target": "ns.foo#List"
+                },
+                "timestamp": {
+                    "target": "ns.foo#UtcTimestamp"
+                },
+                "blob": {
+                    "target": "ns.foo#Blob"
+                }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#UtcTimestamp": {
@@ -189,6 +201,9 @@
         }
     },
     "metadata": {
+        "suppressions": [
+            {"id": "OperationInputOutputName", "namespace": "ns.foo"}
+        ],
         "validators": [
             {
                 "id": "FooReservedWords",

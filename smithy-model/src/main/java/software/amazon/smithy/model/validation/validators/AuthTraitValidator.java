@@ -65,7 +65,7 @@ public final class AuthTraitValidator extends AbstractValidator {
     ) {
         if (shape.getTrait(AuthTrait.class).isPresent()) {
             AuthTrait authTrait = shape.getTrait(AuthTrait.class).get();
-            Set<ShapeId> appliedAuthTraitValue = new TreeSet<>(authTrait.getValues());
+            Set<ShapeId> appliedAuthTraitValue = new TreeSet<>(authTrait.getValueSet());
             appliedAuthTraitValue.removeAll(serviceAuth);
 
             if (!appliedAuthTraitValue.isEmpty()) {

@@ -1,0 +1,2 @@
+[WARNING] smithy.example#InvalidStatusCode204: The HTTP 204 status code does not allow a response body. To use this status code, all output members need to be bound to @httpHeader, @httpPrefixHeaders, @httpResponseCode, etc. | HttpResponseCodeSemantics
+[WARNING] smithy.example#InvalidStatusCode205: The HTTP 205 status code does not allow a response body. To use this status code, all output members need to be bound to @httpHeader, @httpPrefixHeaders, @httpResponseCode, etc. | HttpResponseCodeSemantics

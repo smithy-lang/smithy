@@ -1,6 +1,6 @@
 // This file defines test cases that test list query serialization.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.ec2
 
@@ -26,14 +26,7 @@ apply QueryLists @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=QueryLists
-              &Version=2020-01-08
-              &ListArg.1=foo
-              &ListArg.2=bar
-              &ListArg.3=baz
-              &ComplexListArg.1.Hi=hello
-              &ComplexListArg.2.Hi=hola""",
+        body: "Action=QueryLists&Version=2020-01-08&ListArg.1=foo&ListArg.2=bar&ListArg.3=baz&ComplexListArg.1.Hi=hello&ComplexListArg.2.Hi=hola",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             ListArg: ["foo", "bar", "baz"],
@@ -49,16 +42,14 @@ apply QueryLists @httpRequestTests([
     },
     {
         id: "Ec2EmptyQueryLists",
-        documentation: "Does not serialize empty query lists",
+        documentation: "Serializes empty query lists",
         protocol: ec2Query,
         method: "POST",
         uri: "/",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=QueryLists
-              &Version=2020-01-08""",
+        body: "Action=QueryLists&Version=2020-01-08&ListArg=",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             ListArg: []
@@ -73,11 +64,7 @@ apply QueryLists @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=QueryLists
-              &Version=2020-01-08
-              &ListArgWithXmlNameMember.1=A
-              &ListArgWithXmlNameMember.2=B""",
+        body: "Action=QueryLists&Version=2020-01-08&ListArgWithXmlNameMember.1=A&ListArgWithXmlNameMember.2=B",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             ListArgWithXmlNameMember: ["A", "B"]
@@ -92,14 +79,27 @@ apply QueryLists @httpRequestTests([
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: """
-              Action=QueryLists
-              &Version=2020-01-08
-              &Hi.1=A
-              &Hi.2=B""",
+        body: "Action=QueryLists&Version=2020-01-08&Hi.1=A&Hi.2=B",
         bodyMediaType: "application/x-www-form-urlencoded",
         params: {
             ListArgWithXmlName: ["A", "B"]
+        }
+    },
+    {
+        id: "Ec2ListNestedStructWithList",
+        documentation: "Nested structure with a list member",
+        protocol: ec2Query,
+        method: "POST",
+        uri: "/",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "Action=QueryLists&Version=2020-01-08&NestedWithList.ListArg.1=A&NestedWithList.ListArg.2=B",
+        bodyMediaType: "application/x-www-form-urlencoded",
+        params: {
+            NestedWithList: {
+                ListArg: ["A", "B"]
+            }
         }
     },
 ])
@@ -113,9 +113,15 @@ structure QueryListsInput {
 
     @xmlName("Hi")
     ListArgWithXmlName: ListWithXmlName,
+
+    NestedWithList: NestedStructWithList,
 }
 
 list ListWithXmlName {
     @xmlName("item")
     member: String
+}
+
+structure NestedStructWithList {
+    ListArg: StringList
 }

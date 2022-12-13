@@ -59,7 +59,7 @@ public final class SigV4Trait extends AbstractTrait implements ToSmithyBuilder<S
 
     @Override
     protected Node createNode() {
-        return Node.objectNode().withMember(NAME, getName());
+        return Node.objectNodeBuilder().sourceLocation(getSourceLocation()).withMember(NAME, getName()).build();
     }
 
     public static final class Builder extends AbstractTraitBuilder<SigV4Trait, Builder> {
@@ -88,7 +88,9 @@ public final class SigV4Trait extends AbstractTrait implements ToSmithyBuilder<S
             Builder builder = builder().sourceLocation(value);
             ObjectNode objectNode = value.expectObjectNode();
             builder.name(objectNode.expectStringMember(NAME).getValue());
-            return builder.build();
+            SigV4Trait result = builder.build();
+            result.setNodeCache(objectNode);
+            return result;
         }
     }
 }

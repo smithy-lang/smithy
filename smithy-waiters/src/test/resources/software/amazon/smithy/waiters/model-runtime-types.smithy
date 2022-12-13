@@ -1,3 +1,5 @@
+$version: "2.0"
+
 namespace smithy.example
 
 @length(min: 4, max: 8)
@@ -24,15 +26,6 @@ list StringList {
 
 @length(min: 5, max: 1000)
 list SizedStringList {
-    member: String,
-}
-
-set StringSet {
-    member: String,
-}
-
-@length(min: 5, max: 1000)
-set SizedStringSet {
     member: String,
 }
 

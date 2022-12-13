@@ -28,7 +28,7 @@
         ],
         "responses": {
           "200": {
-            "description": "CreateDocument response"
+            "description": "CreateDocument 200 response"
           }
         }
       }
@@ -43,9 +43,7 @@
             "type": "string"
           },
           "def": {
-            "type": "number",
-            "format": "int32",
-            "nullable": true
+            "type": "number"
           }
         }
       }

@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -45,7 +46,6 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  *     <li>if</li>
  *     <li>then</li>
  *     <li>else</li>
- *     <li>default</li>
  *     <li>examples</li>
  * </ul>
  *
@@ -575,10 +575,10 @@ public final class Schema implements ToNode, ToSmithyBuilder<Schema> {
         private Integer maxProperties;
         private Integer minProperties;
         private Collection<String> required = new ArrayList<>();
-        private Map<String, Schema> properties = new HashMap<>();
+        private Map<String, Schema> properties = new LinkedHashMap<>();
         private Schema additionalProperties;
         private Schema propertyNames;
-        private Map<String, Schema> patternProperties = new HashMap<>();
+        private Map<String, Schema> patternProperties = new LinkedHashMap<>();
 
         private List<Schema> allOf = ListUtils.of();
         private List<Schema> anyOf = ListUtils.of();

@@ -44,7 +44,7 @@
                 ],
                 "responses": {
                     "204": {
-                        "description": "DeletePayload response"
+                        "description": "DeletePayload 204 response"
                     }
                 },
                 "x-amazon-apigateway-integration": {
@@ -118,9 +118,7 @@
                         "name": "query",
                         "in": "query",
                         "schema": {
-                            "type": "number",
-                            "format": "int32",
-                            "nullable": true
+                            "type": "number"
                         }
                     },
                     {
@@ -140,7 +138,7 @@
                 ],
                 "responses": {
                     "201": {
-                        "description": "PutPayload response"
+                        "description": "PutPayload 201 response"
                     }
                 },
                 "x-amazon-apigateway-integration": {
@@ -222,15 +220,27 @@
             "*"
         ],
         "exposeHeaders": [
+            "Content-Length",
+            "Content-Type",
+            "X-Amzn-Errortype",
+            "X-Amzn-Requestid",
             "X-Foo-Header",
             "X-Service-Output-Metadata"
         ],
         "allowHeaders": [
+            "Amz-Sdk-Invocation-Id",
+            "Amz-Sdk-Request",
             "Authorization",
+            "Content-Length",
+            "Content-Type",
             "Date",
+            "Host",
+            "X-Amz-Content-Sha256",
             "X-Amz-Date",
             "X-Amz-Security-Token",
             "X-Amz-Target",
+            "X-Amz-User-Agent",
+            "X-Amzn-Trace-Id",
             "X-EnumString",
             "X-Foo-Header",
             "X-Service-Input-Metadata"

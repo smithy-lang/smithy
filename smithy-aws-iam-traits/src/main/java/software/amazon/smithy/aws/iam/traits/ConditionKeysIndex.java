@@ -225,7 +225,7 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
                 // Inline provided documentation or compute a simple string.
                 builder.documentation(shape.getTrait(DocumentationTrait.class)
                         .map(DocumentationTrait::getValue)
-                        .orElse(computeIdentifierDocs(resource.getId(), childId)));
+                        .orElse(computeIdentifierDocs(resource, childId)));
                 // The identifier name is comprised of "[arn service]:[Resource name][uppercase identifier name]
                 String computeIdentifierName = computeIdentifierName(arnRoot, resource, childId);
                 // Add the computed identifier binding and resolved context key to the result map.
@@ -238,11 +238,17 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
         return result;
     }
 
-    private static String computeIdentifierDocs(ShapeId id, String identifierName) {
-        return id.getName() + " resource " + identifierName + " identifier";
+    private static String computeIdentifierDocs(ResourceShape resource, String identifierName) {
+        return getContextKeyResourceName(resource) + " resource " + identifierName + " identifier";
     }
 
     private static String computeIdentifierName(String arnRoot, ResourceShape resource, String identifierName) {
-        return arnRoot + ":" + resource.getId().getName() + StringUtils.capitalize(identifierName);
+        return arnRoot + ":" + getContextKeyResourceName(resource) + StringUtils.capitalize(identifierName);
+    }
+
+    private static String getContextKeyResourceName(ResourceShape resource) {
+        return resource.getTrait(IamResourceTrait.class)
+                       .flatMap(IamResourceTrait::getName)
+                       .orElse(resource.getId().getName());
     }
 }

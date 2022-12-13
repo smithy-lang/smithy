@@ -1,0 +1,22 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "MyService",
+        "version": "2017-02-11"
+    },
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "GetSomething",
+                "responses": {
+                    "200": {
+                        "description": "GetSomething 200 response"
+                    },
+                    "400": {
+                        "description": "MyError 400 response"
+                    }
+                }
+            }
+        }
+    }
+}

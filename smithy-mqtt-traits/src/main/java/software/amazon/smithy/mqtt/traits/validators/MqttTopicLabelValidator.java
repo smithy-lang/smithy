@@ -18,13 +18,12 @@ package software.amazon.smithy.mqtt.traits.validators;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
@@ -42,7 +41,7 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  *
  * <ul>
  *     <li>Operation input is required when a topic has labels.</li>
- *     <li>Topic labels must be be found in the input.</li>
+ *     <li>Topic labels must be found in the input.</li>
  *     <li>The input must not contain extraneous labels.</li>
  * </ul>
  */
@@ -50,20 +49,25 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 public class MqttTopicLabelValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
-        return model.shapes(OperationShape.class)
-                .map(MqttTopicLabelValidator::createTopics)
-                .filter(Objects::nonNull)
-                .flatMap(topics -> validateMqtt(model, topics).stream())
-                .collect(Collectors.toList());
+        OperationIndex index = OperationIndex.of(model);
+        List<ValidationEvent> events = new ArrayList<>();
+        for (OperationShape operation : model.getOperationShapes()) {
+            TopicCollection topics = createTopics(operation);
+            if (topics != null) {
+                events.addAll(validateMqtt(index, topics));
+            }
+        }
+
+        return events;
     }
 
     private static TopicCollection createTopics(OperationShape shape) {
         if (shape.hasTrait(SubscribeTrait.class)) {
-            SubscribeTrait trait = shape.getTrait(SubscribeTrait.class).get();
+            SubscribeTrait trait = shape.expectTrait(SubscribeTrait.class);
             List<Topic> bindings = Collections.singletonList(trait.getTopic());
             return new TopicCollection(shape, trait, bindings);
         } else if (shape.hasTrait(PublishTrait.class)) {
-            PublishTrait trait = shape.getTrait(PublishTrait.class).get();
+            PublishTrait trait = shape.expectTrait(PublishTrait.class);
             List<Topic> bindings = Collections.singletonList(trait.getTopic());
             return new TopicCollection(shape, trait, bindings);
         } else {
@@ -71,32 +75,17 @@ public class MqttTopicLabelValidator extends AbstractValidator {
         }
     }
 
-    private List<ValidationEvent> validateMqtt(Model model, TopicCollection topics) {
+    private List<ValidationEvent> validateMqtt(OperationIndex index, TopicCollection topics) {
         Set<String> labels = topics.getLabels();
-        StructureShape input = topics.operation.getInput()
-                .flatMap(model::getShape)
-                .flatMap(Shape::asStructureShape)
-                .orElse(null);
-
-        if (!labels.isEmpty() && input == null) {
-            return Collections.singletonList(error(topics.operation, topics.trait, String.format(
-                    "Operation MQTT trait, `%s`, contains topic labels, [%s], but the operation has no input",
-                    Trait.getIdiomaticTraitName(topics.trait.toShapeId()),
-                    ValidationUtils.tickedList(labels))));
-        }
-
-        if (input == null) {
-            // No labels, and no input.
-            return Collections.emptyList();
-        }
-
+        StructureShape input = index.expectInputShape(topics.operation);
         List<ValidationEvent> events = new ArrayList<>();
+
         for (MemberShape member : input.getAllMembers().values()) {
             if (member.hasTrait(TopicLabelTrait.class)) {
                 if (labels.contains(member.getMemberName())) {
                     labels.remove(member.getMemberName());
                 } else {
-                    events.add(error(member, member.getTrait(TopicLabelTrait.class).get(), String.format(
+                    events.add(error(member, member.expectTrait(TopicLabelTrait.class), String.format(
                             "This member is marked with the `smithy.mqtt#topicLabel` trait, but when this member is "
                             + "used as part of the input of the `%s` operation, a corresponding label cannot be "
                             + "found in the `%s` trait",

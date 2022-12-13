@@ -1,7 +1,7 @@
 // This file defines test cases that test HTTP URI label bindings.
-// See: https://awslabs.github.io/smithy/1.0/spec/http.html#httplabel-trait
+// See: https://smithy.io/2.0/spec/http-bindings.html#httplabel-trait
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.restxml
 
@@ -176,4 +176,59 @@ structure HttpRequestWithGreedyLabelInPathInput {
     @httpLabel
     @required
     baz: String,
+}
+
+apply HttpRequestWithFloatLabels @httpRequestTests([
+    {
+        id: "RestXmlSupportsNaNFloatLabels",
+        documentation: "Supports handling NaN float label values.",
+        protocol: restXml,
+        method: "GET",
+        uri: "/FloatHttpLabels/NaN/NaN",
+        body: "",
+        params: {
+            float: "NaN",
+            double: "NaN",
+        }
+    },
+    {
+        id: "RestXmlSupportsInfinityFloatLabels",
+        documentation: "Supports handling Infinity float label values.",
+        protocol: restXml,
+        method: "GET",
+        uri: "/FloatHttpLabels/Infinity/Infinity",
+        body: "",
+        params: {
+            float: "Infinity",
+            double: "Infinity",
+        }
+    },
+    {
+        id: "RestXmlSupportsNegativeInfinityFloatLabels",
+        documentation: "Supports handling -Infinity float label values.",
+        protocol: restXml,
+        method: "GET",
+        uri: "/FloatHttpLabels/-Infinity/-Infinity",
+        body: "",
+        params: {
+            float: "-Infinity",
+            double: "-Infinity",
+        }
+    },
+])
+
+@readonly
+@http(method: "GET", uri: "/FloatHttpLabels/{float}/{double}")
+operation HttpRequestWithFloatLabels {
+    input: HttpRequestWithFloatLabelsInput
+}
+
+structure HttpRequestWithFloatLabelsInput {
+    @httpLabel
+    @required
+    float: Float,
+    
+    @httpLabel
+    @required
+    double: Double,
 }

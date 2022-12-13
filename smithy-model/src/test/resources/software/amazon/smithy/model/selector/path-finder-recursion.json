@@ -1,0 +1,92 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "smithy.example#Operation": {
+            "type": "operation",
+            "input": { "target": "smithy.example#OperationInput" },
+            "output": { "target": "smithy.example#OperationOutput" }
+        },
+        "smithy.example#OperationInput": {
+            "type": "structure",
+            "members": {
+                "payload": {
+                    "target": "smithy.example#ComplexStructure"
+                }
+            }
+        },
+        "smithy.example#ComplexStructure": {
+            "type": "structure",
+            "members": {
+                "nestedStructure": {
+                    "target": "smithy.example#SimpleStructure"
+                },
+                "structureList": {
+                    "target": "smithy.example#ListOfStructures"
+                },
+                "structureMap": {
+                    "target": "smithy.example#MapOfStructures"
+                },
+                "recursiveStructure": {
+                    "target": "smithy.example#RecursiveStructure"
+                }
+            }
+        },
+        "smithy.example#SimpleStructure": {
+            "type": "structure",
+            "members": {
+                "snap": {
+                    "target": "smithy.api#String"
+                },
+                "crackle": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#deprecated": {}
+                    }
+                },
+                "pop": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
+        "smithy.example#ListOfStructures": {
+            "type": "list",
+            "member": {
+                "target": "smithy.example#SimpleStructure"
+            }
+        },
+        "smithy.example#MapOfStructures": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String"
+            },
+            "value": {
+                "target": "smithy.example#SimpleStructure",
+                "traits": {
+                    "smithy.api#deprecated": {}
+                }
+            }
+        },
+        "smithy.example#RecursiveStructure": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "smithy.api#String"
+                },
+                "bar": {
+                    "target": "smithy.example#RecursiveStructure",
+                    "traits": {
+                        "smithy.api#deprecated": {}
+                    }
+                }
+            }
+        },
+        "smithy.example#OperationOutput": {
+            "type": "structure",
+            "members": {
+                "payload": {
+                    "target": "smithy.example#ComplexStructure"
+                }
+            }
+        }
+    }
+}

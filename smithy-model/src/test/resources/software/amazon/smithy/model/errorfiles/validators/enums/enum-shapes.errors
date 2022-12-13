@@ -1,0 +1,10 @@
+[ERROR] ns.foo#StringEnum$INT_VALUE: enum members can only be assigned string values, but found: 1 | EnumShape
+[ERROR] ns.foo#StringEnum$DUPLICATE_VALUE: Multiple enum members found with duplicate value `explicit` | EnumShape
+[WARNING] ns.foo#StringEnum$undesirableName: The name `undesirableName` does not match the recommended enum name format of beginning with an uppercase letter, followed by any number of uppercase letters, numbers, or underscores. | EnumShape
+[ERROR] ns.foo#IntEnum$IMPLICIT_VALUE: intEnum members must be assigned an integer value | EnumShape
+[ERROR] ns.foo#IntEnum$STRING_VALUE: intEnum members require integer values, but found: "foo" | EnumShape
+[ERROR] ns.foo#IntEnum$DUPLICATE_VALUE: Multiple intEnum members found with duplicate value `1` | EnumShape
+[WARNING] ns.foo#IntEnum$undesirableName: The name `undesirableName` does not match the recommended enum name format of beginning with an uppercase letter, followed by any number of uppercase letters, numbers, or underscores. | EnumShape
+[WARNING] ns.foo#EnumWithEnumTrait: The enum trait is deprecated. Smithy 2.0 models should use the enum shape. | ModelDeprecation
+[ERROR] ns.foo#EnumWithEnumTrait: Trait `enum` cannot be applied to `ns.foo#EnumWithEnumTrait`. This trait may only be applied to shapes that match the following selector: string :not(enum) | TraitTarget
+[ERROR] ns.foo#StringEnum$EMPTY_STRING: enum values may not be empty. | EnumShape

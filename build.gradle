@@ -21,9 +21,9 @@ plugins {
     id "signing"
     id "checkstyle"
     id "jacoco"
-    id "com.github.spotbugs" version "4.6.0"
-    id "io.codearte.nexus-staging" version "0.21.0"
-    id "me.champeau.jmh" version "0.6.4"
+    id "com.github.spotbugs" version "4.7.1"
+    id "io.codearte.nexus-staging" version "0.30.0"
+    id "me.champeau.jmh" version "0.6.5"
 }
 
 ext {
@@ -178,6 +178,17 @@ subprojects {
         }
     }
 
+    task copyMavenMetadataForDevelopment(type: Copy) {
+        from('build/tmp/publishMavenJavaPublicationToMavenLocal') {
+            rename 'module-maven-metadata.xml', 'maven-metadata.xml'
+        }
+
+        def wdir = System.getProperty("user.home") + '/.m2/repository/software/amazon/smithy/' + project.name
+        into(wdir)
+    }
+
+    publishToMavenLocal.finalizedBy(copyMavenMetadataForDevelopment)
+
     // ==== CheckStyle ====
     // https://docs.gradle.org/current/userguide/checkstyle_plugin.html
     apply plugin: "checkstyle"
@@ -234,6 +245,13 @@ project.afterEvaluate {
 allprojects {
     tasks.withType(Javadoc) {
         options.addStringOption('Xdoclint:-html', '-quiet')
+        // Fixed in JDK 12: https://bugs.openjdk.java.net/browse/JDK-8215291
+        // --no-module-directories does not exist in JDK 8 and is removed in 13
+        if (JavaVersion.current().isJava9()
+                || JavaVersion.current().isJava10()
+                || JavaVersion.current().isJava11()) {
+            options.addBooleanOption('-no-module-directories', true)
+        }
     }
 }
 

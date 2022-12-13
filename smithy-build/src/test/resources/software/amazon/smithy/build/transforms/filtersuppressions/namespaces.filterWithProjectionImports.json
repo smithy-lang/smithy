@@ -1,0 +1,16 @@
+{
+    "version": "2.0",
+    "projections": {
+        "foo": {
+            "imports": ["namespaces.filterWithTopLevelImports.2.smithy"],
+            "transforms": [
+                {
+                    "name": "filterSuppressions",
+                    "args": {
+                        "removeUnused": true
+                    }
+                }
+            ]
+        }
+    }
+}

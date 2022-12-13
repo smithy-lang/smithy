@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#Operation": {
             "type": "operation",
@@ -9,6 +9,11 @@
             "output": {
                 "target": "ns.foo#OperationOutput"
             },
+            "errors": [
+                {
+                    "target": "ns.foo#OperationError"
+                }
+            ],
             "traits": {
                 "smithy.api#readonly": {},
                 "smithy.api#examples": [
@@ -19,6 +24,13 @@
                         },
                         "output": {
                             "bam": "value2"
+                        },
+                        "error": {
+                            "shapeId": "ns.foo#OperationError",
+                            "content": {
+                                "bat": "baz",
+                                "extra": "field"
+                            }
                         }
                     },
                     {
@@ -33,6 +45,17 @@
                 ]
             }
         },
+        "ns.foo#OperationError": {
+            "type": "structure",
+            "members": {
+                "bat": {
+                    "target": "ns.foo#String"
+                }
+            },
+            "traits": {
+                "smithy.api#error": "client"
+            }
+        },
         "ns.foo#OperationInput": {
             "type": "structure",
             "members": {
@@ -45,6 +68,9 @@
                 "baz": {
                     "target": "ns.foo#String"
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#OperationOutput": {
@@ -56,6 +82,9 @@
                         "smithy.api#required": {}
                     }
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#Operation2": {
@@ -69,7 +98,13 @@
                             "foo": "baz"
                         },
                         "output": {
-                            "foo": "baz"
+                            "bam": "baz"
+                        },
+                        "error": {
+                            "shapeId": "ns.foo#OperationError",
+                            "content": {
+                                "bat": "baz"
+                            }
                         }
                     }
                 ]

@@ -52,7 +52,9 @@ public final class AwsJson1_0Trait extends AwsProtocolTrait {
 
         @Override
         public AwsJson1_0Trait createTrait(ShapeId target, Node value) {
-            return builder().sourceLocation(value).fromNode(value).build();
+            AwsJson1_0Trait result = builder().fromNode(value).build();
+            result.setNodeCache(value);
+            return result;
         }
     }
 }

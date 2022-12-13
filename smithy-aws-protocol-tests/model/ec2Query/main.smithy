@@ -24,7 +24,7 @@
 // EC2 errors have an additional level of nesting. See xml-errors.smithy
 // for details.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace aws.protocoltests.ec2
 
@@ -63,6 +63,7 @@ service AwsEc2 {
         XmlBlobs,
         XmlTimestamps,
         XmlEnums,
+        XmlIntEnums,
         RecursiveXmlShapes,
         RecursiveXmlShapes,
         IgnoresWrappingXmlName,
@@ -74,5 +75,8 @@ service AwsEc2 {
         // @endpoint and @hostLabel trait tests
         EndpointOperation,
         EndpointWithHostLabelOperation,
+
+        // custom endpoints with paths
+        HostWithPathOperation,
     ]
 }

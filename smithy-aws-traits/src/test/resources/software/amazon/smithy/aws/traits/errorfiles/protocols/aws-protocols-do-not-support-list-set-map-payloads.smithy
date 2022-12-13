@@ -1,5 +1,8 @@
 // AWS protocols do not currently support applying the http payload trait to
 // sets, lists, or maps.
+//
+// This uses version 1.0 to test forbidding sets.
+$version: "1.0"
 
 namespace smithy.example
 
@@ -15,17 +18,19 @@ service InvalidExample {
 
 @http(method: "POST", uri: "/invalid-payload")
 operation InvalidBindingOperation {
-    input: InvalidBindingInput,
-    output: InvalidBindingOutput,
+    input: InvalidBindingOperationInput,
+    output: InvalidBindingOperationOutput,
     errors: [InvalidBindingError],
 }
 
-structure InvalidBindingInput {
+@input
+structure InvalidBindingOperationInput {
     @httpPayload
     listBinding: StringList,
 }
 
-structure InvalidBindingOutput {
+@output
+structure InvalidBindingOperationOutput {
     @httpPayload
     mapBinding: StringMap,
 }

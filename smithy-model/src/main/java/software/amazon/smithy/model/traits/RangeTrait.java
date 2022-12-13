@@ -80,7 +80,7 @@ public final class RangeTrait extends AbstractTrait implements ToSmithyBuilder<R
     }
 
     /**
-     * Builder used to create a LongTrait.
+     * Builder used to create a RangeTrait.
      */
     public static final class Builder extends AbstractTraitBuilder<RangeTrait, Builder> {
         private BigDecimal min;
@@ -110,12 +110,18 @@ public final class RangeTrait extends AbstractTrait implements ToSmithyBuilder<R
 
         @Override
         public RangeTrait createTrait(ShapeId target, Node value) {
-            ObjectNode objectNode = value.expectObjectNode();
-            BigDecimal minValue = objectNode.getMember("min")
-                    .map(node -> new BigDecimal(node.expectNumberNode().getValue().toString())).orElse(null);
-            BigDecimal maxValue = objectNode.getMember("max")
-                    .map(node -> new BigDecimal(node.expectNumberNode().getValue().toString())).orElse(null);
-            return builder().sourceLocation(value).min(minValue).max(maxValue).build();
+            Builder builder = builder().sourceLocation(value.getSourceLocation());
+            value.expectObjectNode()
+                    .getMember("min", Provider::convertToBigDecimal, builder::min)
+                    .getMember("max", Provider::convertToBigDecimal, builder::max);
+            RangeTrait result = builder.build();
+            result.setNodeCache(value);
+            return result;
+        }
+
+        private static BigDecimal convertToBigDecimal(Node number) {
+            Number value = number.expectNumberNode().getValue();
+            return value instanceof BigDecimal ? (BigDecimal) value : new BigDecimal(value.toString());
         }
     }
 }

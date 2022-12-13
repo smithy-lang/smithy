@@ -101,9 +101,9 @@ public class TopologicalIndexTest {
         TopologicalIndex index = TopologicalIndex.of(model);
 
         assertThat(index.getRecursiveClosure(model.expectShape(ShapeId.from("smithy.example#MyString"))),
-                   empty());
+                empty());
         assertThat(index.getRecursiveClosure(model.expectShape(ShapeId.from("smithy.example#Recursive$b"))),
-                   not(empty()));
+                not(empty()));
     }
 
     @Test

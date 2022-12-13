@@ -1,3 +1,5 @@
+$version: "2.0"
+
 namespace smithy.example
 
 @aws.protocols#restJson1
@@ -13,8 +15,8 @@ operation StreamingOperation {
 }
 
 structure Output {
-  @httpPayload
-  body: StreamingPayload,
+    @httpPayload
+    body: StreamingPayload = ""
 }
 
 @streaming

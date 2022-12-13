@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#MyService": {
             "type": "service",
@@ -324,7 +324,7 @@
                 "smithy.api#http": {
                     "method": "PUT",
                     "uri": "/f",
-                    "code": 204
+                    "code": 201
                 }
             }
         },
@@ -792,9 +792,12 @@
             }
         },
         "ns.foo#StringSet": {
-            "type": "set",
+            "type": "list",
             "member": {
                 "target": "ns.foo#String"
+            },
+            "traits": {
+                "smithy.api#uniqueItems": {}
             }
         },
         "ns.foo#Structure": {

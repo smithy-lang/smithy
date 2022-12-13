@@ -38,6 +38,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.openapi.OpenApiConfig;
 import software.amazon.smithy.openapi.OpenApiException;
+import software.amazon.smithy.openapi.OpenApiVersion;
 import software.amazon.smithy.openapi.model.OpenApi;
 import software.amazon.smithy.openapi.model.PathItem;
 import software.amazon.smithy.utils.IoUtils;
@@ -495,6 +496,90 @@ public class OpenApiConverterTest {
         Node result = OpenApiConverter.create().config(config).convertToNode(model);
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
                 getClass().getResourceAsStream("service-with-renames.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
+
+    @Test
+    public void generatesOpenApiForSharedErrors() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("service-with-common-errors.json"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#MyService"));
+        Node result = OpenApiConverter.create().config(config).convertToNode(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("service-with-common-errors.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
+
+    @Test
+    public void convertsUnitsThatDoNotConflict() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("nonconflicting-unit.smithy"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example.rest#RestService"));
+        Node result = OpenApiConverter.create().config(config).convertToNode(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("nonconflicting-unit.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
+
+    @Test
+    public void convertsToOpenAPI3_0_2() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("nullability-and-format.smithy"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example#Example"));
+        config.setVersion(OpenApiVersion.VERSION_3_0_2);
+        Node result = OpenApiConverter.create().config(config).convertToNode(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("openapi-3-0-2.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
+    @Test
+    public void convertsToOpenAPI3_1_0() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("nullability-and-format.smithy"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example#Example"));
+        config.setVersion(OpenApiVersion.VERSION_3_1_0);
+        Node result = OpenApiConverter.create().config(config).convertToNode(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("openapi-3-1-0.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
+
+    @Test
+    public void removesMixins() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("model-with-mixins.smithy"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#HasMixin"));
+        config.setProtocol(ShapeId.from("aws.protocols#restJson1"));
+        ObjectNode result = OpenApiConverter.create()
+                .config(config)
+                .convertToNode(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("model-with-mixins.openapi.json")));
 
         Node.assertEquals(result, expectedNode);
     }

@@ -1,0 +1,36 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "smithy.example#IntEnum": {
+            "type": "integer"
+        },
+        "smithy.example#StringEnum": {
+            "type": "string",
+            "traits": {
+                "smithy.api#enum": [
+                    {
+                        "value": "foo",
+                        "name": "FOO"
+                    },
+                    {
+                        "value": "bar",
+                        "name": "BAR"
+                    }
+                ]
+            }
+        },
+        "smithy.example#StringEnumNoName": {
+            "type": "string",
+            "traits": {
+                "smithy.api#enum": [
+                    {
+                        "value": "foo"
+                    },
+                    {
+                        "value": "bar"
+                    }
+                ]
+            }
+        }
+    }
+}

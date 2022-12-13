@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,14 +15,18 @@
 
 package software.amazon.smithy.model.shapes;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
@@ -31,12 +35,13 @@ import software.amazon.smithy.utils.SmithyBuilder;
  * @param <B> Concrete builder type.
  * @param <S> Shape being created.
  */
-public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S extends Shape>
+public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<B, S>, S extends Shape>
         implements SmithyBuilder<S>, FromSourceLocation {
 
     private ShapeId id;
-    private Map<ShapeId, Trait> traits;
+    private final BuilderRef<Map<ShapeId, Trait>> traits = BuilderRef.forUnorderedMap();
     private SourceLocation source = SourceLocation.none();
+    private Map<ShapeId, Shape> mixins;
 
     AbstractShapeBuilder() {}
 
@@ -80,8 +85,7 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S ext
      * @return Returns the builder.
      * @throws ShapeIdSyntaxException if the shape ID is invalid.
      */
-    @SuppressWarnings("unchecked")
-    public final B id(String shapeId) {
+    public B id(String shapeId) {
         return id(ShapeId.from(shapeId));
     }
 
@@ -92,7 +96,7 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S ext
      * @return Returns the builder.
      */
     @SuppressWarnings("unchecked")
-    public final B source(SourceLocation sourceLocation) {
+    public B source(SourceLocation sourceLocation) {
         if (sourceLocation == null) {
             throw new IllegalArgumentException("source must not be null");
         }
@@ -108,8 +112,7 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S ext
      * @param column Column number of the line where the shape was defined.
      * @return Returns the builder.
      */
-    @SuppressWarnings("unchecked")
-    public final B source(String filename, int line, int column) {
+    public B source(String filename, int line, int column) {
         return source(new SourceLocation(filename, line, column));
     }
 
@@ -120,10 +123,21 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S ext
      * @return Returns the builder.
      */
     @SuppressWarnings("unchecked")
-    public final B traits(Collection<Trait> traitsToSet) {
+    public B traits(Collection<Trait> traitsToSet) {
         clearTraits();
-        traitsToSet.forEach(this::addTrait);
+        for (Trait trait : traitsToSet) {
+            addTrait(trait);
+        }
         return (B) this;
+    }
+
+    /**
+     * Get an immutable view of the traits applied to the builder.
+     *
+     * @return Returns the applied traits.
+     */
+    public Map<ShapeId, Trait> getAllTraits() {
+        return traits.peek();
     }
 
     /**
@@ -134,8 +148,10 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S ext
      * @return Returns the builder.
      */
     @SuppressWarnings("unchecked")
-    public final B addTraits(Collection<Trait> traitsToAdd) {
-        traitsToAdd.forEach(this::addTrait);
+    public B addTraits(Collection<? extends Trait> traitsToAdd) {
+        for (Trait trait : traitsToAdd) {
+            addTrait(trait);
+        }
         return (B) this;
     }
 
@@ -146,16 +162,9 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S ext
      * @return Returns the builder.
      */
     @SuppressWarnings("unchecked")
-    public final B addTrait(Trait trait) {
-        if (trait == null) {
-            throw new IllegalArgumentException("trait must not be null");
-        }
-
-        if (traits == null) {
-            traits = new HashMap<>();
-        }
-
-        traits.put(trait.toShapeId(), trait);
+    public B addTrait(Trait trait) {
+        Objects.requireNonNull(trait, "trait must not be null");
+        traits.get().put(trait.toShapeId(), trait);
         return (B) this;
     }
 
@@ -168,7 +177,7 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S ext
      * @param traitId Absolute or relative ID of the trait to remove.
      * @return Returns the builder.
      */
-    public final B removeTrait(String traitId) {
+    public B removeTrait(String traitId) {
         return removeTrait(ShapeId.from(Trait.makeAbsoluteName(traitId)));
     }
 
@@ -179,9 +188,9 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S ext
      * @return Returns the builder.
      */
     @SuppressWarnings("unchecked")
-    public final B removeTrait(ShapeId traitId) {
-        if (traits != null) {
-            traits.remove(traitId);
+    public B removeTrait(ShapeId traitId) {
+        if (traits.hasValue()) {
+            traits.get().remove(traitId);
         }
         return (B) this;
     }
@@ -192,34 +201,16 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S ext
      * @return Returns the builder.
      */
     @SuppressWarnings("unchecked")
-    public final B clearTraits() {
-        if (traits != null) {
-            traits.clear();
-        }
+    public B clearTraits() {
+        traits.clear();
         return (B) this;
-    }
-
-    /**
-     * Configures the builder with the properties of the given shape.
-     *
-     * <p>This should be overridden in subclasses when the shape being
-     * build has more properties than those captured in the method below.
-     *
-     * @param shape Shape to extract values and populate the builder with.
-     * @return Returns the builder.
-     */
-    @SuppressWarnings("unchecked")
-    final B from(S shape) {
-        return (B) id(shape.getId())
-                .source(shape.getSourceLocation())
-                .addTraits(shape.getAllTraits().values());
     }
 
     /**
      * Adds a member to the shape IFF the shape supports members.
      *
      * @param member Member to add to the shape.
-     * @return Returns the model assembler.
+     * @return Returns the builder.
      * @throws UnsupportedOperationException if the shape does not support members.
      */
     public B addMember(MemberShape member) {
@@ -227,7 +218,113 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder, S ext
                 "Member `%s` cannot be added to %s", member.getId(), getClass().getName()));
     }
 
-    Map<ShapeId, Trait> copyTraits() {
-        return traits == null ? Collections.emptyMap() : MapUtils.copyOf(traits);
+    /**
+     * Removes all members from the builder.
+     *
+     * @return Returns the builder.
+     */
+    @SuppressWarnings("unchecked")
+    public B clearMembers() {
+        return (B) this;
+    }
+
+    /**
+     * Adds a mixin to the shape.
+     *
+     * @param shape Mixin to add.
+     * @return Returns the builder.
+     */
+    @SuppressWarnings("unchecked")
+    public B addMixin(Shape shape) {
+        if (mixins == null) {
+            mixins = new LinkedHashMap<>();
+        }
+
+        mixins.put(shape.getId(), shape);
+        return (B) this;
+    }
+
+    /**
+     * Replaces the mixins of the shape.
+     *
+     * @param mixins Mixins to add.
+     * @return Returns the builder.
+     */
+    @SuppressWarnings("unchecked")
+    public B mixins(Collection<? extends Shape> mixins) {
+        for (Shape shape : mixins) {
+            addMixin(shape);
+        }
+        return (B) this;
+    }
+
+    /**
+     * Removes a mixin from the shape by shape or ID.
+     *
+     * @param shape Shape or shape ID to remove.
+     * @return Returns the builder.
+     */
+    @SuppressWarnings("unchecked")
+    public B removeMixin(ToShapeId shape) {
+        if (mixins != null) {
+            mixins.remove(shape.toShapeId());
+        }
+
+        return (B) this;
+    }
+
+    /**
+     * Removes all mixins.
+     *
+     * @return Returns the builder.
+     */
+    @SuppressWarnings("unchecked")
+    public B clearMixins() {
+        if (mixins != null) {
+            // Avoid concurrent modification.
+            List<ShapeId> mixinIds = new ArrayList<>(mixins.keySet());
+            for (ShapeId id : mixinIds) {
+                removeMixin(id);
+            }
+        }
+        return (B) this;
+    }
+
+    /**
+     * Removes mixins from a shape and flattens them into the shape.
+     *
+     * <p>Flattening a mixin into a shape copies the traits and members of a
+     * mixin onto the shape, effectively resulting in the same shape but with
+     * no trace of the mixin relationship.
+     *
+     * @return Returns the updated builder.
+     */
+    @SuppressWarnings("unchecked")
+    public B flattenMixins() {
+        if (mixins == null || mixins.isEmpty()) {
+            return (B) this;
+        }
+
+        for (Shape mixin : mixins.values()) {
+            // Only inherit non-local traits that aren't already on the shape.
+            Map<ShapeId, Trait> nonLocalTraits = MixinTrait.getNonLocalTraitsFromMap(mixin.getAllTraits());
+            for (Map.Entry<ShapeId, Trait> entry : nonLocalTraits.entrySet()) {
+                if (!traits.hasValue() || !traits.get().containsKey(entry.getKey())) {
+                    addTrait(entry.getValue());
+                }
+            }
+        }
+
+        // Don't call clearMixins here because its side effects are unwanted.
+        mixins.clear();
+        return (B) this;
+    }
+
+    Map<ShapeId, Shape> getMixins() {
+        return mixins == null ? Collections.emptyMap() : mixins;
+    }
+
+    Map<ShapeId, Trait> getTraits() {
+        return traits.get();
     }
 }

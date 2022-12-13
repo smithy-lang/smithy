@@ -1,0 +1,2 @@
+[ERROR] smithy.example#Foo$bar: Error validating @default trait: String value provided for `smithy.example#Bar` must be >= 5 characters, but the provided value is only 2 characters. | DefaultTrait
+[ERROR] smithy.example#Foo$baz: Error validating @default trait: String value provided for `smithy.example#Baz` must match regular expression: ^[A-Z]+$ | DefaultTrait

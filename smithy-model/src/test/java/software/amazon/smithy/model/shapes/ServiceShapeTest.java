@@ -19,6 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.SourceException;
@@ -57,5 +58,33 @@ public class ServiceShapeTest {
                 .build();
 
         assertThat(serviceShape.getContextualName(id), equalTo("FooName"));
+    }
+
+    @Test
+    public void versionDefaultsToEmptyString() {
+        ServiceShape shape = ServiceShape.builder()
+                .id("com.foo#Example")
+                .build();
+
+        assertThat(shape.getVersion(), equalTo(""));
+    }
+
+    @Test
+    public void hasErrors() {
+        ServiceShape shape = ServiceShape.builder()
+                .id("com.foo#Example")
+                .version("x")
+                .addError("com.foo#Common1")
+                .addError(ShapeId.from("com.foo#Common2"))
+                .build();
+
+        assertThat(shape, equalTo(shape));
+        assertThat(shape, equalTo(shape.toBuilder().build()));
+
+        ServiceShape shape2 = shape.toBuilder()
+                .errors(Arrays.asList(ShapeId.from("com.foo#Common1"), ShapeId.from("com.foo#Common2")))
+                .build();
+
+        assertThat(shape, equalTo(shape2));
     }
 }

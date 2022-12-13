@@ -15,11 +15,10 @@
 
 package software.amazon.smithy.codegen.core;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -70,14 +69,14 @@ public final class Symbol extends TypedPropertiesBag
     private final List<SymbolDependency> dependencies;
 
     private Symbol(Builder builder) {
-        super(builder.properties);
+        super(builder);
         this.namespace = builder.namespace;
         this.namespaceDelimiter = builder.namespaceDelimiter;
         this.name = builder.name;
         this.declarationFile = builder.declarationFile;
         this.definitionFile = !builder.definitionFile.isEmpty() ? builder.definitionFile : declarationFile;
-        this.references = ListUtils.copyOf(builder.references);
-        this.dependencies = ListUtils.copyOf(builder.dependencies);
+        this.references = builder.references.copy();
+        this.dependencies = builder.dependencies.copy();
     }
 
     /**
@@ -111,7 +110,7 @@ public final class Symbol extends TypedPropertiesBag
     }
 
     /**
-     * Gets the unqualified name of the symbol, that is, a name with
+     * Gets the unqualified name of the symbol, that is, a name without
      * namespace.
      *
      * @return Returns the name of the symbol.
@@ -127,7 +126,7 @@ public final class Symbol extends TypedPropertiesBag
      * symbol's declaration in a file with the same name that is
      * returned from this method. Not all languages separate a symbol's
      * definition from its declaration. This method is useful for things
-     * like like C and C++ header files.
+     * like C and C++ header files.
      *
      * <p>This method returns an empty string if no value was provided
      * in the builder.
@@ -178,6 +177,73 @@ public final class Symbol extends TypedPropertiesBag
      */
     public String relativize(String namespace) {
         return this.namespace.equals(namespace) ? name : toString();
+    }
+
+    /**
+     * Converts the symbol to a {@link SymbolReference} using the given {@code alias}.
+     *
+     * @param alias Alias to use to refer to the symbol.
+     * @param options Variadic array of {@link SymbolReference.Option}s.
+     * @return Returns the created SymbolReference.
+     */
+    public SymbolReference toReference(String alias, SymbolReference.Option... options) {
+        return SymbolReference.builder()
+                .alias(alias)
+                .symbol(this)
+                .options(options)
+                .build();
+    }
+
+    /**
+     * Converts the symbol to a {@link Symbol} that refers to this Symbol
+     * using a {@link SymbolReference}. This makes it easier to refer to a
+     * type using an alias but still through a Symbol to be compatible with
+     * {@link SymbolProvider}.
+     *
+     * <p>The following example creates a Symbol that is referred to as
+     * "__Document" in code, but is an alias of "foo.Document".
+     *
+     * <pre>{@code
+     * Symbol aliasedSymbol = Symbol.builder()
+     *         .name("Document")
+     *         .namespace("foo", ".")
+     *         .build()
+     *         .toReferenceSymbol("__Document");
+     * }</pre>
+     *
+     * <p>When used with a {@link SymbolWriter}, the writer should add an
+     * import on "foo.Document" and alias it to "__Document".
+     *
+     * <p>The created symbol uses an empty namespace (""). If this is not
+     * compatible with specific {@link ImportContainer}s to understand that
+     * the aliased symbol itself needs no imports, then you can augment the
+     * symbol with other metadata by instead using {@link #toReferencedSymbolBuilder(String)}.
+     *
+     * <p>Note that this does not work with every programming language.
+     * For example, Java does not support aliasing whereas TypeScript does.
+     *
+     * @param alias Alias to use to refer to the symbol.
+     * @return Returns the created Symbol.
+     * @see #toReferencedSymbolBuilder(String)
+     */
+    public Symbol toReferencedSymbol(String alias) {
+        return toReferencedSymbolBuilder(alias).build();
+    }
+
+    /**
+     * Converts the symbol to a {@link Symbol.Builder} that refers to this
+     * Symbol using a {@link SymbolReference} via an alias. This makes it
+     * easier to refer to type using an alias but still use a Symbol to be
+     * compatible with SymbolProviders.
+     *
+     * @param alias Alias to use to refer to the symbol.
+     * @return Returns a SymbolBuilder that is prepared with the symbol and alias.
+     * @see #toReferencedSymbol(String)
+     */
+    public Symbol.Builder toReferencedSymbolBuilder(String alias) {
+        return builder()
+                .name(alias)
+                .addReference(toReference(alias, SymbolReference.ContextOption.USE));
     }
 
     /**
@@ -252,8 +318,8 @@ public final class Symbol extends TypedPropertiesBag
         private String namespaceDelimiter = "";
         private String definitionFile = "";
         private String declarationFile = "";
-        private final List<SymbolReference> references = new ArrayList<>();
-        private final List<SymbolDependency> dependencies = new ArrayList<>();
+        private final BuilderRef<List<SymbolReference>> references = BuilderRef.forList();
+        private final BuilderRef<List<SymbolDependency>> dependencies = BuilderRef.forList();
 
         @Override
         public Symbol build() {
@@ -345,7 +411,7 @@ public final class Symbol extends TypedPropertiesBag
          * @return Returns the builder.
          */
         public Builder addReference(SymbolReference reference) {
-            references.add(Objects.requireNonNull(reference));
+            references.get().add(Objects.requireNonNull(reference));
             return this;
         }
 
@@ -379,7 +445,7 @@ public final class Symbol extends TypedPropertiesBag
          * @return Returns the builder.
          */
         public Builder addDependency(SymbolDependencyContainer dependency) {
-            dependencies.addAll(dependency.getDependencies());
+            dependencies.get().addAll(dependency.getDependencies());
             return this;
         }
 

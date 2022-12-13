@@ -1,0 +1,120 @@
+{
+    "smithy": "1.0",
+    "shapes": {
+        "smithy.example#B": {
+            "type": "structure",
+            "members": {}
+        },
+        "smithy.example#F": {
+            "type": "structure",
+            "members": {}
+        },
+        "smithy.example#MixedBigDecimal": {
+            "type": "bigDecimal"
+        },
+        "smithy.example#MixedBigInt": {
+            "type": "bigInteger"
+        },
+        "smithy.example#MixedBlob": {
+            "type": "blob"
+        },
+        "smithy.example#MixedBoolean": {
+            "type": "boolean",
+            "traits": {
+                "smithy.api#box": {}
+            }
+        },
+        "smithy.example#MixedByte": {
+            "type": "byte",
+            "traits": {
+                "smithy.api#box": {}
+            }
+        },
+        "smithy.example#MixedDocument": {
+            "type": "document"
+        },
+        "smithy.example#MixedDouble": {
+            "type": "double",
+            "traits": {
+                "smithy.api#box": {}
+            }
+        },
+        "smithy.example#MixedFloat": {
+            "type": "float",
+            "traits": {
+                "smithy.api#box": {}
+            }
+        },
+        "smithy.example#MixedInteger": {
+            "type": "integer",
+            "traits": {
+                "smithy.api#box": {}
+            }
+        },
+        "smithy.example#MixedList": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String"
+            }
+        },
+        "smithy.example#MixedLong": {
+            "type": "long",
+            "traits": {
+                "smithy.api#box": {}
+            }
+        },
+        "smithy.example#MixedMap": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String"
+            },
+            "value": {
+                "target": "smithy.api#String"
+            }
+        },
+        "smithy.example#MixedSet": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String"
+            },
+            "traits": {
+                "smithy.api#uniqueItems": {}
+            }
+        },
+        "smithy.example#MixedShort": {
+            "type": "short",
+            "traits": {
+                "smithy.api#box": {}
+            }
+        },
+        "smithy.example#MixedString": {
+            "type": "string"
+        },
+        "smithy.example#MixedTimestamp": {
+            "type": "timestamp"
+        },
+        "smithy.example#PrimitiveInteger": {
+            "type": "integer"
+        },
+        "smithy.example#Struct": {
+            "type": "structure",
+            "members": {
+                "foo": {
+                    "target": "smithy.example#PrimitiveInteger"
+                },
+                "bar": {
+                    "target": "smithy.example#PrimitiveInteger",
+                    "traits": {
+                        "smithy.api#box": {}
+                    }
+                },
+                "baz": {
+                    "target": "smithy.example#MixedInteger"
+                },
+                "bam": {
+                    "target": "smithy.example#MixedInteger"
+                }
+            }
+        }
+    }
+}

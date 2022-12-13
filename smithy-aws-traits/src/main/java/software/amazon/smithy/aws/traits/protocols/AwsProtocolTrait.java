@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.aws.traits.protocols;
 
-import java.util.ArrayList;
 import java.util.List;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -23,7 +22,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.BuilderRef;
 
 /**
  * Represents a configurable AWS protocol trait.
@@ -42,8 +41,8 @@ public abstract class AwsProtocolTrait extends AbstractTrait {
     // package-private constructor (at least for now)
     AwsProtocolTrait(ShapeId id, Builder<?, ?> builder) {
         super(id, builder.getSourceLocation());
-        http = ListUtils.copyOf(builder.http);
-        eventStreamHttp = ListUtils.copyOf(builder.eventStreamHttp);
+        http = builder.http.copy();
+        eventStreamHttp = builder.eventStreamHttp.copy();
     }
 
     /**
@@ -68,6 +67,7 @@ public abstract class AwsProtocolTrait extends AbstractTrait {
     @Override
     protected Node createNode() {
         ObjectNode.Builder builder = Node.objectNodeBuilder();
+        builder.sourceLocation(getSourceLocation());
 
         if (!getHttp().isEmpty()) {
             builder.withMember(HTTP, Node.fromStrings(getHttp()));
@@ -88,8 +88,8 @@ public abstract class AwsProtocolTrait extends AbstractTrait {
      */
     public abstract static class Builder<T extends Trait, B extends Builder> extends AbstractTraitBuilder<T, B> {
 
-        private final List<String> http = new ArrayList<>();
-        private final List<String> eventStreamHttp = new ArrayList<>();
+        private final BuilderRef<List<String>> http = BuilderRef.forList();
+        private final BuilderRef<List<String>> eventStreamHttp = BuilderRef.forList();
 
         /**
          * Sets the list of supported HTTP protocols.
@@ -100,7 +100,7 @@ public abstract class AwsProtocolTrait extends AbstractTrait {
         @SuppressWarnings("unchecked")
         public B http(List<String> http) {
             this.http.clear();
-            this.http.addAll(http);
+            this.http.get().addAll(http);
             return (B) this;
         }
 
@@ -113,7 +113,7 @@ public abstract class AwsProtocolTrait extends AbstractTrait {
         @SuppressWarnings("unchecked")
         public B eventStreamHttp(List<String> eventStreamHttp) {
             this.eventStreamHttp.clear();
-            this.eventStreamHttp.addAll(eventStreamHttp);
+            this.eventStreamHttp.get().addAll(eventStreamHttp);
             return (B) this;
         }
 
@@ -125,6 +125,7 @@ public abstract class AwsProtocolTrait extends AbstractTrait {
          */
         @SuppressWarnings("unchecked")
         public B fromNode(Node node) {
+            sourceLocation(node.getSourceLocation());
             ObjectNode objectNode = node.expectObjectNode();
             objectNode.getArrayMember(HTTP)
                     .map(values -> Node.loadArrayOfString(HTTP, values))

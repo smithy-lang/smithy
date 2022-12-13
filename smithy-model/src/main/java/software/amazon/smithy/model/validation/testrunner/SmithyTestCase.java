@@ -30,6 +30,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.utils.IoUtils;
 
 /**
@@ -40,8 +41,8 @@ public final class SmithyTestCase {
     private static final Pattern EVENT_PATTERN = Pattern.compile(
             "^\\[(?<severity>SUPPRESSED|NOTE|WARNING|DANGER|ERROR)] (?<shape>[^ ]+): ?(?<message>.*) \\| (?<id>[^)]+)");
 
-    private List<ValidationEvent> expectedEvents;
-    private String modelLocation;
+    private final List<ValidationEvent> expectedEvents;
+    private final String modelLocation;
 
     /**
      * @param modelLocation Location of where the model is stored.
@@ -115,6 +116,12 @@ public final class SmithyTestCase {
         List<ValidationEvent> extraEvents = actualEvents.stream()
                 .filter(actualEvent -> getExpectedEvents().stream()
                         .noneMatch(expectedEvent -> compareEvents(expectedEvent, actualEvent)))
+                // Exclude suppressed events from needing to be defined as acceptable validation
+                // events. However, these can still be defined as required events.
+                .filter(event -> event.getSeverity() != Severity.SUPPRESSED)
+                // Exclude ModelDeprecation events and deprecation warnings about traits
+                // needing to be defined. Without this exclusion, existing 1.0 test cases will fail.
+                .filter(event -> !isModelDeprecationEvent(event))
                 .collect(Collectors.toList());
 
         return new SmithyTestCase.Result(getModelLocation(), unmatchedEvents, extraEvents);
@@ -126,12 +133,19 @@ public final class SmithyTestCase {
             normalizedActualMessage += " (" + actual.getSuppressionReason().get() + ")";
         }
 
-        String comparedMessage = expected.getMessage().replace("\n", "\\n");
+        String comparedMessage = expected.getMessage().replace("\n", "\\n").replace("\r", "\\n");
         return expected.getSeverity() == actual.getSeverity()
                && expected.getId().equals(actual.getId())
                && expected.getShapeId().equals(actual.getShapeId())
                // Normalize new lines.
                && normalizedActualMessage.startsWith(comparedMessage);
+    }
+
+    private boolean isModelDeprecationEvent(ValidationEvent event) {
+        return event.getId().equals(Validator.MODEL_DEPRECATION)
+               // Trait vendors should be free to deprecate a trait without breaking consumers.
+               || event.getId().equals("DeprecatedTrait")
+               || event.getId().equals("DeprecatedShape");
     }
 
     private static String inferErrorFileLocation(String modelLocation) {

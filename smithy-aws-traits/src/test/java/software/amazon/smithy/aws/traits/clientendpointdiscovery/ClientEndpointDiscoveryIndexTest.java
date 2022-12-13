@@ -45,7 +45,7 @@ public class ClientEndpointDiscoveryIndexTest {
         assertEquals(service, info.getService().getId());
         assertEquals(operation, info.getOperation().getId());
         assertEquals(ShapeId.from("ns.foo#DescribeEndpoints"), info.getDiscoveryOperation().getId());
-        assertEquals(ShapeId.from("ns.foo#InvalidEndpointError"), info.getError().getId());
+        assertEquals(ShapeId.from("ns.foo#InvalidEndpointError"), info.getOptionalError().get().getId());
         assertEquals(1, info.getDiscoveryIds().size());
         assertEquals(ShapeId.from("ns.foo#GetObjectInput$Id"), info.getDiscoveryIds().get(0).getId());
     }

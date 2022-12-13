@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "ns.foo#FooService": {
             "type": "service",
@@ -49,10 +49,10 @@
         "ns.foo#DescribeEndpoints2": {
             "type": "operation",
             "input": {
-                "target": "ns.foo#DescribeEndpointsInput2"
+                "target": "ns.foo#DescribeEndpoints2Input"
             },
             "output": {
-                "target": "ns.foo#DescribeEndpointsOutput"
+                "target": "ns.foo#DescribeEndpoints2Output"
             }
         },
         "ns.foo#DescribeEndpointsInput": {
@@ -67,9 +67,12 @@
                 "Identifiers": {
                     "target": "ns.foo#Identifiers"
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
-        "ns.foo#DescribeEndpointsInput2": {
+        "ns.foo#DescribeEndpoints2Input": {
             "type": "structure",
             "members": {
                 "Operation": {
@@ -78,6 +81,9 @@
                 "Identifiers": {
                     "target": "ns.foo#StructureIdentifiers"
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#Identifiers": {
@@ -103,6 +109,20 @@
                 "Endpoints": {
                     "target": "ns.foo#Endpoints"
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
+            }
+        },
+        "ns.foo#DescribeEndpoints2Output": {
+            "type": "structure",
+            "members": {
+                "Endpoints": {
+                    "target": "ns.foo#Endpoints"
+                }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#Endpoints": {
@@ -151,6 +171,9 @@
                         "smithy.api#required": {}
                     }
                 }
+            },
+            "traits": {
+                "smithy.api#input": {}
             }
         },
         "ns.foo#GetObjectOutput": {
@@ -159,6 +182,9 @@
                 "Object": {
                     "target": "smithy.api#Blob"
                 }
+            },
+            "traits": {
+                "smithy.api#output": {}
             }
         },
         "ns.foo#InvalidEndpointError": {

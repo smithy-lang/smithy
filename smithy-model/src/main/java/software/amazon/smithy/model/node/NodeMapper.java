@@ -18,6 +18,8 @@ package software.amazon.smithy.model.node;
 import static java.lang.String.format;
 
 import java.io.File;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
@@ -58,7 +60,7 @@ public final class NodeMapper {
          * Throws an exception when attempting to deserialize an unknown property.
          */
         FAIL {
-            public void handle(Class<?> into, String pointer, String property, Node value) {
+            public void handle(Type into, String pointer, String property, Node value) {
                 String message = createMessage(property, pointer, into, value);
                 throw new NodeDeserializationException(message, value.getSourceLocation());
             }
@@ -68,7 +70,7 @@ public final class NodeMapper {
          * Warns when attempting to deserialize an unknown property.
          */
         WARN {
-            public void handle(Class<?> into, String pointer, String property, Node value) {
+            public void handle(Type into, String pointer, String property, Node value) {
                 LOGGER.warning(createMessage(property, pointer, into, value));
             }
         },
@@ -77,7 +79,7 @@ public final class NodeMapper {
          * Ignores unknown properties.
          */
         INGORE {
-            public void handle(Class<?> into, String pointer, String property, Node value) {
+            public void handle(Type into, String pointer, String property, Node value) {
             }
         };
 
@@ -89,14 +91,14 @@ public final class NodeMapper {
          * @param property The property that was unknown to the type.
          * @param value The Node being deserialized.
          */
-        public abstract void handle(Class<?> into, String pointer, String property, Node value);
+        public abstract void handle(Type into, String pointer, String property, Node value);
 
-        private static String createMessage(String property, String pointer, Class<?> into, Node node) {
+        private static String createMessage(String property, String pointer, Type into, Node node) {
             String location = node.getSourceLocation() == SourceLocation.NONE
                     ? ""
                     : " " + node.getSourceLocation().toString().trim();
             return format("Deserialization error at %s%s: unable to find setter method for `%s` on %s",
-                          getNormalizedPointer(pointer), location, property, into.getCanonicalName());
+                          getNormalizedPointer(pointer), location, property, into.getTypeName());
         }
     }
 
@@ -139,14 +141,13 @@ public final class NodeMapper {
          * Creates an Object from the given {@code Node} into the given {@code target}.
          *
          * @param node Node to convert into {@code target}.
-         * @param target Type to create.
-         * @param param The nullable parametric type of a {@link Collection} or {@link Map}.
+         * @param type Type to create.
          * @param pointer The JSON pointer to the current serialization context.
          * @param mapper Mapper to invoke to recursively deserialize values.
          * @return Returns the created {@code target} instance.
          * @throws NodeDeserializationException when unable to deserialize a value.
          */
-        Object create(Node node, Class<?> target, Class<?> param, String pointer, NodeMapper mapper);
+        Object create(Node node, Type type, String pointer, NodeMapper mapper);
     }
 
     /**
@@ -168,13 +169,17 @@ public final class NodeMapper {
          * @return Returns the {@code ObjectCreator} or {@code null} if the factory cannot handle the given arguments.
          * @throws NodeDeserializationException when unable to create a factory.
          */
+        ObjectCreator getCreator(NodeType nodeType, Type target, NodeMapper nodeMapper);
+    }
+
+    interface ObjectClassCreatorFactory {
         ObjectCreator getCreator(NodeType nodeType, Class<?> target, NodeMapper nodeMapper);
     }
 
     private static final Logger LOGGER = Logger.getLogger(NodeMapper.class.getName());
     private WhenMissing whenMissing = WhenMissing.WARN;
-    private final Set<Class> disableToNode = new HashSet<>();
-    private final Set<Class> disableFromNode = new HashSet<>();
+    private final Set<Type> disableToNode = new HashSet<>();
+    private final Set<Type> disableFromNode = new HashSet<>();
     private boolean serializeNullValues = false;
     private boolean omitEmptyValues;
 
@@ -225,7 +230,7 @@ public final class NodeMapper {
      *
      * @param type Class to disable the {@code toNode} method serialization for.
      */
-    public void disableToNodeForClass(Class type) {
+    public void disableToNodeForClass(Type type) {
         disableToNode.add(type);
     }
 
@@ -235,7 +240,7 @@ public final class NodeMapper {
      *
      * @param type Class to enable the {@code toNode} method serialization for.
      */
-    public void enableToNodeForClass(Class type) {
+    public void enableToNodeForClass(Type type) {
         disableToNode.remove(type);
     }
 
@@ -244,7 +249,7 @@ public final class NodeMapper {
      *
      * @return Returns the disabled classes.
      */
-    public Set<Class> getDisableToNode() {
+    public Set<Type> getDisableToNode() {
         return disableToNode;
     }
 
@@ -260,7 +265,7 @@ public final class NodeMapper {
      *
      * @param type Class to disable the {@code fromNode} method deserialization for.
      */
-    public void disableFromNodeForClass(Class type) {
+    public void disableFromNodeForClass(Type type) {
         disableFromNode.add(type);
     }
 
@@ -270,7 +275,7 @@ public final class NodeMapper {
      *
      * @param type Class to enable the {@code fromNode} method deserialization for.
      */
-    public void enableFromNodeForClass(Class type) {
+    public void enableFromNodeForClass(Type type) {
         disableFromNode.remove(type);
     }
 
@@ -279,12 +284,12 @@ public final class NodeMapper {
      *
      * @return Returns the disabled classes.
      */
-    public Set<Class> getDisableFromNode() {
+    public Set<Type> getDisableFromNode() {
         return disableFromNode;
     }
 
     /**
-     * Gets whether or not empty arrays and empty objects are omitted from
+     * Gets whether or not false, empty arrays, and empty objects are omitted from
      * serialized POJOs.
      *
      * @return Returns true if empty arrays and POJOs returned from POJO getters are omitted.
@@ -294,9 +299,9 @@ public final class NodeMapper {
     }
 
     /**
-     * Gets whether or not empty arrays and objects are omitted from serialized POJOs.
+     * Gets whether or not false, empty arrays, and empty objects are omitted from serialized POJOs.
      *
-     * @param omitEmptyValues Set to true if empty arrays and objects returned from POJO getters are omitted.
+     * @param omitEmptyValues Set to true if false, empty arrays, and objects returned from POJO getters are omitted.
      */
     public void setOmitEmptyValues(boolean omitEmptyValues) {
         this.omitEmptyValues = omitEmptyValues;
@@ -432,7 +437,7 @@ public final class NodeMapper {
      * @see #deserializeMap(Node, Class, Class)
      */
     public <T> T deserialize(Node value, Class<T> into) {
-        return deserializeNext(value, "", into, Object.class, this);
+        return deserializeNext(value, "", into, this);
     }
 
     /**
@@ -470,13 +475,29 @@ public final class NodeMapper {
      * @throws NodeDeserializationException on error.
      * @see #deserialize(Node, Class)
      */
-    @SuppressWarnings("unchecked")
-    public <T extends Collection, U, V extends Collection<? extends U>> V deserializeCollection(
+    public <T extends Collection<?>, U, V extends Collection<? extends U>> V deserializeCollection(
             Node value,
             Class<T> into,
             Class<U> members
     ) {
-        return (V) deserializeNext(value, "", into, members, this);
+        ParameterizedType type = new ParameterizedType() {
+            @Override
+            public Type[] getActualTypeArguments() {
+                return new Type[]{members};
+            }
+
+            @Override
+            public Type getRawType() {
+                return into;
+            }
+
+            @Override
+            public Type getOwnerType() {
+                return null;
+            }
+        };
+
+        return deserializeNext(value, "", type, this);
     }
 
     /**
@@ -495,12 +516,29 @@ public final class NodeMapper {
      * @throws NodeDeserializationException on error.
      * @see #deserialize(Node, Class)
      */
-    @SuppressWarnings("unchecked")
-    public <T extends Map, U, V extends Map<String, ? extends U>> V deserializeMap(
-            Node value, Class<T> into,
+    public <T extends Map<?, ?>, U, V extends Map<String, ? extends U>> V deserializeMap(
+            Node value,
+            Class<T> into,
             Class<U> members
     ) {
-        return (V) deserializeNext(value, "", into, members, this);
+        ParameterizedType type = new ParameterizedType() {
+            @Override
+            public Type[] getActualTypeArguments() {
+                return new Type[]{String.class, members};
+            }
+
+            @Override
+            public Type getRawType() {
+                return into;
+            }
+
+            @Override
+            public Type getOwnerType() {
+                return null;
+            }
+        };
+
+        return deserializeNext(value, "", type, this);
     }
 
     /**
@@ -513,23 +551,15 @@ public final class NodeMapper {
      * @param value Node value to deserialize.
      * @param pointer The JSON Pointer to the location of the value being deserialized.
      * @param into The type being created.
-     * @param parametricType The parametric type of {@link Collection} or {@link Map} targets.
      * @param mapper The {@code Mapper} that can be invoked to recursively deserialize.
      * @param <T> The type of value to create.
      * @return Returns the created value.
      */
     @SuppressWarnings("unchecked")
-    <T> T deserializeNext(
-            Node value,
-            String pointer,
-            Class<?> into,
-            Class<?> parametricType,
-            NodeMapper mapper
-    ) {
+    <T> T deserializeNext(Node value, String pointer, Type into, NodeMapper mapper) {
         Objects.requireNonNull(value, "Deserialization value cannot be null");
         Objects.requireNonNull(pointer, "Deserialization pointer cannot be null");
         Objects.requireNonNull(into, "Deserialization into cannot be null");
-        Objects.requireNonNull(parametricType, "Deserialization parametricType cannot be null");
         Objects.requireNonNull(mapper, "Deserialization mapper cannot be null");
 
         try {
@@ -537,7 +567,7 @@ public final class NodeMapper {
             if (creator == null) {
                 throw createError(into, pointer, value, null, null);
             }
-            return (T) creator.create(value, into, parametricType, pointer, mapper);
+            return (T) creator.create(value, into, pointer, mapper);
         } catch (NodeDeserializationException e) {
             // Rethrow already formatted exceptions.
             throw e;
@@ -548,7 +578,7 @@ public final class NodeMapper {
     }
 
     private static NodeDeserializationException createError(
-            Class<?> into,
+            Type into,
             String pointer,
             Node node,
             String message,
@@ -558,10 +588,10 @@ public final class NodeMapper {
         return new NodeDeserializationException(errorMessage, node.getSourceLocation(), cause);
     }
 
-    static String createErrorMessage(Class<?> into, String pointer, Node node, String message) {
+    static String createErrorMessage(Type into, String pointer, Node node, String message) {
         String formatted = String.format(
                 "Deserialization error at %s: unable to create %s from %s",
-                getNormalizedPointer(pointer), into.getCanonicalName(), Node.printJson(node));
+                getNormalizedPointer(pointer), into.getTypeName(), Node.printJson(node));
         if (message != null) {
             formatted += ": " + message;
         }

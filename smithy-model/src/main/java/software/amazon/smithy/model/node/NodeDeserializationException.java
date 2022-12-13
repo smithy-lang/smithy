@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.model.node;
 
+import java.lang.reflect.Type;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 
@@ -41,7 +42,7 @@ public class NodeDeserializationException extends SourceException {
      * @return Returns the created exception.
      */
     static NodeDeserializationException fromReflectiveContext(
-            Class<?> into,
+            Type into,
             String pointer,
             Node node,
             ReflectiveOperationException previous,
@@ -65,7 +66,7 @@ public class NodeDeserializationException extends SourceException {
      * @return Returns the created exception.
      */
     static NodeDeserializationException fromContext(
-            Class<?> into,
+            Type into,
             String pointer,
             Node node,
             Throwable previous,
