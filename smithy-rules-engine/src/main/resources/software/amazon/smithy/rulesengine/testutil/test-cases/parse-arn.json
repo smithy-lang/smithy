@@ -139,6 +139,16 @@
       }
     },
     {
+      "documentation": "accountId MAY be non-numeric",
+      "params": {
+        "TestCaseId": "valid-arn",
+        "Bucket": "arn:aws:s3:us-east-1:abcd:resource-id"
+      },
+      "expect": {
+        "error": "Test case passed: A valid ARN was parsed: service: `s3`, partition: `aws, region: `us-east-1`, accountId: `abcd`, resource: `resource-id`"
+      }
+    },
+    {
       "documentation": "resource may contain both `:` and `/`",
       "params": {
         "TestCaseId": "valid-arn",
