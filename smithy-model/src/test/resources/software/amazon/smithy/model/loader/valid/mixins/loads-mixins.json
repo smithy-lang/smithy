@@ -233,6 +233,15 @@
                 "target": "smithy.example#MixinMap"
             }]
         },
+        "smithy.example#MixedMapRedefineValue": {
+            "type": "map",
+            "value": {
+                "target": "smithy.api#String"
+            },
+            "mixins": [{
+                "target": "smithy.example#MixinMap"
+            }]
+        },
         "smithy.example#MixinService": {
             "type": "service",
             "traits": {
