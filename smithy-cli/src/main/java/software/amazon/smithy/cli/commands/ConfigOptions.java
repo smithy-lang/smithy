@@ -27,18 +27,21 @@ import java.util.logging.Logger;
 import software.amazon.smithy.build.SmithyBuild;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.ArgumentReceiver;
+import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.HelpPrinter;
 
 final class ConfigOptions implements ArgumentReceiver {
 
     private static final Logger LOGGER = Logger.getLogger(ConfigOptions.class.getName());
     private final List<String> config = new ArrayList<>();
+    private boolean noConfig = false;
 
     @Override
     public void registerHelp(HelpPrinter printer) {
         printer.param("--config", "-c", "CONFIG_PATH...",
-                      "Path to smithy-build.json configuration (defaults to './smithy-build.json'). "
-                      + "This option can be repeated and each configured will be merged.");
+                      "Path to smithy-build.json config (defaults to ./smithy-build.json if not specified). "
+                      + "This option can be repeated, merging each config file.");
+        printer.option("--no-config", null, "Disable config file detection and use.");
     }
 
     @Override
@@ -52,9 +55,21 @@ final class ConfigOptions implements ArgumentReceiver {
         }
     }
 
+    @Override
+    public boolean testOption(String name) {
+        if (name.equals("--no-config")) {
+            noConfig = true;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     List<String> config() {
         List<String> config = this.config;
-        if (config.isEmpty()) {
+
+        // Don't find the default config if --no-config is passed.
+        if (config.isEmpty() && !noConfig) {
             Path defaultConfig = Paths.get("smithy-build.json").toAbsolutePath();
             if (Files.exists(defaultConfig)) {
                 LOGGER.fine("Detected smithy-build.json at " + defaultConfig);
@@ -68,6 +83,11 @@ final class ConfigOptions implements ArgumentReceiver {
         long startTime = System.nanoTime();
         SmithyBuildConfig smithyBuildConfig;
         List<String> config = config();
+
+        if (noConfig && !config.isEmpty()) {
+            throw new CliError("Invalid combination of --no-config and --config. --no-config can be omitted because "
+                               + "providing --config/-c disables automatically loading ./smithy-build.json.");
+        }
 
         if (config.isEmpty()) {
             smithyBuildConfig = SmithyBuildConfig.builder().version(SmithyBuild.VERSION).build();

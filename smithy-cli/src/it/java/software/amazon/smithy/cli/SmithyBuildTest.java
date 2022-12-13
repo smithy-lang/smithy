@@ -79,4 +79,25 @@ public class SmithyBuildTest {
             assertThat(result.getExitCode(), equalTo(0));
         });
     }
+
+    @Test
+    public void canDisableConfigFileDetection() {
+        // Disable the config file detection and don't pass model via positional arguments.
+        // This causes main.smithy to not be loaded.
+        IntegUtils.run("simple-config-sources", ListUtils.of("build", "--no-config"), result -> {
+            assertThat(result.getExitCode(), equalTo(0));
+            assertThat(result.hasArtifact("source", "sources", "main.smithy"), is(false));
+        });
+    }
+
+    @Test
+    public void failsWhenConfigIsProvidedAndDisabled() {
+        // Disable the config file detection and don't pass model via positional arguments.
+        // This causes main.smithy to not be loaded.
+        IntegUtils.run("simple-config-sources", ListUtils.of("build", "--no-config", "-c", "smithy-build.json"),
+                       result -> {
+            assertThat(result.getExitCode(), equalTo(1));
+            assertThat(result.getOutput(), containsString("Invalid combination of --no-config and --config"));
+        });
+    }
 }
