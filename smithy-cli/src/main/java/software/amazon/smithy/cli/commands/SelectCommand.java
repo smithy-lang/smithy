@@ -52,7 +52,7 @@ final class SelectCommand extends ClasspathCommand {
 
     @Override
     public String getSummary() {
-        return "Queries a model using a selector";
+        return "Queries a model using a selector.";
     }
 
     @Override

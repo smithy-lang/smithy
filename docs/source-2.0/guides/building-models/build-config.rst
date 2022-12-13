@@ -41,14 +41,15 @@ The configuration file accepts the following properties:
         added as sources. Sources are relative to the configuration file.
     * - imports
       - ``[string]``
-      - Provides a list of relative imports to combine into a single model.
-        Imports are a kind of local dependency: they aren't considered part of
-        model being built, but are required to build the model. When a
-        directory is encountered, all files in the entire directory tree are
-        imported. Note that build systems MAY choose to rely on other
-        mechanisms for importing models and forming a composite model.
-        Imports defined at the top-level are used in every projection. Imports
-        are relative to the configuration file.
+      - Provides a list of model files and directories to load when validating
+        and building the model. Imports are a local dependency: they are not
+        considered part of model package being built, but are required to build
+        the model package. Models added through ``imports`` are not present in
+        the output of the built-in ``sources`` plugin.
+
+        When a directory is encountered, all files in the entire directory
+        tree are imported. Imports defined at the top-level are used in every
+        projection. Imports are relative to the configuration file.
     * - projections
       - ``map<string, object>``
       - A map of projection names to projection configurations.
@@ -162,7 +163,7 @@ Maven picks the highest version of each project that satisfies all the hard
 requirements of the dependencies on that project. If no version satisfies
 all the hard requirements, dependency resolution fails.
 
-The following table defines version requirement syntax as defined in
+The following table demonstrates version requirement syntax as defined in
 the `official Maven documentation`_:
 
 .. list-table:: Dependency version syntax
@@ -231,7 +232,7 @@ the following configuration:
             file. Instead, use :ref:`environment variables <build_envars>` to
             keep credentials out of source control.
 
-.. code-block::
+.. code-block:: json
 
     {
         "version": "1.0",
@@ -256,7 +257,7 @@ SMITHY_MAVEN_REPOS environment variable
 
 When using the Smithy CLI, the ``SMITHY_MAVEN_REPOS`` environment variable can
 be used to configure Maven repositories automatically. The
-``SMITHY_MAVEN_REPOS`` environment variable is a pipe-delimited value ("|")
+``SMITHY_MAVEN_REPOS`` environment variable is a pipe-delimited value (``|``)
 that contains the URL of each repository to use.
 
 .. code-block::

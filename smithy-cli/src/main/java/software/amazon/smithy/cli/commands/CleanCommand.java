@@ -46,7 +46,7 @@ final class CleanCommand extends SimpleCommand {
 
     @Override
     public String getSummary() {
-        return "Removes Smithy build artifacts";
+        return "Removes Smithy build artifacts.";
     }
 
     @Override
