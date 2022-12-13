@@ -40,6 +40,7 @@ final class IdlTextParser {
         while (!parser.eof()) {
             char next = parser.peek();
             if (next == '"' && (!triple || (parser.peek(1) == '"' && parser.peek(2) == '"'))) {
+                // Found closing quotes of quoted_text and/or text_block
                 break;
             }
             parser.skip();
@@ -82,8 +83,10 @@ final class IdlTextParser {
                 case NORMAL:
                     if (c == '\\') {
                         state = State.AFTER_ESCAPE;
-                    } else {
+                    } else if (isValidNormalCharacter(c, triple)) {
                         result.append(c);
+                    } else {
+                        throw parser.syntax("Invalid character: `" + c + "`");
                     }
                     break;
                 case AFTER_ESCAPE:
@@ -284,5 +287,18 @@ final class IdlTextParser {
         }
 
         return endPosition >= startPosition ? line.substring(startPosition, endPosition + 1) : null;
+    }
+
+    private static boolean isValidNormalCharacter(char c, boolean isTextBlock) {
+        // Valid normal characters are the unescaped characters defined in the
+        // QuotedChar grammar:
+        // https://smithy.io/2.0/spec/idl.html#grammar-token-smithy-QuotedChar
+        return c == '\t'
+                || c == '\n'
+                || c == '\r'
+                || (c >= 0x20 && c <= 0x21) // space - "!"
+                || (isTextBlock && c == 0x22) // DQUOTE is allowed in text_block
+                || (c >= 0x23 && c <= 0x5b) // "#" - "["
+                || c >= 0x5d; // "]"+
     }
 }

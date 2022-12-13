@@ -2,6 +2,7 @@ package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,6 +19,13 @@ public class IdlTextParserTest {
         assertThat(result.getValue(), equalTo(lexeme));
     }
 
+    @ParameterizedTest
+    @MethodSource("invalidTextProvider")
+    public void throwsForInvalidText(String invalidInput) {
+        IdlModelParser parser = new IdlModelParser("/foo", invalidInput);
+        assertThrows(ModelSyntaxException.class, () -> IdlNodeParser.parseNode(parser).expectStringNode());
+    }
+
     private static Stream<Arguments> validTextProvider() {
         return Stream.of(
                 Arguments.of("\"foo\"", "foo"),
@@ -25,8 +33,6 @@ public class IdlTextParserTest {
                 Arguments.of("\"\t\"", "\t"),
                 Arguments.of("\"\r\"", "\n"),
                 Arguments.of("\"\n\"", "\n"),
-                Arguments.of("\"\b\"", "\b"),
-                Arguments.of("\"\f\"", "\f"),
                 Arguments.of("\"\\t\"", "\t"),
                 Arguments.of("\"\\r\"", "\r"),
                 Arguments.of("\"\\n\"", "\n"),
@@ -59,8 +65,10 @@ public class IdlTextParserTest {
                 Arguments.of("\"\"\"\n\n\n\"\"\"", "\n\n"),
                 Arguments.of("\"\"\"\n  foo\n  baz\n  \"\"\"", "foo\nbaz\n"),
                 Arguments.of("\"\"\"\n  foo\n    baz\n  \"\"\"", "foo\n  baz\n"),
-                Arguments.of("\"\"\"\n\"foo\\\"\"\"\"", "\"foo\""),
                 Arguments.of("\"\"\"\n  foo\\n    bar\n  baz\"\"\"", "foo\n    bar\nbaz"),
+                Arguments.of("\"\"\"\n{ \"foo\": \"bar\" }\"\"\"", "{ \"foo\": \"bar\" }"),
+                Arguments.of("\"\"\"\n \"a\" \"\"\"", "\"a\""),
+                Arguments.of("\"\"\"\n \" \"\"\"", "\""),
                 // Empty lines and lines with only ws do not contribute to incidental ws.
                 Arguments.of("\"\"\"\n\n    foo\n  \n\n      \n    \"\"\"", "\nfoo\n\n\n\n"),
                 // If the last line is offset to the right, it's discarded since it's all whitespace.
@@ -68,5 +76,9 @@ public class IdlTextParserTest {
                 Arguments.of("\"\"\"\n  Foo\\\n  Baz\"\"\"", "FooBaz"),
                 Arguments.of("\"\"\"\r  Foo\\\r  Baz\"\"\"", "FooBaz"),
                 Arguments.of("\"\"\"\r\n  Foo\\\r\n  Baz\"\"\"", "FooBaz"));
+    }
+
+    private static Stream<String> invalidTextProvider() {
+        return Stream.of( "\"\b\"", "\"\"\"", "\"\\\"", "\"\\'\"");
     }
 }

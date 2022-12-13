@@ -148,20 +148,20 @@ string support defined in :rfc:`7405`.
     NodeKeywords        :%s"true" / %s"false" / %s"null"
     NodeStringValue     :`ShapeId` / `TextBlock` / `QuotedText`
     QuotedText          :DQUOTE *`QuotedChar` DQUOTE
-    QuotedChar          :%x20-21     ; space - "!"
+    QuotedChar          :%x09        ; tab
+                        :/ %x20-21     ; space - "!"
                         :/ %x23-5B     ; "#" - "["
                         :/ %x5D-10FFFF ; "]"+
                         :/ `EscapedChar`
-                        :/ `PreservedDouble`
                         :/ `NL`
-    EscapedChar         :`Escape` (`Escape` / "'" / DQUOTE / %s"b"
-                        :          / %s"f" / %s"n" / %s"r" / %s"t"
-                        :          / "/" / `UnicodeEscape`)
+    EscapedChar         :`Escape` (`Escape` / DQUOTE / %s"b" / %s"f"
+                        :           / %s"n" / %s"r" / %s"t" / "/"
+                        :           / `UnicodeEscape`)
     UnicodeEscape       :%s"u" `Hex` `Hex` `Hex` `Hex`
     Hex                 :DIGIT / %x41-46 / %x61-66
-    PreservedDouble     :`Escape` (%x20-21 / %x23-5B / %x5D-10FFFF)
     Escape              :%x5C ; backslash
-    TextBlock           :`ThreeDquotes` *`SP` `NL` *`QuotedChar` `ThreeDquotes`
+    TextBlock           :`ThreeDquotes` *`SP` `NL` *`TextBlockContent` `ThreeDquotes`
+    TextBlockContent    :`QuotedChar` / (1*2DQUOTE 1*`QuotedChar`)
     ThreeDquotes        :DQUOTE DQUOTE DQUOTE
 
 .. rubric:: Shapes
