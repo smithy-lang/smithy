@@ -50,7 +50,7 @@ final class DiffCommand extends ClasspathCommand {
 
     @Override
     public String getSummary() {
-        return "Diffs two Smithy models and reports any significant changes";
+        return "Compares two Smithy models and reports any significant changes.";
     }
 
     private static final class Options implements ArgumentReceiver {

@@ -45,7 +45,7 @@ final class WarmupCommand extends ClasspathCommand {
 
     @Override
     public String getSummary() {
-        return "Creates caches for faster subsequent executions";
+        return "Creates caches for faster subsequent executions.";
     }
 
     @Override

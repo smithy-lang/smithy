@@ -36,7 +36,7 @@ final class AstCommand extends ClasspathCommand {
 
     @Override
     public String getSummary() {
-        return "Reads Smithy models in and writes out a single JSON AST model";
+        return "Reads Smithy models in and writes out a single JSON AST model.";
     }
 
     @Override

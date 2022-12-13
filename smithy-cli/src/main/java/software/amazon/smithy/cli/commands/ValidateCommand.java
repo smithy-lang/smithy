@@ -37,7 +37,7 @@ final class ValidateCommand extends ClasspathCommand {
 
     @Override
     public String getSummary() {
-        return "Validates Smithy models";
+        return "Validates Smithy models.";
     }
 
     @Override
