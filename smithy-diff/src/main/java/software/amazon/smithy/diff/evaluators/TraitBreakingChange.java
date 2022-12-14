@@ -30,6 +30,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Finds breaking changes related to when a trait is added, removed, or
@@ -170,7 +171,7 @@ public final class TraitBreakingChange extends AbstractDiffEvaluator {
                     }
                     FromSourceLocation location = !right.isNullNode() ? right : targetShape;
                     events.add(ValidationEvent.builder()
-                                       .id(TraitBreakingChange.class.getSimpleName())
+                                       .id(getValidationEventId(type))
                                        .severity(rule.getDefaultedSeverity())
                                        .shape(targetShape)
                                        .sourceLocation(location)
@@ -178,6 +179,11 @@ public final class TraitBreakingChange extends AbstractDiffEvaluator {
                                        .build());
                 }
             }
+        }
+
+        private String getValidationEventId(TraitDefinition.ChangeType type) {
+            return String.format("%s.%s.%s", TraitBreakingChange.class.getSimpleName(),
+                    StringUtils.capitalize(type.toString()), trait.getId());
         }
 
         // Check if a breaking change was encountered, and return the type of breaking change.
