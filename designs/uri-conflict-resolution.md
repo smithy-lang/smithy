@@ -79,7 +79,7 @@ algorithm to compare them, for each index `x` from `0` to `min(n, m)`
 
 1. If `A[x]` and `B[x]` are both literals then continue (the literal values have to be equal otherwise the patterns would not be ambiguous)
 2. If `A[x]` is a literal and `B[x]` is a label then `A` is more specific than `B`, 
-3. If `A[x]` is a non-greedy label and `B[x]` is a greedy label than `A` is more specific than `B`
+3. If `A[x]` is a non-greedy label and `B[x]` is a greedy label then `A` is more specific than `B`
 4. If `n > m` then `A` is more specific than `B`
 5. if `p > q` then `A` is more specific than `B`
 
