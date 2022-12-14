@@ -46,6 +46,7 @@ public class TraitBreakingChangeTest {
         validate("trait-removed.smithy", shape -> shape.removeTrait(EXAMPLE_TRAIT).build(), events -> {
             assertThat(events, hasSize(1));
             assertThat(events.get(0).getSeverity(), equalTo(Severity.ERROR));
+            assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Remove.smithy.example#exampleTrait"));
             assertThat(events.get(0).getMessage(), equalTo("Removed trait `smithy.example#exampleTrait`"));
         });
     }
@@ -77,6 +78,7 @@ public class TraitBreakingChangeTest {
             shape -> shape.addTrait(new DynamicTrait(EXAMPLE_TRAIT, Node.objectNode())).build(),
             events -> {
                 assertThat(events, hasSize(1));
+                assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Add.smithy.example#exampleTrait"));
                 assertThat(events.get(0).getMessage(), equalTo("Added trait `smithy.example#exampleTrait`"));
             }
         );
@@ -86,6 +88,7 @@ public class TraitBreakingChangeTest {
     public void detectsBreakingChangePresence() {
         validate("trait-presence.smithy", shape -> shape.removeTrait(EXAMPLE_TRAIT).build(), events -> {
             assertThat(events, hasSize(1));
+            assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Remove.smithy.example#exampleTrait"));
             assertThat(events.get(0).getMessage(), equalTo("Removed trait `smithy.example#exampleTrait`"));
         });
     }
@@ -94,6 +97,7 @@ public class TraitBreakingChangeTest {
     public void detectsBreakingChangeAny() {
         validate("trait-any.smithy", shape -> shape.removeTrait(EXAMPLE_TRAIT).build(), events -> {
             assertThat(events, hasSize(1));
+            assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Remove.smithy.example#exampleTrait"));
             assertThat(events.get(0).getMessage(), equalTo("Removed trait `smithy.example#exampleTrait`"));
         });
     }
@@ -102,6 +106,7 @@ public class TraitBreakingChangeTest {
     public void canChangeSeverity() {
         validate("trait-severity.smithy", shape -> shape.removeTrait(EXAMPLE_TRAIT).build(), events -> {
             assertThat(events, hasSize(1));
+            assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Remove.smithy.example#exampleTrait"));
             assertThat(events.get(0).getSeverity(), equalTo(Severity.WARNING));
         });
     }
@@ -110,6 +115,7 @@ public class TraitBreakingChangeTest {
     public void canIncludeCustomMessage() {
         validate("trait-message.smithy", shape -> shape.removeTrait(EXAMPLE_TRAIT).build(), events -> {
             assertThat(events, hasSize(1));
+            assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Remove.smithy.example#exampleTrait"));
             assertThat(events.get(0).getMessage(),
                        equalTo("Removed trait `smithy.example#exampleTrait`; This is bad!"));
         });
@@ -122,6 +128,7 @@ public class TraitBreakingChangeTest {
             shape -> shape.addTrait(new DynamicTrait(EXAMPLE_TRAIT, Node.fromStrings("a", "B", "c"))).build(),
             events -> {
                 assertThat(events, hasSize(1));
+                assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Update.smithy.example#exampleTrait"));
                 assertThat(events.get(0).getMessage(),
                            equalTo("Changed trait contents of `smithy.example#exampleTrait` at path `/1` "
                                    + "from \"b\" to \"B\""));
@@ -137,6 +144,7 @@ public class TraitBreakingChangeTest {
                         .build(),
                 events -> {
                     assertThat(events, hasSize(1));
+                    assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Remove.smithy.example#exampleTrait"));
                     assertThat(events.get(0).getMessage(),
                                equalTo("Removed trait contents from `smithy.example#exampleTrait` at path `/b`. "
                                        + "Removed value: \"B\""));
@@ -155,6 +163,7 @@ public class TraitBreakingChangeTest {
             },
             events -> {
                 assertThat(events, hasSize(1));
+                assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Update.smithy.example#exampleTrait"));
                 assertThat(events.get(0).getMessage(),
                            equalTo("Changed trait contents of `smithy.example#exampleTrait` at path `/b` "
                                    + "from \"B\" to \"_B_\""));
@@ -172,6 +181,7 @@ public class TraitBreakingChangeTest {
             },
             events -> {
                 assertThat(events, hasSize(1));
+                assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Remove.smithy.example#exampleTrait"));
                 assertThat(events.get(0).getMessage(),
                            equalTo("Removed trait contents from `smithy.example#exampleTrait` at path "
                                    + "`/foo/bar`. Removed value: \"hi\""));
@@ -189,6 +199,7 @@ public class TraitBreakingChangeTest {
             },
             events -> {
                 assertThat(events, hasSize(1));
+                assertThat(events.get(0).getId(), equalTo("TraitBreakingChange.Update.smithy.example#exampleTrait"));
                 assertThat(events.get(0).getMessage(),
                            equalTo("Changed trait contents of `smithy.example#exampleTrait` at path "
                                    + "`/foo` from \"hi\" to \"bye\""));
