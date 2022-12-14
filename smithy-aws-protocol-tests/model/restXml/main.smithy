@@ -94,6 +94,5 @@ service RestXml {
         EndpointWithHostLabelHeaderOperation,
 
         DatetimeOffsets,
-        OffsetDatetimes,
     ]
 }

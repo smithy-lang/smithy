@@ -64,6 +64,5 @@ service AwsQuery {
         HostWithPathOperation,
 
         DatetimeOffsets,
-        OffsetDatetimes,
     ]
 }

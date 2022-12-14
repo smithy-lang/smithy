@@ -139,6 +139,5 @@ service RestJson {
         TestNoPayload,
 
         DatetimeOffsets,
-        OffsetDatetimes
     ]
 }

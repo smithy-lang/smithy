@@ -80,6 +80,5 @@ service AwsEc2 {
         HostWithPathOperation,
 
         DatetimeOffsets,
-        OffsetDatetimes,
     ]
 }

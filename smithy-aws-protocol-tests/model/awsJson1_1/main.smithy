@@ -38,7 +38,6 @@ service JsonProtocol {
         HostWithPathOperation,
 
         DatetimeOffsets,
-        OffsetDatetimes
     ],
 }
 
