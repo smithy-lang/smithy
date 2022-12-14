@@ -59,7 +59,7 @@ we will disallow them, for instance,
 ### Specificity Routing
 
 The proposal is to  accept any non-equivalent URI path patterns and
-also specifying the expected routing algorithm. The routing algorithm
+also specify the expected routing algorithm. The routing algorithm
 will choose the *best-ranked* match using the specificity of the path
 and literal query parameters when present. The Smithy documentation
 will be changed in the following way
