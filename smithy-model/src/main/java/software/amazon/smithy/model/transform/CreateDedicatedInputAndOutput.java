@@ -22,9 +22,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
-import software.amazon.smithy.model.neighbor.Relationship;
 import software.amazon.smithy.model.neighbor.RelationshipDirection;
-import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -60,41 +58,46 @@ final class CreateDedicatedInputAndOutput {
             StructureShape output = operationIndex.expectOutputShape(operation);
             StructureShape updatedOutput = createdUpdatedOutput(model, operation, output, reverse);
 
-            if (!updatedInput.equals(input) || !updatedOutput.equals(output)) {
-                OperationShape.Builder builder = operation.toBuilder();
-                if (!updatedInput.equals(input)) {
-                    LOGGER.fine(() -> String.format("Updating operation input of %s from %s to %s",
-                                                    operation.getId(), input.getId(), updatedInput.getId()));
-                    updates.add(updatedInput);
-                    builder.input(updatedInput);
-                    // If the ID changed and the original is no longer referenced, then remove it.
-                    if (!input.getId().equals(updatedInput.getId())
-                            && isSingularReference(reverse, input, RelationshipType.INPUT)) {
-                        toRemove.add(input);
-                        LOGGER.info("Removing now unused input shape " + input.getId());
-                    }
-                }
-                if (!updatedOutput.equals(output)) {
-                    LOGGER.fine(() -> String.format("Updating operation output of %s from %s to %s",
-                                                    operation.getId(), output.getId(), updatedOutput.getId()));
-                    updates.add(updatedOutput);
-                    builder.output(updatedOutput);
-                    // If the ID changed and the original is no longer referenced, then remove it.
-                    if (!output.getId().equals(updatedOutput.getId())
-                            && isSingularReference(reverse, output, RelationshipType.OUTPUT)) {
-                        toRemove.add(output);
-                        LOGGER.info("Removing now unused output shape " + output.getId());
-                    }
-                }
-                updates.add(builder.build());
+            boolean inputChanged = !input.equals(updatedInput);
+            boolean outputChanged = !output.equals(updatedOutput);
+
+            if (!inputChanged && !outputChanged) {
+                continue;
             }
+
+            OperationShape.Builder builder = operation.toBuilder();
+            if (inputChanged) {
+                LOGGER.fine(() -> String.format("Updating operation input of %s from %s to %s",
+                        operation.getId(), input.getId(), updatedInput.getId()));
+                updates.add(updatedInput);
+                builder.input(updatedInput);
+                // If the ID changed and the original is no longer referenced, then remove it.
+                boolean idChanged = !input.getId().equals(updatedInput.getId());
+                if (idChanged && isSingularReference(reverse, input, operation)) {
+                    toRemove.add(input);
+                    LOGGER.info("Removing now unused input shape " + input.getId());
+                }
+            }
+            if (outputChanged) {
+                LOGGER.fine(() -> String.format("Updating operation output of %s from %s to %s",
+                        operation.getId(), output.getId(), updatedOutput.getId()));
+                updates.add(updatedOutput);
+                builder.output(updatedOutput);
+                // If the ID changed and the original is no longer referenced, then remove it.
+                boolean idChanged = !output.getId().equals(updatedOutput.getId());
+                if (idChanged && isSingularReference(reverse, output, operation)) {
+                    toRemove.add(output);
+                    LOGGER.info("Removing now unused output shape " + output.getId());
+                }
+            }
+            updates.add(builder.build());
         }
 
-        // Replace the operations and add new shapes.
-        Model result = transformer.replaceShapes(model, updates);
-
         // Remove no longer referenced shapes.
-        return transformer.removeShapes(result, toRemove);
+        Model result = transformer.removeShapes(model, toRemove);
+
+        // Replace the operations and add new shapes.
+        return transformer.replaceShapes(result, updates);
     }
 
     private StructureShape createdUpdatedInput(
@@ -105,7 +108,7 @@ final class CreateDedicatedInputAndOutput {
     ) {
         if (input.hasTrait(InputTrait.class)) {
             return renameShapeIfNeeded(model, input, operation, inputSuffix);
-        } else if (isDedicatedHeuristic(operation, input, reverse, RelationshipType.INPUT)) {
+        } else if (isDedicatedHeuristic(operation, input, reverse)) {
             LOGGER.fine(() -> "Attaching the @input trait to " + input.getId());
             InputTrait trait = new InputTrait(input.getSourceLocation());
             return renameShapeIfNeeded(model, input.toBuilder().addTrait(trait).build(), operation, inputSuffix);
@@ -122,7 +125,7 @@ final class CreateDedicatedInputAndOutput {
     ) {
         if (output.hasTrait(OutputTrait.class)) {
             return renameShapeIfNeeded(model, output, operation, outputSuffix);
-        } else if (isDedicatedHeuristic(operation, output, reverse, RelationshipType.OUTPUT)) {
+        } else if (isDedicatedHeuristic(operation, output, reverse)) {
             LOGGER.fine(() -> "Attaching the @output trait to " + output.getId());
             OutputTrait trait = new OutputTrait(output.getSourceLocation());
             return renameShapeIfNeeded(model, output.toBuilder().addTrait(trait).build(), operation, outputSuffix);
@@ -153,36 +156,22 @@ final class CreateDedicatedInputAndOutput {
                 .build();
     }
 
-    private boolean isDedicatedHeuristic(
-            OperationShape operation,
-            StructureShape struct,
-            NeighborProvider reverse,
-            RelationshipType expected
-    ) {
+    private boolean isDedicatedHeuristic(OperationShape operation, StructureShape struct, NeighborProvider reverse) {
         // Only assume that a shape is dedicated to the operation its name starts with the operation name.
         if (!struct.getId().getName().startsWith(operation.getId().getName())) {
             return false;
         }
 
         // Check if the shape is only referenced as input or output.
-        return isSingularReference(reverse, struct, expected);
+        return isSingularReference(reverse, struct, operation);
     }
 
-    private boolean isSingularReference(NeighborProvider reverse, Shape shape, RelationshipType expected) {
-        int totalDirectedEdges = 0;
-
+    private boolean isSingularReference(NeighborProvider reverse, Shape shape, Shape expectedReferencingShape) {
         // We need to exclude inverted edges like MEMBER_CONTAINER, and only look for directed
-        // edges like INPUT and OUTPUT.
-        for (Relationship rel : reverse.getNeighbors(shape)) {
-            if (rel.getRelationshipType().getDirection() == RelationshipDirection.DIRECTED) {
-                totalDirectedEdges++;
-                if (rel.getRelationshipType() != expected) {
-                    return false;
-                }
-            }
-        }
-
-        return totalDirectedEdges == 1;
+        // edges to the expected shape.
+        return reverse.getNeighbors(shape).stream()
+                .filter(relationship -> relationship.getDirection() == RelationshipDirection.DIRECTED)
+                .allMatch(relationship -> relationship.getShape().equals(expectedReferencingShape));
     }
 
     private static StructureShape createSyntheticShape(

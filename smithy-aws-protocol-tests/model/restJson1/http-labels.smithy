@@ -1,5 +1,5 @@
 // This file defines test cases that test HTTP URI label bindings.
-// See: https://awslabs.github.io/smithy/1.0/spec/http.html#httplabel-trait
+// See: https://smithy.io/2.0/spec/http-bindings.html#httplabel-trait
 
 $version: "2.0"
 

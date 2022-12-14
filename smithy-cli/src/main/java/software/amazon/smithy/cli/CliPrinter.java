@@ -15,14 +15,20 @@
 
 package software.amazon.smithy.cli;
 
-import java.util.function.Consumer;
-import software.amazon.smithy.utils.SmithyUnstableApi;
+import java.io.BufferedWriter;
+import java.io.Flushable;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Handles text output of the CLI.
  */
-@SmithyUnstableApi
-public interface CliPrinter {
+@FunctionalInterface
+public interface CliPrinter extends Flushable {
+
     /**
      * Prints text to the writer and appends a new line.
      *
@@ -31,33 +37,39 @@ public interface CliPrinter {
     void println(String text);
 
     /**
-     * Styles the given text using ANSI escape sequences.
-     *
-     * <p>It is strongly recommended to use the constants defined in
-     * {@link Style} to provide valid combinations of ANSI color escape
-     * codes.
-     *
-     * @param text Text to style.
-     * @param styles ANSI escape codes.
-     * @return Returns the styled text.
+     * Flushes any buffers in the printer.
      */
-    default String style(String text, Style... styles) {
-        return Style.format(text, styles);
+    default void flush() {}
+
+    /**
+     * Create a new CliPrinter from a PrintWriter.
+     *
+     * @param printWriter PrintWriter to write to.
+     * @return Returns the created CliPrinter.
+     */
+    static CliPrinter fromPrintWriter(PrintWriter printWriter) {
+        return new CliPrinter() {
+            @Override
+            public void println(String text) {
+                printWriter.println(text);
+            }
+
+            @Override
+            public void flush() {
+                printWriter.flush();
+            }
+        };
     }
 
     /**
-     * CliPrinter that calls a Consumer that accepts a CharSequence.
+     * Create a new CliPrinter from an OutputStream.
+     *
+     * @param stream OutputStream to write to.
+     * @return Returns the created CliPrinter.
      */
-    final class ConsumerPrinter implements CliPrinter {
-        private final Consumer<CharSequence> consumer;
-
-        public ConsumerPrinter(Consumer<CharSequence> consumer) {
-            this.consumer = consumer;
-        }
-
-        @Override
-        public void println(String text) {
-            consumer.accept(text + System.lineSeparator());
-        }
+    static CliPrinter fromOutputStream(OutputStream stream) {
+        Charset charset = StandardCharsets.UTF_8;
+        PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(stream, charset)), false);
+        return fromPrintWriter(writer);
     }
 }

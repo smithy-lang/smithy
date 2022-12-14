@@ -19,3 +19,19 @@ intEnum Bar {
     @enumValue(2)
     KEEP
 }
+
+@trait
+@tags(["filter"])
+string MyTrait
+
+@mixin
+structure MyMixin {
+    @required
+    baz: String
+}
+
+structure StructForMixin with [MyMixin] {
+    bar: String
+}
+
+apply StructForMixin$baz @MyTrait("hello")

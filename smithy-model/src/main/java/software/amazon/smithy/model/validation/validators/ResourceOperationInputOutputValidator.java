@@ -221,9 +221,8 @@ public final class ResourceOperationInputOutputValidator extends AbstractValidat
                         properties.get(propertyName).toString())));
             }
         } else if (!identifierMembers.contains(member.getMemberName())) {
-            events.add(error(member, String.format("Member `%s` does not target a property for resource `%s`",
-                    member.getMemberName(),
-                    resource.getId().toString())));
+            events.add(error(member, String.format("Member `%s` does not target a property or identifier"
+                    + " for resource `%s`", member.getMemberName(), resource.getId().toString())));
         }
     }
 }

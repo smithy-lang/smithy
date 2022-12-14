@@ -18,6 +18,7 @@ package software.amazon.smithy.linters;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import software.amazon.smithy.utils.StringUtils;
@@ -62,14 +63,34 @@ final class WordBoundaryMatcher implements Predicate<String> {
             return false;
         }
 
-        String searchString = searchCache.computeIfAbsent(text, WordBoundaryMatcher::splitWords);
+        String haystack = searchCache.computeIfAbsent(text, WordBoundaryMatcher::splitWords);
         for (String needle : words) {
-            if (testWordMatch(needle, searchString)) {
+            if (testWordMatch(needle, haystack)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Returns the first term that the input text matched.
+     * @param text the String within which to search for matches
+     * @return the first match found
+     */
+    public Optional<String> getFirstMatch(String text) {
+        if (text == null || text.isEmpty() || words.isEmpty()) {
+            return Optional.empty();
+        }
+
+        String haystack = searchCache.computeIfAbsent(text, WordBoundaryMatcher::splitWords);
+        for (String needle : words) {
+            if (testWordMatch(needle, haystack)) {
+                return Optional.of(needle);
+            }
+        }
+
+        return Optional.empty();
     }
 
     private boolean testWordMatch(String needle, String haystack) {

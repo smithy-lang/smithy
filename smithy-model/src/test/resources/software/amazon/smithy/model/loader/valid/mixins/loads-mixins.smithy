@@ -98,6 +98,10 @@ map MixinMap {
 
 map MixedMap with [MixinMap] {}
 
+map MixedMapRedefineValue with [MixinMap] {
+    value: String
+}
+
 @mixin
 service MixinService {}
 

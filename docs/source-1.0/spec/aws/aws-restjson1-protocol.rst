@@ -316,8 +316,9 @@ is contained. New server-side protocol implementations MUST use a header field
 named ``X-Amzn-Errortype``. Clients MUST accept any one of the following: an
 additional header with the name ``X-Amzn-Errortype``, a body field with the
 name ``__type``, or a body field named ``code``. The value of this component
-SHOULD contain only the :token:`shape name <smithy:Identifier>` of the error's
-:ref:`shape-id`.
+SHOULD contain the :token:`shape name <smithy:Identifier>` of the error's
+:ref:`shape-id`. The value of this component SHOULD NOT include the
+:ref:`shape-id`'s namespace.
 
 Legacy server-side protocol implementations sometimes include additional
 information in this value. New server-side protocol implementations SHOULD NOT

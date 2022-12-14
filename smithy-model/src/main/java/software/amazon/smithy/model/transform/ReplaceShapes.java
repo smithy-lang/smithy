@@ -20,6 +20,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -189,7 +190,12 @@ final class ReplaceShapes {
 
         // Add _all_ of the replacements in case mixins or the Mixin trait were removed from updated shapes.
         for (Shape shape : replacements) {
-            sorter.enqueue(shape);
+            // Enqueue member shapes with empty dependencies since the parent will be enqueued with them.
+            if (shape.isMemberShape()) {
+                sorter.enqueue(shape.getId(), Collections.emptySet());
+            } else {
+                sorter.enqueue(shape);
+            }
         }
 
         List<ShapeId> sorted = sorter.dequeueSortedShapes();

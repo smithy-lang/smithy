@@ -1,0 +1,5 @@
+{
+    "version": "1.0",
+    "sources": ["a.smithy"],
+    "imports": ["../notsources/d.smithy"]
+}

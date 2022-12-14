@@ -120,6 +120,59 @@ Example:
         {name: "CamelCase"}
     ]
 
+.. _MissingSensitiveTrait:
+
+MissingSensitiveTrait
+=====================
+
+This validator scans shape or member names and identifies ones that look like they could contain
+sensitive information but are not marked with the ``@sensitive`` trait. This does not apply to
+shapes where the ``@sensitive`` trait would be invalid. Users may also configure this validator
+with a custom list of terms, and choose to ignore the built-in defaults. The defaults terms include
+types of personal information such as 'birth day', 'billing address', 'zip code', or 'gender',
+as well as information that could be maliciously exploited such as  'password', 'secret key', or 'credit card'.
+
+Rationale
+    Sensitive information often incurs legal requirements regarding the handling and logging
+    of it. Mistakenly not marking sensitive data accordingly carries a large risk, and it is
+    helpful to have an automated validator to catch instances of this rather than rely on best efforts.
+
+Default severity
+    ``WARNING``
+
+Configuration
+    .. list-table::
+       :header-rows: 1
+       :widths: 20 20 60
+
+       * - Property
+         - Type
+         - Description
+       * - terms
+         - [ ``string`` ]
+         - A list of search terms that match shape or member names
+           case-insensitively based on word boundaries (for example, the term
+           "access key id" matches "AccessKeyId", "access_key_id", and
+           "accesskeyid"). See :ref:`words-boundaries` for details.
+       * - excludeDefaults
+         - ``boolean``
+         - A flag indicating whether or not to disregard the default set
+           of terms. This property is not required and defaults to false.
+           If set to true, ``terms`` must be provided.
+
+Example:
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    metadata validators = [{
+        name: "MissingSensitiveTrait"
+        configuration: {
+            excludeDefaults: false,
+            terms: ["home planet"]
+        }
+    }]
 
 .. _NoninclusiveTerms:
 
@@ -227,7 +280,7 @@ Configuration
           - A list of search terms that match shape or member names
             case-insensitively based on word boundaries (for example, the term
             "access key id" matches "AccessKeyId", "access_key_id", and
-            "accesskeyid"). See :ref:`reserved-words-boundaries` for details.
+            "accesskeyid"). See :ref:`words-boundaries` for details.
         * - selector
           - ``string``
           - Specifies a selector of shapes to validate for this configuration.
@@ -345,12 +398,12 @@ be specified.
       * - **Codename**
         - Match
 
-.. _reserved-words-boundaries:
+.. _words-boundaries:
 
-Reserved words boundary matching
---------------------------------
+Words boundary matching
+-----------------------
 
-Word boundaries can be used to find reserved words. Word boundary search
+Word boundaries can be used to find terms of interest. Word boundary search
 text consists of one or more alphanumeric words separated by a single
 space. When comparing against another string, the contents of the string
 are separated into words based on word boundaries. Those words are
@@ -379,7 +432,7 @@ demonstrates how comparison text is parsed into words.
     * - access_keyID
       - access key id
 
-The following table shows matches for a reserved term of ``secret id``,
+The following table shows matches for a search term of ``secret id``,
 meaning the word "secret" needs to be followed by the word "id". Word
 boundary searches also match if the search terms concatenated together with
 no spaces is considered a word in the search text (for example,

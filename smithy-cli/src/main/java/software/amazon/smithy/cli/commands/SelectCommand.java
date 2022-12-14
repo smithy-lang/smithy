@@ -22,10 +22,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
+import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliPrinter;
+import software.amazon.smithy.cli.ColorFormatter;
 import software.amazon.smithy.cli.HelpPrinter;
+import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -35,14 +38,11 @@ import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.IoUtils;
-import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.SmithyInternalApi;
 
-@SmithyInternalApi
-public final class SelectCommand extends SimpleCommand {
+final class SelectCommand extends ClasspathCommand {
 
-    public SelectCommand(String parentCommandName) {
-        super(parentCommandName);
+    SelectCommand(String parentCommandName, DependencyResolver.Factory dependencyResolverFactory) {
+        super(parentCommandName, dependencyResolverFactory);
     }
 
     @Override
@@ -52,11 +52,11 @@ public final class SelectCommand extends SimpleCommand {
 
     @Override
     public String getSummary() {
-        return "Queries a model using a selector";
+        return "Queries a model using a selector.";
     }
 
     @Override
-    public String getDocumentation(CliPrinter printer) {
+    public String getDocumentation(ColorFormatter colors) {
         return "By default, each matching shape ID is printed to stdout on a new line. Pass --vars to print out a "
                + "JSON array that contains a 'shape' and 'vars' property, where the 'vars' property is a map of "
                + "each variable that was captured when the shape was matched.";
@@ -104,17 +104,17 @@ public final class SelectCommand extends SimpleCommand {
     }
 
     @Override
-    protected List<ArgumentReceiver> createArgumentReceivers() {
-        return ListUtils.of(new BuildOptions(), new Options());
+    protected void addAdditionalArgumentReceivers(List<ArgumentReceiver> receivers) {
+        receivers.add(new Options());
     }
 
     @Override
-    protected int run(Arguments arguments, Env env, List<String> models) {
+    int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env, List<String> models) {
         CliPrinter stdout = env.stdout();
         Options options = arguments.getReceiver(Options.class);
 
         // Don't write the summary, but do write danger/errors to STDERR.
-        Model model = CommandUtils.buildModel(arguments, models, env, env.stderr(), true);
+        Model model = CommandUtils.buildModel(arguments, models, env, env.stderr(), true, config);
         Selector selector = options.selector();
 
         if (!options.vars()) {

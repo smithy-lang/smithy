@@ -15,12 +15,9 @@
 
 package software.amazon.smithy.cli;
 
-import software.amazon.smithy.utils.SmithyUnstableApi;
-
 /**
  * Represents a CLI command.
  */
-@SmithyUnstableApi
 public interface Command {
     /**
      * Gets the name of the command.
@@ -32,6 +29,15 @@ public interface Command {
     String getName();
 
     /**
+     * Return true to hide this command from help output.
+     *
+     * @return Return true if this is a hidden command.
+     */
+    default boolean isHidden() {
+        return false;
+    }
+
+    /**
      * Gets a short summary of the command that's shown in the main help.
      *
      * @return Returns the short help description.
@@ -41,11 +47,10 @@ public interface Command {
     /**
      * Gets the long description of the command.
      *
-     * @param printer CliPrinter used in case formatting is needed via
-     *                {@link CliPrinter#style(String, Style...)}.
+     * @param colors Color formatter to use for styling help.
      * @return Returns the long description.
      */
-    default String getDocumentation(CliPrinter printer) {
+    default String getDocumentation(ColorFormatter colors) {
         return "";
     }
 
@@ -53,9 +58,10 @@ public interface Command {
      * Prints help output.
      *
      * @param arguments Arguments that have been parsed so far.
+     * @param colors Color formatter to use.
      * @param printer Where to write help.
      */
-    void printHelp(Arguments arguments, CliPrinter printer);
+    void printHelp(Arguments arguments, ColorFormatter colors, CliPrinter printer);
 
     /**
      * Executes the command using the provided arguments.
@@ -73,33 +79,34 @@ public interface Command {
 
         private final CliPrinter stdout;
         private final CliPrinter stderr;
+        private final ColorFormatter colors;
         private final ClassLoader classLoader;
 
-        public Env(CliPrinter stdout, CliPrinter stderr, ClassLoader classLoader) {
+        public Env(ColorFormatter colors, CliPrinter stdout, CliPrinter stderr, ClassLoader classLoader) {
+            this.colors = colors;
             this.stdout = stdout;
             this.stderr = stderr;
             this.classLoader = classLoader;
         }
 
-        /**
-         * @return Returns the configured printer for stdout.
-         */
+        public ColorFormatter colors() {
+            return colors;
+        }
+
         public CliPrinter stdout() {
             return stdout;
         }
 
-        /**
-         * @return Returns the configured printer for stderr.
-         */
         public CliPrinter stderr() {
             return stderr;
         }
 
-        /**
-         * @return Returns the configured class loader to use to load additional classes/resources.
-         */
         public ClassLoader classLoader() {
-            return classLoader;
+            return classLoader == null ? getClass().getClassLoader() : classLoader;
+        }
+
+        public Env withClassLoader(ClassLoader classLoader) {
+            return classLoader == this.classLoader ? this : new Env(colors, stdout, stderr, classLoader);
         }
     }
 }

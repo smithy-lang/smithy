@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.rulesengine.RulesetTestUtil;
 import software.amazon.smithy.rulesengine.language.eval.RuleEvaluator;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.language.eval.Value;
@@ -35,17 +36,9 @@ import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.utils.MapUtils;
 
 class EndpointRuleSetTest {
-    private EndpointRuleSet parse(String resource) {
-        InputStream is = getClass().getClassLoader().getResourceAsStream(resource);
-        assert is != null;
-        Node node = ObjectNode.parse(is);
-        return EndpointRuleSet.fromNode(node);
-    }
-
     @Test
     void testRuleEval() {
-        EndpointRuleSet actual = parse(
-                "software/amazon/smithy/rulesengine/testutil/valid-rules/minimal-ruleset.json");
+        EndpointRuleSet actual = RulesetTestUtil.minimalRuleSet();
         Value result = RuleEvaluator.evaluate(actual, MapUtils.of(Identifier.of("Region"),
                 Value.string("us-east-1")));
         Value.Endpoint expected = new Value.Endpoint.Builder(SourceLocation.none())
@@ -63,9 +56,7 @@ class EndpointRuleSetTest {
 
     @Test
     void testMinimalRuleset() {
-        EndpointRuleSet actual = parse(
-                "software/amazon/smithy/rulesengine/testutil/valid-rules/minimal-ruleset.json");
-        actual.typeCheck(new Scope<>());
+        EndpointRuleSet actual = RulesetTestUtil.minimalRuleSet();
         assertEquals(EndpointRuleSet.builder()
                 .version("1.3")
                 .parameters(Parameters

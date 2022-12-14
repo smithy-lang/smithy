@@ -25,7 +25,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -42,7 +41,6 @@ import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
-import software.amazon.smithy.cli.HelpPrinter;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.loader.ModelAssembler;
@@ -60,56 +58,21 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.SimpleParser;
-import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
-@SmithyInternalApi
 @SuppressWarnings("deprecation")
-public final class Upgrade1to2Command extends SimpleCommand {
+final class Upgrade1to2Command extends SimpleCommand {
     private static final Logger LOGGER = Logger.getLogger(Upgrade1to2Command.class.getName());
     private static final Pattern VERSION_1 = Pattern.compile("(?m)^\\s*\\$\\s*version:\\s*\"1\\.0\"\\s*$");
     private static final Pattern VERSION_2 = Pattern.compile("(?m)^\\s*\\$\\s*version:\\s*\"2\\.0\"\\s*$");
-    private static final EnumSet<ShapeType> HAD_DEFAULT_VALUE_IN_1_0 = EnumSet.of(
-            ShapeType.BYTE,
-            ShapeType.SHORT,
-            ShapeType.INTEGER,
-            ShapeType.LONG,
-            ShapeType.FLOAT,
-            ShapeType.DOUBLE,
-            ShapeType.BOOLEAN);
 
-    public Upgrade1to2Command(String parentCommandName) {
+    Upgrade1to2Command(String parentCommandName) {
         super(parentCommandName);
-    }
-
-    private static final class Options implements ArgumentReceiver {
-        private String config = "smithy-build.json";
-
-        @Override
-        public boolean testOption(String name) {
-            return false;
-        }
-
-        @Override
-        public Consumer<String> testParameter(String name) {
-            switch (name) {
-                case "--config":
-                case "-c":
-                    return c -> this.config = c;
-                default:
-                    return null;
-            }
-        }
-
-        @Override
-        public void registerHelp(HelpPrinter printer) {
-            printer.param("--config", "-c", "CONFIG_PATH", "Path to smithy-build.json configuration.");
-        }
     }
 
     @Override
     protected List<ArgumentReceiver> createArgumentReceivers() {
-        return Arrays.asList(new Options(), new BuildOptions());
+        return Arrays.asList(new ConfigOptions(), new BuildOptions());
     }
 
     @Override
@@ -124,16 +87,13 @@ public final class Upgrade1to2Command extends SimpleCommand {
 
     @Override
     protected int run(Arguments arguments, Env env, List<String> models) {
-        Options commandOptions = arguments.getReceiver(Options.class);
-
-        // Use the provided smithy-build.json file
-        SmithyBuildConfig.Builder configBuilder = SmithyBuildConfig.builder();
-        if (Files.exists(Paths.get(commandOptions.config))) {
-            configBuilder.load(Paths.get(commandOptions.config).toAbsolutePath());
-        }
+        ClassLoader classLoader = env.classLoader();
+        ConfigOptions configOptions = arguments.getReceiver(ConfigOptions.class);
+        SmithyBuildConfig smithyBuildConfig = configOptions.createSmithyBuildConfig();
 
         // Set an output into a temporary directory - we don't actually care about
         // the serialized output.
+        SmithyBuildConfig.Builder configBuilder = smithyBuildConfig.toBuilder();
         Path tempDir;
         try {
             tempDir = Files.createTempDirectory("smithyUpgrade");
@@ -141,11 +101,12 @@ public final class Upgrade1to2Command extends SimpleCommand {
             throw new CliError("Unable to create temporary working directory: " + e);
         }
         configBuilder.outputDirectory(tempDir.toString());
+        SmithyBuildConfig temporaryConfig = configBuilder.build();
 
-        Model initialModel = CommandUtils.buildModel(arguments, models, env, env.stderr(), true);
+        Model initialModel = CommandUtils.buildModel(arguments, models, env, env.stderr(), true, smithyBuildConfig);
 
-        SmithyBuild smithyBuild = SmithyBuild.create(env.classLoader())
-                .config(configBuilder.build())
+        SmithyBuild smithyBuild = SmithyBuild.create(classLoader)
+                .config(temporaryConfig)
                 // Only build the source projection
                 .projectionFilter(name -> name.equals("source"))
                 // The only traits we care about looking at are in the prelude,

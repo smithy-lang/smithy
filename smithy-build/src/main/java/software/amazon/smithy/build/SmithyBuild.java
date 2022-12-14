@@ -93,6 +93,15 @@ public final class SmithyBuild {
     }
 
     /**
+     * Gets the default directory where smithy-build artifacts are written.
+     *
+     * @return Returns the build output path.
+     */
+    public static Path getDefaultOutputDirectory() {
+        return DefaultPathHolder.DEFAULT_PATH;
+    }
+
+    /**
      * Builds the model and applies all projections.
      *
      * <p>This method loads all projections, projected models, and their
@@ -169,7 +178,17 @@ public final class SmithyBuild {
      */
     public SmithyBuild config(SmithyBuildConfig config) {
         this.config = config;
+        for (String source : config.getSources()) {
+            addSource(Paths.get(source));
+        }
         return this;
+    }
+
+    // Add a source path using absolute paths to better de-conflict source files. ModelAssembler also
+    // de-conflicts imports with absolute paths, but this ensures the same file doesn't appear twice in
+    // the build plugin output (though it does not use realpath to de-conflict based on symlinks).
+    private void addSource(Path path) {
+        sources.add(path.toAbsolutePath());
     }
 
     /**
@@ -365,7 +384,9 @@ public final class SmithyBuild {
      * @return Returns the builder.
      */
     public SmithyBuild registerSources(Path... pathToSources) {
-        Collections.addAll(sources, pathToSources);
+        for (Path path : pathToSources) {
+            addSource(path);
+        }
         return this;
     }
 
@@ -391,5 +412,14 @@ public final class SmithyBuild {
     public SmithyBuild pluginFilter(Predicate<String> pluginFilter) {
         this.pluginFilter = Objects.requireNonNull(pluginFilter);
         return this;
+    }
+
+    // Lazy initialization holder class idiom.
+    private static final class DefaultPathHolder {
+        private static final Path DEFAULT_PATH = resolveDefaultPath();
+
+        private static Path resolveDefaultPath() {
+            return Paths.get(".").toAbsolutePath().normalize().resolve("build").resolve("smithy");
+        }
     }
 }

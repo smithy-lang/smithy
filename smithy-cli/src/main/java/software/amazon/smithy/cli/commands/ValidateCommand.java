@@ -15,21 +15,19 @@
 
 package software.amazon.smithy.cli.commands;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
-import software.amazon.smithy.cli.ArgumentReceiver;
+import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.StandardOptions;
-import software.amazon.smithy.utils.SmithyInternalApi;
+import software.amazon.smithy.cli.dependencies.DependencyResolver;
 
-@SmithyInternalApi
-public final class ValidateCommand extends SimpleCommand {
+final class ValidateCommand extends ClasspathCommand {
 
     private static final Logger LOGGER = Logger.getLogger(ValidateCommand.class.getName());
 
-    public ValidateCommand(String parentCommandName) {
-        super(parentCommandName);
+    ValidateCommand(String parentCommandName, DependencyResolver.Factory dependencyResolverFactory) {
+        super(parentCommandName, dependencyResolverFactory);
     }
 
     @Override
@@ -39,19 +37,13 @@ public final class ValidateCommand extends SimpleCommand {
 
     @Override
     public String getSummary() {
-        return "Validates Smithy models";
+        return "Validates Smithy models.";
     }
 
     @Override
-    protected List<ArgumentReceiver> createArgumentReceivers() {
-        return Collections.singletonList(new BuildOptions());
-    }
-
-    @Override
-    protected int run(Arguments arguments, Env env, List<String> models) {
+    int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env, List<String> models) {
         StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
-        LOGGER.info(() -> "Validating Smithy model sources: " + models);
-        CommandUtils.buildModel(arguments, models, env, env.stdout(), standardOptions.quiet());
+        CommandUtils.buildModel(arguments, models, env, env.stdout(), standardOptions.quiet(), config);
         LOGGER.info("Smithy validation complete");
         return 0;
     }

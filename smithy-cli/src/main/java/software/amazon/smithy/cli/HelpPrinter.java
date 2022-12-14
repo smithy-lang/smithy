@@ -18,13 +18,11 @@ package software.amazon.smithy.cli;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
 
 /**
- * Generates and prints structured help output to a {@link CliPrinter}.
+ * Generates and prints structured help output.
  */
-@SmithyUnstableApi
 public final class HelpPrinter {
     private final String name;
     private int maxWidth = 80;
@@ -124,24 +122,25 @@ public final class HelpPrinter {
     /**
      * Prints the generated help to the given printer.
      *
+     * @param colors Color formatter.
      * @param printer CliPrinter to write to.
      */
-    public void print(CliPrinter printer) {
+    public void print(ColorFormatter colors, CliPrinter printer) {
         LineWrapper builder = new LineWrapper(maxWidth);
 
         builder.appendWithinLine("Usage: ")
-                .appendWithinLine(printer.style(name, Style.BRIGHT_WHITE, Style.UNDERLINE))
+                .appendWithinLine(colors.style(name, Style.BRIGHT_WHITE, Style.UNDERLINE))
                 .space();
 
         // Calculate the column manually to account for possible styles interfering with the current column number.
         builder.indent("Usage: ".length() + name.length() + 1);
 
         for (Arg arg : args) {
-            builder.appendWithinLine(arg.toShortArgs(printer)).space();
+            builder.appendWithinLine(arg.toShortArgs(colors)).space();
         }
 
         if (positional != null) {
-            builder.appendWithinLine(positional.toShortArgs(printer));
+            builder.appendWithinLine(positional.toShortArgs(colors));
         }
 
         builder.indent(0).newLine();
@@ -153,11 +152,11 @@ public final class HelpPrinter {
         builder.newLine();
 
         for (Arg arg : args) {
-            writeArgHelp(printer, builder, arg);
+            writeArgHelp(colors, builder, arg);
         }
 
         if (positional != null) {
-            writeArgHelp(printer, builder, positional);
+            writeArgHelp(colors, builder, positional);
         }
 
         if (!StringUtils.isEmpty(documentation)) {
@@ -167,15 +166,15 @@ public final class HelpPrinter {
         printer.println(builder.toString());
     }
 
-    private void writeArgHelp(CliPrinter printer, LineWrapper builder, Arg arg) {
+    private void writeArgHelp(ColorFormatter colors, LineWrapper builder, Arg arg) {
         if (arg.longName != null) {
-            builder.appendWithinLine(printer.style(arg.longName, Style.YELLOW));
+            builder.appendWithinLine(colors.style(arg.longName, Style.YELLOW));
             if (arg.shortName != null) {
                 builder.appendWithinLine(", ");
             }
         }
         if (arg.shortName != null) {
-            builder.appendWithinLine(printer.style(arg.shortName, Style.YELLOW));
+            builder.appendWithinLine(colors.style(arg.shortName, Style.YELLOW));
         }
         if (arg.exampleValue != null) {
             builder.space().appendWithinLine(arg.exampleValue);
@@ -210,17 +209,17 @@ public final class HelpPrinter {
             return new Arg(name, null, null, description);
         }
 
-        String toShortArgs(CliPrinter printer) {
+        String toShortArgs(ColorFormatter colors) {
             StringBuilder builder = new StringBuilder();
             builder.append('[');
             if (longName != null) {
-                builder.append(printer.style(longName, Style.YELLOW));
+                builder.append(colors.style(longName, Style.YELLOW));
                 if (shortName != null) {
                     builder.append(" | ");
                 }
             }
             if (shortName != null) {
-                builder.append(printer.style(shortName, Style.YELLOW));
+                builder.append(colors.style(shortName, Style.YELLOW));
             }
             if (exampleValue != null) {
                 builder.append(' ').append(exampleValue);

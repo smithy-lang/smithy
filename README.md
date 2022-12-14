@@ -33,7 +33,7 @@ resource City {
     resources: [Forecast]
 }
 
-// See the full example at https://awslabs.github.io/smithy/quickstart.html#complete-example
+// See the full example at https://smithy.io/2.0/quickstart.html#complete-example
 ```
 
 Find out more about modeling a service with Smithy in the [Quick Start
@@ -81,10 +81,10 @@ of the Smithy Gradle Plugin repository.
 
 This library is licensed under the Apache 2.0 License.
 
-[docs]: https://awslabs.github.io/smithy/
-[specs]: https://awslabs.github.io/smithy/2.0/spec/
-[javadocs]: https://awslabs.github.io/smithy/javadoc/latest/
-[quickstart]: https://awslabs.github.io/smithy/quickstart.html
+[docs]: https://smithy.io/
+[specs]: https://smithy.io/2.0/spec/
+[javadocs]: https://smithy.io/javadoc/latest/
+[quickstart]: https://smithy.io/2.0/quickstart.html
 [Smithy Gradle Plugin]: https://github.com/awslabs/smithy-gradle-plugin/
-[`smithy-build.json`]: https://awslabs.github.io/smithy/2.0/guides/building-models/build-config.html#using-smithy-build-json
-[building]: https://awslabs.github.io/smithy/2.0/guides/building-models/index.html
+[`smithy-build.json`]: https://smithy.io/2.0/guides/building-models/build-config.html#using-smithy-build-json
+[building]: https://smithy.io/2.0/guides/building-models/index.html
