@@ -11,6 +11,7 @@
 * Add warnings for private access on traits ([#1508](https://github.com/awslabs/smithy/pull/1508))
 * Tweak class caching in node (de)serializers. ([#1518](https://github.com/awslabs/smithy/pull/1518), [#1530](https://github.com/awslabs/smithy/pull/1530))
 * Add Maven dependency resolution to the CLI ([#1526](https://github.com/awslabs/smithy/pull/1526))
+* Add details to TraitBreakingChange EventId ([#1538](https://github.com/awslabs/smithy/pull/1538))
 
 ### Bug Fixes
 
