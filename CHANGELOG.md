@@ -1,5 +1,33 @@
 # Smithy Changelog
 
+## 1.26.5 (12/15/2022)
+
+### Features
+
+* Add tests for ACCEPT * ([#1365](https://github.com/awslabs/smithy/pull/1365))
+* Test content-type modeled inputs without body ([#1399](https://github.com/awslabs/smithy/pull/1399))
+* Improve member not targeting a property error message to better hint at fix ([#1501](https://github.com/awslabs/smithy/pull/1501))
+* Add typechecking to EndpointRuleset build ([#1507](https://github.com/awslabs/smithy/pull/1507))
+* Add warnings for private access on traits ([#1508](https://github.com/awslabs/smithy/pull/1508))
+* Tweak class caching in node (de)serializers. ([#1518](https://github.com/awslabs/smithy/pull/1518), [#1530](https://github.com/awslabs/smithy/pull/1530))
+* Add Maven dependency resolution to the CLI ([#1526](https://github.com/awslabs/smithy/pull/1526))
+
+### Bug Fixes
+
+* Fix dedicated io transform leaving unused shapes ([#1419](https://github.com/awslabs/smithy/pull/1419))
+* Fix return type of substring method ([#1504](https://github.com/awslabs/smithy/pull/1504))
+* Fix quoted text grammar and parsing ([#1535](https://github.com/awslabs/smithy/pull/1535))
+
+### Documentation
+
+* Make it clearer that assembly-name stripping is not a MUST in `restJson1` ([#1493](https://github.com/awslabs/smithy/pull/1493))
+* Clarify service-level pagination configuration ([#1514](https://github.com/awslabs/smithy/pull/1514))
+* Document it is generally breaking to add/remove input trait ([#1519](https://github.com/awslabs/smithy/pull/1519))
+* Fix grammar for MapMembers ([#1520](https://github.com/awslabs/smithy/pull/1520))
+* Clarify that metadata has no namespace ([#1521](https://github.com/awslabs/smithy/pull/1521))
+* Update trailing line break, list member grammar ([#1533](https://github.com/awslabs/smithy/pull/1533))
+* Fix MapMembers grammar and update test ([#1536](https://github.com/awslabs/smithy/pull/1536))
+
 ## 1.26.4 (2022-11-22)
 
 ### Bug Fixes
