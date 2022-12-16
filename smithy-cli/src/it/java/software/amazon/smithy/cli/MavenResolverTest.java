@@ -18,6 +18,9 @@ import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
 
 public class MavenResolverTest {
+
+    private static final String TEST_VERSION = "1.26.0";
+
     @Test
     public void resolvesDependenciesFromMavenCentralDefault() {
         IntegUtils.run("aws-model", ListUtils.of("validate", "model"), result -> {
@@ -46,7 +49,7 @@ public class MavenResolverTest {
     public void lowerSmithyVersionsAreUpgradedToNewerVersionsQuiet() {
         IntegUtils.run("lower-smithy-version", ListUtils.of("validate", "--quiet"), result -> {
             assertThat(result.getExitCode(), equalTo(0));
-            assertThat(result.getOutput(), not(containsString("Replacing software.amazon.smithy:smithy-model:jar:1.0.0 with software.amazon.smithy:smithy-model:" + SmithyCli.getVersion())));
+            assertThat(result.getOutput(), not(containsString("Replacing software.amazon.smithy:smithy-model:jar:1.0.0")));
         });
     }
 
@@ -116,7 +119,7 @@ public class MavenResolverTest {
 
             ObjectNode node = Node.parse(cacheContents).expectObjectNode();
             String location = node.expectStringMember("software.amazon.smithy:smithy-aws-traits:"
-                                                      + SmithyCli.getVersion()).getValue();
+                                                      + TEST_VERSION).getValue();
 
             // Set the lastModified of the JAR to the current time, which is > than the time of the config file,
             // so the cache is invalided.

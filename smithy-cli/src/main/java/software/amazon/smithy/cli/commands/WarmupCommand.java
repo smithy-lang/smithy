@@ -93,7 +93,10 @@ final class WarmupCommand extends ClasspathCommand {
 
     private void resolve(DependencyResolver resolver) {
         resolver.addRepository(MavenRepository.builder().url("https://repo.maven.apache.org/maven2").build());
-        resolver.addDependency("software.amazon.smithy:smithy-model:" + SmithyCli.getVersion());
+        // Use a version that we know exists in Maven Central. The version doesn't matter because it will be ignored
+        // when the result is filtered. This ensures that things like pre-release builds that aren't in Central
+        // work correctly.
+        resolver.addDependency("software.amazon.smithy:smithy-model:1.26.0");
         resolver.resolve();
     }
 }

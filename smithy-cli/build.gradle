@@ -20,7 +20,6 @@ import java.nio.file.Paths
 plugins {
     id "application"
     id "org.beryx.runtime" version "1.12.7"
-    id 'com.github.johnrengelman.shadow' version "7.1.2"
 }
 
 description = "This module implements the Smithy command line interface."
@@ -58,17 +57,9 @@ dependencies {
 
 // ------ Shade Maven dependency resolvers into the JAR. -------
 
-publishing {
-    publications {
-        shadow(MavenPublication) { publication ->
-            project.shadow.component(publication)
-        }
-    }
-}
-
 shadowJar {
     // Replace the normal JAR with the shaded JAR.
-    archiveClassifier.set('')
+    archiveClassifier = ''
 
     mergeServiceFiles()
 

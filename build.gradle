@@ -24,6 +24,7 @@ plugins {
     id "com.github.spotbugs" version "4.7.1"
     id "io.codearte.nexus-staging" version "0.30.0"
     id "me.champeau.jmh" version "0.6.5"
+    id 'com.github.johnrengelman.shadow' version "7.1.2"
 }
 
 ext {
@@ -115,6 +116,13 @@ subprojects {
     // ==== Maven ====
     apply plugin: "maven-publish"
     apply plugin: "signing"
+    apply plugin: "com.github.johnrengelman.shadow"
+
+    // This is a little hacky, but currently needed to build a shadowed CLI JAR with the same customizations
+    // as other JARs.
+    if (project.name != "smithy-cli") {
+        tasks.shadowJar.enabled = false
+    }
 
     publishing {
         repositories {
@@ -130,8 +138,12 @@ subprojects {
         }
 
         publications {
-            mavenJava(MavenPublication) {
-                from(components["java"])
+            mavenJava(MavenPublication) { publication ->
+                if (tasks.shadowJar.enabled) {
+                    project.shadow.component(publication)
+                } else {
+                    publication.from(components["java"])
+                }
 
                 // Ship the source and javadoc jars.
                 artifact(tasks["sourcesJar"])
