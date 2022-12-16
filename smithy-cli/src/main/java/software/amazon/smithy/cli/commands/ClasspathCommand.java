@@ -38,15 +38,9 @@ import software.amazon.smithy.cli.dependencies.DependencyResolverException;
 import software.amazon.smithy.cli.dependencies.FileCacheResolver;
 import software.amazon.smithy.cli.dependencies.FilterCliVersionResolver;
 import software.amazon.smithy.cli.dependencies.ResolvedArtifact;
-import software.amazon.smithy.utils.SetUtils;
 
 abstract class ClasspathCommand extends SimpleCommand {
 
-    private static final Set<String> PROVIDED_SMITHY_DEPENDENCIES = SetUtils.of(
-            "software.amazon.smithy:smithy-cli:",
-            "software.amazon.smithy:smithy-model:",
-            "software.amazon.smithy:smithy-build:",
-            "software.amazon.smithy:smithy-utils:");
     private static final Logger LOGGER = Logger.getLogger(ClasspathCommand.class.getName());
     private static final MavenRepository CENTRAL = MavenRepository.builder()
             .url("https://repo.maven.apache.org/maven2")
@@ -151,7 +145,6 @@ abstract class ClasspathCommand extends SimpleCommand {
         long lastModified = smithyBuildConfig.getLastModifiedInMillis();
         DependencyResolver delegate = new FilterCliVersionResolver(SmithyCli.getVersion(), baseResolver);
         DependencyResolver resolver = new FileCacheResolver(getCacheFile(buildOptions), lastModified, delegate);
-        addDefaultConfiguration(resolver);
         addConfiguredMavenRepos(smithyBuildConfig, resolver);
         maven.getDependencies().forEach(resolver::addDependency);
         List<ResolvedArtifact> artifacts = resolver.resolve();
@@ -163,13 +156,6 @@ abstract class ClasspathCommand extends SimpleCommand {
         }
 
         return result;
-    }
-
-    private static void addDefaultConfiguration(DependencyResolver resolver) {
-        String version = SmithyCli.getVersion();
-        for (String provided : PROVIDED_SMITHY_DEPENDENCIES) {
-            resolver.addDependency(provided + version);
-        }
     }
 
     private static void addConfiguredMavenRepos(SmithyBuildConfig config, DependencyResolver resolver) {
