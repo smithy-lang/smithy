@@ -18,6 +18,7 @@
 * Fix dedicated io transform leaving unused shapes ([#1419](https://github.com/awslabs/smithy/pull/1419))
 * Fix return type of substring method ([#1504](https://github.com/awslabs/smithy/pull/1504))
 * Fix quoted text grammar and parsing ([#1535](https://github.com/awslabs/smithy/pull/1535))
+* Fix backwards compatibility rules for the paginated trait ([#1549](https://github.com/awslabs/smithy/pull/1549))
 
 ### Documentation
 
