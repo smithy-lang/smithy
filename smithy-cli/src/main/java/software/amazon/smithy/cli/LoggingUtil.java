@@ -145,6 +145,8 @@ final class LoggingUtil {
                 } else {
                     printer.println(formatted);
                 }
+                // We want to see log messages right away, so flush the printer.
+                printer.flush();
             }
         }
 
