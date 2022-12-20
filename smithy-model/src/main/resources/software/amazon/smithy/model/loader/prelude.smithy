@@ -714,7 +714,9 @@ structure unstable {}
         {change: "remove"},
         {path: "/inputToken",  change: "update"},
         {path: "/outputToken", change: "update"},
-        {path: "/items",       change: "any",   severity: "NOTE"},
+        {path: "/items",       change: "remove"},
+        {path: "/items",       change: "add",   severity: "NOTE"},
+        {path: "/items",       change: "update",   severity: "NOTE"},
         {path: "/pageSize",    change: "update"},
         {path: "/pageSize",    change: "remove"},
     ]
