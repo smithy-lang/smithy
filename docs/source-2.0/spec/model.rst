@@ -1033,7 +1033,7 @@ model can use these rules to detect breaking or risky changes.
           assumed severity.
         - ``DANGER``: The change is very likely backward incompatible.
         - ``WARNING``: The change might be backward incompatible.
-        - ``NOTICE``: The change is likely ok, but should be noted during
+        - ``NOTE``: The change is likely ok, but should be noted during
           things like code reviews.
     * - message
       - ``string``
