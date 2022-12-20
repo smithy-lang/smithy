@@ -202,11 +202,7 @@ tasks.register("_dumpArchive", Exec) {
     commandLine("$smithyBinary", "warmup", "--discover")
 }
 
-// Can't do CDS if the OS and architecture is not one of our targets.
-if (!imageOs.isEmpty()) {
-    tasks["_dumpArchive"].dependsOn("_createClassList")
-    tasks["runtime"].finalizedBy("_dumpArchive")
-}
+tasks["_dumpArchive"].dependsOn("_createClassList")
 
 // Always shadow the JAR and replace the JAR by the shadowed JAR.
 tasks['jar'].finalizedBy("shadowJar")
