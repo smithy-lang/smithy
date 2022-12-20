@@ -187,26 +187,10 @@ runtime {
     }
 }
 
-// First, call validate with no args and create a class list to use application class data sharing.
-tasks.register("_createClassList", Exec) {
-    environment("SMITHY_OPTS", "-XX:DumpLoadedClassList=${project.buildDir}/image/smithy-cli-${imageOs}/lib/smithy.lst")
-    environment("SMITHY_WARMUP_INTERNAL_ONLY", "true")
-    commandLine("$smithyBinary", "warmup", "--discover")
+tasks.register("optimize", Exec) {
+    commandLine("$smithyBinary", "warmup")
 }
-
-// Next, actually dump out the archive of the collected classes. This is platform specific,
-// so it can only be done for the current OS+architecture.
-tasks.register("_dumpArchive", Exec) {
-    environment("SMITHY_OPTS", "-Xshare:dump -XX:SharedArchiveFile=${project.buildDir}/image/smithy-cli-${imageOs}/lib/smithy.jsa -XX:SharedClassListFile=${project.buildDir}/image/smithy-cli-${imageOs}/lib/smithy.lst")
-    environment("SMITHY_WARMUP_INTERNAL_ONLY", "true")
-    commandLine("$smithyBinary", "warmup", "--discover")
-}
-
-// Can't do CDS if the OS and architecture is not one of our targets.
-if (!imageOs.isEmpty()) {
-    tasks["_dumpArchive"].dependsOn("_createClassList")
-    tasks["runtime"].finalizedBy("_dumpArchive")
-}
+tasks["optimize"].dependsOn("runtime")
 
 // Always shadow the JAR and replace the JAR by the shadowed JAR.
 tasks['jar'].finalizedBy("shadowJar")

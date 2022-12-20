@@ -43,7 +43,7 @@ public final class SmithyCommand implements Command {
             new SelectCommand(getName(), dependencyResolverFactory),
             new CleanCommand(getName()),
             new Upgrade1to2Command(getName()),
-            new WarmupCommand(getName(), dependencyResolverFactory)
+            new WarmupCommand(getName())
         );
     }
 
