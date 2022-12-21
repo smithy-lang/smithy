@@ -18,14 +18,6 @@ public class RulesetTestUtil {
         }
     }
 
-    public static String loadRuleSetAsString(String resourceId) {
-        try(InputStream is = RulesetTestUtil.class.getClassLoader().getResourceAsStream(resourceId)) {
-            return IoUtils.readUtf8Resource(RulesetTestUtil.class.getClassLoader(), resourceId);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public static EndpointRuleSet minimalRuleSet() {
         return loadRuleSet("software/amazon/smithy/rulesengine/testutil/valid-rules/minimal-ruleset.json");
     }

@@ -20,6 +20,7 @@ import static software.amazon.smithy.rulesengine.language.util.StringUtils.inden
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -83,7 +84,7 @@ public abstract class Value implements FromSourceLocation, ToNode {
 
             @Override
             public Value objectNode(ObjectNode node) {
-                HashMap<Identifier, Value> out = new HashMap<>();
+                HashMap<Identifier, Value> out = new LinkedHashMap<>();
                 node.getMembers().forEach((name, member) -> out.put(Identifier.of(name), Value.fromNode(member)));
                 return Value.record(out);
             }
