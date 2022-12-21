@@ -137,5 +137,7 @@ service RestJson {
         TestPayloadStructure,
         TestPayloadBlob,
         TestNoPayload,
+
+        DatetimeOffsets,
     ]
 }

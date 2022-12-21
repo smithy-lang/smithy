@@ -62,5 +62,7 @@ service AwsQuery {
 
         // custom endpoints with paths
         HostWithPathOperation,
+
+        DatetimeOffsets,
     ]
 }

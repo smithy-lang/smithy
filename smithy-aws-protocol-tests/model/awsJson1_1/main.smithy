@@ -36,6 +36,8 @@ service JsonProtocol {
 
         // custom endpoints with paths
         HostWithPathOperation,
+
+        DatetimeOffsets,
     ],
 }
 
