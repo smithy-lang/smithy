@@ -33,6 +33,7 @@ import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.ParameterType;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
+import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.MapUtils;
 
 class EndpointRuleSetTest {
@@ -52,6 +53,14 @@ class EndpointRuleSetTest {
                 )))
                 .build();
         assertEquals(expected, result.expectEndpoint());
+    }
+
+    @Test
+    void testDeterministicSerde() {
+        String resourceId = "software/amazon/smithy/rulesengine/testutil/valid-rules/minimal-ruleset.json";
+        EndpointRuleSet actual = RulesetTestUtil.loadRuleSet(resourceId);
+        String asString = IoUtils.readUtf8Resource(RulesetTestUtil.class.getClassLoader(), resourceId);
+        assertEquals(Node.prettyPrintJson(Node.parseJsonWithComments(asString)), Node.prettyPrintJson(actual.toNode()));
     }
 
     @Test
