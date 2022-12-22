@@ -257,9 +257,9 @@ explicitly on the operation.
     }
 
 Attaching the ``paginated`` trait to a service provides default pagination
-configuration settings to all operations bound within the closure of the
-service. Pagination settings configured on an operation override any inherited
-service setting.
+configuration settings to all ``paginated`` operations bound within the closure
+of the service. Pagination settings configured on an operation override any
+inherited service setting.
 
 The following example defines a paginated operation that inherits some
 settings from a service.

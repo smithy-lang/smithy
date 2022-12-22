@@ -677,8 +677,9 @@ is contained. New server-side protocol implementations MUST use a header field
 named <code class="docutils literal notranslate"><span class="pre">X-Amzn-Errortype</span></code>. Clients MUST accept any one of the following: an
 additional header with the name <code class="docutils literal notranslate"><span class="pre">X-Amzn-Errortype</span></code>, a body field with the
 name <code class="docutils literal notranslate"><span class="pre">__type</span></code>, or a body field named <code class="docutils literal notranslate"><span class="pre">code</span></code>. The value of this component
-SHOULD contain only the <a class="reference internal" href="../core/model.html#grammar-token-smithy-Identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
-<a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>.</p>
+SHOULD contain the <a class="reference internal" href="../core/model.html#grammar-token-smithy-Identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's
+<a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>. The value of this component SHOULD NOT include the
+<a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>'s namespace.</p>
 <p>Legacy server-side protocol implementations sometimes include additional
 information in this value. New server-side protocol implementations SHOULD NOT
 populate this value with anything but the shape name. All client-side

@@ -148,31 +148,32 @@ string support defined in :rfc:`7405`.
     NodeKeywords        :%s"true" / %s"false" / %s"null"
     NodeStringValue     :`ShapeId` / `TextBlock` / `QuotedText`
     QuotedText          :DQUOTE *`QuotedChar` DQUOTE
-    QuotedChar          :%x20-21     ; space - "!"
+    QuotedChar          :%x09        ; tab
+                        :/ %x20-21     ; space - "!"
                         :/ %x23-5B     ; "#" - "["
                         :/ %x5D-10FFFF ; "]"+
                         :/ `EscapedChar`
-                        :/ `PreservedDouble`
                         :/ `NL`
-    EscapedChar         :`Escape` (`Escape` / "'" / DQUOTE / %s"b"
-                        :          / %s"f" / %s"n" / %s"r" / %s"t"
-                        :          / "/" / `UnicodeEscape`)
+    EscapedChar         :`Escape` (`Escape` / DQUOTE / %s"b" / %s"f"
+                        :           / %s"n" / %s"r" / %s"t" / "/"
+                        :           / `UnicodeEscape`)
     UnicodeEscape       :%s"u" `Hex` `Hex` `Hex` `Hex`
     Hex                 :DIGIT / %x41-46 / %x61-66
-    PreservedDouble     :`Escape` (%x20-21 / %x23-5B / %x5D-10FFFF)
     Escape              :%x5C ; backslash
-    TextBlock           :`ThreeDquotes` *`SP` `NL` *`QuotedChar` `ThreeDquotes`
+    TextBlock           :`ThreeDquotes` *`SP` `NL` *`TextBlockContent` `ThreeDquotes`
+    TextBlockContent    :`QuotedChar` / (1*2DQUOTE 1*`QuotedChar`)
     ThreeDquotes        :DQUOTE DQUOTE DQUOTE
 
 .. rubric:: Shapes
 
 .. productionlist:: smithy
-    ShapeSection            :[`NamespaceStatement` `UseSection` `ShapeStatements`]
+    ShapeSection            :[`NamespaceStatement` `UseSection` [`ShapeStatements`]]
     NamespaceStatement      :%s"namespace" `SP` `Namespace` `BR`
     UseSection              :*(`UseStatement`)
     UseStatement            :%s"use" `SP` `AbsoluteRootShapeId` `BR`
-    ShapeStatements         :*(`ShapeStatement` / `ApplyStatement`)
-    ShapeStatement          :`TraitStatements` `ShapeBody` `BR`
+    ShapeStatements         :`ShapeOrApplyStatement` *(`BR` `ShapeOrApplyStatement`)
+    ShapeOrApplyStatement   :`ShapeStatement` / `ApplyStatement`
+    ShapeStatement          :`TraitStatements` `ShapeBody`
     ShapeBody               :`SimpleShapeStatement`
                             :/ `EnumShapeStatement`
                             :/ `ListStatement`
@@ -193,12 +194,12 @@ string support defined in :rfc:`7405`.
     EnumShapeMembers        :"{" *`WS` 1*(`TraitStatements` `Identifier` [`ValueAssignment`] `*WS`) "}"
     ValueAssignment         :*`SP` "=" *`SP` `NodeValue` `BR`
     ListStatement           :%s"list" `SP` `Identifier` [`Mixins`] *`WS` `ListMembers`
-    ListMembers             :"{" *`WS` `ListMember` *`WS` "}"
+    ListMembers             :"{" *`WS` [`ListMember`] *`WS` "}"
     ListMember              :`TraitStatements` (`ElidedListMember` / `ExplicitListMember`)
     ElidedListMember        :%s"$member"
     ExplicitListMember      :%s"member" *`SP` ":" *`SP` `ShapeId`
     MapStatement            :%s"map" `SP` `Identifier` [`Mixins`] *`WS` `MapMembers`
-    MapMembers              :"{" *`WS` `MapKey` `BR` `MapValue` *`WS` "}"
+    MapMembers              :"{" *`WS` [`MapKey` / `MapValue` / (`MapKey` `WS` `MapValue`)] *`WS` "}"
     MapKey                  :`TraitStatements` (`ElidedMapKey` / `ExplicitMapKey`)
     MapValue                :`TraitStatements` (`ElidedMapValue` / `ExplicitMapValue`)
     ElidedMapKey            :%s"$key"
@@ -237,9 +238,9 @@ string support defined in :rfc:`7405`.
     TraitBodyValue          :`TraitStructure` / `NodeValue`
     TraitStructure          :`TraitStructureKvp` *(*`WS` `TraitStructureKvp`)
     TraitStructureKvp       :`NodeObjectKey` *`WS` ":" *`WS` `NodeValue`
-    ApplyStatement          :(`ApplyStatementSingular` / `ApplyStatementBlock`)
-    ApplyStatementSingular  :%s"apply" `SP` `ShapeId` `WS` `Trait` `BR`
-    ApplyStatementBlock     :%s"apply" `SP` `ShapeId` `WS` "{" `TraitStatements` "}" `BR`
+    ApplyStatement          :`ApplyStatementSingular` / `ApplyStatementBlock`
+    ApplyStatementSingular  :%s"apply" `SP` `ShapeId` `WS` `Trait`
+    ApplyStatementBlock     :%s"apply" `SP` `ShapeId` `WS` "{" `TraitStatements` "}"
 
 .. rubric:: Shape ID
 
@@ -390,6 +391,7 @@ The following example defines metadata in the model:
 
     .. code-block:: smithy
 
+        $version: "2"
         metadata greeting = "hello"
         metadata "stringList" = ["a", "b", "c"]
 
@@ -404,6 +406,28 @@ The following example defines metadata in the model:
                 "stringList": ["a", "b", "c"]
             }
         }
+
+Metadata is not defined within a namespace. Unquoted object property values
+are considered :ref:`syntactic shape IDs <syntactic-shape-ids>` and resolve
+to the prelude namespace, ``smithy.api``.
+
+The following Smithy IDL model:
+
+.. code-block:: smithy
+
+    $version: "2"
+    metadata exampleSyntacticShapeId = required
+
+Is equivalent to the following JSON AST model:
+
+.. code-block:: json
+
+    {
+        "smithy": "2",
+        "metadata": {
+            "exampleSyntacticShapeId": "smithy.api#required"
+        }
+    }
 
 
 -------------

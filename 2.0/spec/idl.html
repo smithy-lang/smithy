@@ -487,17 +487,17 @@ string support defined in <span class="target" id="index-1"></span><a class="rfc
     DQUOTE *<a class="reference internal" href="#grammar-token-smithy-QuotedChar"><code class="xref docutils literal notranslate"><span class="pre">QuotedChar</span></code></a> DQUOTE
 
 <strong id="grammar-token-smithy-QuotedChar"><span id="grammar-token-quotedchar"></span>QuotedChar</strong> =
-    %x20-21     ; space - &quot;!&quot;
+    %x09        ; tab
+  / %x20-21     ; space - &quot;!&quot;
   / %x23-5B     ; &quot;#&quot; - &quot;[&quot;
   / %x5D-10FFFF ; &quot;]&quot;+
   / <a class="reference internal" href="#grammar-token-smithy-EscapedChar"><code class="xref docutils literal notranslate"><span class="pre">EscapedChar</span></code></a>
-  / <a class="reference internal" href="#grammar-token-smithy-PreservedDouble"><code class="xref docutils literal notranslate"><span class="pre">PreservedDouble</span></code></a>
   / <a class="reference internal" href="#grammar-token-smithy-NL"><code class="xref docutils literal notranslate"><span class="pre">NL</span></code></a>
 
 <strong id="grammar-token-smithy-EscapedChar"><span id="grammar-token-escapedchar"></span>EscapedChar</strong> =
-    <a class="reference internal" href="#grammar-token-smithy-Escape"><code class="xref docutils literal notranslate"><span class="pre">Escape</span></code></a> (<a class="reference internal" href="#grammar-token-smithy-Escape"><code class="xref docutils literal notranslate"><span class="pre">Escape</span></code></a> / &quot;'&quot; / DQUOTE / %s&quot;b&quot;
-            / %s&quot;f&quot; / %s&quot;n&quot; / %s&quot;r&quot; / %s&quot;t&quot;
-            / &quot;/&quot; / <a class="reference internal" href="#grammar-token-smithy-UnicodeEscape"><code class="xref docutils literal notranslate"><span class="pre">UnicodeEscape</span></code></a>)
+    <a class="reference internal" href="#grammar-token-smithy-Escape"><code class="xref docutils literal notranslate"><span class="pre">Escape</span></code></a> (<a class="reference internal" href="#grammar-token-smithy-Escape"><code class="xref docutils literal notranslate"><span class="pre">Escape</span></code></a> / DQUOTE / %s&quot;b&quot; / %s&quot;f&quot;
+             / %s&quot;n&quot; / %s&quot;r&quot; / %s&quot;t&quot; / &quot;/&quot;
+             / <a class="reference internal" href="#grammar-token-smithy-UnicodeEscape"><code class="xref docutils literal notranslate"><span class="pre">UnicodeEscape</span></code></a>)
 
 <strong id="grammar-token-smithy-UnicodeEscape"><span id="grammar-token-unicodeescape"></span>UnicodeEscape</strong> =
     %s&quot;u&quot; <a class="reference internal" href="#grammar-token-smithy-Hex"><code class="xref docutils literal notranslate"><span class="pre">Hex</span></code></a> <a class="reference internal" href="#grammar-token-smithy-Hex"><code class="xref docutils literal notranslate"><span class="pre">Hex</span></code></a> <a class="reference internal" href="#grammar-token-smithy-Hex"><code class="xref docutils literal notranslate"><span class="pre">Hex</span></code></a> <a class="reference internal" href="#grammar-token-smithy-Hex"><code class="xref docutils literal notranslate"><span class="pre">Hex</span></code></a>
@@ -505,14 +505,14 @@ string support defined in <span class="target" id="index-1"></span><a class="rfc
 <strong id="grammar-token-smithy-Hex"><span id="grammar-token-hex"></span>Hex</strong> =
     DIGIT / %x41-46 / %x61-66
 
-<strong id="grammar-token-smithy-PreservedDouble"><span id="grammar-token-preserveddouble"></span>PreservedDouble</strong> =
-    <a class="reference internal" href="#grammar-token-smithy-Escape"><code class="xref docutils literal notranslate"><span class="pre">Escape</span></code></a> (%x20-21 / %x23-5B / %x5D-10FFFF)
-
 <strong id="grammar-token-smithy-Escape"><span id="grammar-token-escape"></span>Escape</strong> =
     %x5C ; backslash
 
 <strong id="grammar-token-smithy-TextBlock"><span id="grammar-token-textblock"></span>TextBlock</strong> =
-    <a class="reference internal" href="#grammar-token-smithy-ThreeDquotes"><code class="xref docutils literal notranslate"><span class="pre">ThreeDquotes</span></code></a> *<a class="reference internal" href="#grammar-token-smithy-SP"><code class="xref docutils literal notranslate"><span class="pre">SP</span></code></a> <a class="reference internal" href="#grammar-token-smithy-NL"><code class="xref docutils literal notranslate"><span class="pre">NL</span></code></a> *<a class="reference internal" href="#grammar-token-smithy-QuotedChar"><code class="xref docutils literal notranslate"><span class="pre">QuotedChar</span></code></a> <a class="reference internal" href="#grammar-token-smithy-ThreeDquotes"><code class="xref docutils literal notranslate"><span class="pre">ThreeDquotes</span></code></a>
+    <a class="reference internal" href="#grammar-token-smithy-ThreeDquotes"><code class="xref docutils literal notranslate"><span class="pre">ThreeDquotes</span></code></a> *<a class="reference internal" href="#grammar-token-smithy-SP"><code class="xref docutils literal notranslate"><span class="pre">SP</span></code></a> <a class="reference internal" href="#grammar-token-smithy-NL"><code class="xref docutils literal notranslate"><span class="pre">NL</span></code></a> *<a class="reference internal" href="#grammar-token-smithy-TextBlockContent"><code class="xref docutils literal notranslate"><span class="pre">TextBlockContent</span></code></a> <a class="reference internal" href="#grammar-token-smithy-ThreeDquotes"><code class="xref docutils literal notranslate"><span class="pre">ThreeDquotes</span></code></a>
+
+<strong id="grammar-token-smithy-TextBlockContent"><span id="grammar-token-textblockcontent"></span>TextBlockContent</strong> =
+    <a class="reference internal" href="#grammar-token-smithy-QuotedChar"><code class="xref docutils literal notranslate"><span class="pre">QuotedChar</span></code></a> / (1*2DQUOTE 1*<a class="reference internal" href="#grammar-token-smithy-QuotedChar"><code class="xref docutils literal notranslate"><span class="pre">QuotedChar</span></code></a>)
 
 <strong id="grammar-token-smithy-ThreeDquotes"><span id="grammar-token-threedquotes"></span>ThreeDquotes</strong> =
     DQUOTE DQUOTE DQUOTE
@@ -520,7 +520,7 @@ string support defined in <span class="target" id="index-1"></span><a class="rfc
 <p class="rubric">Shapes</p>
 <pre class="productionlist highlight">
 <strong id="grammar-token-smithy-ShapeSection"><span id="grammar-token-shapesection"></span>ShapeSection</strong> =
-    [<a class="reference internal" href="#grammar-token-smithy-NamespaceStatement"><code class="xref docutils literal notranslate"><span class="pre">NamespaceStatement</span></code></a> <a class="reference internal" href="#grammar-token-smithy-UseSection"><code class="xref docutils literal notranslate"><span class="pre">UseSection</span></code></a> <a class="reference internal" href="#grammar-token-smithy-ShapeStatements"><code class="xref docutils literal notranslate"><span class="pre">ShapeStatements</span></code></a>]
+    [<a class="reference internal" href="#grammar-token-smithy-NamespaceStatement"><code class="xref docutils literal notranslate"><span class="pre">NamespaceStatement</span></code></a> <a class="reference internal" href="#grammar-token-smithy-UseSection"><code class="xref docutils literal notranslate"><span class="pre">UseSection</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-ShapeStatements"><code class="xref docutils literal notranslate"><span class="pre">ShapeStatements</span></code></a>]]
 
 <strong id="grammar-token-smithy-NamespaceStatement"><span id="grammar-token-namespacestatement"></span>NamespaceStatement</strong> =
     %s&quot;namespace&quot; <a class="reference internal" href="#grammar-token-smithy-SP"><code class="xref docutils literal notranslate"><span class="pre">SP</span></code></a> <a class="reference internal" href="model.html#grammar-token-smithy-Namespace"><code class="xref docutils literal notranslate"><span class="pre">Namespace</span></code></a> <a class="reference internal" href="#grammar-token-smithy-BR"><code class="xref docutils literal notranslate"><span class="pre">BR</span></code></a>
@@ -532,10 +532,13 @@ string support defined in <span class="target" id="index-1"></span><a class="rfc
     %s&quot;use&quot; <a class="reference internal" href="#grammar-token-smithy-SP"><code class="xref docutils literal notranslate"><span class="pre">SP</span></code></a> <a class="reference internal" href="model.html#grammar-token-smithy-AbsoluteRootShapeId"><code class="xref docutils literal notranslate"><span class="pre">AbsoluteRootShapeId</span></code></a> <a class="reference internal" href="#grammar-token-smithy-BR"><code class="xref docutils literal notranslate"><span class="pre">BR</span></code></a>
 
 <strong id="grammar-token-smithy-ShapeStatements"><span id="grammar-token-shapestatements"></span>ShapeStatements</strong> =
-    *(<a class="reference internal" href="#grammar-token-smithy-ShapeStatement"><code class="xref docutils literal notranslate"><span class="pre">ShapeStatement</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-ApplyStatement"><code class="xref docutils literal notranslate"><span class="pre">ApplyStatement</span></code></a>)
+    <a class="reference internal" href="#grammar-token-smithy-ShapeOrApplyStatement"><code class="xref docutils literal notranslate"><span class="pre">ShapeOrApplyStatement</span></code></a> *(<a class="reference internal" href="#grammar-token-smithy-BR"><code class="xref docutils literal notranslate"><span class="pre">BR</span></code></a> <a class="reference internal" href="#grammar-token-smithy-ShapeOrApplyStatement"><code class="xref docutils literal notranslate"><span class="pre">ShapeOrApplyStatement</span></code></a>)
+
+<strong id="grammar-token-smithy-ShapeOrApplyStatement"><span id="grammar-token-shapeorapplystatement"></span>ShapeOrApplyStatement</strong> =
+    <a class="reference internal" href="#grammar-token-smithy-ShapeStatement"><code class="xref docutils literal notranslate"><span class="pre">ShapeStatement</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-ApplyStatement"><code class="xref docutils literal notranslate"><span class="pre">ApplyStatement</span></code></a>
 
 <strong id="grammar-token-smithy-ShapeStatement"><span id="grammar-token-shapestatement"></span>ShapeStatement</strong> =
-    <a class="reference internal" href="#grammar-token-smithy-TraitStatements"><code class="xref docutils literal notranslate"><span class="pre">TraitStatements</span></code></a> <a class="reference internal" href="#grammar-token-smithy-ShapeBody"><code class="xref docutils literal notranslate"><span class="pre">ShapeBody</span></code></a> <a class="reference internal" href="#grammar-token-smithy-BR"><code class="xref docutils literal notranslate"><span class="pre">BR</span></code></a>
+    <a class="reference internal" href="#grammar-token-smithy-TraitStatements"><code class="xref docutils literal notranslate"><span class="pre">TraitStatements</span></code></a> <a class="reference internal" href="#grammar-token-smithy-ShapeBody"><code class="xref docutils literal notranslate"><span class="pre">ShapeBody</span></code></a>
 
 <strong id="grammar-token-smithy-ShapeBody"><span id="grammar-token-shapebody"></span>ShapeBody</strong> =
     <a class="reference internal" href="#grammar-token-smithy-SimpleShapeStatement"><code class="xref docutils literal notranslate"><span class="pre">SimpleShapeStatement</span></code></a>
@@ -576,7 +579,7 @@ string support defined in <span class="target" id="index-1"></span><a class="rfc
     %s&quot;list&quot; <a class="reference internal" href="#grammar-token-smithy-SP"><code class="xref docutils literal notranslate"><span class="pre">SP</span></code></a> <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-Mixins"><code class="xref docutils literal notranslate"><span class="pre">Mixins</span></code></a>] *<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a> <a class="reference internal" href="#grammar-token-smithy-ListMembers"><code class="xref docutils literal notranslate"><span class="pre">ListMembers</span></code></a>
 
 <strong id="grammar-token-smithy-ListMembers"><span id="grammar-token-listmembers"></span>ListMembers</strong> =
-    &quot;{&quot; *<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a> <a class="reference internal" href="#grammar-token-smithy-ListMember"><code class="xref docutils literal notranslate"><span class="pre">ListMember</span></code></a> *<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a> &quot;}&quot;
+    &quot;{&quot; *<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-ListMember"><code class="xref docutils literal notranslate"><span class="pre">ListMember</span></code></a>] *<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a> &quot;}&quot;
 
 <strong id="grammar-token-smithy-ListMember"><span id="grammar-token-listmember"></span>ListMember</strong> =
     <a class="reference internal" href="#grammar-token-smithy-TraitStatements"><code class="xref docutils literal notranslate"><span class="pre">TraitStatements</span></code></a> (<a class="reference internal" href="#grammar-token-smithy-ElidedListMember"><code class="xref docutils literal notranslate"><span class="pre">ElidedListMember</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-ExplicitListMember"><code class="xref docutils literal notranslate"><span class="pre">ExplicitListMember</span></code></a>)
@@ -591,7 +594,7 @@ string support defined in <span class="target" id="index-1"></span><a class="rfc
     %s&quot;map&quot; <a class="reference internal" href="#grammar-token-smithy-SP"><code class="xref docutils literal notranslate"><span class="pre">SP</span></code></a> <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-Mixins"><code class="xref docutils literal notranslate"><span class="pre">Mixins</span></code></a>] *<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a> <a class="reference internal" href="#grammar-token-smithy-MapMembers"><code class="xref docutils literal notranslate"><span class="pre">MapMembers</span></code></a>
 
 <strong id="grammar-token-smithy-MapMembers"><span id="grammar-token-mapmembers"></span>MapMembers</strong> =
-    &quot;{&quot; *<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a> <a class="reference internal" href="#grammar-token-smithy-MapKey"><code class="xref docutils literal notranslate"><span class="pre">MapKey</span></code></a> <a class="reference internal" href="#grammar-token-smithy-BR"><code class="xref docutils literal notranslate"><span class="pre">BR</span></code></a> <a class="reference internal" href="#grammar-token-smithy-MapValue"><code class="xref docutils literal notranslate"><span class="pre">MapValue</span></code></a> *<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a> &quot;}&quot;
+    &quot;{&quot; *<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a> [<a class="reference internal" href="#grammar-token-smithy-MapKey"><code class="xref docutils literal notranslate"><span class="pre">MapKey</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-MapValue"><code class="xref docutils literal notranslate"><span class="pre">MapValue</span></code></a> / (<a class="reference internal" href="#grammar-token-smithy-MapKey"><code class="xref docutils literal notranslate"><span class="pre">MapKey</span></code></a> <a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a> <a class="reference internal" href="#grammar-token-smithy-MapValue"><code class="xref docutils literal notranslate"><span class="pre">MapValue</span></code></a>)] *<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a> &quot;}&quot;
 
 <strong id="grammar-token-smithy-MapKey"><span id="grammar-token-mapkey"></span>MapKey</strong> =
     <a class="reference internal" href="#grammar-token-smithy-TraitStatements"><code class="xref docutils literal notranslate"><span class="pre">TraitStatements</span></code></a> (<a class="reference internal" href="#grammar-token-smithy-ElidedMapKey"><code class="xref docutils literal notranslate"><span class="pre">ElidedMapKey</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-ExplicitMapKey"><code class="xref docutils literal notranslate"><span class="pre">ExplicitMapKey</span></code></a>)
@@ -688,13 +691,13 @@ string support defined in <span class="target" id="index-1"></span><a class="rfc
     <a class="reference internal" href="#grammar-token-smithy-NodeObjectKey"><code class="xref docutils literal notranslate"><span class="pre">NodeObjectKey</span></code></a> *<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a> &quot;:&quot; *<a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a> <a class="reference internal" href="#grammar-token-smithy-NodeValue"><code class="xref docutils literal notranslate"><span class="pre">NodeValue</span></code></a>
 
 <strong id="grammar-token-smithy-ApplyStatement"><span id="grammar-token-applystatement"></span>ApplyStatement</strong> =
-    (<a class="reference internal" href="#grammar-token-smithy-ApplyStatementSingular"><code class="xref docutils literal notranslate"><span class="pre">ApplyStatementSingular</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-ApplyStatementBlock"><code class="xref docutils literal notranslate"><span class="pre">ApplyStatementBlock</span></code></a>)
+    <a class="reference internal" href="#grammar-token-smithy-ApplyStatementSingular"><code class="xref docutils literal notranslate"><span class="pre">ApplyStatementSingular</span></code></a> / <a class="reference internal" href="#grammar-token-smithy-ApplyStatementBlock"><code class="xref docutils literal notranslate"><span class="pre">ApplyStatementBlock</span></code></a>
 
 <strong id="grammar-token-smithy-ApplyStatementSingular"><span id="grammar-token-applystatementsingular"></span>ApplyStatementSingular</strong> =
-    %s&quot;apply&quot; <a class="reference internal" href="#grammar-token-smithy-SP"><code class="xref docutils literal notranslate"><span class="pre">SP</span></code></a> <a class="reference internal" href="model.html#grammar-token-smithy-ShapeId"><code class="xref docutils literal notranslate"><span class="pre">ShapeId</span></code></a> <a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a> <a class="reference internal" href="#grammar-token-smithy-Trait"><code class="xref docutils literal notranslate"><span class="pre">Trait</span></code></a> <a class="reference internal" href="#grammar-token-smithy-BR"><code class="xref docutils literal notranslate"><span class="pre">BR</span></code></a>
+    %s&quot;apply&quot; <a class="reference internal" href="#grammar-token-smithy-SP"><code class="xref docutils literal notranslate"><span class="pre">SP</span></code></a> <a class="reference internal" href="model.html#grammar-token-smithy-ShapeId"><code class="xref docutils literal notranslate"><span class="pre">ShapeId</span></code></a> <a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a> <a class="reference internal" href="#grammar-token-smithy-Trait"><code class="xref docutils literal notranslate"><span class="pre">Trait</span></code></a>
 
 <strong id="grammar-token-smithy-ApplyStatementBlock"><span id="grammar-token-applystatementblock"></span>ApplyStatementBlock</strong> =
-    %s&quot;apply&quot; <a class="reference internal" href="#grammar-token-smithy-SP"><code class="xref docutils literal notranslate"><span class="pre">SP</span></code></a> <a class="reference internal" href="model.html#grammar-token-smithy-ShapeId"><code class="xref docutils literal notranslate"><span class="pre">ShapeId</span></code></a> <a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a> &quot;{&quot; <a class="reference internal" href="#grammar-token-smithy-TraitStatements"><code class="xref docutils literal notranslate"><span class="pre">TraitStatements</span></code></a> &quot;}&quot; <a class="reference internal" href="#grammar-token-smithy-BR"><code class="xref docutils literal notranslate"><span class="pre">BR</span></code></a>
+    %s&quot;apply&quot; <a class="reference internal" href="#grammar-token-smithy-SP"><code class="xref docutils literal notranslate"><span class="pre">SP</span></code></a> <a class="reference internal" href="model.html#grammar-token-smithy-ShapeId"><code class="xref docutils literal notranslate"><span class="pre">ShapeId</span></code></a> <a class="reference internal" href="#grammar-token-smithy-WS"><code class="xref docutils literal notranslate"><span class="pre">WS</span></code></a> &quot;{&quot; <a class="reference internal" href="#grammar-token-smithy-TraitStatements"><code class="xref docutils literal notranslate"><span class="pre">TraitStatements</span></code></a> &quot;}&quot;
 </pre>
 <p class="rubric">Shape ID</p>
 <div class="admonition seealso">
@@ -827,7 +830,8 @@ consists of the metadata key to set, followed by <code class="docutils literal n
 <p>The following example defines metadata in the model:</p>
 <div class="tab-set docutils container">
 <input checked="True" class="tab-input" id="tab-set--3-input--1" name="tab-set--3" type="radio"><label class="tab-label" for="tab-set--3-input--1">Smithy</label><div class="tab-content docutils container">
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata </span><span class="nc">greeting </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;hello&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">metadata </span><span class="nc">greeting </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;hello&quot;</span><span class="w"></span>
 <span class="kd">metadata </span><span class="nc">&quot;stringList&quot; </span><span class="nd">=</span><span class="w"> </span>[<span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;c&quot;</span>]<span class="w"></span>
 </pre></div>
 </div>
@@ -843,6 +847,23 @@ consists of the metadata key to set, followed by <code class="docutils literal n
 </pre></div>
 </div>
 </div>
+</div>
+<p>Metadata is not defined within a namespace. Unquoted object property values
+are considered <a class="reference internal" href="#syntactic-shape-ids"><span class="std std-ref">syntactic shape IDs</span></a> and resolve
+to the prelude namespace, <code class="docutils literal notranslate"><span class="pre">smithy.api</span></code>.</p>
+<p>The following Smithy IDL model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">metadata </span><span class="nc">exampleSyntacticShapeId </span><span class="nd">=</span><span class="w"> </span><span class="vc">required</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Is equivalent to the following JSON AST model:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;exampleSyntacticShapeId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#required&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
 </div>
 </div>
 <div class="section" id="shape-section">

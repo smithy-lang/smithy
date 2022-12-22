@@ -795,6 +795,23 @@ consists of the metadata key to set, followed by <code class="docutils literal n
 </pre></div>
 </div>
 </div></div>
+<p>Metadata is not defined within a namespace. Unquoted object property values
+are considered <a class="reference internal" href="#syntactic-shape-ids"><span class="std std-ref">syntactic shape IDs</span></a> and resolve
+to the prelude namespace, <code class="docutils literal notranslate"><span class="pre">smithy.api</span></code>.</p>
+<p>The following Smithy IDL model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="w"></span>
+<span class="kd">metadata </span><span class="nc">exampleSyntacticShapeId </span><span class="nd">=</span><span class="w"> </span><span class="vc">required</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Is equivalent to the following JSON AST model:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;exampleSyntacticShapeId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#required&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="shape-section">
 <h2><span class="section-number">16.7. </span>Shape section<a class="headerlink" href="#shape-section" title="Permalink to this headline">#</a></h2>

@@ -33,14 +33,23 @@ The configuration file accepts the following properties:
         projection will create a subdirectory named after the projection, and
         the artifacts from the projection, including a ``model.json`` file,
         will be placed in the directory.
+    * - sources
+      - ``[string]``
+      - Provides a list of relative files or directories that contain the
+        models that are considered the source models of the build. When a
+        directory is encountered, all files in the entire directory tree are
+        added as sources. Sources are relative to the configuration file.
     * - imports
-      - ``string[]``
-      - Provides a list of relative imports to combine into a single model.
-        When a directory is encountered, all files and all files within all
-        subdirectories are imported. Note that build systems MAY choose to rely
-        on other mechanisms for importing models and forming a composite model.
-        These imports are used in every projection. Note: imports are relative
-        to the configuration file.
+      - ``[string]``
+      - Provides a list of model files and directories to load when validating
+        and building the model. Imports are a local dependency: they are not
+        considered part of model package being built, but are required to build
+        the model package. Models added through ``imports`` are not present in
+        the output of the built-in ``sources`` plugin.
+
+        When a directory is encountered, all files in the entire directory
+        tree are imported. Imports defined at the top-level are used in every
+        projection. Imports are relative to the configuration file.
     * - projections
       - ``map<string, object>``
       - A map of projection names to projection configurations.
@@ -54,6 +63,11 @@ The configuration file accepts the following properties:
       - If a plugin can't be found, Smithy will by default fail the build. This
         setting can be set to ``true`` to allow the build to progress even if
         a plugin can't be found on the classpath.
+    * - maven
+      - :ref:`maven-configuration` structure
+      - Defines Java Maven dependencies needed to build the model.
+        Dependencies are used to bring in model imports, build plugins,
+        validators, transforms, and other extensions.
 
 The following is an example ``smithy-build.json`` configuration:
 
@@ -62,7 +76,13 @@ The following is an example ``smithy-build.json`` configuration:
     {
         "version": "1.0",
         "outputDirectory": "build/output",
+        "sources": ["model"],
         "imports": ["foo.json", "some/directory"],
+        "maven": {
+            "dependencies": [
+                "software.amazon.smithy:smithy-aws-traits:__smithy_version__"
+            ]
+        },
         "projections": {
             "my-abstract-projection": {
                 "abstract": true
@@ -100,6 +120,166 @@ The following is an example ``smithy-build.json`` configuration:
     }
 
 
+.. _maven-configuration:
+
+Maven configuration
+===================
+
+Maven dependencies and repositories can be defined in smithy-build.json files,
+and the Smithy CLI will automatically resolve these dependencies using the
+`Apache Maven`_ dependency resolver.
+
+The ``maven`` property accepts the following configuration:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - dependencies
+      - ``[string]``
+      - A list of Maven dependency coordinates in the form of
+        ``groupId:artifactId:version``. The Smithy CLI will search each
+        registered Maven repository for the dependency.
+    * - repositories
+      - ``[`` :ref:`maven-repositories` ``]``
+      - A list of Maven repositories to search for dependencies. If no
+        repositories are defined and the :ref:`SMITHY_MAVEN_REPOS environment variable <SMITHY_MAVEN_REPOS>`
+        is not defined, then this value defaults to `Maven Central`_.
+
+
+Dependency versions
+-------------------
+
+Maven dependencies are defined using GAV coordinates
+(``groupId:artifactId:version``). The version of a dependency can specify
+*version requirements* that are used to control how versions are resolved.
+Requirements can be given as *soft requirements*, meaning the version can be
+replaced by other versions found in the dependency graph. Hard requirements
+can be used to mandate a particular version and override soft requirements.
+Maven picks the highest version of each project that satisfies all the hard
+requirements of the dependencies on that project. If no version satisfies
+all the hard requirements, dependency resolution fails.
+
+The following table demonstrates version requirement syntax as defined in
+the `official Maven documentation`_:
+
+.. list-table:: Dependency version syntax
+    :header-rows: 1
+    :widths: 20 80
+
+    * - Version
+      - Description
+    * - ``1.0``
+      - Soft requirement for 1.0. Use 1.0 if no other version appears earlier
+        in the dependency tree.
+    * - ``[1.0]``
+      - Hard requirement for 1.0. Use 1.0 and only 1.0.
+    * - ``(,1.0]``
+      - Hard requirement for any version <= 1.0.
+    * - ``[1.2,1.3]``
+      - Hard requirement for any version between 1.2 and 1.3 inclusive.
+    * - ``[1.0,2.0)``
+      - 1.0 <= x < 2.0; Hard requirement for any version between 1.0 inclusive
+        and 2.0 exclusive.
+    * - ``[1.5,)``
+      - Hard requirement for any version greater than or equal to 1.5.
+    * - ``(,1.0],[1.2,)``
+      - Multiple requirements are separated by commas. This requirement
+        forbids version 1.1 by adding a hard requirement for any version less
+        than or equal to 1.0 or greater than or equal to 1.2.
+    * - ``(,1.1),(1.1,)``
+      - Hard requirement for any version except 1.1 (for example, if 1.1
+        has a critical vulnerability).
+
+
+Unsupported version requirements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* LATEST, SNAPSHOT, RELEASE, latest-status, and latest.* versions are not
+  supported.
+* Gradle style ``+`` versions are not supported.
+
+
+.. _maven-repositories:
+
+Maven Repositories
+------------------
+
+The ``repositories`` property accepts a list of structures that each accept
+the following configuration:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - url
+      - ``string``
+      - The URL of the repository (for example, ``https://repo.maven.apache.org/maven2``).
+    * - httpCredentials
+      - ``string``
+      - HTTP basic or digest credentials to use with the repository.
+        Credentials are provided in the form of "username:password".
+
+        .. warning::
+
+            Credentials SHOULD NOT be defined statically in a smithy-build.json
+            file. Instead, use :ref:`environment variables <build_envars>` to
+            keep credentials out of source control.
+
+.. code-block:: json
+
+    {
+        "version": "1.0",
+        "maven": {
+            "repositories": [
+                {
+                    "url": "https://my_domain-111122223333.d.codeartifact.region.amazonaws.com/maven/my_repo/",
+                    "httpCredentials": "aws:${CODEARTIFACT_AUTH_TOKEN}"
+                }
+            ],
+            "dependencies": [
+                "software.amazon.smithy:smithy-aws-traits:__smithy_version__"
+            ]
+        }
+    }
+
+
+.. _SMITHY_MAVEN_REPOS:
+
+SMITHY_MAVEN_REPOS environment variable
+---------------------------------------
+
+When using the Smithy CLI, the ``SMITHY_MAVEN_REPOS`` environment variable can
+be used to configure Maven repositories automatically. The
+``SMITHY_MAVEN_REPOS`` environment variable is a pipe-delimited value (``|``)
+that contains the URL of each repository to use.
+
+.. code-block::
+
+    SMITHY_MAVEN_REPOS="https://repo.maven.apache.org/maven2|https://example.repo.com/maven"
+
+Credentials can be provided in the URL. For example:
+
+.. code-block::
+
+    SMITHY_MAVEN_REPOS='https://user:password@example.repo.com/maven'
+
+When repositories are provided through the ``SMITHY_MAVEN_REPOS`` environment
+variable, no default repositories are assumed when resolving the
+``maven.repositories`` setting.
+
+.. important::
+
+    Repositories defined in ``SMITHY_MAVEN_REPOS`` take precedence over
+    repositories defined through smithy-build.json configuration.
+
+
 .. _projections:
 
 Projections
@@ -129,11 +309,12 @@ A projection accepts the following configuration:
         Smithy will not build artifacts for abstract projections. Abstract
         projections must not define ``imports`` or ``plugins``.
     * - imports
-      - ``string[]``
+      - ``[string]``
       - Provides a list of relative imports to include when building this
-        specific projection. When a directory is encountered, all files and
-        all files within all subdirectories are imported. Note: imports are
-        relative to the configuration file.
+        specific projection (in addition to any imports defined at the
+        top-level). When a directory is encountered, all files in the
+        directory tree are imported. Note: imports are relative to the
+        configuration file.
     * - transforms
       - ``list<Transforms>``
       - Defines the transformations to apply to the projection.
@@ -1401,3 +1582,6 @@ ignored. A Smithy manifest file is stored in a JAR as ``META-INF/smithy/manifest
 All model files referenced by the manifest are relative to ``META-INF/smithy/``.
 
 .. _Java SPI: https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html
+.. _Apache Maven: https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html
+.. _Maven Central: https://search.maven.org
+.. _official Maven documentation: https://maven.apache.org/pom.html#dependency-version-requirement-specification

@@ -344,18 +344,34 @@ that was previously relied upon by tooling.</li>
 <div class="section" id="updating-structures">
 <h2>Updating structures<a class="headerlink" href="#updating-structures" title="Permalink to this headline">#</a></h2>
 <p>The following changes to structure shapes are backward-compatible:</p>
-<ol class="arabic simple">
-<li>Adding new optional members to a structure.</li>
-<li>Removing the <a class="reference internal" href="../spec/type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a> from a structure member and replacing
+<ol class="arabic">
+<li><p class="first">Adding new optional members to a structure.</p>
+</li>
+<li><p class="first">Removing the <a class="reference internal" href="../spec/type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a> from a structure member and replacing
 it with the <a class="reference internal" href="../spec/type-refinement-traits.html#default-trait"><span class="std std-ref">default trait</span></a> (assuming the member was not marked with
-the <a class="reference internal" href="../spec/type-refinement-traits.html#clientoptional-trait"><span class="std std-ref">clientOptional trait</span></a>).</li>
-<li>Removing the <a class="reference internal" href="../spec/type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a> from a structure member when the
-structure is marked with the <a class="reference internal" href="../spec/type-refinement-traits.html#input-trait"><span class="std std-ref">input trait</span></a>.</li>
-<li>Removing the <a class="reference internal" href="../spec/type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a> from a structure member that is
-marked with the <a class="reference internal" href="../spec/type-refinement-traits.html#clientoptional-trait"><span class="std std-ref">clientOptional trait</span></a>.</li>
-<li>Adding the <a class="reference internal" href="../spec/type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a> to a member of a structure if the member
+the <a class="reference internal" href="../spec/type-refinement-traits.html#clientoptional-trait"><span class="std std-ref">clientOptional trait</span></a>).</p>
+</li>
+<li><p class="first">Removing the <a class="reference internal" href="../spec/type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a> from a structure member when the
+structure is marked with the <a class="reference internal" href="../spec/type-refinement-traits.html#input-trait"><span class="std std-ref">input trait</span></a>.</p>
+</li>
+<li><p class="first">Removing the <a class="reference internal" href="../spec/type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a> from a structure member that is
+marked with the <a class="reference internal" href="../spec/type-refinement-traits.html#clientoptional-trait"><span class="std std-ref">clientOptional trait</span></a>.</p>
+</li>
+<li><p class="first">Adding the <a class="reference internal" href="../spec/type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a> to a member of a structure if the member
 is marked as <code class="docutils literal notranslate"><span class="pre">clientOptional</span></code> or the structure is marked with the <code class="docutils literal notranslate"><span class="pre">input</span></code>
-trait.</li>
+trait.</p>
+</li>
+<li><p class="first">Adding or removing the <a class="reference internal" href="../spec/type-refinement-traits.html#input-trait"><span class="std std-ref">input trait</span></a> from a structure is generally
+backward incompatible.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Many code generators automatically create dedicated synthetic input
+structures for each operation and treat the synthetic structure
+as if it is marked with the <code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> trait. Code generators that do
+this MAY ignore backward incompatible changes around adding or removing
+the <code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> trait.</p>
+</div>
+</li>
 </ol>
 <p>The following changes to a structure are not backward-compatible:</p>
 <ol class="arabic simple">
