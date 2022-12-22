@@ -51,6 +51,18 @@ and [creating a pull request](https://help.github.com/articles/creating-a-pull-r
 Looking at the existing issues is a great way to find something to contribute on. As our projects, by default, use the default GitHub issue labels (enhancement/bug/duplicate/help wanted/invalid/question/wontfix), looking at any ['help wanted'](https://github.com/awslabs/smithy/labels/help%20wanted) issues is a great place to start.
 
 
+## Testing with AWS SDK code generators
+
+> In the past, Smithy changes have been released without integration testing with Smithy-based SDK code generators.
+> In addition, SDK code generators often fall behind in Smithy versions. As a result, we don’t have visibility on code generators’ failures
+> until they are upgraded to the latest smithy version.
+
+The GitHub action `sdk-codegen-ci.yml` builds and test Smithy-based AWS SDKs using the latest Smithy implementation.
+
+The GitHub action can be triggered manually via `Run workflow` in the `Actions` tab of the Smithy repo.
+(See [Manually running a workflow](https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow) for step-by-step instructions)
+
+
 ## Code of Conduct
 
 This project has adopted the [Amazon Open Source Code of Conduct](https://aws.github.io/code-of-conduct).
