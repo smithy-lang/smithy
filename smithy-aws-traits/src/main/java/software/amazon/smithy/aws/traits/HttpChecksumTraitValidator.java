@@ -191,7 +191,7 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
                                                     + " the prefix `%s` that conflicts with the prefix `%s` used by the"
                                                     + " `httpChecksum` trait.",
                                                 memberName, prefixString, HttpChecksumTrait.CHECKSUM_PREFIX),
-                                    "httpPrefixHeaders", memberName, prefixString));
+                                    "HttpPrefixHeaders", memberName, prefixString));
                         }
                     });
 
@@ -207,7 +207,7 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
                             events.add(warning(operation, format("The `httpHeader` binding of `%s` on `%s`"
                                                     + " starts with the prefix `%s` used by the `httpChecksum` trait.",
                                                 headerString, memberName, HttpChecksumTrait.CHECKSUM_PREFIX),
-                                    "httpHeader", memberName, headerString));
+                                    "HttpHeader", memberName, headerString));
                         }
                     });
         }

@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
@@ -58,9 +59,9 @@ public final class NoninclusiveTermsValidator extends AbstractValidator {
         }
     }
 
-    private static final String TRAIT = "TRAIT";
-    private static final String SHAPE = "SHAPE";
-    private static final String NAMESPACE = "NAMESPACE";
+    private static final String TRAIT = "Trait";
+    private static final String SHAPE = "Shape";
+    private static final String NAMESPACE = "Namespace";
 
     /**
      * NoninclusiveTermsValidator configuration.
@@ -159,7 +160,7 @@ public final class NoninclusiveTermsValidator extends AbstractValidator {
                 return ValidationEvent.builder()
                         .severity(Severity.WARNING)
                         .sourceLocation(SourceLocation.none())
-                        .id(assembleFullEventId(NAMESPACE, instance.getText(), matchedText))
+                        .id(assembleFullEventId(NAMESPACE, instance.getText(), matchedText.toLowerCase(Locale.US)))
                         .message(String.format("%s namespace uses a non-inclusive term `%s`.%s",
                                 instance.getText(), matchedText, replacementAddendum))
                         .build();
@@ -171,7 +172,7 @@ public final class NoninclusiveTermsValidator extends AbstractValidator {
                     return validationEvent.toBuilder()
                             .message(String.format("'%s' trait has a value that contains a non-inclusive term `%s`.%s",
                                     idiomaticTraitName, matchedText, replacementAddendum))
-                            .id(assembleFullEventId(TRAIT, idiomaticTraitName, matchedText))
+                            .id(assembleFullEventId(TRAIT, matchedText.toLowerCase(Locale.US), idiomaticTraitName))
                             .build();
                 } else {
                     final String valuePropertyPathFormatted = formatPropertyPath(instance.getTraitPropertyPath());
@@ -179,8 +180,8 @@ public final class NoninclusiveTermsValidator extends AbstractValidator {
                             .message(String.format(
                                     "'%s' trait value at path {%s} contains a non-inclusive term `%s`.%s",
                                     idiomaticTraitName, valuePropertyPathFormatted, matchedText, replacementAddendum))
-                            .id(assembleFullEventId(
-                                    TRAIT, idiomaticTraitName, valuePropertyPathFormatted, matchedText))
+                            .id(assembleFullEventId(TRAIT, matchedText.toLowerCase(Locale.US), idiomaticTraitName,
+                                    valuePropertyPathFormatted))
                             .build();
                 }
             case SHAPE:
@@ -190,7 +191,7 @@ public final class NoninclusiveTermsValidator extends AbstractValidator {
                         String.format("%s shape uses a non-inclusive term `%s`.%s",
                                 StringUtils.capitalize(instance.getShape().getType().toString()),
                                 matchedText, replacementAddendum),
-                        SHAPE, matchedText);
+                        SHAPE, matchedText.toLowerCase(Locale.US));
         }
     }
 

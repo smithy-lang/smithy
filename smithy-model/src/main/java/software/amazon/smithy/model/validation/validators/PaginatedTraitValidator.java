@@ -61,9 +61,9 @@ public final class PaginatedTraitValidator extends AbstractValidator {
     private static final Set<ShapeType> TOKEN_SHAPES = SetUtils.of(ShapeType.STRING, ShapeType.MAP);
     private static final Set<ShapeType> DANGER_TOKEN_SHAPES = SetUtils.of(ShapeType.MAP);
     private static final Pattern PATH_PATTERN = Pattern.compile("\\.");
-    private static final String DEEPLY_NESTED = "DEEPLY_NESTED";
-    private static final String SHOULD_NOT_BE_REQUIRED = "SHOULD_NOT_BE_REQUIRED";
-    private static final String WRONG_SHAPE_TYPE = "WRONG_SHAPE_TYPE";
+    private static final String DEEPLY_NESTED = "DeeplyNested";
+    private static final String SHOULD_NOT_BE_REQUIRED = "ShouldNotBeRequired";
+    private static final String WRONG_SHAPE_TYPE = "WrongShapeType";
 
     @Override
     public List<ValidationEvent> validate(Model model) {
@@ -100,7 +100,7 @@ public final class PaginatedTraitValidator extends AbstractValidator {
                         String.format(
                             "paginated trait `%s` member `%s` should not be required",
                             pageSizeValidator.propertyName(), member.getMemberName()),
-                        pageSizeValidator.propertyName(), member.getMemberName(), SHOULD_NOT_BE_REQUIRED)
+                        SHOULD_NOT_BE_REQUIRED, pageSizeValidator.propertyName())
                 ));
 
         // Validate output.
@@ -180,7 +180,7 @@ public final class PaginatedTraitValidator extends AbstractValidator {
                             "%spaginated trait `%s` member `%s` targets a %s shape, but this is not recommended. "
                                     + "One of [%s] SHOULD be targeted.",
                             prefix, traitName, memberName, targetType, ValidationUtils.tickedList(preferredTargets)),
-                        traitName, memberName, WRONG_SHAPE_TYPE, targetType
+                        WRONG_SHAPE_TYPE, traitName
                 ));
             }
         }
@@ -190,7 +190,7 @@ public final class PaginatedTraitValidator extends AbstractValidator {
                         "%spaginated trait `%s` contains a path with more than two parts, which can make your API "
                         + "cumbersome to use",
                         prefix, validator.propertyName()),
-                    validator.propertyName(), DEEPLY_NESTED
+                    DEEPLY_NESTED, validator.propertyName()
             ));
         }
 

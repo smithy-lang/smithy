@@ -1,2 +1,2 @@
-[WARNING] ns.foo#DeeplyNested: paginated trait `items` contains a path with more than two parts, which can make your API cumbersome to use | PaginatedTrait.items.DEEPLY_NESTED
-[WARNING] ns.foo#DeeplyNested: paginated trait `outputToken` contains a path with more than two parts, which can make your API cumbersome to use | PaginatedTrait.outputToken.DEEPLY_NESTED
+[WARNING] ns.foo#DeeplyNested: paginated trait `items` contains a path with more than two parts, which can make your API cumbersome to use | PaginatedTrait.DeeplyNested.items
+[WARNING] ns.foo#DeeplyNested: paginated trait `outputToken` contains a path with more than two parts, which can make your API cumbersome to use | PaginatedTrait.DeeplyNested.outputToken
