@@ -23,9 +23,9 @@ apply DatetimeOffsets @httpResponseTests([
         protocol: restXml,
         code: 200,
         body: """
-            <DateTime>
+            <DatetimeOffsetsOutput>
                 <datetime>2019-12-16T22:48:18-01:00</datetime>
-            </DateTime>
+            </DatetimeOffsetsOutput>
             """,
         bodyMediaType: "application/xml",
         headers: {
@@ -40,9 +40,9 @@ apply DatetimeOffsets @httpResponseTests([
         protocol: restXml,
         code: 200,
         body: """
-            <DateTime>
+            <DatetimeOffsetsOutput>
                 <datetime>2019-12-17T00:48:18+01:00</datetime>
-            </DateTime>
+            </DatetimeOffsetsOutput>
             """,
         bodyMediaType: "application/xml",
         headers: {
