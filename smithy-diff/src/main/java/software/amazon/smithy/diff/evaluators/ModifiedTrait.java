@@ -44,6 +44,7 @@ import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Finds breaking changes related to when a trait is added, removed, or
@@ -235,7 +236,7 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                 }
 
                 return Collections.singletonList(ValidationEvent.builder()
-                                                         .id(ModifiedTrait.class.getSimpleName())
+                                                         .id(getValidationEventId(this, trait))
                                                          .severity(severity)
                                                          .shape(shape)
                                                          .sourceLocation(right)
@@ -269,7 +270,7 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                 }
 
                 return Collections.singletonList(ValidationEvent.builder()
-                                                         .id(ModifiedTrait.class.getSimpleName())
+                                                         .id(getValidationEventId(this, trait))
                                                          .severity(severity)
                                                          .shape(shape)
                                                          .message(message)
@@ -303,7 +304,7 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                 }
 
                 return Collections.singletonList(ValidationEvent.builder()
-                                                         .id(ModifiedTrait.class.getSimpleName())
+                                                         .id(getValidationEventId(this, trait))
                                                          .severity(severity)
                                                          .shape(shape)
                                                          .message(message)
@@ -368,6 +369,11 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                 Node left,
                 Node right,
                 Severity severity);
+
+        private static String getValidationEventId(DiffType diffType, ShapeId trait) {
+            return String.format("%s.%s.%s", ModifiedTrait.class.getSimpleName(),
+                    StringUtils.capitalize(StringUtils.lowerCase(diffType.toString())), trait);
+        }
     }
 
     private static void crawlContents(

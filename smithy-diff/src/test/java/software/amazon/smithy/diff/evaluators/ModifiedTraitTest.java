@@ -68,7 +68,7 @@ public class ModifiedTraitTest {
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testConst(String oldValue, String newValue, String tag, String searchString) {
+    public void testConst(String oldValue, String newValue, String diffType, String tag, String searchString) {
         TestCaseData data = new TestCaseData(oldValue, newValue);
         Shape definition = createDefinition("diff.error.const");
         Model modelA = Model.assembler().addShape(definition).addShape(data.oldShape).assemble().unwrap();
@@ -76,11 +76,12 @@ public class ModifiedTraitTest {
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(TestHelper.findEvents(events, "ModifiedTrait").size(), equalTo(1));
+        assertThat(events.get(0).getId(), equalTo(String.format("ModifiedTrait.%s.%s", diffType, ID)));
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testWithTag(String oldValue, String newValue, String tag, String searchString) {
+    public void testWithTag(String oldValue, String newValue, String diffType, String tag, String searchString) {
         TestCaseData data = new TestCaseData(oldValue, newValue);
 
         Shape definition = createDefinition(tag);
@@ -89,12 +90,13 @@ public class ModifiedTraitTest {
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(TestHelper.findEvents(events, "ModifiedTrait").size(), equalTo(1));
+        assertThat(events.get(0).getId(), equalTo(String.format("ModifiedTrait.%s.%s", diffType, ID)));
         assertThat(events.get(0).getMessage(), containsString(searchString));
     }
 
     @ParameterizedTest
     @MethodSource("data")
-    public void testWithoutDefinition(String oldValue, String newValue, String tag, String searchString) {
+    public void testWithoutDefinition(String oldValue, String newValue, String diffType, String tag, String searchString) {
         TestCaseData data = new TestCaseData(oldValue, newValue);
 
         Model modelA = Model.assembler().addShape(data.oldShape).assemble().unwrap();
@@ -102,6 +104,7 @@ public class ModifiedTraitTest {
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(TestHelper.findEvents(events, "ModifiedTrait").size(), equalTo(1));
+        assertThat(events.get(0).getId(), equalTo(String.format("ModifiedTrait.%s.%s", diffType, ID)));
         assertThat(events.get(0).getMessage(), containsString(searchString));
         for (ValidationEvent event : events) {
             assertThat(event.getSeverity(), equalTo(Severity.WARNING));
@@ -110,9 +113,9 @@ public class ModifiedTraitTest {
 
     public static Collection<String[]> data() {
         return Arrays.asList(new String[][] {
-                {null, "hi", "diff.error.add", "Added"},
-                {"hi", null, "diff.error.remove", "Removed"},
-                {"foo", "baz", "diff.error.update", "Changed"},
+                {null, "hi", "Add", "diff.error.add", "Added"},
+                {"hi", null, "Remove", "diff.error.remove", "Removed"},
+                {"foo", "baz", "Update", "diff.error.update", "Changed"},
         });
     }
 
