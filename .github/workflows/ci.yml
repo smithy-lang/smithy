@@ -25,8 +25,8 @@ jobs:
           java-version: ${{ matrix.java }}
           distribution: 'zulu'
 
-      - name: Clean and build
-        run: ./gradlew clean build -Plog-tests --stacktrace
+      - name: Clean, build and javadoc
+        run: ./gradlew clean build javadoc -Plog-tests --stacktrace
 
       - name: CLI integration tests
         if: matrix.java >= 17
