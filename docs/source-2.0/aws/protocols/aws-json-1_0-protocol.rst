@@ -127,5 +127,6 @@ The following example defines a service that requires the use of
 .. |protocol error type contents| replace:: :ref:`shape-id`
 .. |protocol test link| replace:: https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/awsJson1_0
 .. include:: aws-json.rst.template
+.. include:: error-rename-simple.rst.template
 
 .. _`Application-Layer Protocol Negotiation (ALPN) Protocol ID`: https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml#alpn-protocol-ids

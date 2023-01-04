@@ -596,3 +596,5 @@ reference: https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests
 
 These compliance tests define a model that is used to define test cases and
 the expected serialized HTTP requests and responses for each case.
+
+.. include:: error-rename.rst.template

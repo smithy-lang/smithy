@@ -35,7 +35,6 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.SimpleShape;
-import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.Severity;
@@ -156,8 +155,6 @@ public final class ServiceValidator extends AbstractValidator {
     private Optional<String> getInvalidRenameReason(Shape shape) {
         if (shape.isMemberShape() || shape.isResourceShape() || shape.isOperationShape()) {
             return Optional.of(shape.getType() + "s cannot be renamed");
-        } else if (shape.hasTrait(ErrorTrait.class)) {
-            return Optional.of("errors cannot be renamed");
         } else {
             return Optional.empty();
         }

@@ -1,1 +1,0 @@
-[ERROR] smithy.example#MyService: Service attempts to rename a structure shape from `smithy.example#BadGreeting` to "ThisDoesNotWork"; errors cannot be renamed | Service

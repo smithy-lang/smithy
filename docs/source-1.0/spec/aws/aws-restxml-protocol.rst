@@ -316,3 +316,5 @@ the expected serialized HTTP requests and responses for each case.
 *TODO: Add event stream handling specifications.*
 
 .. _`Application-Layer Protocol Negotiation (ALPN) Protocol ID`: https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml#alpn-protocol-ids
+
+.. include:: error-rename.rst.template
