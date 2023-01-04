@@ -1141,9 +1141,9 @@ The service shape supports the following properties:
           shape name or the name of a non-renamed shape contained in the
           service.
         * Member shapes MAY NOT be renamed.
-        * Resource, operation, and shapes marked with the :ref:`error-trait`
-          MAY NOT be renamed. Renaming shapes is intended for incidental naming
-          conflicts, not for renaming the fundamental concepts of a service.
+        * Resource and operation shapes MAY NOT be renamed. Renaming shapes is intended
+          for incidental naming conflicts, not for renaming the fundamental concepts
+          of a service.
         * Shapes from other namespaces marked as :ref:`private <private-trait>`
           MAY be renamed.
         * A rename MUST use a name that is case-sensitively different from the

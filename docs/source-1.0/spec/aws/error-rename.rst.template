@@ -1,0 +1,17 @@
+--------------------
+Error shape renaming
+--------------------
+
+By default, Smithy permits renaming shapes to disambiguate shape ID conflicts in
+the :ref:`service closure <service-closure>` via the ``rename`` property. However, services using this protocol are
+not allowed to rename error shapes (shapes with :ref:`error trait <error-trait>` applied).
+
+Client-side implementations rely on the response body field ``code`` or ``__type`` to resolve the error type.
+Server-side implementations of this protocol will only send the ``shape name`` for the response body field.
+
+When there are conflicting shape IDs ``smithy.service#ServiceError`` and ``smithy.other#ServiceError``,
+the server will only send the shape name ``ServiceError``. Clients will not be able to resolve
+the correct error type without the namespace.
+
+Server-side implementations of this protocol don't serialize renamed shape names.
+As a result, renaming will not resolve the conflicting shape IDs issue, and hence it is not permitted.

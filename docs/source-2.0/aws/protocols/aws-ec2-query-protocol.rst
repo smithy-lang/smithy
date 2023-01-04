@@ -360,3 +360,5 @@ the expected serialized HTTP requests and responses for each case.
 
 
 *TODO: Add specifications, protocol examples, etc.*
+
+.. include:: error-rename.rst.template

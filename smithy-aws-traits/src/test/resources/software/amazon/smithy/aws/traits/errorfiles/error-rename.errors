@@ -1,0 +1,2 @@
+[ERROR] smithy.example#MyService: Service attempts to rename an error shape from `smithy.example#BadGreeting` to "ThisDoesNotWork"; Service protocols [restXml, awsJson1_1] do not support error renaming. | ErrorRename
+[ERROR] smithy.example#MyService: Service attempts to rename an error shape from `smithy.example#ServerError` to "ServerDown"; Service protocols [restXml, awsJson1_1] do not support error renaming. | ErrorRename
