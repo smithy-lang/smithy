@@ -79,7 +79,10 @@ jobs:
           path: aws-sdk-go-v2
 
       - name: Build aws-sdk-go-v2
-        run: cd aws-sdk-go-v2/codegen && ./gradlew -PsmithyVersion=$smithyVersion clean build -Plog-tests && ./gradlew clean
+        run: |
+          cd aws-sdk-go-v2/codegen
+          ./gradlew -PsmithyVersion=$smithyVersion clean build -Plog-tests
+          ./gradlew clean
 
       - name: Run aws-sdk-go-v2 protocol tests
         # This is essentially the `ci-test` command in the Makefile
@@ -152,7 +155,9 @@ jobs:
           path: Sources/SmithySwift/smithy-swift
 
       - name: Build smithy-swift
-        run: echo $smithyVersion && cd Sources/SmithySwift/smithy-swift && ./gradlew -PsmithyVersion=$smithyVersion clean build publishToMavenLocal
+        run: |
+          echo $smithyVersion && cd Sources/SmithySwift/smithy-swift
+          ./gradlew -PsmithyVersion=$smithyVersion clean build publishToMavenLocal
 
       - name: Checkout aws-sdk-swift
         uses: actions/checkout@v2
@@ -177,3 +182,50 @@ jobs:
 
       - name: Run local protocol tests
         run: cd Sources/SmithySwift/aws-sdk-swift/codegen/protocol-test-codegen-local/build && swift test
+
+  build-smithy-rs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.62.1
+
+      - uses: actions/setup-java@v2
+        with:
+          java-version: 11
+          distribution: 'zulu'
+
+      - uses: actions/checkout@v1
+      - id: smithy-version
+        uses: ./.github/workflows/checkout-and-build-smithy
+
+      - name: Add smithyVersion env variable
+        run: echo "smithyVersion=${{ steps.smithy-version.outputs.smithy-version }}" >> $GITHUB_ENV
+
+      - name: Check out smithy-rs
+        uses: actions/checkout@v3
+        with:
+          repository: awslabs/smithy-rs
+          ref: main
+          path: smithy-rs
+
+      - name: Check out aws-sdk-rust
+        uses: actions/checkout@v3
+        with:
+          repository: awslabs/aws-sdk-rust
+          ref: main
+          path: aws-sdk-rust
+
+      - name: Install rustfmt
+        run: rustup component add rustfmt
+
+      - name: Build smithy-rs
+        run: |
+          cd smithy-rs
+          ./gradlew :aws:sdk:assemble -PsmithyVersion=$smithyVersion
+
+      - name: Test smithy-rs
+        run: |
+          cd smithy-rs
+          ./gradlew :aws:sdk:cargoTest -PsmithyVersion=$smithyVersion
