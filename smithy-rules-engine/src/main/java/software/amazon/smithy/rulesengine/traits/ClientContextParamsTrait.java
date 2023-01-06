@@ -24,7 +24,6 @@ import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.BuilderRef;
-import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -58,7 +57,7 @@ public final class ClientContextParamsTrait extends AbstractTrait implements ToS
     }
 
     @Override
-    public SmithyBuilder<ClientContextParamsTrait> toBuilder() {
+    public Builder toBuilder() {
         return builder()
                 .sourceLocation(getSourceLocation())
                 .parameters(getParameters());
