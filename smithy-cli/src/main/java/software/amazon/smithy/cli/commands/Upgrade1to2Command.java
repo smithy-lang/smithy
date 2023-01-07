@@ -46,6 +46,7 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
@@ -321,6 +322,14 @@ final class Upgrade1to2Command extends SimpleCommand {
             return null;
         }
 
+        @Override
+        public Void setShape(SetShape shape) {
+            getDefault(shape);
+            writer.erase(shape.getSourceLocation(), 3); // `set` has 3 characters
+            writer.insert(shape.getSourceLocation(), "@uniqueItems" + System.lineSeparator() + "list");
+            return null;
+        }
+
         private String serializeEnum(StringShape shape) {
             // Strip all the traits from the shape except the enum trait.
             // We're leaving the other traits where they are in the model
@@ -425,6 +434,13 @@ final class Upgrade1to2Command extends SimpleCommand {
             contents = String.join(System.lineSeparator(), lines);
         }
 
+        private void insert(SourceLocation from, String value) {
+            IdlAwareSimpleParser parser = new IdlAwareSimpleParser(contents);
+            parser.rewind(from);
+            int fromPosition = parser.position();
+            contents = contents.substring(0, fromPosition) + value + contents.substring(fromPosition);
+        }
+
         private void eraseLine(int lineNumber) {
             List<String> lines = new ArrayList<>(Arrays.asList(contents.split("\\r?\\n")));
             lines.remove(lineNumber - 1);
@@ -456,6 +472,16 @@ final class Upgrade1to2Command extends SimpleCommand {
             IdlAwareSimpleParser parser = new IdlAwareSimpleParser(contents);
             parser.rewind(from);
             int fromPosition = parser.position();
+            parser.rewind(to);
+            int toPosition = parser.position();
+            contents = contents.substring(0, fromPosition) + contents.substring(toPosition);
+        }
+
+        private void erase(SourceLocation from, int size) {
+            IdlAwareSimpleParser parser = new IdlAwareSimpleParser(contents);
+            parser.rewind(from);
+            int fromPosition = parser.position();
+            SourceLocation to = new SourceLocation(from.getFilename(), from.getLine(), from.getColumn() + size);
             parser.rewind(to);
             int toPosition = parser.position();
             contents = contents.substring(0, fromPosition) + contents.substring(toPosition);
