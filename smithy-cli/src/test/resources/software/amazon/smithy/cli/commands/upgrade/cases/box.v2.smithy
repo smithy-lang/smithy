@@ -24,7 +24,8 @@ list BadSparseList {
     member: NonBoxedInteger,
 }
 
-set BadSparseSet {
+@uniqueItems
+list BadSparseSet {
     member: NonBoxedInteger,
 }
 
