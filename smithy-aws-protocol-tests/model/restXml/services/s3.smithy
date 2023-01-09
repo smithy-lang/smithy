@@ -255,22 +255,6 @@ service AmazonS3 {
         },
     },
 ])
-@httpResponseTests([
-    {
-        id: "S3OperationNoErrorWrappingResponse",
-        documentation: """
-            S3 operations return Error XML nodes unwrapped by
-            the ErrorResponse XML node.
-        """,
-        protocol: restXml,
-        code: 400,
-        headers: {
-            "Content-Type": "application/xml"
-        },
-        body: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error>\n\t<Type>Sender</Type>\n\t<Code>NoSuchBucket</Code>\n</Error>",
-        bodyMediaType: "application/xml",
-    }
-])
 @http(
     method: "GET",
     uri: "/{Bucket}?list-type=2",
@@ -480,6 +464,22 @@ structure DeleteObjectTaggingOutput {
     VersionId: ObjectVersionId
 }
 
+@httpResponseTests([
+    {
+        id: "S3OperationNoErrorWrappingResponse",
+        documentation: """
+            S3 operations return Error XML nodes unwrapped by
+            the ErrorResponse XML node.
+        """,
+        protocol: restXml,
+        code: 400,
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        body: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error>\n\t<Type>Sender</Type>\n\t<Code>NoSuchBucket</Code>\n</Error>",
+        bodyMediaType: "application/xml",
+    }
+])
 @error("client")
 structure NoSuchBucket {}
 
