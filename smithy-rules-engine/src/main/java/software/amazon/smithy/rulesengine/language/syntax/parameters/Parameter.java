@@ -209,8 +209,12 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLo
                 .type(getType())
                 .name(getName())
                 .builtIn(builtIn)
+                .value(value)
+                .required(required)
+                .sourceLocation(sourceLocation)
+                .deprecated(deprecated)
                 .documentation(documentation)
-                .value(value);
+                .defaultValue(defaultValue);
     }
 
     public String template() {
