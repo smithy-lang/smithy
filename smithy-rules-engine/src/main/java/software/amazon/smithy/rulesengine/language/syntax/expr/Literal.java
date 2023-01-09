@@ -16,7 +16,9 @@
 package software.amazon.smithy.rulesengine.language.syntax.expr;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -142,7 +144,7 @@ public final class Literal extends Expression {
 
             @Override
             public ILiteral objectNode(ObjectNode objectNode) {
-                Map<Identifier, Literal> obj = new HashMap<>();
+                Map<Identifier, Literal> obj = new LinkedHashMap<>();
                 objectNode.getMembers().forEach((k, v) -> {
                     obj.put(Identifier.of(k), new Literal(v.accept(this), v));
                 });
@@ -245,7 +247,7 @@ public final class Literal extends Expression {
 
             @Override
             public Type visitRecord(Map<Identifier, Literal> members) {
-                Map<Identifier, Type> tpe = new HashMap<>();
+                Map<Identifier, Type> tpe = new LinkedHashMap<>();
                 ((Record) value).members.forEach((k, v) -> {
                     tpe.put(k, v.typeCheck(scope));
                 });
@@ -543,7 +545,7 @@ public final class Literal extends Expression {
         private final Map<Identifier, Literal> members;
 
         Record(Map<Identifier, Literal> members) {
-            this.members = members;
+            this.members = Collections.unmodifiableMap(new LinkedHashMap<>(members));
         }
 
         public Map<Identifier, Literal> members() {

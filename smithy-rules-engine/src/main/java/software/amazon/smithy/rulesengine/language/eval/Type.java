@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.rulesengine.language.eval;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -389,7 +390,7 @@ public interface Type {
         private final Map<Identifier, Type> shape;
 
         public Record(Map<Identifier, Type> shape) {
-            this.shape = shape;
+            this.shape = new LinkedHashMap<>(shape);
         }
 
         @Override

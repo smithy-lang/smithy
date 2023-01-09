@@ -17,7 +17,7 @@ package software.amazon.smithy.rulesengine.language.eval;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -81,7 +81,7 @@ public final class Scope<T> {
 
     @Override
     public String toString() {
-        HashMap<Identifier, T> toPrint = new HashMap<>();
+        Map<Identifier, T> toPrint = new LinkedHashMap<>();
         for (ScopeLayer<T> layer : scope) {
             toPrint.putAll(layer.getTypes());
         }
