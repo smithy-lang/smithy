@@ -123,7 +123,9 @@ public abstract class AbstractValidator implements Validator {
 
     protected final String assembleFullEventId(String... additionalEventIdParts) {
         String eventId = getName();
-        if (additionalEventIdParts.length > 0) {
+        if (additionalEventIdParts.length == 1) {
+            eventId += "." + additionalEventIdParts[0];
+        } else if (additionalEventIdParts.length > 1) {
             eventId += "." + String.join(".", additionalEventIdParts);
         }
         return eventId;
