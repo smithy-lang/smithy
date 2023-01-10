@@ -1,5 +1,27 @@
 # Smithy Changelog
 
+## 1.27.1 (2023-01-11)
+
+### Features
+* Update protocol tests with datetime offset coverage ([#1502](https://github.com/awslabs/smithy/pull/1502))
+* Add protocol tests to cover @range for short, long and integer shapes ([#1515](https://github.com/awslabs/smithy/pull/1515))
+* Add exclude/include tranforms using selectors ([#1534](https://github.com/awslabs/smithy/pull/1534))
+* Add a parseArn test case for resources with `:` and `/` ([#1537](https://github.com/awslabs/smithy/pull/1537))
+* Move CDS warmup to the CLI directly ([#1553](https://github.com/awslabs/smithy/pull/1553))
+* Allow error rename and disallow error rename for all AWS protocols ([#1554](https://github.com/awslabs/smithy/pull/1554))
+* Add details to ModifiedTrait event id ([#1560](https://github.com/awslabs/smithy/pull/1560))
+
+### Bug Fixes
+* Fix deterministic order of properties ([#1555](https://github.com/awslabs/smithy/pull/1555))
+* Fix datetime offset restXml payload ([#1559](https://github.com/awslabs/smithy/pull/1559))
+* Fix `RestJsonQueryStringEscaping` protocol test ([#1562](https://github.com/awslabs/smithy/pull/1562))
+* Fix `RestJsonAllQueryStringTypes` protocol test ([#1564](https://github.com/awslabs/smithy/pull/1564))
+* Fix Upgrade1to2Command for Set shape ([#1569](https://github.com/awslabs/smithy/pull/1569))
+* Fix parameters to builder ([#1571](https://github.com/awslabs/smithy/pull/1571))
+
+### Documentation
+* Fix typo for NOTE under breaking change rules ([#1552](https://github.com/awslabs/smithy/pull/1552))
+
 ## 1.27.0 (2022-12-15)
 
 ### Features
