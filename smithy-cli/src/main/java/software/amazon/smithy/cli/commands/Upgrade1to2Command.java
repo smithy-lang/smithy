@@ -128,6 +128,9 @@ final class Upgrade1to2Command extends SimpleCommand {
             writeUpgradedFile(finalizedModel, modelFile);
         }
 
+        // Validate upgraded models
+        CommandUtils.buildModel(arguments, models, env, env.stderr(), true, smithyBuildConfig);
+
         return 0;
     }
 
