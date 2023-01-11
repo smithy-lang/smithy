@@ -1141,9 +1141,9 @@ The service shape supports the following properties:
           shape name or the name of a non-renamed shape contained in the
           service.
         * Member shapes MAY NOT be renamed.
-        * Resource, operation, and shapes marked with the :ref:`error-trait`
-          MAY NOT be renamed. Renaming shapes is intended for incidental naming
-          conflicts, not for renaming the fundamental concepts of a service.
+        * Resource and operation shapes MAY NOT be renamed. Renaming shapes is intended
+          for incidental naming conflicts, not for renaming the fundamental concepts
+          of a service.
         * Shapes from other namespaces marked as :ref:`private <private-trait>`
           MAY be renamed.
         * A rename MUST use a name that is case-sensitively different from the
@@ -2786,7 +2786,7 @@ model can use these rules to detect breaking or risky changes.
           assumed severity.
         - ``DANGER``: The change is very likely backward incompatible.
         - ``WARNING``: The change might be backward incompatible.
-        - ``NOTICE``: The change is likely ok, but should be noted during
+        - ``NOTE``: The change is likely ok, but should be noted during
           things like code reviews.
     * - message
       - ``string``

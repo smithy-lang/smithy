@@ -1371,9 +1371,9 @@ shape IDs. Renaming a shape <em>does not</em> give the shape a new shape ID.</p>
 shape name or the name of a non-renamed shape contained in the
 service.</li>
 <li>Member shapes MAY NOT be renamed.</li>
-<li>Resource, operation, and shapes marked with the <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>
-MAY NOT be renamed. Renaming shapes is intended for incidental naming
-conflicts, not for renaming the fundamental concepts of a service.</li>
+<li>Resource and operation shapes MAY NOT be renamed. Renaming shapes is intended
+for incidental naming conflicts, not for renaming the fundamental concepts
+of a service.</li>
 <li>Shapes from other namespaces marked as <a class="reference internal" href="constraint-traits.html#private-trait"><span class="std std-ref">private</span></a>
 MAY be renamed.</li>
 <li>A rename MUST use a name that is case-sensitively different from the
@@ -2902,7 +2902,7 @@ correspond to shapes in the model.</td>
 assumed severity.</li>
 <li><code class="docutils literal notranslate"><span class="pre">DANGER</span></code>: The change is very likely backward incompatible.</li>
 <li><code class="docutils literal notranslate"><span class="pre">WARNING</span></code>: The change might be backward incompatible.</li>
-<li><code class="docutils literal notranslate"><span class="pre">NOTICE</span></code>: The change is likely ok, but should be noted during
+<li><code class="docutils literal notranslate"><span class="pre">NOTE</span></code>: The change is likely ok, but should be noted during
 things like code reviews.</li>
 </ul>
 </td>

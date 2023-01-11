@@ -309,7 +309,7 @@
 responses with JSON documents.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
 <dt>Value type</dt><dd>Structure</dd>
-<dt>See</dt><dd><a class="reference external" href="https://github.com/awslabs/smithy/tree/1.27.0/smithy-aws-protocol-tests/model/awsJson1_0">Protocol tests</a></dd>
+<dt>See</dt><dd><a class="reference external" href="https://github.com/awslabs/smithy/tree/1.27.1/smithy-aws-protocol-tests/model/awsJson1_0">Protocol tests</a></dd>
 </dl>
 <p><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsJson1_0</span></code> is a structure that supports the following
 members:</p>
@@ -676,6 +676,12 @@ reference: <a class="reference external" href="https://github.com/awslabs/smithy
 the expected serialized HTTP requests and responses for each case.</p>
 <p><em>TODO: Add event stream handling specifications.</em></p>
 </div>
+<div class="section" id="error-shape-renaming">
+<h2>Error shape renaming<a class="headerlink" href="#error-shape-renaming" title="Permalink to this headline">#</a></h2>
+<p>By default, Smithy permits renaming shapes to disambiguate shape ID conflicts in
+the <a class="reference internal" href="../../spec/service-types.html#service-closure"><span class="std std-ref">service closure</span></a> via the <code class="docutils literal notranslate"><span class="pre">rename</span></code> property. However, services using this protocol are
+not allowed to rename error shapes (shapes with <a class="reference internal" href="../../spec/type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a> applied).</p>
+</div>
 </div>
 
         </article>
@@ -753,6 +759,7 @@ the expected serialized HTTP requests and responses for each case.</p>
 <li><a class="reference internal" href="#operation-error-serialization">Operation error serialization</a></li>
 <li><a class="reference internal" href="#differences-between-awsjson1-0-and-awsjson1-1">Differences between <code class="docutils literal notranslate"><span class="pre">awsJson1_0</span></code> and <code class="docutils literal notranslate"><span class="pre">awsJson1_1</span></code></a></li>
 <li><a class="reference internal" href="#protocol-compliance-tests">Protocol compliance tests</a></li>
+<li><a class="reference internal" href="#error-shape-renaming">Error shape renaming</a></li>
 </ul>
 </li>
 </ul>

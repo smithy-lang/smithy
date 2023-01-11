@@ -707,6 +707,19 @@ reference: <a class="reference external" href="https://github.com/awslabs/smithy
 the expected serialized HTTP requests and responses for each case.</p>
 <p><em>TODO: Add event stream handling specifications.</em></p>
 </div>
+<div class="section" id="error-shape-renaming">
+<h2>Error shape renaming<a class="headerlink" href="#error-shape-renaming" title="Permalink to this headline">#</a></h2>
+<p>By default, Smithy permits renaming shapes to disambiguate shape ID conflicts in
+the <a class="reference internal" href="../../spec/service-types.html#service-closure"><span class="std std-ref">service closure</span></a> via the <code class="docutils literal notranslate"><span class="pre">rename</span></code> property. However, services using this protocol are
+not allowed to rename error shapes (shapes with <a class="reference internal" href="../../spec/type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a> applied).</p>
+<p>Client-side implementations rely on the response body field <code class="docutils literal notranslate"><span class="pre">code</span></code> or <code class="docutils literal notranslate"><span class="pre">__type</span></code> to resolve the error type.
+Server-side implementations of this protocol will only send the <code class="docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code> for the response body field.</p>
+<p>When there are conflicting shape IDs <code class="docutils literal notranslate"><span class="pre">smithy.service#ServiceError</span></code> and <code class="docutils literal notranslate"><span class="pre">smithy.other#ServiceError</span></code>,
+the server will only send the shape name <code class="docutils literal notranslate"><span class="pre">ServiceError</span></code>. Clients will not be able to resolve
+the correct error type without the namespace.</p>
+<p>Server-side implementations of this protocol don't serialize renamed shape names.
+As a result, renaming will not resolve the conflicting shape IDs issue, and hence it is not permitted.</p>
+</div>
 </div>
 
         </article>
@@ -781,6 +794,7 @@ the expected serialized HTTP requests and responses for each case.</p>
 <li><a class="reference internal" href="#non-numeric-float-and-double-serialization">Non-numeric float and double serialization</a></li>
 <li><a class="reference internal" href="#operation-error-serialization">Operation error serialization</a></li>
 <li><a class="reference internal" href="#protocol-compliance-tests">Protocol compliance tests</a></li>
+<li><a class="reference internal" href="#error-shape-renaming">Error shape renaming</a></li>
 </ul>
 </li>
 </ul>

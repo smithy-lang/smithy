@@ -1007,7 +1007,7 @@ an <a class="reference internal" href="../../spec/protocol-traits.html#xmlnamesp
 <p><em>Service shapes with the xmlNamespace trait</em></p>
 </dd>
 <dt>Value type</dt><dd>Annotation trait.</dd>
-<dt>See</dt><dd><a class="reference external" href="https://github.com/awslabs/smithy/tree/1.27.0/smithy-aws-protocol-tests/model/awsQuery">Protocol tests</a></dd>
+<dt>See</dt><dd><a class="reference external" href="https://github.com/awslabs/smithy/tree/1.27.1/smithy-aws-protocol-tests/model/awsQuery">Protocol tests</a></dd>
 </dl>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
 
@@ -1134,6 +1134,19 @@ reference: <a class="reference external" href="https://github.com/awslabs/smithy
 <p>These compliance tests define a model that is used to define test cases and
 the expected serialized HTTP requests and responses for each case.</p>
 </div>
+<div class="section" id="error-shape-renaming">
+<h2>Error shape renaming<a class="headerlink" href="#error-shape-renaming" title="Permalink to this headline">#</a></h2>
+<p>By default, Smithy permits renaming shapes to disambiguate shape ID conflicts in
+the <a class="reference internal" href="../../spec/service-types.html#service-closure"><span class="std std-ref">service closure</span></a> via the <code class="docutils literal notranslate"><span class="pre">rename</span></code> property. However, services using this protocol are
+not allowed to rename error shapes (shapes with <a class="reference internal" href="../../spec/type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a> applied).</p>
+<p>Client-side implementations rely on the response body field <code class="docutils literal notranslate"><span class="pre">code</span></code> or <code class="docutils literal notranslate"><span class="pre">__type</span></code> to resolve the error type.
+Server-side implementations of this protocol will only send the <code class="docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code> for the response body field.</p>
+<p>When there are conflicting shape IDs <code class="docutils literal notranslate"><span class="pre">smithy.service#ServiceError</span></code> and <code class="docutils literal notranslate"><span class="pre">smithy.other#ServiceError</span></code>,
+the server will only send the shape name <code class="docutils literal notranslate"><span class="pre">ServiceError</span></code>. Clients will not be able to resolve
+the correct error type without the namespace.</p>
+<p>Server-side implementations of this protocol don't serialize renamed shape names.
+As a result, renaming will not resolve the conflicting shape IDs issue, and hence it is not permitted.</p>
+</div>
 </div>
 
         </article>
@@ -1227,6 +1240,7 @@ the expected serialized HTTP requests and responses for each case.</p>
 <li><a class="reference internal" href="#aws-protocols-awsqueryerror-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQueryError</span></code> trait</a></li>
 <li><a class="reference internal" href="#aws-protocols-awsquerycompatible-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQueryCompatible</span></code> trait</a></li>
 <li><a class="reference internal" href="#protocol-compliance-tests">Protocol compliance tests</a></li>
+<li><a class="reference internal" href="#error-shape-renaming">Error shape renaming</a></li>
 </ul>
 </li>
 </ul>
