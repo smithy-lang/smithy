@@ -141,19 +141,10 @@ public final class NoninclusiveTermsValidator extends AbstractValidator {
         return events;
     }
 
-    /**
-     * Creates a single ValidationEvent.
-     * @param instance TextInstance where the noninclusive term was found
-     * @param replacements List of suggested replacements for the noninclusive term
-     * @param matchedText the noninclusive term that was used
-     * @return the constructed ValidationEvent
-     */
-    private ValidationEvent constructValidationEvent(
-            final TextInstance instance,
-            final List<String> replacements,
-            final String matchedText
-    ) {
-        final String replacementAddendum = getReplacementAddendum(matchedText, replacements);
+    private ValidationEvent constructValidationEvent(TextInstance instance,
+                                                     List<String> replacements,
+                                                     String matchedText) {
+        String replacementAddendum = getReplacementAddendum(matchedText, replacements);
         switch (instance.getLocationType()) {
             case NAMESPACE:
                 //Cannot use any warning() overloads because there is no shape associated with the event.
@@ -165,9 +156,9 @@ public final class NoninclusiveTermsValidator extends AbstractValidator {
                                 instance.getText(), matchedText, replacementAddendum))
                         .build();
             case APPLIED_TRAIT:
-                final ValidationEvent validationEvent =
+                ValidationEvent validationEvent =
                         warning(instance.getShape(), instance.getTrait().getSourceLocation(), "");
-                final String idiomaticTraitName = Trait.getIdiomaticTraitName(instance.getTrait());
+                String idiomaticTraitName = Trait.getIdiomaticTraitName(instance.getTrait());
                 if (instance.getTraitPropertyPath().isEmpty()) {
                     return validationEvent.toBuilder()
                             .message(String.format("'%s' trait has a value that contains a non-inclusive term `%s`.%s",
@@ -175,7 +166,7 @@ public final class NoninclusiveTermsValidator extends AbstractValidator {
                             .id(assembleFullEventId(TRAIT, matchedText.toLowerCase(Locale.US), idiomaticTraitName))
                             .build();
                 } else {
-                    final String valuePropertyPathFormatted = formatPropertyPath(instance.getTraitPropertyPath());
+                    String valuePropertyPathFormatted = formatPropertyPath(instance.getTraitPropertyPath());
                     return validationEvent.toBuilder()
                             .message(String.format(
                                     "'%s' trait value at path {%s} contains a non-inclusive term `%s`.%s",
@@ -196,7 +187,7 @@ public final class NoninclusiveTermsValidator extends AbstractValidator {
     }
 
     private static String getReplacementAddendum(String matchedText, List<String> replacements) {
-        final List<String> caseCorrectedEntryValue = replacements.stream()
+        List<String> caseCorrectedEntryValue = replacements.stream()
                 .map(replacement -> Character.isUpperCase(matchedText.charAt(0))
                         ? StringUtils.capitalize(replacement)
                         : StringUtils.uncapitalize(replacement))

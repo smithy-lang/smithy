@@ -185,8 +185,8 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
                     .map(HttpPrefixHeadersTrait::getValue)
                     .ifPresent(headerPrefix -> {
                         if (HttpChecksumTrait.CHECKSUM_PREFIX.startsWith(headerPrefix)) {
-                            final String memberName = member.getId().getName();
-                            final String prefixString = headerPrefix.toLowerCase(Locale.US);
+                            String memberName = member.getId().getName();
+                            String prefixString = headerPrefix.toLowerCase(Locale.US);
                             events.add(danger(operation, format("The `httpPrefixHeaders` binding of `%s` uses"
                                                     + " the prefix `%s` that conflicts with the prefix `%s` used by the"
                                                     + " `httpChecksum` trait.",
@@ -202,8 +202,8 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
                     .map(HttpHeaderTrait::getValue)
                     .ifPresent(headerName -> {
                         if (headerName.startsWith(HttpChecksumTrait.CHECKSUM_PREFIX)) {
-                            final String memberName = member.getId().getName();
-                            final String headerString = headerName.toLowerCase(Locale.US);
+                            String memberName = member.getId().getName();
+                            String headerString = headerName.toLowerCase(Locale.US);
                             events.add(warning(operation, format("The `httpHeader` binding of `%s` on `%s`"
                                                     + " starts with the prefix `%s` used by the `httpChecksum` trait.",
                                                 headerString, memberName, HttpChecksumTrait.CHECKSUM_PREFIX),

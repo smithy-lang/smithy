@@ -173,9 +173,9 @@ public final class PaginatedTraitValidator extends AbstractValidator {
             if (validator.dangerTargets().contains(target.getType())) {
                 Set<ShapeType> preferredTargets = new TreeSet<>(validator.validTargets());
                 preferredTargets.removeAll(validator.dangerTargets());
-                final String traitName = validator.propertyName();
-                final String memberName = member.getId().getName();
-                final String targetType = target.getType().toString();
+                String traitName = validator.propertyName();
+                String memberName = member.getId().getName();
+                String targetType = target.getType().toString();
                 events.add(danger(operation, trait, String.format(
                             "%spaginated trait `%s` member `%s` targets a %s shape, but this is not recommended. "
                                     + "One of [%s] SHOULD be targeted.",

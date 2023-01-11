@@ -122,12 +122,10 @@ public abstract class AbstractValidator implements Validator {
     }
 
     protected final String assembleFullEventId(String... additionalEventIdParts) {
-        String eventId = getName();
-        if (additionalEventIdParts.length == 1) {
-            eventId += "." + additionalEventIdParts[0];
-        } else if (additionalEventIdParts.length > 1) {
-            eventId += "." + String.join(".", additionalEventIdParts);
+        StringBuilder buf = new StringBuilder(getName());
+        for (String part : additionalEventIdParts) {
+            buf.append('.').append(part);
         }
-        return eventId;
+        return buf.toString();
     }
 }
