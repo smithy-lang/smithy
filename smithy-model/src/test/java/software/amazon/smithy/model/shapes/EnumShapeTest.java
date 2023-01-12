@@ -17,6 +17,7 @@ package software.amazon.smithy.model.shapes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
@@ -400,10 +401,13 @@ public class EnumShapeTest {
         StringShape string = StringShape.builder()
                 .id("ns.foo#bar")
                 .addTrait(trait)
+                .source("bar.smithy", 1, 1)
                 .build();
         Optional<EnumShape> optionalEnum = EnumShape.fromStringShape(string);
         assertTrue(optionalEnum.isPresent());
-        assertEquals(trait.getValues(), optionalEnum.get().expectTrait(SyntheticEnumTrait.class).getValues());
+        SyntheticEnumTrait syntheticEnumTrait = optionalEnum.get().expectTrait(SyntheticEnumTrait.class);
+        assertEquals(trait.getValues(), syntheticEnumTrait.getValues());
+        assertNotNull(syntheticEnumTrait.getSourceLocation());
 
         assertEquals(optionalEnum.get().getMember("foo").get(),
                 MemberShape.builder()
