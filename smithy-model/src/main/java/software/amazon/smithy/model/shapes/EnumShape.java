@@ -294,6 +294,7 @@ public final class EnumShape extends StringShape {
          */
         private void addSyntheticEnumTrait() {
             SyntheticEnumTrait.Builder builder = SyntheticEnumTrait.builder();
+            builder.sourceLocation(getSourceLocation());
             for (MemberShape member : members.get().values()) {
                 try {
                     builder.addEnum(EnumShape.enumDefinitionFromMember(member));
