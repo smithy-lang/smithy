@@ -107,6 +107,7 @@ apply ComplexError @httpResponseTests([
         id: "Ec2ComplexError",
         protocol: ec2Query,
         params: {
+            Message: "Hi",
             TopLevel: "Top level",
             Nested: {
                 Foo: "bar"
