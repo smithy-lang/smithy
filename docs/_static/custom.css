@@ -67,3 +67,9 @@ pre.productionlist code.literal {
 .tab-set {
     margin-bottom: 1.5rem;
 }
+
+@media not print, (prefers-color-scheme: dark) {
+    body:not([data-theme="light"]) .highlight .hll {
+        background-color: rgba(235, 218, 177, 0.10);
+    }
+}

@@ -465,6 +465,8 @@ by ``$``, followed by the member name. For example, the shape ID of the ``i32``
 member in the above example is ``smithy.example#MyUnion$i32``.
 
 
+.. _recursive-shape-definitions:
+
 Recursive shape definitions
 ===========================
 
