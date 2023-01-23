@@ -15,13 +15,20 @@
 
 package software.amazon.smithy.openapi.model;
 
+import java.util.Comparator;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
-public final class TagObject extends Component implements ToSmithyBuilder<TagObject> {
+public final class TagObject extends Component implements ToSmithyBuilder<TagObject>, Comparable<TagObject> {
+    private static final Comparator<String> STRING_COMPARATOR = Comparator
+            .nullsFirst(String::compareToIgnoreCase);
+
+    private static final Comparator<ExternalDocumentation> EXTERNAL_DOCUMENTATION_COMPARATOR = Comparator
+            .nullsFirst(ExternalDocumentation::compareTo);
+
     private final String name;
     private final String description;
     private final ExternalDocumentation externalDocs;
@@ -64,6 +71,14 @@ public final class TagObject extends Component implements ToSmithyBuilder<TagObj
                 .withMember("name", Node.from(getName()))
                 .withOptionalMember("description", getDescription().map(Node::from))
                 .withOptionalMember("externalDocs", getExternalDocs().map(ExternalDocumentation::toNode));
+    }
+
+    @Override
+    public int compareTo(TagObject that) {
+        return Comparator.comparing(TagObject::getName, STRING_COMPARATOR)
+            .thenComparing(to -> to.description, STRING_COMPARATOR)
+            .thenComparing(to -> to.externalDocs, EXTERNAL_DOCUMENTATION_COMPARATOR)
+            .compare(this, that);
     }
 
     public static final class Builder extends Component.Builder<Builder, TagObject> {
