@@ -285,9 +285,9 @@ public final class Endpoint extends MandatorySourceLocation implements ToSmithyB
         }
 
         public Builder addAuthScheme(String scheme, Map<String, Literal> parameters) {
-            this.authSchemes.get().add(Pair.of(Identifier.of(scheme),
-                    parameters.entrySet().stream()
-                            .collect(Collectors.toMap(k -> Identifier.of(k.getKey()), Map.Entry::getValue))));
+            Map<Identifier, Literal> transformedParameters = new LinkedHashMap<>();
+            parameters.forEach((k, v) -> transformedParameters.put(Identifier.of(k), v));
+            this.authSchemes.get().add(Pair.of(Identifier.of(scheme), transformedParameters));
             return this;
         }
 
