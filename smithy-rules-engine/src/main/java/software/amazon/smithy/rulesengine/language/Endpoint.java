@@ -19,10 +19,12 @@ import static software.amazon.smithy.rulesengine.language.error.RuleError.contex
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
@@ -71,7 +73,8 @@ public final class Endpoint extends MandatorySourceLocation implements ToSmithyB
                 builder.authSchemes.copy().stream()
                         .map(
                                 authScheme -> {
-                                    Map<Identifier, Literal> base = new LinkedHashMap<>();
+                                    Map<Identifier, Literal> base = new TreeMap<>(
+                                            Comparator.comparing(Identifier::asString));
                                     base.put(Identifier.of("name"), Literal.of(authScheme.left.asString()));
                                     base.putAll(authScheme.right);
                                     return Literal.record(base);
