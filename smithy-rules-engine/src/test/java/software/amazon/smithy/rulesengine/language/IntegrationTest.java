@@ -15,8 +15,7 @@
 
 package software.amazon.smithy.rulesengine.language;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static software.amazon.smithy.rulesengine.language.util.StringUtils.lines;
 
 import java.io.File;
@@ -82,6 +81,13 @@ public class IntegrationTest {
                 .map(path -> new ValidationTestCase(path.toPath(), null));
     }
 
+    private Stream<ValidationTestCase> invalidStandaloneValidationTestCases() {
+        URL url = getClass().getResource("invalid-standalone-validation-rules");
+        assert url != null;
+        return Arrays.stream(Objects.requireNonNull(new File(url.getPath()).listFiles()))
+            .map(path -> new ValidationTestCase(path.toPath(), null));
+    }
+
     @ParameterizedTest
     @MethodSource("validTestcases")
     void checkValidRules(ValidationTestCase validationTestCase) {
@@ -129,6 +135,15 @@ public class IntegrationTest {
         assertEquals(
                 validationTestCase.comments().replaceAll("\\s+", " ").trim(),
                 error.toString().replaceAll("\\s+", " ").trim());
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidStandaloneValidationTestCases")
+    void checkInvalidStandaloneValidationRules(ValidationTestCase validationTestCase) {
+        EndpointRuleSet ruleset = EndpointRuleSet.fromNode(validationTestCase.contents());
+        List<ValidationError> errors = StandaloneRulesetValidator.validate(ruleset, null)
+            .collect(Collectors.toList());
+        assertFalse(errors.isEmpty());
     }
 
     public static final class ValidationTestCase {

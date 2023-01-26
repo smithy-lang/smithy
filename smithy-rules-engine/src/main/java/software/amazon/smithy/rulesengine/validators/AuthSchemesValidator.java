@@ -93,7 +93,7 @@ public final class AuthSchemesValidator {
                 return validateBeta(authScheme, sourceLocation);
             } else {
                 return Stream.of(new ValidationError(ValidationErrorType.INVALID_AUTH_SCHEMES,
-                    String.format("unexpected auth scheme name: `%s`", schemeName), name.getSourceLocation()));
+                        String.format("unexpected auth scheme name: `%s`", schemeName), name.getSourceLocation()));
             }
         }
 
@@ -148,7 +148,7 @@ public final class AuthSchemesValidator {
             return keys.stream().flatMap(key -> {
                 if (!map.containsKey(key)) {
                     return Stream.of(new ValidationError(ValidationErrorType.INVALID_AUTH_SCHEMES,
-                        String.format("Unexpected key: `%s` (valid keys: %s)", key, keys), sourceLocation));
+                            String.format("Missing key: `%s`", key), sourceLocation));
                 } else {
                     return Stream.empty();
                 }
@@ -160,7 +160,7 @@ public final class AuthSchemesValidator {
             SourceLocation sourceLocation
         ) {
             List<ValidationError> missingKeys = hasAllKeys(authScheme,
-                ListUtils.of(SIGNING_NAME, SIGNING_REGION, NAME), sourceLocation)
+                ListUtils.of(SIGNING_NAME, NAME), sourceLocation)
                 .collect(Collectors.toList());
             if (!missingKeys.isEmpty()) {
                 return missingKeys.stream();
