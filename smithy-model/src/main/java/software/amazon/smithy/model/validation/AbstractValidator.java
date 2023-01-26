@@ -30,102 +30,483 @@ public abstract class AbstractValidator implements Validator {
 
     protected final ValidationEvent error(
             Shape shape,
-            String message,
-            String... additionalEventIdParts
+            String message
     ) {
-        return createEvent(Severity.ERROR, shape, shape.getSourceLocation(), message, additionalEventIdParts);
+        return createEvent(Severity.ERROR, shape, shape.getSourceLocation(), message);
+    }
+
+    protected final ValidationEvent error(
+            Shape shape,
+            String message,
+            String eventIdSubpart1
+    ) {
+        return createEvent(Severity.ERROR, shape, shape.getSourceLocation(), message, eventIdSubpart1);
+    }
+
+    protected final ValidationEvent error(
+            Shape shape,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2
+    ) {
+        return createEvent(Severity.ERROR, shape, shape.getSourceLocation(), message, eventIdSubpart1, eventIdSubpart2);
+    }
+
+    protected final ValidationEvent error(
+            Shape shape,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2,
+            String eventIdSubpart3
+    ) {
+        return createEvent(Severity.ERROR, shape, shape.getSourceLocation(), message, eventIdSubpart1, eventIdSubpart2,
+                eventIdSubpart3);
+    }
+
+    protected final ValidationEvent error(
+            Shape shape,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2,
+            String eventIdSubpart3,
+            String eventIdSubpart4
+    ) {
+        return createEvent(Severity.ERROR, shape, shape.getSourceLocation(), message, eventIdSubpart1, eventIdSubpart2,
+                            eventIdSubpart3, eventIdSubpart4);
+    }
+
+    protected final ValidationEvent error(
+            Shape shape,
+            FromSourceLocation location,
+            String message
+    ) {
+        return createEvent(Severity.ERROR, shape, location, message);
     }
 
     protected final ValidationEvent error(
             Shape shape,
             FromSourceLocation location,
             String message,
-            String... additionalEventIdParts
+            String eventIdSubpart1
     ) {
-        return createEvent(Severity.ERROR, shape, location, message, additionalEventIdParts);
+        return createEvent(Severity.ERROR, shape, location, message, eventIdSubpart1);
+    }
+
+    protected final ValidationEvent error(
+            Shape shape,
+            FromSourceLocation location,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2
+    ) {
+        return createEvent(Severity.ERROR, shape, location, message, eventIdSubpart1, eventIdSubpart2);
+    }
+
+    protected final ValidationEvent error(
+            Shape shape,
+            FromSourceLocation location,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2,
+            String eventIdSubpart3
+    ) {
+        return createEvent(Severity.ERROR, shape, location, message, eventIdSubpart1, eventIdSubpart2, eventIdSubpart3);
+    }
+
+    protected final ValidationEvent error(
+            Shape shape,
+            FromSourceLocation location,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2,
+            String eventIdSubpart3,
+            String eventIdSubpart4
+    ) {
+        return createEvent(Severity.ERROR, shape, location, message, eventIdSubpart1, eventIdSubpart2, eventIdSubpart3,
+                            eventIdSubpart4);
+    }
+
+    protected final ValidationEvent danger(
+            Shape shape,
+            String message
+    ) {
+        return createEvent(Severity.DANGER, shape, shape.getSourceLocation(), message);
     }
 
     protected final ValidationEvent danger(
             Shape shape,
             String message,
-            String... additionalEventIdParts
+            String eventIdSubpart1
     ) {
-        return createEvent(Severity.DANGER, shape, shape.getSourceLocation(), message, additionalEventIdParts);
+        return createEvent(Severity.DANGER, shape, shape.getSourceLocation(), message, eventIdSubpart1);
+    }
+
+    protected final ValidationEvent danger(
+            Shape shape,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2
+    ) {
+        return createEvent(Severity.DANGER, shape, shape.getSourceLocation(), message, eventIdSubpart1,
+                            eventIdSubpart2);
+    }
+
+    protected final ValidationEvent danger(
+            Shape shape,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2,
+            String eventIdSubpart3
+    ) {
+        return createEvent(Severity.DANGER, shape, shape.getSourceLocation(), message, eventIdSubpart1, eventIdSubpart2,
+                            eventIdSubpart3);
+    }
+
+    protected final ValidationEvent danger(
+            Shape shape,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2,
+            String eventIdSubpart3,
+            String eventIdSubpart4
+    ) {
+        return createEvent(Severity.DANGER, shape, shape.getSourceLocation(), message, eventIdSubpart1, eventIdSubpart2,
+                            eventIdSubpart3, eventIdSubpart4);
+    }
+
+    protected final ValidationEvent danger(
+            Shape shape,
+            FromSourceLocation location,
+            String message
+    ) {
+        return createEvent(Severity.DANGER, shape, location, message);
     }
 
     protected final ValidationEvent danger(
             Shape shape,
             FromSourceLocation location,
             String message,
-            String... additionalEventIdParts
+            String eventIdSubpart1
     ) {
-        return createEvent(Severity.DANGER, shape, location, message, additionalEventIdParts);
+        return createEvent(Severity.DANGER, shape, location, message, eventIdSubpart1);
+    }
+
+    protected final ValidationEvent danger(
+            Shape shape,
+            FromSourceLocation location,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2
+    ) {
+        return createEvent(Severity.DANGER, shape, location, message, eventIdSubpart1, eventIdSubpart2);
+    }
+
+    protected final ValidationEvent danger(
+            Shape shape,
+            FromSourceLocation location,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2,
+            String eventIdSubpart3
+    ) {
+        return createEvent(Severity.DANGER, shape, location, message, eventIdSubpart1, eventIdSubpart2,
+                            eventIdSubpart3);
+    }
+
+    protected final ValidationEvent danger(
+            Shape shape,
+            FromSourceLocation location,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2,
+            String eventIdSubpart3,
+            String eventIdSubpart4
+    ) {
+        return createEvent(Severity.DANGER, shape, location, message, eventIdSubpart1, eventIdSubpart2, eventIdSubpart3,
+                            eventIdSubpart4);
+    }
+
+    protected final ValidationEvent warning(
+            Shape shape,
+            String message
+    ) {
+        return createEvent(Severity.WARNING, shape, shape.getSourceLocation(), message);
     }
 
     protected final ValidationEvent warning(
             Shape shape,
             String message,
-            String... additionalEventIdParts
+            String eventIdSubpart1
     ) {
-        return createEvent(Severity.WARNING, shape, shape.getSourceLocation(), message, additionalEventIdParts);
+        return createEvent(Severity.WARNING, shape, shape.getSourceLocation(), message, eventIdSubpart1);
+    }
+
+    protected final ValidationEvent warning(
+            Shape shape,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2
+    ) {
+        return createEvent(Severity.WARNING, shape, shape.getSourceLocation(), message, eventIdSubpart1,
+                eventIdSubpart2);
+    }
+
+    protected final ValidationEvent warning(
+            Shape shape,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2,
+            String eventIdSubpart3
+    ) {
+        return createEvent(Severity.WARNING, shape, shape.getSourceLocation(), message, eventIdSubpart1,
+                eventIdSubpart2, eventIdSubpart3);
+    }
+
+    protected final ValidationEvent warning(
+            Shape shape,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2,
+            String eventIdSubpart3,
+            String eventIdSubpart4
+    ) {
+        return createEvent(Severity.WARNING, shape, shape.getSourceLocation(), message, eventIdSubpart1,
+                            eventIdSubpart2, eventIdSubpart3, eventIdSubpart4);
+    }
+
+    protected final ValidationEvent warning(
+            Shape shape,
+            FromSourceLocation location,
+            String message
+    ) {
+        return createEvent(Severity.WARNING, shape, location, message);
     }
 
     protected final ValidationEvent warning(
             Shape shape,
             FromSourceLocation location,
             String message,
-            String... additionalEventIdParts
+            String eventIdSubpart1
     ) {
-        return createEvent(Severity.WARNING, shape, location, message, additionalEventIdParts);
+        return createEvent(Severity.WARNING, shape, location, message, eventIdSubpart1);
+    }
+
+    protected final ValidationEvent warning(
+            Shape shape,
+            FromSourceLocation location,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2
+    ) {
+        return createEvent(Severity.WARNING, shape, location, message, eventIdSubpart1, eventIdSubpart2);
+    }
+
+    protected final ValidationEvent warning(
+            Shape shape,
+            FromSourceLocation location,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2,
+            String eventIdSubpart3
+    ) {
+        return createEvent(Severity.WARNING, shape, location, message, eventIdSubpart1, eventIdSubpart2,
+                            eventIdSubpart3);
+    }
+
+    protected final ValidationEvent warning(
+            Shape shape,
+            FromSourceLocation location,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2,
+            String eventIdSubpart3,
+            String eventIdSubpart4
+    ) {
+        return createEvent(Severity.WARNING, shape, location, message, eventIdSubpart1, eventIdSubpart2,
+                            eventIdSubpart3, eventIdSubpart4);
+    }
+
+    protected final ValidationEvent note(
+            Shape shape,
+            String message
+    ) {
+        return createEvent(Severity.NOTE, shape, shape.getSourceLocation(), message);
     }
 
     protected final ValidationEvent note(
             Shape shape,
             String message,
-            String... additionalEventIdParts
+            String eventIdSubpart1
     ) {
-        return createEvent(Severity.NOTE, shape, shape.getSourceLocation(), message, additionalEventIdParts);
+        return createEvent(Severity.NOTE, shape, shape.getSourceLocation(), message, eventIdSubpart1);
+    }
+
+    protected final ValidationEvent note(
+            Shape shape,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2
+    ) {
+        return createEvent(Severity.NOTE, shape, shape.getSourceLocation(), message, eventIdSubpart1, eventIdSubpart2);
+    }
+
+    protected final ValidationEvent note(
+            Shape shape,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2,
+            String eventIdSubpart3
+    ) {
+        return createEvent(Severity.NOTE, shape, shape.getSourceLocation(), message, eventIdSubpart1, eventIdSubpart2,
+                eventIdSubpart3);
+    }
+
+    protected final ValidationEvent note(
+            Shape shape,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2,
+            String eventIdSubpart3,
+            String eventIdSubpart4
+    ) {
+        return createEvent(Severity.NOTE, shape, shape.getSourceLocation(), message, eventIdSubpart1, eventIdSubpart2,
+                eventIdSubpart3, eventIdSubpart4);
+    }
+
+    protected final ValidationEvent note(
+            Shape shape,
+            FromSourceLocation location,
+            String message
+    ) {
+        return createEvent(Severity.NOTE, shape, location, message);
     }
 
     protected final ValidationEvent note(
             Shape shape,
             FromSourceLocation location,
             String message,
-            String... additionalEventIdParts
+            String eventIdSubpart1
     ) {
-        return createEvent(Severity.NOTE, shape, location, message, additionalEventIdParts);
+        return createEvent(Severity.NOTE, shape, location, message, eventIdSubpart1);
     }
 
-    protected final ValidationEvent createEvent(
-            Severity severity,
+    protected final ValidationEvent note(
             Shape shape,
+            FromSourceLocation location,
             String message,
-            String... additionalEventIdParts
+            String eventIdSubpart1,
+            String eventIdSubpart2
     ) {
-        return createEvent(severity, shape, shape.getSourceLocation(), message, additionalEventIdParts);
+        return createEvent(Severity.NOTE, shape, location, message, eventIdSubpart1, eventIdSubpart2);
+    }
+
+    protected final ValidationEvent note(
+            Shape shape,
+            FromSourceLocation location,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2,
+            String eventIdSubpart3
+    ) {
+        return createEvent(Severity.NOTE, shape, location, message, eventIdSubpart1, eventIdSubpart2, eventIdSubpart3);
+    }
+
+    protected final ValidationEvent note(
+            Shape shape,
+            FromSourceLocation location,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2,
+            String eventIdSubpart3,
+            String eventIdSubpart4
+    ) {
+        return createEvent(Severity.NOTE, shape, location, message, eventIdSubpart1, eventIdSubpart2, eventIdSubpart3,
+                            eventIdSubpart4);
     }
 
     protected final ValidationEvent createEvent(
             Severity severity,
             Shape shape,
             FromSourceLocation loc,
-            String msg,
-            String... additionalEventIdParts
+            String message
     ) {
         return ValidationEvent.builder()
                 .severity(severity)
-                .message(msg)
+                .message(message)
                 .shapeId(shape.getId())
                 .sourceLocation(loc.getSourceLocation())
-                .id(assembleFullEventId(additionalEventIdParts))
+                .id(getName())
                 .build();
     }
 
-    protected final String assembleFullEventId(String... additionalEventIdParts) {
-        StringBuilder buf = new StringBuilder(getName());
-        for (String part : additionalEventIdParts) {
-            buf.append('.').append(part);
-        }
-        return buf.toString();
+    protected final ValidationEvent createEvent(
+            Severity severity,
+            Shape shape,
+            FromSourceLocation loc,
+            String message,
+            String eventIdSubpart1
+    ) {
+        return ValidationEvent.builder()
+                .severity(severity)
+                .message(message)
+                .shapeId(shape.getId())
+                .sourceLocation(loc.getSourceLocation())
+                .id(getName() + "." + eventIdSubpart1)
+                .build();
+    }
+
+    protected final ValidationEvent createEvent(
+            Severity severity,
+            Shape shape,
+            FromSourceLocation loc,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2
+    ) {
+        return ValidationEvent.builder()
+                .severity(severity)
+                .message(message)
+                .shapeId(shape.getId())
+                .sourceLocation(loc.getSourceLocation())
+                .id(getName() + "." + eventIdSubpart1 + "." + eventIdSubpart2)
+                .build();
+    }
+
+    protected final ValidationEvent createEvent(
+            Severity severity,
+            Shape shape,
+            FromSourceLocation loc,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2,
+            String eventIdSubpart3
+    ) {
+        return ValidationEvent.builder()
+                .severity(severity)
+                .message(message)
+                .shapeId(shape.getId())
+                .sourceLocation(loc.getSourceLocation())
+                .id(getName() + "." + eventIdSubpart1 + "." + eventIdSubpart2 + "." + eventIdSubpart3)
+                .build();
+    }
+
+    protected final ValidationEvent createEvent(
+            Severity severity,
+            Shape shape,
+            FromSourceLocation loc,
+            String message,
+            String eventIdSubpart1,
+            String eventIdSubpart2,
+            String eventIdSubpart3,
+            String eventIdSubpart4
+    ) {
+        return ValidationEvent.builder()
+                .severity(severity)
+                .message(message)
+                .shapeId(shape.getId())
+                .sourceLocation(loc.getSourceLocation())
+                .id(getName() + "." + eventIdSubpart1 + "." + eventIdSubpart2
+                        + "." + eventIdSubpart3 + "." + eventIdSubpart4)
+                .build();
     }
 }
