@@ -122,7 +122,7 @@ public final class RemoveUnusedComponents implements OpenApiMapper {
             public Set<String> objectNode(ObjectNode node) {
                 Set<String> result = new HashSet<>();
 
-                if (node.size() == 1 && node.getMember("$ref").isPresent()) {
+                if (node.getMember("$ref").isPresent()) {
                     node.getMember("$ref")
                             .flatMap(Node::asStringNode)
                             .map(StringNode::getValue)
