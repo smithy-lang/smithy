@@ -117,7 +117,9 @@ apply AllQueryStringTypes @httpRequestTests([
                 "Timestamp": ["1970-01-01T00:00:01Z"],
                 "TimestampList": ["1970-01-01T00:00:01Z", "1970-01-01T00:00:02Z", "1970-01-01T00:00:03Z"],
                 "Enum": ["Foo"],
-                "EnumList": ["Foo", "Baz", "Bar"]
+                "EnumList": ["Foo", "Baz", "Bar"],
+                "IntegerEnum": ["1"],
+                "IntegerEnumList": ["1", "2", "3"]
             },
         }
     },
