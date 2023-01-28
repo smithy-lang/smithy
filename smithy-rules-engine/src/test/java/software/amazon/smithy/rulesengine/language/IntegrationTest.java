@@ -16,6 +16,7 @@
 package software.amazon.smithy.rulesengine.language;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static software.amazon.smithy.rulesengine.language.util.StringUtils.lines;
 
@@ -141,12 +142,19 @@ public class IntegrationTest {
 
     @ParameterizedTest
     @MethodSource("invalidStandaloneValidationTestCases")
-    void checkInvalidStandaloneValidationRules(ValidationTestCase validationTestCase) {
+    void checkInvalidStandaloneValidationRules(ValidationTestCase validationTestCase) throws IOException {
         EndpointRuleSet ruleset = EndpointRuleSet.fromNode(validationTestCase.contents());
         List<ValidationError> errors = StandaloneRulesetValidator.validate(ruleset, null)
                 .collect(Collectors.toList());
-        assertEquals(1, errors.size());
-        assertEquals(ValidationErrorType.INVALID_AUTH_SCHEMES, errors.get(0).validationErrorType());
+        assertFalse(errors.isEmpty());
+
+        String concatenatedErrors = errors.stream()
+                .map(ValidationError::error)
+                .collect(Collectors.joining(" "))
+                .replaceAll("\\s+", " ").trim();
+        assertEquals(
+                validationTestCase.comments().replaceAll("\\s+", " ").trim(),
+                concatenatedErrors);
     }
 
     public static final class ValidationTestCase {
