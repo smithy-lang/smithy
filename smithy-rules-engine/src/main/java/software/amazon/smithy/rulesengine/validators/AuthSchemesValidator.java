@@ -141,9 +141,9 @@ public final class AuthSchemesValidator {
         }
 
         private Stream<ValidationError> hasAllKeys(
-            Map<Identifier, Literal> map,
-            List<Identifier> keys,
-            SourceLocation sourceLocation
+                Map<Identifier, Literal> map,
+                List<Identifier> keys,
+                SourceLocation sourceLocation
         ) {
             return keys.stream().flatMap(key -> {
                 if (!map.containsKey(key)) {
@@ -156,12 +156,12 @@ public final class AuthSchemesValidator {
         }
 
         private Stream<ValidationError> validateBeta(
-            Map<Identifier, Literal> authScheme,
-            SourceLocation sourceLocation
+                Map<Identifier, Literal> authScheme,
+                SourceLocation sourceLocation
         ) {
             List<ValidationError> missingKeys = hasAllKeys(authScheme,
-                ListUtils.of(SIGNING_NAME, NAME), sourceLocation)
-                .collect(Collectors.toList());
+                    ListUtils.of(SIGNING_NAME, NAME), sourceLocation)
+                    .collect(Collectors.toList());
             if (!missingKeys.isEmpty()) {
                 return missingKeys.stream();
             }

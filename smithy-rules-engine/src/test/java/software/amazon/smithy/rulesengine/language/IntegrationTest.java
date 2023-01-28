@@ -15,7 +15,8 @@
 
 package software.amazon.smithy.rulesengine.language;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static software.amazon.smithy.rulesengine.language.util.StringUtils.lines;
 
 import java.io.File;
@@ -44,6 +45,7 @@ import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.testutil.TestDiscovery;
 import software.amazon.smithy.rulesengine.validators.StandaloneRulesetValidator;
 import software.amazon.smithy.rulesengine.validators.ValidationError;
+import software.amazon.smithy.rulesengine.validators.ValidationErrorType;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -85,7 +87,7 @@ public class IntegrationTest {
         URL url = getClass().getResource("invalid-standalone-validation-rules");
         assert url != null;
         return Arrays.stream(Objects.requireNonNull(new File(url.getPath()).listFiles()))
-            .map(path -> new ValidationTestCase(path.toPath(), null));
+                .map(path -> new ValidationTestCase(path.toPath(), null));
     }
 
     @ParameterizedTest
@@ -142,8 +144,9 @@ public class IntegrationTest {
     void checkInvalidStandaloneValidationRules(ValidationTestCase validationTestCase) {
         EndpointRuleSet ruleset = EndpointRuleSet.fromNode(validationTestCase.contents());
         List<ValidationError> errors = StandaloneRulesetValidator.validate(ruleset, null)
-            .collect(Collectors.toList());
-        assertFalse(errors.isEmpty());
+                .collect(Collectors.toList());
+        assertEquals(1, errors.size());
+        assertEquals(ValidationErrorType.INVALID_AUTH_SCHEMES, errors.get(0).validationErrorType());
     }
 
     public static final class ValidationTestCase {
