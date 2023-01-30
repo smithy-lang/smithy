@@ -16,6 +16,7 @@
 package software.amazon.smithy.rulesengine.language;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static software.amazon.smithy.rulesengine.language.util.StringUtils.lines;
 
@@ -45,6 +46,7 @@ import software.amazon.smithy.rulesengine.language.eval.Scope;
 import software.amazon.smithy.rulesengine.testutil.TestDiscovery;
 import software.amazon.smithy.rulesengine.validators.StandaloneRulesetValidator;
 import software.amazon.smithy.rulesengine.validators.ValidationError;
+import software.amazon.smithy.rulesengine.validators.ValidationErrorType;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -77,6 +79,13 @@ public class IntegrationTest {
 
     private Stream<ValidationTestCase> invalidTestCases() {
         URL url = getClass().getResource("invalid-rules");
+        assert url != null;
+        return Arrays.stream(Objects.requireNonNull(new File(url.getPath()).listFiles()))
+                .map(path -> new ValidationTestCase(path.toPath(), null));
+    }
+
+    private Stream<ValidationTestCase> invalidStandaloneValidationTestCases() {
+        URL url = getClass().getResource("invalid-standalone-validation-rules");
         assert url != null;
         return Arrays.stream(Objects.requireNonNull(new File(url.getPath()).listFiles()))
                 .map(path -> new ValidationTestCase(path.toPath(), null));
@@ -129,6 +138,23 @@ public class IntegrationTest {
         assertEquals(
                 validationTestCase.comments().replaceAll("\\s+", " ").trim(),
                 error.toString().replaceAll("\\s+", " ").trim());
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidStandaloneValidationTestCases")
+    void checkInvalidStandaloneValidationRules(ValidationTestCase validationTestCase) throws IOException {
+        EndpointRuleSet ruleset = EndpointRuleSet.fromNode(validationTestCase.contents());
+        List<ValidationError> errors = StandaloneRulesetValidator.validate(ruleset, null)
+                .collect(Collectors.toList());
+        assertFalse(errors.isEmpty());
+
+        String concatenatedErrors = errors.stream()
+                .map(ValidationError::error)
+                .collect(Collectors.joining(" "))
+                .replaceAll("\\s+", " ").trim();
+        assertEquals(
+                validationTestCase.comments().replaceAll("\\s+", " ").trim(),
+                concatenatedErrors);
     }
 
     public static final class ValidationTestCase {

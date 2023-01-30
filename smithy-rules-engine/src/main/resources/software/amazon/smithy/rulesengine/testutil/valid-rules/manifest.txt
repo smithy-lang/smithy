@@ -14,3 +14,4 @@ substring.json
 uri-encode.json
 fns.json
 is-virtual-hostable-s3-bucket.json
+beta-auth-scheme.json

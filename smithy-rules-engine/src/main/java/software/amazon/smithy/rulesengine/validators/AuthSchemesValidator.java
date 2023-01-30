@@ -85,14 +85,15 @@ public final class AuthSchemesValidator {
             }
             Literal name = authScheme.get(NAME);
             String schemeName = name.expectLiteralString();
-            switch (schemeName) {
-                case "sigv4":
-                    return validateSigv4(authScheme, sourceLocation);
-                case "sigv4a":
-                    return validateSigv4a(authScheme, sourceLocation);
-                default:
-                    return Stream.of(new ValidationError(ValidationErrorType.INVALID_AUTH_SCHEMES,
-                            String.format("unexpected auth scheme name: `%s`", schemeName), name.getSourceLocation()));
+            if (schemeName.equals("sigv4")) {
+                return validateSigv4(authScheme, sourceLocation);
+            } else if (schemeName.equals("sigv4a")) {
+                return validateSigv4a(authScheme, sourceLocation);
+            } else if (schemeName.startsWith("beta-")) {
+                return validateBeta(authScheme, sourceLocation);
+            } else {
+                return Stream.of(new ValidationError(ValidationErrorType.INVALID_AUTH_SCHEMES,
+                        String.format("unexpected auth scheme name: `%s`", schemeName), name.getSourceLocation()));
             }
         }
 
@@ -137,6 +138,34 @@ public final class AuthSchemesValidator {
             }
             return Stream.concat(propertyIs(authScheme, SIGNING_NAME, Literal::asString),
                     propertyIs(authScheme, SIGNING_REGION, Literal::asString));
+        }
+
+        private Stream<ValidationError> hasAllKeys(
+                Map<Identifier, Literal> map,
+                List<Identifier> keys,
+                SourceLocation sourceLocation
+        ) {
+            return keys.stream().flatMap(key -> {
+                if (!map.containsKey(key)) {
+                    return Stream.of(new ValidationError(ValidationErrorType.INVALID_AUTH_SCHEMES,
+                            String.format("Missing key: `%s`", key), sourceLocation));
+                } else {
+                    return Stream.empty();
+                }
+            });
+        }
+
+        private Stream<ValidationError> validateBeta(
+                Map<Identifier, Literal> authScheme,
+                SourceLocation sourceLocation
+        ) {
+            List<ValidationError> missingKeys = hasAllKeys(authScheme,
+                    ListUtils.of(SIGNING_NAME, NAME), sourceLocation)
+                    .collect(Collectors.toList());
+            if (!missingKeys.isEmpty()) {
+                return missingKeys.stream();
+            }
+            return propertyIs(authScheme, SIGNING_NAME, Literal::asString);
         }
 
         private <U> Stream<ValidationError> propertyIs(
