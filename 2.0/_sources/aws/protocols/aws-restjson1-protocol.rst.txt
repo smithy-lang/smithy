@@ -100,7 +100,7 @@ preferred over ``http/1.1``.
 
     use aws.protocols#restJson1
 
-    @awsJson1_1(
+    @restJson1(
         http: ["h2", "http/1.1"],
         eventStreamHttp: ["h2", "http/1.1"]
     )
