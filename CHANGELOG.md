@@ -1,5 +1,19 @@
 # Smithy Changelog
 
+## 1.27.2 (2023-01-30)
+
+### Features
+* Implement Comparable interface for TagObject and ExternalDocumentation ([#1589](https://github.com/awslabs/smithy/pull/1589))
+* Relax rule engine validation to support test auth schemes ([#1590](https://github.com/awslabs/smithy/pull/1590))
+* Ensure that AuthSchemes added to Endpoint builder retain parameter ordering ([#1591](https://github.com/awslabs/smithy/pull/1591))
+* Add intEnum coverage on map of string list ([#1596](https://github.com/awslabs/smithy/pull/1596))
+
+### Bug Fixes
+* Add source location to synthetic Enum trait ([#1580](https://github.com/awslabs/smithy/pull/1580))
+
+### Documentation
+* Minor fix to restJson1 docs ([#1587](https://github.com/awslabs/smithy/pull/1587))
+
 ## 1.27.1 (2023-01-11)
 
 ### Features
