@@ -40,6 +40,9 @@ final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEve
     private static final String NON_SUPPRESSABLE_ERROR = "WaitableTrait";
     private static final String JMESPATH_PROBLEM = NON_SUPPRESSABLE_ERROR + "JmespathProblem";
     private static final String INVALID_ERROR_TYPE = NON_SUPPRESSABLE_ERROR + "InvalidErrorType";
+    private static final String RETURN_TYPE_MISMATCH = "ReturnTypeMismatch";
+    private static final String JMES_PATH_DANGER = "JmespathEventDanger";
+    private static final String JMES_PATH_WARNING = "JmespathEventWarning";
 
     private final Model model;
     private final OperationShape operation;
@@ -97,7 +100,7 @@ final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEve
         addEvent(Severity.WARNING, String.format(
                 "errorType '%s' not found on operation. This operation defines the following errors: %s",
                     error, operation.getErrors()),
-                INVALID_ERROR_TYPE, waiterName, String.valueOf(acceptorIndex), error);
+                INVALID_ERROR_TYPE, waiterName, String.valueOf(acceptorIndex));
 
         return events;
     }
@@ -153,8 +156,7 @@ final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEve
                     "Waiter acceptors with a %s comparator must return a `%s` type, but this acceptor was "
                         + "statically determined to return a `%s` type.",
                         comparator, expected, actual),
-                    JMESPATH_PROBLEM, waiterName, String.valueOf(acceptorIndex), comparator.toString(),
-                        actual.toString());
+                    JMESPATH_PROBLEM, RETURN_TYPE_MISMATCH, waiterName, String.valueOf(acceptorIndex));
         }
     }
 
@@ -167,22 +169,25 @@ final class WaiterMatcherValidator implements Matcher.Visitor<List<ValidationEve
 
     private void addJmespathEvent(String path, ExpressionProblem problem) {
         Severity severity;
+        String eventId;
         switch (problem.severity) {
             case ERROR:
                 severity = Severity.ERROR;
+                eventId = NON_SUPPRESSABLE_ERROR;
                 break;
             case DANGER:
                 severity = Severity.DANGER;
+                eventId = JMESPATH_PROBLEM + "." + JMES_PATH_DANGER + "." + waiterName + "." + acceptorIndex;
                 break;
             default:
                 severity = Severity.WARNING;
+                eventId = JMESPATH_PROBLEM + "." + JMES_PATH_WARNING + "." + waiterName + "." + acceptorIndex;
                 break;
         }
 
         String problemMessage = problem.message + " (" + problem.line + ":" + problem.column + ")";
         addEvent(severity, String.format("Problem found in JMESPath expression (%s): %s", path, problemMessage),
-                severity == Severity.ERROR ? NON_SUPPRESSABLE_ERROR : JMESPATH_PROBLEM, waiterName,
-                    String.valueOf(acceptorIndex));
+                eventId);
     }
 
     private void addEvent(Severity severity, String message, String... eventIdParts) {
