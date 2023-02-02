@@ -144,6 +144,9 @@ compatible with the shapes and constraints of the corresponding structure.
 These values use the same semantics and format as
 :ref:`custom trait values <trait-node-values>`.
 
+A value for ``output`` or ``error`` SHOULD be provided. However, both
+MUST NOT be defined for the same example.
+
 .. code-block:: smithy
 
     @readonly
