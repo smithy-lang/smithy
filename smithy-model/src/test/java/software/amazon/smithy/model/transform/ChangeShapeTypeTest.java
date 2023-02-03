@@ -423,7 +423,7 @@ public class ChangeShapeTypeTest {
         assertThat(result.expectShape(shapeId).getType(), Matchers.is(ShapeType.ENUM));
         assertThat(result.expectShape(shapeId).members(), Matchers.hasSize(1));
         assertThat(result.expectShape(shapeId).members().iterator().next(), Matchers.equalTo(MemberShape.builder()
-                .id(shapeId.withMember("foo_bar"))
+                .id(shapeId.withMember("FOO_BAR"))
                 .target(UnitTypeTrait.UNIT)
                 .addTrait(EnumValueTrait.builder().stringValue("foo:bar").build())
                 .build()));

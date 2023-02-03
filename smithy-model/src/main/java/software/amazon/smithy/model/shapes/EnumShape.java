@@ -15,14 +15,19 @@
 
 package software.amazon.smithy.model.shapes;
 
+import static software.amazon.smithy.model.validation.validators.EnumShapeValidator.RECOMMENDED_NAME_PATTERN;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
@@ -33,11 +38,11 @@ import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
+import software.amazon.smithy.model.validation.validators.EnumShapeValidator;
 import software.amazon.smithy.utils.BuilderRef;
 
 public final class EnumShape extends StringShape {
 
-    private static final Pattern CONVERTABLE_VALUE = Pattern.compile("^[a-zA-Z-_.:/\\s]+[a-zA-Z_0-9-.:/\\s]*$");
     private static final Logger LOGGER = Logger.getLogger(EnumShape.class.getName());
 
     private final Map<String, MemberShape> members;
@@ -113,6 +118,9 @@ public final class EnumShape extends StringShape {
      * The result will be empty if the given shape doesn't have the {@link EnumTrait},
      * if the enum doesn't have names and name synthesization is disabled, or if a name
      * cannot be synthesized.
+     *
+     * Note: synthesized names are unique and match the regular expression: ^[A-Z]+[A-Z_0-9]*$
+     * See {@value EnumShapeValidator#RECOMMENDED_NAME_PATTERN}
      *
      * @param shape A base {@link StringShape} to convert.
      * @param synthesizeNames Whether names should be synthesized if possible.
@@ -212,7 +220,7 @@ public final class EnumShape extends StringShape {
         String name;
         if (!definition.getName().isPresent()) {
             if (canConvertEnumDefinitionToMember(definition, synthesizeName)) {
-                name = definition.getValue().replaceAll("[-.:/\\s]+", "_");
+                name = synthesizeName(definition.getValue());
             } else {
                 return Optional.empty();
             }
@@ -247,8 +255,16 @@ public final class EnumShape extends StringShape {
      * @return Returns true if the definition can be converted.
      */
     static boolean canConvertEnumDefinitionToMember(EnumDefinition definition, boolean withSynthesizedNames) {
-        return definition.getName().isPresent()
-                || (withSynthesizedNames && CONVERTABLE_VALUE.matcher(definition.getValue()).find());
+        if (definition.getName().isPresent()) {
+            return true;
+        }
+
+        if (withSynthesizedNames) {
+            String syntheticName = synthesizeName(definition.getValue());
+            return RECOMMENDED_NAME_PATTERN.matcher(syntheticName).find();
+        }
+
+        return false;
     }
 
     /**
@@ -269,6 +285,22 @@ public final class EnumShape extends StringShape {
         member.getTrait(TagsTrait.class).ifPresent(tagsTrait -> builder.tags(tagsTrait.getValues()));
         member.getTrait(DeprecatedTrait.class).ifPresent(deprecatedTrait -> builder.deprecated(true));
         return builder.build();
+    }
+
+    /**
+     * Synthesize enum name from enum value by replacing non-alphabetical
+     * and non-numerical characters to underscore, and then uppercase all characters.
+     * See {@value EnumShapeValidator#RECOMMENDED_NAME_PATTERN} for name requirement
+     *
+     * @param value enum value
+     * @return Returns an enum name synthesized from enum value
+     */
+    private static String synthesizeName(String value) {
+        String name = value.replaceAll("[^a-zA-Z0-9_]+", "_").toUpperCase();
+        if (name.length() > 0 && name.charAt(0) == '_') {
+            name = name.substring(1);
+        }
+        return name;
     }
 
     @Override
@@ -343,10 +375,11 @@ public final class EnumShape extends StringShape {
             }
             clearMembers();
 
+            final List<MemberShape> members = new ArrayList<>();
             for (EnumDefinition definition : trait.getValues()) {
                 Optional<MemberShape> member = EnumShape.memberFromEnumDefinition(definition, getId(), synthesizeNames);
                 if (member.isPresent()) {
-                    addMember(member.get());
+                    members.add(member.get());
                 } else {
                     throw new IllegalStateException(String.format(
                             "Unable to convert enum trait entry with name: `%s` and value `%s` to an enum member.",
@@ -355,7 +388,31 @@ public final class EnumShape extends StringShape {
                 }
             }
 
+            boolean hasDuplicateMemberName = false;
+
+            // Check for synthesized name duplication
+            if (synthesizeNames) {
+                Set<String> names = new HashSet<>();
+                members.forEach(m -> names.add(m.getMemberName()));
+                hasDuplicateMemberName = names.size() != members.size();
+            }
+
+
+            for (int i = 0; i < members.size(); i++) {
+                MemberShape member = members.get(i);
+                if (hasDuplicateMemberName) {
+                    // Pad a number to de-duplicate synthesized names
+                    addMember(addSuffixToMemberName(member, "_" + i));
+                } else {
+                    addMember(member);
+                }
+            }
+
             return this;
+        }
+
+        private MemberShape addSuffixToMemberName(MemberShape memberShape, String suffix) {
+            return memberShape.toBuilder().id(getId().withMember(memberShape.getMemberName() + suffix)).build();
         }
 
         /**

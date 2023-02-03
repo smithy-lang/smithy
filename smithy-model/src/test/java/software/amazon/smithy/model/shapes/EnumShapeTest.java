@@ -22,8 +22,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
@@ -239,9 +244,9 @@ public class EnumShapeTest {
                 .build();
         EnumShape shape = builder.setMembersFromEnumTrait(trait, true).build();
 
-        assertEquals(shape.getMember("foo_bar").get(),
+        assertEquals(shape.getMember("FOO_BAR").get(),
                 MemberShape.builder()
-                        .id(shape.getId().withMember("foo_bar"))
+                        .id(shape.getId().withMember("FOO_BAR"))
                         .target(UnitTypeTrait.UNIT)
                         .addTrait(EnumValueTrait.builder().stringValue("foo:bar").build())
                         .build());
@@ -249,7 +254,7 @@ public class EnumShapeTest {
         assertTrue(shape.hasTrait(EnumTrait.class));
 
         EnumDefinition expectedDefinition = EnumDefinition.builder()
-                .name("foo_bar")
+                .name("FOO_BAR")
                 .value("foo:bar")
                 .build();
         assertEquals(shape.expectTrait(EnumTrait.class).getValues(), ListUtils.of(expectedDefinition));
@@ -260,7 +265,7 @@ public class EnumShapeTest {
         EnumShape.Builder builder = (EnumShape.Builder) EnumShape.builder().id("ns.foo#bar");
         EnumTrait trait = EnumTrait.builder()
                 .addEnum(EnumDefinition.builder()
-                        .value("foo&bar")
+                        .value("&0")
                         .build())
                 .build();
 
@@ -470,7 +475,7 @@ public class EnumShapeTest {
     public void canConvertToEnumWithNamelessEnumTrait() {
         EnumTrait trait = EnumTrait.builder()
                 .addEnum(EnumDefinition.builder()
-                        .value("bar")
+                        .value("BAR")
                         .build())
                 .build();
         StringShape string = StringShape.builder()
@@ -485,7 +490,7 @@ public class EnumShapeTest {
     public void canConvertToEnumWithNonConvertableNamelessEnumTrait() {
         EnumTrait trait = EnumTrait.builder()
                 .addEnum(EnumDefinition.builder()
-                        .value("foo&bar")
+                        .value("&0")
                         .build())
                 .build();
         StringShape string = StringShape.builder()
@@ -494,5 +499,80 @@ public class EnumShapeTest {
                 .build();
         assertFalse(EnumShape.canConvertToEnum(string, false));
         assertFalse(EnumShape.canConvertToEnum(string, true));
+    }
+
+    @ParameterizedTest
+    @MethodSource("testEnumValues")
+    public void canConvertToEnumShapeWithUniqueSynthesizedNames(
+        String first, String second, String third, Boolean expected) {
+        StringShape shape = StringShape.builder()
+            .id("foo.bar#Baz")
+            .addTrait(EnumTrait.builder()
+                    .addEnum(EnumDefinition.builder().value(first).build())
+                    .addEnum(EnumDefinition.builder().value(second).build())
+                    .addEnum(EnumDefinition.builder().value(third).build())
+                    .build())
+            .build();
+
+        Optional<EnumShape> result = EnumShape.fromStringShape(shape, true);
+        assertEquals(expected, result.isPresent());
+        if (result.isPresent()) {
+            EnumShape enumShape = result.get();
+            assertEquals(enumShape.getEnumValues().keySet().size(), 3);
+        }
+    }
+
+    @Test
+    public void canConvertToEnumShapeWithUniqueNamesWithNumberSuffix() {
+        StringShape shape = StringShape.builder()
+            .id("foo.bar#Baz")
+            .addTrait(EnumTrait.builder()
+                    .addEnum(EnumDefinition.builder().value("a:b").build())
+                    .addEnum(EnumDefinition.builder().value("a&b").build())
+                    .addEnum(EnumDefinition.builder().value("a_b_0").build())
+                    .build())
+            .build();
+
+        Optional<EnumShape> result = EnumShape.fromStringShape(shape, true);
+        assertTrue(result.isPresent());
+        EnumShape enumShape = result.get();
+        assertEquals(enumShape.getEnumValues().keySet().size(), 3);
+        assertTrue(enumShape.getEnumValues().containsKey("A_B_0"));
+        assertTrue(enumShape.getEnumValues().containsKey("A_B_1"));
+        assertTrue(enumShape.getEnumValues().containsKey("A_B_0_2"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("testConvertableValues")
+    public void canConvertEnumDefinitionToMemberWithSynthesizedName(String value, Boolean expected) {
+        Boolean result = EnumShape
+            .canConvertEnumDefinitionToMember(EnumDefinition.builder().value(value).build(), true);
+        assertEquals(expected, result);
+    }
+
+    private static Stream<Arguments> testEnumValues() {
+        return Stream.of(
+            Arguments.of("a:b_", "a&b.", "a_b_0", true),
+            Arguments.of("Linux/UNIX", "Windows (Amazon VPC)", "Linux/UNIX (Amazon VPC)", true),
+            Arguments.of("a:b", "a&b", "a_b", true),
+            Arguments.of("a:b", "a&b", "a_b_0", true),
+            Arguments.of("a:b", "a_b_0", "a_b_0", true),
+            Arguments.of("a_b_0", "a_b_1", "a_b_2", true),
+            Arguments.of(":a", "&b", "a_b", true),
+            Arguments.of(":", "&", "c", false)
+        );
+    }
+
+    private static Stream<Arguments> testConvertableValues() {
+        return Stream.of(
+            Arguments.of("a", true),
+            Arguments.of("a&b", true),
+            Arguments.of("a&", true),
+            Arguments.of("&a", true),
+            Arguments.of("&", false),
+            Arguments.of("0", false),
+            Arguments.of("a0", true),
+            Arguments.of("a_", true)
+        );
     }
 }
