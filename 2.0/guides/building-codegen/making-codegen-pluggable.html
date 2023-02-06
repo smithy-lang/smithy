@@ -1,0 +1,725 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Generating Code" href="generating-code.html" /><link rel="prev" title="Implementing the Generator" href="implementing-the-generator.html" />
+
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+        <title>Making Codegen Pluggable - Smithy 2.0</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --admonition-font-size: 100%;
+  --admonition-title-font-size: 100%;
+  --color-brand-primary: #C44536;
+  --color-brand-content: #00808b;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Smithy 2.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../_static/smithy.svg" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quick start</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../spec/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/model.html">1. The Smithy model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/simple-types.html">2. Simple types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/aggregate-types.html">3. Aggregate types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/service-types.html">4. Service types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/mixins.html">5. Mixins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/constraint-traits.html">6. Constraint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/type-refinement-traits.html">7. Type refinement traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/documentation-traits.html">8. Documentation traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/behavior-traits.html">9. Behavior traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/resource-traits.html">10. Resource traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/authentication-traits.html">11. Authentication traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/protocol-traits.html">12. Serialization and Protocol traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/streaming.html">13. Streaming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/http-bindings.html">14. HTTP bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/endpoint-traits.html">15. Endpoint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/selectors.html">16. Selectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/model-validation.html">17. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/idl.html">18. Smithy IDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/json-ast.html">19. JSON AST</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../trait-index.html">Trait index</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">Guides</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-models/build-config.html">smithy-build</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../using-code-generation/index.html">Using Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/update-model.html">Updating the Smithy Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/generating-a-client.html">Generating a client</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../model-linters.html">Model linters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../style-guide.html">Style Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">Creating a Smithy Code Generator</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="overview-and-concepts.html">Overview and Concepts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mapping-shapes-to-languages.html">Mapping Smithy Shapes to Your Language</a></li>
+<li class="toctree-l3"><a class="reference internal" href="creating-codegen-repo.html">Creating a Codegen Repo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="configuring-the-generator.html">Configuring the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="implementing-the-generator.html">Implementing the Generator</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Making Codegen Pluggable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generating-code.html">Generating Code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="decoupling-codegen-with-symbols.html">Decoupling Codegen with Symbols</a></li>
+<li class="toctree-l3"><a class="reference internal" href="using-the-semantic-model.html">Using the Semantic Model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../additional-specs/index.html">Additional specs</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/waiters.html">Waiters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../aws/index.html">AWS integrations</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-core.html">AWS Core Specification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-auth.html">AWS Authentication Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-iam.html">AWS IAM traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-cloudformation.html">AWS CloudFormation Traits</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/protocols/index.html">AWS Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-restxml-protocol.html">AWS restXml protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-query-protocol.html">AWS query protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../implementations.html">Implementations</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-2.0/guides/building-codegen/making-codegen-pluggable.rst" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <div class="section" id="making-codegen-pluggable">
+<h1>Making Codegen Pluggable<a class="headerlink" href="#making-codegen-pluggable" title="Permalink to this headline">#</a></h1>
+<p>This document describes various code generation and runtime concepts
+that can be used to make Smithy code generators open to extension.</p>
+<div class="section" id="why-make-codegen-extensible">
+<h2>Why make codegen extensible?<a class="headerlink" href="#why-make-codegen-extensible" title="Permalink to this headline">#</a></h2>
+<p>Smithy code generators need to be extensible so that optional features
+can be contributed to augment generated code. For example, Smithy code
+generators can generate generic clients that know how to send requests
+to an endpoint, but AWS SDK code generators resolve endpoints based on
+other configuration settings like regions. Smithy code generators should
+have no built-in concept of &quot;region&quot;, and instead they should rely on
+codegen <em>integrations</em> that can augment generated code based on the
+presence of traits and configuration found in smithy-build.json files.</p>
+</div>
+<div class="section" id="integrations">
+<h2>Integrations<a class="headerlink" href="#integrations" title="Permalink to this headline">#</a></h2>
+<p><em>Integrations</em> are the primary abstraction used to customize Smithy code
+generators. Integrations are found on the classpath using
+Java Service Provider Interfaces (<a class="reference internal" href="../glossary.html#term-SPI"><span class="xref std std-term">SPI</span></a>) and are used to customize
+Smithy code generators.</p>
+<div class="section" id="what-can-integrations-customize">
+<h3>What can integrations customize?<a class="headerlink" href="#what-can-integrations-customize" title="Permalink to this headline">#</a></h3>
+<p>Various aspects of a Smithy code generator can be customized. For example:</p>
+<ul class="simple">
+<li>Generate custom files like licenses, readmes, etc.</li>
+<li>Preprocess the model (e.g., validate that the model uses only features
+supported by the generator, remove unsupported features, add codegen
+specific traits, etc)</li>
+<li>Add parameters used to configure a client (e.g., constructor
+arguments, builder parameters, etc)</li>
+<li>Inject interceptors into the client automatically (based on traits or
+opt-in flags)</li>
+<li>Inject custom client or server HTTP request headers</li>
+<li>Contribute available protocol implementations that a generator can
+choose from when generating clients or servers</li>
+<li>Contribute authentication scheme implementations that a generator can
+choose from when generating clients or servers</li>
+<li>Intercept and modify sections of generated code (this feature is part
+of <a class="reference internal" href="../glossary.html#term-AbstractCodeWriter"><span class="xref std std-term">AbstractCodeWriter</span></a>)</li>
+<li>Add dependencies either unconditionally or based on the presence of
+shapes and traits in the model</li>
+<li>Modify the <a class="reference internal" href="../glossary.html#term-SymbolProvider"><span class="xref std std-term">SymbolProvider</span></a> used to convert shapes into code
+(e.g., add custom reserved words, change how names are generated, etc.)</li>
+<li>Add custom retry-strategies</li>
+</ul>
+</div>
+<div class="section" id="only-customize-through-opt-in">
+<h3>Only customize through opt-in<a class="headerlink" href="#only-customize-through-opt-in" title="Permalink to this headline">#</a></h3>
+<p>Simply finding an integration on the classpath should not enable the
+integration. Integrations should only be enabled through opt-in signals.
+Traits found in the model and feature configuration in smithy-build.json
+are used to enable customizations performed by integrations.</p>
+</div>
+</div>
+<div class="section" id="creating-a-smithyintegrations">
+<h2>Creating a <code class="docutils literal notranslate"><span class="pre">SmithyIntegrations</span></code><a class="headerlink" href="#creating-a-smithyintegrations" title="Permalink to this headline">#</a></h2>
+<p>Smithy codegen provides a pre-built integration interface,
+<a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SmithyIntegration.java">SmithyIntegration</a>,
+that <em>should</em> be used by every Smithy code generator. Using this
+standardized interface ensures all code generators follow the same basic
+framework and makes it easier to contribute features that span multiple
+code generators.</p>
+<p><code class="docutils literal notranslate"><span class="pre">SmithyIntegration</span></code> requires a few generic type parameters:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SmithyIntegration</span><span class="o">&lt;</span><span class="n">S</span><span class="p">,</span><span class="w"></span>
+<span class="w">                  </span><span class="n">W</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">SymbolWriter</span><span class="o">&lt;</span><span class="n">W</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                  </span><span class="n">C</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CodegenContext</span><span class="o">&lt;</span><span class="n">S</span><span class="p">,</span><span class="w"> </span><span class="n">W</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;&gt;</span><span class="w"></span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">S</span></code>: The settings object used to configure the code generator. This
+object should be a basic POJO or <a class="reference external" href="https://docs.oracle.com/en/java/javase/14/language/records.html">Java
+record</a>
+that captures the same properties used by smithy-build.json files to
+configure the generator. For example, this object might contain the
+service shape ID being generated, a specific protocol shape ID to
+generate, the code generation mode (client or server), etc.</li>
+<li><code class="docutils literal notranslate"><span class="pre">W</span></code>: The specific subclass of <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> that is used by the
+code generator. For example, if generating Python code, you should
+create a <code class="docutils literal notranslate"><span class="pre">PythonWriter</span></code> and supply that as the type parameter.</li>
+<li><code class="docutils literal notranslate"><span class="pre">C</span></code>: The <code class="docutils literal notranslate"><span class="pre">CodegenContext</span></code> object used by the generator. This type
+depends on codegen settings. It provides integration methods access
+to the model being generated, the settings object, the
+<code class="docutils literal notranslate"><span class="pre">SymbolProvider</span></code> used to convert shapes to <code class="docutils literal notranslate"><span class="pre">Symbol</span></code>s, and a
+<code class="docutils literal notranslate"><span class="pre">FileManifest</span></code> that's used to write files to disk. Each
+implementation is expected to create a specific subtype of
+<code class="docutils literal notranslate"><span class="pre">CodegenContext</span></code>.</li>
+</ul>
+<p>Example of a custom <code class="docutils literal notranslate"><span class="pre">SmithyIntegration</span></code> for Python:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">interface</span> <span class="nc">PythonIntegration</span><span class="w"> </span><span class="kd">extends</span><span class="w"></span>
+<span class="w">        </span><span class="n">SmithyIntegration</span><span class="o">&lt;</span><span class="n">PythonSettings</span><span class="p">,</span><span class="w"> </span><span class="n">PythonWriter</span><span class="p">,</span><span class="w"> </span><span class="n">PythonContext</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Example codegen settings type:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">record</span> <span class="nc">PythonSettings</span><span class="p">(</span><span class="n">ShapeId</span><span class="w"> </span><span class="n">service</span><span class="p">,</span><span class="w"> </span><span class="n">ShapeId</span><span class="w"> </span><span class="n">protocol</span><span class="p">);</span><span class="w"></span>
+<span class="c1">// A builder pattern could be applied later if the number of arguments grows.</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Example of a custom <code class="docutils literal notranslate"><span class="pre">CodegenContext</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">record</span> <span class="nc">PythonContext</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">PythonSettings</span><span class="w"> </span><span class="n">settings</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">SymbolProvider</span><span class="w"> </span><span class="n">symbolProvider</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">FileManifest</span><span class="w"> </span><span class="n">fileManifest</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">WriterDelegator</span><span class="o">&lt;</span><span class="n">PythonWriter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">writerDelegator</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">PythonIntegration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">integrations</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">CodegenContext</span><span class="o">&lt;</span><span class="n">PythonSettings</span><span class="p">,</span><span class="w"> </span><span class="n">PythonWriter</span><span class="p">,</span><span class="w"> </span><span class="n">PythonIntegration</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>This integration is then implemented to implement customizations:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">AddCodeLicense</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">PythonIntegration</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// implement overrides, detailed below</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="section" id="identifying-integrations">
+<h3>Identifying integrations<a class="headerlink" href="#identifying-integrations" title="Permalink to this headline">#</a></h3>
+<p>Integrations are identified using the <code class="docutils literal notranslate"><span class="pre">SmithyIntegration#name()</span></code>
+method. This method will return the canonical class name of the
+integration by default, but it can be overridden to provide a different
+name. Note that naming conflicts between integrations are not allowed.</p>
+</div>
+<div class="section" id="how-integrations-are-ordered">
+<h3>How integrations are ordered<a class="headerlink" href="#how-integrations-are-ordered" title="Permalink to this headline">#</a></h3>
+<p>Integrations are ordered using a kind of priority ordered dependency
+graph. Integrations can specify that they should be applied before other
+integrations by name and/or after other integrations by name. The
+following example states that the integration needs to run before
+<code class="docutils literal notranslate"><span class="pre">&quot;Foo&quot;</span></code> but after <code class="docutils literal notranslate"><span class="pre">&quot;CodeLicenseHeader&quot;</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span><span class="w"></span>
+<span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">runBefore</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;Foo&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="nd">@Override</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">runAfter</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;CodeLicenseHeader&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>In rare cases, you might need more granular control over the order of
+an integration. A priority can be provided to influence when the integration
+is applied relative to other integrations when their dependencies are
+resolved. The higher the priority, the earlier an integration is applied.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span><span class="w"></span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">byte</span><span class="w"> </span><span class="nf">priority</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">64</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last"><a class="reference internal" href="implementing-the-generator.html#directedcodegen"><span class="std std-ref">DirectedCodegen</span></a> automatically handles finding integrations on
+the classpath and topologically ordering them.</p>
+</div>
+</div>
+<div class="section" id="preprocessing-models">
+<h3>Preprocessing models<a class="headerlink" href="#preprocessing-models" title="Permalink to this headline">#</a></h3>
+<p>A common requirement of code generators is to preprocess the model. For
+example, a generator that doesn't support <a class="reference internal" href="../../spec/streaming.html#event-streams"><span class="std std-ref">event streams</span></a>
+might want to filter out event stream operations and emit warnings.
+A generator could also choose to apply synthetic traits (traits that are not
+persisted when the model is serialized) to shapes in the model as part of
+their code generation strategy.</p>
+<p>The model can be preprocessed by implementing the
+<code class="docutils literal notranslate"><span class="pre">SmithyIntegration#preprocessModel</span></code> method and returning an updated
+model.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span><span class="w"></span>
+<span class="n">Model</span><span class="w"> </span><span class="nf">preprocessModel</span><span class="p">(</span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">PythonSettings</span><span class="w"> </span><span class="n">settings</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// Perform some transformation and return the updated model.</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">model</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="using-the-semantic-model.html#codegen-transforming-the-model"><span class="std std-ref">Transforming the model</span></a></p>
+</div>
+</div>
+<div class="section" id="changing-how-shapes-are-named-or-how-files-are-generated">
+<h3>Changing how shapes are named or how files are generated<a class="headerlink" href="#changing-how-shapes-are-named-or-how-files-are-generated" title="Permalink to this headline">#</a></h3>
+<p>Another requirement when generating code might be to change the strategy
+used for naming shapes, the file location of shapes, or just adding
+metadata to each <a class="reference internal" href="../glossary.html#term-Symbol"><span class="xref std std-term">Symbol</span></a> created by a <a class="reference internal" href="../glossary.html#term-SymbolProvider"><span class="xref std std-term">SymbolProvider</span></a>. This can
+be achieved by implementing <code class="docutils literal notranslate"><span class="pre">SmithyIntegration#decorateSymbolProvider</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span><span class="w"></span>
+<span class="kd">public</span><span class="w"> </span><span class="n">SymbolProvider</span><span class="w"> </span><span class="nf">decorateSymbolProvider</span><span class="p">(</span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">PythonSetting</span><span class="w"> </span><span class="n">settings</span><span class="p">,</span><span class="w"> </span><span class="n">SymbolProvider</span><span class="w"> </span><span class="n">symbolProvider</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// Decorate the symbol provider and add a &quot;foo&quot; property to every symbol.</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">symbolProvider</span><span class="p">.</span><span class="na">toSymbol</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span><span class="w"></span>
+<span class="w">            </span><span class="p">.</span><span class="na">toBuilder</span><span class="p">()</span><span class="w"></span>
+<span class="w">            </span><span class="p">.</span><span class="na">putProperty</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hello!&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">            </span><span class="p">.</span><span class="na">build</span><span class="p">());</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="intercepting-and-updating-sections-of-code">
+<span id="codegen-intercepting"></span><h3>Intercepting and updating sections of code<a class="headerlink" href="#intercepting-and-updating-sections-of-code" title="Permalink to this headline">#</a></h3>
+<p>Code generators can designate sections of code that can be modified
+by integrations. This feature allows integrations to do things like add
+text to every code file (for example a license header), apply
+annotations to generated types, change the type signature of a class,
+change how classes are created, etc. Implementations of <code class="docutils literal notranslate"><span class="pre">CodeInterceptors</span></code>
+registered with <code class="docutils literal notranslate"><span class="pre">SmithyIntegration</span></code>s must be added to each code
+writer created during code generation.</p>
+<p>Let's say you wanted to emit a customizable section in generated code
+where headers for the code could be modified to add a custom license
+header or disclaimer that the code is generated. This can be achieved by
+first creating an implementation of <code class="docutils literal notranslate"><span class="pre">CodeSection</span></code>. We'll call it
+<code class="docutils literal notranslate"><span class="pre">CodeHeader</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// This event does not need any properties.</span><span class="w"></span>
+<span class="kd">record</span> <span class="nc">CodeHeader</span><span class="p">()</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">CodeSection</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+<p>When generating code, inject the section at the start of each file:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">mywriter</span><span class="p">.</span><span class="na">injectSection</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">CodeHeader</span><span class="p">());</span><span class="w"></span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">injectSection</span></code> is used because this section of code is empty by default.
+If the section should have content by default, then use <code class="docutils literal notranslate"><span class="pre">pushSection</span></code> and
+<code class="docutils literal notranslate"><span class="pre">popSection</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">mywriter</span><span class="p">.</span><span class="na">pushSection</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">CodeHeader</span><span class="p">());</span><span class="w"></span>
+<span class="n">mywriter</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;// This is generated code&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="n">mywriter</span><span class="p">.</span><span class="na">popSection</span><span class="p">();</span><span class="w"></span>
+</pre></div>
+</div>
+<p>The call to <code class="docutils literal notranslate"><span class="pre">injectSection</span></code> implicitly calls <code class="docutils literal notranslate"><span class="pre">popSection</span></code>. When
+<code class="docutils literal notranslate"><span class="pre">popSection</span></code> is called, the code that was written during that section is
+sent to each matching interceptor so that they can prepend to the contents,
+append to the contents, or completely rewrite the contents.</p>
+<p><code class="docutils literal notranslate"><span class="pre">CodeInterceptor</span></code>s can be registered to append to this section by
+returning interceptors from <code class="docutils literal notranslate"><span class="pre">SmithyIntegration#interceptors</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span><span class="w"></span>
+<span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;?</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CodeInterceptor</span><span class="o">&lt;?</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CodeSection</span><span class="p">,</span><span class="w"> </span><span class="n">PythonWriter</span><span class="o">&gt;&gt;</span><span class="w"></span>
+<span class="w">        </span><span class="nf">interceptors</span><span class="p">(</span><span class="n">C</span><span class="w"> </span><span class="n">codegenContext</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">CodeHeaderInterceptor</span><span class="p">());</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Interceptors should be created as a dedicated class. The following interceptor
+appends to the existing content in the section:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">CodeHeaderInterceptor</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CodeInterceptor</span><span class="p">.</span><span class="na">Appender</span><span class="o">&lt;</span><span class="n">CodeHeader</span><span class="p">,</span><span class="w"> </span><span class="n">PythonWriter</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Class</span><span class="o">&lt;</span><span class="n">CodeHeader</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">sectionType</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">CodeHeader</span><span class="p">.</span><span class="na">class</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">append</span><span class="p">(</span><span class="n">PythonWriter</span><span class="w"> </span><span class="n">writer</span><span class="p">,</span><span class="w"> </span><span class="n">CodeHeader</span><span class="w"> </span><span class="n">section</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">            /*</span>
+<span class="s">             * Copyright 2023 example.com, Inc. or its affiliates. All Rights Reserved.</span>
+<span class="s">             */</span>
+<span class="s">            &quot;&quot;&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="generating-other-custom-content">
+<h3>Generating other custom content<a class="headerlink" href="#generating-other-custom-content" title="Permalink to this headline">#</a></h3>
+<p>Integrations might need to write additional files like a README, license
+files, or generate additional code. Integrations can override the
+<code class="docutils literal notranslate"><span class="pre">SmithyIntegration#customize</span></code> method to perform anything they need to
+do. This method is provided the <code class="docutils literal notranslate"><span class="pre">CodegenContext</span></code> type that is used
+with the integration, allowing the <code class="docutils literal notranslate"><span class="pre">customize</span></code> method access to the
+model, settings object, symbol provider, <code class="docutils literal notranslate"><span class="pre">WriterDelegator</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">FileManifest</span></code> used to save and read files.</p>
+<p>The following example writes a custom README.md file:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span><span class="w"></span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">customize</span><span class="p">(</span><span class="n">PythonContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">context</span><span class="p">.</span><span class="na">writerDelegator</span><span class="p">().</span><span class="na">useFileWriter</span><span class="p">(</span><span class="s">&quot;README.md&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">            # $L service client</span>
+<span class="s">            Client SDK library ...&quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="n">context</span><span class="p">.</span><span class="na">settings</span><span class="p">().</span><span class="na">service</span><span class="p">()</span><span class="w"></span>
+<span class="w">        </span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">});</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="registering-smithyintegrations">
+<h2>Registering <code class="docutils literal notranslate"><span class="pre">SmithyIntegration</span></code>s<a class="headerlink" href="#registering-smithyintegrations" title="Permalink to this headline">#</a></h2>
+<p>Implementations of Integrations are registered with Java <a class="reference internal" href="../glossary.html#term-SPI"><span class="xref std std-term">SPI</span></a> by
+adding a specific <code class="docutils literal notranslate"><span class="pre">META-INF</span></code> file and found on the classpath. For example,
+if the integration class is defined as
+<code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.python.client.PythonIntegration</span></code>, then when using
+<a class="reference internal" href="../glossary.html#term-Gradle"><span class="xref std std-term">Gradle</span></a>, the fully qualified class name of each implementation of the
+integration needs to placed in a file named
+<code class="docutils literal notranslate"><span class="pre">src/main/resources/META-INF/services/software.amazon.smithy.python.client.PythonIntegration</span></code>.</p>
+<p>For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># in src/main/resources/META-INF/services/software.amazon.smithy.python.client.PythonIntegration</span>
+<span class="n">software</span><span class="o">.</span><span class="n">foobaz</span><span class="o">.</span><span class="n">AddCodeLicense</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-smithyintegrations-in-generators">
+<h2>Using <code class="docutils literal notranslate"><span class="pre">SmithyIntegration</span></code>s in generators<a class="headerlink" href="#using-smithyintegrations-in-generators" title="Permalink to this headline">#</a></h2>
+<p><a class="reference internal" href="implementing-the-generator.html#directedcodegen"><span class="std std-ref">DirectedCodegen</span></a> automatically handles finding integrations on the
+classpath, topologically ordering them, and applying each integration method at
+the appropriate point of code generation.</p>
+</div>
+</div>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="generating-code.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Generating Code</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="implementing-the-generator.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Implementing the Generator</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Amazon Web Services
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Making Codegen Pluggable</a><ul>
+<li><a class="reference internal" href="#why-make-codegen-extensible">Why make codegen extensible?</a></li>
+<li><a class="reference internal" href="#integrations">Integrations</a><ul>
+<li><a class="reference internal" href="#what-can-integrations-customize">What can integrations customize?</a></li>
+<li><a class="reference internal" href="#only-customize-through-opt-in">Only customize through opt-in</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#creating-a-smithyintegrations">Creating a <code class="docutils literal notranslate"><span class="pre">SmithyIntegrations</span></code></a><ul>
+<li><a class="reference internal" href="#identifying-integrations">Identifying integrations</a></li>
+<li><a class="reference internal" href="#how-integrations-are-ordered">How integrations are ordered</a></li>
+<li><a class="reference internal" href="#preprocessing-models">Preprocessing models</a></li>
+<li><a class="reference internal" href="#changing-how-shapes-are-named-or-how-files-are-generated">Changing how shapes are named or how files are generated</a></li>
+<li><a class="reference internal" href="#intercepting-and-updating-sections-of-code">Intercepting and updating sections of code</a></li>
+<li><a class="reference internal" href="#generating-other-custom-content">Generating other custom content</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#registering-smithyintegrations">Registering <code class="docutils literal notranslate"><span class="pre">SmithyIntegration</span></code>s</a></li>
+<li><a class="reference internal" href="#using-smithyintegrations-in-generators">Using <code class="docutils literal notranslate"><span class="pre">SmithyIntegration</span></code>s in generators</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/scripts/furo.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/tabs.js"></script>
+    </body>
+</html>

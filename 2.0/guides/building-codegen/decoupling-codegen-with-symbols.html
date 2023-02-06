@@ -1,0 +1,1103 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Using the Semantic Model" href="using-the-semantic-model.html" /><link rel="prev" title="Generating Code" href="generating-code.html" />
+
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+        <title>Decoupling Codegen with Symbols - Smithy 2.0</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --admonition-font-size: 100%;
+  --admonition-title-font-size: 100%;
+  --color-brand-primary: #C44536;
+  --color-brand-content: #00808b;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Smithy 2.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../_static/smithy.svg" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quick start</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../spec/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/model.html">1. The Smithy model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/simple-types.html">2. Simple types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/aggregate-types.html">3. Aggregate types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/service-types.html">4. Service types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/mixins.html">5. Mixins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/constraint-traits.html">6. Constraint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/type-refinement-traits.html">7. Type refinement traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/documentation-traits.html">8. Documentation traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/behavior-traits.html">9. Behavior traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/resource-traits.html">10. Resource traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/authentication-traits.html">11. Authentication traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/protocol-traits.html">12. Serialization and Protocol traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/streaming.html">13. Streaming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/http-bindings.html">14. HTTP bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/endpoint-traits.html">15. Endpoint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/selectors.html">16. Selectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/model-validation.html">17. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/idl.html">18. Smithy IDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/json-ast.html">19. JSON AST</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../trait-index.html">Trait index</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">Guides</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-models/build-config.html">smithy-build</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../using-code-generation/index.html">Using Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/update-model.html">Updating the Smithy Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/generating-a-client.html">Generating a client</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../model-linters.html">Model linters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../style-guide.html">Style Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">Creating a Smithy Code Generator</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="overview-and-concepts.html">Overview and Concepts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mapping-shapes-to-languages.html">Mapping Smithy Shapes to Your Language</a></li>
+<li class="toctree-l3"><a class="reference internal" href="creating-codegen-repo.html">Creating a Codegen Repo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="configuring-the-generator.html">Configuring the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="implementing-the-generator.html">Implementing the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="making-codegen-pluggable.html">Making Codegen Pluggable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generating-code.html">Generating Code</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Decoupling Codegen with Symbols</a></li>
+<li class="toctree-l3"><a class="reference internal" href="using-the-semantic-model.html">Using the Semantic Model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../additional-specs/index.html">Additional specs</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/waiters.html">Waiters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../aws/index.html">AWS integrations</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-core.html">AWS Core Specification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-auth.html">AWS Authentication Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-iam.html">AWS IAM traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-cloudformation.html">AWS CloudFormation Traits</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/protocols/index.html">AWS Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-restxml-protocol.html">AWS restXml protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-query-protocol.html">AWS query protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../implementations.html">Implementations</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-2.0/guides/building-codegen/decoupling-codegen-with-symbols.rst" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <div class="section" id="decoupling-codegen-with-symbols">
+<h1>Decoupling Codegen with Symbols<a class="headerlink" href="#decoupling-codegen-with-symbols" title="Permalink to this headline">#</a></h1>
+<p><a class="reference internal" href="../glossary.html#term-Symbols"><span class="xref std std-term">Symbols</span></a> are used in Smithy code generators to refer to qualified types
+in the target programming language. Symbols provide a layer of abstraction
+between the code being generated and the logic used to determine:</p>
+<ul class="simple">
+<li>how shapes are named</li>
+<li>where types are declared and defined</li>
+<li>the runtime dependencies needed for a type</li>
+<li>the imports needed to define and reference a type</li>
+</ul>
+<div class="section" id="quick-symbol-example">
+<h2>Quick Symbol example<a class="headerlink" href="#quick-symbol-example" title="Permalink to this headline">#</a></h2>
+<p>The following example uses the built-in &quot;<code class="docutils literal notranslate"><span class="pre">T</span></code>&quot; formatter of
+<a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolWriter.java">SymbolWriter</a>
+to write symbols to the generated code and automatically add imports to
+the file:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Create MyWriter, an imaginary subclass of SymbolWriter.</span><span class="w"></span>
+<span class="c1">// Set the namespace of the writer to &quot;example.foo&quot;, which internally</span><span class="w"></span>
+<span class="c1">// calls SymbolWriter#relativizeSymbols, passing in &quot;example.foo&quot;.</span><span class="w"></span>
+<span class="kd">var</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">MyWriter</span><span class="p">(</span><span class="s">&quot;example.foo&quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="c1">// Create an example Symbol that refers to a type in the same namespace</span><span class="w"></span>
+<span class="c1">// as the writer&#39;s current namespace. Setting the the namespace also</span><span class="w"></span>
+<span class="c1">// requires the namespace separator.</span><span class="w"></span>
+<span class="kd">var</span><span class="w"> </span><span class="n">exampleSymbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Symbol</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">&quot;Example&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="s">&quot;example.foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;.&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span><span class="w"></span>
+
+<span class="c1">// &quot;$T&quot; in the following call to &#39;write&#39; is replaced with just</span><span class="w"></span>
+<span class="c1">// the name of the Symbol (&quot;Example&quot;) because the Symbol&#39;s</span><span class="w"></span>
+<span class="c1">// namespace matches the relative namespace of the writer.</span><span class="w"></span>
+<span class="c1">// If exampleSymbol was in a different namespace, the writer</span><span class="w"></span>
+<span class="c1">// would either write the fully-qualified name or would add</span><span class="w"></span>
+<span class="c1">// an import to the file for the symbol.</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">    if ($T.isEmpty()) {</span>
+<span class="s">        doSomething();</span>
+<span class="s">    }</span>
+<span class="s">    &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">exampleSymbol</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="benefits-of-symbols">
+<h2>Benefits of Symbols<a class="headerlink" href="#benefits-of-symbols" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li>Refactoring. Symbols make it easy to refactor how shapes are generated
+and the file location of where shapes are generated.</li>
+<li>Managing imports. Symbols can contain the list of other symbols
+needed in order to refer to the type. For example, if a list has
+generic type parameters (e.g., <code class="docutils literal notranslate"><span class="pre">List&lt;BigDecimal&gt;</span></code>), then the symbol
+that refers to the list would also contain symbols referring to the
+generic type parameters. All the symbols needed in a generated code
+file can then be used to automatically create import statements as
+symbols are referenced by a CodeWriter.</li>
+<li>Managing dependencies. Symbols can define the dependencies needed by
+the generated code in order to reference the symbol. For example, if
+BigDecimal implementations are provided by a third-party library,
+then a dependency is needed by the generated code in order to
+reference BigDecimal in code. Symbols carry this information because
+they are implementations of a <code class="docutils literal notranslate"><span class="pre">SymbolDependencyContainer</span></code>. After
+writing code to a CodeWriter, all the dependencies of each referenced
+symbol can be used to generate a dependency graph (e.g., Maven poms,
+Python setup.py files, etc.).</li>
+<li>Readability. Referencing symbols using <code class="docutils literal notranslate"><span class="pre">$T</span></code> makes the string
+templates passed to CodeWriter more succinct.</li>
+</ul>
+</div>
+<div class="section" id="referencing-symbols-using-symbolreference">
+<h2>Referencing Symbols using SymbolReference<a class="headerlink" href="#referencing-symbols-using-symbolreference" title="Permalink to this headline">#</a></h2>
+<p>A <a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolReference.java">SymbolReference</a> is used to refer to another Symbol. For example, a
+SymbolReference is used when a Symbol uses generic type parameters. The
+following example is a Symbol created for a list of
+<code class="docutils literal notranslate"><span class="pre">example.foo.Example</span></code> values in a Java-like language,
+<code class="docutils literal notranslate"><span class="pre">collections.List&lt;example.foo.Example&gt;</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Create the &quot;Example&quot; Symbol used in the &quot;List&lt;Example&gt;&quot;.</span><span class="w"></span>
+<span class="kd">var</span><span class="w"> </span><span class="n">exampleSymbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Symbol</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">&quot;Example&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="s">&quot;example.foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;.&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="na">build</span><span class="p">();</span><span class="w"></span>
+
+<span class="c1">// Create a &quot;List&lt;Example&gt;&quot; that can be properly relativized</span><span class="w"></span>
+<span class="c1">// against the current namespace of the SymbolWriter.</span><span class="w"></span>
+<span class="kd">var</span><span class="w"> </span><span class="n">listSymbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Symbol</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">&quot;List&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="s">&quot;collections&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;.&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// Automatically creates a SymbolReference from a Symbol.</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="na">addReference</span><span class="p">(</span><span class="n">exampleSymbol</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="na">build</span><span class="p">();</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="section" id="aliasing-symbols">
+<h3>Aliasing Symbols<a class="headerlink" href="#aliasing-symbols" title="Permalink to this headline">#</a></h3>
+<p>An alias can be given to SymbolReference to deconflict the symbol with
+other symbols already in the target namespace. For example, let's say
+you need to reference a type that uses a fairly common name, so you
+decide to alias the common name to something that is far less likely to
+have conflicts.</p>
+<p>The following example creates a Symbol for <code class="docutils literal notranslate"><span class="pre">List&lt;__Example&gt;</span></code> where
+<code class="docutils literal notranslate"><span class="pre">__Example</span></code> is an alias to <code class="docutils literal notranslate"><span class="pre">com.foo.Example</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span><span class="w"> </span><span class="n">exampleSymbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Symbol</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">&quot;Example&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="s">&quot;example.foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;.&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span><span class="w"></span>
+
+<span class="c1">// Alias &quot;Example&quot; to &quot;__Example&quot;.</span><span class="w"></span>
+<span class="n">SymbolReference</span><span class="w"> </span><span class="n">exampleReference</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">exampleSymbol</span><span class="p">.</span><span class="na">toReference</span><span class="p">(</span><span class="s">&quot;__Example&quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="c1">// Create a &quot;List&lt;__Example&gt;&quot; that can be properly relativized</span><span class="w"></span>
+<span class="c1">// against the current namespace of the SymbolWriter.</span><span class="w"></span>
+<span class="kd">var</span><span class="w"> </span><span class="n">listSymbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Symbol</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">&quot;List&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="s">&quot;collections&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;.&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">addReference</span><span class="p">(</span><span class="n">exampleReference</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span><span class="w"></span>
+</pre></div>
+</div>
+<p>When a SymbolReference is added to a Symbol, <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> will know
+that the references of the Symbol need to be accounted for when writing
+the symbol by importing any necessary dependencies with appropriate
+aliases.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Hypothetical example of managing imports and using references.</span><span class="w"></span>
+<span class="kd">var</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">MyWriter</span><span class="p">(</span><span class="s">&quot;example.other.namespace&quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">    var list = new $T();</span>
+<span class="s">    &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">listSymbol</span><span class="p">);</span><span class="w"></span>
+
+<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">    package example.other.namespace;</span>
+
+<span class="s">    import collections.List;</span>
+<span class="s">    import example.foo.Example as __Example;</span>
+
+<span class="s">    var list = new List&lt;__Example&gt;();</span>
+<span class="s">    &quot;&quot;&quot;</span><span class="p">));</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="symbol-dependencies">
+<h2>Symbol dependencies<a class="headerlink" href="#symbol-dependencies" title="Permalink to this headline">#</a></h2>
+<p>Symbols can be used to automatically generate dependency closures and
+configuration files based on the symbols written to a <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code>.
+This allows generated code to depend on only the closure of dependencies
+they actually need. Codegen plugins can conditionally require runtime
+dependencies in generated code (something needed by AWS SDKs to add
+dependencies on AWS signature version 4 implementations, credential providers,
+and other AWS-specific features).</p>
+<p>The symbols used during codegen can be tracked using a <code class="docutils literal notranslate"><span class="pre">WriterDelegator</span></code>,
+and from these tracked symbols, the graph of referenced <code class="docutils literal notranslate"><span class="pre">SymbolDependency</span></code>
+can be written to whatever dependency manifest format is needed for the
+target environment.</p>
+<p>Dependencies are registered with a Symbol by creating a
+<a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolDependency.java">SymbolDependency</a>
+and adding them to the Symbol via <code class="docutils literal notranslate"><span class="pre">Symbol#addDependency</span></code>.</p>
+<p>The following example creates a TypeScript Symbol for big decimal that
+refers to a type defined in a package named <code class="docutils literal notranslate"><span class="pre">big</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// This dependency is needed in JavaScript.</span><span class="w"></span>
+<span class="kd">var</span><span class="w"> </span><span class="n">bigRuntimeDependency</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SymbolDependency</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="na">dependencyType</span><span class="p">(</span><span class="s">&quot;dependencies&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="na">packageName</span><span class="p">(</span><span class="s">&quot;big&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;^5.2.2&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="na">build</span><span class="p">();</span><span class="w"></span>
+
+<span class="c1">// This dependency is needed by the TypeScript compiler.</span><span class="w"></span>
+<span class="kd">var</span><span class="w"> </span><span class="n">bigTsDependency</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SymbolDependency</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="na">dependencyType</span><span class="p">(</span><span class="s">&quot;devDependencies&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="na">packageName</span><span class="p">(</span><span class="s">&quot;@types/big.js&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;^4.0.5&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="na">build</span><span class="p">();</span><span class="w"></span>
+
+<span class="c1">// Create a symbol used for big decimals in Smithy.</span><span class="w"></span>
+<span class="kd">var</span><span class="w"> </span><span class="n">big</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Symbol</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">&quot;Big&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="s">&quot;big&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="na">addDependency</span><span class="p">(</span><span class="n">bigRuntimeDependency</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="na">addDependency</span><span class="p">(</span><span class="n">bigTsDependency</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">.</span><span class="na">build</span><span class="p">();</span><span class="w"></span>
+</pre></div>
+</div>
+<p>As you can see in the above example, symbol dependencies can have a
+dependency type that is used to classify when the dependency is needed
+(see <code class="docutils literal notranslate"><span class="pre">SymbolDependency#dependencyType</span></code>). It is common in TypeScript
+libraries to need different dependencies for JavaScript code vs
+TypeScript type definitions, so two dependencies were added to the
+created <code class="docutils literal notranslate"><span class="pre">big</span></code> symbol: one that is a normal &quot;dependencies&quot; and one that
+is a &quot;<code class="docutils literal notranslate"><span class="pre">devDependencies</span></code>&quot;.</p>
+<div class="section" id="symboldependency-best-practices">
+<h3><code class="docutils literal notranslate"><span class="pre">SymbolDependency</span></code> best practices<a class="headerlink" href="#symboldependency-best-practices" title="Permalink to this headline">#</a></h3>
+<p>Creating a <code class="docutils literal notranslate"><span class="pre">SymbolDependency</span></code> in each place the dependency is needed
+spreads them out all over a project, making it difficult to change
+dependencies. Rather than create a <code class="docutils literal notranslate"><span class="pre">SymbolDependency</span></code> each time they
+are needed in the code generator, a better practice is to create a
+dedicated Java <code class="docutils literal notranslate"><span class="pre">enum</span></code> that contains each Symbol used in the project.
+This enum can be referenced throughout a project, making it possible to
+update version numbers in a single place.</p>
+<p>For example:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="cm">/**</span>
+<span class="cm"> * An enum of all of the built-in dependencies managed by this package.</span>
+<span class="cm"> */</span><span class="w"></span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">enum</span><span class="w"> </span><span class="n">TypeScriptDependency</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">SymbolDependencyContainer</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// Conditionally added if a big decimal shape is found in a model.</span><span class="w"></span>
+<span class="w">    </span><span class="n">BIG_JS</span><span class="p">(</span><span class="s">&quot;dependencies&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;big.js&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;^5.2.2&quot;</span><span class="p">),</span><span class="w"></span>
+<span class="w">    </span><span class="n">TYPES_BIG_JS</span><span class="p">(</span><span class="s">&quot;devDependencies&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;@types/big.js&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;^4.0.5&quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">NORMAL_DEPENDENCY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;dependencies&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">DEV_DEPENDENCY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;devDependencies&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">PEER_DEPENDENCY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;peerDependencies&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">BUNDLED_DEPENDENCY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;bundledDependencies&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">OPTIONAL_DEPENDENCY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;optionalDependencies&quot;</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">SymbolDependency</span><span class="w"> </span><span class="n">dependency</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">TypeScriptDependency</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">type</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">version</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">dependency</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SymbolDependency</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w"></span>
+<span class="w">                </span><span class="p">.</span><span class="na">dependencyType</span><span class="p">(</span><span class="n">type</span><span class="p">)</span><span class="w"></span>
+<span class="w">                </span><span class="p">.</span><span class="na">packageName</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="w"></span>
+<span class="w">                </span><span class="p">.</span><span class="na">version</span><span class="p">(</span><span class="n">version</span><span class="p">)</span><span class="w"></span>
+<span class="w">                </span><span class="p">.</span><span class="na">build</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">SymbolDependency</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">getDependencies</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Collections</span><span class="p">.</span><span class="na">singletonList</span><span class="p">(</span><span class="n">dependency</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ol class="last arabic simple">
+<li>The <code class="docutils literal notranslate"><span class="pre">enum</span></code> implements <a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolDependencyContainer.java">SymbolDependencyContainer</a>, an abstraction
+for composing dependencies.</li>
+<li>This example is taken from
+<a class="reference external" href="https://github.com/awslabs/smithy-typescript/blob/main/smithy-typescript-codegen/src/main/java/software/amazon/smithy/typescript/codegen/TypeScriptDependency.java">smithy-typescript</a>,
+which shows other possibilities like how to define unconditional
+dependencies that are needed by every client.</li>
+</ol>
+</div>
+</div>
+<div class="section" id="tracking-externally-controlled-dependencies">
+<h3>Tracking externally controlled dependencies<a class="headerlink" href="#tracking-externally-controlled-dependencies" title="Permalink to this headline">#</a></h3>
+<p>A <a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/DependencyTracker.java">DependencyTracker</a> can be used to track available dependencies using a
+JSON file that can be then used to provide version numbers to an enum. This
+can be useful if version numbers are maintained outside a code generator or
+need to be translated from other formats or lock files. For example:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="cm">/**</span>
+<span class="cm"> * An enum of all of the built-in dependencies managed by this package.</span>
+<span class="cm"> */</span><span class="w"></span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">enum</span><span class="w"> </span><span class="n">TypeScriptDependency</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">SymbolDependencyContainer</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// Conditionally added if a big decimal shape is found in a model.</span><span class="w"></span>
+<span class="w">    </span><span class="n">BIG_JS</span><span class="p">(</span><span class="s">&quot;big.js&quot;</span><span class="p">),</span><span class="w"></span>
+<span class="w">    </span><span class="n">TYPES_BIG_JS</span><span class="p">(</span><span class="s">&quot;@types/big.js&quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">SymbolDependency</span><span class="w"> </span><span class="n">dependency</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">TypeScriptDependency</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">dependency</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VersionFile</span><span class="p">.</span><span class="na">VERSIONS</span><span class="p">.</span><span class="na">getByName</span><span class="p">(</span><span class="n">name</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">SymbolDependency</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">getDependencies</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Collections</span><span class="p">.</span><span class="na">singletonList</span><span class="p">(</span><span class="n">dependency</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">VersionFile</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">DependencyTracker</span><span class="w"> </span><span class="n">VERSIONS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">DependencyTracker</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="kd">static</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">String</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;sdkVersions.json&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="w">            </span><span class="n">VERSIONS</span><span class="p">.</span><span class="na">addDependenciesFromJson</span><span class="p">(</span><span class="n">SdkVersion</span><span class="p">.</span><span class="na">class</span><span class="p">.</span><span class="na">getResource</span><span class="p">(</span><span class="n">path</span><span class="p">));</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="converting-shapes-to-symbols-with-symbolproviders">
+<h2>Converting shapes to Symbols with <code class="docutils literal notranslate"><span class="pre">SymbolProviders</span></code><a class="headerlink" href="#converting-shapes-to-symbols-with-symbolproviders" title="Permalink to this headline">#</a></h2>
+<p>A <code class="docutils literal notranslate"><span class="pre">SymbolProvider</span></code> is used to convert Smithy shapes to Symbols. A
+<code class="docutils literal notranslate"><span class="pre">SymbolProvider</span></code> is the brains of a Smithy code generator; it tells
+the code generator the types used to represent shapes in the model, the
+dependencies needed by generated code, the filenames used to declare and
+define types, and automatically ensures reserved words in the target
+language are accounted for during codegen.</p>
+<p>A selection of existing <code class="docutils literal notranslate"><span class="pre">SymbolProviders</span></code> can be found at:</p>
+<ol class="arabic simple">
+<li>TypeScript:
+<a class="reference external" href="https://github.com/awslabs/smithy-typescript/blob/main/smithy-typescript-codegen/src/main/java/software/amazon/smithy/typescript/codegen/SymbolVisitor.java">https://github.com/awslabs/smithy-typescript/blob/main/smithy-typescript-codegen/src/main/java/software/amazon/smithy/typescript/codegen/SymbolVisitor.java</a></li>
+<li>Python:
+<a class="reference external" href="https://github.com/awslabs/smithy-python/blob/develop/codegen/smithy-python-codegen/src/main/java/software/amazon/smithy/python/codegen/SymbolVisitor.java">https://github.com/awslabs/smithy-python/blob/develop/codegen/smithy-python-codegen/src/main/java/software/amazon/smithy/python/codegen/SymbolVisitor.java</a></li>
+<li>Go:
+<a class="reference external" href="https://github.com/aws/smithy-go/blob/main/codegen/smithy-go-codegen/src/main/java/software/amazon/smithy/go/codegen/SymbolVisitor.java">https://github.com/aws/smithy-go/blob/main/codegen/smithy-go-codegen/src/main/java/software/amazon/smithy/go/codegen/SymbolVisitor.java</a></li>
+</ol>
+<p>The simplest way to implement a <code class="docutils literal notranslate"><span class="pre">SymbolProvider</span></code> is to also implement
+<code class="docutils literal notranslate"><span class="pre">ShapeVisitor</span></code>. The basic setup will look something like this:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span><span class="w"> </span><span class="nn">software.amazon.smithy.python.codegen</span><span class="p">;</span><span class="w"></span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.logging.Logger</span><span class="p">;</span><span class="w"></span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.codegen.core.SymbolProvider</span><span class="p">;</span><span class="w"></span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.Model</span><span class="p">;</span><span class="w"></span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.shapes.ServiceShape</span><span class="p">;</span><span class="w"></span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.shapes.Shape</span><span class="p">;</span><span class="w"></span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.shapes.ShapeVisitor</span><span class="p">;</span><span class="w"></span>
+
+<span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">SymbolVisitor</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">SymbolProvider</span><span class="p">,</span><span class="w"> </span><span class="n">ShapeVisitor</span><span class="o">&lt;</span><span class="n">Symbol</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Logger</span><span class="w"> </span><span class="n">LOGGER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Logger</span><span class="p">.</span><span class="na">getLogger</span><span class="p">(</span><span class="n">SymbolVisitor</span><span class="p">.</span><span class="na">class</span><span class="p">.</span><span class="na">getName</span><span class="p">());</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">MySettings</span><span class="w"> </span><span class="n">settings</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">ServiceShape</span><span class="w"> </span><span class="n">service</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">SymbolVisitor</span><span class="p">(</span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">MySettings</span><span class="w"> </span><span class="n">settings</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">settings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">settings</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">service</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">expectShape</span><span class="p">(</span><span class="n">settings</span><span class="p">.</span><span class="na">getService</span><span class="p">(),</span><span class="w"> </span><span class="n">ServiceShape</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Symbol</span><span class="w"> </span><span class="nf">toSymbol</span><span class="p">(</span><span class="n">Shape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">Symbol</span><span class="w"> </span><span class="n">symbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">accept</span><span class="p">(</span><span class="k">this</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">LOGGER</span><span class="p">.</span><span class="na">fine</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">format</span><span class="p">(</span><span class="s">&quot;Creating symbol from %s: %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span><span class="w"> </span><span class="n">symbol</span><span class="p">));</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// TODO: Escape reserved words.</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">symbol</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Symbol</span><span class="w"> </span><span class="nf">structureShape</span><span class="p">(</span><span class="n">StructureShape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getDefaultShapeName</span><span class="p">(</span><span class="n">shape</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">        </span><span class="c1">// Generate errors differently than normal structures.</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">shape</span><span class="p">.</span><span class="na">hasTrait</span><span class="p">(</span><span class="n">ErrorTrait</span><span class="p">.</span><span class="na">class</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">createErrorStructure</span><span class="p">(</span><span class="n">shape</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">createNormalStructure</span><span class="p">(</span><span class="n">shape</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Symbol</span><span class="w"> </span><span class="nf">createErrorStructure</span><span class="p">(</span><span class="n">StructureShape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">UnsupportedOperationException</span><span class="p">(</span><span class="s">&quot;Error type codegen not yet implemented&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Symbol</span><span class="w"> </span><span class="nf">createNormalStructure</span><span class="p">(</span><span class="n">StructureShape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Symbol</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w"></span>
+<span class="w">            </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="w"></span>
+<span class="w">            </span><span class="c1">// Change this to however the settings object configures the</span><span class="w"></span>
+<span class="w">            </span><span class="c1">// target namespace and the namespace separator for the</span><span class="w"></span>
+<span class="w">            </span><span class="c1">// language.</span><span class="w"></span>
+<span class="w">            </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="n">settings</span><span class="p">.</span><span class="na">getNamespace</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;.&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">            </span><span class="c1">// Change this to however filenames should work each generated</span><span class="w"></span>
+<span class="w">            </span><span class="c1">// type. If this changes, then the files used to generate</span><span class="w"></span>
+<span class="w">            </span><span class="c1">// code should automatically change too.</span><span class="w"></span>
+<span class="w">            </span><span class="p">.</span><span class="na">definitionFile</span><span class="p">(</span><span class="s">&quot;models/&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;.xyz&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">            </span><span class="p">.</span><span class="na">build</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getDefaultShapeName</span><span class="p">(</span><span class="n">Shape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// Use the service-aliased name and ensure it&#39;s capitalized.</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">StringUtils</span><span class="p">.</span><span class="na">capitalize</span><span class="p">(</span><span class="n">shape</span><span class="p">.</span><span class="na">getId</span><span class="p">().</span><span class="na">getName</span><span class="p">(</span><span class="n">service</span><span class="p">));</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// TODO implement other ShapeVisitor methods.</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="section" id="automatically-handling-reserved-words">
+<h3>Automatically handling reserved words<a class="headerlink" href="#automatically-handling-reserved-words" title="Permalink to this headline">#</a></h3>
+<p>Smithy code generators are expected to generate valid code for the
+<a class="reference internal" href="../glossary.html#term-Target-environment"><span class="xref std std-term">target environment</span></a>. Service teams defining Smithy models should not
+need to know the intricacies of how Smithy models are converted to every
+programming language. Instead, Smithy code generators should ensure that
+reserved words in a target environment are not used by the <code class="docutils literal notranslate"><span class="pre">SymbolProvider</span></code>.
+The <code class="docutils literal notranslate"><span class="pre">smithy-codegen-core</span></code> library provides several abstractions for handling
+reserved words. These abstractions should be used in your <code class="docutils literal notranslate"><span class="pre">SymbolProvider</span></code>.</p>
+<p>The primary abstraction is the <a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/ReservedWords.java">ReservedWords</a> interface. The
+<a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/ReservedWordsBuilder.java">ReservedWordsBuilder</a> class provides a convenient way to build an instance
+of <code class="docutils literal notranslate"><span class="pre">ReservedWords</span></code>. These <code class="docutils literal notranslate"><span class="pre">ReservedWords</span></code> instances should be
+integrated into your <code class="docutils literal notranslate"><span class="pre">SymbolProvider</span></code> by passing the created names,
+namespaces, and member names through the appropriate escaper. For
+example:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">SymbolVisitor</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">SymbolProvider</span><span class="p">,</span><span class="w"> </span><span class="n">ShapeVisitor</span><span class="o">&lt;</span><span class="n">Symbol</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// ... other properties</span><span class="w"></span>
+<span class="hll"><span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">ReservedWords</span><span class="w"> </span><span class="n">escaper</span><span class="p">;</span><span class="w"></span>
+</span>
+<span class="w">    </span><span class="n">SymbolVisitor</span><span class="p">(</span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">MySettings</span><span class="w"> </span><span class="n">settings</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// ... other setup</span><span class="w"></span>
+<span class="hll"><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">escaper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ReservedWordsBuilder</span><span class="p">()</span><span class="w"></span>
+</span><span class="hll"><span class="w">            </span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;function&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">service</span><span class="p">.</span><span class="na">getId</span><span class="p">().</span><span class="na">getName</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;Function&quot;</span><span class="p">)</span><span class="w"></span>
+</span><span class="hll"><span class="w">            </span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;throw&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">service</span><span class="p">.</span><span class="na">getId</span><span class="p">().</span><span class="na">getName</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;Throw&quot;</span><span class="p">)</span><span class="w"></span>
+</span><span class="hll"><span class="w">            </span><span class="p">.</span><span class="na">build</span><span class="p">();</span><span class="w"></span>
+</span><span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// other methods...</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getDefaultShapeName</span><span class="p">(</span><span class="n">Shape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">StringUtils</span><span class="p">.</span><span class="na">capitalize</span><span class="p">(</span><span class="n">shape</span><span class="p">.</span><span class="na">getId</span><span class="p">().</span><span class="na">getName</span><span class="p">(</span><span class="n">service</span><span class="p">));</span><span class="w"></span>
+<span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">escaper</span><span class="p">.</span><span class="na">escape</span><span class="p">(</span><span class="n">name</span><span class="p">);</span><span class="w"></span>
+</span><span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>While you can manually define the mapping for each reserved word, a
+simpler method is to create an algorithm for automatically handling
+reserved words. This can be done by creating a newline delimited file
+that contains each reserved word and a <code class="docutils literal notranslate"><span class="pre">Function&lt;String,</span> <span class="pre">String&gt;</span></code> that
+takes a reserved word and returns an escaped word. For example, given
+the following file named <em>reservedwords.txt</em>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>function
+throw
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ReservedWordsBuilder</span></code> can be configured to escape words using the
+file and your escaping function.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Function</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">escaper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">word</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// Returns something like &quot;MyServiceFunction&quot;.</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">service</span><span class="p">.</span><span class="na">getId</span><span class="p">().</span><span class="na">getName</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">StringUtils</span><span class="p">.</span><span class="na">capitalize</span><span class="p">(</span><span class="n">word</span><span class="p">);</span><span class="w"></span>
+<span class="p">});</span><span class="w"></span>
+
+<span class="n">URL</span><span class="w"> </span><span class="n">wordsFile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getClass</span><span class="p">().</span><span class="na">getResource</span><span class="p">(</span><span class="s">&quot;reservedwords.txt&quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="n">ReservedWords</span><span class="w"> </span><span class="n">escaper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ReservedWordsBuilder</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">loadWords</span><span class="p">(</span><span class="n">wordsFile</span><span class="p">,</span><span class="w"> </span><span class="n">escaper</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Reserved words handling should be as granular as possible. If a symbol
+is only reserved in certain contexts, then that word should only be
+treated as reserved in that context. This might require the use of
+multiple instances of <code class="docutils literal notranslate"><span class="pre">ReservedWords</span></code>.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span><span class="w"> </span><span class="n">memberNameEscaper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ReservedWordsBuilder</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">loadWords</span><span class="p">(</span><span class="n">memberNameWordsFile</span><span class="p">,</span><span class="w"> </span><span class="n">escaper</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span><span class="w"></span>
+
+<span class="kd">var</span><span class="w"> </span><span class="n">classNameEscaper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ReservedWordsBuilder</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">loadWords</span><span class="p">(</span><span class="n">classNameWordsFile</span><span class="p">,</span><span class="w"> </span><span class="n">escaper</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Reserved words handling is case-sensitive by default. You can use
+reserved words file case insensitively using
+<code class="docutils literal notranslate"><span class="pre">ReservedWordsBuilder#loadCaseInsensitiveWords</span></code>.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span><span class="w"> </span><span class="n">escaper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ReservedWordsBuilder</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">loadCaseInsensitiveWords</span><span class="p">(</span><span class="n">wordsFile</span><span class="p">,</span><span class="w"> </span><span class="n">escaper</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="composing-symbolproviders">
+<h3>Composing <code class="docutils literal notranslate"><span class="pre">SymbolProviders</span></code><a class="headerlink" href="#composing-symbolproviders" title="Permalink to this headline">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">SymbolProvider</span></code> has a very simple interface, making it easy to
+compose functionality using decorators. Decorators can be used to do
+things like add caching or add more contextual data to Symbols.</p>
+<p>The following example decorates a <code class="docutils literal notranslate"><span class="pre">SymbolProvider</span></code> by adding caching
+of resolved Symbols:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span><span class="w"> </span><span class="n">cachedProvider</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SymbolProvider</span><span class="p">.</span><span class="na">caching</span><span class="p">(</span><span class="n">mySymbolProvider</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>The following example creates a decorator that adds a &quot;shape&quot; property
+to every Symbol:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyCodegenPlugin</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">static</span><span class="w"> </span><span class="n">SymbolProvider</span><span class="w"> </span><span class="nf">wrapSymbolProvider</span><span class="p">(</span><span class="n">SymbolProvider</span><span class="w"> </span><span class="n">delegate</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">delegate</span><span class="p">.</span><span class="na">toSymbol</span><span class="p">(</span><span class="n">shape</span><span class="p">).</span><span class="na">toBuilder</span><span class="p">()</span><span class="w"></span>
+<span class="w">                    </span><span class="p">.</span><span class="na">putProperty</span><span class="p">(</span><span class="s">&quot;shape&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"></span>
+<span class="w">                    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="p">};</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="kd">var</span><span class="w"> </span><span class="n">wrapped</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MyCodegenPlugin</span><span class="p">.</span><span class="na">wrapSymbolProvider</span><span class="p">(</span><span class="n">mySymbolProvider</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="integrating-symbols-into-your-symbolwriter">
+<h2>Integrating Symbols into your <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code><a class="headerlink" href="#integrating-symbols-into-your-symbolwriter" title="Permalink to this headline">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> provides some building blocks to help integrate Symbols
+into a particular programming language, but the actual gluing together
+of abstractions, generating import statements, generating dependencies,
+accounting for aliasing, etc. is an exercise left to each language
+implementation of Smithy.</p>
+<div class="section" id="create-an-importcontainer-for-your-language">
+<h3>Create an <code class="docutils literal notranslate"><span class="pre">ImportContainer</span></code> for your language<a class="headerlink" href="#create-an-importcontainer-for-your-language" title="Permalink to this headline">#</a></h3>
+<p>An <a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/ImportContainer.java">ImportContainer</a> is used to track the imports associated with a
+specific file being generated. Each time a <code class="docutils literal notranslate"><span class="pre">Symbol</span></code> is written to a
+<a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolWriter.java">SymbolWriter</a>, and each call to methods like <code class="docutils literal notranslate"><span class="pre">SymbolWriter#addImport</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Symbol</span></code>s are sent to the <code class="docutils literal notranslate"><span class="pre">ImportContainer</span></code> owned by the
+<code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code>. The <code class="docutils literal notranslate"><span class="pre">ImportContainer</span></code> should be aware of the current
+namespace in use by the <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code>.</p>
+<p>The following example implements a simple <code class="docutils literal notranslate"><span class="pre">ImportContainer</span></code> for a made
+up language. If a provided <code class="docutils literal notranslate"><span class="pre">Symbol</span></code> is in the same namespace that the
+container is tracking, the import is discarded. Otherwise, each import
+is added to a map of namespaces to a map of alias → target name.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyLangImports</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">ImportContainer</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">imports</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">TreeMap</span><span class="o">&lt;&gt;</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">MyLangSettings</span><span class="w"> </span><span class="n">settings</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">namespace</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">MyLangImports</span><span class="p">(</span><span class="n">MyLangSettings</span><span class="w"> </span><span class="n">settings</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">namespace</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">settings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">settings</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">namespace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">namespace</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">importSymbol</span><span class="p">(</span><span class="n">Symbol</span><span class="w"> </span><span class="n">symbol</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">alias</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="n">symbolNamespace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">symbol</span><span class="p">.</span><span class="na">getNamespace</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">        </span><span class="c1">// Only import symbols in other namespaces.</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">symbolNamespace</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">namespace</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="kd">var</span><span class="w"> </span><span class="n">namespaceImports</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">imports</span><span class="p">.</span><span class="na">computeIfAbsent</span><span class="p">(</span><span class="n">symbolNamespace</span><span class="p">,</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">TreeMap</span><span class="o">&lt;&gt;</span><span class="p">());</span><span class="w"></span>
+<span class="w">            </span><span class="n">namespaceImports</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">alias</span><span class="p">,</span><span class="w"> </span><span class="n">symbol</span><span class="p">.</span><span class="na">getName</span><span class="p">());</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">toString</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">imports</span><span class="p">.</span><span class="na">isEmpty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="c1">// Build up each line of import statements.</span><span class="w"></span>
+<span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="n">builder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StringBuilder</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">var</span><span class="w"> </span><span class="n">entry</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">imports</span><span class="p">.</span><span class="na">entrySet</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="kd">var</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="na">getKey</span><span class="p">();</span><span class="w"></span>
+<span class="w">            </span><span class="kd">var</span><span class="w"> </span><span class="n">alias</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="na">getValue</span><span class="p">().</span><span class="na">getKey</span><span class="p">();</span><span class="w"></span>
+<span class="w">            </span><span class="kd">var</span><span class="w"> </span><span class="n">target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="na">getValue</span><span class="p">().</span><span class="na">getValue</span><span class="p">();</span><span class="w"></span>
+<span class="w">            </span><span class="n">builder</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot;import &quot;</span><span class="p">).</span><span class="na">append</span><span class="p">(</span><span class="n">target</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">            </span><span class="c1">// Use a made up aliasing syntax if the alias differs from the target.</span><span class="w"></span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">alias</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">target</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                </span><span class="n">builder</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot; as &quot;</span><span class="p">).</span><span class="na">append</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span><span class="w"></span>
+<span class="w">            </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">            </span><span class="c1">// Import from a target namespace.</span><span class="w"></span>
+<span class="w">            </span><span class="n">builder</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot; from &quot;</span><span class="p">).</span><span class="na">append</span><span class="p">(</span><span class="n">ns</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="n">builder</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot;\n&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">builder</span><span class="p">.</span><span class="na">toString</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ImportContainer</span></code> implements <code class="docutils literal notranslate"><span class="pre">toString</span></code> so that <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> can
+write out imports before writing out the rest of the code.</p>
+</div>
+<div class="section" id="create-a-symbolwriter-subclass">
+<h3>Create a <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> subclass<a class="headerlink" href="#create-a-symbolwriter-subclass" title="Permalink to this headline">#</a></h3>
+<p>Each language should create a subclass of <a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolWriter.java">SymbolWriter</a> that
+automatically manages imports, symbols, and writes documentation
+strings.</p>
+<p>The following example shows how a subclass of <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> can be
+created.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MyWriter</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">SymbolWriter</span><span class="o">&lt;</span><span class="n">MyWriter</span><span class="p">,</span><span class="w"> </span><span class="n">MyImportContainer</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="nf">MyWriter</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">namespace</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="kd">super</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">MyImportContainer</span><span class="p">(</span><span class="n">namespace</span><span class="p">));</span><span class="w"></span>
+
+<span class="w">        </span><span class="c1">// Write Symbols relative to the current namespace.</span><span class="w"></span>
+<span class="w">        </span><span class="n">setRelativizeSymbols</span><span class="p">(</span><span class="n">namespace</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">toString</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// You can override how code is converted to a string. For example,</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// this allows you to add a prelude to generated code or to write the</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// necessary imports that were used in the writer.</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">getImportContainer</span><span class="p">().</span><span class="na">toString</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;\n\n&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="kd">super</span><span class="p">.</span><span class="na">toString</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">MyWriter</span><span class="w"> </span><span class="nf">someCustomMethod</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// You can implement custom methods that are specific to whatever</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// language you&#39;re implementing a generator for.</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="use-writerdelegator-to-create-writers">
+<h3>Use <code class="docutils literal notranslate"><span class="pre">WriterDelegator</span></code> to create writers<a class="headerlink" href="#use-writerdelegator-to-create-writers" title="Permalink to this headline">#</a></h3>
+<p>In order to track the dependencies used while generating code, and to
+add code interceptors to each created <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code>, code generators
+should use a <a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/WriterDelegator.java">WriterDelegator</a> to create <code class="docutils literal notranslate"><span class="pre">SymbolWriters</span></code>.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">WriterDelegator</span></code> is used to create and track all the
+<code class="docutils literal notranslate"><span class="pre">SymbolWriters</span></code> used during code generation. A codegen project will
+generally use a single <code class="docutils literal notranslate"><span class="pre">WriterDelegator</span></code> during codegen. You need to
+ensure your <code class="docutils literal notranslate"><span class="pre">WriterDelegator</span></code> knows about the code interceptors returned
+from <code class="docutils literal notranslate"><span class="pre">SmithyIntegration</span></code>s so that it can apply transformations as code
+is written.</p>
+<p>Let's say you need to generate code for a structure shape. You ask the
+<code class="docutils literal notranslate"><span class="pre">WriterDelegator</span></code> to give you the appropriate <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">delegator</span><span class="p">.</span><span class="na">useShapeWriter</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Structure $L&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">getId</span><span class="p">());</span><span class="w"></span>
+<span class="p">});</span><span class="w"></span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">WriterDelegator</span></code> will create the appropriate <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> that
+writes to the correct file location based on the <code class="docutils literal notranslate"><span class="pre">Symbol</span></code> created for
+the given shape. If multiple shapes use the same filename, then
+<code class="docutils literal notranslate"><span class="pre">WriterDelegator</span></code> will provide the same <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> to each call
+to <code class="docutils literal notranslate"><span class="pre">useShapeWriter</span></code>, and it will automatically inject <code class="docutils literal notranslate"><span class="pre">\n</span></code> prior to
+vending a previously used writer (this can be customized).</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">useFileWriter</span></code> to write to a file that isn't specific to a shape:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">delegator</span><span class="p">.</span><span class="na">useFileWriter</span><span class="p">(</span><span class="s">&quot;README.md&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">        # This is my README!</span>
+
+<span class="s">        Do you like it?</span>
+<span class="s">        &quot;&quot;&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="p">});</span><span class="w"></span>
+</pre></div>
+</div>
+<p>When codegen has completed, the generator needs to call <code class="docutils literal notranslate"><span class="pre">flushWriters</span></code>
+on the delegator to write each created <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> to the
+<code class="docutils literal notranslate"><span class="pre">FileManifest</span></code> the generator is using:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">delegator</span><span class="p">.</span><span class="na">flushWriters</span><span class="p">();</span><span class="w"></span>
+</pre></div>
+</div>
+<p>All the symbol dependencies detected when using each <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code>
+can be retrieved from the delegator using <code class="docutils literal notranslate"><span class="pre">getDependencies</span></code>.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">List</span><span class="o">&lt;</span><span class="n">SymbolDependency</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dependencies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">delegator</span><span class="p">.</span><span class="na">getDependencies</span><span class="p">();</span><span class="w"></span>
+</pre></div>
+</div>
+<p>These dependencies can then be used to generate things like dependency
+manifests for the created code.</p>
+</div>
+</div>
+<div class="section" id="faq">
+<h2>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline">#</a></h2>
+<div class="section" id="how-do-i-add-more-information-to-symbols-symbolreferences-and-symboldependencies">
+<h3>How do I add more information to <code class="docutils literal notranslate"><span class="pre">Symbols</span></code>, <code class="docutils literal notranslate"><span class="pre">SymbolReferences</span></code>, and <code class="docutils literal notranslate"><span class="pre">SymbolDependencies</span></code>?<a class="headerlink" href="#how-do-i-add-more-information-to-symbols-symbolreferences-and-symboldependencies" title="Permalink to this headline">#</a></h3>
+<p>Use typed property bags to store additional information. For example:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Symbol</span><span class="w"> </span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Symbol</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">name</span><span class="p">(</span><span class="s">&quot;Foo&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">namespace</span><span class="p">(</span><span class="s">&quot;example.foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;.&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">putProperty</span><span class="p">(</span><span class="s">&quot;customData&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hello&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span><span class="w"></span>
+
+<span class="n">String</span><span class="w"> </span><span class="n">customData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">foo</span><span class="p">.</span><span class="na">getProperty</span><span class="p">(</span><span class="s">&quot;customData&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>You can add properties to an existing <code class="docutils literal notranslate"><span class="pre">Symbol</span></code>, <code class="docutils literal notranslate"><span class="pre">SymbolReference</span></code>,
+or <code class="docutils literal notranslate"><span class="pre">SymbolDependency</span></code> by calling <code class="docutils literal notranslate"><span class="pre">toBuilder</span></code> first:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">foo</span><span class="p">.</span><span class="na">toBuilder</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">putProperty</span><span class="p">(</span><span class="s">&quot;anotherProperty&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">build</span><span class="p">();</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="does-symbolwriter-require-one-namespace-per-file">
+<h3>Does <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> require one namespace per file?<a class="headerlink" href="#does-symbolwriter-require-one-namespace-per-file" title="Permalink to this headline">#</a></h3>
+<p>No, but that's the easiest way to use <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code>. Your language's
+subclass can be setup in a way that it uses multiple <code class="docutils literal notranslate"><span class="pre">ImportContainer</span></code>
+instances per/namespace in a single file. For example, an <code class="docutils literal notranslate"><span class="pre">ImportContainer</span></code>
+could be given the current namespace of a <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> each time it's
+invoked, allowing the <code class="docutils literal notranslate"><span class="pre">ImportContainer</span></code> to perform more targeted
+relativization. Then the <code class="docutils literal notranslate"><span class="pre">ImportContainer</span></code> would need special methods
+used to convert each nested namespace's imports to a string. It's an
+abstract exercise left up to the implementation.</p>
+</div>
+</div>
+</div>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="using-the-semantic-model.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Using the Semantic Model</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="generating-code.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Generating Code</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Amazon Web Services
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Decoupling Codegen with Symbols</a><ul>
+<li><a class="reference internal" href="#quick-symbol-example">Quick Symbol example</a></li>
+<li><a class="reference internal" href="#benefits-of-symbols">Benefits of Symbols</a></li>
+<li><a class="reference internal" href="#referencing-symbols-using-symbolreference">Referencing Symbols using SymbolReference</a><ul>
+<li><a class="reference internal" href="#aliasing-symbols">Aliasing Symbols</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#symbol-dependencies">Symbol dependencies</a><ul>
+<li><a class="reference internal" href="#symboldependency-best-practices"><code class="docutils literal notranslate"><span class="pre">SymbolDependency</span></code> best practices</a></li>
+<li><a class="reference internal" href="#tracking-externally-controlled-dependencies">Tracking externally controlled dependencies</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#converting-shapes-to-symbols-with-symbolproviders">Converting shapes to Symbols with <code class="docutils literal notranslate"><span class="pre">SymbolProviders</span></code></a><ul>
+<li><a class="reference internal" href="#automatically-handling-reserved-words">Automatically handling reserved words</a></li>
+<li><a class="reference internal" href="#composing-symbolproviders">Composing <code class="docutils literal notranslate"><span class="pre">SymbolProviders</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#integrating-symbols-into-your-symbolwriter">Integrating Symbols into your <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code></a><ul>
+<li><a class="reference internal" href="#create-an-importcontainer-for-your-language">Create an <code class="docutils literal notranslate"><span class="pre">ImportContainer</span></code> for your language</a></li>
+<li><a class="reference internal" href="#create-a-symbolwriter-subclass">Create a <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> subclass</a></li>
+<li><a class="reference internal" href="#use-writerdelegator-to-create-writers">Use <code class="docutils literal notranslate"><span class="pre">WriterDelegator</span></code> to create writers</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#faq">FAQ</a><ul>
+<li><a class="reference internal" href="#how-do-i-add-more-information-to-symbols-symbolreferences-and-symboldependencies">How do I add more information to <code class="docutils literal notranslate"><span class="pre">Symbols</span></code>, <code class="docutils literal notranslate"><span class="pre">SymbolReferences</span></code>, and <code class="docutils literal notranslate"><span class="pre">SymbolDependencies</span></code>?</a></li>
+<li><a class="reference internal" href="#does-symbolwriter-require-one-namespace-per-file">Does <code class="docutils literal notranslate"><span class="pre">SymbolWriter</span></code> require one namespace per file?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/scripts/furo.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/tabs.js"></script>
+    </body>
+</html>

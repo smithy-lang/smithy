@@ -1,0 +1,993 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Decoupling Codegen with Symbols" href="decoupling-codegen-with-symbols.html" /><link rel="prev" title="Making Codegen Pluggable" href="making-codegen-pluggable.html" />
+
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+        <title>Generating Code - Smithy 2.0</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --admonition-font-size: 100%;
+  --admonition-title-font-size: 100%;
+  --color-brand-primary: #C44536;
+  --color-brand-content: #00808b;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Smithy 2.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../_static/smithy.svg" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quick start</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../spec/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/model.html">1. The Smithy model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/simple-types.html">2. Simple types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/aggregate-types.html">3. Aggregate types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/service-types.html">4. Service types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/mixins.html">5. Mixins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/constraint-traits.html">6. Constraint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/type-refinement-traits.html">7. Type refinement traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/documentation-traits.html">8. Documentation traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/behavior-traits.html">9. Behavior traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/resource-traits.html">10. Resource traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/authentication-traits.html">11. Authentication traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/protocol-traits.html">12. Serialization and Protocol traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/streaming.html">13. Streaming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/http-bindings.html">14. HTTP bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/endpoint-traits.html">15. Endpoint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/selectors.html">16. Selectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/model-validation.html">17. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/idl.html">18. Smithy IDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/json-ast.html">19. JSON AST</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../trait-index.html">Trait index</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">Guides</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-models/build-config.html">smithy-build</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../using-code-generation/index.html">Using Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/update-model.html">Updating the Smithy Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/generating-a-client.html">Generating a client</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../model-linters.html">Model linters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../style-guide.html">Style Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">Creating a Smithy Code Generator</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="overview-and-concepts.html">Overview and Concepts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mapping-shapes-to-languages.html">Mapping Smithy Shapes to Your Language</a></li>
+<li class="toctree-l3"><a class="reference internal" href="creating-codegen-repo.html">Creating a Codegen Repo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="configuring-the-generator.html">Configuring the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="implementing-the-generator.html">Implementing the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="making-codegen-pluggable.html">Making Codegen Pluggable</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Generating Code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="decoupling-codegen-with-symbols.html">Decoupling Codegen with Symbols</a></li>
+<li class="toctree-l3"><a class="reference internal" href="using-the-semantic-model.html">Using the Semantic Model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../additional-specs/index.html">Additional specs</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/waiters.html">Waiters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../aws/index.html">AWS integrations</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-core.html">AWS Core Specification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-auth.html">AWS Authentication Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-iam.html">AWS IAM traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-cloudformation.html">AWS CloudFormation Traits</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/protocols/index.html">AWS Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-restxml-protocol.html">AWS restXml protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-query-protocol.html">AWS query protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../implementations.html">Implementations</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-2.0/guides/building-codegen/generating-code.rst" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <div class="section" id="generating-code">
+<h1>Generating Code<a class="headerlink" href="#generating-code" title="Permalink to this headline">#</a></h1>
+<p>A &quot;code writer&quot; is the main abstraction used to generate code. It can be
+used to write basically any kind of code, including whitespace sensitive
+and brace-based. The following example generates some Python code:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span><span class="w"></span>
+
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;def Foo(str):&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">      </span><span class="p">.</span><span class="na">indent</span><span class="p">()</span><span class="w"></span>
+<span class="w">      </span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;print str&quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="n">String</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">();</span><span class="w"></span>
+</pre></div>
+</div>
+<p>There are few kinds of code writers:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-utils/src/main/java/software/amazon/smithy/utils/AbstractCodeWriter.java">AbstractCodeWriter</a>: An abstract class that can be extended to
+create language-specific writers.</li>
+<li><a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-utils/src/main/java/software/amazon/smithy/utils/SimpleCodeWriter.java">SimpleCodeWriter</a>: An implementation of <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> with no
+added methods or support for <code class="docutils literal notranslate"><span class="pre">Symbol</span></code>s.</li>
+<li><a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolWriter.java">SymbolWriter</a>: An abstract class that extends <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code>,
+available in <a class="reference external" href="https://search.maven.org/artifact/software.amazon.smithy/smithy-codegen-core">software.amazon.smithy:smithy-codegen-core</a>.
+This class adds abstractions for managing imports and dependencies.
+Smithy code generators should extend this class.
+See <a class="reference internal" href="decoupling-codegen-with-symbols.html"><span class="doc">Decoupling Codegen with Symbols</span></a>.</li>
+</ul>
+<div class="section" id="abstractcodewriter-is-a-lightweight-template-engine">
+<h2><code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> is a lightweight template engine<a class="headerlink" href="#abstractcodewriter-is-a-lightweight-template-engine" title="Permalink to this headline">#</a></h2>
+<p>An <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> can be used as a lightweight templating
+language. It supports interpolation, formatting,
+<a class="reference internal" href="making-codegen-pluggable.html#codegen-intercepting"><span class="std std-ref">intercepting named sections of the generated content</span></a>,
+conditionals, and loops. This removes the need to add a dependency on a Java
+templating engine and the need to integrate Smithy Symbols and dependency
+management into other templating languages. The following example uses Java 17
+text blocks to generate a contiguous section of code:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">pushState</span><span class="p">();</span><span class="w"></span>
+
+<span class="c1">// Add variables that can be referenced in templates.</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">putContext</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">settings</span><span class="p">.</span><span class="na">getModuleName</span><span class="p">());</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">putContext</span><span class="p">(</span><span class="s">&quot;version&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">settings</span><span class="p">.</span><span class="na">getModuleVersion</span><span class="p">());</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">putContext</span><span class="p">(</span><span class="s">&quot;description&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">settings</span><span class="p">.</span><span class="na">getModuleDescription</span><span class="p">());</span><span class="w"></span>
+
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">    [flake8]</span>
+<span class="s">    # We ignore E203, E501 for this project due to black</span>
+<span class="s">    ignore = E203,E501</span>
+
+<span class="s">    [metadata]</span>
+<span class="s">    name = ${name:L}</span>
+<span class="s">    version = ${version:L}</span>
+<span class="s">    description = ${description:L}</span>
+<span class="s">    license = Apache-2.0</span>
+<span class="s">    python_requires = &gt;=3.10</span>
+<span class="s">    classifiers =</span>
+<span class="s">        Development Status :: 2 - Pre-Alpha</span>
+<span class="s">        Intended Audience :: Developers</span>
+<span class="s">        Intended Audience :: System Administrators</span>
+<span class="s">        Natural Language :: English</span>
+<span class="s">        License :: OSI Approved :: Apache Software License</span>
+<span class="s">        Programming Language :: Python</span>
+<span class="s">        Programming Language :: Python :: 3</span>
+<span class="s">        Programming Language :: Python :: 3 :: Only</span>
+<span class="s">        Programming Language :: Python :: 3.10</span>
+<span class="s">    &quot;&quot;&quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="n">writer</span><span class="p">.</span><span class="na">popState</span><span class="p">();</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="interpolation">
+<h2>Interpolation<a class="headerlink" href="#interpolation" title="Permalink to this headline">#</a></h2>
+<p>Various methods like <code class="docutils literal notranslate"><span class="pre">write()</span></code> and <code class="docutils literal notranslate"><span class="pre">writeInline()</span></code> take a template
+string and a variadic list of arguments that are <em>interpolated</em>, or
+replaced, into the expression.</p>
+<p>In the following example, <code class="docutils literal notranslate"><span class="pre">$L</span></code> is interpolated and replaced with the
+relative argument, <code class="docutils literal notranslate"><span class="pre">&quot;there!&quot;</span></code>.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">CodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Hello, $L&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;there!&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;Hello, there!\n&quot;</span><span class="p">));</span><span class="w"></span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">$</span></code> character is escaped using <code class="docutils literal notranslate"><span class="pre">$$</span></code>.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">().</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$$L&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;$L\n&quot;</span><span class="p">));</span><span class="w"></span>
+</pre></div>
+</div>
+<p>The default character used to start an expression is <code class="docutils literal notranslate"><span class="pre">$</span></code>, but this can
+be changed for the current state of the <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> by
+calling <code class="docutils literal notranslate"><span class="pre">setExpressionStart(char)</span></code>. This might be useful for
+programming languages that make heavy use of <code class="docutils literal notranslate"><span class="pre">$</span></code> like PHP or Kotlin. A
+custom start character can be escaped using two start characters in a
+row. For example, given a custom start character of <code class="docutils literal notranslate"><span class="pre">#</span></code>, <code class="docutils literal notranslate"><span class="pre">#</span></code> can be
+escaped using <code class="docutils literal notranslate"><span class="pre">##</span></code>.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">setExpressionStart</span><span class="p">(</span><span class="sc">&#39;#&#39;</span><span class="p">);</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;#L ##L $L&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hi&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;hi #L $L\n&quot;</span><span class="p">));</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="formatters">
+<h2>Formatters<a class="headerlink" href="#formatters" title="Permalink to this headline">#</a></h2>
+<p>An <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> supports three kinds of interpolations:
+relative, positional, and named. Each of these kinds of interpolations
+pass a value to a <em>formatter</em>. Formatters are named functions that
+accept an object as input, accepts a string that contains the current
+indentation (it can be ignored if not useful), and returns a string as
+output. <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> registers two built-in formatters:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">L</span></code> (literal): Outputs a literal value of an <code class="docutils literal notranslate"><span class="pre">Object</span></code> using the
+following implementation: (1) A null value is formatted as &quot;&quot;. (2) An
+empty <code class="docutils literal notranslate"><span class="pre">Optional</span></code> value is formatted as &quot;&quot;. (3) A non-empty
+<code class="docutils literal notranslate"><span class="pre">Optional</span></code> value is formatted using the value inside the
+<code class="docutils literal notranslate"><span class="pre">Optional</span></code>. (3) All other values are formatted using the result of
+calling Java's <code class="docutils literal notranslate"><span class="pre">String#valueOf</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">S</span></code> (string): Adds double quotes around the result of formatting a
+value first using the default literal &quot;L&quot; implementation described
+above and then wrapping the value in an escaped string safe for use
+in Java according to
+<a class="reference external" href="https://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.10.6">https://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.10.6</a>.
+This should work for many programming languages, but this formatter
+can be overridden if needed.</li>
+<li><code class="docutils literal notranslate"><span class="pre">C</span></code> (call): Used to break up a template and execute code at
+specific locations. <code class="docutils literal notranslate"><span class="pre">$C</span></code> stands for &quot;call&quot; and is used to run a
+<code class="docutils literal notranslate"><span class="pre">Runnable</span></code> or <code class="docutils literal notranslate"><span class="pre">Consumer&lt;AbstractCodeWriter&gt;</span></code> that is expected to
+write to the same writer. Any text written to the writer is used as
+the interpolation result. Note that a single trailing newline is
+removed from the captured text. If a <code class="docutils literal notranslate"><span class="pre">Runnable</span></code> is provided, it is
+required to have a reference to the writer. A <code class="docutils literal notranslate"><span class="pre">Consumer</span></code> is
+provided a reference to the writer as a single argument. Using a
+<code class="docutils literal notranslate"><span class="pre">Consumer</span></code> makes it possible to create more generic methods for
+handling different sections of code.</li>
+<li>…: Custom formatters can be registered using
+<code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter#putFormatter</span></code>. Registering custom formatters
+with a writer for common formatting tasks is a great way to simplify
+a code generator.</li>
+</ul>
+</div>
+<div class="section" id="relative-parameters">
+<h2>Relative parameters<a class="headerlink" href="#relative-parameters" title="Permalink to this headline">#</a></h2>
+<p>Placeholders in the form of &quot;$&quot; followed by a formatter name are treated
+as relative parameters. The first instance of a relative parameter
+interpolates the first positional argument, the second, etc. All
+relative arguments must be used as part of an expression and relative
+interpolation cannot be mixed with positional variables.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$L $L $L&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;a b c\n&quot;</span><span class="p">));</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="positional-parameters">
+<h2>Positional parameters<a class="headerlink" href="#positional-parameters" title="Permalink to this headline">#</a></h2>
+<p>Placeholders in the form of &quot;$&quot; followed by a positive number, followed
+by a formatter name are treated as positional parameters. The number
+refers to the 1-based index of the argument to interpolate. All
+positional arguments must be used as part of an expression and relative
+interpolation cannot be mixed with positional variables.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$1L $2L $3L, $3L $2L $1L&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;a b c c b a\n&quot;</span><span class="p">));</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="named-parameters">
+<h2>Named parameters<a class="headerlink" href="#named-parameters" title="Permalink to this headline">#</a></h2>
+<p>Named parameters are parameters that take a value from the context of
+the current state. They take the following form
+<code class="docutils literal notranslate"><span class="pre">$&lt;variable&gt;:&lt;formatter&gt;</span></code>, where <code class="docutils literal notranslate"><span class="pre">&lt;variable&gt;</span></code> is a string that
+starts with a lowercase letter, followed by any number of
+<code class="docutils literal notranslate"><span class="pre">[A-Za-z0-9_#$.]</span></code> characters, and <code class="docutils literal notranslate"><span class="pre">&lt;formatter&gt;</span></code> is the name of a
+formatter.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">pushState</span><span class="p">();</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">putContext</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">putContext</span><span class="p">(</span><span class="s">&quot;bar&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;b&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$foo:L $bar:L&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">popState</span><span class="p">();</span><span class="w"></span>
+<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;a b\n&quot;</span><span class="p">));</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="inline-block-alignment">
+<span id="id1"></span><h2>Inline block alignment<a class="headerlink" href="#inline-block-alignment" title="Permalink to this headline">#</a></h2>
+<p>Sometimes it's necessary to maintain the exact indentation level of an
+interpolated property even if newlines are written when interpolating.
+For example, say we wanted to indent a variable list of names,
+<code class="docutils literal notranslate"><span class="pre">Bob\nKaren\nLuis</span></code>, like this:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Names: Bob
+       Karen
+       Luis
+</pre></div>
+</div>
+<p>Using normal <code class="docutils literal notranslate"><span class="pre">$L</span></code> expansion:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$L: $L&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Names&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Bob\nKaren\nLuis&quot;</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">$L</span></code> does not preserve the desired indentation, resulting in:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Names: Bob
+Karen
+Luis
+</pre></div>
+</div>
+<p>Indentation can be preserved to match the desired list from the first
+example by using the inline block alignment operator (that is, putting
+<code class="docutils literal notranslate"><span class="pre">|</span></code> before the closing brace):</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$L: ${L|}&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Names&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Bob\nKaren\nLuis&quot;</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>If all the characters on the line in the template leading up to the
+interpolation are spaces or tabs, then those characters are applied
+before each new line. This means that block alignment works even with
+tab-based languages:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">    if (true) {</span>
+<span class="s">    \t\t${C|}</span>
+<span class="s">    }</span>
+<span class="s">    &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="n">writer</span><span class="p">.</span><span class="na">call</span><span class="p">(</span><span class="n">w</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">w</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Hi\nHello&quot;</span><span class="p">))</span><span class="w"></span>
+<span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Outputs:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>if (true) {
+\t\tHi
+\t\tHello
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="breaking-up-large-templates-with-the-c-formatter">
+<h2>Breaking up large templates with the <code class="docutils literal notranslate"><span class="pre">$C</span></code> formatter<a class="headerlink" href="#breaking-up-large-templates-with-the-c-formatter" title="Permalink to this headline">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">$C</span></code> formatter can be used to break up large codegen templates
+without losing the readability benefits of <a class="reference external" href="https://docs.oracle.com/en/java/javase/13/text_blocks/index.html">Java text blocks</a>.
+The <code class="docutils literal notranslate"><span class="pre">$C</span></code> formatter pairs well with inline block alignment, allowing
+you to generate indented sections of code within a larger template.</p>
+<p>The following example uses the <code class="docutils literal notranslate"><span class="pre">call</span></code> method of an
+<code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> to properly type the <code class="docutils literal notranslate"><span class="pre">Function</span></code>, and a method
+reference is provided to invoke a method that accepts the writer.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">someMethod</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">        if (true) {</span>
+<span class="s">            ${C|}</span>
+<span class="s">        } else {</span>
+<span class="s">            ${C|}</span>
+<span class="s">        }</span>
+<span class="s">        &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">writer</span><span class="p">.</span><span class="na">call</span><span class="p">(</span><span class="k">this</span><span class="p">::</span><span class="n">handleTrue</span><span class="p">),</span><span class="w"></span>
+<span class="w">        </span><span class="n">writer</span><span class="p">.</span><span class="na">call</span><span class="p">(</span><span class="k">this</span><span class="p">::</span><span class="n">handleFalse</span><span class="p">));</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">handleTrue</span><span class="p">(</span><span class="n">CodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;True!&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">handleFalse</span><span class="p">(</span><span class="n">CodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;False!&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">When generating code, try to show the overall structure of the
+code that will be generated as much as possible in larger blocks of
+templated text that leverage <code class="docutils literal notranslate"><span class="pre">${C|}</span></code>, template conditionals (e.g.,
+<code class="docutils literal notranslate"><span class="pre">${?foo}${/foo}</span></code>), and template loops (e.g., <code class="docutils literal notranslate"><span class="pre">${#foo}${/foo}</span></code>).</p>
+</div>
+</div>
+<div class="section" id="pushing-and-popping-states">
+<h2>Pushing and popping states<a class="headerlink" href="#pushing-and-popping-states" title="Permalink to this headline">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> maintains a stack of transformation states,
+including the text used to indent, a prefix to add before each line,
+newline character, the number of times to indent, a map of context
+values, whether whitespace is trimmed from the end of newlines, whether
+the automatic insertion of newlines is disabled, the character used to
+start code expressions (defaults to <code class="docutils literal notranslate"><span class="pre">$</span></code>), and formatters.</p>
+<p>State can be pushed onto the stack using <code class="docutils literal notranslate"><span class="pre">pushState</span></code> which copies the
+current state. Mutations can then be made to the top-most state of the
+<code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> and do not affect previous states. The previous
+transformation state of the <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> can later be restored
+using <code class="docutils literal notranslate"><span class="pre">popState</span></code>.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span><span class="w"></span>
+<span class="n">writer</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">pushState</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;/**&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">setNewlinePrefix</span><span class="p">(</span><span class="s">&quot; * &quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;This is some docs.&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;And more docs.\n\n\n&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Foo.&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">popState</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot; */&quot;</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>The above example outputs:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>/**
+ * This is some docs.
+ * And more docs.
+ *
+ * Foo.
+ */
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> maintains some global state that is not affected
+by <code class="docutils literal notranslate"><span class="pre">pushState()</span></code> and <code class="docutils literal notranslate"><span class="pre">popState()</span></code>:</p>
+<ul class="simple">
+<li>The number of successive blank lines to trim.</li>
+<li>Whether a trailing newline is inserted or removed from the result of
+converting the <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> to a string.</li>
+</ul>
+</div>
+<div class="section" id="limiting-blank-lines">
+<h2>Limiting blank lines<a class="headerlink" href="#limiting-blank-lines" title="Permalink to this headline">#</a></h2>
+<p>Many coding standards recommend limiting the number of successive blank
+lines. This can be handled automatically by <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> by
+calling <code class="docutils literal notranslate"><span class="pre">trimBlankLines()</span></code>. The removal of blank lines is handled when
+the <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> is converted to a string. Lines that consist
+solely of spaces or tabs are considered blank. If the number of blank
+lines exceeds the allowed threshold, they are omitted from the result.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">trimBlankLines</span><span class="p">();</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;hello\n\n\n\nhello&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;hello\n\nhello\n&quot;</span><span class="p">));</span><span class="w"></span>
+</pre></div>
+</div>
+<p>In the above example, <code class="docutils literal notranslate"><span class="pre">\n\n\n\n</span></code> results in two blank lines (two
+newlines outputs an entirely blank line). <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> trims
+the successive blank line, resulting in <code class="docutils literal notranslate"><span class="pre">&quot;hello\n\nhello\n&quot;</span></code> (the
+trailing newline is added by <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> by default
+separately). Two blank lines could be allowed if the above example was
+updated to pass <code class="docutils literal notranslate"><span class="pre">2</span></code> into <code class="docutils literal notranslate"><span class="pre">trimBlankLines</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">trimBlankLines</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="trimming-trailing-spaces">
+<h2>Trimming trailing spaces<a class="headerlink" href="#trimming-trailing-spaces" title="Permalink to this headline">#</a></h2>
+<p>Many coding standards do not allow trailing spaces on lines. Trailing
+spaces can be automatically trimmed from each line by calling
+<code class="docutils literal notranslate"><span class="pre">trimTrailingSpaces()</span></code>.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">trimTrailingSpaces</span><span class="p">();</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;hello  &quot;</span><span class="p">);</span><span class="w"></span>
+<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">));</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="code-sections">
+<h2>Code sections<a class="headerlink" href="#code-sections" title="Permalink to this headline">#</a></h2>
+<p>Named sections can be marked in the code writer that can be intercepted
+and modified by <em>section interceptors</em>. This gives the
+<code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> an extension system for augmenting generated
+code. A section of code can be captured using a <em>block section</em> or an
+<em>inline section</em>.</p>
+<div class="section" id="block-sections">
+<h3>Block sections<a class="headerlink" href="#block-sections" title="Permalink to this headline">#</a></h3>
+<p>The primary method for creating sections of code is block sections. A
+block section is created by passing a string or an implementation of
+<code class="docutils literal notranslate"><span class="pre">CodeSection</span></code> to <code class="docutils literal notranslate"><span class="pre">pushState()</span></code>. A string gives the state a name and
+captures all the output written inside this state to an internal buffer.
+This buffer is then passed to each registered interceptor for that name.
+These interceptors can choose to use the default contents of the section
+or emit entirely different content.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span><span class="w"></span>
+
+<span class="n">writer</span><span class="p">.</span><span class="na">onSection</span><span class="p">(</span><span class="s">&quot;example&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Intercepted: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">text</span><span class="p">);</span><span class="w"></span>
+<span class="p">});</span><span class="w"></span>
+
+<span class="n">writer</span><span class="p">.</span><span class="na">pushState</span><span class="p">(</span><span class="s">&quot;example&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Original contents&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">popState</span><span class="p">();</span><span class="w"></span>
+<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;Intercepted: Original contents\n&quot;</span><span class="p">));</span><span class="w"></span>
+</pre></div>
+</div>
+<p>A better method for creating and intercepting code sections is to use an
+instance of a <code class="docutils literal notranslate"><span class="pre">CodeSection</span></code>. A <code class="docutils literal notranslate"><span class="pre">CodeSection</span></code> is a simple interface
+that is just required to return the name of the <code class="docutils literal notranslate"><span class="pre">CodeSection</span></code> (in
+fact, using a string for <code class="docutils literal notranslate"><span class="pre">pushState</span></code> internally creates a
+<code class="docutils literal notranslate"><span class="pre">CodeSection</span></code>).</p>
+<p>Java records are an easy way to implement <code class="docutils literal notranslate"><span class="pre">CodeSection</span></code>s:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">record</span> <span class="nc">NameEvent</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">sectionName</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">person</span><span class="p">)</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">CodeSection</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">CodeInterceptor</span></code>s can be registered to intercept sections by class.
+A simple way to create one-off interceptors is using
+<code class="docutils literal notranslate"><span class="pre">CodeSection#appender</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">onSection</span><span class="p">(</span><span class="n">CodeInterceptor</span><span class="p">.</span><span class="na">appender</span><span class="p">(</span><span class="n">NameEvent</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="n">section</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">w</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$L&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">section</span><span class="p">.</span><span class="na">sectionName</span><span class="p">()));</span><span class="w"></span>
+<span class="p">}));</span><span class="w"></span>
+
+<span class="n">writer</span><span class="p">.</span><span class="na">onSection</span><span class="p">(</span><span class="n">CodeInterceptor</span><span class="p">.</span><span class="na">appender</span><span class="p">(</span><span class="n">NameEvent</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="n">section</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">w</span><span class="p">.</span><span class="na">writeInline</span><span class="p">(</span><span class="s">&quot;Who? &quot;</span><span class="p">);</span><span class="w"></span>
+<span class="p">}));</span><span class="w"></span>
+
+<span class="n">writer</span><span class="p">.</span><span class="na">onSection</span><span class="p">(</span><span class="n">CodeInterceptor</span><span class="p">.</span><span class="na">appender</span><span class="p">(</span><span class="n">NameEvent</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="n">section</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">w</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$L!&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">section</span><span class="p">.</span><span class="na">person</span><span class="p">());</span><span class="w"></span>
+<span class="p">}));</span><span class="w"></span>
+</pre></div>
+</div>
+<p>When a <code class="docutils literal notranslate"><span class="pre">CodeSection</span></code> is given to <code class="docutils literal notranslate"><span class="pre">pushState</span></code> or <code class="docutils literal notranslate"><span class="pre">injectState</span></code>,
+<code class="docutils literal notranslate"><span class="pre">CodeInterceptor</span></code>s are applied in the order they were registered.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">NameEvent</span><span class="w"> </span><span class="n">event</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">NameEvent</span><span class="p">(</span><span class="s">&quot;Zak&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;McKracken&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">injectSection</span><span class="p">(</span><span class="n">event</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>When applied, the <code class="docutils literal notranslate"><span class="pre">writer</span></code> contains the following output:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Zak
+Who? McKracken!
+</pre></div>
+</div>
+</div>
+<div class="section" id="inline-sections">
+<h3>Inline sections<a class="headerlink" href="#inline-sections" title="Permalink to this headline">#</a></h3>
+<p>An <em>inline section</em> is created using a special <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code>
+interpolation format that appends &quot;&#64;&quot; followed by the section name.
+Inline sections function just like block sections, but they can
+appear inline inside other content passed in calls to
+<code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter#write()</span></code>.</p>
+<p>Inline sections are created in a format string inside braced arguments
+after the formatter. For example, <code class="docutils literal notranslate"><span class="pre">${L&#64;foo}</span></code> is an inline section that
+uses the literal &quot;L&quot; value of a relative argument as the default value
+of the section and allows interceptors registered for the &quot;foo&quot; section
+to make calls to the <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> to modify the section.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span><span class="w"></span>
+
+<span class="c1">// Add an intercept for the &quot;example&quot; section.</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">onSection</span><span class="p">(</span><span class="s">&quot;example&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Intercepted: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">text</span><span class="p">));</span><span class="w"></span>
+
+<span class="c1">// Write to the writer and define an inline &quot;example&quot; section.</span><span class="w"></span>
+<span class="c1">// If nothing intercepts this section, &quot;foo&quot; is written to it.</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Leading...${L@example}...Trailing...&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;foo&quot;</span><span class="p">);</span><span class="w"></span>
+
+<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;Leading...Intercepted: foo...Trailing...\n&quot;</span><span class="p">));</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">An inline section that makes no calls to <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter#write()</span></code>
+expands to an empty string.</p>
+</div>
+</div>
+</div>
+<div class="section" id="template-conditions-and-loops">
+<h2>Template conditions and loops<a class="headerlink" href="#template-conditions-and-loops" title="Permalink to this headline">#</a></h2>
+<p>Conditional blocks can be defined in code writer templates using the
+following syntax:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">    ${?foo}</span>
+<span class="s">    Foo is set: ${foo:L}</span>
+<span class="s">    ${/foo}&quot;&quot;&quot;</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Assuming <code class="docutils literal notranslate"><span class="pre">foo</span></code> is <em>truthy</em> and set to &quot;hi&quot;, then the above template
+outputs: &quot;Foo is set: hi&quot; In the above example, &quot;?&quot; indicates that the
+expression is a conditional block to check if the named context property
+&quot;foo&quot; is truthy. If it is, then the contents of the block up to the
+matching closing block, <code class="docutils literal notranslate"><span class="pre">${/foo}</span></code>, are evaluated. If the condition is
+not satisfied, then contents of the block are skipped.</p>
+<p>You can check if a named context property is <em>falsey</em> using &quot;^&quot;:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">    ${^foo}</span>
+<span class="s">    Foo is not set</span>
+<span class="s">    ${/foo}&quot;&quot;&quot;</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Assuming <code class="docutils literal notranslate"><span class="pre">foo</span></code> is set to &quot;hi&quot;, then the above template outputs
+nothing. If <code class="docutils literal notranslate"><span class="pre">foo</span></code> is falsey, then the above template outputs &quot;Foo is
+not set&quot;.</p>
+<div class="section" id="truthy-and-falsey-values">
+<h3>Truthy and falsey values<a class="headerlink" href="#truthy-and-falsey-values" title="Permalink to this headline">#</a></h3>
+<p>The following values are considered falsey:</p>
+<ul class="simple">
+<li>properties that are not found</li>
+<li>null values</li>
+<li>false</li>
+<li>empty <a class="reference external" href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></li>
+<li>empty <a class="reference external" href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Iterable.html">Iterable</a></li>
+<li>empty <a class="reference external" href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html">Map</a></li>
+<li>empty <a class="reference external" href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Optional.html">Optional</a></li>
+</ul>
+<p>Values that are not falsey are considered truthy.</p>
+</div>
+<div class="section" id="loops">
+<h3>Loops<a class="headerlink" href="#loops" title="Permalink to this headline">#</a></h3>
+<p>Loops can be created to repeat a section of a template for each value
+stored in a list or each key value pair stored in a map. Loops are
+created using <code class="docutils literal notranslate"><span class="pre">#</span></code>.</p>
+<p>The following template with a &quot;foo&quot; value of
+<code class="docutils literal notranslate"><span class="pre">{&quot;key1&quot;:</span> <span class="pre">&quot;a&quot;,</span> <span class="pre">&quot;key2&quot;:</span> <span class="pre">&quot;b&quot;,</span> <span class="pre">&quot;key3&quot;:</span> <span class="pre">&quot;c&quot;}</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">    ${#foo}</span>
+<span class="s">    - ${key:L}: ${value:L} (first: ${key.first:L}, last: ${key.last:L})</span>
+<span class="s">    ${/foo}</span>
+<span class="s">    &quot;&quot;&quot;</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Evaluates to:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>- key1: a (first: true, last: false)
+- key2: b (first: false, last: false)
+- key3: c (first: false, last: true)
+</pre></div>
+</div>
+<p>Each iteration of the loop pushes a new state in the writer that sets
+the following context properties:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">key</span></code>: contains the current 0-based index of an iterator or the
+current key of a map entry</li>
+<li><code class="docutils literal notranslate"><span class="pre">value</span></code>: contains the current value of an iterator or current value
+of a map entry</li>
+<li><code class="docutils literal notranslate"><span class="pre">key.first</span></code>: set to true if the loop is on the first iteration</li>
+<li><code class="docutils literal notranslate"><span class="pre">key.false</span></code>: set to true if the loop is on the last iteration</li>
+</ul>
+<p>A custom variable name can be used in loop variable bindings. For
+example:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">    ${#foo as key1, value1}</span>
+<span class="s">    - ${key1:L}: ${value1:L} (first: ${key1.first:L}, last: ${key1.last:L})</span>
+<span class="s">    ${/foo}&quot;&quot;&quot;</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="whitespace-control">
+<h3>Whitespace control<a class="headerlink" href="#whitespace-control" title="Permalink to this headline">#</a></h3>
+<p>Conditional blocks and loop blocks that occur on lines that only contain
+whitespace are not written to the template output. For example, if
+<code class="docutils literal notranslate"><span class="pre">foo</span></code> in the following template is falsey, then the template expands
+to an empty string:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">    ${?foo}</span>
+<span class="s">    Foo is set: ${foo:L}</span>
+<span class="s">    ${/foo}&quot;&quot;&quot;</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Whitespace that comes before a template expression can be removed by
+putting <code class="docutils literal notranslate"><span class="pre">-</span></code> at the beginning of the expression.</p>
+<p>Assuming that the first positional argument is &quot;hi&quot;:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">    Greeting:</span>
+<span class="s">        ${-L}&quot;&quot;&quot;</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Expands to:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Greeting:hi\n
+</pre></div>
+</div>
+<p>Whitespace that comes after a template expression can be removed by
+adding <code class="docutils literal notranslate"><span class="pre">-</span></code> to the end of the expression:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">    ${L-}</span>
+
+<span class="s">    .&quot;&quot;&quot;</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Expands to:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>hi.\n\n
+</pre></div>
+</div>
+<p>Leading whitespace cannot be removed when using
+<a class="reference internal" href="#inline-block-alignment"><span class="std std-ref">inline block alignment</span></a>
+(<code class="docutils literal notranslate"><span class="pre">|</span></code>). The following is <em>invalid</em>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;${-C|}&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">             </span><span class="c1">// ^ ^ invalid combination</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="decoupling-codegen-with-symbols.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Decoupling Codegen with Symbols</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="making-codegen-pluggable.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Making Codegen Pluggable</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Amazon Web Services
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Generating Code</a><ul>
+<li><a class="reference internal" href="#abstractcodewriter-is-a-lightweight-template-engine"><code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> is a lightweight template engine</a></li>
+<li><a class="reference internal" href="#interpolation">Interpolation</a></li>
+<li><a class="reference internal" href="#formatters">Formatters</a></li>
+<li><a class="reference internal" href="#relative-parameters">Relative parameters</a></li>
+<li><a class="reference internal" href="#positional-parameters">Positional parameters</a></li>
+<li><a class="reference internal" href="#named-parameters">Named parameters</a></li>
+<li><a class="reference internal" href="#inline-block-alignment">Inline block alignment</a></li>
+<li><a class="reference internal" href="#breaking-up-large-templates-with-the-c-formatter">Breaking up large templates with the <code class="docutils literal notranslate"><span class="pre">$C</span></code> formatter</a></li>
+<li><a class="reference internal" href="#pushing-and-popping-states">Pushing and popping states</a></li>
+<li><a class="reference internal" href="#limiting-blank-lines">Limiting blank lines</a></li>
+<li><a class="reference internal" href="#trimming-trailing-spaces">Trimming trailing spaces</a></li>
+<li><a class="reference internal" href="#code-sections">Code sections</a><ul>
+<li><a class="reference internal" href="#block-sections">Block sections</a></li>
+<li><a class="reference internal" href="#inline-sections">Inline sections</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#template-conditions-and-loops">Template conditions and loops</a><ul>
+<li><a class="reference internal" href="#truthy-and-falsey-values">Truthy and falsey values</a></li>
+<li><a class="reference internal" href="#loops">Loops</a></li>
+<li><a class="reference internal" href="#whitespace-control">Whitespace control</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/scripts/furo.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/tabs.js"></script>
+    </body>
+</html>

@@ -1,0 +1,935 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Glossary" href="../glossary.html" /><link rel="prev" title="Decoupling Codegen with Symbols" href="decoupling-codegen-with-symbols.html" />
+
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+        <title>Using the Semantic Model - Smithy 2.0</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --admonition-font-size: 100%;
+  --admonition-title-font-size: 100%;
+  --color-brand-primary: #C44536;
+  --color-brand-content: #00808b;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Smithy 2.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../_static/smithy.svg" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quick start</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../spec/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/model.html">1. The Smithy model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/simple-types.html">2. Simple types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/aggregate-types.html">3. Aggregate types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/service-types.html">4. Service types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/mixins.html">5. Mixins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/constraint-traits.html">6. Constraint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/type-refinement-traits.html">7. Type refinement traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/documentation-traits.html">8. Documentation traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/behavior-traits.html">9. Behavior traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/resource-traits.html">10. Resource traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/authentication-traits.html">11. Authentication traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/protocol-traits.html">12. Serialization and Protocol traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/streaming.html">13. Streaming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/http-bindings.html">14. HTTP bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/endpoint-traits.html">15. Endpoint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/selectors.html">16. Selectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/model-validation.html">17. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/idl.html">18. Smithy IDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/json-ast.html">19. JSON AST</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../trait-index.html">Trait index</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">Guides</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-models/build-config.html">smithy-build</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../using-code-generation/index.html">Using Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/update-model.html">Updating the Smithy Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/generating-a-client.html">Generating a client</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../model-linters.html">Model linters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../style-guide.html">Style Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">Creating a Smithy Code Generator</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="overview-and-concepts.html">Overview and Concepts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mapping-shapes-to-languages.html">Mapping Smithy Shapes to Your Language</a></li>
+<li class="toctree-l3"><a class="reference internal" href="creating-codegen-repo.html">Creating a Codegen Repo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="configuring-the-generator.html">Configuring the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="implementing-the-generator.html">Implementing the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="making-codegen-pluggable.html">Making Codegen Pluggable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generating-code.html">Generating Code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="decoupling-codegen-with-symbols.html">Decoupling Codegen with Symbols</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Using the Semantic Model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../additional-specs/index.html">Additional specs</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/waiters.html">Waiters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../aws/index.html">AWS integrations</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-core.html">AWS Core Specification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-auth.html">AWS Authentication Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-iam.html">AWS IAM traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-cloudformation.html">AWS CloudFormation Traits</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/protocols/index.html">AWS Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-restxml-protocol.html">AWS restXml protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-query-protocol.html">AWS query protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../implementations.html">Implementations</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-2.0/guides/building-codegen/using-the-semantic-model.rst" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <div class="section" id="using-the-semantic-model">
+<h1>Using the Semantic Model<a class="headerlink" href="#using-the-semantic-model" title="Permalink to this headline">#</a></h1>
+<p>The Java reference implementation of Smithy provides various
+abstractions to interact with the in-memory semantic model. This
+document provides a kind of &quot;cookbook&quot; for achieving various tasks with
+the Smithy model.</p>
+<div class="section" id="traversing-the-model">
+<h2>Traversing the model<a class="headerlink" href="#traversing-the-model" title="Permalink to this headline">#</a></h2>
+<p>Each of the following examples assume a variable named <code class="docutils literal notranslate"><span class="pre">model</span></code> is
+defined that is a <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.model.Model</span></code>.</p>
+<div class="section" id="iterate-over-all-shapes">
+<h3>Iterate over all shapes<a class="headerlink" href="#iterate-over-all-shapes" title="Permalink to this headline">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Model#toSet</span></code> is a cheap operation that just provides a <code class="docutils literal notranslate"><span class="pre">Set</span></code>
+view over a model.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Shape</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">toSet</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// ...</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="iterate-over-all-shapes-of-a-specific-type">
+<h3>Iterate over all shapes of a specific type<a class="headerlink" href="#iterate-over-all-shapes-of-a-specific-type" title="Permalink to this headline">#</a></h3>
+<p>Each type of shape in Smithy has a dedicated <code class="docutils literal notranslate"><span class="pre">Model#getXShapes</span></code>
+method. These methods are cheap to invoke. They just provide a
+filtered <code class="docutils literal notranslate"><span class="pre">Set</span></code> view over a model.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">ServiceShape</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getServiceShapes</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// ...</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">StructureShape</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getStructureShapes</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// ...</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">MemberShape</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getMemberShapes</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// ...</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="c1">// etc...</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="iterate-over-all-shapes-with-a-specific-trait">
+<h3>Iterate over all shapes with a specific trait<a class="headerlink" href="#iterate-over-all-shapes-with-a-specific-trait" title="Permalink to this headline">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Model#getShapesWithTrait</span></code> returns shapes that have a specific trait.
+This is a cheap method to call and uses caches internally. The provided
+trait class can be retrieved from each returned shape. The following
+example uses <code class="docutils literal notranslate"><span class="pre">DeprecatedTrait</span></code> but any trait class can be used.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Shape</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getShapesWithTrait</span><span class="p">(</span><span class="n">DeprecatedTrait</span><span class="p">.</span><span class="na">class</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">DeprecatedTrait</span><span class="w"> </span><span class="n">trait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">expectTrait</span><span class="p">(</span><span class="n">DeprecatedTrait</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="iterate-over-shapes-of-a-specific-type-with-a-specific-trait">
+<h3>Iterate over shapes of a specific type with a specific trait<a class="headerlink" href="#iterate-over-shapes-of-a-specific-type-with-a-specific-trait" title="Permalink to this headline">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Model#getXShapesWithTrait</span></code> returns shapes of type <code class="docutils literal notranslate"><span class="pre">X</span></code> that have a
+specific trait. Each type of shape has a dedicated <code class="docutils literal notranslate"><span class="pre">Model#getXShapesWithTrait</span></code>
+method. This is a cheap method to call and uses caches internally.
+The provided trait class can be retrieved from each returned shape. The
+following example uses <code class="docutils literal notranslate"><span class="pre">SensitiveTrait</span></code> but any trait class can be used.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">StructureShape</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getStructureShapesWithTrait</span><span class="p">(</span><span class="n">SensitiveTrait</span><span class="p">.</span><span class="na">class</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">SensitiveTrait</span><span class="w"> </span><span class="n">trait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">expectTrait</span><span class="p">(</span><span class="n">SensitiveTrait</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">StringShape</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getStringShapesWithTrait</span><span class="p">(</span><span class="n">SensitiveTrait</span><span class="p">.</span><span class="na">class</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">SensitiveTrait</span><span class="w"> </span><span class="n">trait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">expectTrait</span><span class="p">(</span><span class="n">SensitiveTrait</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="c1">// etc..</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="stream-over-all-shapes">
+<h3>Stream over all shapes<a class="headerlink" href="#stream-over-all-shapes" title="Permalink to this headline">#</a></h3>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">StringShape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">strings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">shapes</span><span class="p">(</span><span class="n">StringShape</span><span class="p">.</span><span class="na">class</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">getId</span><span class="p">().</span><span class="na">getNamespace</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;foo.bar&quot;</span><span class="p">));</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">In general, prefer the named methods that convert <code class="docutils literal notranslate"><span class="pre">Model</span></code> to a set.
+However, it's sometimes useful to break down complicated pipeline
+style transformations into streams.</p>
+</div>
+</div>
+<div class="section" id="traversing-the-members-of-a-shape">
+<h3>Traversing the members of a shape<a class="headerlink" href="#traversing-the-members-of-a-shape" title="Permalink to this headline">#</a></h3>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">StructureShape</span><span class="w"> </span><span class="n">struct</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">MemberShape</span><span class="w"> </span><span class="n">member</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">struct</span><span class="p">.</span><span class="na">members</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// Get the shape targeted by the member.</span><span class="w"></span>
+<span class="w">    </span><span class="n">Shape</span><span class="w"> </span><span class="n">target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">expectShape</span><span class="p">(</span><span class="n">member</span><span class="p">.</span><span class="na">getTarget</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">member</span><span class="p">.</span><span class="na">getMemberName</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; targets &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">target</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// Get that container of the member.</span><span class="w"></span>
+<span class="w">    </span><span class="n">Shape</span><span class="w"> </span><span class="n">container</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">expectShape</span><span class="p">(</span><span class="n">member</span><span class="p">.</span><span class="na">getContainer</span><span class="p">());</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>Members are ordered based on the order given in the Smithy model</li>
+<li>You can order the members differently if needed (for example sorting
+them using a <code class="docutils literal notranslate"><span class="pre">TreeMap</span></code>).</li>
+<li>The above code works the same way for any shape, whether it's a
+structure, union, list, or map.</li>
+<li>By the time a code generator is running, the model has been
+thoroughly validated. You should use the various methods that start
+with <code class="docutils literal notranslate"><span class="pre">expect</span></code> to more easily interact with shapes.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="visiting-shapes">
+<h3>Visiting shapes<a class="headerlink" href="#visiting-shapes" title="Permalink to this headline">#</a></h3>
+<p>Smithy often relies on <em>visitors</em> to dispatch to different typed methods
+for handling different kinds of shapes.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Silly example that returns the numbers of members a shape has.</span><span class="w"></span>
+<span class="n">ShapeVisitor</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">visitor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ShapeVisitor</span><span class="p">.</span><span class="na">Default</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="nf">getDefault</span><span class="p">(</span><span class="n">Shape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="nf">listShape</span><span class="p">(</span><span class="n">ListShape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="nf">mapShape</span><span class="p">(</span><span class="n">MapShape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="nf">structureShape</span><span class="p">(</span><span class="n">StructureShape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">members</span><span class="p">().</span><span class="na">size</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="nf">unionShape</span><span class="p">(</span><span class="n">UnionShape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">members</span><span class="p">().</span><span class="na">size</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="n">StringShape</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">exampleThatGetsString</span><span class="p">();</span><span class="w"></span>
+<span class="kt">int</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">string</span><span class="p">.</span><span class="na">accept</span><span class="p">(</span><span class="n">visitor</span><span class="p">);</span><span class="w"></span>
+<span class="k">assert</span><span class="p">(</span><span class="n">count</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>The <code class="docutils literal notranslate"><span class="pre">accept</span></code> method of a shape is used to apply a visitor to the
+shape.</li>
+<li>You should typically use the <code class="docutils literal notranslate"><span class="pre">Visitor.Default</span></code> implementation to
+implement a visitor.</li>
+<li>A simpler way to get the answer of the above example is to just call
+<code class="docutils literal notranslate"><span class="pre">shape.members().size()</span></code>.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="knowledge-indexes">
+<h2>Knowledge Indexes<a class="headerlink" href="#knowledge-indexes" title="Permalink to this headline">#</a></h2>
+<p>Smithy provides various knowledge index implementations that are used to
+break down more complex tasks into easily queried, pre-computed data
+stores. These knowledge indexes are also cached on a <code class="docutils literal notranslate"><span class="pre">Model</span></code> object,
+making them cheaper to use than recomputing information multiple times
+across things like validators.</p>
+<div class="section" id="get-every-operation-in-a-service-or-resource">
+<h3>Get every operation in a service or resource<a class="headerlink" href="#get-every-operation-in-a-service-or-resource" title="Permalink to this headline">#</a></h3>
+<p>Service shapes can contain resources which can contain operations.
+<code class="docutils literal notranslate"><span class="pre">TopDownIndex</span></code> will walk the service/resource to find all contained
+operations.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">TopDownIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TopDownIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
+<span class="n">index</span><span class="p">.</span><span class="na">getContainedOperations</span><span class="p">(</span><span class="n">serviceShape</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-every-resource-in-a-service-or-resource">
+<h3>Get every resource in a service or resource<a class="headerlink" href="#get-every-resource-in-a-service-or-resource" title="Permalink to this headline">#</a></h3>
+<p>Service shapes can contain resources which can themselves contain
+resources. <code class="docutils literal notranslate"><span class="pre">TopDownIndex</span></code> will walk the service/resource to find
+all contained operations.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">TopDownIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TopDownIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
+<span class="n">index</span><span class="p">.</span><span class="na">getContainedResources</span><span class="p">(</span><span class="n">serviceShape</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="determine-if-a-member-is-nullable">
+<h3>Determine if a member is nullable<a class="headerlink" href="#determine-if-a-member-is-nullable" title="Permalink to this headline">#</a></h3>
+<p>Taking the version of the Smithy IDL into account when computing
+the nullability of a member can be complex. <code class="docutils literal notranslate"><span class="pre">NullableIndex</span></code>
+hides all of this complexity by providing a simple boolean result
+for a given member shape.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">NullableIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NullableIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="p">.</span><span class="na">isMemberNullable</span><span class="p">(</span><span class="n">someMemberShape</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// nullable</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-pagination-information-about-an-operation">
+<h3>Get pagination information about an operation<a class="headerlink" href="#get-pagination-information-about-an-operation" title="Permalink to this headline">#</a></h3>
+<p>Resolving information about paginated operations in Smithy requires
+some bookkeeping. <code class="docutils literal notranslate"><span class="pre">PaginatedIndex</span></code> tries to consolidate all the
+information you might need when interacting with paginated traits.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">PaginatedIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaginatedIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
+
+<span class="n">index</span><span class="p">.</span><span class="na">getPaginationInfo</span><span class="p">(</span><span class="n">service</span><span class="p">,</span><span class="w"> </span><span class="n">operation</span><span class="p">).</span><span class="na">ifPresenet</span><span class="p">(</span><span class="n">info</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// method invoked if the operation is paginated.</span><span class="w"></span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Service shape: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="na">getService</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Operation shape: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="na">getOperation</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Input shape: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="na">getInput</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Output shape: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="na">getOutput</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Paginated trait: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="na">getPaginatedTrait</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Input token member: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="na">getInputTokenMember</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Output token membber: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="na">getOutputTokenMemberPath</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// etc...</span><span class="w"></span>
+<span class="p">});</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-the-http-binding-response-status-code-of-an-operation">
+<h3>Get the HTTP binding response status code of an operation<a class="headerlink" href="#get-the-http-binding-response-status-code-of-an-operation" title="Permalink to this headline">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">HttpBindingIndex</span></code> can provide all kinds of information about
+the HTTP bindings of an operation, including the response status
+code.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">HttpBindingIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HttpBindingIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
+<span class="kt">int</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="p">.</span><span class="na">getResponseCode</span><span class="p">(</span><span class="n">operationShape</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-the-request-content-type-of-an-operation">
+<h3>Get the request content-type of an operation<a class="headerlink" href="#get-the-request-content-type-of-an-operation" title="Permalink to this headline">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">HttpBindingIndex</span></code> can attempt to resolve the Content-Type header
+of a request. The content-type might not be statically known by
+the model and might rely on protocol-specific information.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">HttpBindingIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HttpBindingIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
+
+<span class="n">String</span><span class="w"> </span><span class="n">defaultPayloadType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;application/json&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="n">String</span><span class="w"> </span><span class="n">eventStreamType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;application/vnd.amazon.event-stream&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="n">String</span><span class="w"> </span><span class="n">contentType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">determineRequestContentType</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span><span class="w"> </span><span class="n">defaultPayloadType</span><span class="p">,</span><span class="w"> </span><span class="n">eventStreamType</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">orElseNull</span><span class="p">();</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-the-response-content-type-of-an-operation">
+<h3>Get the response content-type of an operation<a class="headerlink" href="#get-the-response-content-type-of-an-operation" title="Permalink to this headline">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">HttpBindingIndex</span></code> can attempt to resolve the Content-Type header
+of a response. The content-type might not be statically known by
+the model and might rely on protocol-specific information.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">HttpBindingIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HttpBindingIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
+
+<span class="n">String</span><span class="w"> </span><span class="n">defaultPayloadType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;application/json&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="n">String</span><span class="w"> </span><span class="n">eventStreamType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;application/vnd.amazon.event-stream&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="n">String</span><span class="w"> </span><span class="n">contentType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">determineResponseContentType</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span><span class="w"> </span><span class="n">defaultPayloadType</span><span class="p">,</span><span class="w"> </span><span class="n">eventStreamType</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">.</span><span class="na">orElseNull</span><span class="p">();</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-http-binding-information-of-an-operation">
+<h3>Get HTTP binding information of an operation<a class="headerlink" href="#get-http-binding-information-of-an-operation" title="Permalink to this headline">#</a></h3>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">HttpBindingIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HttpBindingIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
+<span class="kd">var</span><span class="w"> </span><span class="n">requestBindings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="p">.</span><span class="na">getRequestBindings</span><span class="p">(</span><span class="n">operationShape</span><span class="p">);</span><span class="w"></span>
+<span class="kd">var</span><span class="w"> </span><span class="n">responseBindings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="p">.</span><span class="na">getResponseBindings</span><span class="p">(</span><span class="n">operationShape</span><span class="p">);</span><span class="w"></span>
+
+<span class="c1">// This loop works the same way for request or response bindings.</span><span class="w"></span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">var</span><span class="w"> </span><span class="n">entry</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">requestBindings</span><span class="p">.</span><span class="na">entrySet</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">memberName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="na">getKey</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">HttpBinding</span><span class="w"> </span><span class="n">binding</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="na">getValue</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Member: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">memberName</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Member shape: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">binding</span><span class="p">.</span><span class="na">getMember</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Location: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">binding</span><span class="p">.</span><span class="na">getLocation</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Location name: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">binding</span><span class="p">.</span><span class="na">getLocationName</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="n">binding</span><span class="p">.</span><span class="na">getBindingTrait</span><span class="p">().</span><span class="na">ifPresent</span><span class="p">(</span><span class="n">trait</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Binding trait: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">trait</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">});</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-the-timestamp-format-used-for-a-specific-http-binding">
+<h3>Get the timestamp format used for a specific HTTP binding<a class="headerlink" href="#get-the-timestamp-format-used-for-a-specific-http-binding" title="Permalink to this headline">#</a></h3>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Determine the format used for members bound to HTTP labels.</span><span class="w"></span>
+<span class="n">HttpBindingIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HttpBindingIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
+<span class="kd">var</span><span class="w"> </span><span class="n">formatUsedInPayloads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TimestampFormatTrait</span><span class="p">.</span><span class="na">Format</span><span class="p">.</span><span class="na">EPOCH_SECONDS</span><span class="p">;</span><span class="w"></span>
+<span class="kd">var</span><span class="w"> </span><span class="n">format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="p">.</span><span class="na">determineTimestampFormat</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">member</span><span class="p">,</span><span class="w"> </span><span class="n">HttpBinding</span><span class="p">.</span><span class="na">Location</span><span class="p">.</span><span class="na">LABEL</span><span class="p">,</span><span class="w"> </span><span class="n">formatUsedInPayloads</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-members-that-have-specific-http-bindings">
+<h3>Get members that have specific HTTP bindings<a class="headerlink" href="#get-members-that-have-specific-http-bindings" title="Permalink to this headline">#</a></h3>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Find every member in the input of the operation bound to an HTTP label.</span><span class="w"></span>
+<span class="n">HttpBindingIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HttpBindingIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
+<span class="kd">var</span><span class="w"> </span><span class="n">locationTypeToFind</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HttpBinding</span><span class="p">.</span><span class="na">Location</span><span class="p">.</span><span class="na">LABEL</span><span class="p">;</span><span class="w"></span>
+<span class="kd">var</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="p">.</span><span class="na">getRequestBindings</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span><span class="w"> </span><span class="n">locationTypeToFind</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="transforming-the-model">
+<span id="codegen-transforming-the-model"></span><h2>Transforming the model<a class="headerlink" href="#transforming-the-model" title="Permalink to this headline">#</a></h2>
+<p>It's often necessary to transform a Smithy model prior to code
+generation. For example, you might need to remove operations that use
+unsupported features, remove shapes that aren't in the closure of a
+service, or add traits to shapes that are specific to your code
+generator. Smithy provides a model transformation abstraction in
+<code class="docutils literal notranslate"><span class="pre">ModelTransformer</span></code>. <code class="docutils literal notranslate"><span class="pre">ModelTransformer</span></code> provides various methods for
+transforming a model, some of which are documented below.</p>
+<div class="section" id="remove-deprecated-operations">
+<h3>Remove deprecated operations<a class="headerlink" href="#remove-deprecated-operations" title="Permalink to this headline">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">ModelTransformer</span></code> will remove any broken relationships when a
+shape is removed. If you remove an operation from the model, it's
+removed from any service or resource.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModelTransformer</span><span class="p">.</span><span class="na">create</span><span class="p">().</span><span class="na">removeShapesIf</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">isOperationShape</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">hasTrait</span><span class="p">(</span><span class="n">DeprecatedTrait</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w"></span>
+<span class="p">)};</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="add-a-trait-to-every-shape">
+<h3>Add a trait to every shape<a class="headerlink" href="#add-a-trait-to-every-shape" title="Permalink to this headline">#</a></h3>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModelTransformer</span><span class="p">.</span><span class="na">create</span><span class="p">().</span><span class="na">mapShapes</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Shape</span><span class="p">.</span><span class="na">shapeToBuilder</span><span class="p">(</span><span class="n">shape</span><span class="p">).</span><span class="na">addTrait</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">MyCustomTrait</span><span class="p">()).</span><span class="na">build</span><span class="p">();</span><span class="w"></span>
+<span class="p">});</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">You can convert any shape to a builder using the static method
+<code class="docutils literal notranslate"><span class="pre">Shape#shapeToBuilder</span></code></p>
+</div>
+</div>
+<div class="section" id="flattening-mixins">
+<span id="codegen-flattening-mixins"></span><h3>Flattening mixins<a class="headerlink" href="#flattening-mixins" title="Permalink to this headline">#</a></h3>
+<p>Mixins are used to share shape definitions across a model. They're
+essentially build-time copy and paste, and they have no meaningful
+impact on generated code. For example, the following model uses mixins:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@mixin</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">HasUsername</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
+<span class="w">    </span><span class="py">username</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">structure </span><span class="nc">UserData</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">HasUserName</span>]<span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">isAdmin</span><span class="p">:</span><span class="w"> </span><span class="vc">Boolean</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>Code generators should flatten mixins out of a model before generating
+code, allowing them to more easily generate code without needing to
+implement special handling for mixins. This can be done using a Smithy
+model transformation:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">ModelTransformer</span><span class="w"> </span><span class="n">transformer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModelTransformer</span><span class="p">.</span><span class="na">create</span><span class="p">();</span><span class="w"></span>
+<span class="n">Model</span><span class="w"> </span><span class="n">transformedModel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">transformer</span><span class="p">.</span><span class="na">flattenAndRemoveMixins</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>After flattening mixins, the above model is equivalent to:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">UserData</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">HasUserName</span>]<span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
+<span class="w">    </span><span class="py">username</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+
+<span class="w">    </span><span class="py">isAdmin</span><span class="p">:</span><span class="w"> </span><span class="vc">Boolean</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="copying-service-errors-to-operation-errors">
+<span id="codegen-copying-errors-to-service"></span><h3>Copying service errors to operation errors<a class="headerlink" href="#copying-service-errors-to-operation-errors" title="Permalink to this headline">#</a></h3>
+<p>Service shapes can define a set of errors that can be returned from any
+operation. While this is great for modeling a service, it makes code
+generation harder.</p>
+<p>For example:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span><span class="vc">GetSomething</span><span class="w"></span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ValidationError</span>]<span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">operation </span><span class="nc">GetSomething</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{}<span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{}<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>Code generators can flatten these errors using a model transformer:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">ModelTransformer</span><span class="w"> </span><span class="n">transformer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModelTransformer</span><span class="p">.</span><span class="na">create</span><span class="p">();</span><span class="w"></span>
+<span class="n">Model</span><span class="w"> </span><span class="n">transformed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">transformer</span><span class="p">.</span><span class="na">copyServiceErrorsToOperations</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">service</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>After flattening the error hierarchy, the above model is equivalent to:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span><span class="vc">GetSomething</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="kd">operation </span><span class="nc">GetSomething</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{}<span class="w"></span>
+<span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{}<span class="w"></span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ValidationError</span>]<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="remove-shapes-not-in-the-closure-of-a-service">
+<h3>Remove shapes not in the closure of a service<a class="headerlink" href="#remove-shapes-not-in-the-closure-of-a-service" title="Permalink to this headline">#</a></h3>
+<p>Smithy models can contain multiple services and shapes that aren't connected
+to any service. Code generation is often easier if you remove shapes from the
+model that are not connected to the service being generated.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Walker</span><span class="w"> </span><span class="n">walker</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Walker</span><span class="p">(</span><span class="n">someModel</span><span class="p">);</span><span class="w"></span>
+<span class="n">Set</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">closure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">walker</span><span class="p">.</span><span class="na">walkShapes</span><span class="p">(</span><span class="n">someService</span><span class="p">);</span><span class="w"></span>
+<span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModelTransformer</span><span class="p">.</span><span class="na">create</span><span class="p">().</span><span class="na">removeShapesIf</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">!</span><span class="n">closure</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">shape</span><span class="p">));</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="selectors">
+<h2>Selectors<a class="headerlink" href="#selectors" title="Permalink to this headline">#</a></h2>
+<p>Selectors are used to find shapes in the model that match a query. While
+you should typically not need selectors when writing Java code, they can
+sometimes make getting the desired set of shapes far simpler than
+writing complex loops and conditionals. Selectors have similar caveats
+as regular expressions: selectors are slower than handwritten code, and
+sometimes handwritten code is easier to understand than the DSL. Whether
+a selector is appropriate for a given use case will mostly depend on the
+complexity of the query and if there's already a built-in abstraction
+for what you're trying to do.</p>
+<div class="section" id="creating-selectors">
+<h3>Creating Selectors<a class="headerlink" href="#creating-selectors" title="Permalink to this headline">#</a></h3>
+<p>Let's say you want to find something complex, like every operation that
+has a <a class="reference internal" href="../../spec/streaming.html#streaming-trait"><span class="std std-ref">streaming trait</span></a> member in its input. This can be achieved through
+the following selector:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Selector</span><span class="w"> </span><span class="n">selector</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Selector</span><span class="p">.</span><span class="na">parse</span><span class="p">(</span><span class="s">&quot;operation :test(-[input]-&gt; structure &gt; member &gt; [trait|streaming])&quot;</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="finding-shapes-that-match-a-selector">
+<h3>Finding shapes that match a selector<a class="headerlink" href="#finding-shapes-that-match-a-selector" title="Permalink to this headline">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Selector#select</span></code> finds every matching shape and put them in a <code class="docutils literal notranslate"><span class="pre">Set</span></code>.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Set</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">matches</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">selector</span><span class="p">.</span><span class="na">select</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="iterate-over-shapes-that-match-a-selector">
+<h3>Iterate over shapes that match a selector<a class="headerlink" href="#iterate-over-shapes-that-match-a-selector" title="Permalink to this headline">#</a></h3>
+<p>If the result set does not need to be loaded into memory, then using
+<code class="docutils literal notranslate"><span class="pre">shapes()</span></code> is cheaper than using <code class="docutils literal notranslate"><span class="pre">select()</span></code>.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">selector</span><span class="p">.</span><span class="na">shapes</span><span class="p">().</span><span class="na">forEach</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// do something with each shape</span><span class="w"></span>
+<span class="p">});</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reuse-parsed-selectors">
+<h3>Reuse parsed <code class="docutils literal notranslate"><span class="pre">Selector</span></code>s<a class="headerlink" href="#reuse-parsed-selectors" title="Permalink to this headline">#</a></h3>
+<p>Be sure to use a previously parsed selector if a selector will be used
+repeatedly. For example don't do this:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// ❌ DON&#39;T DO THIS ❌</span><span class="w"></span>
+
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">var</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getServiceShapes</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// This is bad! Reuse Selector instances!</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// This has to parse the selector in each iteration of the loop.</span><span class="w"></span>
+<span class="w">    </span><span class="n">Selector</span><span class="w"> </span><span class="n">selector</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Selector</span><span class="p">.</span><span class="na">parse</span><span class="p">(</span><span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="w"></span>
+<span class="w">        </span><span class="s">&quot;[id=%s] -&gt; structure &gt; member[trait|required]&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">shape</span><span class="p">.</span><span class="na">getId</span><span class="p">()));</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">selector</span><span class="p">.</span><span class="na">shapes</span><span class="p">(</span><span class="n">model</span><span class="p">).</span><span class="na">forEach</span><span class="p">(</span><span class="n">match</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// do something with each found shape</span><span class="w"></span>
+<span class="w">    </span><span class="p">});</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Instead, do this:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// ✅ DO THIS</span><span class="w"></span>
+
+<span class="n">Selector</span><span class="w"> </span><span class="n">selector</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Selector</span><span class="p">.</span><span class="na">parse</span><span class="p">(</span><span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="s">&quot;[id=%s] -&gt; structure &gt; member[trait|required]&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">shape</span><span class="p">.</span><span class="na">getId</span><span class="p">()));</span><span class="w"></span>
+
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">var</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getServiceShapes</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">selector</span><span class="p">.</span><span class="na">shapes</span><span class="p">(</span><span class="n">model</span><span class="p">).</span><span class="na">forEach</span><span class="p">(</span><span class="n">match</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// do something with each found shape</span><span class="w"></span>
+<span class="w">    </span><span class="p">});</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../glossary.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Glossary</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="decoupling-codegen-with-symbols.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Decoupling Codegen with Symbols</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Amazon Web Services
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Using the Semantic Model</a><ul>
+<li><a class="reference internal" href="#traversing-the-model">Traversing the model</a><ul>
+<li><a class="reference internal" href="#iterate-over-all-shapes">Iterate over all shapes</a></li>
+<li><a class="reference internal" href="#iterate-over-all-shapes-of-a-specific-type">Iterate over all shapes of a specific type</a></li>
+<li><a class="reference internal" href="#iterate-over-all-shapes-with-a-specific-trait">Iterate over all shapes with a specific trait</a></li>
+<li><a class="reference internal" href="#iterate-over-shapes-of-a-specific-type-with-a-specific-trait">Iterate over shapes of a specific type with a specific trait</a></li>
+<li><a class="reference internal" href="#stream-over-all-shapes">Stream over all shapes</a></li>
+<li><a class="reference internal" href="#traversing-the-members-of-a-shape">Traversing the members of a shape</a></li>
+<li><a class="reference internal" href="#visiting-shapes">Visiting shapes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#knowledge-indexes">Knowledge Indexes</a><ul>
+<li><a class="reference internal" href="#get-every-operation-in-a-service-or-resource">Get every operation in a service or resource</a></li>
+<li><a class="reference internal" href="#get-every-resource-in-a-service-or-resource">Get every resource in a service or resource</a></li>
+<li><a class="reference internal" href="#determine-if-a-member-is-nullable">Determine if a member is nullable</a></li>
+<li><a class="reference internal" href="#get-pagination-information-about-an-operation">Get pagination information about an operation</a></li>
+<li><a class="reference internal" href="#get-the-http-binding-response-status-code-of-an-operation">Get the HTTP binding response status code of an operation</a></li>
+<li><a class="reference internal" href="#get-the-request-content-type-of-an-operation">Get the request content-type of an operation</a></li>
+<li><a class="reference internal" href="#get-the-response-content-type-of-an-operation">Get the response content-type of an operation</a></li>
+<li><a class="reference internal" href="#get-http-binding-information-of-an-operation">Get HTTP binding information of an operation</a></li>
+<li><a class="reference internal" href="#get-the-timestamp-format-used-for-a-specific-http-binding">Get the timestamp format used for a specific HTTP binding</a></li>
+<li><a class="reference internal" href="#get-members-that-have-specific-http-bindings">Get members that have specific HTTP bindings</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#transforming-the-model">Transforming the model</a><ul>
+<li><a class="reference internal" href="#remove-deprecated-operations">Remove deprecated operations</a></li>
+<li><a class="reference internal" href="#add-a-trait-to-every-shape">Add a trait to every shape</a></li>
+<li><a class="reference internal" href="#flattening-mixins">Flattening mixins</a></li>
+<li><a class="reference internal" href="#copying-service-errors-to-operation-errors">Copying service errors to operation errors</a></li>
+<li><a class="reference internal" href="#remove-shapes-not-in-the-closure-of-a-service">Remove shapes not in the closure of a service</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#selectors">Selectors</a><ul>
+<li><a class="reference internal" href="#creating-selectors">Creating Selectors</a></li>
+<li><a class="reference internal" href="#finding-shapes-that-match-a-selector">Finding shapes that match a selector</a></li>
+<li><a class="reference internal" href="#iterate-over-shapes-that-match-a-selector">Iterate over shapes that match a selector</a></li>
+<li><a class="reference internal" href="#reuse-parsed-selectors">Reuse parsed <code class="docutils literal notranslate"><span class="pre">Selector</span></code>s</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/scripts/furo.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/tabs.js"></script>
+    </body>
+</html>

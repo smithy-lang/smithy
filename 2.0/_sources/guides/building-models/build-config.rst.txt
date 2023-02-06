@@ -1,3 +1,5 @@
+.. _smithy-build:
+
 ============
 smithy-build
 ============

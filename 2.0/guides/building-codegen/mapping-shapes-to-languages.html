@@ -1,0 +1,989 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Creating a Codegen Repo" href="creating-codegen-repo.html" /><link rel="prev" title="Overview and Concepts" href="overview-and-concepts.html" />
+
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+        <title>Mapping Smithy Shapes to Your Language - Smithy 2.0</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --admonition-font-size: 100%;
+  --admonition-title-font-size: 100%;
+  --color-brand-primary: #C44536;
+  --color-brand-content: #00808b;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Smithy 2.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../_static/smithy.svg" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quick start</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../spec/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/model.html">1. The Smithy model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/simple-types.html">2. Simple types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/aggregate-types.html">3. Aggregate types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/service-types.html">4. Service types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/mixins.html">5. Mixins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/constraint-traits.html">6. Constraint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/type-refinement-traits.html">7. Type refinement traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/documentation-traits.html">8. Documentation traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/behavior-traits.html">9. Behavior traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/resource-traits.html">10. Resource traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/authentication-traits.html">11. Authentication traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/protocol-traits.html">12. Serialization and Protocol traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/streaming.html">13. Streaming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/http-bindings.html">14. HTTP bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/endpoint-traits.html">15. Endpoint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/selectors.html">16. Selectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/model-validation.html">17. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/idl.html">18. Smithy IDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/json-ast.html">19. JSON AST</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../trait-index.html">Trait index</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">Guides</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-models/build-config.html">smithy-build</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../using-code-generation/index.html">Using Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/update-model.html">Updating the Smithy Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/generating-a-client.html">Generating a client</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../model-linters.html">Model linters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../style-guide.html">Style Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">Creating a Smithy Code Generator</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="overview-and-concepts.html">Overview and Concepts</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Mapping Smithy Shapes to Your Language</a></li>
+<li class="toctree-l3"><a class="reference internal" href="creating-codegen-repo.html">Creating a Codegen Repo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="configuring-the-generator.html">Configuring the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="implementing-the-generator.html">Implementing the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="making-codegen-pluggable.html">Making Codegen Pluggable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generating-code.html">Generating Code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="decoupling-codegen-with-symbols.html">Decoupling Codegen with Symbols</a></li>
+<li class="toctree-l3"><a class="reference internal" href="using-the-semantic-model.html">Using the Semantic Model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../additional-specs/index.html">Additional specs</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/waiters.html">Waiters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../aws/index.html">AWS integrations</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-core.html">AWS Core Specification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-auth.html">AWS Authentication Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-iam.html">AWS IAM traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-cloudformation.html">AWS CloudFormation Traits</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/protocols/index.html">AWS Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-restxml-protocol.html">AWS restXml protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-query-protocol.html">AWS query protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../implementations.html">Implementations</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-2.0/guides/building-codegen/mapping-shapes-to-languages.rst" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <div class="section" id="mapping-smithy-shapes-to-your-language">
+<h1>Mapping Smithy Shapes to Your Language<a class="headerlink" href="#mapping-smithy-shapes-to-your-language" title="Permalink to this headline">#</a></h1>
+<p>One of the first design documents to write is how shapes in Smithy
+will map to types in your target environment. The way shapes map to a
+target environment can also vary depending on if you are generating a
+client or server.</p>
+<div class="section" id="interoperability">
+<h2>Interoperability<a class="headerlink" href="#interoperability" title="Permalink to this headline">#</a></h2>
+<p>When determining how shapes are represented in a target environment, adhering
+to the Smithy specification is a hard requirement and the first of Smithy's
+tenets. This implies two practical considerations to keep in mind:</p>
+<ol class="arabic simple">
+<li>Generators cannot create a client that will break backward
+compatibility if a service team makes a backward compatible change
+according to the Smithy specification. Any deviation from this should
+require opt-in from the end-user and emit warnings.</li>
+<li>Code generators should not enforce their own restrictions on top of
+the restrictions defined in the Smithy model. For example, if a
+particular identifier is a reserved word in the target programming
+language, the code generator should automatically modify the
+identifier to deconflict it with the reserved word.</li>
+</ol>
+</div>
+<div class="section" id="smithy-shapes">
+<h2>Smithy shapes<a class="headerlink" href="#smithy-shapes" title="Permalink to this headline">#</a></h2>
+<p>This section identifies the non-exhaustive shapes and traits that code
+generators need to account for (additional details on each type of shape
+and trait can be found in the Smithy specification).</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">When mapping Smithy shapes to a target environment, you may
+decide that the abstractions provided in the standard library of the
+target environment aren't ergonomic enough or don't map well to Smithy.
+In these cases, you can provide your own abstractions. For example, the
+AWS SDK for Java created an <a class="reference external" href="https://github.com/aws/aws-sdk-java-v2/blob/master/core/sdk-core/src/main/java/software/amazon/awssdk/core/SdkBytes.java">SdkBytes</a> class to make it easier to
+provide the contents of a blob to the SDK.</p>
+</div>
+<div class="section" id="when-to-generate-unique-named-types">
+<h3>When to Generate unique named types<a class="headerlink" href="#when-to-generate-unique-named-types" title="Permalink to this headline">#</a></h3>
+<p>The following shapes <em>should not</em> generate uniquely named types based on the
+name provided in a model:</p>
+<ul class="simple">
+<li>blobs</li>
+<li>booleans</li>
+<li>strings</li>
+<li>numbers</li>
+<li>documents</li>
+<li>lists</li>
+<li>maps</li>
+</ul>
+<p>When possible, the above types should use the target environment's equivalent
+language built-in type (for example, a Smithy string would become a
+Java <code class="docutils literal notranslate"><span class="pre">String`</span></code>). Creating Smithy-specific types where an idiomatic language
+built-in type is available hurts the developer experience of the generator
+and should be avoided. Furthermore, changing the names of these types in the
+Smithy model should not impact generated code.</p>
+<p>The following shapes <em>are</em> expected to translate into named generated types
+or methods in the target environment:</p>
+<ul class="simple">
+<li>services</li>
+<li>operations</li>
+<li>structures</li>
+<li>unions</li>
+<li>structure and union member names</li>
+<li>enums</li>
+<li>intEnums</li>
+<li>enum and intEnum member names</li>
+</ul>
+</div>
+<div class="section" id="blob">
+<h3>Blob<a class="headerlink" href="#blob" title="Permalink to this headline">#</a></h3>
+<p>Blobs represent opaque binary data. There are three kinds of blobs:</p>
+<ol class="arabic simple">
+<li>Blobs that are expected to fit into memory. These shapes are not
+marked with the <a class="reference internal" href="../../spec/streaming.html#streaming-trait"><span class="std std-ref">streaming trait</span></a>. Such blobs should be
+represented as a kind of byte array that is stored in memory
+(for example, <code class="docutils literal notranslate"><span class="pre">byte[]</span></code> in Java, or a string in PHP).</li>
+<li>Unbounded blobs that are not expected to fit into memory. These
+blobs are marked with the <code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait and should be
+represented using some kind of streaming abstraction that
+can work with potentially infinite streams of data.</li>
+<li>Bounded blobs that are not expected to fit into memory. These
+blobs are marked with both the <code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait and the
+<a class="reference internal" href="../../spec/streaming.html#requireslength-trait"><span class="std std-ref">requiresLength trait</span></a>, which implies that the stream has
+some method for &quot;telling&quot; callers its length.</li>
+</ol>
+</div>
+<div class="section" id="boolean">
+<h3>Boolean<a class="headerlink" href="#boolean" title="Permalink to this headline">#</a></h3>
+<p>Boolean shapes in Smithy represent true or false values. These should
+always map to a language's standard Boolean type.</p>
+</div>
+<div class="section" id="document">
+<h3>Document<a class="headerlink" href="#document" title="Permalink to this headline">#</a></h3>
+<p>The document type represents untyped data. Document types by default are
+JSON-like values that can be set to a string, number, boolean, list, map,
+or null. Document types are generally used for truly untyped data that
+users are expected to dynamically inspect at runtime.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Document types are limited to the JSON data model for now; however,
+future support for other type systems <em>could</em> be added to document
+types (for example, a CBOR document).</p>
+</div>
+</div>
+<div class="section" id="string">
+<h3>String<a class="headerlink" href="#string" title="Permalink to this headline">#</a></h3>
+<p>Strings should be represented using string types from the target
+environment's standard library when possible.</p>
+<ul class="simple">
+<li>Avoid creating custom string type for Smithy code generators unless
+it's absolutely necessary.</li>
+<li>Never generate specific types for normal strings — the name of a
+normal string shape is irrelevant and should not appear in generated
+code.</li>
+<li>Code used to represent strings must be able to losslessly round-trip
+UTF-8 data. Don't create a custom string type if your programming
+language represents strings as bytes (like in PHP) or uses UTF-16
+(like Java). However, if the string type in a given language can only
+contain, say, ASCII characters, then you should use some kind of byte
+array to represent strings.</li>
+</ul>
+<p>Strings in Smithy can be marked with the <a class="reference internal" href="../../spec/constraint-traits.html#enum-trait"><span class="std std-ref">enum trait</span></a>; however,
+Smithy code generators should transform models prior to code generation
+to convert these kinds of strings to proper <code class="docutils literal notranslate"><span class="pre">enum</span></code> shapes.</p>
+</div>
+<div class="section" id="enums">
+<h3>Enums<a class="headerlink" href="#enums" title="Permalink to this headline">#</a></h3>
+<p>Smithy IDL V2 introduced a proper <a class="reference internal" href="../../spec/simple-types.html#enum"><span class="std std-ref">enum</span></a> shape that obsoletes the
+<a class="reference internal" href="../../spec/constraint-traits.html#enum-trait"><span class="std std-ref">enum trait</span></a>. Enums define a set of allowed string values that can be
+provided for the shape.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">Because client implementations often lag behind service, clients
+<em>must not</em> fail to deserialize and serialize unknown enum values.
+For example, implementations could use a kind of discriminated union
+with a catch-all unknown value placeholder, provide additional
+accessor methods to retrieve the raw string value of an enum,
+or some other technique to carry unknown values.</p>
+</div>
+<p>Consider the following Smithy model:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">enum </span><span class="nc">Suit</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="vc">DIAMOND</span><span class="w"></span>
+<span class="w">    </span><span class="vc">CLUB</span><span class="w"></span>
+<span class="w">    </span><span class="vc">HEART</span><span class="w"></span>
+<span class="w">    </span><span class="vc">SPADE</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>It could be generated as the following enum in Rust:</p>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="cp">#[non_exhaustive]</span><span class="w"></span>
+<span class="k">enum</span> <span class="nc">Suit</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">   </span><span class="n">DIAMOND</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="n">CLUB</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="n">HEART</span><span class="p">,</span><span class="w"></span>
+<span class="w">   </span><span class="n">SPADE</span><span class="p">,</span><span class="w"></span>
+
+<span class="w">   </span><span class="cp">#[non_exhaustive]</span><span class="w"></span>
+<span class="w">   </span><span class="n">Unknown</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Notice that unknown enum variants are captured in <code class="docutils literal notranslate"><span class="pre">Unknown</span></code>, along
+with the unknown value. This allows the enum type to store newly added
+values that the client doesn't yet know about. Also note that the enum
+is <code class="docutils literal notranslate"><span class="pre">non_exhaustive</span></code>, because new enum values can be added in the
+future, and we want consumers of the generated code to account for this.</p>
+<p>Smithy also supports <a class="reference internal" href="../../spec/simple-types.html#intenum"><span class="std std-ref">intEnum</span></a>. It's just like an <code class="docutils literal notranslate"><span class="pre">enum</span></code> but is an
+enum of integer values. <code class="docutils literal notranslate"><span class="pre">intEnum</span></code> shapes must also support sending and
+receiving unknown integer values to account for newly added enum
+members. For example:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">intEnum </span><span class="nc">FaceCard</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="vc">JACK</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">1</span><span class="w"></span>
+<span class="w">    </span><span class="vc">QUEEN</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">2</span><span class="w"></span>
+<span class="w">    </span><span class="vc">KING</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">3</span><span class="w"></span>
+<span class="w">    </span><span class="vc">ACE</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">4</span><span class="w"></span>
+<span class="w">    </span><span class="vc">JOKER</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">5</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="timestamp">
+<h3>Timestamp<a class="headerlink" href="#timestamp" title="Permalink to this headline">#</a></h3>
+<p>A <a class="reference internal" href="../../spec/simple-types.html#timestamp"><span class="std std-ref">timestamp</span></a> shape represents an instant in time with no UTC
+offset or timezone. For example, to represent a timestamp in Java,
+you would use <a class="reference external" href="https://docs.oracle.com/javase/8/docs/api/java/time/Instant.html">java.time.Instant</a> and not <a class="reference external" href="https://docs.oracle.com/javase/8/docs/api/java/time/OffsetDateTime.html">java.time.OffsetDateTime</a>
+because a timestamp has no UTC offset.</p>
+<p>The serialization format of a timestamp is an implementation detail
+determined by a <a class="reference internal" href="../../spec/protocol-traits.html#protocoldefinition-trait"><span class="std std-ref">protocol</span></a> and must not
+have any effect on the types exposed by tooling to represent a timestamp
+value. If a timestamp in one service is serialized as a string and in
+another service as an integer, the type exposed by the code generator to
+represent these timestamps must be exactly the same type. Put another
+way: changing the protocol and serialization format of a timestamp should
+not break previously generated code.</p>
+</div>
+<div class="section" id="numbers-byte-short-integer-long-float-double-biginteger-bigdecimal">
+<h3>Numbers: byte, short, integer, long, float, double, bigInteger, bigDecimal<a class="headerlink" href="#numbers-byte-short-integer-long-float-double-biginteger-bigdecimal" title="Permalink to this headline">#</a></h3>
+<p>Smithy supports various numeric types. If a target environment does not
+support smaller types like byte, short, or float, then these types
+should be rolled into the next largest supported numeric type (e.g.,
+byte → integer, short → integer, float → double).</p>
+<p>If a target environment does not support <a class="reference internal" href="../../spec/simple-types.html#biginteger"><span class="std std-ref">bigInteger</span></a> (an arbitrary
+precision integer) or <a class="reference internal" href="../../spec/simple-types.html#bigdecimal"><span class="std std-ref">bigDecimal</span></a> (an arbitrary precision decimal),
+then a library dependency should be used if and only if one of these types are
+encountered or the runtime library of the generator should provide an
+implementation.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If a library is needed to provide support for larger numeric types,
+then the library should only be required conditionally if the type is
+used in the service closure. This can be handled automatically using
+Smithy symbol and symbol dependency abstractions, or by crawling the
+shapes in a service closure to detect specific types.</p>
+</div>
+</div>
+<div class="section" id="list">
+<h3>List<a class="headerlink" href="#list" title="Permalink to this headline">#</a></h3>
+<p>The <em>list</em> type represents an ordered homogeneous collection of values.
+A list type should be code generated using the list or array type
+provided in the standard library of the target environment.</p>
+<p class="rubric">Value presence</p>
+<ul class="simple">
+<li>List values are always present (non-nullable) unless the list is marked
+with the <code class="docutils literal notranslate"><span class="pre">&#64;sparse</span></code> trait.</li>
+</ul>
+<div class="section" id="ignore-set-shapes-from-smithy-1-0">
+<h4>Ignore set shapes from Smithy 1.0<a class="headerlink" href="#ignore-set-shapes-from-smithy-1-0" title="Permalink to this headline">#</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">set</span></code> type was deprecated in Smithy 1.0 and removed in Smithy
+2.0. Smithy model implementations should automatically add the
+<a class="reference internal" href="../../spec/constraint-traits.html#uniqueitems-trait"><span class="std std-ref">uniqueItems trait</span></a> to set shapes, and code generators should
+treat set shapes exactly like list shapes marked with <code class="docutils literal notranslate"><span class="pre">uniqueItems</span></code>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">When using the Smithy Java reference implementation, the
+<code class="docutils literal notranslate"><span class="pre">uniqueItems</span></code> trait is automatically added to set shapes, and the
+class used to represent set shapes, SetShape, extends from ListShape,
+allowing you to ignore the difference between list and set shapes
+altogether.</p>
+</div>
+</div>
+</div>
+<div class="section" id="map">
+<h3>Map<a class="headerlink" href="#map" title="Permalink to this headline">#</a></h3>
+<p>The <a class="reference internal" href="../../spec/aggregate-types.html#map"><span class="std std-ref">Map</span></a> type represents a map data structure that maps
+<code class="docutils literal notranslate"><span class="pre">string</span></code> keys to homogeneous values. Maps are not required to
+maintain insertion order. Implementations should use the idiomatic
+map data structure of the target environment when possible.</p>
+<p class="rubric">Key and value presence</p>
+<ul class="simple">
+<li>Map keys are always present and never nullable.</li>
+<li>Map values are always present (non-nullable) unless the map is
+marked with the <a class="reference internal" href="../../spec/type-refinement-traits.html#sparse-trait"><span class="std std-ref">sparse trait</span></a>.</li>
+</ul>
+</div>
+<div class="section" id="structure">
+<h3>Structure<a class="headerlink" href="#structure" title="Permalink to this headline">#</a></h3>
+<p>The <em>structure</em> type represents a fixed set of named, heterogeneous
+values. Structures are always code generated and use the name provided
+in the model. Structures are generally code generated into things like
+POJOs, POCOs, etc. Smithy IDL 2.0 supports adding a <a class="reference internal" href="../../spec/type-refinement-traits.html#default-trait"><span class="std std-ref">default trait</span></a> to
+structure members. Some target environments allow types to be created using a
+kind of literal syntax that does not perform any custom initialization.
+In these cases, it may be necessary to use a constructor method in order
+to set members to their default zero values if needed.</p>
+<p>Structure and union members are ordered based on the order they are
+defined in the model. When adding new members, they should be added to
+the end of the structure. While this allows code generators like C++ to
+maintain ABI compatibility, it requires extreme levels of rigor to
+enforce that every change will be ABI compatible.</p>
+<div class="section" id="error-structures">
+<h4>Error structures<a class="headerlink" href="#error-structures" title="Permalink to this headline">#</a></h4>
+<p>Structures marked with the <code class="docutils literal notranslate"><span class="pre">&#64;error</span></code> trait should be code generated as
+a kind of error type or exception type in the target environment. A good
+design goal for errors generated from Smithy models is to allow generic
+abstractions to work across generated Smithy clients. For example,
+developers should be able to create a middleware that can be used with
+any Smithy generated client to check if an error is a client error,
+server error, retryable, or throttling error. The <a class="reference internal" href="../../spec/behavior-traits.html#retryable-trait"><span class="std std-ref">retryable trait</span></a>
+is used to describe if an error can be retried, and the <code class="docutils literal notranslate"><span class="pre">throttling</span></code>
+property of this trait describes if the error is due to throttling. This
+information should be exposed by the generated type in some way.</p>
+<p>Errors could have a kind of hierarchy resembling the following (note
+that other error conditions like networking errors need to be accounted
+for as well):</p>
+<ul class="simple">
+<li>Service specific error: a top-level error type generated specifically
+for every error the service can return. This error is used when an
+unmodeled exception is encountered.</li>
+<li>Client Error: Error used when an <code class="docutils literal notranslate"><span class="pre">&#64;error</span></code> trait is set to &quot;client&quot;.</li>
+<li>Server Error: Error used when an <code class="docutils literal notranslate"><span class="pre">&#64;error</span></code> trait is set to &quot;server&quot;.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="union">
+<h3>Union<a class="headerlink" href="#union" title="Permalink to this headline">#</a></h3>
+<p>The union type represents a <a class="reference external" href="https://en.wikipedia.org/wiki/Tagged_union">tagged union data
+structure</a> that can take
+on several different, but fixed, types. Unions function similarly to
+structures except that only one member can be used at any one time.
+Unions are always code generated and use the name provided in the model.
+Code generators should provide some kind of abstraction to make union
+types easier to use. For example, if a target environment supports sum
+types or discriminated unions, use them. Sealed classes with specific
+subtypes for each variant of the union are also good options.</p>
+<ul class="simple">
+<li>The member that is set in a union cannot be optional.</li>
+<li>There must be exactly one member of the union set to a non-null
+value.</li>
+<li>Clients must account for unknown union values by storing the name of
+the unknown variant.</li>
+</ul>
+<div class="section" id="unit-types-in-unions">
+<h4>Unit types in unions<a class="headerlink" href="#unit-types-in-unions" title="Permalink to this headline">#</a></h4>
+<p>Union members may target Smithy's built-in unit type, <code class="docutils literal notranslate"><span class="pre">smithy.api#Unit</span></code>,
+meaning the member has no meaningful value. If a member targets the unit type,
+implementations should generate code that omits the value for that variant or
+sets the value to a specific type (e.g., <code class="docutils literal notranslate"><span class="pre">Void</span></code> in Java). You can detect
+if a member targets the Unit type using the following:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.traits.UnitTypeTrait</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">MemberShape</span><span class="w"> </span><span class="n">member</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">unitShape</span><span class="p">.</span><span class="na">members</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">member</span><span class="p">.</span><span class="na">getTarget</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="n">UnitTypeTrait</span><span class="p">.</span><span class="na">UNIT</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// Generate special code to handle unit types.</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// The member is a normal shape.</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="service">
+<h3>Service<a class="headerlink" href="#service" title="Permalink to this headline">#</a></h3>
+<p>A <em>service</em> is the entry point of an API that aggregates resources and
+operations together. The service shape will tell you which protocols a
+service supports, which auth schemes it supports, the operations of the
+service, and the resources contained in the service.</p>
+<div class="section" id="computing-a-service-closure">
+<h4>Computing a service closure<a class="headerlink" href="#computing-a-service-closure" title="Permalink to this headline">#</a></h4>
+<p>The closure of shapes connected to a service are the shapes that will be
+code generated. You can compute this closure using a
+<a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/neighbor/Walker.java">Walker</a>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Walker</span><span class="w"> </span><span class="n">walker</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Walker</span><span class="p">(</span><span class="n">someModel</span><span class="p">);</span><span class="w"></span>
+<span class="n">Set</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">closure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">walker</span><span class="p">.</span><span class="na">walkShapes</span><span class="p">(</span><span class="n">someService</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>You can get the entire set of operations contained in a service using a
+<code class="docutils literal notranslate"><span class="pre">TopDownIndex</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">TopDownIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TopDownIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
+<span class="n">Set</span><span class="o">&lt;</span><span class="n">OperationShape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">operations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="p">.</span><span class="na">getContainedOperations</span><span class="p">(</span><span class="n">someService</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last"><a class="reference internal" href="implementing-the-generator.html#directedcodegen"><span class="std std-ref">DirectedCodegen</span></a> automatically handles this for you.</p>
+</div>
+</div>
+<div class="section" id="service-renames">
+<h4>Service renames<a class="headerlink" href="#service-renames" title="Permalink to this headline">#</a></h4>
+<p>Services might need to &quot;rename&quot; shapes in order to disambiguate shapes
+that share the same name. This is done so that namespaces in the Smithy
+model do no need to have a 1:1 namespace mapping in generated code. When
+determining the name of a shape for use in codegen, never rely on the
+shape ID directly, but rather first check if the shape was renamed
+within the closure of a service. This can be done by passing a
+<code class="docutils literal notranslate"><span class="pre">ServiceShape</span></code> into <code class="docutils literal notranslate"><span class="pre">ShapeId#getName</span></code>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Good!</span><span class="w"></span>
+<span class="n">String</span><span class="w"> </span><span class="n">goodCodegenName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">someShapeId</span><span class="p">.</span><span class="na">getName</span><span class="p">(</span><span class="n">someServiceShape</span><span class="p">);</span><span class="w"></span>
+
+<span class="c1">// Bad!</span><span class="w"></span>
+<span class="n">String</span><span class="w"> </span><span class="n">badCodegenName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">someShapeId</span><span class="p">.</span><span class="na">getName</span><span class="p">();</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="operation">
+<h3>Operation<a class="headerlink" href="#operation" title="Permalink to this headline">#</a></h3>
+<p>The <em>operation</em> type represents the input, output, and possible errors
+of an API operation.</p>
+<div class="section" id="generating-unique-input-and-output-shapes">
+<h4>Generating unique input and output shapes<a class="headerlink" href="#generating-unique-input-and-output-shapes" title="Permalink to this headline">#</a></h4>
+<p>Client code generators must generate distinct types for all operation
+input and output shape structures. Members of an input structure should
+all be treated as optional regardless of if the member is marked with
+the <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait or <code class="docutils literal notranslate"><span class="pre">&#64;required</span></code> trait. This allows service teams
+to evolve their API without breaking previously generated clients.</p>
+<p>A more recent feature of Smithy allows marking structures as specific to
+the input or output of an operation using <code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> and <code class="docutils literal notranslate"><span class="pre">&#64;output</span></code>
+traits. You can transform the model being code generated and create
+synthetic input and output shapes when necessary using the
+<a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/transform/ModelTransformer.java#L546">createDedicatedInputAndOutput</a>
+model transformer. The following example creates a new Model that has
+dedicated input and output shapes for every operation, each marked with
+the <code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> or <code class="docutils literal notranslate"><span class="pre">&#64;output</span></code> trait, and each uses a consistent name
+that ends with <code class="docutils literal notranslate"><span class="pre">Input</span></code> or <code class="docutils literal notranslate"><span class="pre">Output</span></code>.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">ModelTransformer</span><span class="w"> </span><span class="n">transformer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModelTransformer</span><span class="p">.</span><span class="na">create</span><span class="p">();</span><span class="w"></span>
+<span class="n">Model</span><span class="w"> </span><span class="n">transformed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">transformer</span><span class="p">.</span><span class="na">createDedicatedInputAndOutput</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="s">&quot;model&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Input&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Output&quot;</span><span class="w"></span>
+<span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last"><a class="reference internal" href="implementing-the-generator.html#directedcodegen"><span class="std std-ref">DirectedCodegen</span></a> automatically handles this for you.</p>
+</div>
+</div>
+</div>
+<div class="section" id="resource">
+<h3>Resource<a class="headerlink" href="#resource" title="Permalink to this headline">#</a></h3>
+<p>A <em>resource</em> is an entity with an identity that has a set of operations.</p>
+<p>Resources add hierarchy to a model. You will need to traverse from a
+service to every operation and resource in order to crawl the entire
+service. This process can be simplified using the
+<a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/knowledge/TopDownIndex.java">TopDownIndex</a>.
+Iterating only over the operations attached to a service will not
+provide every operation in the closure of the service.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Exposing resource abstractions through code, if attempted, should
+be done in addition to a more traditional, flattened, service
+interface with every operation contained in the service.</p>
+</div>
+</div>
+</div>
+<div class="section" id="other-shape-topics">
+<h2>Other shape topics<a class="headerlink" href="#other-shape-topics" title="Permalink to this headline">#</a></h2>
+<div class="section" id="shapes-can-be-recursive">
+<h3>Shapes can be recursive<a class="headerlink" href="#shapes-can-be-recursive" title="Permalink to this headline">#</a></h3>
+<p>Smithy <a class="reference internal" href="../../spec/aggregate-types.html#recursive-shape-definitions"><span class="std std-ref">shapes support recursion</span></a>.
+Some languages like Rust require the size of types to be known at
+compile time. Recursive types in these languages need some kind of heap
+allocation to ensure they have a size known at compile time. In order to
+identify which member in a recursive loop needs to be heap allocated,
+implementations will need to utilize a topological sort. Smithy's
+<a class="reference internal" href="implementing-the-generator.html#directedcodegen"><span class="std std-ref">DirectedCodegen</span></a> abstraction will automatically generate code based
+on a topological sort, though generators that need more control over how to handle recursion will need to manually
+use a <a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/TopologicalIndex.java">TopologicalIndex</a>.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://github.com/awslabs/smithy-rs/blob/main/design/src/smithy/recursive_shapes.md">Rust design doc</a>
+for how they handled recursive shapes.</p>
+</div>
+</div>
+<div class="section" id="mixins-are-an-implementation-detail-of-the-model">
+<span id="codegen-mixins-are-an-implementation-detail"></span><h3>Mixins are an implementation detail of the model<a class="headerlink" href="#mixins-are-an-implementation-detail-of-the-model" title="Permalink to this headline">#</a></h3>
+<p>Mixins are considered an implementation detail of a model and should not
+impact code generation. Code generators should transform the model prior
+to code generation to remove mixins.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="using-the-semantic-model.html#codegen-flattening-mixins"><span class="std std-ref">Flattening mixins</span></a></p>
+</div>
+</div>
+<div class="section" id="member-optionality">
+<h3>Member optionality<a class="headerlink" href="#member-optionality" title="Permalink to this headline">#</a></h3>
+<p>Smithy has different rules around when a member is always present or
+optional. The rules around nullability are defined in the Smithy
+specification. However, all of this complexity is accounted for
+automatically using the
+<a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/knowledge/NullableIndex.java">NullableIndex</a>.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">NullableIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NullableIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="p">.</span><span class="na">isNullable</span><span class="p">(</span><span class="n">someMember</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// optional</span><span class="w"></span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// always present</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="faq">
+<h2>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline">#</a></h2>
+<div class="section" id="should-constraint-traits-impact-generated-types">
+<h3>Should constraint traits impact generated types?<a class="headerlink" href="#should-constraint-traits-impact-generated-types" title="Permalink to this headline">#</a></h3>
+<p>In general, no. Baking anything about these traits into generated types
+makes these traits impossible to change in the future without breaking
+previously generated code.</p>
+<ul class="simple">
+<li>Length and pattern traits should have no impact on generated types.
+Shapes with a length or pattern trait should be represented as a
+standard string type.</li>
+<li>Range traits must have no impact on generated types. Code generators
+must not rely on range traits to determine which numeric type is best
+for representing a Smithy shape. Instead, code generators must rely
+on the Smithy type used for the numeric shape (integer, long, etc).</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">&#64;enum</span></code> trait was replaced by the <code class="docutils literal notranslate"><span class="pre">enum</span></code> shape in Smithy IDL
+2.0. Both the <code class="docutils literal notranslate"><span class="pre">&#64;enum</span></code> trait and <code class="docutils literal notranslate"><span class="pre">enum</span></code> shape can influence code
+generation, though they must be considered a specialization of
+strings. This allows servers to add new enum values over time without
+breaking previously generated clients.</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">&#64;required</span></code> trait is no longer considered a constraint trait in
+Smithy IDL 2.0. It is now expected to influence code generated types.</li>
+</ul>
+</div>
+<div class="section" id="should-clients-enforce-constraint-traits">
+<h3>Should clients enforce constraint traits?<a class="headerlink" href="#should-clients-enforce-constraint-traits" title="Permalink to this headline">#</a></h3>
+<p>No. A client should defer the validation of constraint traits to the
+service.</p>
+</div>
+<div class="section" id="why-don-t-we-validate-constraint-traits-on-the-client">
+<h3>Why don't we validate constraint traits on the client?<a class="headerlink" href="#why-don-t-we-validate-constraint-traits-on-the-client" title="Permalink to this headline">#</a></h3>
+<p>Validating constraint traits on the client makes it extremely hard to
+change constraint traits, even in what appears to be a backward
+compatible change. Changes to constraint traits need to be backward
+compatible by making the constraint more relaxed. However, things fall
+apart when multiple actors are creating resources using different
+versions of the service.</p>
+<p>Years ago, many AWS SDKs validated constraint traits client-side and
+refused to send non-compliant input. During that period, Amazon EC2
+updated instance IDs to support a longer string, and existing SDKs began
+to break when this change was deployed. That's because the use of other
+tools like the AWS Management Console or even managed services created
+instances that SDKs could no longer interact with. If a client
+encountered an instance created in the console and then tried to make a
+subsequent call using the instance ID, the client would refuse to send
+the request. This resulted in a large amount of customer pain and took
+months of effort to correct. If the client ignored constraint traits and
+allowed the service to enforce them, the change would have been
+transparent to previously generated clients.</p>
+</div>
+<div class="section" id="do-generators-need-to-worry-about-mixins">
+<h3>Do generators need to worry about mixins?<a class="headerlink" href="#do-generators-need-to-worry-about-mixins" title="Permalink to this headline">#</a></h3>
+<p>No. See <a class="reference internal" href="#codegen-mixins-are-an-implementation-detail"><span class="std std-ref">Mixins are an implementation detail of the model</span></a>.</p>
+</div>
+<div class="section" id="is-there-an-easier-way-to-account-for-errors-of-operations-inheriting-service-errors">
+<h3>Is there an easier way to account for errors of operations inheriting service errors?<a class="headerlink" href="#is-there-an-easier-way-to-account-for-errors-of-operations-inheriting-service-errors" title="Permalink to this headline">#</a></h3>
+<p>Yes. You can flatten error hierarchies before generating code. This is
+also something that <a class="reference internal" href="implementing-the-generator.html#directedcodegen"><span class="std std-ref">DirectedCodegen</span></a> can handle for you.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="using-the-semantic-model.html#codegen-copying-errors-to-service"><span class="std std-ref">Copying service errors to operation errors</span></a></p>
+</div>
+</div>
+</div>
+</div>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="creating-codegen-repo.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Creating a Codegen Repo</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="overview-and-concepts.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Overview and Concepts</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Amazon Web Services
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Mapping Smithy Shapes to Your Language</a><ul>
+<li><a class="reference internal" href="#interoperability">Interoperability</a></li>
+<li><a class="reference internal" href="#smithy-shapes">Smithy shapes</a><ul>
+<li><a class="reference internal" href="#when-to-generate-unique-named-types">When to Generate unique named types</a></li>
+<li><a class="reference internal" href="#blob">Blob</a></li>
+<li><a class="reference internal" href="#boolean">Boolean</a></li>
+<li><a class="reference internal" href="#document">Document</a></li>
+<li><a class="reference internal" href="#string">String</a></li>
+<li><a class="reference internal" href="#enums">Enums</a></li>
+<li><a class="reference internal" href="#timestamp">Timestamp</a></li>
+<li><a class="reference internal" href="#numbers-byte-short-integer-long-float-double-biginteger-bigdecimal">Numbers: byte, short, integer, long, float, double, bigInteger, bigDecimal</a></li>
+<li><a class="reference internal" href="#list">List</a><ul>
+<li><a class="reference internal" href="#ignore-set-shapes-from-smithy-1-0">Ignore set shapes from Smithy 1.0</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#map">Map</a></li>
+<li><a class="reference internal" href="#structure">Structure</a><ul>
+<li><a class="reference internal" href="#error-structures">Error structures</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#union">Union</a><ul>
+<li><a class="reference internal" href="#unit-types-in-unions">Unit types in unions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#service">Service</a><ul>
+<li><a class="reference internal" href="#computing-a-service-closure">Computing a service closure</a></li>
+<li><a class="reference internal" href="#service-renames">Service renames</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#operation">Operation</a><ul>
+<li><a class="reference internal" href="#generating-unique-input-and-output-shapes">Generating unique input and output shapes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#resource">Resource</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#other-shape-topics">Other shape topics</a><ul>
+<li><a class="reference internal" href="#shapes-can-be-recursive">Shapes can be recursive</a></li>
+<li><a class="reference internal" href="#mixins-are-an-implementation-detail-of-the-model">Mixins are an implementation detail of the model</a></li>
+<li><a class="reference internal" href="#member-optionality">Member optionality</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#faq">FAQ</a><ul>
+<li><a class="reference internal" href="#should-constraint-traits-impact-generated-types">Should constraint traits impact generated types?</a></li>
+<li><a class="reference internal" href="#should-clients-enforce-constraint-traits">Should clients enforce constraint traits?</a></li>
+<li><a class="reference internal" href="#why-don-t-we-validate-constraint-traits-on-the-client">Why don't we validate constraint traits on the client?</a></li>
+<li><a class="reference internal" href="#do-generators-need-to-worry-about-mixins">Do generators need to worry about mixins?</a></li>
+<li><a class="reference internal" href="#is-there-an-easier-way-to-account-for-errors-of-operations-inheriting-service-errors">Is there an easier way to account for errors of operations inheriting service errors?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/scripts/furo.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/tabs.js"></script>
+    </body>
+</html>
