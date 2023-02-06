@@ -6,6 +6,7 @@ Guides
     :maxdepth: 1
 
     building-models/index
+    using-code-generation/index
     model-linters
     evolving-models
     style-guide

@@ -491,6 +491,8 @@ That's it! We just created a simple, read-only, ``Weather`` service.
 3. Try adding :ref:`HTTP binding traits <http-traits>` to the API.
 4. Try adding :ref:`tags <tags-trait>` to shapes and filtering them out with
    :ref:`excludeShapesByTag <excludeShapesByTag-transform>`.
+5. Follow the :ref:`Using Code Generation Guide <using-code-generation>`
+   to generate code for the ``Weather`` service.
 
 There's plenty more to explore in Smithy. The
 :ref:`Smithy specification <smithy-specification>` can teach you everything you
