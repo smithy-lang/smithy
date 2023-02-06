@@ -133,7 +133,7 @@ public final class OpenApi extends Component implements ToSmithyBuilder<OpenApi>
         }
 
         if (!tags.isEmpty()) {
-            builder.withMember("tags", tags.stream().sorted().collect(ArrayNode.collect()));
+            builder.withMember("tags", tags.stream().collect(ArrayNode.collect()));
         }
 
         return builder;
