@@ -14,7 +14,7 @@
  */
 
 /**
- * Defines experimental protocols for Smithy.
+ * Defines protocols for Smithy.
  */
 @SmithyUnstableApi
 package software.amazon.smithy.protocols.traits;

@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-description = "This module provides the implementation of experimental protocols traits for Smithy."
+description = "This module provides the implementation of protocols traits for Smithy."
 
 ext {
     displayName = "Smithy :: Protocols Traits"
