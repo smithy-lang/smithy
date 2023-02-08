@@ -1,7 +1,7 @@
 # Smithy protocols traits
 
-This module provides the implementation of experimental protocols traits for Smithy.
+This module provides the implementation of protocols traits for Smithy.
 
 Protocols:
 
-* Smithy RPC v2
+* RPC v2 - An RPC protocol with support for multiple wire formats.

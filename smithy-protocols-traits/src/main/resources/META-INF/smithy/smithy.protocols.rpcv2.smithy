@@ -15,7 +15,7 @@ use smithy.api#hostLabel
     endpoint
     hostLabel
 ])
-structure smithyRpcV2 {
+structure rpcv2 {
     /// Priority ordered list of supported HTTP protocol versions.
     http: StringList
     /// Priority ordered list of supported HTTP protocol versions
