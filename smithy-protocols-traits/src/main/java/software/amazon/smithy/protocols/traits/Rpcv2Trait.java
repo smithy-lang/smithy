@@ -24,7 +24,7 @@ import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.utils.ListUtils;
 
-public final class SmithyRpcV2Trait extends AbstractTrait {
+public final class Rpcv2Trait extends AbstractTrait {
 
     private static final String HTTP = "http";
     private static final String EVENT_STREAM_HTTP = "eventStreamHttp";
@@ -37,7 +37,7 @@ public final class SmithyRpcV2Trait extends AbstractTrait {
     public static final ShapeId ID = ShapeId.from("smithy.protocols#smithyRpcV2");
 
     // package-private constructor (at least for now)
-    public SmithyRpcV2Trait(ShapeId id, Builder builder) {
+    public Rpcv2Trait(ShapeId id, Builder builder) {
         super(id, builder.getSourceLocation());
         http = ListUtils.copyOf(builder.http);
         eventStreamHttp = ListUtils.copyOf(builder.eventStreamHttp);
@@ -95,9 +95,9 @@ public final class SmithyRpcV2Trait extends AbstractTrait {
     }
 
     /**
-     * Builder for creating a {@code SmithyRpcV2Trait}.
+     * Builder for creating a {@code Rpcv2Trait}.
      */
-    public static final class Builder extends AbstractTraitBuilder<SmithyRpcV2Trait, Builder> {
+    public static final class Builder extends AbstractTraitBuilder<Rpcv2Trait, Builder> {
 
         private final List<String> http = new ArrayList<>();
         private final List<String> eventStreamHttp = new ArrayList<>();
@@ -105,8 +105,8 @@ public final class SmithyRpcV2Trait extends AbstractTrait {
 
 
         @Override
-        public SmithyRpcV2Trait build() {
-            return new SmithyRpcV2Trait(ID, this);
+        public Rpcv2Trait build() {
+            return new Rpcv2Trait(ID, this);
         }
 
         /**
@@ -188,10 +188,10 @@ public final class SmithyRpcV2Trait extends AbstractTrait {
          *
          * @param shapeId The shape ID.
          * @param value The Node value.
-         * @return Returns the SmithyRpcV2Trait. 
+         * @return Returns the Rpcv2Trait. 
          */
         @Override
-        public SmithyRpcV2Trait createTrait(ShapeId shapeId, Node value) {
+        public Rpcv2Trait createTrait(ShapeId shapeId, Node value) {
             return builder().sourceLocation(value).fromNode(value).build();
         }
     }

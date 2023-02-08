@@ -24,17 +24,17 @@ import software.amazon.smithy.model.traits.TraitFactory;
 
 import java.util.Optional;
 
-public class SmithyRpcV2TraitTest {
+public class Rpcv2TraitTest {
 
     @Test
     public void loadsTraitWithDefaults() {
         Node node = Node.objectNode();
         TraitFactory provider = TraitFactory.createServiceFactory();
-        Optional<Trait> trait = provider.createTrait(SmithyRpcV2Trait.ID, ShapeId.from("ns.foo#foo"), node);
+        Optional<Trait> trait = provider.createTrait(Rpcv2Trait.ID, ShapeId.from("ns.foo#foo"), node);
 
         Assertions.assertTrue(trait.isPresent());
-        Assertions.assertTrue(trait.get() instanceof SmithyRpcV2Trait);
-        SmithyRpcV2Trait smithyRpcV2Trait = (SmithyRpcV2Trait) trait.get();
+        Assertions.assertTrue(trait.get() instanceof Rpcv2Trait);
+        Rpcv2Trait smithyRpcV2Trait = (Rpcv2Trait) trait.get();
         Assertions.assertEquals(smithyRpcV2Trait.toNode(), node);
     }
 }

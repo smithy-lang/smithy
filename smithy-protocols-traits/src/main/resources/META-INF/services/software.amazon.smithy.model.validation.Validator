@@ -1,0 +1,2 @@
+software.amazon.smithy.aws.traits.protocols.ProtocolHttpValidator
+software.amazon.smithy.protocols.traits.Rpcv2Validator
