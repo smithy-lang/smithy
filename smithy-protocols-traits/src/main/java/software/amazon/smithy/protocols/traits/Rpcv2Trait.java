@@ -34,7 +34,7 @@ public final class Rpcv2Trait extends AbstractTrait {
     private final List<String> eventStreamHttp;
     private final List<String> format;
 
-    public static final ShapeId ID = ShapeId.from("smithy.protocols#Rpcv2");
+    public static final ShapeId ID = ShapeId.from("smithy.protocols#rpcv2");
 
     // Package-private constructor (at least for now)
     Rpcv2Trait(Builder builder) {
