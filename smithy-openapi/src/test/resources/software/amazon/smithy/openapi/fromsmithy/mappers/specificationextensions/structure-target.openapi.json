@@ -1,0 +1,73 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Service",
+    "version": ""
+  },
+  "paths": {
+    "/": {
+      "put": {
+        "operationId": "Operation",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OperationRequestContent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operation 200 response"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "OperationRequestContent": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          }
+        },
+        "x-blob": "blob content",
+        "x-boolean": true,
+        "x-string": "string content",
+        "x-byte": 64,
+        "x-short": 16384,
+        "x-integer": 1073741824,
+        "x-long": 4611686018427387904,
+        "x-float": 1.07846,
+        "x-double": 57.64123,
+        "x-big-integer": 46116860184273879045678,
+        "x-big-decimal": 0.1234567890123456789,
+        "x-timestamp": "2023-02-27T13:01:57Z",
+        "x-document": {
+          "a": "b",
+          "c": ["d"]
+        },
+        "x-enum": "first",
+        "x-int-enum": 3,
+        "x-list": ["a", "b", "c"],
+        "x-map": {
+          "a": 15,
+          "b": 18
+        },
+        "x-smithy-example-structureExt": {
+          "stringMember": "first field",
+          "integerMember": 17
+        },
+        "x-smithy-example-unionExt": {
+          "string": "string variant"
+        }
+      }
+    }
+  }
+}

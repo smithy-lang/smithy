@@ -23,7 +23,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.jsonschema.JsonSchemaConfig;
-import software.amazon.smithy.jsonschema.JsonSchemaMapper;
+import software.amazon.smithy.jsonschema.JsonSchemaMapperContext;
+import software.amazon.smithy.jsonschema.JsonSchemaMapperV2;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
@@ -32,6 +33,7 @@ import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.openapi.OpenApiConfig;
+import software.amazon.smithy.openapi.fromsmithy.mappers.SpecificationExtensionsMapper;
 import software.amazon.smithy.openapi.model.ExternalDocumentation;
 import software.amazon.smithy.utils.MapUtils;
 
@@ -42,7 +44,7 @@ import software.amazon.smithy.utils.MapUtils;
  * <p>Note: the properties and features added by this mapper can be removed using
  * {@link OpenApiConfig#setDisableFeatures}.
  */
-public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
+public final class OpenApiJsonSchemaMapper implements JsonSchemaMapperV2 {
 
     @Override
     public Schema.Builder updateSchema(Shape shape, Schema.Builder builder, JsonSchemaConfig config) {
@@ -90,6 +92,14 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
             OpenApiConfig openApiConfig = (OpenApiConfig) config;
             openApiConfig.getVersion().getUnsupportedKeywords().forEach(builder::disableProperty);
         }
+
+        return builder;
+    }
+
+    @Override
+    public Schema.Builder updateSchema(JsonSchemaMapperContext<? extends Shape> context, Schema.Builder builder) {
+        SpecificationExtensionsMapper.findSpecificationExtensions(
+                context.getModel(), context.getShape(), builder::putExtension);
 
         return builder;
     }
