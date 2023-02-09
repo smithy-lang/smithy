@@ -34,11 +34,11 @@ public final class Rpcv2Trait extends AbstractTrait {
     private final List<String> eventStreamHttp;
     private final List<String> format;
 
-    public static final ShapeId ID = ShapeId.from("smithy.protocols#smithyRpcV2");
+    public static final ShapeId ID = ShapeId.from("smithy.protocols#Rpcv2");
 
-    // package-private constructor (at least for now)
-    public Rpcv2Trait(ShapeId id, Builder builder) {
-        super(id, builder.getSourceLocation());
+    // Package-private constructor (at least for now)
+    Rpcv2Trait(Builder builder) {
+        super(ID, builder.getSourceLocation());
         http = ListUtils.copyOf(builder.http);
         eventStreamHttp = ListUtils.copyOf(builder.eventStreamHttp);
         format = ListUtils.copyOf(builder.format);
@@ -106,7 +106,7 @@ public final class Rpcv2Trait extends AbstractTrait {
 
         @Override
         public Rpcv2Trait build() {
-            return new Rpcv2Trait(ID, this);
+            return new Rpcv2Trait(this);
         }
 
         /**
