@@ -28,6 +28,7 @@ structure rpcv2 {
 }
 
 /// A list of String shapes.
+@private
 list StringList {
     member: String
 }
