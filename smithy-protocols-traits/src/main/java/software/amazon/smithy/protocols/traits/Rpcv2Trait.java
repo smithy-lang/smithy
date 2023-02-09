@@ -1,20 +1,18 @@
 /*
  * Copyright 2023 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
+ * Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except
+ * in compliance with the License. A copy of the License is located at
  *
- *  http://aws.amazon.com/apache2.0
+ * http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package software.amazon.smithy.protocols.traits;
- 
+
 import java.util.ArrayList;
 import java.util.List;
 import software.amazon.smithy.model.node.Node;
@@ -26,6 +24,8 @@ import software.amazon.smithy.utils.ListUtils;
 
 public final class Rpcv2Trait extends AbstractTrait {
 
+    public static final ShapeId ID = ShapeId.from("smithy.protocols#rpcv2");
+
     private static final String HTTP = "http";
     private static final String EVENT_STREAM_HTTP = "eventStreamHttp";
     private static final String FORMAT = "format";
@@ -33,8 +33,6 @@ public final class Rpcv2Trait extends AbstractTrait {
     private final List<String> http;
     private final List<String> eventStreamHttp;
     private final List<String> format;
-
-    public static final ShapeId ID = ShapeId.from("smithy.protocols#rpcv2");
 
     // Package-private constructor (at least for now)
     Rpcv2Trait(Builder builder) {
@@ -54,8 +52,8 @@ public final class Rpcv2Trait extends AbstractTrait {
     }
 
     /**
-     * Gets the priority ordered list of supported HTTP protocol versions
-     * that are required when using event streams.
+     * Gets the priority ordered list of supported HTTP protocol versions that are required when
+     * using event streams.
      *
      * @return Returns the supported event stream HTTP protocol versions.
      */
@@ -73,7 +71,7 @@ public final class Rpcv2Trait extends AbstractTrait {
     }
 
     /**
-     * Turns the trait into a {@code Node}
+     * Turns the trait into a {@code Node}.
      */
     @Override
     protected Node createNode() {
@@ -153,16 +151,14 @@ public final class Rpcv2Trait extends AbstractTrait {
          */
         public Builder fromNode(Node node) {
             ObjectNode objectNode = node.expectObjectNode();
-            objectNode.getArrayMember(HTTP)
-                    .map(values -> Node.loadArrayOfString(HTTP, values))
+            objectNode.getArrayMember(HTTP).map(values -> Node.loadArrayOfString(HTTP, values))
                     .ifPresent(this::http);
             objectNode.getArrayMember(EVENT_STREAM_HTTP)
                     .map(values -> Node.loadArrayOfString(EVENT_STREAM_HTTP, values))
                     .ifPresent(this::eventStreamHttp);
-            objectNode.getArrayMember(FORMAT)
-                    .map(values -> Node.loadArrayOfString(FORMAT, values))
+            objectNode.getArrayMember(FORMAT).map(values -> Node.loadArrayOfString(FORMAT, values))
                     .ifPresent(this::format);
-                
+
             return this;
         }
     }
@@ -178,17 +174,17 @@ public final class Rpcv2Trait extends AbstractTrait {
      * Implements the {@code AbstractTrait.Provider}.
      */
     public static final class Provider extends AbstractTrait.Provider {
- 
+
         public Provider() {
             super(ID);
         }
- 
+
         /**
          * Creates a trait from a {@code Node} value.
          *
          * @param shapeId The shape ID.
          * @param value The Node value.
-         * @return Returns the Rpcv2Trait. 
+         * @return Returns the Rpcv2Trait.
          */
         @Override
         public Rpcv2Trait createTrait(ShapeId shapeId, Node value) {
