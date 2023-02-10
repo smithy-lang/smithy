@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import software.amazon.smithy.jsonschema.JsonSchemaConfig;
+import software.amazon.smithy.jsonschema.JsonSchemaVersion;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -348,5 +349,15 @@ public final class CfnConfig extends JsonSchemaConfig {
         }
 
         return config;
+    }
+
+    @Override
+    public void setJsonSchemaVersion(JsonSchemaVersion schemaVersion) {
+        // CloudFormation Resource Schemas MUST use schema version draft07
+        // https://github.com/aws-cloudformation/cloudformation-cli/blob/master/src/rpdk/core/data/schema/provider.definition.schema.v1.json#L210
+        if (!schemaVersion.equals(JsonSchemaVersion.DRAFT07)) {
+            throw new CfnException(String.format("CloudFormation Resource Schemas require the use of JSON Schema version draft07. "
+                    + "`jsonSchemaVersion` value of `%s` was provided.", schemaVersion));
+        }
     }
 }
