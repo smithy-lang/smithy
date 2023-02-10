@@ -30,8 +30,8 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  *
  * - Ensuring that every entry in {@code eventStreamHttp} also appears in the {@code http} property of
  * a protocol trait.
- * - Ensuring that there is at least one value for the format property.
- * - Ensuring all the format property values are valid and supported.
+ * - Ensuring that there is at least one value for the {@code format} property.
+ * - Ensuring all the {@code format} property values are valid and supported.
  */
 @SmithyInternalApi
 public final class Rpcv2TraitValidator extends AbstractValidator {
