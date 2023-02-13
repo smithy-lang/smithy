@@ -16,6 +16,7 @@
 package software.amazon.smithy.codegen.core.directed;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.ServiceLoader;
@@ -26,6 +27,7 @@ import java.util.logging.Logger;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.CodegenContext;
 import software.amazon.smithy.codegen.core.ImportContainer;
+import software.amazon.smithy.codegen.core.ShapeGenerationOrder;
 import software.amazon.smithy.codegen.core.SmithyIntegration;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.SymbolWriter;
@@ -75,6 +77,7 @@ public final class CodegenDirector<
     private Supplier<Iterable<I>> integrationFinder;
     private DirectedCodegen<C, S, I> directedCodegen;
     private final List<BiFunction<Model, ModelTransformer, Model>> transforms = new ArrayList<>();
+    private ShapeGenerationOrder shapeGenerationOrder = ShapeGenerationOrder.TOPOLOGICAL;
 
     /**
      * Simplifies a Smithy model for code generation of a single service.
@@ -251,6 +254,18 @@ public final class CodegenDirector<
     }
 
     /**
+     * Sets the shapes order for code generation.
+     *
+     * <p>CodegenDirector order the shapes appropriately before passing them to the code generators.
+     * The default order is topological, and can be overridden with this method
+     *
+     * @param order the order to use for the shape generation process.
+     */
+    public void shapeGenerationOrder(ShapeGenerationOrder order) {
+        this.shapeGenerationOrder = order;
+    }
+
+    /**
      * Sorts all members of the model prior to codegen.
      *
      * <p>This should only be used by languages where changing the order of members
@@ -328,6 +343,7 @@ public final class CodegenDirector<
         SmithyBuilder.requiredState("settings", settings);
         SmithyBuilder.requiredState("fileManifest", fileManifest);
         SmithyBuilder.requiredState("directedCodegen", directedCodegen);
+        SmithyBuilder.requiredState("shapeGenerationOrder", shapeGenerationOrder);
 
         // Use a default integration finder implementation.
         if (integrationFinder == null) {
@@ -390,16 +406,36 @@ public final class CodegenDirector<
     }
 
     private void generateShapesInService(C context, ServiceShape serviceShape) {
-        LOGGER.fine(() -> "Generating shapes for " + directedCodegen.getClass().getName());
+        LOGGER.fine(() -> String.format("Generating shapes for %s in %s order",
+                directedCodegen.getClass().getName(), this.shapeGenerationOrder.name()));
         Set<Shape> shapes = new Walker(context.model()).walkShapes(serviceShape);
-        TopologicalIndex topologicalIndex = TopologicalIndex.of(context.model());
         ShapeGenerator<W, C, S> generator = new ShapeGenerator<>(context, serviceShape, directedCodegen);
-        for (Shape shape : topologicalIndex.getOrderedShapes()) {
-            if (shapes.contains(shape)) {
-                shape.accept(generator);
-            }
+        List<Shape> orderedShapes = new ArrayList<>();
+
+        switch (this.shapeGenerationOrder) {
+            case ALPHABETICAL:
+                orderedShapes.addAll(shapes);
+                orderedShapes.sort(Comparator.comparing(s -> s.getId().getName(serviceShape)));
+                break;
+            case NONE:
+                orderedShapes.addAll(shapes);
+                break;
+            case TOPOLOGICAL:
+            default:
+                TopologicalIndex topologicalIndex = TopologicalIndex.of(context.model());
+                for (Shape shape : topologicalIndex.getOrderedShapes()) {
+                    if (shapes.contains(shape)) {
+                        orderedShapes.add(shape);
+                    }
+                }
+                for (Shape shape : topologicalIndex.getRecursiveShapes()) {
+                    if (shapes.contains(shape)) {
+                        orderedShapes.add(shape);
+                    }
+                }
         }
-        for (Shape shape : topologicalIndex.getRecursiveShapes()) {
+
+        for (Shape shape : orderedShapes) {
             if (shapes.contains(shape)) {
                 shape.accept(generator);
             }
