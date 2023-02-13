@@ -1,0 +1,4 @@
+[ERROR] smithy.example#InvalidService1: The `format` property for the smithy.protocols#rpcv2 protocol must have at least 1 element | Rpcv2Trait
+[ERROR] smithy.example#InvalidService2: The following values of the `format` property for the smithy.protocols#rpcv2 protocol are not supported: [invalid-wire-format] | Rpcv2Trait
+[ERROR] smithy.example#InvalidService3: The following values of the `format` property for the smithy.protocols#rpcv2 protocol are not supported: [invalid-wire-format] | Rpcv2Trait
+[ERROR] smithy.example#InvalidService4: The following values of the `format` property for the smithy.protocols#rpcv2 protocol are not supported: [invalid-wire-format1, invalid-wire-format2] | Rpcv2Trait
