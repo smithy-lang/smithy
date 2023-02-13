@@ -40,10 +40,11 @@ public final class Rpcv2TraitValidator extends AbstractValidator {
 
     @Override
     public List<ValidationEvent> validate(Model model) {
-        ServiceIndex serviceIndex = ServiceIndex.of(model);
-        return model.shapes(ServiceShape.class)
-                .flatMap(service -> validateService(service, serviceIndex).stream())
-                .collect(Collectors.toList());
+        List<ValidationEvent> events = new ArrayList<>();
+        for (ServiceShape serviceShape : model. getServiceShapesWithTrait(Rpcv2Trait.class)) {
+            events.addAll(validateService(serviceShape));
+        }
+        return events;
     }
 
     private List<ValidationEvent> validateService(ServiceShape service, ServiceIndex index) {
