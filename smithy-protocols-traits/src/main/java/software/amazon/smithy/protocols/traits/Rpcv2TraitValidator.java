@@ -26,7 +26,8 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  * Validates models implementing the {@code Rpcv2Trait} against its constraints by:
  *
  * - Ensuring that every entry in {@code eventStreamHttp} also appears in the {@code http} property
- * of a protocol trait. - Ensuring that there is at least one value for the {@code format} property.
+ *   of a protocol trait. - Ensuring that there is at least one value for the {@code format} property.
+ *
  * - Ensuring all the {@code format} property values are valid and supported.
  */
 @SmithyInternalApi
