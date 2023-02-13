@@ -85,9 +85,9 @@ public final class Rpcv2Trait extends AbstractTrait {
             builder.withMember(EVENT_STREAM_HTTP, Node.fromStrings(getEventStreamHttp()));
         }
 
-        if (!getFormat().isEmpty()) {
-            builder.withMember(FORMAT, Node.fromStrings(getFormat()));
-        }
+        // Build the format property even if it's empty as the {@code Rpcv2TraitValidator}
+        // will take care of validating it.
+        builder.withMember(FORMAT, Node.fromStrings(getFormat()));
 
         return builder.build();
     }
