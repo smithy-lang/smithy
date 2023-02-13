@@ -19,14 +19,13 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitFactory;
-
 import java.util.Optional;
 
 public class Rpcv2TraitTest {
 
     @Test
     public void loadsTraitWithDefaults() {
-        Node node = Node.objectNode();
+        Node node = Node.objectNode().withMember("format", Node.fromStrings("cors"));
         TraitFactory provider = TraitFactory.createServiceFactory();
         Optional<Trait> trait =
                 provider.createTrait(Rpcv2Trait.ID, ShapeId.from("ns.foo#foo"), node);
