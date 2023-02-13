@@ -25,7 +25,7 @@ public class Rpcv2TraitTest {
 
     @Test
     public void loadsTraitWithDefaults() {
-        Node node = Node.objectNode().withMember("format", Node.fromStrings("cors"));
+        Node node = Node.objectNode().withMember("format", Node.fromStrings("cbor"));
         TraitFactory provider = TraitFactory.createServiceFactory();
         Optional<Trait> trait =
                 provider.createTrait(Rpcv2Trait.ID, ShapeId.from("ns.foo#foo"), node);
