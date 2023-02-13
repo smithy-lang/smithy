@@ -37,3 +37,6 @@ build/
 
 # jdt-ls
 .metadata
+
+# smithy-language-server
+.smithy.lsp.log
