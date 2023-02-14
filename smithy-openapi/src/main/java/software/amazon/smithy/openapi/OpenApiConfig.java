@@ -389,6 +389,6 @@ public class OpenApiConfig extends JsonSchemaConfig {
 
     @Override
     public void setJsonSchemaVersion(JsonSchemaVersion schemaVersion) {
-        throw new OpenApiException("The `jsonSchemaVersion` configuration parameter is not supported by the OpenAPI plugin.");
+        throw new OpenApiException("`jsonSchemaVersion` configuration parameter is not supported by OpenAPI plugin.");
     }
 }

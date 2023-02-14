@@ -18,8 +18,6 @@ package software.amazon.smithy.openapi;
 import software.amazon.smithy.jsonschema.JsonSchemaVersion;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
-import java.util.EnumSet;
-
 /**
  * OpenAPI versions supported by the converter.
  */
@@ -48,5 +46,7 @@ public enum OpenApiVersion {
         return supportsContentEncodingKeyword;
     }
 
-    JsonSchemaVersion getJsonSchemaVersion() { return jsonSchemaVersion; }
+    JsonSchemaVersion getJsonSchemaVersion() {
+        return jsonSchemaVersion;
+    }
 }

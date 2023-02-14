@@ -204,8 +204,8 @@ public class JsonSchemaConfig {
      * characters to place schemas in nested object properties. The provided
      * JSON Pointer does not support escaping.
      *
-     * <p>Defaults to {@code "#/definitions"} for schema versions less than 2019-09 and {@code "#/$defs"} for schema versions 2019-09 and greater.
-     * OpenAPI artifacts will want to use "#/components/schemas".
+     * <p>Defaults to {@code "#/definitions"} for schema versions less than 2019-09 and {@code "#/$defs"} for schema
+     * versions 2019-09 and greater. OpenAPI artifacts will want to use "#/components/schemas".
      *
      * @param definitionPointer The root definition pointer to use.
      */
@@ -417,7 +417,7 @@ public class JsonSchemaConfig {
     }
 
     /**
-     * JSON schema version to use when converting Smithy shapes into Json Schema
+     * JSON schema version to use when converting Smithy shapes into Json Schema.
      *
      * @param schemaVersion JSON Schema version to use for generated schema
      */

@@ -356,8 +356,8 @@ public final class CfnConfig extends JsonSchemaConfig {
         // CloudFormation Resource Schemas MUST use schema version draft07
         // https://github.com/aws-cloudformation/cloudformation-cli/blob/master/src/rpdk/core/data/schema/provider.definition.schema.v1.json#L210
         if (!schemaVersion.equals(JsonSchemaVersion.DRAFT07)) {
-            throw new CfnException(String.format("CloudFormation Resource Schemas require the use of JSON Schema version draft07. "
-                    + "`jsonSchemaVersion` value of `%s` was provided.", schemaVersion));
+            throw new CfnException(String.format("CloudFormation Resource Schemas require the use of JSON Schema"
+                + " version draft07. `jsonSchemaVersion` value of `%s` was provided.", schemaVersion));
         }
     }
 }
