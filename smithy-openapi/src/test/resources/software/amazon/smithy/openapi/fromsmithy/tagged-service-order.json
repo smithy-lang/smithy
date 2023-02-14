@@ -1,0 +1,60 @@
+{
+  "smithy": "2.0",
+  "shapes": {
+    "smithy.example#Service": {
+      "type": "service",
+      "version": "2006-03-01",
+      "operations": [
+        {
+          "target": "smithy.example#Operation1"
+        },
+        {
+          "target": "smithy.example#Operation2"
+        }
+      ],
+      "traits": {
+        "smithy.api#tags": [
+          "two",
+          "four",
+          "six",
+          "eight"
+        ],
+        "aws.protocols#restJson1": {}
+      }
+    },
+    "smithy.example#Operation1": {
+      "type": "operation",
+      "traits": {
+        "smithy.api#tags": [
+          "one",
+          "two",
+          "three",
+          "four",
+          "five",
+          "six",
+          "seven",
+          "eight"
+        ],
+        "smithy.api#http": {
+          "uri": "/operation1",
+          "method": "GET"
+        }
+      }
+    },
+    "smithy.example#Operation2": {
+      "type": "operation",
+      "traits": {
+        "smithy.api#tags": [
+          "one",
+          "three",
+          "five",
+          "seven"
+        ],
+        "smithy.api#http": {
+          "uri": "/operation2",
+          "method": "GET"
+        }
+      }
+    }
+  }
+}
