@@ -161,7 +161,7 @@ public final class OperationObject extends Component implements ToSmithyBuilder<
         }
 
         if (!tags.isEmpty()) {
-            builder.withMember("tags", getTags().stream().sorted().map(Node::from).collect(ArrayNode.collect()));
+            builder.withMember("tags", getTags().stream().map(Node::from).collect(ArrayNode.collect()));
         }
 
         return builder;

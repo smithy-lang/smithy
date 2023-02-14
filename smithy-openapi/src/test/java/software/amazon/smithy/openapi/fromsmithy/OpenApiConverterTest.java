@@ -131,6 +131,45 @@ public class OpenApiConverterTest {
     }
 
     @Test
+    public void preservesUserSpecifiedOrderOfTags() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("tagged-service-order.json"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
+        config.setTags(true);
+        OpenApi result = OpenApiConverter.create()
+                .config(config)
+                .convert(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("tagged-service-order.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
+
+    @Test
+    public void preservesUserSpecifiedOrderOfTagsWhenFilteringSupportedTags() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("tagged-service-order.json"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#Service"));
+        config.setTags(true);
+        config.setSupportedTags(ListUtils.of("one", "two", "three", "four"));
+        OpenApi result = OpenApiConverter.create()
+                .config(config)
+                .convert(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("tagged-service-order-supported-tags.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
+
+    @Test
     public void usesOpenApiIntegers() {
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("example.rest#RestService"));
