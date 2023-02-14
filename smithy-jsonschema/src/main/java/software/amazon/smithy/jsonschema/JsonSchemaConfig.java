@@ -405,8 +405,9 @@ public class JsonSchemaConfig {
         this.useIntegerType = useIntegerType;
     }
 
+
     /**
-     * Set the JSON schema version to use when converting Smithy shapes into Json Schema.
+     * JSON schema version to use when converting Smithy shapes into Json Schema.
      *
      * <p> Defaults to JSON Schema version {@code draft07} if no schema version is specified
      *
@@ -417,7 +418,7 @@ public class JsonSchemaConfig {
     }
 
     /**
-     * JSON schema version to use when converting Smithy shapes into Json Schema.
+     * Set the JSON schema version to use when converting Smithy shapes into Json Schema.
      *
      * @param schemaVersion JSON Schema version to use for generated schema
      */
