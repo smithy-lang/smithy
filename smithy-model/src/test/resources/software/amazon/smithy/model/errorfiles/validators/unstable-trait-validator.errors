@@ -1,1 +1,1 @@
-[WARNING] ns.foo#MyString: This shape applies a trait that is unstable: ns.foo#fooTrait | UnstableTrait
+[WARNING] ns.foo#MyString: This shape applies a trait that is unstable: ns.foo#fooTrait | UnstableTrait.ns.foo#fooTrait

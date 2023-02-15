@@ -1,3 +1,3 @@
 [ERROR] smithy.example#A: Waiter `Invalid1`, acceptor 0: Invalid JMESPath expression (||): Syntax error | WaitableTrait
 [ERROR] smithy.example#A: Waiter `Invalid2`, acceptor 0: Problem found in JMESPath expression (length(`10`)): length function argument 0 error | WaitableTrait
-[DANGER] smithy.example#A: Waiter `Invalid2`, acceptor 0: Waiter acceptors with a booleanEquals comparator must return a `boolean` type, but this acceptor was statically determined to return a `number` type. | WaitableTraitJmespathProblem
+[DANGER] smithy.example#A: Waiter `Invalid2`, acceptor 0: Waiter acceptors with a booleanEquals comparator must return a `boolean` type, but this acceptor was statically determined to return a `number` type. | WaitableTraitJmespathProblem.ReturnTypeMismatch.Invalid2.0

@@ -152,6 +152,12 @@
                     "traits": {
                         "smithy.api#required": {}
                     }
+                },
+                "morePayload": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": {}
+                    }
                 }
             },
             "traits": {

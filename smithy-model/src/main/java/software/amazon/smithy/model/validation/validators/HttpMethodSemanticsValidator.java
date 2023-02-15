@@ -67,6 +67,12 @@ public final class HttpMethodSemanticsValidator extends AbstractValidator {
             "PUT", new HttpMethodSemantics(false, true, true, null),
             "PATCH", new HttpMethodSemantics(false, null, true, null));
 
+    private static final String UNEXPECTED_PAYLOAD = "UnexpectedPayload";
+    private static final String MISSING_READONLY_TRAIT = "MissingReadonlyTrait";
+    private static final String MISSING_IDEMPOTENT_TRAIT = "MissingIdempotentTrait";
+    private static final String UNNECESSARY_READONLY_TRAIT = "UnnecessaryReadonlyTrait";
+    private static final String UNNECESSARY_IDEMPOTENT_TRAIT = "UnnecessaryIdempotentTrait";
+
     @Override
     public List<ValidationEvent> validate(Model model) {
         if (!model.isTraitApplied(HttpTrait.class)) {
@@ -97,21 +103,23 @@ public final class HttpMethodSemanticsValidator extends AbstractValidator {
         HttpMethodSemantics semantics = EXPECTED.get(method);
 
         if (semantics.warningWhenModeled != null) {
-            events.add(warning(shape, trait, semantics.warningWhenModeled));
+            events.add(warning(shape, trait, semantics.warningWhenModeled, method));
         }
 
         boolean isReadonly = shape.getTrait(ReadonlyTrait.class).isPresent();
         if (semantics.isReadonly != null && semantics.isReadonly != isReadonly) {
             events.add(warning(shape, trait, String.format(
                     "This operation uses the `%s` method in the `http` trait, but %s marked with the readonly trait",
-                    method, isReadonly ? "is" : "is not")));
+                        method, isReadonly ? "is" : "is not"),
+                    isReadonly ? UNNECESSARY_READONLY_TRAIT : MISSING_READONLY_TRAIT));
         }
 
         boolean isIdempotent = shape.getTrait(IdempotentTrait.class).isPresent();
         if (semantics.isIdempotent != null && semantics.isIdempotent != isIdempotent) {
             events.add(warning(shape, trait, String.format(
                     "This operation uses the `%s` method in the `http` trait, but %s marked with the idempotent trait",
-                    method, isIdempotent ? "is" : "is not")));
+                        method, isIdempotent ? "is" : "is not"),
+                    isIdempotent ? UNNECESSARY_IDEMPOTENT_TRAIT : MISSING_IDEMPOTENT_TRAIT));
         }
 
         List<HttpBinding> payloadBindings = bindingIndex.getRequestBindings(shape, HttpBinding.Location.PAYLOAD);
@@ -119,25 +127,27 @@ public final class HttpMethodSemanticsValidator extends AbstractValidator {
         if (semantics.allowsRequestPayload != null && !semantics.allowsRequestPayload) {
             if (!payloadBindings.isEmpty()) {
                 events.add(danger(shape, trait, String.format(
-                        "This operation uses the `%s` method in the `http` trait, but the `%s` member is sent as the "
-                            + "payload of the request because it is marked with the `httpPayload` trait. Many HTTP "
-                            + "clients do not support payloads with %1$s requests. Consider binding this member to "
-                            + "other parts of the HTTP request such as a query string parameter using the `httpQuery` "
-                            + "trait, a header using the `httpHeader` trait, or a path segment using the `httpLabel` "
-                            + "trait.",
-                        method, payloadBindings.get(0).getMemberName()
-                )));
+                    "This operation uses the `%s` method in the `http` trait, but the `%s` member is sent as the "
+                        + "payload of the request because it is marked with the `httpPayload` trait. Many HTTP "
+                        + "clients do not support payloads with %1$s requests. Consider binding this member to "
+                        + "other parts of the HTTP request such as a query string parameter using the `httpQuery` "
+                        + "trait, a header using the `httpHeader` trait, or a path segment using the `httpLabel` "
+                        + "trait.",
+                        method, payloadBindings.get(0).getMemberName()),
+                    UNEXPECTED_PAYLOAD)
+                );
             } else if (!documentBindings.isEmpty()) {
                 events.add(danger(shape, trait, String.format(
-                        "This operation uses the `%s` method in the `http` trait, but the following members "
-                            + "are sent as part of the payload of the request: %s. These members are sent as part "
-                            + "of the payload because they are not explicitly configured to be sent in headers, in the "
-                            + "query string, or in a URI segment. Many HTTP clients do not support payloads with %1$s "
-                            + "requests. Consider binding these members to other parts of the HTTP request such as "
-                            + "query string parameters using the `httpQuery` trait, headers using the `httpHeader` "
-                            + "trait, or URI segments using the `httpLabel` trait.",
-                        method, ValidationUtils.tickedList(documentBindings.stream().map(HttpBinding::getMemberName))
-                )));
+                    "This operation uses the `%s` method in the `http` trait, but the following members "
+                        + "are sent as part of the payload of the request: %s. These members are sent as part "
+                        + "of the payload because they are not explicitly configured to be sent in headers, in the "
+                        + "query string, or in a URI segment. Many HTTP clients do not support payloads with %1$s "
+                        + "requests. Consider binding these members to other parts of the HTTP request such as "
+                        + "query string parameters using the `httpQuery` trait, headers using the `httpHeader` "
+                        + "trait, or URI segments using the `httpLabel` trait.",
+                        method, ValidationUtils.tickedList(documentBindings.stream().map(HttpBinding::getMemberName))),
+                    UNEXPECTED_PAYLOAD)
+                );
             }
         }
 

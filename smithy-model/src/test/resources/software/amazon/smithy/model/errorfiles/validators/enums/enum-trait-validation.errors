@@ -1,9 +1,9 @@
 [WARNING] ns.foo#ValidNoName: Enums should define the `name` property to allow rich types to be generated in code generators. | EnumNamesPresent
-[WARNING] ns.foo#Warn1: The name `_bar` does not match the recommended enum name format of beginning with an uppercase letter, followed by any number of uppercase letters, numbers, or underscores. | EnumTrait
-[WARNING] ns.foo#Warn1: The name `baz` does not match the recommended enum name format of beginning with an uppercase letter, followed by any number of uppercase letters, numbers, or underscores. | EnumTrait
-[WARNING] ns.foo#Invalid2: The name `invalid!` does not match the recommended enum name format of beginning with an uppercase letter, followed by any number of uppercase letters, numbers, or underscores. | EnumTrait
-[WARNING] ns.foo#Invalid2: The name `invalid2!` does not match the recommended enum name format of beginning with an uppercase letter, followed by any number of uppercase letters, numbers, or underscores. | EnumTrait
-[WARNING] ns.foo#Invalid3: The name `a` does not match the recommended enum name format of beginning with an uppercase letter, followed by any number of uppercase letters, numbers, or underscores. | EnumTrait
+[WARNING] ns.foo#Warn1: The name `_bar` does not match the recommended enum name format of beginning with an uppercase letter, followed by any number of uppercase letters, numbers, or underscores. | EnumTrait._bar
+[WARNING] ns.foo#Warn1: The name `baz` does not match the recommended enum name format of beginning with an uppercase letter, followed by any number of uppercase letters, numbers, or underscores. | EnumTrait.baz
+[WARNING] ns.foo#Invalid2: The name `invalid!` does not match the recommended enum name format of beginning with an uppercase letter, followed by any number of uppercase letters, numbers, or underscores. | EnumTrait.invalid!
+[WARNING] ns.foo#Invalid2: The name `invalid2!` does not match the recommended enum name format of beginning with an uppercase letter, followed by any number of uppercase letters, numbers, or underscores. | EnumTrait.invalid2!
+[WARNING] ns.foo#Invalid3: The name `a` does not match the recommended enum name format of beginning with an uppercase letter, followed by any number of uppercase letters, numbers, or underscores. | EnumTrait.a
 [ERROR] ns.foo#Invalid1: `foo` enum value body is missing the `name` property; if any enum trait value contains a `name` property, then all values must contain the `name` property. | EnumTrait
 [ERROR] ns.foo#Invalid2: Error validating trait `enum`.0.name: String value provided for `smithy.api#EnumConstantBodyName` must match regular expression: ^[a-zA-Z_]+[a-zA-Z_0-9]*$ | TraitValue
 [ERROR] ns.foo#Invalid2: Error validating trait `enum`.1.name: String value provided for `smithy.api#EnumConstantBodyName` must match regular expression: ^[a-zA-Z_]+[a-zA-Z_0-9]*$ | TraitValue

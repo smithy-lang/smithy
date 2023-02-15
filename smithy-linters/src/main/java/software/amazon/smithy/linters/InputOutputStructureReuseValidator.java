@@ -39,6 +39,9 @@ public final class InputOutputStructureReuseValidator extends AbstractValidator 
         }
     }
 
+    private static final String INPUT = "Input";
+    private static final String OUTPUT = "Output";
+
     @Override
     public List<ValidationEvent> validate(Model model) {
         List<ValidationEvent> events = new ArrayList<>();
@@ -62,13 +65,15 @@ public final class InputOutputStructureReuseValidator extends AbstractValidator 
                     "This structure is the input of `%s`, but it is not marked with the "
                     + "@input trait. The @input trait gives operations more flexibility to "
                     + "evolve their top-level input members in ways that would otherwise "
-                    + "be backward incompatible.", operation.getId())));
+                    + "be backward incompatible.", operation.getId()),
+                    INPUT, operation.getId().getName()));
         }
 
         if (!output.hasTrait(OutputTrait.class)) {
             events.add(warning(output, String.format(
                     "This structure is the output of `%s`, but it is not marked with "
-                    + "the @output trait.", operation.getId())));
+                    + "the @output trait.", operation.getId()),
+                    OUTPUT, operation.getId().getName()));
         }
     }
 }
