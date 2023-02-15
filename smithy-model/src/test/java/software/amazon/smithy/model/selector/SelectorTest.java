@@ -737,6 +737,24 @@ public class SelectorTest {
     }
 
     @Test
+    public void evaluatesScopedAttributesWithOr() {
+        final Model enumModel = Model.assembler()
+                .addImport(SelectorTest.class.getResource("enums.smithy"))
+                .assemble()
+                .unwrap();
+
+        Set<String> shapes = ids(
+            enumModel, "[@trait|enum|(values): @{name} ^= DIA, CLU]");
+
+        assertThat(shapes, containsInAnyOrder("smithy.example#Suit"));
+
+        shapes = ids(
+            enumModel, "[@trait|enum|(values): @{name} ^= DIA, BLA]");
+
+        assertThat(shapes, containsInAnyOrder("smithy.example#Color", "smithy.example#Suit"));
+    }
+
+    @Test
     public void evaluatesScopedAttributesWithProjections() {
         // Note that the projection can be on either side.
         Set<String> shapes1 = ids(traitModel, "[@trait|enum|(values): @{name}=@{value} && @{tags|(values)}=hi]");
