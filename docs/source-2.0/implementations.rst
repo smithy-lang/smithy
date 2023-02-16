@@ -76,7 +76,7 @@ IDE Support
       - WIP
       - A Language Server Protocol implementation for the Smithy IDL.
     * - `Tree Sitter grammar for Smithy <https://github.com/indoorvivants/tree-sitter-smithy>`_
-      - C
+      - JavaScript, C
       - GA
       - Included in `nvim-treesitter <https://github.com/nvim-treesitter/nvim-treesitter>`_
         to provide syntax highlighting in Neovim.
