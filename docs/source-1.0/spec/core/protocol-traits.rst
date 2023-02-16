@@ -305,6 +305,8 @@ Smithy defines the following built-in timestamp formats:
         `RFC3339 section 5.6 <https://www.rfc-editor.org/rfc/rfc3339#section-5.6>`_
         with no UTC offset and optional fractional precision (for example,
         ``1985-04-12T23:20:50.52Z``).
+        *However*, offsets are parsed gracefully, but the datetime is normalized
+        to an offset of zero by converting to UTC.
     * - http-date
       - An HTTP date as defined by the ``IMF-fixdate`` production in
         :rfc:`7231#section-7.1.1.1` (for example,

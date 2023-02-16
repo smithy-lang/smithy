@@ -1,1 +1,1 @@
-[WARNING] ns.foo#Baz: Error validating trait `sensitive`: Invalid structure member `test` found for `smithy.api#sensitive` | TraitValue
+[WARNING] ns.foo#Baz: Error validating trait `sensitive`: Invalid structure member `test` found for `smithy.api#sensitive` | TraitValue.smithy.api#sensitive.test

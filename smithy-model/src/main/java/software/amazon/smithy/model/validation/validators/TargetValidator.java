@@ -204,7 +204,7 @@ public final class TargetValidator extends AbstractValidator {
         deprecatedTrait.getMessage().ifPresent(message -> builder.append(". ").append(message));
         deprecatedTrait.getSince().ifPresent(since -> builder.append(" (since ").append(since).append(')'));
         events.add(ValidationEvent.builder()
-                           .id("DeprecatedShape")
+                           .id("DeprecatedShape." + target.getId())
                            .severity(Severity.WARNING)
                            .shape(shape)
                            .message(builder.toString())

@@ -185,11 +185,13 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
                     .map(HttpPrefixHeadersTrait::getValue)
                     .ifPresent(headerPrefix -> {
                         if (HttpChecksumTrait.CHECKSUM_PREFIX.startsWith(headerPrefix)) {
+                            String memberName = member.getId().getName();
+                            String prefixString = headerPrefix.toLowerCase(Locale.US);
                             events.add(danger(operation, format("The `httpPrefixHeaders` binding of `%s` uses"
-                                            + " the prefix `%s` that conflicts with the prefix `%s` used by the"
-                                            + " `httpChecksum` trait.",
-                                    member.getId().getName(), headerPrefix.toLowerCase(Locale.US),
-                                    HttpChecksumTrait.CHECKSUM_PREFIX)));
+                                                    + " the prefix `%s` that conflicts with the prefix `%s` used by the"
+                                                    + " `httpChecksum` trait.",
+                                                memberName, prefixString, HttpChecksumTrait.CHECKSUM_PREFIX),
+                                    "HttpPrefixHeaders", memberName, prefixString));
                         }
                     });
 
@@ -200,10 +202,12 @@ public final class HttpChecksumTraitValidator extends AbstractValidator {
                     .map(HttpHeaderTrait::getValue)
                     .ifPresent(headerName -> {
                         if (headerName.startsWith(HttpChecksumTrait.CHECKSUM_PREFIX)) {
+                            String memberName = member.getId().getName();
+                            String headerString = headerName.toLowerCase(Locale.US);
                             events.add(warning(operation, format("The `httpHeader` binding of `%s` on `%s`"
-                                            + " starts with the prefix `%s` used by the `httpChecksum` trait.",
-                                    headerName.toLowerCase(Locale.US), member.getId().getName(),
-                                    HttpChecksumTrait.CHECKSUM_PREFIX)));
+                                                    + " starts with the prefix `%s` used by the `httpChecksum` trait.",
+                                                headerString, memberName, HttpChecksumTrait.CHECKSUM_PREFIX),
+                                    "HttpHeader", memberName, headerString));
                         }
                     });
         }
