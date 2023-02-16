@@ -25,7 +25,7 @@ Smithy models can be converted to OpenAPI through smithy-build using the
 
 .. note::
 
-    The Smithy ``openapi`` plugin currently supports OpenAPI 3.0.2.
+    The Smithy ``openapi`` plugin currently supports OpenAPI 3.0.2 and OpenAPI 3.1.0.
 
 
 --------------------------------------
@@ -228,6 +228,11 @@ version (``string``)
     Specifies the OpenAPI specification version.
     Currently supports OpenAPI 3.0.2 and OpenAPI 3.1.0.
     This option defaults to ``3.0.2``.
+
+    .. note::
+        The JSON schema version used for model schemas is the latest JSON schema
+        version supported by the specified OpenAPI version. For example, OpenAPI version
+        ``3.1.0`` will use JSON schema version ``draft2020-12`` for model schemas.
 
     .. code-block:: json
 
