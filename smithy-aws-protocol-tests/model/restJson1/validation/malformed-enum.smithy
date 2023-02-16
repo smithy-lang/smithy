@@ -38,8 +38,8 @@ apply MalformedEnum @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value $value:L at '/string' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]",
-                      "fieldList" : [{"message": "Value $value:L at '/string' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]", "path": "/string"}]}"""
+                    { "message" : "1 validation error detected. Value at '/string' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]",
+                      "fieldList" : [{"message": "Value at '/string' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]", "path": "/string"}]}"""
                 }
             }
         },
@@ -71,8 +71,8 @@ apply MalformedEnum @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value $value:L at '/list/0' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]",
-                      "fieldList" : [{"message": "Value $value:L at '/list/0' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]", "path": "/list/0"}]}"""
+                    { "message" : "1 validation error detected. Value at '/list/0' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]",
+                      "fieldList" : [{"message": "Value at '/list/0' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]", "path": "/list/0"}]}"""
                 }
             }
         },
@@ -104,8 +104,8 @@ apply MalformedEnum @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value $value:L at '/map' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]",
-                      "fieldList" : [{"message": "Value $value:L at '/map' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]", "path": "/map"}]}"""
+                    { "message" : "1 validation error detected. Value at '/map' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]",
+                      "fieldList" : [{"message": "Value at '/map' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]", "path": "/map"}]}"""
                 }
             }
         },
@@ -137,8 +137,8 @@ apply MalformedEnum @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value $value:L at '/map/abc' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]",
-                      "fieldList" : [{"message": "Value $value:L at '/map/abc' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]", "path": "/map/abc"}]}"""
+                    { "message" : "1 validation error detected. Value at '/map/abc' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]",
+                      "fieldList" : [{"message": "Value at '/map/abc' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]", "path": "/map/abc"}]}"""
                 }
             }
         },
@@ -170,8 +170,8 @@ apply MalformedEnum @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value $value:L at '/union/first' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]",
-                      "fieldList" : [{"message": "Value $value:L at '/union/first' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]", "path": "/union/first"}]}"""
+                    { "message" : "1 validation error detected. Value at '/union/first' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]",
+                      "fieldList" : [{"message": "Value at '/union/first' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]", "path": "/union/first"}]}"""
                 }
             }
         },
