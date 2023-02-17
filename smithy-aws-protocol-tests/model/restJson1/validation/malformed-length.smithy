@@ -52,8 +52,8 @@ apply MalformedLength @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value at '/blob' failed to satisfy constraint: Member must have length between 2 and 8, inclusive",
-                      "fieldList" : [{"message": "Value at '/blob' failed to satisfy constraint: Member must have length between 2 and 8, inclusive", "path": "/blob"}]}"""
+                    { "message" : "1 validation error detected. Value with length $inputLength:L at '/blob' failed to satisfy constraint: Member must have length between 2 and 8, inclusive",
+                      "fieldList" : [{"message": "Value with length $inputLength:L at '/blob' failed to satisfy constraint: Member must have length between 2 and 8, inclusive", "path": "/blob"}]}"""
                 }
             }
         },
@@ -86,8 +86,8 @@ apply MalformedLength @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value at '/string' failed to satisfy constraint: Member must have length between 2 and 8, inclusive",
-                      "fieldList" : [{"message": "Value at '/string' failed to satisfy constraint: Member must have length between 2 and 8, inclusive", "path": "/string"}]}"""
+                    { "message" : "1 validation error detected. Value with length $inputLength:L at '/string' failed to satisfy constraint: Member must have length between 2 and 8, inclusive",
+                      "fieldList" : [{"message": "Value with length $inputLength:L at '/string' failed to satisfy constraint: Member must have length between 2 and 8, inclusive", "path": "/string"}]}"""
                 }
             }
         },
@@ -120,8 +120,8 @@ apply MalformedLength @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value at '/minString' failed to satisfy constraint: Member must have length greater than or equal to 2",
-                      "fieldList" : [{"message": "Value at '/minString' failed to satisfy constraint: Member must have length greater than or equal to 2", "path": "/minString"}]}"""
+                    { "message" : "1 validation error detected. Value with length 1 at '/minString' failed to satisfy constraint: Member must have length greater than or equal to 2",
+                      "fieldList" : [{"message": "Value with length 1 at '/minString' failed to satisfy constraint: Member must have length greater than or equal to 2", "path": "/minString"}]}"""
                 }
             }
         }
@@ -150,8 +150,8 @@ apply MalformedLength @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value at '/maxString' failed to satisfy constraint: Member must have length less than or equal to 8",
-                      "fieldList" : [{"message": "Value at '/maxString' failed to satisfy constraint: Member must have length less than or equal to 8", "path": "/maxString"}]}"""
+                    { "message" : "1 validation error detected. Value with length 26 at '/maxString' failed to satisfy constraint: Member must have length less than or equal to 8",
+                      "fieldList" : [{"message": "Value with length 26 at '/maxString' failed to satisfy constraint: Member must have length less than or equal to 8", "path": "/maxString"}]}"""
                 }
             }
         }
@@ -180,8 +180,8 @@ apply MalformedLength @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value at '/list' failed to satisfy constraint: Member must have length between 2 and 8, inclusive",
-                      "fieldList" : [{"message": "Value at '/list' failed to satisfy constraint: Member must have length between 2 and 8, inclusive", "path": "/list"}]}"""
+                    { "message" : "1 validation error detected. Value with length $inputLength:L at '/list' failed to satisfy constraint: Member must have length between 2 and 8, inclusive",
+                      "fieldList" : [{"message": "Value with length $inputLength:L at '/list' failed to satisfy constraint: Member must have length between 2 and 8, inclusive", "path": "/list"}]}"""
                 }
             }
         },
@@ -215,8 +215,8 @@ apply MalformedLength @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value at '/list/0' failed to satisfy constraint: Member must have length between 2 and 8, inclusive",
-                      "fieldList" : [{"message": "Value at '/list/0' failed to satisfy constraint: Member must have length between 2 and 8, inclusive", "path": "/list/0"}]}"""
+                    { "message" : "1 validation error detected. Value with length $inputLength:L at '/list/0' failed to satisfy constraint: Member must have length between 2 and 8, inclusive",
+                      "fieldList" : [{"message": "Value with length $inputLength:L at '/list/0' failed to satisfy constraint: Member must have length between 2 and 8, inclusive", "path": "/list/0"}]}"""
                 }
             }
         },
@@ -252,8 +252,8 @@ apply MalformedLength @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value at '/map' failed to satisfy constraint: Member must have length between 2 and 8, inclusive",
-                      "fieldList" : [{"message": "Value at '/map' failed to satisfy constraint: Member must have length between 2 and 8, inclusive", "path": "/map"}]}"""
+                    { "message" : "1 validation error detected. Value with length $inputLength:L at '/map' failed to satisfy constraint: Member must have length between 2 and 8, inclusive",
+                      "fieldList" : [{"message": "Value with length $inputLength:L at '/map' failed to satisfy constraint: Member must have length between 2 and 8, inclusive", "path": "/map"}]}"""
                 }
             }
         },
@@ -292,8 +292,8 @@ apply MalformedLength @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value at '/map' failed to satisfy constraint: Member must have length between 2 and 8, inclusive",
-                      "fieldList" : [{"message": "Value at '/map' failed to satisfy constraint: Member must have length between 2 and 8, inclusive", "path": "/map"}]}"""
+                    { "message" : "1 validation error detected. Value with length $inputLength:L at '/map' failed to satisfy constraint: Member must have length between 2 and 8, inclusive",
+                      "fieldList" : [{"message": "Value with length $inputLength:L at '/map' failed to satisfy constraint: Member must have length between 2 and 8, inclusive", "path": "/map"}]}"""
                 }
             }
         },
@@ -327,8 +327,8 @@ apply MalformedLength @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value at '/map/abc' failed to satisfy constraint: Member must have length between 2 and 8, inclusive",
-                      "fieldList" : [{"message": "Value at '/map/abc' failed to satisfy constraint: Member must have length between 2 and 8, inclusive", "path": "/map/abc"}]}"""
+                    { "message" : "1 validation error detected. Value with length $inputLength:L at '/map/abc' failed to satisfy constraint: Member must have length between 2 and 8, inclusive",
+                      "fieldList" : [{"message": "Value with length $inputLength:L at '/map/abc' failed to satisfy constraint: Member must have length between 2 and 8, inclusive", "path": "/map/abc"}]}"""
                 }
             }
         },
@@ -369,8 +369,8 @@ apply MalformedLengthOverride @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value at '/blob' failed to satisfy constraint: Member must have length between 4 and 6, inclusive",
-                      "fieldList" : [{"message": "Value at '/blob' failed to satisfy constraint: Member must have length between 4 and 6, inclusive", "path": "/blob"}]}"""
+                    { "message" : "1 validation error detected. Value with length $inputLength:L at '/blob' failed to satisfy constraint: Member must have length between 4 and 6, inclusive",
+                      "fieldList" : [{"message": "Value with length $inputLength:L at '/blob' failed to satisfy constraint: Member must have length between 4 and 6, inclusive", "path": "/blob"}]}"""
                 }
             }
         },
@@ -403,8 +403,8 @@ apply MalformedLengthOverride @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value at '/string' failed to satisfy constraint: Member must have length between 4 and 6, inclusive",
-                      "fieldList" : [{"message": "Value at '/string' failed to satisfy constraint: Member must have length between 4 and 6, inclusive", "path": "/string"}]}"""
+                    { "message" : "1 validation error detected. Value with length $inputLength:L at '/string' failed to satisfy constraint: Member must have length between 4 and 6, inclusive",
+                      "fieldList" : [{"message": "Value with length $inputLength:L at '/string' failed to satisfy constraint: Member must have length between 4 and 6, inclusive", "path": "/string"}]}"""
                 }
             }
         },
@@ -437,8 +437,8 @@ apply MalformedLengthOverride @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value at '/minString' failed to satisfy constraint: Member must have length greater than or equal to 4",
-                      "fieldList" : [{"message": "Value at '/minString' failed to satisfy constraint: Member must have length greater than or equal to 4", "path": "/minString"}]}"""
+                    { "message" : "1 validation error detected. Value with length 3 at '/minString' failed to satisfy constraint: Member must have length greater than or equal to 4",
+                      "fieldList" : [{"message": "Value with length 3 at '/minString' failed to satisfy constraint: Member must have length greater than or equal to 4", "path": "/minString"}]}"""
                 }
             }
         }
@@ -467,8 +467,8 @@ apply MalformedLengthOverride @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value at '/maxString' failed to satisfy constraint: Member must have length less than or equal to 6",
-                      "fieldList" : [{"message": "Value at '/maxString' failed to satisfy constraint: Member must have length less than or equal to 6", "path": "/maxString"}]}"""
+                    { "message" : "1 validation error detected. Value with length 7 at '/maxString' failed to satisfy constraint: Member must have length less than or equal to 6",
+                      "fieldList" : [{"message": "Value with length 7 at '/maxString' failed to satisfy constraint: Member must have length less than or equal to 6", "path": "/maxString"}]}"""
                 }
             }
         }
@@ -497,8 +497,8 @@ apply MalformedLengthOverride @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value at '/list' failed to satisfy constraint: Member must have length between 4 and 6, inclusive",
-                      "fieldList" : [{"message": "Value at '/list' failed to satisfy constraint: Member must have length between 4 and 6, inclusive", "path": "/list"}]}"""
+                    { "message" : "1 validation error detected. Value with length $inputLength:L at '/list' failed to satisfy constraint: Member must have length between 4 and 6, inclusive",
+                      "fieldList" : [{"message": "Value with length $inputLength:L at '/list' failed to satisfy constraint: Member must have length between 4 and 6, inclusive", "path": "/list"}]}"""
                 }
             }
         },
@@ -534,8 +534,8 @@ apply MalformedLengthOverride @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value at '/map' failed to satisfy constraint: Member must have length between 4 and 6, inclusive",
-                      "fieldList" : [{"message": "Value at '/map' failed to satisfy constraint: Member must have length between 4 and 6, inclusive", "path": "/map"}]}"""
+                    { "message" : "1 validation error detected. Value with length $inputLength:L at '/map' failed to satisfy constraint: Member must have length between 4 and 6, inclusive",
+                      "fieldList" : [{"message": "Value with length $inputLength:L at '/map' failed to satisfy constraint: Member must have length between 4 and 6, inclusive", "path": "/map"}]}"""
                 }
             }
         },
@@ -580,8 +580,8 @@ apply MalformedLengthQueryString @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value at '/string' failed to satisfy constraint: Member must have length between 2 and 8, inclusive",
-                      "fieldList" : [{"message": "Value at '/string' failed to satisfy constraint: Member must have length between 2 and 8, inclusive", "path": "/string"}]}"""
+                    { "message" : "1 validation error detected. Value with length 0 at '/string' failed to satisfy constraint: Member must have length between 2 and 8, inclusive",
+                      "fieldList" : [{"message": "Value with length 0 at '/string' failed to satisfy constraint: Member must have length between 2 and 8, inclusive", "path": "/string"}]}"""
                 }
             }
         }
