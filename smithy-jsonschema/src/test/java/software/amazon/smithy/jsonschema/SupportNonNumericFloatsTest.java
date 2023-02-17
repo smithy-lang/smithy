@@ -28,7 +28,7 @@ public class SupportNonNumericFloatsTest {
         assertThat(result.getDefinitions().keySet(), not(empty()));
 
         Node expectedNode = Node.parse(IoUtils.toUtf8String(
-                getClass().getResourceAsStream("non-numeric-floats.jsonschema.json")));
+                getClass().getResourceAsStream("non-numeric-floats.jsonschema.v07.json")));
         Node.assertEquals(result, expectedNode);
     }
 }

@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
 import software.amazon.smithy.jsonschema.JsonSchemaConfig;
+import software.amazon.smithy.jsonschema.JsonSchemaVersion;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -87,6 +88,7 @@ public class OpenApiConfig extends JsonSchemaConfig {
     public OpenApiConfig() {
         super();
         setDefinitionPointer(SCHEMA_COMPONENTS_POINTER);
+        super.setJsonSchemaVersion(version.getJsonSchemaVersion());
     }
 
     public ShapeId getProtocol() {
@@ -316,6 +318,7 @@ public class OpenApiConfig extends JsonSchemaConfig {
 
     public void setVersion(OpenApiVersion version) {
         this.version = Objects.requireNonNull(version);
+        super.setJsonSchemaVersion(version.getJsonSchemaVersion());
     }
 
     /**
@@ -382,5 +385,10 @@ public class OpenApiConfig extends JsonSchemaConfig {
         }
 
         return mapped;
+    }
+
+    @Override
+    public void setJsonSchemaVersion(JsonSchemaVersion schemaVersion) {
+        throw new OpenApiException("`jsonSchemaVersion` configuration parameter is not supported by OpenAPI plugin.");
     }
 }

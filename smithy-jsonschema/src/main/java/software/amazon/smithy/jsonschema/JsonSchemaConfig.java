@@ -53,7 +53,7 @@ public class JsonSchemaConfig {
          */
         STRUCTURE("structure");
 
-        private String stringValue;
+        private final String stringValue;
 
         UnionStrategy(String stringValue) {
             this.stringValue = stringValue;
@@ -84,7 +84,7 @@ public class JsonSchemaConfig {
          */
         PATTERN_PROPERTIES("patternProperties");
 
-        private String stringValue;
+        private final String stringValue;
 
         MapStrategy(String stringValue) {
             this.stringValue = stringValue;
@@ -101,11 +101,12 @@ public class JsonSchemaConfig {
     private TimestampFormatTrait.Format defaultTimestampFormat = TimestampFormatTrait.Format.DATE_TIME;
     private UnionStrategy unionStrategy = UnionStrategy.ONE_OF;
     private MapStrategy mapStrategy = MapStrategy.PROPERTY_NAMES;
-    private String definitionPointer = "#/definitions";
+    private String definitionPointer;
     private ObjectNode schemaDocumentExtensions = Node.objectNode();
     private ObjectNode extensions = Node.objectNode();
     private Set<String> disableFeatures = new HashSet<>();
-    private final ConcurrentHashMap<Class, Object> extensionCache = new ConcurrentHashMap<>();
+    private JsonSchemaVersion jsonSchemaVersion = JsonSchemaVersion.DRAFT07;
+    private final ConcurrentHashMap<Class<?>, Object> extensionCache = new ConcurrentHashMap<>();
     private final NodeMapper nodeMapper = new NodeMapper();
     private ShapeId service;
     private boolean supportNonNumericFloats = false;
@@ -193,7 +194,7 @@ public class JsonSchemaConfig {
     }
 
     public String getDefinitionPointer() {
-        return definitionPointer;
+        return definitionPointer != null ? definitionPointer : jsonSchemaVersion.getDefaultDefinitionPointer();
     }
 
     /**
@@ -203,8 +204,8 @@ public class JsonSchemaConfig {
      * characters to place schemas in nested object properties. The provided
      * JSON Pointer does not support escaping.
      *
-     * <p>Defaults to "#/definitions" if no value is specified. OpenAPI
-     * artifacts will want to use "#/components/schemas".
+     * <p>Defaults to {@code "#/definitions"} for schema versions less than 2019-09 and {@code "#/$defs"} for schema
+     * versions 2019-09 and greater. OpenAPI artifacts will want to use "#/components/schemas".
      *
      * @param definitionPointer The root definition pointer to use.
      */
@@ -402,5 +403,26 @@ public class JsonSchemaConfig {
      */
     public void setUseIntegerType(boolean useIntegerType) {
         this.useIntegerType = useIntegerType;
+    }
+
+
+    /**
+     * JSON schema version to use when converting Smithy shapes into Json Schema.
+     *
+     * <p> Defaults to JSON Schema version {@code draft07} if no schema version is specified
+     *
+     * @return JSON Schema version that will be used for generated JSON schema
+     */
+    public JsonSchemaVersion getJsonSchemaVersion() {
+        return jsonSchemaVersion;
+    }
+
+    /**
+     * Set the JSON schema version to use when converting Smithy shapes into Json Schema.
+     *
+     * @param schemaVersion JSON Schema version to use for generated schema
+     */
+    public void setJsonSchemaVersion(JsonSchemaVersion schemaVersion) {
+        this.jsonSchemaVersion = Objects.requireNonNull(schemaVersion);
     }
 }
