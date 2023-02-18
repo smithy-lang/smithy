@@ -20,6 +20,7 @@ service RestJsonValidation {
         MalformedRange,
         MalformedRangeOverride,
         MalformedRequired,
+        MalformedUniqueItems,
         RecursiveStructures,
         SensitiveValidation
     ]
