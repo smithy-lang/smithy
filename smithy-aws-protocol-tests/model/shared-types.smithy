@@ -121,16 +121,6 @@ list ListSet {
 }
 
 @uniqueItems
-list MapSet {
-    member: StringMap
-}
-
-map StringMap {
-    key: String,
-    value: String
-}
-
-@uniqueItems
 list StructureSet {
     member: GreetingStruct
 }

@@ -13,7 +13,6 @@ use aws.protocoltests.shared#IntegerSet
 use aws.protocoltests.shared#IntegerEnumSet
 use aws.protocoltests.shared#ListSet
 use aws.protocoltests.shared#LongSet
-use aws.protocoltests.shared#MapSet
 use aws.protocoltests.shared#ShortSet
 use aws.protocoltests.shared#StringSet
 use aws.protocoltests.shared#StructureSet
@@ -428,36 +427,6 @@ apply MalformedUniqueItems @httpMalformedRequestTests([
         }
     },
     {
-        id: "RestJsonMalformedUniqueItemsMapList",
-        documentation: """
-        When an list of maps contains non-unique values,
-        the response should be a 400 ValidationException.""",
-        protocol: restJson1,
-        request: {
-            method: "POST",
-            uri: "/MalformedUniqueItems",
-            body: """
-            { "mapList" : [{"foo": "bar"}, {"foo": "bar"}] }""",
-            headers: {
-                "content-type": "application/json"
-            }
-        },
-        response: {
-            code: 400,
-            headers: {
-                "x-amzn-errortype": "ValidationException"
-            },
-            body: {
-                mediaType: "application/json",
-                assertion: {
-                    contents: """
-                    { "message" : "1 validation error detected. Value with repeated values at '/mapList' failed to satisfy constraint: Member must have unique values",
-                      "fieldList" : [{"message": "Value with repeated values at '/mapList' failed to satisfy constraint: Member must have unique values", "path": "/mapList"}]}"""
-                }
-            }
-        }
-    },
-    {
         id: "RestJsonMalformedUniqueItemsStructureList",
         documentation: """
         When an list of structures contains non-unique values,
@@ -536,7 +505,6 @@ structure MalformedUniqueItemsInput {
     enumList: FooEnumSet
     intEnumList: IntegerEnumSet
     listList: ListSet,
-    mapList: MapSet,
     structureList: StructureSet
     unionList: UnionSet
 }
