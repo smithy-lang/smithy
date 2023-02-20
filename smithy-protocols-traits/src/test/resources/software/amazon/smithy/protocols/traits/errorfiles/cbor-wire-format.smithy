@@ -28,3 +28,8 @@ service InvalidService3 {
 service InvalidService4 {
     version: "2023-02-10"
 }
+
+@rpcv2(format: ["CBOR"])
+service InvalidService5 {
+    version: "2023-02-10"
+}

@@ -22,12 +22,19 @@ structure rpcv2 {
     /// that are required when using event streams.
     eventStreamHttp: StringList
 
-    /// Priority ordered list of supported wire formats.
+    /// The list of serialization formats supported by the service.
+    /// Must contain at least one entry. Can currently only contain "cbor".
     @required
-    format: StringList
+    @length(min: 1)
+    format: FormatList
 }
 
-/// A list of String shapes.
+@private
+list FormatList {
+    @pattern("^[a-z0-9\\-]+$")
+    member: String
+}
+
 @private
 list StringList {
     member: String

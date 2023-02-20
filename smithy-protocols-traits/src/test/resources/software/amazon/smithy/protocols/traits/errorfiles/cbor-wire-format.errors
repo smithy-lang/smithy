@@ -1,4 +1,6 @@
-[ERROR] smithy.example#InvalidService1: The `format` property for the smithy.protocols#rpcv2 protocol must have at least 1 element | Rpcv2Trait
+[ERROR] smithy.example#InvalidService1: Error validating trait `smithy.protocols#rpcv2`.format: Value provided for `smithy.protocols#rpcv2$format` must have at least 1 elements, but the provided value only has 0 elements | TraitValue
 [ERROR] smithy.example#InvalidService2: The following values of the `format` property for the smithy.protocols#rpcv2 protocol are not supported: [invalid-wire-format] | Rpcv2Trait
 [ERROR] smithy.example#InvalidService3: The following values of the `format` property for the smithy.protocols#rpcv2 protocol are not supported: [invalid-wire-format] | Rpcv2Trait
 [ERROR] smithy.example#InvalidService4: The following values of the `format` property for the smithy.protocols#rpcv2 protocol are not supported: [invalid-wire-format1, invalid-wire-format2] | Rpcv2Trait
+[ERROR] smithy.example#InvalidService5: Error validating trait `smithy.protocols#rpcv2`.format.0: String value provided for `smithy.protocols#FormatList$member` must match regular expression: ^[a-z0-9\-]+$ | TraitValue
+[ERROR] smithy.example#InvalidService5: The following values of the `format` property for the smithy.protocols#rpcv2 protocol are not supported: [CBOR] | Rpcv2Trait

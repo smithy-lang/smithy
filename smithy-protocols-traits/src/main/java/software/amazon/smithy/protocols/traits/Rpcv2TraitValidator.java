@@ -58,13 +58,8 @@ public final class Rpcv2TraitValidator extends AbstractValidator {
                             + "trait: %s", protocolTrait.toShapeId(), invalid)));
         }
 
+        // The trait model validates having 1 or more formats and that formats are lowercase.
         List<String> formats = new ArrayList<>(protocolTrait.getFormat());
-        // Validate there is at least one element in the format property.
-        if (formats.size() == 0) {
-            events.add(error(service, protocolTrait, String.format(
-                    "The `format` property for the %s protocol must have at least 1 element",
-                    protocolTrait.toShapeId())));
-        }
         // All the user specified wire formats must be valid.
         formats.removeAll(VALID_FORMATS);
         if (!formats.isEmpty()) {
