@@ -346,6 +346,25 @@ apply XmlTimestamps @httpResponseTests([
         }
     },
     {
+        id: "Ec2XmlTimestampsWithFractionalHttpDateFormat",
+        documentation: "Ensures that the timestampFormat of fractional http-date works",
+        protocol: ec2Query,
+        code: 200,
+        body: """
+              <XmlTimestampsResponse xmlns="https://example.com/">
+                  <httpDate>Tue, 29 Apr 2014 18:30:38.789 GMT</httpDate>
+                  <RequestId>requestid</RequestId>
+              </XmlTimestampsResponse>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "text/xml;charset=UTF-8"
+        },
+        params: {
+            httpDate: 1398796238.789
+        }
+    },
+    {
         id: "Ec2XmlTimestampsWithHttpDateOnTargetFormat",
         documentation: "Ensures that the timestampFormat of http-date on the target shape works",
         protocol: ec2Query,
@@ -362,6 +381,25 @@ apply XmlTimestamps @httpResponseTests([
         },
         params: {
             httpDateOnTarget: 1398796238
+        }
+    },
+    {
+        id: "Ec2XmlTimestampsWithFractionalHttpDateOnTargetFormat",
+        documentation: "Ensures that the timestampFormat of fractional http-date on the target shape works",
+        protocol: ec2Query,
+        code: 200,
+        body: """
+              <XmlTimestampsResponse xmlns="https://example.com/">
+                  <httpDateOnTarget>Tue, 29 Apr 2014 18:30:38.314 GMT</httpDateOnTarget>
+                  <RequestId>requestid</RequestId>
+              </XmlTimestampsResponse>
+              """,
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "text/xml;charset=UTF-8"
+        },
+        params: {
+            httpDateOnTarget: 1398796238.314
         }
     },
 ])
