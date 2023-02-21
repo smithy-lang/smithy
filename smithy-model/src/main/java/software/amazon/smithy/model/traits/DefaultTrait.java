@@ -19,7 +19,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
- * Indicates that a shape is defaulted, meaning a zero value is used when one is not provided.
+ * Provides a default value for a shape or member.
  */
 public final class DefaultTrait extends AbstractTrait {
 

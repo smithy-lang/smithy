@@ -117,7 +117,7 @@ public final class ShapeMatcher<S extends Shape> extends TypeSafeMatcher<ShapeId
         for (ValidationEvent event : result.getValidationEvents()) {
             if (event.getShapeId().filter(sid -> sid.equals(id.toShapeId())).isPresent()
                     && event.getSeverity() == severity
-                    && event.getId().equals(eventId)
+                    && event.containsId(eventId)
                     && event.getMessage().contains(contains)) {
                 return true;
             }

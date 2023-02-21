@@ -79,7 +79,7 @@ public final class HttpBindingsMissingValidator extends AbstractValidator {
     }
 
     private ValidationEvent createEvent(Severity severity, ServiceShape service, OperationShape operation) {
-        return createEvent(severity, operation, String.format(
+        return createEvent(severity, operation, operation.getSourceLocation(), String.format(
                 "One or more operations in the `%s` service define the `http` trait, but this "
                 + "operation is missing the `http` trait.", service.getId()));
     }

@@ -1,1 +1,1 @@
-[WARNING] smithy.example#A: Waiter `A`, acceptor 0: errorType 'Nope' not found on operation. This operation defines the following errors: [smithy.example#OhNo] | WaitableTraitInvalidErrorType
+[WARNING] smithy.example#A: Waiter `A`, acceptor 0: errorType 'Nope' not found on operation. This operation defines the following errors: [smithy.example#OhNo] | WaitableTraitInvalidErrorType.A.0

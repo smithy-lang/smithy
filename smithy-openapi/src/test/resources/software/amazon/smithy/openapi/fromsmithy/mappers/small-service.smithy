@@ -9,9 +9,23 @@ service Small {
   operations: [SmallOperation]
 }
 
-@http(method: "GET", uri: "/")
+@http(method: "POST", uri: "/")
 operation SmallOperation {
     input: SmallOperationInput
 }
 
-structure SmallOperationInput {}
+structure SmallOperationInput {
+    @default({})
+    payload: StringMap
+}
+
+map StringMap {
+    key: String
+    value: String
+}
+
+@error("server")
+@httpError(500)
+structure SmallOperationException {
+    message: String = null
+}
