@@ -65,7 +65,13 @@ final class AddIntegrations implements ApiGatewayMapper {
                 });
     }
 
-    private ObjectNode createIntegration(
+    static ObjectNode createIntegration(MockIntegrationTrait integration) {
+        // The MockIntegrationTrait path doesn't use the context or shape,
+        // so it's safe to pass null here for those.
+        return createIntegration(null, null, integration);
+    }
+
+    private static ObjectNode createIntegration(
             Context<? extends Trait> context,
             OperationShape shape,
             Trait integration

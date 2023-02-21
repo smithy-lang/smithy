@@ -76,12 +76,11 @@ public class JsonSchemaConverterTest {
                 .assemble()
                 .unwrap();
         SchemaDocument document = JsonSchemaConverter.builder().model(model).build().convert();
-
         assertThat(document.getDefinitions().keySet(), not(empty()));
     }
 
     @Test
-    public void integrationTest() {
+    public void integrationTestV07() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("test-service.json"))
                 .assemble()
@@ -91,7 +90,27 @@ public class JsonSchemaConverterTest {
         assertThat(document.getDefinitions().keySet(), not(empty()));
 
         Node expected = Node.parse(
-                IoUtils.toUtf8String(getClass().getResourceAsStream("test-service.jsonschema.json")));
+                IoUtils.toUtf8String(getClass().getResourceAsStream("test-service.jsonschema.v07.json")));
+        Node.assertEquals(document.toNode(), expected);
+    }
+
+    @Test
+    public void integrationTestV2020_12() {
+        Model model = Model.assembler()
+            .addImport(getClass().getResource("test-service.json"))
+            .assemble()
+            .unwrap();
+
+        JsonSchemaConfig testConfig = new JsonSchemaConfig();
+        testConfig.setJsonSchemaVersion(JsonSchemaVersion.DRAFT2020_12);
+        SchemaDocument document = JsonSchemaConverter.builder()
+            .config(testConfig)
+            .model(model).build().convert();
+
+        assertThat(document.getDefinitions().keySet(), not(empty()));
+
+        Node expected = Node.parse(
+            IoUtils.toUtf8String(getClass().getResourceAsStream("test-service.jsonschema.v2020.json")));
         Node.assertEquals(document.toNode(), expected);
     }
 
@@ -284,7 +303,7 @@ public class JsonSchemaConverterTest {
                 .convert();
 
         Node expected = Node.parse(
-                IoUtils.toUtf8String(getClass().getResourceAsStream("integer-types.jsonschema.json")));
+                IoUtils.toUtf8String(getClass().getResourceAsStream("integer-types.jsonschema.v07.json")));
         Node.assertEquals(document.toNode(), expected);
     }
 
@@ -681,7 +700,7 @@ public class JsonSchemaConverterTest {
                 .convert();
 
         Node expected = Node.parse(
-                IoUtils.toUtf8String(getClass().getResourceAsStream("default-values.jsonschema.json")));
+                IoUtils.toUtf8String(getClass().getResourceAsStream("default-values.jsonschema.v07.json")));
         Node.assertEquals(document.toNode(), expected);
     }
 }

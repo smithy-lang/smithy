@@ -238,7 +238,7 @@ final class AddCorsPreflightIntegration implements ApiGatewayMapper {
             }
         }
 
-        // Ensure that the mock integration include the "type" = "mock" property.
-        return integration.build().toNode().expectObjectNode().withMember("type", "mock");
+        // Use createIntegration to fix the casing of the passThroughBehavior property.
+        return AddIntegrations.createIntegration(integration.build());
     }
 }

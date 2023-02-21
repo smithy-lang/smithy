@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.MockManifest;
+import software.amazon.smithy.codegen.core.ShapeGenerationOrder;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.WriterDelegator;
@@ -227,7 +228,7 @@ public class CodegenDirectorTest {
     }
 
     @Test
-    public void sortsShapes() {
+    public void sortsShapesWithDefaultTopologicalOrder() {
         TestDirected testDirected = new TestDirected();
         CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner
                 = new CodegenDirector<>();
@@ -257,6 +258,74 @@ public class CodegenDirectorTest {
                 ShapeId.from("smithy.example#RecursiveA"),
                 ShapeId.from("smithy.example#RecursiveB"),
                 ShapeId.from("smithy.example#FooOperationInput"),
+                ShapeId.from("smithy.example#Foo")
+        ));
+    }
+
+    @Test
+    public void testShapesGenerationWithAlphabeticalOrder() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner
+                = new CodegenDirector<>();
+        FileManifest manifest = new MockManifest();
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("needs-sorting.smithy"))
+                .assemble()
+                .unwrap();
+
+        runner.settings(new TestSettings());
+        runner.directedCodegen(testDirected);
+        runner.fileManifest(manifest);
+        runner.service(ShapeId.from("smithy.example#Foo"));
+        runner.model(model);
+        runner.integrationClass(TestIntegration.class);
+        runner.performDefaultCodegenTransforms();
+        runner.shapeGenerationOrder(ShapeGenerationOrder.ALPHABETICAL);
+        runner.run();
+
+        assertThat(testDirected.generatedShapes, contains(
+                ShapeId.from("smithy.example#A"),
+                ShapeId.from("smithy.example#B"),
+                ShapeId.from("smithy.example#C"),
+                ShapeId.from("smithy.example#D"),
+                ShapeId.from("smithy.example#FooOperationInput"),
+                ShapeId.from("smithy.example#FooOperationOutput"),
+                ShapeId.from("smithy.example#RecursiveA"),
+                ShapeId.from("smithy.example#RecursiveB"),
+                ShapeId.from("smithy.example#Foo")
+        ));
+    }
+
+    @Test
+    public void testShapesGenerationWithoutOrder() {
+        TestDirected testDirected = new TestDirected();
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner
+                = new CodegenDirector<>();
+        FileManifest manifest = new MockManifest();
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("needs-sorting.smithy"))
+                .assemble()
+                .unwrap();
+
+        runner.settings(new TestSettings());
+        runner.directedCodegen(testDirected);
+        runner.fileManifest(manifest);
+        runner.service(ShapeId.from("smithy.example#Foo"));
+        runner.model(model);
+        runner.integrationClass(TestIntegration.class);
+        runner.performDefaultCodegenTransforms();
+        runner.shapeGenerationOrder(ShapeGenerationOrder.NONE);
+        runner.run();
+
+        assertThat(testDirected.generatedShapes, contains(
+                ShapeId.from("smithy.example#FooOperationOutput"),
+                ShapeId.from("smithy.example#A"),
+                ShapeId.from("smithy.example#B"),
+                ShapeId.from("smithy.example#C"),
+                ShapeId.from("smithy.example#D"),
+                ShapeId.from("smithy.example#FooOperationInput"),
+                ShapeId.from("smithy.example#RecursiveA"),
+                ShapeId.from("smithy.example#RecursiveB"),
                 ShapeId.from("smithy.example#Foo")
         ));
     }

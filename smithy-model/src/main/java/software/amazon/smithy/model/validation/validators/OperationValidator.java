@@ -141,7 +141,7 @@ public final class OperationValidator extends AbstractValidator {
         return ValidationEvent.builder()
                 .severity(Severity.WARNING)
                 .shape(operation)
-                .id(OPERATION_INPUT_OUTPUT_NAME)
+                .id(OPERATION_INPUT_OUTPUT_NAME + "." + property)
                 .message(String.format(
                         "The %s of this operation should target a shape that starts with the operation's name, '%s', "
                         + "but the targeted shape is `%s`", property, operation.getId().getName(), target))

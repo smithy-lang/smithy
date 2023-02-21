@@ -84,7 +84,7 @@
           "CORS"
         ],
         "x-amazon-apigateway-integration": {
-          "passThroughBehavior": "when_no_match",
+          "passthroughBehavior": "when_no_match",
           "contentHandling": "CONVERT_TO_TEXT",
           "requestTemplates": {
             "application/json": "{\"statusCode\":200}"
@@ -254,7 +254,7 @@
           "CORS"
         ],
         "x-amazon-apigateway-integration": {
-          "passThroughBehavior": "when_no_match",
+          "passthroughBehavior": "when_no_match",
           "contentHandling": "CONVERT_TO_TEXT",
           "requestTemplates": {
             "application/json": "{\"statusCode\":200}",

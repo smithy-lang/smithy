@@ -36,7 +36,10 @@ public class RemoveUnusedComponentsTest {
         config.setService(ShapeId.from("smithy.example#Small"));
         OpenApi result = OpenApiConverter.create().config(config).convert(model);
 
-        Assertions.assertTrue(result.getComponents().getSchemas().isEmpty());
+        Assertions.assertFalse(result.getComponents().getSchemas().isEmpty());
+        Assertions.assertTrue(result.getComponents().getSchemas().containsKey("SmallOperationRequestContent"));
+        Assertions.assertTrue(result.getComponents().getSchemas().containsKey("StringMap"));
+        Assertions.assertFalse(result.getComponents().getSchemas().containsKey("SmallOperationExceptionResponseContent"));
     }
 
     @Test
