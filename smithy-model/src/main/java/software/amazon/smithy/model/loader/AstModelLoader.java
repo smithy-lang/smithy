@@ -83,7 +83,7 @@ final class AstModelLoader {
     private static final Set<String> MEMBER_PROPERTIES = SetUtils.of(TARGET, TRAITS);
     private static final Set<String> REFERENCE_PROPERTIES = SetUtils.of(TARGET);
     private static final Set<String> OPERATION_PROPERTY_NAMES = SetUtils.of(
-            TYPE, "input", "output", ERRORS, TRAITS);
+            TYPE, "input", "output", ERRORS, TRAITS, MIXINS);
     private static final Set<String> RESOURCE_PROPERTIES = SetUtils.of(
             TYPE, "create", "read", "update", "delete", "list", "put",
             "identifiers", "resources", "operations", "collectionOperations", "properties", TRAITS);

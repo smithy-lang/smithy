@@ -43,4 +43,14 @@ public class AstModelLoaderTest {
                 .assemble()
                 .unwrap();
     }
+
+    @Test
+    public void allowsMixinsOnOperationsWithoutWarningOrError() {
+        ValidatedResult<Model> model = Model.assembler()
+            .addImport(getClass().getResource("mixins/operation-mixins.json"))
+            .assemble();
+        assertEquals(0, model.getValidationEvents(Severity.WARNING).size());
+        assertEquals(0, model.getValidationEvents(Severity.ERROR).size());
+    }
+
 }
