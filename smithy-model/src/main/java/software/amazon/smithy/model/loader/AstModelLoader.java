@@ -86,7 +86,7 @@ final class AstModelLoader {
             TYPE, "input", "output", ERRORS, TRAITS, MIXINS);
     private static final Set<String> RESOURCE_PROPERTIES = SetUtils.of(
             TYPE, "create", "read", "update", "delete", "list", "put",
-            "identifiers", "resources", "operations", "collectionOperations", "properties", TRAITS);
+            "identifiers", "resources", "operations", "collectionOperations", "properties", TRAITS, MIXINS);
     private static final Set<String> SERVICE_PROPERTIES = SetUtils.of(
             TYPE, "version", "operations", "resources", "rename", ERRORS, TRAITS);
 

@@ -53,4 +53,13 @@ public class AstModelLoaderTest {
         assertEquals(0, model.getValidationEvents(Severity.ERROR).size());
     }
 
+    @Test
+    public void allowsMixinsOnResourcesWithoutWarningOrError() {
+        ValidatedResult<Model> model = Model.assembler()
+            .addImport(getClass().getResource("mixins/resource-mixins.json"))
+            .assemble();
+        assertEquals(0, model.getValidationEvents(Severity.WARNING).size());
+        assertEquals(0, model.getValidationEvents(Severity.ERROR).size());
+    }
+
 }
