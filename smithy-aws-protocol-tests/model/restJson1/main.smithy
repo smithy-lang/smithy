@@ -43,6 +43,7 @@ service RestJson {
         ConstantAndVariableQueryString,
         IgnoreQueryParamsInResponse,
         OmitsNullSerializesEmptyString,
+        OmitsSerializingEmptyLists,
         QueryIdempotencyTokenAutoFill,
         QueryPrecedence,
         QueryParamsAsStringListMap,
