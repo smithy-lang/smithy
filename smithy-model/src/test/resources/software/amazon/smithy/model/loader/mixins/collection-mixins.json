@@ -1,0 +1,50 @@
+{
+  "smithy": "2.0",
+  "shapes": {
+    "smithy.example#MyList": {
+      "type": "list",
+      "mixins": [
+        {
+          "target": "smithy.example#MyListMixin"
+        }
+      ]
+    },
+    "smithy.example#MyListMixin": {
+      "type": "list",
+      "member": {
+        "target": "smithy.api#String"
+      },
+      "traits": {
+        "smithy.api#length": {
+          "min": 2,
+          "max": 4
+        },
+        "smithy.api#mixin": {}
+      }
+    },
+    "smithy.example#MyMap": {
+      "type": "map",
+      "mixins": [
+        {
+          "target": "smithy.example#MyMapMixin"
+        }
+      ]
+    },
+    "smithy.example#MyMapMixin": {
+      "type": "map",
+      "key": {
+        "target": "smithy.api#String"
+      },
+      "value": {
+        "target": "smithy.api#String"
+      },
+      "traits": {
+        "smithy.api#length": {
+          "min": 1,
+          "max": 4
+        },
+        "smithy.api#mixin": {}
+      }
+    }
+  }
+}

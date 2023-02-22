@@ -1,0 +1,77 @@
+{
+  "smithy": "2.0",
+  "shapes": {
+    "example.weather.errors#ThrottlingException": {
+      "type": "structure",
+      "members": {},
+      "traits": {
+        "smithy.api#error": "server"
+      }
+    },
+    "example.weather.errors#ValidationException": {
+      "type": "structure",
+      "members": {},
+      "traits": {
+        "smithy.api#error": "client"
+      }
+    },
+    "example.weather.mixins#OperationMixin": {
+      "type": "operation",
+      "input": {
+        "target": "smithy.api#Unit"
+      },
+      "output": {
+        "target": "smithy.api#Unit"
+      },
+      "errors": [
+        {
+          "target": "example.weather.errors#ThrottlingException"
+        },
+        {
+          "target": "example.weather.errors#ValidationException"
+        }
+      ],
+      "traits": {
+        "smithy.api#mixin": {}
+      }
+    },
+    "example.weather.operations#OperationWithMixin": {
+      "type": "operation",
+      "mixins": [
+        {
+          "target": "example.weather.mixins#OperationMixin"
+        }
+      ],
+      "input": {
+        "target": "example.weather.operations#OperationWithMixinInput"
+      },
+      "output": {
+        "target": "smithy.api#Unit"
+      },
+      "traits": {
+        "smithy.api#http": {
+          "method": "POST",
+          "uri": "/my/resource/uri/{myInputField}"
+        }
+      }
+    },
+    "example.weather.operations#OperationWithMixinInput": {
+      "type": "structure",
+      "members": {
+        "myInputField": {
+          "target": "smithy.api#String",
+          "traits": {
+            "smithy.api#httpLabel": {},
+            "smithy.api#required": {}
+          }
+        },
+        "other": {
+          "target": "smithy.api#String"
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    }
+  }
+}
