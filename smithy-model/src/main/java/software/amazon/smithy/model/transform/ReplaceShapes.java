@@ -28,7 +28,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.TopologicalShapeSort;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
@@ -42,6 +41,7 @@ import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.SimpleShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SetUtils;
@@ -180,8 +180,11 @@ final class ReplaceShapes {
         // Topologically sort the updated shapes to ensure shapes are updated in order.
         TopologicalShapeSort sorter = new TopologicalShapeSort();
 
-        // Add structure and union shapes that are mixins or use mixins.
-        Stream.concat(model.mixins(), model.shapesWithMixins()).forEach(sorter::enqueue);
+        // Add shapes that are mixins or use mixins.
+        model.shapes()
+            .filter(shape -> !shape.isMemberShape())
+            .filter(shape -> shape.hasTrait(MixinTrait.class) || !shape.getMixins().isEmpty())
+            .forEach(sorter::enqueue);
 
         // Add _all_ of the replacements in case mixins or the Mixin trait were removed from updated shapes.
         for (Shape shape : replacements) {
