@@ -61,6 +61,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.TraitFactory;
@@ -759,6 +760,26 @@ public final class Model implements ToSmithyBuilder<Model> {
      */
     public <T extends Shape> Stream<T> shapes(Class<T> shapeType) {
         return toSet(shapeType).stream();
+    }
+
+    /**
+     * Gets a stream of shapes that have mixins.
+     *
+     * @return stream of shapes
+     */
+    public Stream<Shape> shapesWithMixins() {
+        return shapeMap.values().stream()
+            .filter(shape -> !shape.isMemberShape())
+            .filter(shape -> !shape.getMixins().isEmpty());
+    }
+
+    /**
+     * Gets a stream of shapes defined as mixins.
+     *
+     * @return stream of shapes
+     */
+    public Stream<Shape> mixins() {
+        return shapeMap.values().stream().filter(shape -> shape.hasTrait(MixinTrait.class));
     }
 
     /**

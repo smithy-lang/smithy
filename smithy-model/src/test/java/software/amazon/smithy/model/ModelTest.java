@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -44,7 +45,9 @@ import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
+import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 
@@ -259,6 +262,92 @@ public class ModelTest {
                 .build();
 
         assertThat(model.getShapesWithTrait(OriginalShapeIdTrait.class), contains(stringShape));
+    }
+
+    @Test
+    public void correctlyReturnsMixinsStream() {
+        StringShape string = StringShape.builder().id("smithy.example#String").build();
+        StructureShape mixin1 = StructureShape.builder()
+            .id("smithy.example#Mixin1")
+            .addTrait(MixinTrait.builder().build())
+            .addMember("a", string.getId())
+            .build();
+        StructureShape mixin2 = StructureShape.builder()
+            .id("smithy.example#Mixin2")
+            .addTrait(MixinTrait.builder().build())
+            .addMember("b", string.getId())
+            .build();
+        StringShape mixin3 = StringShape.builder()
+            .id("smithy.example#Mixin3")
+            .addTrait(MixinTrait.builder().build())
+            .build();
+        StructureShape concrete = StructureShape.builder()
+            .id("smithy.example#Concrete")
+            .addMember("d", string.getId())
+            .addMixin(mixin1)
+            .addMixin(mixin2)
+            .build();
+        StructureShape noMixins = StructureShape.builder()
+            .id("smithy.example#NoMixins")
+            .addMember("q", string.getId())
+            .build();
+
+        Set<ShapeId> expectedShapeIds = new HashSet<>();
+        expectedShapeIds.add(mixin1.getId());
+        expectedShapeIds.add(mixin2.getId());
+        expectedShapeIds.add(mixin3.getId());
+
+        Model model = Model.builder()
+            .addShapes(string, mixin1, mixin2, mixin3, concrete, noMixins)
+            .build();
+        assertTrue(model.mixins().map(Shape::getId).allMatch(expectedShapeIds::contains));
+    }
+
+    @Test
+    public void correctlyReturnsShapesWithMixinsShapeStream() {
+        StringShape string = StringShape.builder().id("smithy.example#String").build();
+        StructureShape mixin1 = StructureShape.builder()
+            .id("smithy.example#Mixin1")
+            .addTrait(MixinTrait.builder().build())
+            .addMember("a", string.getId())
+            .build();
+        StructureShape mixin2 = StructureShape.builder()
+            .id("smithy.example#Mixin2")
+            .addTrait(MixinTrait.builder().build())
+            .addMember("b", string.getId())
+            .build();
+        StringShape mixin3 = StringShape.builder()
+            .id("smithy.example#Mixin3")
+            .addTrait(MixinTrait.builder().build())
+            .build();
+        StructureShape concrete = StructureShape.builder()
+            .id("smithy.example#Concrete")
+            .addMember("d", string.getId())
+            .addMixin(mixin1)
+            .addMixin(mixin2)
+            .build();
+        StructureShape noMixins = StructureShape.builder()
+            .id("smithy.example#NoMixins")
+            .addMember("q", string.getId())
+            .build();
+        StringShape stringWithMixin = StringShape.builder()
+            .id("smithy.example#StringWithMixin")
+            .addMixin(mixin3)
+            .build();
+
+
+        Set<ShapeId> expectedShapeIds = new HashSet<>();
+        expectedShapeIds.add(concrete.getId());
+        expectedShapeIds.add(stringWithMixin.getId());
+
+        Model model = Model.builder()
+            .addShapes(string, mixin1, mixin2, mixin3, concrete, noMixins, stringWithMixin)
+            .build();
+
+        assertTrue(model.shapesWithMixins()
+            .peek(shape -> System.out.println("SHAPE: " + shape.getId()))
+            .map(Shape::getId)
+            .allMatch(expectedShapeIds::contains));
     }
 
     /**
