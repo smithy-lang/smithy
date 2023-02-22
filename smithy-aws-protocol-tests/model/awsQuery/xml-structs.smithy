@@ -358,26 +358,6 @@ apply XmlTimestamps @httpResponseTests([
         }
     },
     {
-        id: "QueryXmlTimestampsWithFractionalHttpDateFormat",
-        documentation: "Ensures that the timestampFormat of fractional http-date works",
-        protocol: awsQuery,
-        code: 200,
-        body: """
-              <XmlTimestampsResponse xmlns="https://example.com/">
-                  <XmlTimestampsResult>
-                      <httpDate>Tue, 29 Apr 2014 18:30:38.123 GMT</httpDate>
-                  </XmlTimestampsResult>
-              </XmlTimestampsResponse>
-              """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "text/xml"
-        },
-        params: {
-            httpDate: 1398796238.123
-        }
-    },
-    {
         id: "QueryXmlTimestampsWithHttpDateOnTargetFormat",
         documentation: "Ensures that the timestampFormat of http-date on the target shape works",
         protocol: awsQuery,
@@ -395,26 +375,6 @@ apply XmlTimestamps @httpResponseTests([
         },
         params: {
             httpDateOnTarget: 1398796238
-        }
-    },
-    {
-        id: "QueryXmlTimestampsWithFractionalHttpDateOnTargetFormat",
-        documentation: "Ensures that the timestampFormat of fractional http-date on the target shape works",
-        protocol: awsQuery,
-        code: 200,
-        body: """
-              <XmlTimestampsResponse xmlns="https://example.com/">
-                  <XmlTimestampsResult>
-                      <httpDateOnTarget>Tue, 29 Apr 2014 18:30:38.456 GMT</httpDateOnTarget>
-                  </XmlTimestampsResult>
-              </XmlTimestampsResponse>
-              """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "text/xml"
-        },
-        params: {
-            httpDateOnTarget: 1398796238.456
         }
     },
 ])

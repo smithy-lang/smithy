@@ -859,24 +859,6 @@ apply XmlTimestamps @httpResponseTests([
         }
     },
     {
-        id: "XmlTimestampsWithFractionalHttpDateFormat",
-        documentation: "Ensures that the timestampFormat of fractional http-date works",
-        protocol: restXml,
-        code: 200,
-        body: """
-              <XmlTimestampsInputOutput>
-                  <httpDate>Tue, 29 Apr 2014 18:30:38.111 GMT</httpDate>
-              </XmlTimestampsInputOutput>
-              """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
-        params: {
-            httpDate: 1398796238.111
-        }
-    },
-    {
         id: "XmlTimestampsWithHttpDateOnTargetFormat",
         documentation: "Ensures that the timestampFormat of http-date on the target shape works",
         protocol: restXml,
@@ -892,24 +874,6 @@ apply XmlTimestamps @httpResponseTests([
         },
         params: {
             httpDateOnTarget: 1398796238
-        }
-    },
-    {
-        id: "XmlTimestampsWithFractionalHttpDateOnTargetFormat",
-        documentation: "Ensures that the timestampFormat of fractional http-date on the target shape works",
-        protocol: restXml,
-        code: 200,
-        body: """
-              <XmlTimestampsInputOutput>
-                  <httpDateOnTarget>Tue, 29 Apr 2014 18:30:38.222 GMT</httpDateOnTarget>
-              </XmlTimestampsInputOutput>
-              """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
-        params: {
-            httpDateOnTarget: 1398796238.222
         }
     },
 ])

@@ -4,7 +4,6 @@ namespace aws.protocoltests.query
 
 use aws.protocols#awsQuery
 use aws.protocoltests.shared#DateTime
-use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
 // These tests are for verifying the client can correctly parse

@@ -93,6 +93,8 @@ service RestXml {
         EndpointWithHostLabelOperation,
         EndpointWithHostLabelHeaderOperation,
 
+        // client-only timestamp parsing tests
         DatetimeOffsets,
+        FractionalSeconds,
     ]
 }

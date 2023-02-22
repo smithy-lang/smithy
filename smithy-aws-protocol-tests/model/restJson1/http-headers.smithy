@@ -520,7 +520,6 @@ apply TimestampFormatHeaders @httpResponseTests([
         headers: {
             "X-memberEpochSeconds": "1576540098",
             "X-memberHttpDate": "Mon, 16 Dec 2019 23:48:18 GMT",
-            "X-memberFractionalHttpDate": "Mon, 16 Dec 2019 23:48:18.444 GMT",
             "X-memberDateTime": "2019-12-16T23:48:18Z",
             "X-defaultFormat": "Mon, 16 Dec 2019 23:48:18 GMT",
             "X-targetEpochSeconds": "1576540098",
@@ -530,7 +529,6 @@ apply TimestampFormatHeaders @httpResponseTests([
         params: {
             memberEpochSeconds: 1576540098,
             memberHttpDate: 1576540098,
-            memberFractionalHttpDate: 1576540098.444,
             memberDateTime: 1576540098,
             defaultFormat: 1576540098,
             targetEpochSeconds: 1576540098,
@@ -548,10 +546,6 @@ structure TimestampFormatHeadersIO {
     @httpHeader("X-memberHttpDate")
     @timestampFormat("http-date")
     memberHttpDate: Timestamp,
-
-    @httpHeader("X-memberFractionalHttpDate")
-    @timestampFormat("http-date")
-    memberFractionalHttpDate: Timestamp,
 
     @httpHeader("X-memberDateTime")
     @timestampFormat("date-time")

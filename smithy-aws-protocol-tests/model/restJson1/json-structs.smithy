@@ -598,23 +598,6 @@ apply JsonTimestamps @httpResponseTests([
         }
     },
     {
-        id: "RestJsonJsonTimestampsWithHttpDateFormatFractionalSeconds",
-        documentation: "Ensures that the timestampFormat of fractional http-date works",
-        protocol: restJson1,
-        code: 200,
-        body: """
-              {
-                  "httpDate": "Tue, 29 Apr 2014 18:30:38.123 GMT"
-              }""",
-        bodyMediaType: "application/json",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        params: {
-            httpDate: 1398796238.123
-        }
-    },
-    {
         id: "RestJsonJsonTimestampsWithHttpDateOnTargetFormat",
         documentation: "Ensures that the timestampFormat of http-date on the target shape works",
         protocol: restJson1,
@@ -630,24 +613,7 @@ apply JsonTimestamps @httpResponseTests([
         params: {
             httpDateOnTarget: 1398796238
         }
-    },
-    {
-        id: "RestJsonJsonTimestampsWithFractionalHttpDateOnTargetFormat",
-        documentation: "Ensures that the timestampFormat of fractional http-date on the target shape works",
-        protocol: restJson1,
-        code: 200,
-        body: """
-              {
-                  "httpDateOnTarget": "Tue, 29 Apr 2014 18:30:38.456 GMT"
-              }""",
-        bodyMediaType: "application/json",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        params: {
-            httpDateOnTarget: 1398796238.456
-        }
-    },
+    }
 ])
 
 structure JsonTimestampsInputOutput {
