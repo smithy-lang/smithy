@@ -476,6 +476,59 @@ structure OmitsNullSerializesEmptyStringInput {
     emptyString: String,
 }
 
+/// Omits serializing empty lists. Because empty strings are serilized as
+/// `Foo=`, empty lists cannot also be serialized as `Foo=` and instead
+/// must be omitted.
+@http(uri: "/OmitsSerializingEmptyLists", method: "POST")
+@tags(["client-only"])
+operation OmitsSerializingEmptyLists {
+    input: OmitsSerializingEmptyListsInput
+}
+
+apply OmitsSerializingEmptyLists @httpRequestTests([
+    {
+        id: "RestJsonOmitsEmptyListQueryValues",
+        documentation: "Supports omitting empty lists.",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/OmitsSerializingEmptyLists",
+        body: "",
+        queryParams: [],
+        params: {
+            queryStringList: [],
+            queryIntegerList: [],
+            queryDoubleList: [],
+            queryBooleanList: [],
+            queryTimestampList: [],
+            queryEnumList: [],
+            queryIntegerEnumList: [],
+        }
+    }
+])
+
+structure OmitsSerializingEmptyListsInput {
+    @httpQuery("StringList")
+    queryStringList: StringList,
+
+    @httpQuery("IntegerList")
+    queryIntegerList: IntegerList,
+
+    @httpQuery("DoubleList")
+    queryDoubleList: DoubleList,
+
+    @httpQuery("BooleanList")
+    queryBooleanList: BooleanList,
+
+    @httpQuery("TimestampList")
+    queryTimestampList: TimestampList,
+
+    @httpQuery("EnumList")
+    queryEnumList: FooEnumList,
+
+    @httpQuery("IntegerEnumList")
+    queryIntegerEnumList: IntegerEnumList,
+}
+
 /// Automatically adds idempotency tokens.
 @http(uri: "/QueryIdempotencyTokenAutoFill", method: "POST")
 @tags(["client-only"])
