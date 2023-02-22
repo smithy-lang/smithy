@@ -1,0 +1,32 @@
+{
+  "smithy": "2.0",
+  "shapes": {
+    "smithy.example#MyMixin": {
+      "type": "union",
+      "members": {
+        "bar": {
+          "target": "smithy.api#String"
+        }
+      },
+      "traits": {
+        "smithy.api#mixin": {}
+      }
+    },
+    "smithy.example#MyUnion": {
+      "type": "union",
+      "mixins": [
+        {
+          "target": "smithy.example#MyMixin"
+        }
+      ],
+      "members": {
+        "baz": {
+          "target": "smithy.api#String"
+        }
+      },
+      "traits": {
+        "smithy.api#mixin": {}
+      }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "smithy": "2.0",
+  "shapes": {
+    "smithy.example#MyDummyOperation": {
+      "type": "operation",
+      "input": {
+        "target": "smithy.example#MyDummyOperationInput"
+      },
+      "output": {
+        "target": "smithy.api#Unit"
+      }
+    },
+    "smithy.example#MyDummyOperationInput": {
+      "type": "structure",
+      "members": {
+        "foo": {
+          "target": "smithy.api#String"
+        }
+      },
+      "traits": {
+        "smithy.api#input": {}
+      }
+    },
+    "smithy.example#MyMixin": {
+      "type": "service",
+      "operations": [
+        {
+          "target": "smithy.example#MyDummyOperation"
+        }
+      ],
+      "traits": {
+        "smithy.api#mixin": {}
+      }
+    },
+    "smithy.example#MyService": {
+      "type": "service",
+      "mixins": [
+        {
+          "target": "smithy.example#MyMixin"
+        }
+      ]
+    }
+  }
+}

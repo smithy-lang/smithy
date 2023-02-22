@@ -76,10 +76,10 @@ final class AstModelLoader {
 
     private static final List<String> TOP_LEVEL_PROPERTIES = ListUtils.of("smithy", SHAPES, METADATA);
     private static final List<String> APPLY_PROPERTIES = ListUtils.of(TYPE, TRAITS);
-    private static final List<String> SIMPLE_PROPERTY_NAMES = ListUtils.of(TYPE, TRAITS);
+    private static final List<String> SIMPLE_PROPERTY_NAMES = ListUtils.of(TYPE, TRAITS, MIXINS);
     private static final List<String> NAMED_MEMBER_SHAPE_PROPERTY_NAMES = ListUtils.of(TYPE, MEMBERS, TRAITS, MIXINS);
-    private static final List<String> COLLECTION_PROPERTY_NAMES = ListUtils.of(TYPE, "member", TRAITS);
-    private static final List<String> MAP_PROPERTY_NAMES = ListUtils.of(TYPE, "key", "value", TRAITS);
+    private static final List<String> COLLECTION_PROPERTY_NAMES = ListUtils.of(TYPE, "member", TRAITS, MIXINS);
+    private static final List<String> MAP_PROPERTY_NAMES = ListUtils.of(TYPE, "key", "value", TRAITS, MIXINS);
     private static final Set<String> MEMBER_PROPERTIES = SetUtils.of(TARGET, TRAITS);
     private static final Set<String> REFERENCE_PROPERTIES = SetUtils.of(TARGET);
     private static final Set<String> OPERATION_PROPERTY_NAMES = SetUtils.of(
@@ -88,7 +88,7 @@ final class AstModelLoader {
             TYPE, "create", "read", "update", "delete", "list", "put",
             "identifiers", "resources", "operations", "collectionOperations", "properties", TRAITS, MIXINS);
     private static final Set<String> SERVICE_PROPERTIES = SetUtils.of(
-            TYPE, "version", "operations", "resources", "rename", ERRORS, TRAITS);
+            TYPE, "version", "operations", "resources", "rename", ERRORS, TRAITS, MIXINS);
 
     private final Version modelVersion;
     private final ObjectNode model;
