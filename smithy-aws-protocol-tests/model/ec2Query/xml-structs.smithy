@@ -363,7 +363,7 @@ apply XmlTimestamps @httpResponseTests([
         params: {
             httpDateOnTarget: 1398796238
         }
-    },
+    }
 ])
 
 structure XmlTimestampsOutput {

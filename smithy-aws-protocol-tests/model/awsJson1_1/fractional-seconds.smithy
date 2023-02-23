@@ -4,30 +4,31 @@ namespace aws.protocoltests.json
 
 use aws.protocols#awsJson1_1
 use aws.protocoltests.shared#DateTime
+use aws.protocoltests.shared#HttpDate
 use smithy.test#httpResponseTests
 
 // These tests are for verifying the client can correctly parse
-// the `DateTime` timestamp with an offset
+// the `DateTime` and `HttpDate` timestamps with fractional seconds
 @tags(["client-only"])
-@http(uri: "/DatetimeOffsets", method: "POST")
-operation DatetimeOffsets {
-    output: DatetimeOffsetsOutput
+@http(uri: "/FractionalSeconds", method: "POST")
+operation FractionalSeconds {
+    output: FractionalSecondsOutput
 }
 
-apply DatetimeOffsets @httpResponseTests([
+apply FractionalSeconds @httpResponseTests([
     {
-        id: "AwsJson11DateTimeWithNegativeOffset",
+        id: "AwsJson11DateTimeWithFractionalSeconds",
         documentation: """
-        Ensures that clients can correctly parse datetime (timestamps) with offsets""",
+        Ensures that clients can correctly parse datetime timestamps with fractional seconds""",
         protocol: awsJson1_1,
         code: 200,
         body:
         """
               {
-                  "datetime": "2019-12-16T22:48:18-01:00"
+                  "datetime": "2000-01-02T20:34:56.123Z"
               }
         """,
-        params: { datetime: 1576540098 }
+        params: { datetime: 946845296.123 }
         bodyMediaType: "application/json",
         headers: {
             "Content-Type": "application/x-amz-json-1.1"
@@ -35,26 +36,27 @@ apply DatetimeOffsets @httpResponseTests([
         appliesTo: "client"
     },
     {
-        id: "AwsJson11DateTimeWithPositiveOffset",
+        id: "AwsJson11HttpDateWithFractionalSeconds",
         documentation: """
-        Ensures that clients can correctly parse datetime (timestamps) with offsets""",
+        Ensures that clients can correctly parse http-date timestamps with fractional seconds""",
         protocol: awsJson1_1,
         code: 200,
         body:
         """
               {
-                  "datetime": "2019-12-17T00:48:18+01:00"
+                  "httpdate": "Sun, 02 Jan 2000 20:34:56.456 GMT"
               }
         """,
-        params: { datetime: 1576540098 }
+        params: { httpdate: 946845296.456 }
         bodyMediaType: "application/json",
         headers: {
             "Content-Type": "application/x-amz-json-1.1"
         },
         appliesTo: "client"
-    },
+    }
 ])
 
-structure DatetimeOffsetsOutput {
+structure FractionalSecondsOutput {
     datetime: DateTime
+    httpdate: HttpDate
 }

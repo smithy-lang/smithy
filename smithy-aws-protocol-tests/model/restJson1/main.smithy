@@ -139,6 +139,8 @@ service RestJson {
         TestPayloadBlob,
         TestNoPayload,
 
+        // client-only timestamp parsing tests
         DatetimeOffsets,
+        FractionalSeconds,
     ]
 }

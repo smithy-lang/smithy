@@ -751,7 +751,7 @@ use smithy.test#httpResponseTests
         id: "parses_iso8601_timestamps",
         protocol: awsJson1_1,
         documentation: "Parses iso8601 timestamps",
-        body: "{\"Iso8601Timestamp\":\"2000-01-02T20:34:56.000Z\"}",
+        body: "{\"Iso8601Timestamp\":\"2000-01-02T20:34:56Z\"}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {
@@ -763,7 +763,7 @@ use smithy.test#httpResponseTests
         id: "parses_httpdate_timestamps",
         protocol: awsJson1_1,
         documentation: "Parses httpdate timestamps",
-        body: "{\"HttpdateTimestamp\":\"Sun, 02 Jan 2000 20:34:56.000 GMT\"}",
+        body: "{\"HttpdateTimestamp\":\"Sun, 02 Jan 2000 20:34:56 GMT\"}",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/x-amz-json-1.1"},
         params: {

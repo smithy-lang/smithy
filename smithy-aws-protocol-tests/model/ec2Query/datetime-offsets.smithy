@@ -4,7 +4,6 @@ namespace aws.protocoltests.ec2
 
 use aws.protocols#ec2Query
 use aws.protocoltests.shared#DateTime
-use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
 // These tests are for verifying the client can correctly parse
