@@ -43,8 +43,8 @@ apply MalformedRequired @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value null at '/string' failed to satisfy constraint: Member must not be null",
-                      "fieldList" : [{"message": "Value null at '/string' failed to satisfy constraint: Member must not be null", "path": "/string"}]}"""
+                    { "message" : "1 validation error detected. Value at '/string' failed to satisfy constraint: Member must not be null",
+                      "fieldList" : [{"message": "Value at '/string' failed to satisfy constraint: Member must not be null", "path": "/string"}]}"""
                 }
             }
         }
@@ -77,8 +77,8 @@ apply MalformedRequired @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value null at '/string' failed to satisfy constraint: Member must not be null",
-                      "fieldList" : [{"message": "Value null at '/string' failed to satisfy constraint: Member must not be null", "path": "/string"}]}"""
+                    { "message" : "1 validation error detected. Value at '/string' failed to satisfy constraint: Member must not be null",
+                      "fieldList" : [{"message": "Value at '/string' failed to satisfy constraint: Member must not be null", "path": "/string"}]}"""
                 }
             }
         }
@@ -110,8 +110,8 @@ apply MalformedRequired @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value null at '/stringInHeader' failed to satisfy constraint: Member must not be null",
-                      "fieldList" : [{"message": "Value null at '/stringInHeader' failed to satisfy constraint: Member must not be null", "path": "/stringInHeader"}]}"""
+                    { "message" : "1 validation error detected. Value at '/stringInHeader' failed to satisfy constraint: Member must not be null",
+                      "fieldList" : [{"message": "Value at '/stringInHeader' failed to satisfy constraint: Member must not be null", "path": "/stringInHeader"}]}"""
                 }
             }
         }

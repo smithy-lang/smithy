@@ -72,8 +72,67 @@ list BooleanList {
     member: Boolean,
 }
 
+@uniqueItems
+list BooleanSet {
+    member: Boolean,
+}
+
 list TimestampList {
     member: Timestamp,
+}
+
+@uniqueItems
+list BlobSet {
+    member: Blob,
+}
+
+@uniqueItems
+list ByteSet {
+    member: Byte,
+}
+@uniqueItems
+list ShortSet {
+    member: Short,
+}
+
+@uniqueItems
+list LongSet {
+    member: Long,
+}
+
+@uniqueItems
+list TimestampSet {
+    member: Timestamp,
+}
+
+@uniqueItems
+list DateTimeSet {
+    member: DateTime,
+}
+
+@uniqueItems
+list HttpDateSet {
+    member: HttpDate,
+}
+
+@uniqueItems
+list ListSet {
+    member: StringList
+}
+
+@uniqueItems
+list StructureSet {
+    member: GreetingStruct
+}
+
+@uniqueItems
+list UnionSet {
+    member: FooUnion
+}
+
+union FooUnion {
+    string: String
+    integer: Integer
 }
 
 enum FooEnum {
@@ -114,7 +173,7 @@ blob TextPlainBlob
 blob JpegBlob
 
 structure GreetingStruct {
-    hi: String,
+    hi: String
 }
 
 list GreetingList {

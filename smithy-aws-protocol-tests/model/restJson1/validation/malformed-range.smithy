@@ -45,8 +45,8 @@ apply MalformedRange @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value $value:L at '/byte' failed to satisfy constraint: Member must be between 2 and 8, inclusive",
-                      "fieldList" : [{"message": "Value $value:L at '/byte' failed to satisfy constraint: Member must be between 2 and 8, inclusive", "path": "/byte"}]}"""
+                    { "message" : "1 validation error detected. Value at '/byte' failed to satisfy constraint: Member must be between 2 and 8, inclusive",
+                      "fieldList" : [{"message": "Value at '/byte' failed to satisfy constraint: Member must be between 2 and 8, inclusive", "path": "/byte"}]}"""
                 }
             }
         },
@@ -78,8 +78,8 @@ apply MalformedRange @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value 1 at '/minByte' failed to satisfy constraint: Member must be greater than or equal to 2",
-                      "fieldList" : [{"message": "Value 1 at '/minByte' failed to satisfy constraint: Member must be greater than or equal to 2", "path": "/minByte"}]}"""
+                    { "message" : "1 validation error detected. Value at '/minByte' failed to satisfy constraint: Member must be greater than or equal to 2",
+                      "fieldList" : [{"message": "Value at '/minByte' failed to satisfy constraint: Member must be greater than or equal to 2", "path": "/minByte"}]}"""
                 }
             }
         }
@@ -108,8 +108,8 @@ apply MalformedRange @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value 9 at '/maxByte' failed to satisfy constraint: Member must be less than or equal to 8",
-                      "fieldList" : [{"message": "Value 9 at '/maxByte' failed to satisfy constraint: Member must be less than or equal to 8", "path": "/maxByte"}]}"""
+                    { "message" : "1 validation error detected. Value at '/maxByte' failed to satisfy constraint: Member must be less than or equal to 8",
+                      "fieldList" : [{"message": "Value at '/maxByte' failed to satisfy constraint: Member must be less than or equal to 8", "path": "/maxByte"}]}"""
                 }
             }
         }
@@ -138,8 +138,8 @@ apply MalformedRange @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value $value:L at '/float' failed to satisfy constraint: Member must be between 2.2 and 8.8, inclusive",
-                      "fieldList" : [{"message": "Value $value:L at '/float' failed to satisfy constraint: Member must be between 2.2 and 8.8, inclusive", "path": "/float"}]}"""
+                    { "message" : "1 validation error detected. Value at '/float' failed to satisfy constraint: Member must be between 2.2 and 8.8, inclusive",
+                      "fieldList" : [{"message": "Value at '/float' failed to satisfy constraint: Member must be between 2.2 and 8.8, inclusive", "path": "/float"}]}"""
                 }
             }
         },
@@ -171,8 +171,8 @@ apply MalformedRange @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value 2.1 at '/minFloat' failed to satisfy constraint: Member must be greater than or equal to 2.2",
-                      "fieldList" : [{"message": "Value 2.1 at '/minFloat' failed to satisfy constraint: Member must be greater than or equal to 2.2", "path": "/minFloat"}]}"""
+                    { "message" : "1 validation error detected. Value at '/minFloat' failed to satisfy constraint: Member must be greater than or equal to 2.2",
+                      "fieldList" : [{"message": "Value at '/minFloat' failed to satisfy constraint: Member must be greater than or equal to 2.2", "path": "/minFloat"}]}"""
                 }
             }
         }
@@ -201,8 +201,8 @@ apply MalformedRange @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value 8.9 at '/maxFloat' failed to satisfy constraint: Member must be less than or equal to 8.8",
-                      "fieldList" : [{"message": "Value 8.9 at '/maxFloat' failed to satisfy constraint: Member must be less than or equal to 8.8", "path": "/maxFloat"}]}"""
+                    { "message" : "1 validation error detected. Value at '/maxFloat' failed to satisfy constraint: Member must be less than or equal to 8.8",
+                      "fieldList" : [{"message": "Value at '/maxFloat' failed to satisfy constraint: Member must be less than or equal to 8.8", "path": "/maxFloat"}]}"""
                 }
             }
         }
@@ -231,8 +231,8 @@ apply MalformedRange @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value $value:L at '/short' failed to satisfy constraint: Member must be between 2 and 8, inclusive",
-                      "fieldList" : [{"message": "Value $value:L at '/short' failed to satisfy constraint: Member must be between 2 and 8, inclusive", "path": "/short"}]}"""
+                    { "message" : "1 validation error detected. Value at '/short' failed to satisfy constraint: Member must be between 2 and 8, inclusive",
+                      "fieldList" : [{"message": "Value at '/short' failed to satisfy constraint: Member must be between 2 and 8, inclusive", "path": "/short"}]}"""
                 }
             }
         },
@@ -264,8 +264,8 @@ apply MalformedRange @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value 1 at '/minShort' failed to satisfy constraint: Member must be greater than or equal to 2",
-                      "fieldList" : [{"message": "Value 1 at '/minShort' failed to satisfy constraint: Member must be greater than or equal to 2", "path": "/minShort"}]}"""
+                    { "message" : "1 validation error detected. Value at '/minShort' failed to satisfy constraint: Member must be greater than or equal to 2",
+                      "fieldList" : [{"message": "Value at '/minShort' failed to satisfy constraint: Member must be greater than or equal to 2", "path": "/minShort"}]}"""
                 }
             }
         }
@@ -294,8 +294,8 @@ apply MalformedRange @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value 9 at '/maxShort' failed to satisfy constraint: Member must be less than or equal to 8",
-                      "fieldList" : [{"message": "Value 9 at '/maxShort' failed to satisfy constraint: Member must be less than or equal to 8", "path": "/maxShort"}]}"""
+                    { "message" : "1 validation error detected. Value at '/maxShort' failed to satisfy constraint: Member must be less than or equal to 8",
+                      "fieldList" : [{"message": "Value at '/maxShort' failed to satisfy constraint: Member must be less than or equal to 8", "path": "/maxShort"}]}"""
                 }
             }
         }
@@ -324,8 +324,8 @@ apply MalformedRange @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value $value:L at '/integer' failed to satisfy constraint: Member must be between 2 and 8, inclusive",
-                      "fieldList" : [{"message": "Value $value:L at '/integer' failed to satisfy constraint: Member must be between 2 and 8, inclusive", "path": "/integer"}]}"""
+                    { "message" : "1 validation error detected. Value at '/integer' failed to satisfy constraint: Member must be between 2 and 8, inclusive",
+                      "fieldList" : [{"message": "Value at '/integer' failed to satisfy constraint: Member must be between 2 and 8, inclusive", "path": "/integer"}]}"""
                 }
             }
         },
@@ -357,8 +357,8 @@ apply MalformedRange @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value 1 at '/minInteger' failed to satisfy constraint: Member must be greater than or equal to 2",
-                      "fieldList" : [{"message": "Value 1 at '/minInteger' failed to satisfy constraint: Member must be greater than or equal to 2", "path": "/minInteger"}]}"""
+                    { "message" : "1 validation error detected. Value at '/minInteger' failed to satisfy constraint: Member must be greater than or equal to 2",
+                      "fieldList" : [{"message": "Value at '/minInteger' failed to satisfy constraint: Member must be greater than or equal to 2", "path": "/minInteger"}]}"""
                 }
             }
         }
@@ -387,8 +387,8 @@ apply MalformedRange @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value 9 at '/maxInteger' failed to satisfy constraint: Member must be less than or equal to 8",
-                      "fieldList" : [{"message": "Value 9 at '/maxInteger' failed to satisfy constraint: Member must be less than or equal to 8", "path": "/maxInteger"}]}"""
+                    { "message" : "1 validation error detected. Value at '/maxInteger' failed to satisfy constraint: Member must be less than or equal to 8",
+                      "fieldList" : [{"message": "Value at '/maxInteger' failed to satisfy constraint: Member must be less than or equal to 8", "path": "/maxInteger"}]}"""
                 }
             }
         }
@@ -417,8 +417,8 @@ apply MalformedRange @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value $value:L at '/long' failed to satisfy constraint: Member must be between 2 and 8, inclusive",
-                      "fieldList" : [{"message": "Value $value:L at '/long' failed to satisfy constraint: Member must be between 2 and 8, inclusive", "path": "/long"}]}"""
+                    { "message" : "1 validation error detected. Value at '/long' failed to satisfy constraint: Member must be between 2 and 8, inclusive",
+                      "fieldList" : [{"message": "Value at '/long' failed to satisfy constraint: Member must be between 2 and 8, inclusive", "path": "/long"}]}"""
                 }
             }
         },
@@ -450,8 +450,8 @@ apply MalformedRange @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value 1 at '/minLong' failed to satisfy constraint: Member must be greater than or equal to 2",
-                      "fieldList" : [{"message": "Value 1 at '/minLong' failed to satisfy constraint: Member must be greater than or equal to 2", "path": "/minLong"}]}"""
+                    { "message" : "1 validation error detected. Value at '/minLong' failed to satisfy constraint: Member must be greater than or equal to 2",
+                      "fieldList" : [{"message": "Value at '/minLong' failed to satisfy constraint: Member must be greater than or equal to 2", "path": "/minLong"}]}"""
                 }
             }
         }
@@ -480,8 +480,8 @@ apply MalformedRange @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value 9 at '/maxLong' failed to satisfy constraint: Member must be less than or equal to 8",
-                      "fieldList" : [{"message": "Value 9 at '/maxLong' failed to satisfy constraint: Member must be less than or equal to 8", "path": "/maxLong"}]}"""
+                    { "message" : "1 validation error detected. Value at '/maxLong' failed to satisfy constraint: Member must be less than or equal to 8",
+                      "fieldList" : [{"message": "Value at '/maxLong' failed to satisfy constraint: Member must be less than or equal to 8", "path": "/maxLong"}]}"""
                 }
             }
         }
@@ -514,8 +514,8 @@ apply MalformedRangeOverride @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value $value:L at '/byte' failed to satisfy constraint: Member must be between 4 and 6, inclusive",
-                      "fieldList" : [{"message": "Value $value:L at '/byte' failed to satisfy constraint: Member must be between 4 and 6, inclusive", "path": "/byte"}]}"""
+                    { "message" : "1 validation error detected. Value at '/byte' failed to satisfy constraint: Member must be between 4 and 6, inclusive",
+                      "fieldList" : [{"message": "Value at '/byte' failed to satisfy constraint: Member must be between 4 and 6, inclusive", "path": "/byte"}]}"""
                 }
             }
         },
@@ -547,8 +547,8 @@ apply MalformedRangeOverride @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value 3 at '/minByte' failed to satisfy constraint: Member must be greater than or equal to 4",
-                      "fieldList" : [{"message": "Value 3 at '/minByte' failed to satisfy constraint: Member must be greater than or equal to 4", "path": "/minByte"}]}"""
+                    { "message" : "1 validation error detected. Value at '/minByte' failed to satisfy constraint: Member must be greater than or equal to 4",
+                      "fieldList" : [{"message": "Value at '/minByte' failed to satisfy constraint: Member must be greater than or equal to 4", "path": "/minByte"}]}"""
                 }
             }
         }
@@ -577,8 +577,8 @@ apply MalformedRangeOverride @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value 7 at '/maxByte' failed to satisfy constraint: Member must be less than or equal to 6",
-                      "fieldList" : [{"message": "Value 7 at '/maxByte' failed to satisfy constraint: Member must be less than or equal to 6", "path": "/maxByte"}]}"""
+                    { "message" : "1 validation error detected. Value at '/maxByte' failed to satisfy constraint: Member must be less than or equal to 6",
+                      "fieldList" : [{"message": "Value at '/maxByte' failed to satisfy constraint: Member must be less than or equal to 6", "path": "/maxByte"}]}"""
                 }
             }
         }
@@ -607,8 +607,8 @@ apply MalformedRangeOverride @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value $value:L at '/float' failed to satisfy constraint: Member must be between 4.4 and 6.6, inclusive",
-                      "fieldList" : [{"message": "Value $value:L at '/float' failed to satisfy constraint: Member must be between 4.4 and 6.6, inclusive", "path": "/float"}]}"""
+                    { "message" : "1 validation error detected. Value at '/float' failed to satisfy constraint: Member must be between 4.4 and 6.6, inclusive",
+                      "fieldList" : [{"message": "Value at '/float' failed to satisfy constraint: Member must be between 4.4 and 6.6, inclusive", "path": "/float"}]}"""
                 }
             }
         },
@@ -640,8 +640,8 @@ apply MalformedRangeOverride @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value 4.3 at '/minFloat' failed to satisfy constraint: Member must be greater than or equal to 4.4",
-                      "fieldList" : [{"message": "Value 4.3 at '/minFloat' failed to satisfy constraint: Member must be greater than or equal to 4.4", "path": "/minFloat"}]}"""
+                    { "message" : "1 validation error detected. Value at '/minFloat' failed to satisfy constraint: Member must be greater than or equal to 4.4",
+                      "fieldList" : [{"message": "Value at '/minFloat' failed to satisfy constraint: Member must be greater than or equal to 4.4", "path": "/minFloat"}]}"""
                 }
             }
         }
@@ -670,8 +670,8 @@ apply MalformedRangeOverride @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value 6.7 at '/maxFloat' failed to satisfy constraint: Member must be less than or equal to 6.6",
-                      "fieldList" : [{"message": "Value 6.7 at '/maxFloat' failed to satisfy constraint: Member must be less than or equal to 6.6", "path": "/maxFloat"}]}"""
+                    { "message" : "1 validation error detected. Value at '/maxFloat' failed to satisfy constraint: Member must be less than or equal to 6.6",
+                      "fieldList" : [{"message": "Value at '/maxFloat' failed to satisfy constraint: Member must be less than or equal to 6.6", "path": "/maxFloat"}]}"""
                 }
             }
         }
@@ -700,8 +700,8 @@ apply MalformedRangeOverride @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value $value:L at '/short' failed to satisfy constraint: Member must be between 4 and 6, inclusive",
-                      "fieldList" : [{"message": "Value $value:L at '/short' failed to satisfy constraint: Member must be between 4 and 6, inclusive", "path": "/short"}]}"""
+                    { "message" : "1 validation error detected. Value at '/short' failed to satisfy constraint: Member must be between 4 and 6, inclusive",
+                      "fieldList" : [{"message": "Value at '/short' failed to satisfy constraint: Member must be between 4 and 6, inclusive", "path": "/short"}]}"""
                 }
             }
         },
@@ -733,8 +733,8 @@ apply MalformedRangeOverride @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value 3 at '/minShort' failed to satisfy constraint: Member must be greater than or equal to 4",
-                      "fieldList" : [{"message": "Value 3 at '/minShort' failed to satisfy constraint: Member must be greater than or equal to 4", "path": "/minShort"}]}"""
+                    { "message" : "1 validation error detected. Value at '/minShort' failed to satisfy constraint: Member must be greater than or equal to 4",
+                      "fieldList" : [{"message": "Value at '/minShort' failed to satisfy constraint: Member must be greater than or equal to 4", "path": "/minShort"}]}"""
                 }
             }
         }
@@ -763,8 +763,8 @@ apply MalformedRangeOverride @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value 7 at '/maxShort' failed to satisfy constraint: Member must be less than or equal to 6",
-                      "fieldList" : [{"message": "Value 7 at '/maxShort' failed to satisfy constraint: Member must be less than or equal to 6", "path": "/maxShort"}]}"""
+                    { "message" : "1 validation error detected. Value at '/maxShort' failed to satisfy constraint: Member must be less than or equal to 6",
+                      "fieldList" : [{"message": "Value at '/maxShort' failed to satisfy constraint: Member must be less than or equal to 6", "path": "/maxShort"}]}"""
                 }
             }
         }
@@ -793,8 +793,8 @@ apply MalformedRangeOverride @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value $value:L at '/integer' failed to satisfy constraint: Member must be between 4 and 6, inclusive",
-                      "fieldList" : [{"message": "Value $value:L at '/integer' failed to satisfy constraint: Member must be between 4 and 6, inclusive", "path": "/integer"}]}"""
+                    { "message" : "1 validation error detected. Value at '/integer' failed to satisfy constraint: Member must be between 4 and 6, inclusive",
+                      "fieldList" : [{"message": "Value at '/integer' failed to satisfy constraint: Member must be between 4 and 6, inclusive", "path": "/integer"}]}"""
                 }
             }
         },
@@ -826,8 +826,8 @@ apply MalformedRangeOverride @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value 3 at '/minInteger' failed to satisfy constraint: Member must be greater than or equal to 4",
-                      "fieldList" : [{"message": "Value 3 at '/minInteger' failed to satisfy constraint: Member must be greater than or equal to 4", "path": "/minInteger"}]}"""
+                    { "message" : "1 validation error detected. Value at '/minInteger' failed to satisfy constraint: Member must be greater than or equal to 4",
+                      "fieldList" : [{"message": "Value at '/minInteger' failed to satisfy constraint: Member must be greater than or equal to 4", "path": "/minInteger"}]}"""
                 }
             }
         }
@@ -856,8 +856,8 @@ apply MalformedRangeOverride @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value 7 at '/maxInteger' failed to satisfy constraint: Member must be less than or equal to 6",
-                      "fieldList" : [{"message": "Value 7 at '/maxInteger' failed to satisfy constraint: Member must be less than or equal to 6", "path": "/maxInteger"}]}"""
+                    { "message" : "1 validation error detected. Value at '/maxInteger' failed to satisfy constraint: Member must be less than or equal to 6",
+                      "fieldList" : [{"message": "Value at '/maxInteger' failed to satisfy constraint: Member must be less than or equal to 6", "path": "/maxInteger"}]}"""
                 }
             }
         }
@@ -886,8 +886,8 @@ apply MalformedRangeOverride @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value $value:L at '/long' failed to satisfy constraint: Member must be between 4 and 6, inclusive",
-                      "fieldList" : [{"message": "Value $value:L at '/long' failed to satisfy constraint: Member must be between 4 and 6, inclusive", "path": "/long"}]}"""
+                    { "message" : "1 validation error detected. Value at '/long' failed to satisfy constraint: Member must be between 4 and 6, inclusive",
+                      "fieldList" : [{"message": "Value at '/long' failed to satisfy constraint: Member must be between 4 and 6, inclusive", "path": "/long"}]}"""
                 }
             }
         },
@@ -919,8 +919,8 @@ apply MalformedRangeOverride @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value 3 at '/minLong' failed to satisfy constraint: Member must be greater than or equal to 4",
-                      "fieldList" : [{"message": "Value 3 at '/minLong' failed to satisfy constraint: Member must be greater than or equal to 4", "path": "/minLong"}]}"""
+                    { "message" : "1 validation error detected. Value at '/minLong' failed to satisfy constraint: Member must be greater than or equal to 4",
+                      "fieldList" : [{"message": "Value at '/minLong' failed to satisfy constraint: Member must be greater than or equal to 4", "path": "/minLong"}]}"""
                 }
             }
         }
@@ -949,8 +949,8 @@ apply MalformedRangeOverride @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value 7 at '/maxLong' failed to satisfy constraint: Member must be less than or equal to 6",
-                      "fieldList" : [{"message": "Value 7 at '/maxLong' failed to satisfy constraint: Member must be less than or equal to 6", "path": "/maxLong"}]}"""
+                    { "message" : "1 validation error detected. Value at '/maxLong' failed to satisfy constraint: Member must be less than or equal to 6",
+                      "fieldList" : [{"message": "Value at '/maxLong' failed to satisfy constraint: Member must be less than or equal to 6", "path": "/maxLong"}]}"""
                 }
             }
         }

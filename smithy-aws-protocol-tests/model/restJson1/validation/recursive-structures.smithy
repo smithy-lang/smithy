@@ -73,8 +73,8 @@ apply RecursiveStructures @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value XYZ at '/union/union/union/string' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]",
-                      "fieldList" : [{"message": "Value XYZ at '/union/union/union/string' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]", "path": "/union/union/union/string"}]}"""
+                    { "message" : "1 validation error detected. Value at '/union/union/union/string' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]",
+                      "fieldList" : [{"message": "Value at '/union/union/union/string' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]", "path": "/union/union/union/string"}]}"""
                 }
             }
         }
