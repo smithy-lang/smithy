@@ -682,8 +682,9 @@ structure with the ``httpLabel`` trait MUST have a corresponding
   (for example, ``1985-04-12T23:20:50.52Z``, and with percent-encoding,
   ``1985-04-12T23%3A20%3A50.52Z``). The :ref:`timestampFormat-trait`
   MAY be used to use a custom serialization format.
-- Reserved characters defined in :rfc:`section 2.2 of RFC3986 <3986#section-2.2>`
-  and the `%` itself MUST be percent-encoded_ (that is, ``:/?#[]@!$&'()*+,;=%``).
+- Characters not defined as unreserved by :rfc:`RFC 3986 section 2.3 <3986#section-2.3>`
+  MUST be :rfc:`percent-encoded <3986#section-2.1>`. That is, all characters except for
+  alphanumerics and ``-._~``.
 - However, if the label is greedy, then "/" MUST NOT be percent-encoded
   because greedy labels are meant to span multiple path segments.
 
@@ -918,8 +919,9 @@ request:
 
 * "&" is used to separate query string parameter key-value pairs.
 * "=" is used to separate query string parameter names from values.
-* Reserved characters in keys and values as defined in :rfc:`section 2.2 of RFC3986 <3986#section-2.2>` and `%`
-  MUST be percent-encoded_ (that is, ``:/?#[]@!$&'()*+,;=%``).
+* Characters not defined as unreserved by :rfc:`RFC 3986 section 2.3 <3986#section-2.3>`
+  MUST be :rfc:`percent-encoded <3986#section-2.1>`. That is, all characters except for
+  alphanumerics and ``-._~``.
 * ``boolean`` values are serialized as ``true`` or ``false``.
 * ``timestamp`` values are serialized as an :rfc:`3339`
   ``date-time`` string by default (for example, ``1985-04-12T23:20:50.52Z``,
