@@ -246,7 +246,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
             Optional<ExamplesTrait> examplesTrait = operationOrError.getTrait(ExamplesTrait.class);
             for (ExamplesTrait.Example example
                     : examplesTrait.map(ExamplesTrait::getExamples).orElse(Collections.emptyList())) {
-                ObjectNode inputOrOutput = type == MessageType.REQUEST ? example.getInput() : example.getOutput();
+                ObjectNode inputOrOutput = type == MessageType.REQUEST ? example.getInput()
+                        : example.getOutput().orElse(Node.objectNode());
                 String name = operationOrError.getId().getName() + "_example" + uniqueNum++;
 
                 // this if condition is needed to avoid errors when converting examples of response.
@@ -327,7 +328,8 @@ abstract class AbstractRestProtocol<T extends Trait> implements OpenApiProtocol<
                     : examplesTrait.map(ExamplesTrait::getExamples).orElse(Collections.emptyList())) {
                 // get members included in bindings
                 ObjectNode values = getMembersWithHttpBindingTrait(bindings,
-                        type == MessageType.REQUEST ? example.getInput() : example.getOutput());
+                        type == MessageType.REQUEST ? example.getInput()
+                                : example.getOutput().orElse(Node.objectNode()));
                 String name = operationOrError.getId().getName() + "_example" + uniqueNum++;
                 // this if condition is needed to avoid errors when converting examples of response.
                 if (!example.getError().isPresent() || type == MessageType.REQUEST) {

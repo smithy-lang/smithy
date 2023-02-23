@@ -53,13 +53,20 @@ public final class ExamplesTraitValidator extends AbstractValidator {
                 events.addAll(input.accept(validator));
             });
 
-            model.getShape(shape.getOutputShape()).ifPresent(output -> {
-                NodeValidationVisitor validator = createVisitor(
-                        "output", example.getOutput(), model, shape, example);
-                events.addAll(output.accept(validator));
-            });
+            boolean isOutputDefined = example.getOutput().isPresent();
+            boolean isErrorDefined = example.getError().isPresent();
 
-            if (example.getError().isPresent()) {
+            if (isOutputDefined && isErrorDefined) {
+                events.add(error(shape, trait, String.format(
+                        "Example: `%s` has both output and error defined, only one should be present.",
+                        example.getTitle())));
+            } else if (isOutputDefined) {
+                model.getShape(shape.getOutputShape()).ifPresent(output -> {
+                    NodeValidationVisitor validator = createVisitor(
+                            "output", example.getOutput().get(), model, shape, example);
+                    events.addAll(output.accept(validator));
+                });
+            } else if (isErrorDefined) {
                 ExamplesTrait.ErrorExample errorExample = example.getError().get();
                 Optional<Shape> errorShape = model.getShape(errorExample.getShapeId());
                 if (errorShape.isPresent() && shape.getErrors().contains(errorExample.getShapeId())) {
@@ -68,7 +75,7 @@ public final class ExamplesTraitValidator extends AbstractValidator {
                     events.addAll(errorShape.get().accept(validator));
                 } else {
                     events.add(error(shape, trait, String.format(
-                        "Error parameters provided for operation without the `%s` error: `%s`",
+                            "Error parameters provided for operation without the `%s` error: `%s`",
                             errorExample.getShapeId(), example.getTitle())));
                 }
             }

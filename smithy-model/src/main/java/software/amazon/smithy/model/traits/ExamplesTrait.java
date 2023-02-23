@@ -133,8 +133,8 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
         /**
          * @return Gets the output object.
          */
-        public ObjectNode getOutput() {
-            return output;
+        public Optional<ObjectNode> getOutput() {
+            return Optional.ofNullable(output);
         }
 
         /**
@@ -154,7 +154,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
             if (!input.isEmpty()) {
                 builder.withMember("input", input);
             }
-            if (!output.isEmpty()) {
+            if (this.getOutput().isPresent()) {
                 builder.withMember("output", output);
             }
 
@@ -177,7 +177,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
             private String title;
             private String documentation;
             private ObjectNode input = Node.objectNode();
-            private ObjectNode output = Node.objectNode();
+            private ObjectNode output;
             private ErrorExample error;
 
             @Override

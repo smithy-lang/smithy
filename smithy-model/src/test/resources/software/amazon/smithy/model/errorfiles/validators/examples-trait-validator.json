@@ -22,9 +22,6 @@
                         "input": {
                             "foo": "value1"
                         },
-                        "output": {
-                            "bam": "value2"
-                        },
                         "error": {
                             "shapeId": "ns.foo#OperationError",
                             "content": {
@@ -40,6 +37,21 @@
                         },
                         "output": {
                             "additional": "value"
+                        }
+                    },
+                    {
+                        "title": "Testing 3",
+                        "input": {
+                            "foo": "value1"
+                        },
+                        "output": {
+                            "bam": "value2"
+                        },
+                        "error": {
+                            "shapeId": "ns.foo#OperationError",
+                            "content": {
+                                "bat": "baz"
+                            }
                         }
                     }
                 ]
@@ -93,13 +105,16 @@
                 "smithy.api#readonly": {},
                 "smithy.api#examples": [
                     {
-                        "title": "Testing 3",
+                        "title": "Testing 4",
                         "input": {
                             "foo": "baz"
                         },
                         "output": {
                             "bam": "baz"
-                        },
+                        }
+                    },
+                    {
+                        "title": "Testing 5",
                         "error": {
                             "shapeId": "ns.foo#OperationError",
                             "content": {
