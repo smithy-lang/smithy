@@ -1,5 +1,30 @@
 # Smithy Changelog
 
+## 1.28.0 (2023-02-24)
+
+### Features
+* Add client-only protocol tests for fractional second parsing ([#1627](https://github.com/awslabs/smithy/pull/1627))
+* Add protocol test for omitting empty http-query lists ([#1629](https://github.com/awslabs/smithy/pull/1629))
+* Add support for JSON Schema draft2020-12 ([#1617](https://github.com/awslabs/smithy/pull/1617))
+* Add hierarchical eventIds ([#1527](https://github.com/awslabs/smithy/pull/1527), [#1631](https://github.com/awslabs/smithy/pull/1631))
+* Preserve tag order in generated OpenAPI specification ([#1604](https://github.com/awslabs/smithy/pull/1604))
+* Add shapes generation order in CodegenDirector ([#1615](https://github.com/awslabs/smithy/pull/1615))
+
+### Bug Fixes
+* Remove reflected input values from validation protocol tests ([#1622](https://github.com/awslabs/smithy/pull/1622))
+* Fail ExamplesTraitValidator when both output and error are defined ([#1599](https://github.com/awslabs/smithy/pull/1599))
+* Fix mixin cycles being incorrectly detected ([#1628](https://github.com/awslabs/smithy/pull/1628))
+* Fix warnings in AST Loader for Resource and Operation Shapes with mixins ([#1626](https://github.com/awslabs/smithy/pull/1626))
+* Fix referenced components removed in openapi schema ([#1595](https://github.com/awslabs/smithy/pull/1595))
+* Fix OR condition in scoped attribute selector ([#1618](https://github.com/awslabs/smithy/pull/1618))
+* Fix passthroughBehavior casing on x-amzn-apigateway-integration ([#1619](https://github.com/awslabs/smithy/pull/1619))
+
+### Documentation
+* Clarify rules for escaping shapes bound to URIs ([#1630](https://github.com/awslabs/smithy/pull/1630))
+* Document Tree Sitter implementation ([#1621](https://github.com/awslabs/smithy/pull/1621))
+* Clarify handling of date-time offsets ([#1597](https://github.com/awslabs/smithy/pull/1597))
+* Add Smithy code generation guide ([#1586](https://github.com/awslabs/smithy/pull/1586), [#1592](https://github.com/awslabs/smithy/pull/1592))
+
 ## 1.27.2 (2023-01-30)
 
 ### Features
