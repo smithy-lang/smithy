@@ -287,11 +287,10 @@ public final class FilterSuppressions extends ConfigurableProjectionTransformer<
 
             // Only keep IDs that actually acted to suppress an event.
             if (config.getRemoveUnused()) {
-                Set<String> matched = suppressedEvents.stream()
+                Set<ValidationEvent> matchedEvents = suppressedEvents.stream()
                         .filter(event -> Objects.equals(shape.getId(), event.getShapeId().orElse(null)))
-                        .map(ValidationEvent::getId)
                         .collect(Collectors.toSet());
-                allowed.removeIf(value -> !matched.contains(value));
+                allowed.removeIf(value -> matchedEvents.stream().noneMatch(event -> event.containsId(value)));
             }
 
             if (allowed.isEmpty()) {
