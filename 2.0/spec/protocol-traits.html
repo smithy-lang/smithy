@@ -511,8 +511,8 @@ override the default format using the <code class="docutils literal notranslate"
 <span class="target" id="index-1"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3339.html#section-5.6"><strong>RFC 3339#section-5.6</strong></a>
 with no UTC offset and optional fractional precision (for example,
 <code class="docutils literal notranslate"><span class="pre">1985-04-12T23:20:50.52Z</span></code>).
-<em>However</em>, offsets will still be parsed gracefully, but the datetime
-will be normalized to an offset of zero (i.e. converted to UTC)</td>
+<em>However</em>, offsets are parsed gracefully, but the datetime is normalized
+to an offset of zero by converting to UTC.</td>
 </tr>
 <tr class="row-odd"><td>http-date</td>
 <td>An HTTP date as defined by the <code class="docutils literal notranslate"><span class="pre">IMF-fixdate</span></code> production in

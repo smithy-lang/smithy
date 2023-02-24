@@ -454,6 +454,8 @@ operation.</td>
 compatible with the shapes and constraints of the corresponding structure.
 These values use the same semantics and format as
 <a class="reference internal" href="model.html#trait-node-values"><span class="std std-ref">custom trait values</span></a>.</p>
+<p>A value for <code class="docutils literal notranslate"><span class="pre">output</span></code> or <code class="docutils literal notranslate"><span class="pre">error</span></code> SHOULD be provided. However, both
+MUST NOT be defined for the same example.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span><span class="w"></span>
 <span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">MyOperationInput</span><span class="w"></span>
@@ -483,9 +485,7 @@ These values use the same semantics and format as
 <span class="w">    </span>{<span class="w"></span>
 <span class="w">        </span><span class="py">title</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Error example for MyOperation&quot;</span><span class="w"></span>
 <span class="w">        </span><span class="py">input</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;!&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">            </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w"></span>
+<span class="w">            </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;!&quot;</span><span class="w"></span>
 <span class="w">        </span>}<span class="w"></span>
 <span class="w">        </span><span class="py">error</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
 <span class="w">            </span><span class="py">shapeId</span><span class="p">:</span><span class="w"> </span><span class="vc">MyOperationError</span><span class="w"></span>

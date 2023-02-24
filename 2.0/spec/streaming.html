@@ -325,7 +325,7 @@ or streams of events (<a class="reference internal" href="#event-streams"><span 
 <span id="id1"></span><h2><span class="section-number">13.1. </span>Data streams<a class="headerlink" href="#data-streams" title="Permalink to this headline">#</a></h2>
 <p>Operations can contain <em class="dfn">data streams</em>, a potentially unbounded sequence of
 bytes or UTF-8 characters. A data stream is created by applying the
-<a class="reference internal" href="#streaming-trait"><span class="std std-ref">streaming trait</span></a> to a blob or string. This stream can then be referenced
+<a class="reference internal" href="#streaming-trait"><span class="std std-ref">streaming trait</span></a> to a blob. This stream can then be referenced
 by a single top-level operation input or output structure member. For example:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/streaming-operation&quot;</span>)<span class="w"></span>
 <span class="kd">operation </span><span class="nc">StreamingOperation</span><span class="w"> </span>{<span class="w"></span>

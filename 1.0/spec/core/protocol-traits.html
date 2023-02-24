@@ -568,7 +568,9 @@ override the default format using the <code class="docutils literal notranslate"
 <td>Date time as defined by the <code class="docutils literal notranslate"><span class="pre">date-time</span></code> production in
 <a class="reference external" href="https://www.rfc-editor.org/rfc/rfc3339#section-5.6">RFC3339 section 5.6</a>
 with no UTC offset and optional fractional precision (for example,
-<code class="docutils literal notranslate"><span class="pre">1985-04-12T23:20:50.52Z</span></code>).</td>
+<code class="docutils literal notranslate"><span class="pre">1985-04-12T23:20:50.52Z</span></code>).
+<em>However</em>, offsets are parsed gracefully, but the datetime is normalized
+to an offset of zero by converting to UTC.</td>
 </tr>
 <tr class="row-odd"><td>http-date</td>
 <td>An HTTP date as defined by the <code class="docutils literal notranslate"><span class="pre">IMF-fixdate</span></code> production in
