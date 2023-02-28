@@ -10,7 +10,6 @@ use smithy.test#httpResponseTests
 // These tests are for verifying the client can correctly parse
 // the `DateTime` and `HttpDate` timestamps with fractional seconds
 @tags(["client-only"])
-@http(uri: "/FractionalSeconds", method: "POST")
 operation FractionalSeconds {
     output: FractionalSecondsOutput
 }
