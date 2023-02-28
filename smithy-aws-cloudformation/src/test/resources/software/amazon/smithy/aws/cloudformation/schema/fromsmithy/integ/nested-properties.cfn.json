@@ -1,0 +1,38 @@
+{
+    "typeName": "Smithy::TestService::Forecast",
+    "description": "Definition of Smithy::TestService::Forecast Resource Type",
+    "properties": {
+        "ChanceOfRain": {
+            "type": "number"
+        },
+        "ForecastId": {
+            "type": "string"
+        }
+    },
+    "createOnlyProperties": [
+        "/properties/ForecastId"
+    ],
+    "primaryIdentifier": [
+        "/properties/ForecastId"
+    ],
+    "handlers": {
+        "create": {
+            "permissions": [
+                "testservice:CreateForecast",
+                "testservice:PutForecast"
+            ]
+        },
+        "read": {
+            "permissions": [
+                "testservice:GetForecast"
+            ]
+        },
+        "update": {
+            "permissions": [
+                "testservice:PutForecast",
+                "testservice:UpdateForecast"
+            ]
+        }
+    },
+    "additionalProperties": false
+}
