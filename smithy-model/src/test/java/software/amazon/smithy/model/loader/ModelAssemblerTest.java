@@ -470,6 +470,35 @@ public class ModelAssemblerTest {
     }
 
     @Test
+    public void canSuppressCoreEvents() {
+        Map<String, ObjectNode> loaded = new HashMap<>();
+        ValidatorFactory factory = new ValidatorFactory() {
+            @Override
+            public List<Validator> loadBuiltinValidators() {
+                return ListUtils.of();
+            }
+
+            @Override
+            public Optional<Validator> createValidator(String name, ObjectNode configuration) {
+                loaded.put(name, configuration);
+                return Optional.of(model -> ListUtils.of());
+            }
+        };
+        List<ValidationEvent> collectedEvents = Collections.synchronizedList(new ArrayList<>());
+        ValidatedResult<Model> result = new ModelAssembler()
+                .addImport(getClass().getResource("core-events.smithy"))
+                .validatorFactory(factory)
+                .validationEventListener(collectedEvents::add)
+                .assemble();
+        for (ValidationEvent event : result.getValidationEvents()) {
+            assertEquals(event.getSeverity(), Severity.SUPPRESSED);
+        }
+        for (ValidationEvent event : collectedEvents) {
+            assertEquals(event.getSeverity(), Severity.SUPPRESSED);
+        }
+    }
+
+    @Test
     public void canIgnoreUnknownTraits() {
         String document =
                 "{\"smithy\": \"" + Model.MODEL_VERSION + "\", "
