@@ -19,24 +19,28 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.List;
-import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.eval.Value;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Function;
-import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
-import software.amazon.smithy.rulesengine.language.syntax.fn.LibraryFunction;
+import java.util.Map;
+import software.amazon.smithy.rulesengine.language.eval.type.Type;
+import software.amazon.smithy.rulesengine.language.eval.value.Value;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.functions.Function;
+import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionDefinition;
+import software.amazon.smithy.rulesengine.language.syntax.functions.LibraryFunction;
+import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * A rule-set function for URI encoding a string.
  */
 @SmithyUnstableApi
-public final class UriEncode extends FunctionDefinition {
-
+public final class UriEncode implements FunctionDefinition {
     public static final String ID = "uriEncode";
-    private static final String[] ENCODED_CHARACTERS = new String[]{"+", "*", "%7E"};
-    private static final String[] ENCODED_CHARACTERS_REPLACEMENTS = new String[]{"%20", "%2A", "~"};
 
+    private static final Map<String, String> ENCODING_REPLACEMENTS = MapUtils.of(
+            "+", "%20",
+            "*", "%2A",
+            "%7E", "~"
+    );
 
     @Override
     public String getId() {
@@ -45,23 +49,23 @@ public final class UriEncode extends FunctionDefinition {
 
     @Override
     public List<Type> getArguments() {
-        return Collections.singletonList(Type.string());
+        return Collections.singletonList(Type.stringType());
     }
 
     @Override
     public Type getReturnType() {
-        return Type.string();
+        return Type.stringType();
     }
 
     @Override
     public Value evaluate(List<Value> arguments) {
-        String url = arguments.get(0).expectString();
+        String url = arguments.get(0).expectStringValue().getValue();
         try {
             String encoded = URLEncoder.encode(url, "UTF-8");
-            for (int i = 0; i < ENCODED_CHARACTERS.length; i++) {
-                encoded = encoded.replace(ENCODED_CHARACTERS[i], ENCODED_CHARACTERS_REPLACEMENTS[i]);
+            for (Map.Entry<String, String> entry : ENCODING_REPLACEMENTS.entrySet()) {
+                encoded = encoded.replace(entry.getKey(), entry.getValue());
             }
-            return Value.string(encoded);
+            return Value.stringValue(encoded);
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }

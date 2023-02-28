@@ -16,7 +16,7 @@
 package software.amazon.smithy.rulesengine.language.syntax.parameters;
 
 import java.util.List;
-import software.amazon.smithy.rulesengine.language.eval.Value;
+import software.amazon.smithy.rulesengine.language.eval.value.Value;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -47,7 +47,7 @@ public final class Builtins {
                             "When true, use the dual-stack endpoint. If the configured endpoint does not support "
                                     + "dual-stack, dispatching the request MAY return an error.")
                     .required(true)
-                    .defaultValue(Value.bool(false))
+                    .defaultValue(Value.booleanValue(false))
                     .build();
 
     /**
@@ -62,7 +62,7 @@ public final class Builtins {
                             + "configured endpoint does not have a FIPS compliant endpoint, dispatching "
                             + "the request will return an error.")
                     .required(true)
-                    .defaultValue(Value.bool(false))
+                    .defaultValue(Value.booleanValue(false))
                     .build();
 
     /**
@@ -70,10 +70,10 @@ public final class Builtins {
      */
     public static final Parameter SDK_ENDPOINT =
             Parameter.builder()
-                    .name("Endpoint")
+                    .name("EndpointType")
                     .type(ParameterType.STRING)
                     .documentation("Override the endpoint used to send this request")
-                    .builtIn("SDK::Endpoint")
+                    .builtIn("SDK::EndpointType")
                     .build();
 
     /**
@@ -97,7 +97,7 @@ public final class Builtins {
                     .name("Accelerate")
                     .builtIn("AWS::S3::Accelerate")
                     .required(true)
-                    .defaultValue(Value.bool(false))
+                    .defaultValue(Value.booleanValue(false))
                     .documentation(
                             "When true, use S3 Accelerate. NOTE: Not all regions support S3 accelerate.")
                     .build();
@@ -139,7 +139,7 @@ public final class Builtins {
                     .name("UseGlobalEndpoint")
                     .builtIn("AWS::S3::UseGlobalEndpoint")
                     .required(true)
-                    .defaultValue(Value.bool(false))
+                    .defaultValue(Value.booleanValue(false))
                     .documentation("Whether the global endpoint should be used, rather then "
                             + "the regional endpoint for us-east-1.")
                     .build();
@@ -153,7 +153,7 @@ public final class Builtins {
                     .name("DisableMultiRegionAccessPoints")
                     .builtIn("AWS::S3::DisableMultiRegionAccessPoints")
                     .required(true)
-                    .defaultValue(Value.bool(false))
+                    .defaultValue(Value.booleanValue(false))
                     .documentation("Whether multi-region access points (MRAP) should be disabled.")
                     .build();
 
@@ -166,7 +166,7 @@ public final class Builtins {
                     .name("UseGlobalEndpoint")
                     .builtIn("AWS::STS::UseGlobalEndpoint")
                     .required(true)
-                    .defaultValue(Value.bool(false))
+                    .defaultValue(Value.booleanValue(false))
                     .documentation("Whether the global endpoint should be used, rather then "
                             + "the regional endpoint for us-east-1.")
                     .build();
@@ -175,6 +175,5 @@ public final class Builtins {
             SDK_ENDPOINT, REGION, FIPS, DUALSTACK, S3_ACCELERATE, S3_FORCE_PATH_STYLE, S3_USE_ARN_REGION,
             S3_USE_GLOBAL_ENDPOINT, S3_CONTROL_USE_ARN_REGION, STS_USE_GLOBAL_ENDPOINT, S3_DISABLE_MRAP);
 
-    private Builtins() {
-    }
+    private Builtins() {}
 }

@@ -4,10 +4,10 @@
 // while typechecking the endpoint
 //   at invalid-rules/invalid-slice.json5:40
 // while checking the URL
+//   at invalid-rules/invalid-slice.json5:41
 // while typechecking "{bucketArn#accountId}.{bucketArn#resourceId[2]}.{bucketArn#region}"
 // while typechecking the template `"{bucketArn#accountId}.{bucketArn#resourceId[2]}.{bucketArn#region}"`
-//   at invalid-rules/invalid-slice.json5:41
-// Expected string but found Option<String>. hint: use `assign` in a condition or `isSet` to prove that this value is non-null
+// Expected string but found OptionalType<StringType>. hint: use `assign` in a condition or `isSet` to prove that this value is non-null
 {
   "version": "1.2",
   "parameters": {

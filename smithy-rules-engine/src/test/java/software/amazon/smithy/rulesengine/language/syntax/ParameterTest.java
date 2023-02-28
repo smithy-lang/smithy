@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.rulesengine.language.eval.Value;
+import software.amazon.smithy.rulesengine.language.eval.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.ParameterType;
 
@@ -15,7 +15,7 @@ public class ParameterTest {
                 .name("test")
                 .builtIn("Test::BuiltIn")
                 .required(true)
-                .defaultValue(Value.bool(true))
+                .defaultValue(Value.booleanValue(true))
                 .type(ParameterType.BOOLEAN)
                 .deprecated(new Parameter.Deprecated("message", "I wrote this test"))
                 .value(Node.from(true))

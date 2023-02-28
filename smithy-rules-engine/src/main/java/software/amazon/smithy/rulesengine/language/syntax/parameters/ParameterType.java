@@ -24,8 +24,6 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 public enum ParameterType {
     STRING, BOOLEAN;
 
-    private static final String TYPE = "type";
-
     public static ParameterType fromNode(StringNode node) throws RuleError {
         String value = node.getValue();
         if (value.equalsIgnoreCase("String")) {
@@ -33,8 +31,8 @@ public enum ParameterType {
         } else if (value.equalsIgnoreCase("Boolean")) {
             return BOOLEAN;
         }
-        throw new RuleError(new SourceException(String.format("Unexpected parameter type `%s`. Expected `String` or "
-                                                              + "`Boolean`.", value), node));
+        throw new RuleError(new SourceException(
+                String.format("Unexpected parameter type `%s`. Expected `String` or `Boolean`.", value), node));
     }
 
     @Override

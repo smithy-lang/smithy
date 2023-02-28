@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.rulesengine.language.syntax.rule;
 
+import static software.amazon.smithy.rulesengine.language.RulesComponentBuilder.javaLocation;
+
 import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
@@ -23,14 +25,12 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.rulesengine.IntoSelf;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.Type;
 import software.amazon.smithy.rulesengine.language.eval.TypeCheck;
+import software.amazon.smithy.rulesengine.language.eval.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionNode;
-import software.amazon.smithy.rulesengine.language.util.SourceLocationUtils;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionNode;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -39,7 +39,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * Can assign the results of functions to new parameters within the current scope.
  */
 @SmithyUnstableApi
-public final class Condition implements TypeCheck, FromSourceLocation, ToNode, IntoSelf<Condition> {
+public final class Condition implements TypeCheck, FromSourceLocation, ToNode {
     public static final String ASSIGN = "assign";
     private final Expression fn;
     private final Identifier result;
@@ -140,7 +140,7 @@ public final class Condition implements TypeCheck, FromSourceLocation, ToNode, I
      */
     public Expression toExpression() {
         if (this.getResult().isPresent()) {
-            return Expression.reference(this.getResult().get(), SourceLocationUtils.javaLocation());
+            return Expression.getReference(this.getResult().get(), javaLocation());
         } else {
             throw new RuntimeException("Cannot generate expression from a condition without a result");
         }

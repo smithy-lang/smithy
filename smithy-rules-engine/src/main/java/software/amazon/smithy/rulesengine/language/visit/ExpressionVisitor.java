@@ -16,11 +16,11 @@
 package software.amazon.smithy.rulesengine.language.visit;
 
 import java.util.List;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Reference;
-import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
-import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Reference;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
+import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionDefinition;
+import software.amazon.smithy.rulesengine.language.syntax.functions.GetAttr;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -59,6 +59,7 @@ public interface ExpressionVisitor<R> {
             return getDefault();
         }
 
+        @Override
         public R visitGetAttr(GetAttr getAttr) {
             return getDefault();
         }

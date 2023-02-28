@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -70,8 +69,7 @@ public final class AwsArn implements ToSmithyBuilder<AwsArn> {
                 .service(base[2])
                 .region(base[3])
                 .accountId(base[4])
-                .resource(Arrays.stream(base[5].split("[:/]", -1))
-                        .collect(Collectors.toList()))
+                .resource(Arrays.asList(base[5].split("[:/]", -1)))
                 .build());
     }
 
@@ -79,23 +77,23 @@ public final class AwsArn implements ToSmithyBuilder<AwsArn> {
         return new Builder();
     }
 
-    public String partition() {
+    public String getPartition() {
         return partition;
     }
 
-    public String service() {
+    public String getService() {
         return service;
     }
 
-    public String region() {
+    public String getRegion() {
         return region;
     }
 
-    public String accountId() {
+    public String getAccountId() {
         return accountId;
     }
 
-    public List<String> resource() {
+    public List<String> getResource() {
         return resource;
     }
 
@@ -120,7 +118,7 @@ public final class AwsArn implements ToSmithyBuilder<AwsArn> {
     @Override
     public String toString() {
         StringBuilder resource = new StringBuilder();
-        this.resource().forEach(resource::append);
+        this.getResource().forEach(resource::append);
 
         return "Arn["
                + "partition="

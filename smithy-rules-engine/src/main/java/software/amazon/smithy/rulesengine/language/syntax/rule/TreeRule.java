@@ -22,10 +22,10 @@ import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.util.StringUtils;
+import software.amazon.smithy.rulesengine.language.eval.type.Type;
 import software.amazon.smithy.rulesengine.language.visit.RuleValueVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
+import software.amazon.smithy.utils.StringUtils;
 
 @SmithyUnstableApi
 public final class TreeRule extends Rule {
@@ -55,18 +55,20 @@ public final class TreeRule extends Rule {
             throw new SourceException("Tree rule contains no rules!", this.getSourceLocation());
         }
         for (Rule rule : rules) {
-            RuleError.context(
-                    "while checking nested rule in tree rule",
+            RuleError.context("while checking nested rule in tree rule",
                     () -> scope.inScope(() -> rule.typeCheck(scope)));
         }
-        return Type.endpoint();
+        return Type.endpointType();
     }
 
     @Override
     void withValueNode(ObjectNode.Builder builder) {
-        builder.withMember(TYPE, TREE).withMember(
-                "rules",
-                new ArrayNode(rules.stream().map(Rule::toNode).collect(Collectors.toList()), this.getSourceLocation()));
+        ArrayNode.Builder rulesBuilder = ArrayNode.builder().sourceLocation(getSourceLocation());
+        for (Rule rule : rules) {
+            rulesBuilder.withValue(rule.toNode());
+        }
+        builder.withMember(TYPE, TREE)
+                .withMember("rules", rulesBuilder.build());
     }
 
     @Override

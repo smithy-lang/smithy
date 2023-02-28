@@ -21,10 +21,10 @@ import java.util.Objects;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.rulesengine.language.util.StringUtils;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
+import software.amazon.smithy.utils.StringUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**

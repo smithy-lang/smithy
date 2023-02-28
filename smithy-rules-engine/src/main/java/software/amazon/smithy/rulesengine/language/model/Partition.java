@@ -23,7 +23,7 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
+import software.amazon.smithy.rulesengine.language.RulesComponentBuilder;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -77,15 +77,15 @@ public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLo
         return b.build();
     }
 
-    public String id() {
+    public String getId() {
         return id;
     }
 
-    public String regionRegex() {
+    public String getRegionRegex() {
         return regionRegex;
     }
 
-    public Map<String, RegionOverride> regions() {
+    public Map<String, RegionOverride> getRegions() {
         return regions;
     }
 
@@ -142,7 +142,7 @@ public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLo
         return on.build();
     }
 
-    public static class Builder extends SourceLocationTrackingBuilder<Builder, Partition> {
+    public static class Builder extends RulesComponentBuilder<Builder, Partition> {
         private String id;
         private String regionRegex;
         private final BuilderRef<Map<String, RegionOverride>> regions = BuilderRef.forOrderedMap();

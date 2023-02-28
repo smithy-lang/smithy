@@ -10,10 +10,10 @@
 // while typechecking the endpoint
 //   at invalid-rules/only-refs-coerce-isset.json5:87
 // while checking the URL
+//   at invalid-rules/only-refs-coerce-isset.json5:88
 // while typechecking "https://{bucketArn#resourceId[1]}-{bucketArn#accountId}.{bucketArn#region}.{partitionResult#dnsSuffix}"
 // while typechecking the template `"https://{bucketArn#resourceId[1]}-{bucketArn#accountId}.{bucketArn#region}.{partitionResult#dnsSuffix}"`
-//   at invalid-rules/only-refs-coerce-isset.json5:88
-// Expected string but found Option<String>. hint: use `assign` in a condition or `isSet` to prove that this value is non-null
+// Expected string but found OptionalType<StringType>. hint: use `assign` in a condition or `isSet` to prove that this value is non-null
 {
   "version": "1.2",
   "parameters": {

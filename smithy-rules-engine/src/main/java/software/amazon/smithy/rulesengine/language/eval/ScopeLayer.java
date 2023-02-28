@@ -21,15 +21,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Reference;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Reference;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
+// TODO The internal containers of this class are mutated.
 final class ScopeLayer<T> {
     private final Map<Identifier, T> types;
     private final Set<Reference> nonNullReferences;
 
-    ScopeLayer(HashMap<Identifier, T> types, Set<Reference> nonNullReferences) {
+    ScopeLayer(Map<Identifier, T> types, Set<Reference> nonNullReferences) {
         this.types = types;
         this.nonNullReferences = nonNullReferences;
     }
@@ -42,7 +43,7 @@ final class ScopeLayer<T> {
         return types;
     }
 
-    public Set<Reference> getNonNullRefs() {
+    public Set<Reference> getNonNullReferences() {
         return nonNullReferences;
     }
 

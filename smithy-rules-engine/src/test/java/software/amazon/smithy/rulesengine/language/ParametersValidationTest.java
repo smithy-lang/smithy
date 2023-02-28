@@ -18,12 +18,12 @@ package software.amazon.smithy.rulesengine.language;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
@@ -38,18 +38,18 @@ import software.amazon.smithy.rulesengine.validators.ValidationErrorType;
 import software.amazon.smithy.utils.MapUtils;
 
 class ParametersValidationTest {
-    private EndpointRuleSet parseRuleset(String resource) {
-        InputStream is = getClass().getResourceAsStream(resource);
-        assert is != null;
-        Node node = ObjectNode.parse(is);
-        return EndpointRuleSet.fromNode(node);
+    private EndpointRuleSet parseRuleset(String resource) throws IOException {
+        try (InputStream is = getClass().getResourceAsStream(resource)) {
+            Node node = ObjectNode.parse(is);
+            return EndpointRuleSet.fromNode(node);
+        }
     }
 
-    private EndpointTestsTrait parseTestSuite(String resource) {
-        InputStream is = getClass().getResourceAsStream(resource);
-        assert is != null;
-        Node node = ObjectNode.parse(is);
-        return EndpointTestsTrait.fromNode(node);
+    private EndpointTestsTrait parseTestSuite(String resource) throws IOException {
+        try (InputStream is = getClass().getResourceAsStream(resource)) {
+            Node node = ObjectNode.parse(is);
+            return EndpointTestsTrait.fromNode(node);
+        }
     }
 
     @Test
@@ -106,14 +106,17 @@ class ParametersValidationTest {
     }
 
     @Test
-    void validateTestParametersMatching() {
+    void validateTestParametersMatching() throws IOException {
         EndpointRuleSet ruleset = parseRuleset("params-validation/ruleset.json");
 
         ShapeId serviceId = ShapeId.from("example#FizzBuzz");
 
-        Map<String, Parameter> rulesetParams = ruleset.getParameters().toList().stream()
-                .filter(p -> !p.isBuiltIn())
-                .collect(Collectors.toMap(param -> param.getName().asString(), item -> item));
+        Map<String, Parameter> rulesetParams = new HashMap<>();
+        for (Parameter parameter : ruleset.getParameters().toList()) {
+            if (!parameter.isBuiltIn()) {
+                rulesetParams.put(parameter.getName().toString(), parameter);
+            }
+        }
 
         Model model = Model.assembler()
                 .discoverModels()
@@ -201,7 +204,7 @@ class ParametersValidationTest {
     }
 
     @Test
-    void testValidParams() {
+    void testValidParams() throws IOException {
 
         Model model = Model.assembler()
                 .discoverModels()
@@ -216,7 +219,7 @@ class ParametersValidationTest {
     }
 
     @Test
-    void testValidTestParams() {
+    void testValidTestParams() throws IOException {
 
         EndpointRuleSet ruleset = parseRuleset("params-validation/eventbridge-rules.json");
 
@@ -228,7 +231,7 @@ class ParametersValidationTest {
     }
 
     @Test
-    void testRequiredTestParams() {
+    void testRequiredTestParams() throws IOException {
 
         EndpointRuleSet ruleset = parseRuleset("params-validation/eventbridge-rules.json");
 
@@ -241,7 +244,7 @@ class ParametersValidationTest {
     }
 
     @Test
-    void testParamsTypesMismatch() {
+    void testParamsTypesMismatch() throws IOException {
 
         EndpointRuleSet ruleset = parseRuleset("params-validation/eventbridge-rules.json");
 
@@ -254,7 +257,7 @@ class ParametersValidationTest {
     }
 
     @Test
-    void testParamsNotUsed() {
+    void testParamsNotUsed() throws IOException {
 
         EndpointRuleSet ruleset = parseRuleset("params-validation/eventbridge-rules-extra-param.json");
 
@@ -267,7 +270,7 @@ class ParametersValidationTest {
     }
 
     @Test
-    void testParamsNotDefined() {
+    void testParamsNotDefined() throws IOException {
 
         EndpointRuleSet ruleset = parseRuleset("params-validation/eventbridge-rules.json");
 

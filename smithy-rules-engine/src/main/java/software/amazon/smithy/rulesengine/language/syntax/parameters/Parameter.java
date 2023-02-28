@@ -25,14 +25,14 @@ import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.rulesengine.language.RulesComponentBuilder;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
-import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.eval.Value;
+import software.amazon.smithy.rulesengine.language.eval.type.Type;
+import software.amazon.smithy.rulesengine.language.eval.value.Value;
 import software.amazon.smithy.rulesengine.language.stdlib.BooleanEquals;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Function;
-import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.functions.Function;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -45,21 +45,15 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLo
     public static final String DEFAULT = "default";
     private static final String BUILT_IN = "builtIn";
     private static final String REQUIRED = "required";
+
     private final ParameterType type;
     private final Identifier name;
-
     private final Value value;
-
     private final String builtIn;
-
     private final Value defaultValue;
-
     private final boolean required;
-
     private final SourceLocation sourceLocation;
-
     private final Deprecated deprecated;
-
     private final String documentation;
 
     private Parameter(Builder builder) {
@@ -69,19 +63,19 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLo
         if (builder.defaultValue != null && !builder.required) {
             throw new RuntimeException("When a default value is set, the field must also be marked as required");
         }
+
         this.type = SmithyBuilder.requiredState("type", builder.type);
         this.name = SmithyBuilder.requiredState("name", builder.name);
-        this.builtIn = builder.builtIn;
         this.value = builder.value;
+        this.builtIn = builder.builtIn;
+        this.defaultValue = builder.defaultValue;
         this.required = builder.required;
         this.sourceLocation = builder.getSourceLocation();
         this.deprecated = builder.deprecated;
         this.documentation = builder.documentation;
-        this.defaultValue = builder.defaultValue;
     }
 
     public static Parameter fromNode(StringNode name, ObjectNode node) throws RuleError {
-        // TODO: support documentation from JSON
         return RuleError.context("while parsing the parameter `" + name + "`", node, () -> {
             node.expectNoAdditionalProperties(Arrays.asList(BUILT_IN, REQUIRED, TYPE, DEPRECATED, DOCUMENTATION,
                     DEFAULT));
@@ -134,24 +128,24 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLo
 
         switch (this.type) {
             case STRING:
-                out = Type.string();
+                out = Type.stringType();
                 break;
             case BOOLEAN:
-                out = Type.bool();
+                out = Type.booleanType();
                 break;
             default:
                 throw new IllegalArgumentException("unexpected parameter type: " + this.type);
         }
 
         if (defaultValue != null) {
-            if (!defaultValue.type().equals(out)) {
+            if (!defaultValue.getType().equals(out)) {
                 throw new RuntimeException(String.format("Invalid type for field \"default\": Type must match "
                                                          + "parameter type. Expected %s, found %s.", out,
-                        defaultValue.type()));
+                        defaultValue.getType()));
             }
         }
         if (!this.required) {
-            out = Type.optional(out);
+            out = Type.optionalType(out);
         }
         return out;
     }
@@ -182,11 +176,14 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLo
             return false;
         }
         Parameter parameter = (Parameter) o;
-        return required == parameter.required && type == parameter.type && name.equals(parameter.name)
-               && Objects.equals(value, parameter.value) && Objects.equals(builtIn, parameter.builtIn)
-               && Objects.equals(defaultValue, parameter.defaultValue)
-               && Objects.equals(deprecated, parameter.deprecated)
-               && Objects.equals(documentation, parameter.documentation);
+        return required == parameter.required
+                && Objects.equals(type, parameter.type)
+                && name.equals(parameter.name)
+                && Objects.equals(value, parameter.value)
+                && Objects.equals(builtIn, parameter.builtIn)
+                && Objects.equals(defaultValue, parameter.defaultValue)
+                && Objects.equals(deprecated, parameter.deprecated)
+                && Objects.equals(documentation, parameter.documentation);
     }
 
     @Override
@@ -217,7 +214,7 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLo
                 .defaultValue(defaultValue);
     }
 
-    public String template() {
+    public String getTemplate() {
         return "{" + name + "}";
     }
 
@@ -247,7 +244,7 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLo
      * @return the reference to the parameter.
      */
     public Expression toExpression() {
-        return Expression.reference(this.name, SourceLocation.none());
+        return Expression.getReference(this.name, SourceLocation.none());
     }
 
     /**
@@ -342,7 +339,7 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLo
 
     }
 
-    public static final class Builder extends SourceLocationTrackingBuilder<Builder, Parameter> {
+    public static final class Builder extends RulesComponentBuilder<Builder, Parameter> {
         private ParameterType type;
         private Identifier name;
         private String builtIn;
@@ -396,11 +393,6 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLo
 
         public Builder defaultValue(Value defaultValue) {
             this.defaultValue = defaultValue;
-            return this;
-        }
-
-        public Builder sourceLocation(SourceLocation value) {
-            this.sourceLocation = value;
             return this;
         }
 

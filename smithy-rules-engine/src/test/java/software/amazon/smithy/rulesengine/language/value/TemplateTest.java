@@ -17,14 +17,15 @@ package software.amazon.smithy.rulesengine.language.value;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.Collectors;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Template;
-import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Template;
+import software.amazon.smithy.rulesengine.language.syntax.functions.GetAttr;
 
 class TemplateTest {
     @Test
@@ -40,22 +41,24 @@ class TemplateTest {
 
     private void checkTemplateParts(String templateInput, String... parts) {
         Template template = Template.fromString(templateInput);
-        assertEquals(
-                Arrays.stream(parts).collect(Collectors.toList()),
-                template.getParts().stream().map(Object::toString).collect(Collectors.toList()));
+        List<String> templateParts = new ArrayList<>();
+        for (Template.Part part : template.getParts()) {
+            templateParts.add(part.toString());
+        }
+        assertEquals(Arrays.asList(parts), templateParts);
     }
 
     @Test
     void validateShortformParsing() {
-        assertEquals(Expression.parseShortform("a", SourceLocation.none()), Expression.reference(Identifier.of("a"), SourceLocation.none()));
+        assertEquals(Expression.parseShortform("a", SourceLocation.none()), Expression.getReference(Identifier.of("a"), SourceLocation.none()));
         assertEquals(Expression.parseShortform("a#b", SourceLocation.none()), GetAttr
                 .builder()
-                .target(Expression.reference(Identifier.of("a"), SourceLocation.none()))
+                .target(Expression.getReference(Identifier.of("a"), SourceLocation.none()))
                 .path("b")
                 .build());
         assertEquals(Expression.parseShortform("a#b.c", SourceLocation.none()), GetAttr
                 .builder()
-                .target(Expression.reference(Identifier.of("a"), SourceLocation.none()))
+                .target(Expression.getReference(Identifier.of("a"), SourceLocation.none()))
                 .path("b.c")
                 .build());
     }

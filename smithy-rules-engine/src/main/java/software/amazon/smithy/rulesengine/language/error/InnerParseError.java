@@ -21,7 +21,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * Represents an error encountered when parsing a rule-set expression.
  */
 @SmithyUnstableApi
-public final class InnerParseError extends Exception {
+public final class InnerParseError extends RuntimeException {
     public InnerParseError(String message) {
         super(message);
     }

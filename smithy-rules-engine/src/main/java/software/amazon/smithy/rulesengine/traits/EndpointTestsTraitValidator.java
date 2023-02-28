@@ -28,6 +28,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 public final class EndpointTestsTraitValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
+        // TODO https://github.com/awslabs/smithy/pull/1516/
         return null;
     }
 }

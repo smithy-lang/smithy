@@ -26,12 +26,11 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.rulesengine.language.RulesComponentBuilder;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.Type;
+import software.amazon.smithy.rulesengine.language.eval.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
-import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -51,22 +50,18 @@ public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBui
 
     public static Parameters fromNode(ObjectNode node) throws RuleError {
         Builder builder = new Builder(node);
-        for (Map.Entry<StringNode, Node> kv : node.getMembers().entrySet()) {
-            builder.addParameter(
-                    Parameter.fromNode(
-                            kv.getKey(),
-                            RuleError.context("when parsing parameter", () -> kv.getValue().expectObjectNode())));
+        for (Map.Entry<StringNode, Node> entry : node.getMembers().entrySet()) {
+            builder.addParameter(Parameter.fromNode(entry.getKey(),
+                    RuleError.context("when parsing parameter", () -> entry.getValue().expectObjectNode())));
         }
         return builder.build();
     }
 
     public void writeToScope(Scope<Type> scope) {
-        this.parameters.forEach(
-                (param) ->
-                        RuleError.context(
-                                String.format("while typechecking %s", param.getName()),
-                                param,
-                                () -> scope.insert(param.getName(), param.toType())));
+        for (Parameter parameter : parameters) {
+            RuleError.context(String.format("while typechecking %s", parameter.getName()), parameter,
+                    () -> scope.insert(parameter.getName(), parameter.toType()));
+        }
     }
 
     @Override
@@ -113,17 +108,24 @@ public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBui
     }
 
     public Optional<Parameter> get(Identifier name) {
-        return parameters.stream().filter((param) -> param.getName().equals(name)).findFirst();
+        for (Parameter parameter : parameters) {
+            if (parameter.getName().equals(name)) {
+                return Optional.of(parameter);
+            }
+        }
+        return Optional.empty();
     }
 
     @Override
     public Node toNode() {
         ObjectNode.Builder params = ObjectNode.builder();
-        parameters.forEach(p -> params.withMember(p.getName().getName(), p));
+        for (Parameter parameter : parameters) {
+            params.withMember(parameter.getName().getName(), parameter);
+        }
         return params.build();
     }
 
-    public static class Builder extends SourceLocationTrackingBuilder<Builder, Parameters> {
+    public static class Builder extends RulesComponentBuilder<Builder, Parameters> {
         private final List<Parameter> parameters = new ArrayList<>();
 
         public Builder(FromSourceLocation sourceLocation) {
@@ -132,11 +134,6 @@ public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBui
 
         public Builder addParameter(Parameter parameter) {
             this.parameters.add(parameter);
-            return this;
-        }
-
-        public Builder addParameter(SmithyBuilder<Parameter> parameter) {
-            this.parameters.add(parameter.build());
             return this;
         }
 

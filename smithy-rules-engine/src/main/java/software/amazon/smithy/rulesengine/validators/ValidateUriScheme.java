@@ -20,8 +20,9 @@ import java.util.Map;
 import java.util.stream.Stream;
 import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Template;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Template;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.LiteralVisitor;
 import software.amazon.smithy.rulesengine.language.visit.TraversingVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -42,9 +43,9 @@ public final class ValidateUriScheme extends TraversingVisitor<ValidationError> 
 
     @Override
     public Stream<ValidationError> visitLiteral(Literal literal) {
-        return literal.accept(new Literal.Vistor<Stream<ValidationError>>() {
+        return literal.accept(new LiteralVisitor<Stream<ValidationError>>() {
             @Override
-            public Stream<ValidationError> visitBool(boolean b) {
+            public Stream<ValidationError> visitBoolean(boolean b) {
                 return Stream.empty();
             }
 

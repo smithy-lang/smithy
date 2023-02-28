@@ -17,16 +17,15 @@ package software.amazon.smithy.rulesengine.language.stdlib;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.eval.Value;
+import software.amazon.smithy.rulesengine.language.eval.type.Type;
+import software.amazon.smithy.rulesengine.language.eval.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Function;
-import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
-import software.amazon.smithy.rulesengine.language.syntax.fn.LibraryFunction;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.functions.Function;
+import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionDefinition;
+import software.amazon.smithy.rulesengine.language.syntax.functions.LibraryFunction;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
@@ -35,7 +34,7 @@ import software.amazon.smithy.utils.StringUtils;
  * A rule-set function to parse a URI from a string.
  */
 @SmithyUnstableApi
-public class ParseUrl extends FunctionDefinition {
+public class ParseUrl implements FunctionDefinition {
     public static final String ID = "parseURL";
     public static final Identifier SCHEME = Identifier.of("scheme");
     public static final Identifier AUTHORITY = Identifier.of("authority");
@@ -51,7 +50,7 @@ public class ParseUrl extends FunctionDefinition {
 
     @Override
     public List<Type> getArguments() {
-        return Collections.singletonList(Type.string());
+        return Collections.singletonList(Type.stringType());
     }
 
     public static Function ofExpression(Expression expression) {
@@ -60,28 +59,28 @@ public class ParseUrl extends FunctionDefinition {
 
     @Override
     public Type getReturnType() {
-        return Type.optional(Type.record(
+        return Type.optionalType(Type.recordType(
                 MapUtils.of(
-                        SCHEME, Type.string(),
-                        AUTHORITY, Type.string(),
-                        PATH, Type.string(),
-                        NORMALIZED_PATH, Type.string(),
-                        IS_IP, Type.bool()
+                        SCHEME, Type.stringType(),
+                        AUTHORITY, Type.stringType(),
+                        PATH, Type.stringType(),
+                        NORMALIZED_PATH, Type.stringType(),
+                        IS_IP, Type.booleanType()
                 )
         ));
     }
 
     @Override
     public Value evaluate(List<Value> arguments) {
-        String url = arguments.get(0).expectString();
+        String url = arguments.get(0).expectStringValue().getValue();
         try {
             URL parsed = new URL(url);
-            String path = parsed.getPath();
             if (parsed.getQuery() != null) {
                 System.out.println("empty query not supported");
-                return Value.none();
+                return Value.emptyValue();
 
             }
+
             boolean isIpAddr = false;
             String host = parsed.getHost();
             if (host.startsWith("[") && host.endsWith("]")) {
@@ -89,17 +88,20 @@ public class ParseUrl extends FunctionDefinition {
             }
             String[] dottedParts = host.split("\\.");
             if (dottedParts.length == 4) {
-                if (Arrays.stream(dottedParts).allMatch(part -> {
+                isIpAddr = true;
+                for (String dottedPart : dottedParts) {
                     try {
-                        int value = Integer.parseInt(part);
-                        return value >= 0 && value <= 255;
+                        int value = Integer.parseInt(dottedPart);
+                        if (value < 0 || value > 255) {
+                            isIpAddr = false;
+                        }
                     } catch (NumberFormatException ex) {
-                        return false;
+                        isIpAddr = false;
                     }
-                })) {
-                    isIpAddr = true;
                 }
             }
+
+            String path = parsed.getPath();
             String normalizedPath;
             if (StringUtils.isBlank(path)) {
                 normalizedPath = "/";
@@ -114,16 +116,18 @@ public class ParseUrl extends FunctionDefinition {
                 }
                 normalizedPath = builder.toString();
             }
-            return Value.record(MapUtils.of(
-                    SCHEME, Value.string(parsed.getProtocol()),
-                    AUTHORITY, Value.string(parsed.getAuthority()),
-                    PATH, Value.string(path),
-                    NORMALIZED_PATH, Value.string(normalizedPath.toString()),
-                    IS_IP, Value.bool(isIpAddr)
+
+            return Value.recordValue(MapUtils.of(
+                    SCHEME, Value.stringValue(parsed.getProtocol()),
+                    AUTHORITY, Value.stringValue(parsed.getAuthority()),
+                    PATH, Value.stringValue(path),
+                    NORMALIZED_PATH, Value.stringValue(normalizedPath),
+                    IS_IP, Value.booleanValue(isIpAddr)
             ));
         } catch (MalformedURLException e) {
+            // TODO Search for more of these
             System.out.printf("invalid URL: %s%n", e);
-            return Value.none();
+            return Value.emptyValue();
         }
     }
 }

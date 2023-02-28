@@ -17,7 +17,6 @@ package software.amazon.smithy.rulesengine.language.error;
 
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.rulesengine.language.util.SourceLocationUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -41,8 +40,24 @@ public final class InvalidRulesException extends RuntimeException implements Fro
         if (sourceLocation == SourceLocation.NONE) {
             return message;
         } else {
-            String prettyLocation = SourceLocationUtils.stackTraceForm(sourceLocation);
+            String prettyLocation = stackTraceForm(sourceLocation);
             return message.contains(prettyLocation) ? message : message + " (" + prettyLocation + ")";
         }
+    }
+
+    private static String stackTraceForm(SourceLocation sourceLocation) {
+        if (sourceLocation == SourceLocation.NONE) {
+            return "N/A";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        if (sourceLocation.getFilename() != null) {
+            sb.append(sourceLocation.getFilename());
+        }
+        if (sourceLocation.getLine() != 0) {
+            sb.append(":").append(sourceLocation.getLine());
+        }
+        // column is ignored in stack trace form
+        return sb.toString();
     }
 }

@@ -17,34 +17,33 @@ package software.amazon.smithy.rulesengine.language.eval;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.InputStream;
+import java.io.IOException;
 import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.rulesengine.RulesetTestUtil;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
+import software.amazon.smithy.rulesengine.language.TestDiscovery;
+import software.amazon.smithy.rulesengine.language.eval.value.EndpointValue;
+import software.amazon.smithy.rulesengine.language.eval.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.utils.MapUtils;
 
 class RuleEngineTest {
-
     @Test
-    void testRuleEval() {
-        EndpointRuleSet actual = RulesetTestUtil.minimalRuleSet();
+    void testRuleEval() throws IOException {
+        EndpointRuleSet actual = TestDiscovery.getMinimalEndpointRuleSet();
         Value result = RuleEvaluator.evaluate(actual, MapUtils.of(Identifier.of("Region"),
-                Value.string("us-east-1")));
-        Value.Endpoint expected = new Value.Endpoint.Builder(SourceLocation.none())
+                Value.stringValue("us-east-1")));
+        EndpointValue expected = new EndpointValue.Builder(SourceLocation.none())
                 .url("https://us-east-1.amazonaws.com")
-                .addProperty("authSchemes", Value.array(Collections.singletonList(
-                        Value.record(MapUtils.of(
-                                Identifier.of("name"), Value.string("sigv4"),
-                                Identifier.of("signingRegion"), Value.string("us-east-1"),
-                                Identifier.of("signingName"), Value.string("serviceName")
+                .putProperty("authSchemes", Value.arrayValue(Collections.singletonList(
+                        Value.recordValue(MapUtils.of(
+                                Identifier.of("name"), Value.stringValue("sigv4"),
+                                Identifier.of("signingRegion"), Value.stringValue("us-east-1"),
+                                Identifier.of("signingName"), Value.stringValue("serviceName")
                         ))
                 )))
                 .build();
-        assertEquals(expected, result.expectEndpoint());
+        assertEquals(expected, result.expectEndpointValue());
     }
 }

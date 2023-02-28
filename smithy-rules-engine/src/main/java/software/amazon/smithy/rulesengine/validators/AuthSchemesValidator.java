@@ -25,7 +25,7 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
 import software.amazon.smithy.rulesengine.language.visit.TraversingVisitor;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -84,7 +84,7 @@ public final class AuthSchemesValidator {
                         sourceLocation));
             }
             Literal name = authScheme.get(NAME);
-            String schemeName = name.expectLiteralString();
+            String schemeName = name.asString().get().expectLiteral();
             if (schemeName.equals("sigv4")) {
                 return validateSigv4(authScheme, sourceLocation);
             } else if (schemeName.equals("sigv4a")) {

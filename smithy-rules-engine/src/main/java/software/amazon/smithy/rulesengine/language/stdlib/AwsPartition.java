@@ -24,18 +24,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.regex.Pattern;
-import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.eval.Value;
+import software.amazon.smithy.rulesengine.language.eval.type.RecordType;
+import software.amazon.smithy.rulesengine.language.eval.type.Type;
+import software.amazon.smithy.rulesengine.language.eval.value.Value;
+import software.amazon.smithy.rulesengine.language.model.Partition;
 import software.amazon.smithy.rulesengine.language.model.PartitionOutputs;
 import software.amazon.smithy.rulesengine.language.model.Partitions;
 import software.amazon.smithy.rulesengine.language.stdlib.partition.PartitionDataProvider;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Function;
-import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
-import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionNode;
-import software.amazon.smithy.rulesengine.language.syntax.fn.LibraryFunction;
-import software.amazon.smithy.rulesengine.language.util.LazyValue;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.functions.Function;
+import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionDefinition;
+import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionNode;
+import software.amazon.smithy.rulesengine.language.syntax.functions.LibraryFunction;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -43,7 +44,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * An AWS rule-set function for mapping a region string to a partition.
  */
 @SmithyUnstableApi
-public final class AwsPartition extends FunctionDefinition {
+public final class AwsPartition implements FunctionDefinition {
     public static final String ID = "aws.partition";
 
     public static final Identifier NAME = Identifier.of("name");
@@ -53,9 +54,7 @@ public final class AwsPartition extends FunctionDefinition {
     public static final Identifier SUPPORTS_DUAL_STACK = Identifier.of("supportsDualStack");
     public static final Identifier INFERRED = Identifier.of("inferred");
 
-    private final LazyValue<PartitionData> partitionData = LazyValue.<PartitionData>builder()
-            .initializer(this::loadPartitionData)
-            .build();
+    private static final PartitionData PARTITION_DATA = loadPartitionData();
 
     @Override
     public String getId() {
@@ -64,35 +63,32 @@ public final class AwsPartition extends FunctionDefinition {
 
     @Override
     public List<Type> getArguments() {
-        return Collections.singletonList(Type.string());
+        return Collections.singletonList(Type.stringType());
     }
 
     @Override
     public Type getReturnType() {
-        LinkedHashMap<Identifier, Type> type = new LinkedHashMap<>();
-        type.put(NAME, Type.string());
-        type.put(DNS_SUFFIX, Type.string());
-        type.put(DUAL_STACK_DNS_SUFFIX, Type.string());
-        type.put(SUPPORTS_DUAL_STACK, Type.bool());
-        type.put(SUPPORTS_FIPS, Type.bool());
-        return Type.optional(new Type.Record(type));
+        Map<Identifier, Type> type = new LinkedHashMap<>();
+        type.put(NAME, Type.stringType());
+        type.put(DNS_SUFFIX, Type.stringType());
+        type.put(DUAL_STACK_DNS_SUFFIX, Type.stringType());
+        type.put(SUPPORTS_DUAL_STACK, Type.booleanType());
+        type.put(SUPPORTS_FIPS, Type.booleanType());
+        return Type.optionalType(new RecordType(type));
     }
 
     @Override
     public Value evaluate(List<Value> arguments) {
-        String regionName = arguments.get(0).expectString();
-
-        final PartitionData data = partitionData.value();
-
-        software.amazon.smithy.rulesengine.language.model.Partition matchedPartition;
+        String regionName = arguments.get(0).expectStringValue().getValue();
+        Partition matchedPartition;
         boolean inferred = false;
 
         // Known region
-        matchedPartition = data.regionMap.get(regionName);
+        matchedPartition = PARTITION_DATA.regionMap.get(regionName);
         if (matchedPartition == null) {
-            // try matching on region name pattern
-            for (software.amazon.smithy.rulesengine.language.model.Partition p : data.partitions) {
-                Pattern regex = Pattern.compile(p.regionRegex());
+            // Try matching on region name pattern
+            for (Partition p : PARTITION_DATA.partitions) {
+                Pattern regex = Pattern.compile(p.getRegionRegex());
                 if (regex.matcher(regionName).matches()) {
                     matchedPartition = p;
                     inferred = true;
@@ -102,17 +98,27 @@ public final class AwsPartition extends FunctionDefinition {
         }
 
         if (matchedPartition == null) {
-            matchedPartition = data.partitions.stream().filter(p -> p.id().equals("aws")).findFirst().get();
+            for (Partition partition : PARTITION_DATA.partitions) {
+                if (partition.getId().equals("aws")) {
+                    matchedPartition = partition;
+                    break;
+                }
+            }
+        }
+
+        if (matchedPartition == null) {
+            // TODO
+            throw new RuntimeException("Unable to match a partition for region " + regionName);
         }
 
         PartitionOutputs matchedPartitionOutputs = matchedPartition.getOutputs();
-        return Value.record(MapUtils.of(
-                NAME, Value.string(matchedPartition.id()),
-                DNS_SUFFIX, Value.string(matchedPartitionOutputs.dnsSuffix()),
-                DUAL_STACK_DNS_SUFFIX, Value.string(matchedPartitionOutputs.dualStackDnsSuffix()),
-                SUPPORTS_FIPS, Value.bool(matchedPartitionOutputs.supportsFips()),
-                SUPPORTS_DUAL_STACK, Value.bool(matchedPartitionOutputs.supportsDualStack()),
-                INFERRED, Value.bool(inferred)));
+        return Value.recordValue(MapUtils.of(
+                NAME, Value.stringValue(matchedPartition.getId()),
+                DNS_SUFFIX, Value.stringValue(matchedPartitionOutputs.getDnsSuffix()),
+                DUAL_STACK_DNS_SUFFIX, Value.stringValue(matchedPartitionOutputs.getDualStackDnsSuffix()),
+                SUPPORTS_FIPS, Value.booleanValue(matchedPartitionOutputs.supportsFips()),
+                SUPPORTS_DUAL_STACK, Value.booleanValue(matchedPartitionOutputs.supportsDualStack()),
+                INFERRED, Value.booleanValue(inferred)));
     }
 
     /**
@@ -125,7 +131,7 @@ public final class AwsPartition extends FunctionDefinition {
         return new LibraryFunction(new AwsPartition(), FunctionNode.ofExpressions(ID, expression));
     }
 
-    private PartitionData loadPartitionData() {
+    private static PartitionData loadPartitionData() {
         Iterator<PartitionDataProvider> iter = ServiceLoader.load(PartitionDataProvider.class).iterator();
         if (!iter.hasNext()) {
             throw new RuntimeException("Unable to locate partition data");
@@ -137,9 +143,9 @@ public final class AwsPartition extends FunctionDefinition {
 
         PartitionData partitionData = new PartitionData();
 
-        partitions.partitions().forEach(part -> {
+        partitions.getPartitions().forEach(part -> {
             partitionData.partitions.add(part);
-            part.regions().forEach((name, override) -> {
+            part.getRegions().forEach((name, override) -> {
                 partitionData.regionMap.put(name, part);
             });
         });
@@ -148,8 +154,7 @@ public final class AwsPartition extends FunctionDefinition {
     }
 
     private static class PartitionData {
-        private final List<software.amazon.smithy.rulesengine.language.model.Partition> partitions = new ArrayList<>();
-        private final Map<String, software.amazon.smithy.rulesengine.language.model.Partition> regionMap =
-                new HashMap<>();
+        private final List<Partition> partitions = new ArrayList<>();
+        private final Map<String, Partition> regionMap = new HashMap<>();
     }
 }
