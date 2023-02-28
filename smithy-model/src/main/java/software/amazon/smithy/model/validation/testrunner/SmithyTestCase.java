@@ -142,10 +142,10 @@ public final class SmithyTestCase {
     }
 
     private boolean isModelDeprecationEvent(ValidationEvent event) {
-        return event.getId().equals(Validator.MODEL_DEPRECATION)
+        return event.containsId(Validator.MODEL_DEPRECATION)
                // Trait vendors should be free to deprecate a trait without breaking consumers.
-               || event.getId().equals("DeprecatedTrait")
-               || event.getId().equals("DeprecatedShape");
+               || event.containsId("DeprecatedTrait")
+               || event.containsId("DeprecatedShape");
     }
 
     private static String inferErrorFileLocation(String modelLocation) {
