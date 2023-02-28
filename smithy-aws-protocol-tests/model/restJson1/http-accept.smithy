@@ -6,7 +6,7 @@ use aws.protocols#restJson1
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
-@idempotent
+@readonly
 @http(method: "GET", uri: "/test-accept-header")
 @documentation("Service accepts `*` in ACCEPT header")
 @httpRequestTests([
