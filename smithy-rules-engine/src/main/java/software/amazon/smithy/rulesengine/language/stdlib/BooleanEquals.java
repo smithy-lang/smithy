@@ -19,13 +19,13 @@ import java.util.Arrays;
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.eval.Value;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Function;
-import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
-import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionNode;
-import software.amazon.smithy.rulesengine.language.syntax.fn.LibraryFunction;
+import software.amazon.smithy.rulesengine.language.eval.type.Type;
+import software.amazon.smithy.rulesengine.language.eval.value.Value;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.functions.Function;
+import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionDefinition;
+import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionNode;
+import software.amazon.smithy.rulesengine.language.syntax.functions.LibraryFunction;
 import software.amazon.smithy.rulesengine.language.visit.ExpressionVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -63,7 +63,7 @@ public final class BooleanEquals extends Function {
         return DEFINITION.getReturnType();
     }
 
-    static class Definition extends FunctionDefinition {
+    public static class Definition implements FunctionDefinition {
         public static final String ID = BooleanEquals.ID;
 
         @Override
@@ -73,17 +73,18 @@ public final class BooleanEquals extends Function {
 
         @Override
         public List<Type> getArguments() {
-            return Arrays.asList(Type.bool(), Type.bool());
+            return Arrays.asList(Type.booleanType(), Type.booleanType());
         }
 
         @Override
         public Type getReturnType() {
-            return Type.bool();
+            return Type.booleanType();
         }
 
         @Override
         public Value evaluate(List<Value> arguments) {
-            return Value.bool(arguments.get(0).expectBool() == arguments.get(1).expectBool());
+            return Value.booleanValue(arguments.get(0).expectBooleanValue().getValue()
+                    == arguments.get(1).expectBooleanValue().getValue());
         }
     }
 }

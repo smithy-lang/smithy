@@ -17,19 +17,19 @@ package software.amazon.smithy.rulesengine.language.stdlib;
 
 import java.util.Arrays;
 import java.util.List;
-import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.eval.Value;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Function;
-import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
-import software.amazon.smithy.rulesengine.language.syntax.fn.LibraryFunction;
+import software.amazon.smithy.rulesengine.language.eval.type.Type;
+import software.amazon.smithy.rulesengine.language.eval.value.Value;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.functions.Function;
+import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionDefinition;
+import software.amazon.smithy.rulesengine.language.syntax.functions.LibraryFunction;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * A rule-set function for getting the substring of a string value.
  */
 @SmithyUnstableApi
-public final class Substring extends FunctionDefinition {
+public final class Substring implements FunctionDefinition {
     public static final String ID = "substring";
 
     @Override
@@ -39,38 +39,38 @@ public final class Substring extends FunctionDefinition {
 
     @Override
     public List<Type> getArguments() {
-        return Arrays.asList(Type.string(), Type.integer(), Type.integer(), Type.bool());
+        return Arrays.asList(Type.stringType(), Type.integerType(), Type.integerType(), Type.booleanType());
     }
 
     @Override
     public Type getReturnType() {
-        return Type.optional(Type.string());
+        return Type.optionalType(Type.stringType());
     }
 
     @Override
     public Value evaluate(List<Value> arguments) {
-        String str = arguments.get(0).expectString();
-        int startIndex = arguments.get(1).expectInteger();
-        int stopIndex = arguments.get(2).expectInteger();
-        boolean reverse = arguments.get(3).expectBool();
+        String str = arguments.get(0).expectStringValue().getValue();
+        int startIndex = arguments.get(1).expectIntegerValue().getValue();
+        int stopIndex = arguments.get(2).expectIntegerValue().getValue();
+        boolean reverse = arguments.get(3).expectBooleanValue().getValue();
 
         for (int i = 0; i < str.length(); i++) {
             char ch = str.charAt(i);
             if (!(ch <= 127)) {
-                return Value.none();
+                return Value.emptyValue();
             }
         }
 
         if (startIndex >= stopIndex || str.length() < stopIndex) {
-            return new Value.None();
+            return Value.emptyValue();
         }
 
         if (!reverse) {
-            return Value.string(str.substring(startIndex, stopIndex));
+            return Value.stringValue(str.substring(startIndex, stopIndex));
         } else {
             int revStart = str.length() - stopIndex;
             int revStop = str.length() - startIndex;
-            return Value.string(str.substring(revStart, revStop));
+            return Value.stringValue(str.substring(revStart, revStop));
         }
     }
 

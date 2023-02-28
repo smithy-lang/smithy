@@ -27,8 +27,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  */
 @SmithyUnstableApi
 public final class ParamsHaveDocs {
-    private ParamsHaveDocs() {
-    }
+    private ParamsHaveDocs() {}
 
     public static Stream<ValidationError> ensureParamsHaveDocs(EndpointRuleSet ruleset) {
         return ruleset

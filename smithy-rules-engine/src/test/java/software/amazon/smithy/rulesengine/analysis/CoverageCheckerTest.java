@@ -17,35 +17,34 @@ package software.amazon.smithy.rulesengine.analysis;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.IOException;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
-import software.amazon.smithy.rulesengine.language.eval.Value;
+import software.amazon.smithy.rulesengine.language.TestDiscovery;
+import software.amazon.smithy.rulesengine.language.eval.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.testutil.TestDiscovery;
 import software.amazon.smithy.utils.MapUtils;
 
 class CoverageCheckerTest {
     @Test
-    void checkCoverage() {
-        TestDiscovery.RulesTestSuite suite = new TestDiscovery().getTestSuite("local-region-override.json");
-        CoverageChecker checker = new CoverageChecker(suite.ruleSet());
+    void checkCoverage() throws IOException {
+        TestDiscovery.RulesTestSuite suite = TestDiscovery.getTestSuite("local-region-override.json");
+        CoverageChecker checker = new CoverageChecker(suite.getRuleSet());
         assertEquals((int) checker.checkCoverage().count(), 2);
 
-        checker.evaluateInput(MapUtils.of(Identifier.of("Region"), Value.string("local")));
+        checker.evaluateInput(MapUtils.of(Identifier.of("Region"), Value.stringValue("local")));
         assertEquals(1, (int) checker.checkCoverage().count());
-        checker.evaluateInput(MapUtils.of(Identifier.of("Region"), Value.string("notlocal")));
+        checker.evaluateInput(MapUtils.of(Identifier.of("Region"), Value.stringValue("notlocal")));
         assertEquals(0, (int) checker.checkCoverage().count());
     }
 
     @Test
-    void checkCoverageOfTestSuite() {
-        TestDiscovery.RulesTestSuite testSuites = new TestDiscovery().getTestSuite("local-region-override.json");
-        CoverageChecker checker = new CoverageChecker(testSuites.ruleSet());
-        assertEquals(2, checker.checkCoverage()
-                .collect(Collectors.toList())
-                .size());
-        testSuites.testSuite().getTestCases().forEach(checker::evaluateTestCase);
-        assertEquals(0, checker.checkCoverage().collect(Collectors.toList()).size());
+    void checkCoverageOfTestSuite() throws IOException {
+        TestDiscovery.RulesTestSuite testSuites = TestDiscovery.getTestSuite("local-region-override.json");
+        CoverageChecker checker = new CoverageChecker(testSuites.getRuleSet());
+        assertEquals(2, checker.checkCoverage().count());
+        testSuites.getTestSuite().getTestCases().forEach(checker::evaluateTestCase);
+        assertEquals(0, checker.checkCoverage().count());
     }
 
 }

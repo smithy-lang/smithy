@@ -15,18 +15,19 @@
 
 package software.amazon.smithy.rulesengine.language.stdlib;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.eval.Value;
+import software.amazon.smithy.rulesengine.language.eval.type.RecordType;
+import software.amazon.smithy.rulesengine.language.eval.type.Type;
+import software.amazon.smithy.rulesengine.language.eval.value.Value;
 import software.amazon.smithy.rulesengine.language.impl.AwsArn;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Function;
-import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
-import software.amazon.smithy.rulesengine.language.syntax.fn.LibraryFunction;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.functions.Function;
+import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionDefinition;
+import software.amazon.smithy.rulesengine.language.syntax.functions.LibraryFunction;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -34,7 +35,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * An aws rule-set function for parsing an AWS ARN into it's componenet parts.
  */
 @SmithyUnstableApi
-public final class ParseArn extends FunctionDefinition {
+public final class ParseArn implements FunctionDefinition {
     public static final String ID = "aws.parseArn";
     public static final Identifier PARTITION = Identifier.of("partition");
     public static final Identifier SERVICE = Identifier.of("service");
@@ -50,35 +51,39 @@ public final class ParseArn extends FunctionDefinition {
 
     @Override
     public List<Type> getArguments() {
-        return Collections.singletonList(Type.string());
+        return Collections.singletonList(Type.stringType());
     }
 
     @Override
     public Type getReturnType() {
-        return Type.optional(new Type.Record(MapUtils.of(
-                PARTITION, Type.string(),
-                SERVICE, Type.string(),
-                REGION, Type.string(),
-                ACCOUNT_ID, Type.string(),
-                RESOURCE_ID, Type.array(Type.string())
+        return Type.optionalType(new RecordType(MapUtils.of(
+                PARTITION, Type.stringType(),
+                SERVICE, Type.stringType(),
+                REGION, Type.stringType(),
+                ACCOUNT_ID, Type.stringType(),
+                RESOURCE_ID, Type.arrayType(Type.stringType())
         )));
     }
 
     @Override
     public Value evaluate(List<Value> arguments) {
-        String value = arguments.get(0).expectString();
+        String value = arguments.get(0).expectStringValue().getValue();
         Optional<AwsArn> arnOpt = AwsArn.parse(value);
-        return arnOpt.map(awsArn ->
-                (Value) Value.record(MapUtils.of(
-                        PARTITION, Value.string(awsArn.partition()),
-                        SERVICE, Value.string(awsArn.service()),
-                        REGION, Value.string(awsArn.region()),
-                        ACCOUNT_ID, Value.string(awsArn.accountId()),
-                        RESOURCE_ID, Value.array(awsArn.resource().stream()
-                                .map(v -> (Value) Value.string(v))
-                                .collect(Collectors.toList()))
-                ))
-        ).orElse(new Value.None());
+        if (!arnOpt.isPresent()) {
+            return Value.emptyValue();
+        }
+
+        AwsArn awsArn = arnOpt.get();
+        List<Value> resourceId = new ArrayList<>();
+        for (String resourceIdPart : awsArn.getResource()) {
+            resourceId.add(Value.stringValue(resourceIdPart));
+        }
+        return Value.recordValue(MapUtils.of(
+                PARTITION, Value.stringValue(awsArn.getPartition()),
+                SERVICE, Value.stringValue(awsArn.getService()),
+                REGION, Value.stringValue(awsArn.getRegion()),
+                ACCOUNT_ID, Value.stringValue(awsArn.getAccountId()),
+                RESOURCE_ID, Value.arrayValue(resourceId)));
     }
 
     public static Function ofExpression(Expression expression) {

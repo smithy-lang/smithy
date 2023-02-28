@@ -17,19 +17,19 @@ package software.amazon.smithy.rulesengine.language.stdlib;
 
 import java.util.Arrays;
 import java.util.List;
-import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.eval.Value;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Function;
-import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
-import software.amazon.smithy.rulesengine.language.syntax.fn.LibraryFunction;
+import software.amazon.smithy.rulesengine.language.eval.type.Type;
+import software.amazon.smithy.rulesengine.language.eval.value.Value;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.functions.Function;
+import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionDefinition;
+import software.amazon.smithy.rulesengine.language.syntax.functions.LibraryFunction;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * A rule-engine function for checking whether a string is a valid DNS host label.
  */
 @SmithyUnstableApi
-public final class IsValidHostLabel extends FunctionDefinition {
+public final class IsValidHostLabel implements FunctionDefinition {
     public static final String ID = "isValidHostLabel";
 
     @Override
@@ -39,22 +39,22 @@ public final class IsValidHostLabel extends FunctionDefinition {
 
     @Override
     public List<Type> getArguments() {
-        return Arrays.asList(Type.string(), Type.bool());
+        return Arrays.asList(Type.stringType(), Type.booleanType());
     }
 
     @Override
     public Type getReturnType() {
-        return Type.bool();
+        return Type.booleanType();
     }
 
     @Override
     public Value evaluate(List<Value> arguments) {
-        String hostLabel = arguments.get(0).expectString();
-        boolean allowDots = arguments.get(1).expectBool();
+        String hostLabel = arguments.get(0).expectStringValue().getValue();
+        boolean allowDots = arguments.get(1).expectBooleanValue().getValue();
         if (allowDots) {
-            return Value.bool(hostLabel.matches("[a-zA-Z\\d][a-zA-Z\\d\\-.]{0,62}"));
+            return Value.booleanValue(hostLabel.matches("[a-zA-Z\\d][a-zA-Z\\d\\-.]{0,62}"));
         } else {
-            return Value.bool(hostLabel.matches("[a-zA-Z\\d][a-zA-Z\\d\\-]{0,62}"));
+            return Value.booleanValue(hostLabel.matches("[a-zA-Z\\d][a-zA-Z\\d\\-]{0,62}"));
         }
     }
 

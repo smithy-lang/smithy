@@ -24,16 +24,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
-import software.amazon.smithy.rulesengine.language.eval.Value;
+import software.amazon.smithy.rulesengine.language.eval.value.BooleanValue;
+import software.amazon.smithy.rulesengine.language.eval.value.StringValue;
+import software.amazon.smithy.rulesengine.language.eval.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.ParameterType;
-import software.amazon.smithy.rulesengine.traits.ClientContextParamsTrait;
 import software.amazon.smithy.rulesengine.traits.ContextParamTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
 import software.amazon.smithy.rulesengine.traits.StaticContextParamDefinition;
@@ -56,21 +58,21 @@ public final class ParametersValidator {
             Map<String, Parameter> rulesetParams,
             Map<String, Parameter> modelParams
     ) {
-        ArrayList<ValidationError> errors = new ArrayList<>();
-        HashSet<String> matchedParams = new HashSet<>();
+        List<ValidationError> errors = new ArrayList<>();
+        Set<String> matchedParams = new HashSet<>();
 
         for (Map.Entry<String, Parameter> entry : rulesetParams.entrySet()) {
             String name = entry.getKey();
             Parameter modelParam = modelParams.getOrDefault(name, null);
             if (modelParam == null) {
-                String error = java.lang.String.format("Parameter '%s' exists in ruleset but not in service model",
+                String error = String.format("Parameter '%s' exists in ruleset but not in service model",
                         name);
                 errors.add(new ValidationError(ValidationErrorType.PARAMETER_MISMATCH, error,
                         entry.getValue().getSourceLocation()));
             } else {
                 matchedParams.add(name);
                 if (entry.getValue().getType() != modelParam.getType()) {
-                    String error = java.lang.String.format("Type mismatch for parameter '%s'", name);
+                    String error = String.format("Type mismatch for parameter '%s'", name);
                     errors.add(new ValidationError(ValidationErrorType.PARAMETER_TYPE_MISMATCH, error,
                             entry.getValue().getSourceLocation()));
                 }
@@ -80,7 +82,7 @@ public final class ParametersValidator {
         for (Map.Entry<String, Parameter> entry : modelParams.entrySet()) {
             String name = entry.getKey();
             if (!matchedParams.contains(name)) {
-                String error = java.lang.String.format("Parameter '%s' exists in service model but not in ruleset",
+                String error = String.format("Parameter '%s' exists in service model but not in ruleset",
                         name);
                 errors.add(new ValidationError(ValidationErrorType.PARAMETER_MISMATCH, error,
                         entry.getValue().getSourceLocation()));
@@ -103,19 +105,13 @@ public final class ParametersValidator {
             ShapeId serviceShape,
             Map<String, Parameter> endpointParams
     ) {
-        ArrayList<ValidationError> errors = new ArrayList<ValidationError>();
+        List<ValidationError> errors = new ArrayList<>();
         // TODO: is this validator still even right?
         ServiceShape service = model.expectShape(serviceShape, ServiceShape.class);
-        Set<ShapeId> ops = service.getAllOperations();
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
+        Set<OperationShape> operations = topDownIndex.getContainedOperations(service);
 
-        service.getTrait(ClientContextParamsTrait.class).ifPresent(t -> {
-
-        });
-
-        ops.forEach(shapeId -> {
-
-            OperationShape operation = model.expectShape(shapeId, OperationShape.class);
-
+        operations.forEach(operation -> {
             operation.getTrait(StaticContextParamsTrait.class).ifPresent(t -> {
                 List<Parameter> params = t.getParameters().entrySet().stream()
                         .map(entry -> {
@@ -131,7 +127,7 @@ public final class ParametersValidator {
                                     builder.type(ParameterType.BOOLEAN);
                                     break;
                                 default:
-                                    throw new IllegalArgumentException(java.lang.String.format(
+                                    throw new IllegalArgumentException(String.format(
                                             "invalid parameter value type: `%s`", definition.getValue().getType()));
                             }
                             return builder.build();
@@ -142,7 +138,7 @@ public final class ParametersValidator {
                     String name = p.getName().asString();
                     Parameter param = endpointParams.getOrDefault(name, null);
                     if (param != null && param.getType() != p.getType()) {
-                        String error = java.lang.String.format("Inconsistent type for '%s' parameter", name);
+                        String error = String.format("Inconsistent type for '%s' parameter", name);
                         errors.add(new ValidationError(ValidationErrorType.INCONSISTENT_PARAMETER_TYPE, error,
                                 t.getSourceLocation()));
                     } else {
@@ -158,7 +154,7 @@ public final class ParametersValidator {
 
                     Shape targetType = model.expectShape(member.getTarget());
                     if (!targetType.isStringShape() && !targetType.isBooleanShape()) {
-                        String error = java.lang.String.format("Unsupported type %s for '%s' parameter", targetType,
+                        String error = String.format("Unsupported type %s for '%s' parameter", targetType,
                                 name);
                         errors.add(new ValidationError(ValidationErrorType.UNSUPPORTED_PARAMETER_TYPE, error,
                                 t.getSourceLocation()));
@@ -167,7 +163,7 @@ public final class ParametersValidator {
 
                         Parameter existingParam = endpointParams.getOrDefault(name, null);
                         if (existingParam != null && type != existingParam.getType()) {
-                            String error = java.lang.String.format("Inconsistent type for '%s' parameter", name);
+                            String error = String.format("Inconsistent type for '%s' parameter", name);
                             errors.add(new ValidationError(ValidationErrorType.INCONSISTENT_PARAMETER_TYPE, error,
                                     t.getSourceLocation()));
                         } else {
@@ -192,12 +188,11 @@ public final class ParametersValidator {
     public static List<ValidationError> validateParameters(
             EndpointRuleSet ruleset, ShapeId serviceShape, Model smithyModel
     ) {
-
         Map<String, Parameter> rulesetParams = ruleset.getParameters().toList().stream()
                 .filter(p -> !p.isBuiltIn())
                 .collect(Collectors.toMap(k -> k.getName().asString(), item -> item));
 
-        HashMap<String, Parameter> modelParams = new HashMap<String, Parameter>();
+        Map<String, Parameter> modelParams = new HashMap<>();
 
         List<ValidationError> errors = ParametersValidator.validateModelAndExtractParameters(smithyModel, serviceShape,
                 modelParams);
@@ -225,7 +220,7 @@ public final class ParametersValidator {
      */
     public static List<ValidationError> validateTestsParameters(EndpointTestsTrait tests, EndpointRuleSet ruleset) {
 
-        ArrayList<ValidationError> errors = new ArrayList<ValidationError>();
+        List<ValidationError> errors = new ArrayList<>();
 
         Map<String, List<Parameter>> testSuiteParams = extractTestSuiteParameters(tests);
 
@@ -236,7 +231,7 @@ public final class ParametersValidator {
         requiredRulesetParams.forEach(rp -> {
             String name = rp.getName().asString();
             if (!testSuiteParams.containsKey(name) || testSuiteParams.get(name).size() != tests.getTestCases().size()) {
-                String error = java.lang.String.format("Required parameter '%s' is missing in at least one test case",
+                String error = String.format("Required parameter '%s' is missing in at least one test case",
                         name);
                 errors.add(new ValidationError(ValidationErrorType.REQUIRED_PARAMETER_MISSING, error,
                         rp.getSourceLocation()));
@@ -249,13 +244,13 @@ public final class ParametersValidator {
             String name = rp.getName().asString();
             List<Parameter> testParams = testSuiteParams.getOrDefault(name, null);
             if (testParams == null) {
-                String error = java.lang.String.format("Parameter '%s' is never used in test cases", name);
+                String error = String.format("Parameter '%s' is never used in test cases", name);
                 errors.add(new ValidationError(ValidationErrorType.PARAMETER_IS_NOT_USED, error,
                         rp.getSourceLocation()));
             } else {
                 testParams.forEach(tp -> {
                     if (tp.getType() != rp.getType()) {
-                        String error = java.lang.String.format("Type mismatch for parameter '%s', '%s' expected",
+                        String error = String.format("Type mismatch for parameter '%s', '%s' expected",
                                 tp.getName().asString(), rp.getType());
                         errors.add(new ValidationError(ValidationErrorType.PARAMETER_TYPE_MISMATCH, error,
                                 tp.getSourceLocation()));
@@ -270,7 +265,7 @@ public final class ParametersValidator {
                 .collect(Collectors.toSet());
         testSuiteParams.forEach((name, list) -> {
             if (!rulesetParamNames.contains(name)) {
-                String error = java.lang.String.format("Test parameter '%s' is not defined in ruleset", name);
+                String error = String.format("Test parameter '%s' is not defined in ruleset", name);
                 errors.add(new ValidationError(ValidationErrorType.PARAMETER_IS_NOT_DEFINED, error,
                         list.get(0).getSourceLocation()));
             }
@@ -286,7 +281,7 @@ public final class ParametersValidator {
      * @return the list of validation errors if present
      */
     public static Map<String, List<Parameter>> extractTestSuiteParameters(EndpointTestsTrait tests) {
-        HashMap<String, List<Parameter>> params = new HashMap<>();
+        Map<String, List<Parameter>> params = new HashMap<>();
 
         tests.getTestCases().forEach(tc -> {
             List<Parameter> testParams = tc.getParams().getStringMap().entrySet()
@@ -297,9 +292,9 @@ public final class ParametersValidator {
                                 .sourceLocation(value.getSourceLocation())
                                 .name(entry.getKey())
                                 .value(value);
-                        if (value instanceof Value.String) {
+                        if (value instanceof StringValue) {
                             builder.type(ParameterType.STRING);
-                        } else if (value instanceof Value.Bool) {
+                        } else if (value instanceof BooleanValue) {
                             builder.type(ParameterType.BOOLEAN);
                         }
                         return builder.build();

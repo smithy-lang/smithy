@@ -17,11 +17,7 @@ package software.amazon.smithy.rulesengine.language.visit;
 
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.Endpoint;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Reference;
-import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
-import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -31,47 +27,8 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * @param <R> the return value type.
  */
 @SmithyUnstableApi
-public abstract class DefaultVisitor<R> implements RuleValueVisitor<R>, ExpressionVisitor<R> {
+public abstract class DefaultVisitor<R> extends ExpressionVisitor.Default<R> implements RuleValueVisitor<R> {
     public abstract R getDefault();
-
-    @Override
-    public R visitLiteral(Literal literal) {
-        return getDefault();
-    }
-
-    @Override
-    public R visitRef(Reference reference) {
-        return getDefault();
-    }
-
-    @Override
-    public R visitIsSet(Expression fn) {
-        return getDefault();
-    }
-
-    @Override
-    public R visitNot(Expression not) {
-        return getDefault();
-    }
-
-    @Override
-    public R visitBoolEquals(Expression left, Expression right) {
-        return getDefault();
-    }
-
-    @Override
-    public R visitStringEquals(Expression left, Expression right) {
-        return getDefault();
-    }
-
-    public R visitGetAttr(GetAttr getAttr) {
-        return getDefault();
-    }
-
-    @Override
-    public R visitLibraryFunction(FunctionDefinition fn, List<Expression> args) {
-        return getDefault();
-    }
 
     @Override
     public R visitTreeRule(List<Rule> rules) {
@@ -87,5 +44,4 @@ public abstract class DefaultVisitor<R> implements RuleValueVisitor<R>, Expressi
     public R visitEndpointRule(Endpoint endpoint) {
         return getDefault();
     }
-
 }

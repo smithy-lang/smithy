@@ -22,7 +22,7 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
+import software.amazon.smithy.rulesengine.language.RulesComponentBuilder;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -73,11 +73,11 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
         return b.build();
     }
 
-    public String dnsSuffix() {
+    public String getDnsSuffix() {
         return dnsSuffix;
     }
 
-    public String dualStackDnsSuffix() {
+    public String getDualStackDnsSuffix() {
         return dualStackDnsSuffix;
     }
 
@@ -132,7 +132,7 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
                 .build();
     }
 
-    public static class Builder extends SourceLocationTrackingBuilder<Builder, PartitionOutputs> {
+    public static class Builder extends RulesComponentBuilder<Builder, PartitionOutputs> {
         private String dnsSuffix;
         private String dualStackDnsSuffix;
         private boolean supportsFips;

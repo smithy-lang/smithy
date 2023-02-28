@@ -17,7 +17,7 @@ package software.amazon.smithy.rulesengine.language.visit;
 
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.Endpoint;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 

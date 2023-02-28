@@ -34,8 +34,8 @@ class AwsArnTest {
         // if the resource is non-empty and ends in colon, the resource will be `["outpost"]`
         String arn = "arn:aws:s3:us-east-2:012345678:outpost:";
         AwsArn parsed = AwsArn.parse(arn).get();
-        assertEquals(parsed.resource().get(0), "outpost");
-        assertEquals(parsed.resource().get(1), "");
-        assertEquals(parsed.resource().size(), 2);
+        assertEquals(parsed.getResource().get(0), "outpost");
+        assertEquals(parsed.getResource().get(1), "");
+        assertEquals(parsed.getResource().size(), 2);
     }
 }

@@ -17,18 +17,16 @@ package software.amazon.smithy.rulesengine.language;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.InputStream;
+import java.io.IOException;
 import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.rulesengine.RulesetTestUtil;
 import software.amazon.smithy.rulesengine.language.eval.RuleEvaluator;
-import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.Value;
+import software.amazon.smithy.rulesengine.language.eval.value.EndpointValue;
+import software.amazon.smithy.rulesengine.language.eval.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.ParameterType;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
@@ -38,57 +36,55 @@ import software.amazon.smithy.utils.MapUtils;
 
 class EndpointRuleSetTest {
     @Test
-    void testRuleEval() {
-        EndpointRuleSet actual = RulesetTestUtil.minimalRuleSet();
+    void testRuleEval() throws IOException {
+        EndpointRuleSet actual = TestDiscovery.getMinimalEndpointRuleSet();
         Value result = RuleEvaluator.evaluate(actual, MapUtils.of(Identifier.of("Region"),
-                Value.string("us-east-1")));
-        Value.Endpoint expected = new Value.Endpoint.Builder(SourceLocation.none())
+                Value.stringValue("us-east-1")));
+        EndpointValue expected = new EndpointValue.Builder(SourceLocation.none())
                 .url("https://us-east-1.amazonaws.com")
-                .addProperty("authSchemes", Value.array(Collections.singletonList(
-                        Value.record(MapUtils.of(
-                                Identifier.of("name"), Value.string("sigv4"),
-                                Identifier.of("signingRegion"), Value.string("us-east-1"),
-                                Identifier.of("signingName"), Value.string("serviceName")
+                .putProperty("authSchemes", Value.arrayValue(Collections.singletonList(
+                        Value.recordValue(MapUtils.of(
+                                Identifier.of("name"), Value.stringValue("sigv4"),
+                                Identifier.of("signingRegion"), Value.stringValue("us-east-1"),
+                                Identifier.of("signingName"), Value.stringValue("serviceName")
                         ))
                 )))
                 .build();
-        assertEquals(expected, result.expectEndpoint());
+        assertEquals(expected, result.expectEndpointValue());
     }
 
     @Test
-    void testDeterministicSerde() {
-        String resourceId = "software/amazon/smithy/rulesengine/testutil/valid-rules/minimal-ruleset.json";
-        EndpointRuleSet actual = RulesetTestUtil.loadRuleSet(resourceId);
-        String asString = IoUtils.readUtf8Resource(RulesetTestUtil.class.getClassLoader(), resourceId);
+    void testDeterministicSerde() throws IOException {
+        EndpointRuleSet actual = TestDiscovery.getMinimalEndpointRuleSet();
+        String asString = IoUtils.readUtf8File(
+                EndpointRuleSetTest.class.getResource("valid-rules/minimal-ruleset.json").getPath());
         assertEquals(Node.prettyPrintJson(Node.parseJsonWithComments(asString)), Node.prettyPrintJson(actual.toNode()));
     }
 
     @Test
-    void testMinimalRuleset() {
-        EndpointRuleSet actual = RulesetTestUtil.minimalRuleSet();
+    void testMinimalRuleset() throws IOException {
+        EndpointRuleSet actual = TestDiscovery.getMinimalEndpointRuleSet();
         assertEquals(EndpointRuleSet.builder()
                 .version("1.3")
                 .parameters(Parameters
                         .builder()
-                        .addParameter(Parameter
-                                .builder()
+                        .addParameter(Parameter.builder()
                                 .name("Region")
                                 .builtIn("AWS::Region")
                                 .type(ParameterType.STRING)
                                 .required(true)
-                        ).build())
+                                .build())
+                        .build())
                 .addRule(Rule
                         .builder()
                         .description("base rule")
-                        .endpoint(Endpoint
-                                .builder()
+                        .endpoint(Endpoint.builder()
                                 .sourceLocation(SourceLocation.none())
                                 .url(Literal.of("https://{Region}.amazonaws.com"))
                                 .addAuthScheme(Identifier.of("sigv4"), MapUtils.of(
                                         Identifier.of("signingRegion"), Literal.of("{Region}"),
                                         Identifier.of("signingName"), Literal.of("serviceName")))
                                 .build()))
-                .build(), actual
-        );
+                .build(), actual);
     }
 }
