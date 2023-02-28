@@ -16,17 +16,17 @@
 package software.amazon.smithy.rulesengine.traits;
 
 import java.lang.ref.WeakReference;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.KnowledgeIndex;
+import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.utils.Pair;
+import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -73,18 +73,18 @@ public final class ContextIndex implements KnowledgeIndex {
      * @return The mapping of operation's {@link MemberShape} to {@link ContextParamTrait}.
      */
     public Map<MemberShape, ContextParamTrait> getContextParams(Shape operation) {
-        OperationShape operationShape = operation.asOperationShape()
-                .orElseThrow(() -> new IllegalArgumentException(operation.toShapeId()
-                                                                + " is not an operation shape"));
+        if (!operation.isOperationShape()) {
+            throw new IllegalArgumentException(operation.toShapeId() + " is not an operation shape");
+        }
 
-        LinkedHashMap<MemberShape, ContextParamTrait> out = new LinkedHashMap<>();
-
-        getModel().expectShape(operationShape.getInputShape())
-                .members().stream()
-                .map(memberShape -> Pair.of(memberShape, memberShape.getTrait(ContextParamTrait.class)))
-                .filter(pair -> pair.right.isPresent())
-                .forEach(pair -> out.put(pair.left, pair.right.get()));
-        return out;
+        OperationIndex operationIndex = OperationIndex.of(getModel());
+        Map<MemberShape, ContextParamTrait> contextParams = new HashMap<>();
+        for (MemberShape member : operationIndex.getInputMembers(operation).values()) {
+            if (member.hasTrait(ContextParamTrait.ID)) {
+                contextParams.put(member, member.expectTrait(ContextParamTrait.class));
+            }
+        }
+        return MapUtils.copyOf(contextParams);
     }
 
     private Model getModel() {

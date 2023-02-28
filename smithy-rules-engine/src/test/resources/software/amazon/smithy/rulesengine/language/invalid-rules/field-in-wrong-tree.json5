@@ -4,9 +4,9 @@
 // while typechecking the endpoint
 //   at invalid-rules/field-in-wrong-tree.json5:43
 // while checking the URL
+//   at invalid-rules/field-in-wrong-tree.json5:44
 // while typechecking "{partitionResult#name}.amazonaws.com"
 // while typechecking the template `"{partitionResult#name}.amazonaws.com"`
-//   at invalid-rules/field-in-wrong-tree.json5:44
 // while checking {partitionResult#name}
 // while typechecking partitionResult#name
 // while typechecking partitionResult

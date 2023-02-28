@@ -15,7 +15,7 @@
 
 package software.amazon.smithy.rulesengine.language.visit;
 
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**

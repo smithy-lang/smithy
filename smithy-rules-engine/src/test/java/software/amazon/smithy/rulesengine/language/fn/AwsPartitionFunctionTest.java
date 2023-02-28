@@ -24,43 +24,43 @@ import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.rulesengine.language.eval.RuleEvaluator;
-import software.amazon.smithy.rulesengine.language.eval.Value;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.fn.Function;
+import software.amazon.smithy.rulesengine.language.eval.value.RecordValue;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.functions.Function;
 import software.amazon.smithy.rulesengine.language.stdlib.AwsPartition;
 
 public class AwsPartitionFunctionTest {
     @Test
     public void eval() {
-        Value.Record result = evalWithRegion("us-west-2");
+        RecordValue result = evalWithRegion("us-west-2");
 
-        assertThat(result.get(AwsPartition.DNS_SUFFIX).expectString(), not(equalTo("")));
-        assertThat(result.get(AwsPartition.DUAL_STACK_DNS_SUFFIX).expectString(), not(equalTo("")));
-        assertThat(result.get(AwsPartition.SUPPORTS_FIPS).expectBool(), equalTo(true));
-        assertThat(result.get(AwsPartition.SUPPORTS_DUAL_STACK).expectBool(), equalTo(true));
+        assertThat(result.get(AwsPartition.DNS_SUFFIX).expectStringValue().getValue(), not(equalTo("")));
+        assertThat(result.get(AwsPartition.DUAL_STACK_DNS_SUFFIX).expectStringValue().getValue(), not(equalTo("")));
+        assertThat(result.get(AwsPartition.SUPPORTS_FIPS).expectBooleanValue().getValue(), equalTo(true));
+        assertThat(result.get(AwsPartition.SUPPORTS_DUAL_STACK).expectBooleanValue().getValue(), equalTo(true));
     }
 
     @Test
     public void eval_enumeratedRegion_inferredIsFalse() {
-        Value.Record result = evalWithRegion("us-west-1");
+        RecordValue result = evalWithRegion("us-west-1");
 
-        assertThat(result.get(AwsPartition.INFERRED).expectBool(), equalTo(false));
+        assertThat(result.get(AwsPartition.INFERRED).expectBooleanValue().getValue(), equalTo(false));
     }
 
     @Test
     public void eval_regionNotEnumerated_inferredIsTrue() {
-        Value.Record result = evalWithRegion("us-west-3");
+        RecordValue result = evalWithRegion("us-west-3");
 
-        assertThat(result.get(AwsPartition.INFERRED).expectBool(), equalTo(true));
+        assertThat(result.get(AwsPartition.INFERRED).expectBooleanValue().getValue(), equalTo(true));
     }
 
 
-    private Value.Record evalWithRegion(String region) {
+    private RecordValue evalWithRegion(String region) {
         Expression fn = Function.fromNode(
                 ObjectNode.builder().withMember("fn", AwsPartition.ID)
                         .withMember("argv", ArrayNode.arrayNode(StringNode.from(region)))
                         .build());
 
-        return fn.accept(new RuleEvaluator()).expectRecord();
+        return fn.accept(new RuleEvaluator()).expectRecordValue();
     }
 }

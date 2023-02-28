@@ -20,11 +20,11 @@ import static software.amazon.smithy.rulesengine.language.error.RuleError.contex
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
-import software.amazon.smithy.rulesengine.language.util.StringUtils;
+import software.amazon.smithy.rulesengine.language.eval.type.Type;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.visit.RuleValueVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
+import software.amazon.smithy.utils.StringUtils;
 
 /**
  * A rule-set rule that is used to indicate an error in evaluation.
@@ -45,7 +45,7 @@ public final class ErrorRule extends Rule {
 
     @Override
     protected Type typecheckValue(Scope<Type> scope) {
-        return context("while typechecking the error", error, () -> error.typeCheck(scope).expectString());
+        return context("while typechecking the error", error, () -> error.typeCheck(scope).expectStringType());
     }
 
     @Override

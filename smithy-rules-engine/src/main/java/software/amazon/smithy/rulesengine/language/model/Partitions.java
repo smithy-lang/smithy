@@ -24,9 +24,8 @@ import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.rulesengine.language.util.SourceLocationTrackingBuilder;
+import software.amazon.smithy.rulesengine.language.RulesComponentBuilder;
 import software.amazon.smithy.utils.BuilderRef;
-import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -92,11 +91,11 @@ public final class Partitions implements ToSmithyBuilder<Partitions>, FromSource
                + '}';
     }
 
-    public String version() {
+    public String getVersion() {
         return version;
     }
 
-    public List<Partition> partitions() {
+    public List<Partition> getPartitions() {
         return partitions;
     }
 
@@ -106,7 +105,7 @@ public final class Partitions implements ToSmithyBuilder<Partitions>, FromSource
     }
 
     @Override
-    public SmithyBuilder<Partitions> toBuilder() {
+    public Builder toBuilder() {
         return new Builder(getSourceLocation())
                 .version(version)
                 .partitions(partitions);
@@ -126,7 +125,7 @@ public final class Partitions implements ToSmithyBuilder<Partitions>, FromSource
         return node.build();
     }
 
-    public static class Builder extends SourceLocationTrackingBuilder<Builder, Partitions> {
+    public static class Builder extends RulesComponentBuilder<Builder, Partitions> {
         private String version;
         private final BuilderRef<List<Partition>> partitions = BuilderRef.forList();
 

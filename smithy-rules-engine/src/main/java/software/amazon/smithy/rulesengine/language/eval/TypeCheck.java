@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.rulesengine.language.eval;
 
+import software.amazon.smithy.rulesengine.language.eval.type.Type;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /*

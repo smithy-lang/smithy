@@ -15,17 +15,20 @@
 
 package software.amazon.smithy.rulesengine.language.eval;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
+import software.amazon.smithy.rulesengine.language.eval.value.EndpointValue;
+import software.amazon.smithy.rulesengine.language.eval.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Literal;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Reference;
-import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionDefinition;
-import software.amazon.smithy.rulesengine.language.syntax.fn.GetAttr;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Reference;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
+import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionDefinition;
+import software.amazon.smithy.rulesengine.language.syntax.functions.GetAttr;
+import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.rulesengine.language.visit.ExpressionVisitor;
@@ -58,24 +61,21 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
      * @return The resulting value from the final matched rule.
      */
     public Value evaluateRuleSet(EndpointRuleSet ruleset, Map<Identifier, Value> parameterArguments) {
-        return scope.inScope(
-                () -> {
-                    ruleset
-                            .getParameters()
-                            .toList()
-                            .forEach(
-                                    param -> {
-                                        param.getDefault().ifPresent(value -> scope.insert(param.getName(), value));
-                                    });
-                    parameterArguments.forEach(scope::insert);
-                    for (Rule rule : ruleset.getRules()) {
-                        Value result = handleRule(rule);
-                        if (!result.isNone()) {
-                            return result;
-                        }
-                    }
-                    throw new RuntimeException("No rules in ruleset matched");
-                });
+        return scope.inScope(() -> {
+            for (Parameter parameter : ruleset.getParameters().toList()) {
+                parameter.getDefault().ifPresent(value -> scope.insert(parameter.getName(), value));
+            }
+
+            parameterArguments.forEach(scope::insert);
+
+            for (Rule rule : ruleset.getRules()) {
+                Value result = handleRule(rule);
+                if (!result.isEmpty()) {
+                    return result;
+                }
+            }
+            throw new RuntimeException("No rules in ruleset matched");
+        });
     }
 
     @Override
@@ -87,27 +87,29 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
     public Value visitRef(Reference reference) {
         return scope
                 .getValue(reference.getName())
-                .orElse(Value.none());
+                .orElse(Value.emptyValue());
     }
 
     @Override
     public Value visitIsSet(Expression fn) {
-        return Value.bool(!fn.accept(this).isNone());
+        return Value.booleanValue(!fn.accept(this).isEmpty());
     }
 
     @Override
     public Value visitNot(Expression not) {
-        return Value.bool(!not.accept(this).expectBool());
+        return Value.booleanValue(!not.accept(this).expectBooleanValue().getValue());
     }
 
     @Override
     public Value visitBoolEquals(Expression left, Expression right) {
-        return Value.bool(left.accept(this).expectBool() == right.accept(this).expectBool());
+        return Value.booleanValue(left.accept(this).expectBooleanValue()
+                .equals(right.accept(this).expectBooleanValue()));
     }
 
     @Override
     public Value visitStringEquals(Expression left, Expression right) {
-        return Value.bool(left.accept(this).expectString().equals(right.accept(this).expectString()));
+        return Value.booleanValue(left.accept(this).expectStringValue()
+                .equals(right.accept(this).expectStringValue()));
     }
 
     public Value visitGetAttr(GetAttr getAttr) {
@@ -116,15 +118,20 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
 
     @Override
     public Value visitLibraryFunction(FunctionDefinition definition, List<Expression> arguments) {
-        return definition.evaluate(arguments.stream().map(arg -> arg.accept(this)).collect(Collectors.toList()));
+        List<Value> values = new ArrayList<>();
+        for (Expression argument : arguments) {
+            values.add(argument.accept(this));
+        }
+        return definition.evaluate(values);
     }
 
     private Value handleRule(Rule rule) {
+        RuleEvaluator self = this;
         return scope.inScope(() -> {
             for (Condition condition : rule.getConditions()) {
                 Value value = evaluateCondition(condition);
-                if (value.isNone() || value.equals(Value.bool(false))) {
-                    return Value.none();
+                if (value.isEmpty() || value.equals(Value.booleanValue(false))) {
+                    return Value.emptyValue();
                 }
             }
             return rule.accept(new RuleValueVisitor<Value>() {
@@ -132,7 +139,7 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
                 public Value visitTreeRule(List<Rule> rules) {
                     for (Rule subRule : rules) {
                         Value result = handleRule(subRule);
-                        if (!result.isNone()) {
+                        if (!result.isEmpty()) {
                             return result;
                         }
                     }
@@ -142,40 +149,32 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
 
                 @Override
                 public Value visitErrorRule(Expression error) {
-                    return RuleEvaluator.this.visitErrorRule(error);
+                    return error.accept(self);
                 }
 
                 @Override
                 public Value visitEndpointRule(Endpoint endpoint) {
-                    return RuleEvaluator.this.visitEndpointRule(endpoint);
+                    EndpointValue.Builder builder = EndpointValue.builder()
+                            .sourceLocation(endpoint)
+                            .url(endpoint.getUrl()
+                                    .accept(RuleEvaluator.this)
+                                    .expectStringValue()
+                                    .getValue());
+                    endpoint.getProperties()
+                            .forEach((key, value) -> builder.putProperty(key.toString(),
+                                    value.accept(RuleEvaluator.this)));
+                    endpoint.getHeaders()
+                            .forEach((name, expressions) -> expressions.forEach(expr -> builder.addHeader(name,
+                                    expr.accept(RuleEvaluator.this).expectStringValue().getValue())));
+                    return builder.build();
                 }
             });
         });
     }
 
-    public Value visitErrorRule(Expression error) {
-        return error.accept(this);
-    }
-
-    public Value visitEndpointRule(Endpoint endpoint) {
-        Value.Endpoint.Builder builder = Value.Endpoint.builder()
-                .sourceLocation(endpoint)
-                .url(endpoint.getUrl()
-                        .accept(RuleEvaluator.this)
-                        .expectString());
-        endpoint.getProperties()
-                .forEach((key, value) -> builder.addProperty(key.toString(),
-                        value.accept(RuleEvaluator.this)));
-        endpoint.getHeaders()
-                .forEach((name, expressions) -> expressions.forEach(expr -> builder.addHeader(name,
-                        expr.accept(RuleEvaluator.this).expectString())));
-        return builder.build();
-
-    }
-
     public Value evaluateCondition(Condition condition) {
         Value value = condition.getFn().accept(this);
-        if (!value.isNone()) {
+        if (!value.isEmpty()) {
             condition.getResult().ifPresent(res -> scope.insert(res, value));
         }
         return value;

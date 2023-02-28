@@ -18,82 +18,71 @@ package software.amazon.smithy.rulesengine.language;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static software.amazon.smithy.rulesengine.language.util.StringUtils.lines;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.testutil.TestDiscovery;
+import software.amazon.smithy.rulesengine.traits.EndpointTestCase;
 import software.amazon.smithy.rulesengine.validators.StandaloneRulesetValidator;
 import software.amazon.smithy.rulesengine.validators.ValidationError;
-import software.amazon.smithy.rulesengine.validators.ValidationErrorType;
 import software.amazon.smithy.utils.IoUtils;
-import software.amazon.smithy.utils.StringUtils;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class IntegrationTest {
-
-    private Stream<ValidationTestCase> validTestcases() {
-        URL url = Thread.currentThread()
-                .getContextClassLoader()
-                .getResource("software/amazon/smithy/rulesengine/testutil/valid-rules");
-        File testCases = new File(Thread.currentThread()
-                .getContextClassLoader()
-                .getResource("software/amazon/smithy/rulesengine/testutil/test-cases")
-                .getPath());
-        assert url != null;
-        return Arrays.stream(Objects.requireNonNull(new File(url.getPath()).listFiles()))
-                .filter(path -> path.toString()
-                        .endsWith(".json"))
-                .map(path -> new ValidationTestCase(path.toPath(), Paths.get(testCases.toPath()
-                        .toString(), path.getName())));
+    public static Stream<ValidationTestCase> validRules() throws IOException {
+        return TestDiscovery.getValidRuleSetFiles()
+                .map(path -> new ValidationTestCase(path, path.resolve("../" + path.getFileName())));
     }
 
-    private Stream<TestDiscovery.RulesTestCase> checkableTestCases() {
-        return new TestDiscovery().testSuites()
-                .flatMap(
-                        suite -> suite.testSuite().getTestCases()
-                                .stream()
-                                .map(tc -> new TestDiscovery.RulesTestCase(suite.ruleSet(), tc)));
+    public static Stream<ValidationTestCase> invalidRules() throws IOException {
+        return TestDiscovery.getInvalidRuleSetFiles().map(path -> new ValidationTestCase(path, null));
     }
 
-    private Stream<ValidationTestCase> invalidTestCases() {
-        URL url = getClass().getResource("invalid-rules");
-        assert url != null;
-        return Arrays.stream(Objects.requireNonNull(new File(url.getPath()).listFiles()))
-                .map(path -> new ValidationTestCase(path.toPath(), null));
+    public static List<TestDiscovery.RulesTestCase> checkableTestCases() throws IOException {
+        List<TestDiscovery.RulesTestCase> testCases = new ArrayList<>();
+        for (TestDiscovery.RulesTestSuite testSuite : TestDiscovery.getValidTestSuites().values()) {
+            for (EndpointTestCase testCase : testSuite.getTestSuite().getTestCases()) {
+                testCases.add(new TestDiscovery.RulesTestCase(testSuite.getRuleSet(), testCase));
+            }
+        }
+        return testCases;
     }
 
-    private Stream<ValidationTestCase> invalidStandaloneValidationTestCases() {
-        URL url = getClass().getResource("invalid-standalone-validation-rules");
+    @Test
+    public void checkTestSuites() throws IOException {
+        for (TestDiscovery.RulesTestSuite rulesTestSuite : TestDiscovery.getValidTestSuites().values()) {
+            assertEquals(Collections.emptyList(),
+                    StandaloneRulesetValidator.validate(rulesTestSuite.getRuleSet(), rulesTestSuite.getTestSuite())
+                            .collect(Collectors.toList()));
+        }
+    }
+
+    public static Stream<ValidationTestCase> invalidStandaloneValidationTestCases() {
+        URL url = IntegrationTest.class.getResource("invalid-standalone-validation-rules");
         assert url != null;
         return Arrays.stream(Objects.requireNonNull(new File(url.getPath()).listFiles()))
                 .map(path -> new ValidationTestCase(path.toPath(), null));
     }
 
     @ParameterizedTest
-    @MethodSource("validTestcases")
-    void checkValidRules(ValidationTestCase validationTestCase) {
+    @MethodSource("validRules")
+    public void checkValidRules(ValidationTestCase validationTestCase) {
         EndpointRuleSet ruleset = EndpointRuleSet.fromNode(validationTestCase.contents());
         List<ValidationError> errors = StandaloneRulesetValidator.validate(ruleset, null).collect(Collectors.toList());
         assertEquals(Collections.emptyList(), errors);
@@ -101,8 +90,8 @@ public class IntegrationTest {
     }
 
     @ParameterizedTest
-    @MethodSource("validTestcases")
-    void rulesRoundTripViaJson(ValidationTestCase validationTestCase) {
+    @MethodSource("validRules")
+    public void rulesRoundTripViaJson(ValidationTestCase validationTestCase) {
         EndpointRuleSet ruleset = EndpointRuleSet.fromNode(validationTestCase.contents());
         Node serialized = ruleset.toNode();
         EndpointRuleSet deserialized = EndpointRuleSet.fromNode(serialized);
@@ -115,29 +104,18 @@ public class IntegrationTest {
 
     @ParameterizedTest
     @MethodSource("checkableTestCases")
-    void checkTestSuites(TestDiscovery.RulesTestCase testcase) {
-        new TestDiscovery().testSuites().forEach(rulesTestSuite -> {
-            assertEquals(Collections.emptyList(), StandaloneRulesetValidator.validate(rulesTestSuite.ruleSet(),
-                    rulesTestSuite.testSuite()).collect(Collectors.toList()));
-        });
-    }
-
-    @ParameterizedTest
-    @MethodSource("checkableTestCases")
-    void executeTestSuite(TestDiscovery.RulesTestCase testcase) {
+    public void executeTestSuite(TestDiscovery.RulesTestCase testcase) {
         testcase.execute();
     }
 
     @ParameterizedTest
-    @MethodSource("invalidTestCases")
-    void checkInvalidRules(ValidationTestCase validationTestCase) throws IOException {
+    @MethodSource("invalidRules")
+    public void checkInvalidRules(ValidationTestCase validationTestCase) throws IOException {
         RuleError error = assertThrows(RuleError.class, () -> {
             EndpointRuleSet.fromNode(validationTestCase.contents());
         });
-        //validationTestCase.overrideComments(error.toString());
-        assertEquals(
-                validationTestCase.comments().replaceAll("\\s+", " ").trim(),
-                error.toString().replaceAll("\\s+", " ").trim());
+
+        assertEquals(validationTestCase.comments(), error.toString());
     }
 
     @ParameterizedTest
@@ -176,53 +154,12 @@ public class IntegrationTest {
             }
         }
 
-        Optional<Node> testNode() {
-            return Optional.ofNullable(testCase)
-                    .filter(name -> name.toFile()
-                            .exists())
-                    .map(testPath -> {
-                        try {
-                            return Node.parseJsonWithComments(IoUtils.toUtf8String(new FileInputStream(testPath.toFile())), testPath.subpath(testPath.getNameCount() - 2, testPath.getNameCount())
-                                    .toString());
-                        } catch (FileNotFoundException e) {
-                            throw new RuntimeException(e);
-                        }
-                    });
-        }
-
-        String comments() throws FileNotFoundException {
-            return lines(IoUtils.toUtf8String(new FileInputStream(path.toFile()))).stream()
-                    .filter(line -> line.startsWith("// "))
-                    .map(line -> line.substring(3))
-                    .collect(Collectors.joining("\n"));
-        }
-
-        /**
-         * Write back the current error message into the test case
-         */
-        void overrideComments(String comments) throws IOException {
-            String commentSection = lines(comments).stream()
-                                            .map(line -> "// " + line)
-                                            .collect(Collectors.joining("\n")) + "\n";
-            String newContents = commentSection + lines(IoUtils.toUtf8String(new FileInputStream(path.toFile())))
-                    .stream()
-                    .filter(line -> !line.startsWith("// "))
-                    .collect(Collectors.joining("\n"));
-            Path realPath = Paths.get(path.toString().replaceFirst("/build/resources/test/",
-                    "/src/test/resources/"));
-            if (!Files.exists(realPath)) {
-                throw new RuntimeException("writeback path must exist! %s " + realPath);
+        String comments() throws IOException {
+            try (Stream<String> lines = Files.lines(path)) {
+                return lines.filter(line -> line.startsWith("// "))
+                               .map(line -> line.substring(3))
+                               .collect(Collectors.joining("\n"));
             }
-            Files.delete(realPath);
-            Files.write(realPath, newContents.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE_NEW, StandardOpenOption.SYNC);
-        }
-
-        public Path path() {
-            return path;
-        }
-
-        public Path testCase() {
-            return testCase;
         }
 
         @Override
@@ -245,8 +182,7 @@ public class IntegrationTest {
 
         @Override
         public String toString() {
-            return path.getFileName()
-                    .toString();
+            return path.getFileName().toString();
         }
 
     }

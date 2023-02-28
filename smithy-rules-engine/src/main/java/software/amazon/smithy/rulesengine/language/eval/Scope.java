@@ -21,12 +21,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
+import software.amazon.smithy.rulesengine.language.eval.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Reference;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Reference;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -67,7 +67,7 @@ public final class Scope<T> {
     }
 
     public void setNonNull(Reference name) {
-        this.scope.getFirst().getNonNullRefs().add(name);
+        this.scope.getFirst().getNonNullReferences().add(name);
     }
 
     public <U> U inScope(Supplier<U> func) {
@@ -89,7 +89,12 @@ public final class Scope<T> {
     }
 
     public boolean isNonNull(Reference reference) {
-        return scope.stream().anyMatch(s -> s.getNonNullRefs().contains(reference));
+        for (ScopeLayer<T> layer : scope) {
+            if (layer.getNonNullReferences().contains(reference)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public T expectValue(Identifier name) throws InnerParseError {
@@ -104,9 +109,12 @@ public final class Scope<T> {
     public Optional<Map.Entry<Identifier, T>> getDeclaration(Identifier name) {
         for (ScopeLayer<T> layer : scope) {
             if (layer.getTypes().containsKey(name)) {
-                return Optional.of(layer.getTypes().entrySet().stream()
-                        .filter(e -> e.getKey().equals(name))
-                        .collect(Collectors.toList()).get(0));
+                for (Map.Entry<Identifier, T> type : layer.getTypes().entrySet()) {
+                    if (type.getKey().equals(name)) {
+                        return Optional.of(type);
+                    }
+                }
+                return Optional.empty();
             }
         }
         return Optional.empty();

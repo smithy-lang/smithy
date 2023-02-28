@@ -37,7 +37,7 @@ public final class RuleError extends RuntimeException {
         this.root = root;
     }
 
-    public static <T> T context(String message, Runnable f) throws RuleError {
+    public static <T> T context(String message, Runnable f) {
         return RuleError.context(message, SourceLocation.none(), () -> {
             f.run();
             return null;

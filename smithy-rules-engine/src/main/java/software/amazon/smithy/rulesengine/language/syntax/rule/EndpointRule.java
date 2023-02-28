@@ -21,10 +21,10 @@ import java.util.Objects;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.util.StringUtils;
+import software.amazon.smithy.rulesengine.language.eval.type.Type;
 import software.amazon.smithy.rulesengine.language.visit.RuleValueVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
+import software.amazon.smithy.utils.StringUtils;
 
 /**
  * A rule-set rule that specifies a resolved endpoint.
@@ -75,8 +75,7 @@ public final class EndpointRule extends Rule {
 
     @Override
     public String toString() {
-        return super.toString()
-               + StringUtils.indent(endpoint.toString(), 2);
+        return super.toString() + StringUtils.indent(endpoint.toString(), 2);
     }
 
     /**
