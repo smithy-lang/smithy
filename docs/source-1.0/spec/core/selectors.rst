@@ -1646,5 +1646,75 @@ Selectors are defined by the following ABNF_ grammar.
     SelectorVariableSet                :"$" `smithy:Identifier` "(" `Selector` ")"
     SelectorVariableGet                :"${" `smithy:Identifier` "}"
 
+
+Compliance Tests
+================
+
+Selector compliance tests are used to verify the behavior of selectors. Each compliance test is written as a Smithy file
+and includes a :ref:`metadata <metadata>` called ``selectorTests``. This metadata contains a list of test cases, each including a selector,
+the expected matched shapes, and additional configuration options. The test case contains the following properties:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - selector
+      - ``string``
+      - **REQUIRED** The selector to match shapes within the smithy model
+    * - matches
+      - ``list<shape ID>``
+      - **REQUIRED** The expected shapes ID of the matched shapes
+    * - skipPreludeShapes
+      - ``boolean``
+      - Skip :ref:`prelude shapes <prelude>` when comparing the expected shapes and the actual shapes returned from the selector. Default value is ``false``
+
+Below is an example selector compliance test:
+
+.. code-block:: smithy
+
+    $version: "1.0"
+
+    metadata selectorTests = [
+        {
+            selector: "[trait|length|min > 1]"
+            matches: [
+                smithy.example#AtLeastTen
+            ]
+        }
+        {
+            selector: "[trait|length|min >= 1]"
+            skipPreludeShapes: true
+            matches: [
+                smithy.example#AtLeastOne
+                smithy.example#AtLeastTen
+            ]
+        }
+        {
+            selector: "[trait|length|min < 2]"
+            skipPreludeShapes: true
+            matches: [
+                smithy.example#AtLeastOne
+            ]
+        }
+    ]
+
+    namespace smithy.example
+
+    @length(min: 1)
+    string AtLeastOne
+
+    @length(max: 5)
+    string AtMostFive
+
+    @length(min: 10)
+    string AtLeastTen
+
+The compliance tests can also be accessed in this
+`directory <https://github.com/awslabs/smithy/tree/main/smithy-model/src/test/resources/software/amazon/smithy/model/selector/cases>`__
+of the Smithy Github repository.
+
 .. _ABNF: https://tools.ietf.org/html/rfc5234
 .. _set: https://en.wikipedia.org/wiki/Set_(abstract_data_type)
