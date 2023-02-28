@@ -52,7 +52,8 @@ apply HttpPrefixHeaders @httpRequestTests([
         params: {
             foo: "Foo",
             fooMap: {}
-        }
+        },
+        appliesTo: "client"
     },
 ])
 
