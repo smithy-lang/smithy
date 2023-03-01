@@ -184,8 +184,8 @@ final class ModelValidator {
             // Perform critical validation before other more granular semantic validators.
             // If these validators fail, then many other validators will fail as well,
             // which will only obscure the root cause.
-            coreEvents.addAll(new TargetValidator().validate(model));
-            coreEvents.addAll(new ResourceCycleValidator().validate(model));
+            coreEvents.addAll(suppressEvents(model, new TargetValidator().validate(model), modelSuppressions));
+            coreEvents.addAll(suppressEvents(model, new ResourceCycleValidator().validate(model), modelSuppressions));
             // Emit any events that have already occurred.
             coreEvents.forEach(eventListener);
 
@@ -284,6 +284,13 @@ final class ModelValidator {
                 }
             }
         });
+    }
+
+    private static List<ValidationEvent> suppressEvents(
+            Model model,
+            List<ValidationEvent> events,
+            List<Suppression> suppressions) {
+        return events.stream().map(event -> suppressEvent(model, event, suppressions)).collect(Collectors.toList());
     }
 
     private static ValidationEvent suppressEvent(Model model, ValidationEvent event, List<Suppression> suppressions) {
