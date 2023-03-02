@@ -31,7 +31,7 @@ apply FractionalSeconds @httpResponseTests([
         headers: {
             "Content-Type": "text/xml;charset=UTF-8"
         },
-        params: { datetime: 1398796238.789 }
+        params: { datetime: 946845296.123 }
     },
     {
         id: "Ec2QueryHttpDateWithFractionalSeconds",
