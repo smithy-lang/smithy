@@ -342,7 +342,7 @@ public class OpenApiConfig extends JsonSchemaConfig {
         // warning on something intentional is just noise. It sucks
         // that this can't tell us when keys are misspelled, but it
         // does allow for a flat key-space for all extensions.
-        mapper.setWhenMissingSetter(NodeMapper.WhenMissing.INGORE);
+        mapper.setWhenMissingSetter(NodeMapper.WhenMissing.IGNORE);
 
         // Fix and remap deprecated keys to newly supported keys.
         ObjectNode node = fixDeprecatedKeys(input.expectObjectNode());

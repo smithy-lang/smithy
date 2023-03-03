@@ -324,7 +324,7 @@ public final class CfnConfig extends JsonSchemaConfig {
     public static CfnConfig fromNode(Node settings) {
         NodeMapper mapper = new NodeMapper();
 
-        mapper.setWhenMissingSetter(NodeMapper.WhenMissing.INGORE);
+        mapper.setWhenMissingSetter(NodeMapper.WhenMissing.IGNORE);
 
         ObjectNode node = settings.expectObjectNode();
         CfnConfig config = new CfnConfig();

@@ -80,7 +80,7 @@ public final class ExampleObject extends Component implements ToSmithyBuilder<Ex
             return null;
         }
         NodeMapper mapper = new NodeMapper();
-        mapper.setWhenMissingSetter(NodeMapper.WhenMissing.INGORE);
+        mapper.setWhenMissingSetter(NodeMapper.WhenMissing.IGNORE);
         ObjectNode node = exampleObject.expectObjectNode();
         ExampleObject.Builder result = new ExampleObject.Builder();
         mapper.deserializeInto(node, result);
