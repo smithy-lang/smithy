@@ -114,7 +114,7 @@ public class JsonSchemaConfig {
     private boolean useIntegerType;
 
     public JsonSchemaConfig() {
-        nodeMapper.setWhenMissingSetter(NodeMapper.WhenMissing.INGORE);
+        nodeMapper.setWhenMissingSetter(NodeMapper.WhenMissing.IGNORE);
     }
 
     public boolean getAlphanumericOnlyRefs() {
