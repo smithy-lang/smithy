@@ -17,6 +17,7 @@ package software.amazon.smithy.rulesengine.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
