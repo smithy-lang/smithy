@@ -41,7 +41,8 @@ structure BillingAddress {
     safeBank: MySensitiveString,
     // should get flagged
     firstName: FirstName,
-    lastName: LastName
+    lastName: LastName,
+    someEnum: MyEnum
 }
 
 @sensitive
@@ -51,6 +52,11 @@ structure SafeBillingAddress {
     safeBank: MySensitiveString,
     firstName: MyString,
     lastName: MySensitiveString
+}
+
+enum MyEnum {
+    // should not be flagged
+    IP_ADDRESS
 }
 
 string MyString
