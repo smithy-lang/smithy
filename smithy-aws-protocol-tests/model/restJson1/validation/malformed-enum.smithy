@@ -18,7 +18,8 @@ apply MalformedEnum @httpMalformedRequestTests([
         id: "RestJsonMalformedEnumString",
         documentation: """
         When a string member does not contain a valid enum value,
-        the response should be a 400 ValidationException.""",
+        the response should be a 400 ValidationException. Internal-only
+        enum values are excluded from the response message.""",
         protocol: restJson1,
         request: {
             method: "POST",
@@ -51,7 +52,8 @@ apply MalformedEnum @httpMalformedRequestTests([
         id: "RestJsonMalformedEnumList",
         documentation: """
         When a list member value does not contain a valid enum value,
-        the response should be a 400 ValidationException.""",
+        the response should be a 400 ValidationException. Internal-only
+        enum values are excluded from the response message.""",
         protocol: restJson1,
         request: {
             method: "POST",
@@ -84,7 +86,8 @@ apply MalformedEnum @httpMalformedRequestTests([
         id: "RestJsonMalformedEnumMapKey",
         documentation: """
         When a map member's key does not contain a valid enum value,
-        the response should be a 400 ValidationException.""",
+        the response should be a 400 ValidationException. Internal-only
+        enum values are excluded from the response message.""",
         protocol: restJson1,
         request: {
             method: "POST",
@@ -117,7 +120,8 @@ apply MalformedEnum @httpMalformedRequestTests([
         id: "RestJsonMalformedEnumMapValue",
         documentation: """
         When a map member's value does not contain a valid enum value,
-        the response should be a 400 ValidationException.""",
+        the response should be a 400 ValidationException. Internal-only
+        enum values are excluded from the response message.""",
         protocol: restJson1,
         request: {
             method: "POST",
@@ -150,7 +154,8 @@ apply MalformedEnum @httpMalformedRequestTests([
         id: "RestJsonMalformedEnumUnion",
         documentation: """
         When a union member's value does not contain a valid enum value,
-        the response should be a 400 ValidationException.""",
+        the response should be a 400 ValidationException. Internal-only
+        enum values are excluded from the response message.""",
         protocol: restJson1,
         request: {
             method: "POST",
@@ -194,6 +199,12 @@ structure MalformedEnumInput {
 enum EnumString {
     ABC = "abc"
     DEF = "def"
+
+    @internal
+    GHI = "ghi"
+
+    @tags(["internal"])
+    JKL = "jkl"
 }
 
 list EnumList {
