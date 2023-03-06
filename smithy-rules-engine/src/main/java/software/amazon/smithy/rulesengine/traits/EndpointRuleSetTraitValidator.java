@@ -62,8 +62,9 @@ public final class EndpointRuleSetTraitValidator extends AbstractValidator {
 
     private Optional<ValidationEvent> validateService(ServiceShape service, EndpointRuleSetTrait trait) {
         try {
-            EndpointRuleSet value = EndpointRuleSet.fromNode(trait.getRuleSet());
+            EndpointRuleSet value = EndpointRuleSet.fromNode(trait.getRuleSet(), false);
             validateRuleSet(value);
+            value.typecheck();
             return Optional.empty();
         } catch (RuleError e) {
             return Optional.of(error(service, trait, e.getMessage()));

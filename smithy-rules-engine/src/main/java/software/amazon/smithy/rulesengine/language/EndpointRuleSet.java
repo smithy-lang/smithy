@@ -63,10 +63,15 @@ public final class EndpointRuleSet extends MandatorySourceLocation implements Ty
     }
 
     public static EndpointRuleSet fromNode(Node node) throws RuleError {
-        return RuleError.context("when parsing endpoint ruleset", () -> EndpointRuleSet.newFromNode(node));
+        return fromNode(node, true);
     }
 
-    private static EndpointRuleSet newFromNode(Node node) throws RuleError {
+    public static EndpointRuleSet fromNode(Node node, Boolean runTypeCheck) throws RuleError {
+        return RuleError.context("when parsing endpoint ruleset", () ->
+            EndpointRuleSet.newFromNode(node, runTypeCheck));
+    }
+
+    private static EndpointRuleSet newFromNode(Node node, Boolean runTypeCheck) throws RuleError {
         ObjectNode on = node.expectObjectNode("The root of a ruleset must be an object");
         EndpointRuleSet.Builder builder = new Builder(node);
         Parameters parameters = Parameters.fromNode(on.expectObjectMember(PARAMETERS));
@@ -76,7 +81,7 @@ public final class EndpointRuleSet extends MandatorySourceLocation implements Ty
                 .getElements().forEach(n -> {
                     builder.addRule(context("while parsing rule", n, () -> EndpointRule.fromNode(n)));
                 });
-        return builder.version(version.getValue()).parameters(parameters).build();
+        return builder.version(version.getValue()).parameters(parameters).runTypeCheck(runTypeCheck).build();
     }
 
     public static Builder builder() {
@@ -158,6 +163,7 @@ public final class EndpointRuleSet extends MandatorySourceLocation implements Ty
     public static class Builder extends SourceLocationTrackingBuilder<Builder, EndpointRuleSet> {
         private final BuilderRef<List<Rule>> rules = BuilderRef.forList();
         private Parameters parameters;
+        private Boolean runTypeCheck = true;
         // default the version to the latest.
         private String version = LATEST_VERSION;
 
@@ -227,10 +233,24 @@ public final class EndpointRuleSet extends MandatorySourceLocation implements Ty
             return this;
         }
 
+        /**
+         * Set whether or not to run automatically the typecheck
+         * for this {@link EndpointRuleSet}.
+         *
+         * @param runTypeCheck {@link Boolean} to whether or not run the typecheck
+         * @return the {@link Builder}
+         */
+        public Builder runTypeCheck(Boolean runTypeCheck) {
+            this.runTypeCheck = runTypeCheck;
+            return this;
+        }
+
         @Override
         public EndpointRuleSet build() {
             EndpointRuleSet ruleSet = new EndpointRuleSet(this);
-            ruleSet.typecheck();
+            if (this.runTypeCheck) {
+                ruleSet.typecheck();
+            }
             return ruleSet;
         }
     }

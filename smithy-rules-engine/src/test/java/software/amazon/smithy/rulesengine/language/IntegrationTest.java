@@ -94,7 +94,7 @@ public class IntegrationTest {
     @ParameterizedTest
     @MethodSource("validTestcases")
     void checkValidRules(ValidationTestCase validationTestCase) {
-        EndpointRuleSet ruleset = EndpointRuleSet.fromNode(validationTestCase.contents());
+        EndpointRuleSet ruleset = EndpointRuleSet.fromNode(validationTestCase.contents(), false);
         List<ValidationError> errors = StandaloneRulesetValidator.validate(ruleset, null).collect(Collectors.toList());
         assertEquals(Collections.emptyList(), errors);
         ruleset.typeCheck(new Scope<>());
@@ -143,7 +143,7 @@ public class IntegrationTest {
     @ParameterizedTest
     @MethodSource("invalidStandaloneValidationTestCases")
     void checkInvalidStandaloneValidationRules(ValidationTestCase validationTestCase) throws IOException {
-        EndpointRuleSet ruleset = EndpointRuleSet.fromNode(validationTestCase.contents());
+        EndpointRuleSet ruleset = EndpointRuleSet.fromNode(validationTestCase.contents(), false);
         List<ValidationError> errors = StandaloneRulesetValidator.validate(ruleset, null)
                 .collect(Collectors.toList());
         assertFalse(errors.isEmpty());
