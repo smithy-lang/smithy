@@ -264,6 +264,18 @@
                 "smithy.api#private": {},
                 "smithy.api#documentation": "An IAM policy principal type."
             }
+        },
+        "aws.iam#actionName": {
+            "type": "string",
+            "member": {
+                "target": "aws.iam#IamIdentifier"
+            },
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "operation"
+                },
+                "smithy.api#documentation": "Provides the ability to override the default action name for the operation. By convention, the action name is the same as the operation name."
+            }
         }
     }
 }
