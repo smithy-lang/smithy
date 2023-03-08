@@ -392,6 +392,45 @@ deviates from the :ref:`shape name of the shape ID <shape-id>` of the resource.
         }
     }
 
+.. smithy-trait:: aws.iam#actionName
+.. _aws.iam#actionName-trait:
+
+-------------------------------
+``aws.iam#actionName`` trait
+-------------------------------
+
+Summary
+    Provides the ability to override the default action name for the operation. By convention, the action name is the same as the operation name.
+Trait selector
+    ``:test(operation)``
+Value type
+    ``string``
+
+Operations not annotated with the ``actionName`` trait use the operation name as the action name.
+
+The following example defines two operations:
+
+* OperationA is not annoated with the ``actionName`` trait, so has the action name ``OperationA`` which is the same as the operation name.
+* OperationB has the ``actionName`` trait, so has the action name ``OverridingActionName``.
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.iam#actionName
+
+    service MyService {
+        version: "2020-07-02"
+        operations: [OperationA, OperationB]
+    }
+
+    operation OperationA {}
+
+    @actionName("OverridingActionName")
+    operation OperationB {}
+
 
 .. _deriving-condition-keys:
 
