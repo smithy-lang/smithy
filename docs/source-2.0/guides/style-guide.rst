@@ -45,16 +45,16 @@ Smithy models SHOULD resemble the following example:
     structure MyMixin {}
 
     // When using a single mixin, place "with" and the shape on the same line
-    structure UsesMixin with MyMixin {
+    structure UsesMixin with [MyMixin] {
         foo: String
     }
 
     // When using multiple mixins, place each shape ID on its own line,
     // followed by a line that contains the opening brace.
-    structure UsesMixin with
+    structure UsesMixin with [
         MyMixin
         SomeOtherMixin
-    {
+    ] {
         foo: String
     }
 
