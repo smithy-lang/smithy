@@ -189,6 +189,10 @@ Server code generators
       - Java
       - 0.x (Developer Preview)
       - :doc:`Documentation <ts-ssdk/index>`
+    * - `Smithy Rust <https://github.com/awslabs/smithy-rs>`_
+      - Kotlin
+      - 0.x (Developer Preview)
+      - `Documentation <https://github.com/awslabs/smithy-rs>`_
 
 ----------------
 Model converters

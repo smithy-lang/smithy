@@ -1868,6 +1868,83 @@ changing the semantics of a selector.</p>
     &quot;${&quot; <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a> &quot;}&quot;
 </pre>
 </div>
+<div class="section" id="compliance-tests">
+<h2><span class="section-number">16.11. </span>Compliance Tests<a class="headerlink" href="#compliance-tests" title="Permalink to this headline">#</a></h2>
+<p>Selector compliance tests are used to verify the behavior of selectors. Each compliance test is written as a Smithy file
+and includes a <a class="reference internal" href="model.html#metadata"><span class="std std-ref">metadata</span></a> called <code class="docutils literal notranslate"><span class="pre">selectorTests</span></code>. This metadata contains a list of test cases, each including a selector,
+the expected matched shapes, and additional configuration options. The test case contains the following properties:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>selector</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>REQUIRED</strong> The selector to match shapes within the smithy model</td>
+</tr>
+<tr class="row-odd"><td>matches</td>
+<td><code class="docutils literal notranslate"><span class="pre">list&lt;shape</span> <span class="pre">ID&gt;</span></code></td>
+<td><strong>REQUIRED</strong> The expected shapes ID of the matched shapes</td>
+</tr>
+<tr class="row-even"><td>skipPreludeShapes</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>Skip <a class="reference internal" href="model.html#prelude"><span class="std std-ref">prelude shapes</span></a> when comparing the expected shapes and the actual shapes returned from the selector. Default value is <code class="docutils literal notranslate"><span class="pre">false</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Below is an example selector compliance test:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="w"></span>
+
+<span class="kd">metadata </span><span class="nc">selectorTests </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|length|min &gt; 1]&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="py">matches</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">            </span><span class="vc">smithy.example#AtLeastTen</span><span class="w"></span>
+<span class="w">        </span>]<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|length|min &gt;= 1]&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="py">skipPreludeShapes</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<span class="w">        </span><span class="py">matches</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">            </span><span class="vc">smithy.example#AtLeastOne</span><span class="w"></span>
+<span class="w">            </span><span class="vc">smithy.example#AtLeastTen</span><span class="w"></span>
+<span class="w">        </span>]<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|length|min &lt; 2]&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="py">skipPreludeShapes</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<span class="w">        </span><span class="py">matches</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">            </span><span class="vc">smithy.example#AtLeastOne</span><span class="w"></span>
+<span class="w">        </span>]<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+]<span class="w"></span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span>)<span class="w"></span>
+<span class="kd">string </span><span class="nc">AtLeastOne</span><span class="w"></span>
+
+<span class="nt">@length</span>(<span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">5</span>)<span class="w"></span>
+<span class="kd">string </span><span class="nc">AtMostFive</span><span class="w"></span>
+
+<span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">10</span>)<span class="w"></span>
+<span class="kd">string </span><span class="nc">AtLeastTen</span><span class="w"></span>
+</pre></div>
+</div>
+<p>The compliance tests can also be accessed in this
+<a class="reference external" href="https://github.com/awslabs/smithy/tree/main/smithy-model/src/test/resources/software/amazon/smithy/model/selector/cases">directory</a>
+of the Smithy Github repository.</p>
+</div>
 </div>
 
         </article>
@@ -1985,6 +2062,7 @@ changing the semantics of a selector.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#grammar">16.10. Grammar</a></li>
+<li><a class="reference internal" href="#compliance-tests">16.11. Compliance Tests</a></li>
 </ul>
 </li>
 </ul>

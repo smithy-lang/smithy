@@ -329,8 +329,8 @@ can be used to apply additional validation to Smithy models.</p>
 <p>The following example adds <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code> as a Gradle dependency
 to a <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code> file:</p>
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.28.0&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.28.0&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.28.1&quot;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.28.1&quot;</span><span class="p">)</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
@@ -391,7 +391,8 @@ letters. Defaults to an empty list.</td>
 <p>Validates that shape names and member names adhere to a consistent style of
 camel casing. By default, this validator will ensure that shape names use
 UpperCamelCase, trait shape names use lowerCamelCase, and that member names
-use lowerCamelCase.</p>
+use <em>either</em> lowerCamelCase or UpperCamelCase (depending on which is currently more
+prevalent in each service closure).</p>
 <dl class="docutils">
 <dt>Rationale</dt><dd>Utilizing a consistent camelCase style makes it easier to understand a
 model and can lead to consistent naming in code generated from Smithy
@@ -414,7 +415,7 @@ models.</dd>
 <tr class="row-even"><td>memberNames</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td>Specifies the camelCase style of member names. Can be set to either
-&quot;upper&quot; or &quot;lower&quot; (the default).</td>
+&quot;upper&quot;, &quot;lower&quot;, or &quot;auto&quot; (the default).</td>
 </tr>
 </tbody>
 </table>
