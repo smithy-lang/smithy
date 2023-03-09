@@ -187,6 +187,18 @@ runtime {
     }
 }
 
+// Add finishing touches to the distributables, such as an install script
+tasks.runtime.doLast {
+    targetPlatforms.each { targetPlatform ->
+        copy {
+            from "config"
+            include targetPlatform.value.name.contains("windows") ? "install.bat" : "install"
+            into Paths.get(
+                    "${project.buildDir}", "image", "smithy-cli-${targetPlatform.value.name}").toString()
+        }
+    }
+}
+
 tasks.register("optimize", Exec) {
     commandLine("$smithyBinary", "warmup")
 }
