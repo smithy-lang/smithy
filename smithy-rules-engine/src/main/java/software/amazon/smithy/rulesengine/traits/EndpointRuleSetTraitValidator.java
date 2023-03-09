@@ -66,9 +66,7 @@ public final class EndpointRuleSetTraitValidator extends AbstractValidator {
             validateRuleSet(value);
             value.typecheck();
             return Optional.empty();
-        } catch (RuleError e) {
-            return Optional.of(error(service, trait, e.getMessage()));
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | RuleError e) {
             return Optional.of(error(service, trait, e.getMessage()));
         }
     }
