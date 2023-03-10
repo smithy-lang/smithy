@@ -70,6 +70,7 @@ service RestJson {
 
         // Errors
         GreetingWithErrors,
+        PayLoadOperationWithErrors,
 
         // Synthesized JSON document body tests
         SimpleScalarProperties,

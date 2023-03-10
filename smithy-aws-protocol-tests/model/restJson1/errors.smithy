@@ -22,7 +22,7 @@ use smithy.test#httpResponseTests
 @http(uri: "/GreetingWithErrors", method: "PUT")
 operation GreetingWithErrors {
     output: GreetingWithErrorsOutput,
-    errors: [InvalidGreeting, ComplexError, FooError, ErrorWithHttpPayload ]
+    errors: [ InvalidGreeting, ComplexError, FooError ]
 }
 
 apply GreetingWithErrors @httpResponseTests([
@@ -309,6 +309,26 @@ apply FooError @httpResponseTests([
     }
 ])
 
+/// This operation has three possible return values:
+///
+/// 1. A successful response in the form of PayLoadOperationWithErrorsOutput
+/// 2. An ErrorWithoutHttpPayload error.
+/// 3. An ErrorWithHttpPayload error.
+///
+/// Implementations must be able to successfully take a response and
+/// properly (de)serialize error responses with and without http payloads.
+@idempotent
+@http(uri: "/PayloadWithErrors", method: "PUT")
+operation PayLoadOperationWithErrors {
+    output: PayLoadOperationWithErrorsOutput,
+    errors: [ ErrorWithoutHttpPayload, ErrorWithHttpPayload ]
+}
+
+structure PayLoadOperationWithErrorsOutput {
+    @httpHeader("X-Greeting")
+    greeting: String,
+}
+
 /// This error is thrown when a service error occurs and contains an http payload
 @error("server")
 @httpError(500)
@@ -331,6 +351,30 @@ apply ErrorWithHttpPayload @httpResponseTests([
             "X-Foo": "foo"
         },
         body: "blobby blob blob",
+        appliesTo: "client",
+    }
+])
+
+
+/// This error is thrown when a service error occurs and does _not_ contain an http payload
+@error("server")
+@httpError(500)
+structure ErrorWithoutHttpPayload {
+    @httpHeader("X-Foo")
+    foo: String,
+}
+
+apply ErrorWithoutHttpPayload @httpResponseTests([
+    {
+        id: "RestJsonErrorWithoutHttpPayload",
+        documentation: "Deserializes an error without a payload.",
+        protocol: restJson1,
+        code: 500,
+        headers: {
+            "X-Amzn-Errortype": "ErrorWithoutHttpPayload",
+            "X-Foo": "foo"
+        },
+        body: "{}",
         appliesTo: "client",
     }
 ])
