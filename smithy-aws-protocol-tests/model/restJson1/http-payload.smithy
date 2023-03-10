@@ -7,6 +7,7 @@ namespace aws.protocoltests.restjson
 
 use aws.protocols#restJson1
 use aws.protocoltests.shared#TextPlainBlob
+use aws.protocoltests.shared#TextPlainString
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -267,4 +268,62 @@ structure HttpPayloadWithStructureInputOutput {
 structure NestedPayload {
     greeting: String,
     name: String,
+}
+
+
+/// This examples uses a `@mediaType` trait on the payload with a string payload
+@http(uri: "/HttpStringPayloadHttpStringPayloadWithMediaTypeTrait", method: "POST")
+operation HttpStringPayloadHttpStringPayloadWithMediaTypeTrait {
+    input: HttpStringPayloadHttpStringPayloadWithMediaTypeTraitInputOutput ,
+    output: HttpStringPayloadHttpStringPayloadWithMediaTypeTraitInputOutput
+}
+
+apply HttpStringPayloadHttpStringPayloadWithMediaTypeTrait @httpRequestTests([
+    {
+        id: "RestJsonHttpStringPayloadWithMediaType",
+        documentation: "Serializes a string in the payload with a media type",
+        protocol: restJson1,
+        method: "POST",
+        uri: "/HttpStringPayloadHttpStringPayloadWithMediaTypeTrait",
+        body: "stringy String string",
+        bodyMediaType: "text/plain",
+        headers: {
+            "X-Foo": "Foo",
+            "Content-Type": "image/jpeg"
+        },
+        params: {
+            foo: "Foo",
+            plainString: "stringy String string"
+        }
+        requireHeaders: [
+            "Content-Length"
+        ],
+    }
+])
+
+apply HttpStringPayloadHttpStringPayloadWithMediaTypeTrait @httpResponseTests([
+    {
+        id: "HttpStringPayloadHttpStringPayloadWithMediaTypeTrait",
+        documentation: "Deserializes a string in the payload with a media type",
+        protocol: restJson1,
+        code: 200,
+        body: "stringy String string",
+        bodyMediaType: "text/plain",
+        headers: {
+            "X-Foo": "Foo",
+            "Content-Type": "image/jpeg"
+        },
+        params: {
+            foo: "Foo",
+            plainString: "stringy String string"
+        }
+    }
+])
+
+structure HttpStringPayloadHttpStringPayloadWithMediaTypeTraitInputOutput {
+    @httpHeader("X-Foo")
+    foo: String,
+
+    @httpPayload
+    plainString: TextPlainString
 }

@@ -22,7 +22,7 @@ use smithy.test#httpResponseTests
 @http(uri: "/GreetingWithErrors", method: "PUT")
 operation GreetingWithErrors {
     output: GreetingWithErrorsOutput,
-    errors: [InvalidGreeting, ComplexError, FooError]
+    errors: [InvalidGreeting, ComplexError, FooError, ErrorWithHttpPayload ]
 }
 
 apply GreetingWithErrors @httpResponseTests([
@@ -61,7 +61,7 @@ apply GreetingWithErrors @httpResponseTests([
             greeting: "Hello"
         },
         appliesTo: "client"
-    },
+    }
 ])
 
 structure GreetingWithErrorsOutput {
@@ -305,6 +305,32 @@ apply FooError @httpResponseTests([
                   "__type": "aws.protocoltests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
               }""",
         bodyMediaType: "application/json",
+        appliesTo: "client",
+    }
+])
+
+/// This error is thrown when a service error occurs and contains an http payload
+@error("server")
+@httpError(500)
+structure ErrorWithHttpPayload {
+    @httpHeader("X-Foo")
+    foo: String,
+
+    @httpPayload
+    blob: Blob
+}
+
+apply ErrorWithHttpPayload @httpResponseTests([
+    {
+        id: "RestJsonErrorWithHttpPayload",
+        documentation: "Deserializes an error with a payload.",
+        protocol: restJson1,
+        code: 500,
+        headers: {
+            "X-Amzn-Errortype": "ErrorWithHttpPayload",
+            "X-Foo": "foo"
+        },
+        body: "blobby blob blob",
         appliesTo: "client",
     }
 ])

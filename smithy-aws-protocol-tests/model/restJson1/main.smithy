@@ -55,6 +55,7 @@ service RestJson {
         // @httpPayload tests
         HttpPayloadTraits,
         HttpPayloadTraitsWithMediaType,
+        HttpStringPayloadHttpStringPayloadWithMediaTypeTrait,
         HttpPayloadWithStructure,
         HttpEnumPayload,
         HttpStringPayload,

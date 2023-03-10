@@ -172,6 +172,9 @@ blob TextPlainBlob
 @mediaType("image/jpeg")
 blob JpegBlob
 
+@mediaType("image/jpeg")
+string TextPlainString
+
 structure GreetingStruct {
     hi: String
 }
