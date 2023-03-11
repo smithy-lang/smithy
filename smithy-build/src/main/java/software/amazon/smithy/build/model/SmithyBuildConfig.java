@@ -16,7 +16,6 @@
 package software.amazon.smithy.build.model;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -286,7 +285,7 @@ public final class SmithyBuildConfig implements ToSmithyBuilder<SmithyBuildConfi
                 String content = IoUtils.readUtf8File(config);
                 Path basePath = config.getParent();
                 if (basePath == null) {
-                    basePath = Paths.get(".");
+                    basePath = SmithyBuildUtils.getCurrentWorkingDirectory();
                 }
                 Node loadedAndExpanded = SmithyBuildUtils.loadAndExpandJson(config.toString(), content);
                 return loadNode(basePath, loadedAndExpanded);

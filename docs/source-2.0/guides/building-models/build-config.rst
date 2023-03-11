@@ -58,8 +58,8 @@ The configuration file accepts the following properties:
     * - plugins
       - ``map<string, object>``
       - Defines the plugins to apply to the model when building every
-        projection. Plugins are a mapping of plugin names to an arbitrary
-        plugin configuration object.
+        projection. Plugins are a mapping of :ref:`plugin IDs <plugin-id>` to
+        plugin-specific configuration objects.
     * - ignoreMissingPlugins
       - ``bool``
       - If a plugin can't be found, Smithy will by default fail the build. This
@@ -109,6 +109,9 @@ The following is an example ``smithy-build.json`` configuration:
                     "plugin-name": {
                         "plugin-config": "value"
                     },
+                    "custom-artifact-name via run": {
+                        "command": ["my-codegenerator", "--debug"]
+                    },
                     "...": {}
                 }
             }
@@ -120,6 +123,51 @@ The following is an example ``smithy-build.json`` configuration:
             "...": {}
         }
     }
+
+.. _plugin-id:
+
+Plugin ID and artifact names
+============================
+
+A plugin ID defines an *artifact name* and a *plugin name*. The artifact
+name defines the directory where a plugin writes files. The plugin name
+tells Smithy which plugin to find and apply. By default, the artifact name
+is equivalent to the plugin name (that is, ``foo`` is equivalent to
+``foo via foo``).
+
+A custom artifact name can be configured using the syntax
+``artifact-name via plugin-name`` where:
+
+* ``artifact-name`` is the artifact name and directory where the plugin
+  writes artifacts.
+* ``plugin-name`` is the name of the plugin Smithy finds and runs with the
+  plugin-specific configuration.
+
+The following example shows that the :ref:`run-plugin` can be used in the
+same projection multiple times using a custom artifact name.
+
+.. code-block:: json
+
+    {
+        "version": "1.0",
+        "projections": {
+            "source": {
+                "plugins": {
+                    "foo via run": {
+                        "command": ["sh", "foo.sh"]
+                    },
+                    "baz via run": {
+                        "command": ["baz", "-a", "A"]
+                    }
+                }
+            }
+        }
+    }
+
+The above example will generate source projection artifacts in the
+"source/foo" and "source/baz" directories.
+
+.. seealso:: :ref:`projection-artifacts`
 
 
 .. _maven-configuration:
@@ -326,11 +374,12 @@ A projection accepts the following configuration:
     * - plugins
       - ``map<string, object>``
       - Defines the plugins to apply to the model when building this
-        projection. Plugins are a mapping of plugin names to an arbitrary
-        plugin configuration object. smithy-build will attempt to resolve
-        plugin names using `Java SPI`_ to locate an instance of ``software.amazon.smithy.build.SmithyBuildPlugin``
-        that returns a matching name when calling ``getName``. smithy-build will
-        emit a warning when a plugin cannot be resolved.
+        projection. ``plugins`` is a mapping of a :ref:`plugin IDs <plugin-id>`
+        to plugin-specific configuration objects. smithy-build will attempt
+        to resolve plugin names using `Java SPI`_ to locate an instance of
+        ``software.amazon.smithy.build.SmithyBuildPlugin`` that returns a
+        matching name when calling ``getName``. smithy-build will emit a
+        warning when a plugin cannot be resolved.
 
 
 .. _projection-artifacts:
@@ -345,12 +394,9 @@ smithy-build will write artifacts for each projection inside of
 * Build information about the projection build result, including the
   configuration of the projection and the validation events encountered when
   validating the projected model, are written to ``${outputDirectory}/${projectionName}/build-info/smithy-build-info.json``.
-* All plugin artifacts are written to ``${outputDirectory}/${projectionName}/${pluginName}/${artifactName}``,
-  where ``${artifactName}`` is the name of an artifact contributed by an
-  instance of ``software.amazon.smithy.build.SmithyBuildPlugin``. The relative
-  path of each artifact is resolved against ``${outputDirectory}/${projectionName}/${pluginName}/``.
-  For example, given an artifact path of ``foo/baz.json``, the resolved path
-  would become ``${outputDirectory}/${projectionName}/${pluginName}/foo/baz.json``.
+* All plugin artifacts are written to ``${outputDirectory}/${projectionName}/${artifactName}/${files...}``,
+  where ``${artifactName}`` is the artifact name of the :ref:`plugin ID <plugin-id>`,
+  and ``${files...}`` are the artifacts created by a plugin.
 
 
 .. _transforms:
@@ -1595,6 +1641,18 @@ environment variable set to "hi", this file is equivalent to:
         }
     }
 
+In addition to environment variables of the process, smithy-build.json
+files have access to the following environment variables:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 25 75
+
+    * - Name
+      - Description
+    * - ``SMITHY_ROOT_DIR``
+      - The root directory of the build (e.g., where the Smithy CLI was invoked).
+
 
 .. _plugins:
 
@@ -1664,6 +1722,116 @@ relative path from the manifest file to each model file created by the
 sources plugin. Lines that start with a number sign (#) are comments and are
 ignored. A Smithy manifest file is stored in a JAR as ``META-INF/smithy/manifest``.
 All model files referenced by the manifest are relative to ``META-INF/smithy/``.
+
+
+.. _run-plugin:
+
+run plugin
+----------
+
+The ``run`` plugin runs an external program during the build. This plugin is
+useful when integrating Smithy's build process with Smithy implementations
+that are not written in Java.
+
+When invoking the process, the Smithy model of the projection is serialized
+using the :ref:`JSON AST <json-ast>` and sent to the standard input of the
+process.
+
+.. important::
+
+    The ``run`` plugin requires a custom artifact name in its
+    :ref:`plugin ID <plugin-id>`.
+
+The ``run`` plugin supports the following properties:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - command
+      - ``[string]``
+      - **REQUIRED** The name of the program to run, followed by an optional
+        list of arguments. If the command uses a relative path, Smithy will
+        first check if the command can be found relative to the current working
+        directory. Otherwise, the program must be available on the ``$PATH`` or
+        use an absolute path. No arguments are sent other than the arguments
+        configured in the ``command`` setting.
+    * - env
+      - ``Map<String, String>``
+      - A map of environment variables to send to the process. The process
+        will inherit the environment variables of the containing process.
+        The values defined in ``env`` add new variables or overwrite
+        inherited variables.
+    * - sendPrelude
+      - ``boolean``
+      - Set to true to include prelude shapes when sending the Smithy model to
+        the standard input of the process. By default, the prelude is omitted.
+
+Smithy will make the following environment variables available to the program:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 25 75
+
+    * - Name
+      - Description
+    * - ``SMITHY_ROOT_DIR``
+      - The root directory of the build (e.g., where the Smithy CLI was invoked).
+    * - ``SMITHY_PLUGIN_DIR``
+      - The working directory of the program. All files written by the program
+        should be relative to this directory.
+    * - ``SMITHY_PROJECTION_NAME``
+      - The projection name the program was called within (e.g., "source").
+    * - ``SMITHY_ARTIFACT_NAME``
+      - The :ref:`plugin ID <plugin-id>` artifact name provided in
+        "artifact-name via run".
+    * - ``SMITHY_INCLUDES_PRELUDE``
+      - Contains the value of ``sendPrelude`` in the form of ``true`` or
+        ``false`` to tell the process if the prelude is included in the
+        serialized model.
+
+The following example applies the ``run`` command with an artifact name
+of ``custom-process``:
+
+.. code-block:: json
+
+    {
+        "version": "1.0",
+        "projections": {
+            "source": {
+                "plugins": {
+                    "custom-process via run": {
+                        "command": ["hello.sh", "--arg", "arg-value"]
+                    }
+                }
+            }
+        }
+    }
+
+Assuming ``hello.sh`` is on the PATH and might look something like:
+
+.. code-block:: bash
+
+    #!/bin/sh
+
+    # Command line arguments are provided.
+    echo "--arg: $2"
+
+    # Print out the provided environment variables.
+    echo "SMITHY_ROOT_DIR: ${SMITHY_ROOT_DIR}"
+    echo "SMITHY_PLUGIN_DIR: ${SMITHY_PLUGIN_DIR}"
+    echo "SMITHY_PROJECTION_NAME: ${SMITHY_PROJECTION_NAME}"
+    echo "SMITHY_ARTIFACT_NAME: ${SMITHY_ARTIFACT_NAME}"
+    echo "SMITHY_INCLUDES_PRELUDE: ${SMITHY_INCLUDES_PRELUDE}"
+
+    # Copy the model from stdin and write it to copy-model.json.
+    # The process is run in the appropriate working directory for the
+    # plugin ID's artifact name.
+    cat >> copy-model.json
+
 
 .. _Java SPI: https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html
 .. _Apache Maven: https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html
