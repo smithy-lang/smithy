@@ -1,0 +1,8 @@
+{
+    "version": "1.0",
+    "plugins": {
+        ".. via run": {
+            "command": ["java", "-version"]
+        }
+    }
+}

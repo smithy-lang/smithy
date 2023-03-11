@@ -1,0 +1,8 @@
+{
+    "version": "1.0",
+    "plugins": {
+        "invalid-exit-code via run": {
+            "command": ["sh", "return-error.sh", "2"]
+        }
+    }
+}
