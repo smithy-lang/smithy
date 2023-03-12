@@ -47,23 +47,23 @@ public class ConditionKeysIndexTest {
         assertThat(index.getConditionKeyNames(service), containsInAnyOrder(
                 "aws:accountId", "foo:baz", "myservice:Resource1Id1", "myservice:ResourceTwoId2"));
         assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#Operation1")),
-                   containsInAnyOrder("aws:accountId", "foo:baz"));
+                containsInAnyOrder("aws:accountId", "foo:baz"));
         assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#Resource1")),
-                   containsInAnyOrder("aws:accountId", "foo:baz", "myservice:Resource1Id1"));
+                containsInAnyOrder("aws:accountId", "foo:baz", "myservice:Resource1Id1"));
         // Note that ID1 is not duplicated but rather reused on the child operation.
         assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#Resource2")),
-                   containsInAnyOrder("aws:accountId", "foo:baz",
-                                      "myservice:Resource1Id1", "myservice:ResourceTwoId2"));
+                containsInAnyOrder("aws:accountId", "foo:baz",
+                        "myservice:Resource1Id1", "myservice:ResourceTwoId2"));
         // Note that while this operation binds identifiers, it contains no unique ConditionKeys to bind.
         assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#GetResource2")), is(empty()));
 
         // Defined context keys are assembled from the names and mapped with the definitions.
         assertThat(index.getDefinedConditionKeys(service).get("myservice:Resource1Id1").getDocumentation(),
-                   not(Optional.empty()));
+                not(Optional.empty()));
         assertEquals(index.getDefinedConditionKeys(service).get("myservice:ResourceTwoId2").getDocumentation().get(),
                 "This is Foo");
         assertThat(index.getDefinedConditionKeys(service, ShapeId.from("smithy.example#GetResource2")).keySet(),
-                   is(empty()));
+                is(empty()));
     }
 
     @Test
@@ -75,8 +75,8 @@ public class ConditionKeysIndexTest {
 
         assertTrue(result.isBroken());
         assertThat(result.getValidationEvents(Severity.ERROR).stream()
-                           .map(ValidationEvent::getId)
-                           .collect(Collectors.toSet()),
+                        .map(ValidationEvent::getId)
+                        .collect(Collectors.toSet()),
                 contains("ConditionKeys"));
     }
 }
