@@ -395,9 +395,9 @@ deviates from the :ref:`shape name of the shape ID <shape-id>` of the resource.
 .. smithy-trait:: aws.iam#actionName
 .. _aws.iam#actionName-trait:
 
--------------------------------
+----------------------------
 ``aws.iam#actionName`` trait
--------------------------------
+----------------------------
 
 Summary
     Provides a custom IAM action name.
