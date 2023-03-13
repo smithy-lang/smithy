@@ -30,10 +30,10 @@ final class PluginId {
         String pluginName = identifier;
         String artifactName = null;
 
-        int viaPosition = identifier.indexOf(" via ");
-        if (viaPosition > -1) {
-            pluginName = identifier.substring(viaPosition + 5);
-            artifactName = identifier.substring(0, viaPosition);
+        int separatorPosition = identifier.indexOf("::");
+        if (separatorPosition > -1) {
+            pluginName = identifier.substring(0, separatorPosition);
+            artifactName = identifier.substring(separatorPosition + 2);
         }
 
         return new PluginId(pluginName, artifactName);
@@ -56,7 +56,7 @@ final class PluginId {
         if (!hasArtifactName()) {
             return pluginName;
         } else {
-            return artifactName + " via " + pluginName;
+            return pluginName + "::" + artifactName;
         }
     }
 

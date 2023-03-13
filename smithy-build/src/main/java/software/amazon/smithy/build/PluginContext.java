@@ -93,7 +93,7 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
     /**
      * Gets the plugin artifact name, if present.
      *
-     * <p>An artifact name is given to a plugin by defining the plugin as "foo via bar", where "foo" is the artifact
+     * <p>An artifact name is given to a plugin by defining the plugin as "bar::foo", where "foo" is the artifact
      * name and "bar" is the plugin name. An artifact name is useful for cases when a plugin is applied multiple times
      * in a single projection. The artifact name changes the directory of where the plugin writes files. A plugin
      * implementation should use the plugin name as the artifact name if no explicit artifact name is provided.

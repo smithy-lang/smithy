@@ -1,7 +1,7 @@
 {
     "version": "1.0",
     "plugins": {
-        ".. via run": {
+        "run::..": {
             "command": ["java", "-version"]
         }
     }

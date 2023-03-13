@@ -20,20 +20,20 @@ public class PluginArtifactIdTest {
 
     @Test
     public void allowsArtifactId() {
-        PluginId id = PluginId.from("foo via bar");
+        PluginId id = PluginId.from("bar::foo");
 
         assertThat(id.hasArtifactName(), is(true));
-        assertThat(id.toString(), equalTo("foo via bar"));
+        assertThat(id.toString(), equalTo("bar::foo"));
         assertThat(id.getPluginName(), equalTo("bar"));
         assertThat(id.getArtifactName(), equalTo("foo"));
     }
 
     @Test
     public void supportsEqualsAndHashCode() {
-        PluginId id1 = PluginId.from("foo via bar");
-        PluginId id2 = PluginId.from("foo via bar");
-        PluginId id3 = PluginId.from("foo via bam");
-        PluginId id4 = PluginId.from("bam via foo");
+        PluginId id1 = PluginId.from("bar::foo");
+        PluginId id2 = PluginId.from("bar::foo");
+        PluginId id3 = PluginId.from("bam::foo");
+        PluginId id4 = PluginId.from("foo::bam");
         PluginId id5 = PluginId.from("bam");
 
         assertThat(id1.hashCode(), equalTo(id2.hashCode()));

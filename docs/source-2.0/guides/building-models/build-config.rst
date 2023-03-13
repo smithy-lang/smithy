@@ -109,7 +109,7 @@ The following is an example ``smithy-build.json`` configuration:
                     "plugin-name": {
                         "plugin-config": "value"
                     },
-                    "custom-artifact-name via run": {
+                    "run::custom-artifact-name": {
                         "command": ["my-codegenerator", "--debug"]
                     },
                     "...": {}
@@ -129,19 +129,15 @@ The following is an example ``smithy-build.json`` configuration:
 Plugin ID and artifact names
 ============================
 
-A plugin ID defines an *artifact name* and a *plugin name*. The artifact
-name defines the directory where a plugin writes files. The plugin name
-tells Smithy which plugin to find and apply. By default, the artifact name
-is equivalent to the plugin name (that is, ``foo`` is equivalent to
-``foo via foo``).
+A plugin ID defines a *plugin name* and *artifact name* in the form of
+``plugin-name::artifact-name``.
 
-A custom artifact name can be configured using the syntax
-``artifact-name via plugin-name`` where:
-
-* ``artifact-name`` is the artifact name and directory where the plugin
-  writes artifacts.
 * ``plugin-name`` is the name of the plugin Smithy finds and runs with the
   plugin-specific configuration.
+* ``artifact-name`` is the optional artifact name and directory where the
+  plugin writes artifacts. If no ``::artifact-name`` is specific,
+  the artifact name defaults to the plugin name. No two plugin IDs in a
+  single projection can use the same artifact name.
 
 The following example shows that the :ref:`run-plugin` can be used in the
 same projection multiple times using a custom artifact name.
@@ -153,10 +149,10 @@ same projection multiple times using a custom artifact name.
         "projections": {
             "source": {
                 "plugins": {
-                    "foo via run": {
+                    "run::foo": {
                         "command": ["sh", "foo.sh"]
                     },
-                    "baz via run": {
+                    "run::baz": {
                         "command": ["baz", "-a", "A"]
                     }
                 }
@@ -1740,7 +1736,7 @@ process.
 .. important::
 
     The ``run`` plugin requires a custom artifact name in its
-    :ref:`plugin ID <plugin-id>`.
+    :ref:`plugin ID <plugin-id>` (e.g., ``run::artifact-name``).
 
 The ``run`` plugin supports the following properties:
 
@@ -1786,8 +1782,7 @@ Smithy will make the following environment variables available to the program:
     * - ``SMITHY_PROJECTION_NAME``
       - The projection name the program was called within (e.g., "source").
     * - ``SMITHY_ARTIFACT_NAME``
-      - The :ref:`plugin ID <plugin-id>` artifact name provided in
-        "artifact-name via run".
+      - The :ref:`plugin ID <plugin-id>` artifact name.
     * - ``SMITHY_INCLUDES_PRELUDE``
       - Contains the value of ``sendPrelude`` in the form of ``true`` or
         ``false`` to tell the process if the prelude is included in the
@@ -1803,7 +1798,7 @@ of ``custom-process``:
         "projections": {
             "source": {
                 "plugins": {
-                    "custom-process via run": {
+                    "run::hello": {
                         "command": ["hello.sh", "--arg", "arg-value"]
                     }
                 }

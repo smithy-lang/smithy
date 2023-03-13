@@ -1,7 +1,7 @@
 {
     "version": "1.0",
     "plugins": {
-        "test-process via run": {
+        "run::test-process": {
             "command": ["sh", "test-process.sh", "a"],
             "env": {
                 "FOO_BAR": "BAZ",

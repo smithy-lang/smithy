@@ -103,7 +103,7 @@ public final class ProjectionResult {
     /**
      * Gets the result of a specific plugin by plugin artifact name.
      *
-     * <p>If no artifact name is configured for a plugin in smithy-build.json (e.g., "foo via bar"), the
+     * <p>If no artifact name is configured for a plugin in smithy-build.json (e.g., "plugin::artifact"), the
      * artifact name defaults to the plugin name.
      *
      * @param artifactName Name of the plugin artifact to retrieve.
@@ -152,7 +152,7 @@ public final class ProjectionResult {
         /**
          * Adds an artifact result for a plugin.
          *
-         * <p>If no artifact name is configured for a plugin in smithy-build.json (e.g., "foo via bar"), the
+         * <p>If no artifact name is configured for a plugin in smithy-build.json (e.g., "plugin::artifact"), the
          * artifact name defaults to the plugin name.
          *
          * @param artifactName Name of the plugin artifact to set.

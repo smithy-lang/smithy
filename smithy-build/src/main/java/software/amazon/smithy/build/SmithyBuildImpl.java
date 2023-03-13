@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -55,9 +56,9 @@ final class SmithyBuildImpl {
     // The pattern for projections and plugins must only be a valid PATTERN_PART.
     private static final Pattern PATTERN = Pattern.compile("^" + PATTERN_PART + "$");
 
-    // Must start with letter/number. Allows for optional artifact name: artifact-name via plugin-name
+    // Must start with letter/number. Allows for optional artifact name: plugin-name::artifact-name
     private static final Pattern PLUGIN_PATTERN = Pattern
-            .compile("^" + PATTERN_PART + "( via " + PATTERN_PART + ")?$");
+            .compile("^" + PATTERN_PART + "(::" + PATTERN_PART + ")?$");
 
     private final SmithyBuildConfig config;
     private final Function<Path, FileManifest> fileManifestFactory;
@@ -211,13 +212,22 @@ final class SmithyBuildImpl {
     }
 
     private List<ResolvedPlugin> resolvePlugins(String projectionName, ProjectionConfig config) {
+        // Ensure that no two plugins use the same artifact name.
+        Set<String> seenArtifactNames = new HashSet<>();
         List<ResolvedPlugin> resolvedPlugins = new ArrayList<>();
+
         for (Map.Entry<String, ObjectNode> pluginEntry : getCombinedPlugins(config).entrySet()) {
             PluginId id = PluginId.from(pluginEntry.getKey());
+            if (!seenArtifactNames.add(id.getArtifactName())) {
+                throw new SmithyBuildException(String.format(
+                        "Multiple plugins use the same artifact name '%s' in the '%s' projection",
+                        id.getArtifactName(), projectionName));
+            }
             createPlugin(projectionName, id).ifPresent(plugin -> {
                 resolvedPlugins.add(new ResolvedPlugin(id, plugin, pluginEntry.getValue()));
             });
         }
+
         return resolvedPlugins;
     }
 
