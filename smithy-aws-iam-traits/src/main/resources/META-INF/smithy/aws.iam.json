@@ -274,7 +274,7 @@
                 "smithy.api#trait": {
                     "selector": "operation"
                 },
-                "smithy.api#documentation": "Provides the ability to override the default action name for the operation. By convention, the action name is the same as the operation name."
+                "smithy.api#documentation": "Provides a custom IAM action name. By default, the action name is the same as the operation name."
             }
         }
     }
