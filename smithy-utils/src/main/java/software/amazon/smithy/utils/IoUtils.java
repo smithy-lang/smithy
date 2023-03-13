@@ -45,7 +45,7 @@ import java.util.logging.Logger;
 public final class IoUtils {
 
     private static final Logger LOGGER = Logger.getLogger(IoUtils.class.getName());
-    private static final int BUFFER_SIZE = 1024 * 4;
+    private static final int BUFFER_SIZE = 1024 * 8;
 
     private IoUtils() {}
 
@@ -276,7 +276,7 @@ public final class IoUtils {
             if (input != null) {
                 OutputStream outputStream = process.getOutputStream();
                 copyInputToOutput(input, outputStream);
-                closeAndFlushStream(args, outputStream);
+                quietlyCloseStream(args, outputStream);
             }
 
             try (BufferedReader bufferedStdoutReader = new BufferedReader(
@@ -295,20 +295,18 @@ public final class IoUtils {
 
     // Can be replaced with InputStream#transferTo in Java 9+.
     private static void copyInputToOutput(InputStream source, OutputStream sink) throws IOException {
-        byte[] buffer = new byte[8192];
+        byte[] buffer = new byte[BUFFER_SIZE];
         int read;
-        while ((read = source.read(buffer, 0, 8192)) >= 0) {
+        while ((read = source.read(buffer, 0, BUFFER_SIZE)) >= 0) {
             sink.write(buffer, 0, read);
         }
     }
 
-    private static void closeAndFlushStream(List<String> args, OutputStream outputStream) {
+    private static void quietlyCloseStream(List<String> args, OutputStream outputStream) {
         try {
-            outputStream.flush();
             outputStream.close();
         } catch (IOException e) {
-            // TODO: Why is this necessary?
-            LOGGER.log(Level.WARNING, "Unable to close and flush outputStream for " + args, e);
+            LOGGER.log(Level.WARNING, "Unable to close outputStream for " + args, e);
         }
     }
 
