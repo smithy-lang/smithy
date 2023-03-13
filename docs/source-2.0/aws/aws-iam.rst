@@ -411,8 +411,10 @@ Operations not annotated with the ``actionName`` trait, default to the
 
 The following example defines two operations:
 
-* ``OperationA`` is not annotated with the ``actionName`` trait, and resolves the action name of ``OperationA``.
-* ``OperationB`` has the ``actionName`` trait, so has the action name ``OverridingActionName``.
+* ``OperationA`` is not annotated with the ``actionName`` trait, and
+  resolves the action name of ``OperationA``.
+* ``OperationB`` has the ``actionName`` trait, so has the action
+  name ``OverridingActionName``.
 
 .. code-block:: smithy
 
