@@ -347,7 +347,6 @@ public class CodegenDirectorTest {
             CodegenDirector.<TestWriter, TestIntegration, TestContext, TestSettings>builder()
             .settings(new TestSettings())
             .directedCodegen(testDirected)
-            .directedCodegen(testDirected)
             .fileManifest(manifest)
             .service(ShapeId.from("smithy.example#Foo"))
             .model(model)
