@@ -18,7 +18,7 @@ jobs:
     - name: Assume IAM Role
       id: iam-role
       continue-on-error: true
-      uses: aws-actions/configure-aws-credentials@v1
+      uses: aws-actions/configure-aws-credentials@v2
       with:
         role-to-assume: arn:aws:iam::048169001733:role/GuruGitHubCICDRole
         aws-region: us-west-2
