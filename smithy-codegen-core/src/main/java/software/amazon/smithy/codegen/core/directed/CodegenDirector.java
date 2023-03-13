@@ -52,6 +52,7 @@ import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.utils.CodeInterceptor;
 import software.amazon.smithy.utils.CodeSection;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * Performs directed code generation of a {@link DirectedCodegen}.
@@ -65,7 +66,7 @@ public final class CodegenDirector<
         W extends SymbolWriter<W, ? extends ImportContainer>,
         I extends SmithyIntegration<S, W, C>,
         C extends CodegenContext<S, W, I>,
-        S> {
+        S> implements ToSmithyBuilder<CodegenDirector<W, I, C, S>> {
 
     private static final Logger LOGGER = Logger.getLogger(CodegenDirector.class.getName());
 
@@ -78,6 +79,25 @@ public final class CodegenDirector<
     private DirectedCodegen<C, S, I> directedCodegen;
     private final List<BiFunction<Model, ModelTransformer, Model>> transforms = new ArrayList<>();
     private ShapeGenerationOrder shapeGenerationOrder = ShapeGenerationOrder.TOPOLOGICAL;
+
+    public CodegenDirector() {
+        // No args constructor
+    }
+
+    private CodegenDirector(Builder<W, I, C, S> builder) {
+        System.out.println("BuILDER " +  builder);
+        System.out.println("VALUE " +  builder.integrationClass);
+        integrationClass = SmithyBuilder.requiredState("integrationClass", builder.integrationClass);
+        service = SmithyBuilder.requiredState("service", builder.service);
+        model = SmithyBuilder.requiredState("model", builder.model);
+        settings = SmithyBuilder.requiredState("settings", builder.settings);
+        fileManifest = SmithyBuilder.requiredState("fileManifest", builder.fileManifest);
+        directedCodegen = SmithyBuilder.requiredState("directedCodegen", builder.directedCodegen);
+        shapeGenerationOrder = SmithyBuilder.requiredState("shapeGenerationOrder", builder.shapeGenerationOrder);
+        integrationFinder = builder.integrationFinder;
+        transforms.addAll(builder.transforms);
+    }
+
 
     /**
      * Simplifies a Smithy model for code generation of a single service.
@@ -204,11 +224,12 @@ public final class CodegenDirector<
      * Set to true to apply {@link CodegenDirector#simplifyModelForServiceCodegen}
      * prior to code generation.
      */
-    public void performDefaultCodegenTransforms() {
+    public CodegenDirector<W, I, C, S> performDefaultCodegenTransforms() {
         transforms.add((model, transformer) -> {
             LOGGER.finest("Performing default codegen model transforms for directed codegen");
             return simplifyModelForServiceCodegen(model, Objects.requireNonNull(service), transformer);
         });
+        return this;
     }
 
     /**
@@ -221,8 +242,9 @@ public final class CodegenDirector<
      *
      * @see ModelTransformer#createDedicatedInputAndOutput(Model, String, String)
      */
-    public void createDedicatedInputsAndOutputs() {
+    public CodegenDirector<W, I, C, S> createDedicatedInputsAndOutputs() {
         createDedicatedInputsAndOutputs("Input", "Output");
+        return this;
     }
 
     /**
@@ -233,11 +255,12 @@ public final class CodegenDirector<
      * @param outputSuffix Suffix to use for output shapes (e.g., "Output").
      * @see ModelTransformer#createDedicatedInputAndOutput(Model, String, String)
      */
-    public void createDedicatedInputsAndOutputs(String inputSuffix, String outputSuffix) {
+    public CodegenDirector<W, I, C, S> createDedicatedInputsAndOutputs(String inputSuffix, String outputSuffix) {
         transforms.add((model, transformer) -> {
             LOGGER.finest("Creating dedicated input and output shapes for directed codegen");
             return transformer.createDedicatedInputAndOutput(model, inputSuffix, outputSuffix);
         });
+        return this;
     }
 
     /**
@@ -246,11 +269,12 @@ public final class CodegenDirector<
      * @param synthesizeEnumNames Whether enums without names should have names synthesized if possible.
      * @see ModelTransformer#changeStringEnumsToEnumShapes(Model, boolean)
      */
-    public void changeStringEnumsToEnumShapes(boolean synthesizeEnumNames) {
+    public CodegenDirector<W, I, C, S> changeStringEnumsToEnumShapes(boolean synthesizeEnumNames) {
         transforms.add((model, transformer) -> {
             LOGGER.finest("Creating dedicated input and output shapes for directed codegen");
             return transformer.changeStringEnumsToEnumShapes(model, synthesizeEnumNames);
         });
+        return this;
     }
 
     /**
@@ -273,11 +297,12 @@ public final class CodegenDirector<
      * Once this is performed, there's no need to ever explicitly sort members
      * throughout the rest of code generation.
      */
-    public void sortMembers() {
+    public CodegenDirector<W, I, C, S> sortMembers() {
         transforms.add((model, transformer) -> {
             LOGGER.finest("Sorting model members for directed codegen");
             return transformer.sortMembers(model, Shape::compareTo);
         });
+        return this;
     }
 
     /**
@@ -448,6 +473,97 @@ public final class CodegenDirector<
             LOGGER.finest(() -> "Customizing codegen for " + directedCodegen.getClass().getName()
                                 + " using integration " + integration.getClass().getName());
             integration.customize(context);
+        }
+    }
+
+    @Override
+    public Builder<W, I, C, S> toBuilder() {
+        return CodegenDirector.<W, I, C, S>builder()
+            .integrationClass(integrationClass)
+            .service(service)
+            .model(model)
+            .settings(settings)
+            .fileManifest(fileManifest)
+            .integrationFinder(integrationFinder)
+            .directedCodegen(directedCodegen)
+            .transforms(transforms)
+            .shapeGenerationOrder(shapeGenerationOrder);
+    }
+
+    public static <
+        W extends SymbolWriter<W, ? extends ImportContainer>,
+        I extends SmithyIntegration<S, W, C>,
+        C extends CodegenContext<S, W, I>,
+        S>  Builder<W, I, C, S> builder() {
+        return new Builder<>();
+    }
+
+    public static final class Builder<
+        W extends SymbolWriter<W, ? extends ImportContainer>,
+        I extends SmithyIntegration<S, W, C>,
+        C extends CodegenContext<S, W, I>,
+        S> implements SmithyBuilder<CodegenDirector<W, I, C, S>> {
+
+        private Class<I> integrationClass;
+        private ShapeId service;
+        private Model model;
+        private S settings;
+        private FileManifest fileManifest;
+        private Supplier<Iterable<I>> integrationFinder;
+        private DirectedCodegen<C, S, I> directedCodegen;
+        private final List<BiFunction<Model, ModelTransformer, Model>> transforms = new ArrayList<>();
+        private ShapeGenerationOrder shapeGenerationOrder = ShapeGenerationOrder.TOPOLOGICAL;
+
+        @Override
+        public CodegenDirector<W, I, C, S> build() {
+            return new CodegenDirector<>(this);
+        }
+
+        public Builder<W, I, C, S> directedCodegen(DirectedCodegen<C, S, I> directedCodegen) {
+            this.directedCodegen = directedCodegen;
+            return this;
+        }
+
+        public Builder<W, I, C, S> integrationClass(Class<I> integrationClass) {
+            System.out.println("INTEG: " + integrationClass);
+            this.integrationClass = integrationClass;
+            return this;
+        }
+
+        public Builder<W, I, C, S> fileManifest(FileManifest fileManifest) {
+            this.fileManifest = fileManifest;
+            return this;
+        }
+
+        public Builder<W, I, C, S> model(Model model) {
+            this.model = model;
+            return this;
+        }
+
+        public Builder<W, I, C, S> settings(S settings) {
+            this.settings = settings;
+            return this;
+        }
+
+        public Builder<W, I, C, S> service(ShapeId serviceId) {
+            this.service = serviceId;
+            return this;
+        }
+
+        public Builder<W, I, C, S> shapeGenerationOrder(ShapeGenerationOrder shapeGenerationOrder) {
+            this.shapeGenerationOrder = shapeGenerationOrder;
+            return this;
+        }
+
+        public Builder<W, I, C, S> integrationFinder(Supplier<Iterable<I>> integrationFinder) {
+            this.integrationFinder = integrationFinder;
+            return this;
+        }
+
+        public Builder<W, I, C, S> transforms(List<BiFunction<Model, ModelTransformer, Model>> transforms) {
+            this.transforms.clear();
+            this.transforms.addAll(transforms);
+            return this;
         }
     }
 

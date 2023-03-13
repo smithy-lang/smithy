@@ -22,6 +22,8 @@ import static org.hamcrest.Matchers.empty;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.sun.tools.javac.jvm.Code;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.FileManifest;
@@ -34,6 +36,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.SmithyBuilder;
 
 public class CodegenDirectorTest {
 
@@ -327,6 +330,44 @@ public class CodegenDirectorTest {
                 ShapeId.from("smithy.example#RecursiveA"),
                 ShapeId.from("smithy.example#RecursiveB"),
                 ShapeId.from("smithy.example#Foo")
+        ));
+    }
+
+    @Test
+    public void testShapesGenerationWithBuilder() {
+        TestDirected testDirected = new TestDirected();
+
+        FileManifest manifest = new MockManifest();
+        Model model = Model.assembler()
+            .addImport(getClass().getResource("needs-sorting.smithy"))
+            .assemble()
+            .unwrap();
+
+        CodegenDirector<TestWriter, TestIntegration, TestContext, TestSettings> runner =
+            CodegenDirector.<TestWriter, TestIntegration, TestContext, TestSettings>builder()
+            .settings(new TestSettings())
+            .directedCodegen(testDirected)
+            .directedCodegen(testDirected)
+            .fileManifest(manifest)
+            .service(ShapeId.from("smithy.example#Foo"))
+            .model(model)
+            .integrationClass(TestIntegration.class)
+            .shapeGenerationOrder(ShapeGenerationOrder.NONE)
+            .build();
+
+        runner.performDefaultCodegenTransforms()
+            .run();
+
+        assertThat(testDirected.generatedShapes, contains(
+            ShapeId.from("smithy.example#FooOperationOutput"),
+            ShapeId.from("smithy.example#A"),
+            ShapeId.from("smithy.example#B"),
+            ShapeId.from("smithy.example#C"),
+            ShapeId.from("smithy.example#D"),
+            ShapeId.from("smithy.example#FooOperationInput"),
+            ShapeId.from("smithy.example#RecursiveA"),
+            ShapeId.from("smithy.example#RecursiveB"),
+            ShapeId.from("smithy.example#Foo")
         ));
     }
 }
