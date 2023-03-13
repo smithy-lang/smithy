@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -779,4 +780,28 @@ public class SmithyBuildTest {
 
         return Assertions.assertThrows(SmithyBuildException.class, builder::build);
     }
+
+    @Test
+    public void detectsConflictingArtifactNames() throws Exception {
+        // Setup fake test1 and test2 plugins just to create a conflict in the test between artifact names
+        // but without conflicting JSON keys.
+        Map<String, SmithyBuildPlugin> plugins = MapUtils.of(
+                "test1", new Test1SerialPlugin(),
+                "test2", new Test2ParallelPlugin());
+        Function<String, Optional<SmithyBuildPlugin>> factory = SmithyBuildPlugin.createServiceFactory();
+        Function<String, Optional<SmithyBuildPlugin>> composed = name -> OptionalUtils.or(
+                Optional.ofNullable(plugins.get(name)), () -> factory.apply(name));
+
+        URI build = getClass().getResource("run-plugin/invalid-conflicting-artifact-names.json").toURI();
+        SmithyBuild builder = new SmithyBuild()
+                .pluginFactory(composed)
+                .fileManifestFactory(MockManifest::new)
+                .config(SmithyBuildConfig.builder().load(Paths.get(build)).build());
+
+        SmithyBuildException e = Assertions.assertThrows(SmithyBuildException.class, builder::build);
+
+        assertThat(e.getMessage(), containsString("Multiple plugins use the same artifact name 'foo' in "
+                                                  + "the 'source' projection"));
+    }
 }
+
