@@ -338,7 +338,11 @@ or include parameters and operations that are available to only a subset of
 their customers.
 
 Projections are defined in the smithy-build.json file in the ``projections``
-property. Projection names MUST match the following pattern: ``^[A-Za-z0-9\-_.]+$``.
+property. Projection names MUST match the following pattern:
+
+.. code-block::
+
+    ^[A-Za-z0-9]+[A-Za-z0-9\\-_.]*$
 
 A projection accepts the following configuration:
 
@@ -1662,7 +1666,11 @@ every projection. Projections that define plugins of the same name as a
 top-level plugin completely overwrite the top-level plugin for that projection;
 projection settings are not merged in any way.
 
-Plugin names MUST match the following pattern: ``^[A-Za-z0-9\-_.]+$``.
+Plugin names MUST match the following pattern:
+
+.. code-block::
+
+    ^[A-Za-z0-9]+[A-Za-z0-9\\-_.]*(::[A-Za-z0-9]+[A-Za-z0-9\\-_.]*)?$
 
 smithy-build will attempt to resolve plugin names using `Java SPI`_
 to locate an instance of ``software.amazon.smithy.build.SmithyBuildPlugin``
@@ -1752,9 +1760,10 @@ The ``run`` plugin supports the following properties:
       - **REQUIRED** The name of the program to run, followed by an optional
         list of arguments. If the command uses a relative path, Smithy will
         first check if the command can be found relative to the current working
-        directory. Otherwise, the program must be available on the ``$PATH`` or
-        use an absolute path. No arguments are sent other than the arguments
-        configured in the ``command`` setting.
+        directory. Otherwise, the program must use an absolute path or be
+        available on the user's ``$PATH`` if Unix-like environments or its
+        equivalent in other operating systems. No arguments are sent other
+        than the arguments configured in the ``command`` setting.
     * - env
       - ``Map<String, String>``
       - A map of environment variables to send to the process. The process
