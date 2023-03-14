@@ -85,17 +85,16 @@ public final class CodegenDirector<
     }
 
     private CodegenDirector(Builder<W, I, C, S> builder) {
-        System.out.println("BuILDER " +  builder);
-        System.out.println("VALUE " +  builder.integrationClass);
-        integrationClass = SmithyBuilder.requiredState("integrationClass", builder.integrationClass);
-        service = SmithyBuilder.requiredState("service", builder.service);
-        model = SmithyBuilder.requiredState("model", builder.model);
-        settings = SmithyBuilder.requiredState("settings", builder.settings);
-        fileManifest = SmithyBuilder.requiredState("fileManifest", builder.fileManifest);
-        directedCodegen = SmithyBuilder.requiredState("directedCodegen", builder.directedCodegen);
-        shapeGenerationOrder = SmithyBuilder.requiredState("shapeGenerationOrder", builder.shapeGenerationOrder);
+        integrationClass = builder.integrationClass;
+        service = builder.service;
+        model = builder.model;
+        settings = builder.settings;
+        fileManifest = builder.fileManifest;
+        directedCodegen = builder.directedCodegen;
+        shapeGenerationOrder = builder.shapeGenerationOrder;
         integrationFinder = builder.integrationFinder;
         transforms.addAll(builder.transforms);
+        validateState();
     }
 
 
@@ -224,12 +223,11 @@ public final class CodegenDirector<
      * Set to true to apply {@link CodegenDirector#simplifyModelForServiceCodegen}
      * prior to code generation.
      */
-    public CodegenDirector<W, I, C, S> performDefaultCodegenTransforms() {
+    public void performDefaultCodegenTransforms() {
         transforms.add((model, transformer) -> {
             LOGGER.finest("Performing default codegen model transforms for directed codegen");
             return simplifyModelForServiceCodegen(model, Objects.requireNonNull(service), transformer);
         });
-        return this;
     }
 
     /**
@@ -242,9 +240,8 @@ public final class CodegenDirector<
      *
      * @see ModelTransformer#createDedicatedInputAndOutput(Model, String, String)
      */
-    public CodegenDirector<W, I, C, S> createDedicatedInputsAndOutputs() {
+    public void createDedicatedInputsAndOutputs() {
         createDedicatedInputsAndOutputs("Input", "Output");
-        return this;
     }
 
     /**
@@ -269,12 +266,11 @@ public final class CodegenDirector<
      * @param synthesizeEnumNames Whether enums without names should have names synthesized if possible.
      * @see ModelTransformer#changeStringEnumsToEnumShapes(Model, boolean)
      */
-    public CodegenDirector<W, I, C, S> changeStringEnumsToEnumShapes(boolean synthesizeEnumNames) {
+    public void changeStringEnumsToEnumShapes(boolean synthesizeEnumNames) {
         transforms.add((model, transformer) -> {
             LOGGER.finest("Creating dedicated input and output shapes for directed codegen");
             return transformer.changeStringEnumsToEnumShapes(model, synthesizeEnumNames);
         });
-        return this;
     }
 
     /**
@@ -297,12 +293,11 @@ public final class CodegenDirector<
      * Once this is performed, there's no need to ever explicitly sort members
      * throughout the rest of code generation.
      */
-    public CodegenDirector<W, I, C, S> sortMembers() {
+    public void sortMembers() {
         transforms.add((model, transformer) -> {
             LOGGER.finest("Sorting model members for directed codegen");
             return transformer.sortMembers(model, Shape::compareTo);
         });
-        return this;
     }
 
     /**
@@ -498,6 +493,14 @@ public final class CodegenDirector<
         return new Builder<>();
     }
 
+    /**
+     * Builder used to create a {@link CodegenDirector}.
+     *
+     * @param <W> Type of {@link SymbolWriter} used to generate code.
+     * @param <I> Type of {@link SmithyIntegration} to apply.
+     * @param <C> Type of {@link CodegenContext} to create and use.
+     * @param <S> Type of settings object to pass to directed methods.
+     */
     public static final class Builder<
         W extends SymbolWriter<W, ? extends ImportContainer>,
         I extends SmithyIntegration<S, W, C>,

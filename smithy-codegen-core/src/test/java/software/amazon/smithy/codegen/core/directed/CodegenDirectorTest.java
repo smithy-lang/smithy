@@ -354,8 +354,8 @@ public class CodegenDirectorTest {
             .shapeGenerationOrder(ShapeGenerationOrder.NONE)
             .build();
 
-        runner.performDefaultCodegenTransforms()
-            .run();
+        runner.performDefaultCodegenTransforms();
+        runner.run();
 
         assertThat(testDirected.generatedShapes, contains(
             ShapeId.from("smithy.example#FooOperationOutput"),
