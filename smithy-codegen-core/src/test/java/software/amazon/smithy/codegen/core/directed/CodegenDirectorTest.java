@@ -23,7 +23,6 @@ import static org.hamcrest.Matchers.empty;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sun.tools.javac.jvm.Code;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.FileManifest;
@@ -36,7 +35,6 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.utils.SmithyBuilder;
 
 public class CodegenDirectorTest {
 
