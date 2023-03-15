@@ -120,7 +120,6 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
     }
 
     private Value handleRule(Rule rule) {
-        RuleEvaluator self = this;
         return scope.inScope(() -> {
             for (Condition condition : rule.getConditions()) {
                 Value value = evaluateCondition(condition);
@@ -143,26 +142,35 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
 
                 @Override
                 public Value visitErrorRule(Expression error) {
-                    return error.accept(self);
+                    return RuleEvaluator.this.visitErrorRule(error);
                 }
 
                 @Override
                 public Value visitEndpointRule(Endpoint endpoint) {
-                    Value.Endpoint.Builder builder = Value.Endpoint.builder()
-                            .sourceLocation(endpoint)
-                            .url(endpoint.getUrl()
-                                    .accept(RuleEvaluator.this)
-                                    .expectString());
-                    endpoint.getProperties()
-                            .forEach((key, value) -> builder.addProperty(key.toString(),
-                                    value.accept(RuleEvaluator.this)));
-                    endpoint.getHeaders()
-                            .forEach((name, expressions) -> expressions.forEach(expr -> builder.addHeader(name,
-                                    expr.accept(RuleEvaluator.this).expectString())));
-                    return builder.build();
+                    return RuleEvaluator.this.visitEndpointRule(endpoint);
                 }
             });
         });
+    }
+
+    public Value visitErrorRule(Expression error) {
+        return error.accept(this);
+    }
+
+    public Value visitEndpointRule(Endpoint endpoint) {
+        Value.Endpoint.Builder builder = Value.Endpoint.builder()
+                .sourceLocation(endpoint)
+                .url(endpoint.getUrl()
+                        .accept(RuleEvaluator.this)
+                        .expectString());
+        endpoint.getProperties()
+                .forEach((key, value) -> builder.addProperty(key.toString(),
+                        value.accept(RuleEvaluator.this)));
+        endpoint.getHeaders()
+                .forEach((name, expressions) -> expressions.forEach(expr -> builder.addHeader(name,
+                        expr.accept(RuleEvaluator.this).expectString())));
+        return builder.build();
+
     }
 
     public Value evaluateCondition(Condition condition) {
