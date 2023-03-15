@@ -49,6 +49,40 @@ apply MalformedEnum @httpMalformedRequestTests([
         }
     },
     {
+        id: "RestJsonMalformedEnumTraitString",
+        documentation: """
+        When a string member does not contain a valid enum value,
+        the response should be a 400 ValidationException. Internal-only
+        enum values are excluded from the response message.""",
+        protocol: restJson1,
+        request: {
+            method: "POST",
+            uri: "/MalformedEnum",
+            body: """
+            { "stringWithEnumTrait" : $value:S }""",
+            headers: {
+                "content-type": "application/json"
+            }
+        },
+        response: {
+            code: 400,
+            headers: {
+                "x-amzn-errortype": "ValidationException"
+            },
+            body: {
+                mediaType: "application/json",
+                assertion: {
+                    contents: """
+                    { "message" : "1 validation error detected. Value at '/stringWithEnumTrait' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]",
+                      "fieldList" : [{"message": "Value at '/stringWithEnumTrait' failed to satisfy constraint: Member must satisfy enum value set: [abc, def]", "path": "/stringWithEnumTrait"}]}"""
+                }
+            }
+        },
+        testParameters: {
+            value: ["ABC", "XYZ"]
+        }
+    },
+    {
         id: "RestJsonMalformedEnumList",
         documentation: """
         When a list member value does not contain a valid enum value,
@@ -189,6 +223,8 @@ apply MalformedEnum @httpMalformedRequestTests([
 structure MalformedEnumInput {
     string: EnumString,
 
+    stringWithEnumTrait: EnumTraitString,
+
     list: EnumList,
 
     map: EnumMap,
@@ -206,6 +242,13 @@ enum EnumString {
     @tags(["internal"])
     JKL = "jkl"
 }
+
+@enum([
+    {value: "abc", name: "ABC", tags: ["external"]},
+    {value: "def", name: "DEF"},
+    {value: "ghi", name: "GHI", tags: ["internal"]},
+])
+string EnumTraitString
 
 list EnumList {
     member: EnumString
