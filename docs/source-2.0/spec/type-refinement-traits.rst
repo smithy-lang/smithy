@@ -142,27 +142,12 @@ of a member because they are using different versions of the same model.
 Default value serialization
 ---------------------------
 
-Authoritative model consumers like servers SHOULD always serialize default
-values to remove any ambiguity about the value of the most up to default
-value. However, to avoid information disclosure, servers SHOULD NOT serialize
-default values if the member is marked with the :ref:`internal-trait`.
-
-To allow servers to change default values if necessary, clients SHOULD NOT
-serialize default values unless the member is explicitly set to the default
-value or marked with the :ref:`default-trait`. This implies that clients
-SHOULD implement a kind of "presence tracking" of defaulted members so that
-the member is only serialized if it is explicitly set to the default value.
-
-
-Default and required
---------------------
-
-A member that is both ``@default`` and ``@required`` SHOULD always be
-serialized, and implementations SHOULD NOT use any form of presence tracking
-to omit a member if the member is not explicitly set to the default value.
-It is a protocol-specific decision as to whether this is enforced in
-serialized messages; some protocols follow this strictly whereas others may
-not.
+1. All default values SHOULD be serialized. This ensures that messages are
+   unambiguous so that messages do not change during deserialization if the
+   default value for a member changes after the message was serialized.
+2. To avoid information disclosure, implementations MAY choose to not serialize
+   a default values if the member is marked with the :ref:`internal-trait`.
+3. A member that is both ``@default`` and ``@required`` MUST be serialized.
 
 
 .. smithy-trait:: smithy.api#addedDefault
