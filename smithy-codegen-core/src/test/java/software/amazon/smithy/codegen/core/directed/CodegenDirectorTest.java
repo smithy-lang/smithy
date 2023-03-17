@@ -72,6 +72,11 @@ public class CodegenDirectorTest {
         }
 
         @Override
+        public void generateOperation(GenerateOperationDirective<TestContext, TestSettings> directive) {
+            generatedShapes.add(directive.shape().getId());
+        }
+
+        @Override
         public void generateStructure(GenerateStructureDirective<TestContext, TestSettings> directive) {
             generatedShapes.add(directive.shape().getId());
         }
@@ -177,7 +182,8 @@ public class CodegenDirectorTest {
                 ShapeId.from("smithy.example#Status"),
                 ShapeId.from("smithy.example#FaceCard"),
                 ShapeId.from("smithy.example#Instruction"),
-                ShapeId.from("smithy.api#Unit")
+                ShapeId.from("smithy.api#Unit"),
+                ShapeId.from("smithy.example#ListFoo")
         ));
 
         assertThat(testDirected.generatedStringTypeEnums, containsInAnyOrder(
@@ -218,7 +224,8 @@ public class CodegenDirectorTest {
                 ShapeId.from("smithy.example#Status"),
                 ShapeId.from("smithy.example#FaceCard"),
                 ShapeId.from("smithy.example#Instruction"),
-                ShapeId.from("smithy.api#Unit")
+                ShapeId.from("smithy.api#Unit"),
+                ShapeId.from("smithy.example#ListFoo")
         ));
 
         assertThat(testDirected.generatedEnumTypeEnums, containsInAnyOrder(
@@ -258,6 +265,7 @@ public class CodegenDirectorTest {
                 ShapeId.from("smithy.example#RecursiveA"),
                 ShapeId.from("smithy.example#RecursiveB"),
                 ShapeId.from("smithy.example#FooOperationInput"),
+                ShapeId.from("smithy.example#FooOperation"),
                 ShapeId.from("smithy.example#Foo")
         ));
     }
@@ -288,6 +296,7 @@ public class CodegenDirectorTest {
                 ShapeId.from("smithy.example#B"),
                 ShapeId.from("smithy.example#C"),
                 ShapeId.from("smithy.example#D"),
+                ShapeId.from("smithy.example#FooOperation"),
                 ShapeId.from("smithy.example#FooOperationInput"),
                 ShapeId.from("smithy.example#FooOperationOutput"),
                 ShapeId.from("smithy.example#RecursiveA"),
@@ -318,6 +327,7 @@ public class CodegenDirectorTest {
         runner.run();
 
         assertThat(testDirected.generatedShapes, contains(
+                ShapeId.from("smithy.example#FooOperation"),
                 ShapeId.from("smithy.example#FooOperationOutput"),
                 ShapeId.from("smithy.example#A"),
                 ShapeId.from("smithy.example#B"),
