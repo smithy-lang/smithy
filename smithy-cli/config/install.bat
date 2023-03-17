@@ -28,7 +28,7 @@ if exist "%choice_path%" goto upgrade
 ) > "%installer_path%\%exe_name%.bat" 
 
 :: Copy the installation
-xcopy /i /h /e "%installer_path%\*" "%choice_path%\"
+xcopy /i /h /e /k "%installer_path%*" "%choice_path%\"
 setx path "%path%;%choice_path%\;"
 call %exe_name% warmup
 echo You may now run '%exe_name% --version'

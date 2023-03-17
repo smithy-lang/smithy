@@ -159,10 +159,10 @@ runtime {
         // startup script is significantly slower than what was used by the plugin.
         unixScriptTemplate = file('config/unixStartScript.txt')
         jvmArgs = [
-                // Disable this when attempting to profile the CLI. In 99% of use cases this isn't not necessary.
-                '-XX:-UsePerfData',
-                '-Xshare:auto',
-                '-XX:SharedArchiveFile={{BIN_DIR}}/../lib/smithy.jsa'
+            // Disable this when attempting to profile the CLI. In 99% of use cases this isn't not necessary.
+            '-XX:-UsePerfData',
+            '-Xshare:auto',
+            '-XX:SharedArchiveFile={{BIN_DIR}}/../lib/smithy.jsa'
         ]
     }
 

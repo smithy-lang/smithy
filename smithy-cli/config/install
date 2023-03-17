@@ -67,7 +67,6 @@ set_global_vars() {
   SMITHY_VERSION=$($INSTALLER_EXE --version)
 
   INSTALL_DIR="$ROOT_INSTALL_DIR/$SMITHY_VERSION"
-#  INSTALL_DIR="$INSTALL_DIR"
 
   CURRENT_INSTALL_DIR="$ROOT_INSTALL_DIR/current"
   CURRENT_SMITHY_EXE="$CURRENT_INSTALL_DIR/bin/$EXE_NAME"
@@ -79,7 +78,7 @@ create_install_dir() {
   echo "Installing Smithy CLI to '$INSTALL_DIR'..."
   mkdir -p "$INSTALL_DIR" || exit 1
   {
-    cp -R "$INSTALLER_DIR/" "$INSTALL_DIR" &&
+    cp -R "$INSTALLER_DIR/." "$INSTALL_DIR/." &&
     ln -snf "$INSTALL_DIR" "$CURRENT_INSTALL_DIR"
   } || {
     rm -rf "$INSTALL_DIR"
