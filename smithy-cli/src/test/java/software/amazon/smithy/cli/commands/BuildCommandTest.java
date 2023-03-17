@@ -53,6 +53,16 @@ public class BuildCommandTest {
     }
 
     @Test
+    public void allowsUnknownTraitWithFlag() throws Exception {
+        String model = Paths.get(getClass().getResource("unknown-trait.smithy").toURI()).toString();
+        CliUtils.Result result = CliUtils.runSmithy("build", "--allow-unknown-traits", model);
+
+        assertThat(result.code(), equalTo(0));
+        assertThat(result.stderr(), containsString("Completed projection source"));
+        assertThat(result.stderr(), containsString("Smithy built "));
+    }
+
+    @Test
     public void printsSuccessfulProjections() throws Exception {
         String model = Paths.get(getClass().getResource("valid-model.smithy").toURI()).toString();
         CliUtils.Result result = CliUtils.runSmithy("build", model);
@@ -72,6 +82,26 @@ public class BuildCommandTest {
         assertThat(result.stderr(), containsString("ResourceLifecycle"));
         assertThat(result.stderr(),
                    containsString("The following 1 Smithy build projection(s) failed: [exampleProjection]"));
+    }
+
+    @Test
+    public void projectionUnknownTraitsAreDisallowed() throws Exception {
+        String config = Paths.get(getClass().getResource("projection-model-import.json").toURI()).toString();
+        CliUtils.Result result = CliUtils.runSmithy("build", "--config", config);
+
+        assertThat(result.code(), not(0));
+        assertThat(result.stderr(), containsString("Unable to resolve trait `some.unknown#trait`"));
+        assertThat(result.stderr(), containsString("Smithy build projection(s) failed: [exampleProjection]\n"));
+    }
+
+    @Test
+    public void projectionUnknownTraitsAreAllowedWithFlag() throws Exception {
+        String config = Paths.get(getClass().getResource("projection-model-import.json").toURI()).toString();
+        CliUtils.Result result = CliUtils.runSmithy("build", "--allow-unknown-traits",  "--config", config);
+
+        assertThat(result.code(), equalTo(0));
+        assertThat(result.stderr(), containsString("Completed projection exampleProjection"));
+        assertThat(result.stderr(), containsString("Smithy built "));
     }
 
     @Test

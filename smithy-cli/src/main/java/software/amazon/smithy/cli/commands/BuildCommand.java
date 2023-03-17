@@ -102,7 +102,7 @@ final class BuildCommand extends ClasspathCommand {
         // Configure whether the build is quiet or not based on the --quiet option.
         Model model = CommandUtils.buildModel(arguments, models, env, env.stderr(), standardOptions.quiet(), config);
 
-        SmithyBuild smithyBuild = SmithyBuild.create(classLoader)
+        SmithyBuild smithyBuild = SmithyBuild.create(classLoader, buildOptions.allowUnknownTraits())
                 .config(config)
                 .model(model);
 
