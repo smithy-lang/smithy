@@ -1,0 +1,29 @@
+{
+    "version": "2.0",
+    "plugins": {
+        "test1": {"hello": "a"},
+        "test1::foo1": {"hello": "b"}
+    },
+    "projections": {
+        "source": {
+            "plugins": {
+                "test1::foo2": {"hello": "d"},
+                "test2::foo3": {"hello": "e"}
+            }
+        },
+        "a": {
+            "plugins": {
+                "test2": {"hello": "f"},
+                "test1::foo2": {"hello": "g"},
+                "test2::foo3": {"hello": "h"}
+            }
+        },
+        "b": {
+            "plugins": {
+                "test2": {"hello": "i"},
+                "test1::foo2": {"hello": "j"},
+                "test2::foo3": {"hello": "k"}
+            }
+        }
+    }
+}

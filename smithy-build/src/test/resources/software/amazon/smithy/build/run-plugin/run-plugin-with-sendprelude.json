@@ -1,0 +1,9 @@
+{
+    "version": "1.0",
+    "plugins": {
+        "run::test-process": {
+            "command": ["sh", "test-process.sh"],
+            "sendPrelude": true
+        }
+    }
+}

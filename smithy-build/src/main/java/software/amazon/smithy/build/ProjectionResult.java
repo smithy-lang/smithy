@@ -101,13 +101,16 @@ public final class ProjectionResult {
     }
 
     /**
-     * Gets the result of a specific plugin.
+     * Gets the result of a specific plugin by plugin artifact name.
      *
-     * @param pluginName Name of the plugin to retrieve.
-     * @return Returns the files created by the given plugin or an empty list.
+     * <p>If no artifact name is configured for a plugin in smithy-build.json (e.g., "plugin::artifact"), the
+     * artifact name defaults to the plugin name.
+     *
+     * @param artifactName Name of the plugin artifact to retrieve.
+     * @return Returns files created by the given plugin or an empty list.
      */
-    public Optional<FileManifest> getPluginManifest(String pluginName) {
-        return Optional.ofNullable(pluginManifests.get(pluginName));
+    public Optional<FileManifest> getPluginManifest(String artifactName) {
+        return Optional.ofNullable(pluginManifests.get(artifactName));
     }
 
     /**
@@ -147,14 +150,17 @@ public final class ProjectionResult {
         }
 
         /**
-         * Adds a plugin result.
+         * Adds an artifact result for a plugin.
          *
-         * @param pluginName Name of the plugin.
+         * <p>If no artifact name is configured for a plugin in smithy-build.json (e.g., "plugin::artifact"), the
+         * artifact name defaults to the plugin name.
+         *
+         * @param artifactName Name of the plugin artifact to set.
          * @param manifest File manifest used by the plugin.
          * @return Returns the builder.
          */
-        public Builder addPluginManifest(String pluginName, FileManifest manifest) {
-            pluginManifests.get().put(pluginName, manifest);
+        public Builder addPluginManifest(String artifactName, FileManifest manifest) {
+            pluginManifests.get().put(artifactName, manifest);
             return this;
         }
 

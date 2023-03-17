@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,16 @@ import software.amazon.smithy.utils.SmithyBuilder;
 
 final class SmithyBuildImpl {
     private static final Logger LOGGER = Logger.getLogger(SmithyBuild.class.getName());
-    private static final Pattern PATTERN = Pattern.compile("^[A-Za-z0-9\\-_.]+$");
+
+    // Must start with one or more alphanumerics, followed by zero or more alphanumerics, "-", "_", or ".".
+    private static final String PATTERN_PART = "[A-Za-z0-9]+[A-Za-z0-9\\-_.]*";
+
+    // The pattern for projections and plugins must only be a valid PATTERN_PART.
+    private static final Pattern PATTERN = Pattern.compile("^" + PATTERN_PART + "$");
+
+    // Must start with letter/number. Allows for optional artifact name: plugin-name::artifact-name
+    private static final Pattern PLUGIN_PATTERN = Pattern
+            .compile("^" + PATTERN_PART + "(::" + PATTERN_PART + ")?$");
 
     private final SmithyBuildConfig config;
     private final Function<Path, FileManifest> fileManifestFactory;
@@ -63,6 +73,18 @@ final class SmithyBuildImpl {
     private final Set<Path> sources;
     private final Predicate<String> projectionFilter;
     private final Predicate<String> pluginFilter;
+
+    private static final class ResolvedPlugin {
+        final PluginId id;
+        final SmithyBuildPlugin plugin;
+        final ObjectNode config;
+
+        ResolvedPlugin(PluginId id, SmithyBuildPlugin plugin, ObjectNode config) {
+            this.id = id;
+            this.plugin = plugin;
+            this.config = config;
+        }
+    }
 
     SmithyBuildImpl(SmithyBuild builder) {
         config = prepareConfig(SmithyBuilder.requiredState("config", builder.config));
@@ -142,10 +164,10 @@ final class SmithyBuildImpl {
     }
 
     private static void validatePluginName(String projection, String plugin) {
-        if (!PATTERN.matcher(plugin).matches()) {
+        if (!PLUGIN_PATTERN.matcher(plugin).matches()) {
             throw new SmithyBuildException(String.format(
                     "Invalid plugin name `%s` found in the `%s` projection. "
-                    + " Plugin names must match the following regex: %s", plugin, projection, PATTERN));
+                    + " Plugin names must match the following regex: %s", plugin, projection, PLUGIN_PATTERN));
         }
     }
 
@@ -155,49 +177,99 @@ final class SmithyBuildImpl {
     ) {
         ValidatedResult<Model> resolvedModel = createBaseModel();
 
-        // The projections are being split up here because we need to be able
-        // to break out non-parallelizeable plugins. Right now the only
-        // parallelization that occurs is at the projection level.
+        // Some plugins need things like file locks and can't be run in parallel with other plugins.
+        // When a serial plugin is encountered for a projection, run the projection immediately.
+        // Parallel projections are collected into a list and run in parallel after serial projections.
+        // Note: we may later decide to run all parallel plugins in parallel across projections.
         List<Runnable> parallelProjections = new ArrayList<>();
 
         for (Map.Entry<String, ProjectionConfig> entry : config.getProjections().entrySet()) {
-            String name = entry.getKey();
+            String projectionName = entry.getKey();
             ProjectionConfig config = entry.getValue();
 
-            if (config.isAbstract() || !projectionFilter.test(name)) {
+            if (config.isAbstract() || !projectionFilter.test(projectionName)) {
                 continue;
             }
 
-            // Check to see if any of the plugins in the projection require the projection be run serially
-            boolean isSerial = resolvePlugins(config).keySet().stream().anyMatch(pluginName -> {
-                Optional<SmithyBuildPlugin> plugin = pluginFactory.apply(pluginName);
-                return plugin.isPresent() && plugin.get().isSerial();
-            });
+            List<ResolvedPlugin> resolvedPlugins = resolvePlugins(projectionName, config);
 
-            if (isSerial) {
-                executeSerialProjection(resolvedModel, name, config,
+            if (areAnyResolvedPluginsSerial(resolvedPlugins)) {
+                executeSerialProjection(resolvedModel, projectionName, config, resolvedPlugins,
                                         projectionResultConsumer, projectionExceptionConsumer);
             } else {
                 parallelProjections.add(() -> {
-                    executeSerialProjection(resolvedModel, name, config,
+                    executeSerialProjection(resolvedModel, projectionName, config, resolvedPlugins,
                                             projectionResultConsumer, projectionExceptionConsumer);
                 });
             }
         }
 
-        if (!parallelProjections.isEmpty()) {
-            if (parallelProjections.size() == 1) {
-                parallelProjections.get(0).run();
-            } else {
-                parallelProjections.parallelStream().forEach(Runnable::run);
+        if (parallelProjections.size() == 1) {
+            parallelProjections.get(0).run();
+        } else if (!parallelProjections.isEmpty()) {
+            parallelProjections.parallelStream().forEach(Runnable::run);
+        }
+    }
+
+    private List<ResolvedPlugin> resolvePlugins(String projectionName, ProjectionConfig config) {
+        // Ensure that no two plugins use the same artifact name.
+        Set<String> seenArtifactNames = new HashSet<>();
+        List<ResolvedPlugin> resolvedPlugins = new ArrayList<>();
+
+        for (Map.Entry<String, ObjectNode> pluginEntry : getCombinedPlugins(config).entrySet()) {
+            PluginId id = PluginId.from(pluginEntry.getKey());
+            if (!seenArtifactNames.add(id.getArtifactName())) {
+                throw new SmithyBuildException(String.format(
+                        "Multiple plugins use the same artifact name '%s' in the '%s' projection",
+                        id.getArtifactName(), projectionName));
+            }
+            createPlugin(projectionName, id).ifPresent(plugin -> {
+                resolvedPlugins.add(new ResolvedPlugin(id, plugin, pluginEntry.getValue()));
+            });
+        }
+
+        return resolvedPlugins;
+    }
+
+    private Map<String, ObjectNode> getCombinedPlugins(ProjectionConfig projection) {
+        Map<String, ObjectNode> result = new TreeMap<>(config.getPlugins());
+        result.putAll(projection.getPlugins());
+        return result;
+    }
+
+    private Optional<SmithyBuildPlugin> createPlugin(String projectionName, PluginId id) {
+        SmithyBuildPlugin plugin = pluginFactory.apply(id.getPluginName()).orElse(null);
+
+        if (plugin != null) {
+            return Optional.of(plugin);
+        }
+
+        String message = "Unable to find a plugin for `" + id + "` in the `" + projectionName + "` "
+                         + "projection. Is this the correct spelling? Are you missing a dependency? Is your "
+                         + "classpath configured correctly?";
+
+        if (config.isIgnoreMissingPlugins()) {
+            LOGGER.severe(message);
+            return Optional.empty();
+        }
+
+        throw new SmithyBuildException(message);
+    }
+
+    private boolean areAnyResolvedPluginsSerial(List<ResolvedPlugin> resolvedPlugins) {
+        for (ResolvedPlugin plugin : resolvedPlugins) {
+            if (plugin.plugin.isSerial()) {
+                return true;
             }
         }
+        return false;
     }
 
     private void executeSerialProjection(
             ValidatedResult<Model> baseModel,
             String name,
             ProjectionConfig config,
+            List<ResolvedPlugin> resolvedPlugins,
             Consumer<ProjectionResult> projectionResultConsumer,
             BiConsumer<String, Throwable> projectionExceptionConsumer
     ) {
@@ -206,7 +278,7 @@ final class SmithyBuildImpl {
         ProjectionResult result = null;
 
         try {
-            result = applyProjection(name, config, baseModel);
+            result = applyProjection(name, config, baseModel, resolvedPlugins);
         } catch (Throwable e) {
             projectionExceptionConsumer.accept(name, e);
         }
@@ -229,7 +301,8 @@ final class SmithyBuildImpl {
     private ProjectionResult applyProjection(
             String projectionName,
             ProjectionConfig projection,
-            ValidatedResult<Model> baseModel
+            ValidatedResult<Model> baseModel,
+            List<ResolvedPlugin> resolvedPlugins
     ) {
         Model resolvedModel = baseModel.unwrap();
         LOGGER.fine(() -> String.format("Creating the `%s` projection", projectionName));
@@ -283,9 +356,9 @@ final class SmithyBuildImpl {
                 .model(projectedModel)
                 .events(modelResult.getValidationEvents());
 
-        for (Map.Entry<String, ObjectNode> entry : resolvePlugins(projection).entrySet()) {
-            if (pluginFilter.test(entry.getKey())) {
-                applyPlugin(projectionName, projection, baseProjectionDir, entry.getKey(), entry.getValue(),
+        for (ResolvedPlugin resolvedPlugin : resolvedPlugins) {
+            if (pluginFilter.test(resolvedPlugin.id.getArtifactName())) {
+                applyPlugin(projectionName, projection, baseProjectionDir, resolvedPlugin,
                             projectedModel, resolvedModel, modelResult, resultBuilder);
             }
         }
@@ -323,55 +396,37 @@ final class SmithyBuildImpl {
             String projectionName,
             ProjectionConfig projection,
             Path baseProjectionDir,
-            String pluginName,
-            ObjectNode pluginSettings,
+            ResolvedPlugin resolvedPlugin,
             Model projectedModel,
             Model resolvedModel,
             ValidatedResult<Model> modelResult,
             ProjectionResult.Builder resultBuilder
     ) {
+        PluginId id = resolvedPlugin.id;
+
         // Create the manifest where plugin artifacts are stored.
-        Path pluginBaseDir = baseProjectionDir.resolve(pluginName);
+        Path pluginBaseDir = baseProjectionDir.resolve(id.getArtifactName());
         FileManifest manifest = fileManifestFactory.apply(pluginBaseDir);
 
-        // Find the desired plugin in the SPI found plugins.
-        SmithyBuildPlugin resolved = pluginFactory.apply(pluginName).orElse(null);
-
-        if (resolved == null) {
-            String message = "Unable to find a plugin named `" + pluginName + "` in the `" + projectionName + "` "
-                             + "projection. Is this the correct spelling? Are you missing a dependency? Is your "
-                             + "classpath configured correctly?";
-            if (config.isIgnoreMissingPlugins()) {
-                LOGGER.severe(message);
-            } else {
-                throw new SmithyBuildException(message);
-            }
-        } else if (resolved.requiresValidModel() && modelResult.isBroken()) {
-            LOGGER.fine(() -> String.format(
-                    "Skipping `%s` plugin for `%s` projection because the model is broken",
-                    pluginName, projectionName));
+        if (resolvedPlugin.plugin.requiresValidModel() && modelResult.isBroken()) {
+            LOGGER.fine(() -> String.format("Skipping `%s` plugin for `%s` projection because the model is broken",
+                                            id, projectionName));
         } else {
-            LOGGER.info(() -> String.format(
-                    "Applying `%s` plugin to `%s` projection",
-                    pluginName, projectionName));
-            resolved.execute(PluginContext.builder()
+            LOGGER.info(() -> String.format("Applying `%s` plugin to `%s` projection", id, projectionName));
+            resolvedPlugin.plugin
+                    .execute(PluginContext.builder()
                     .model(projectedModel)
                     .originalModel(resolvedModel)
                     .projection(projectionName, projection)
                     .events(modelResult.getValidationEvents())
-                    .settings(pluginSettings)
+                    .settings(resolvedPlugin.config)
                     .fileManifest(manifest)
                     .pluginClassLoader(pluginClassLoader)
                     .sources(sources)
+                    .artifactName(id.hasArtifactName() ? id.getArtifactName() : null)
                     .build());
-            resultBuilder.addPluginManifest(pluginName, manifest);
+            resultBuilder.addPluginManifest(id.getArtifactName(), manifest);
         }
-    }
-
-    private Map<String, ObjectNode> resolvePlugins(ProjectionConfig projection) {
-        Map<String, ObjectNode> result = new TreeMap<>(config.getPlugins());
-        result.putAll(projection.getPlugins());
-        return result;
     }
 
     // Creates pairs where the left value is the configuration arguments of the
