@@ -70,23 +70,7 @@ public final class SmithyBuild {
      * @return Returns the created {@code SmithyBuild} object.
      */
     public static SmithyBuild create(ClassLoader classLoader) {
-        return create(classLoader, false);
-    }
-
-    /**
-     * Creates a {@code SmithyBuild} implementation that is configured to
-     * discover various Smithy service providers using the given
-     * {@code ClassLoader}.
-     *
-     * @param classLoader ClassLoader used to discover service providers.
-     * @param allowUnknownTraits Set to true to allow unknown traits.
-     * @return Returns the created {@code SmithyBuild} object.
-     */
-    public static SmithyBuild create(ClassLoader classLoader, boolean allowUnknownTraits) {
         ModelAssembler assembler = Model.assembler(classLoader);
-        if (allowUnknownTraits) {
-            assembler.putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true);
-        }
         return create(classLoader, assembler::copy);
     }
 
