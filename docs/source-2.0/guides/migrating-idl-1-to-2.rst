@@ -105,7 +105,7 @@ This 1.0 model:
 
     boolean MyPrimitiveBoolean
 
-    boolean MyPrimitiveInteger
+    integer MyPrimitiveInteger
 
     structure Foo {
         myBoolean: MyPrimitiveBoolean,
@@ -123,7 +123,7 @@ Becomes this 2.0 model:
     boolean MyPrimitiveBoolean
 
     @default(0)
-    boolean MyPrimitiveInteger
+    integer MyPrimitiveInteger
 
     structure Foo {
         myBoolean: MyPrimitiveBoolean = false
