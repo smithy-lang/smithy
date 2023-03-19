@@ -32,23 +32,23 @@ abstract class AbstractNeighborSelector implements InternalSelector {
     }
 
     @Override
-    public final boolean push(Context context, Shape shape, Receiver next) {
+    public final Response push(Context context, Shape shape, Receiver next) {
         NeighborProvider resolvedProvider = getNeighborProvider(context, includeTraits);
         for (Relationship rel : resolvedProvider.getNeighbors(shape)) {
             if (matches(rel)) {
-                if (!emitMatchingRel(context, rel, next)) {
+                if (emitMatchingRel(context, rel, next) == Response.STOP) {
                     // Stop pushing shapes upstream and propagate the signal to stop.
-                    return false;
+                    return Response.STOP;
                 }
             }
         }
 
-        return true;
+        return Response.CONTINUE;
     }
 
     abstract NeighborProvider getNeighborProvider(Context context, boolean includeTraits);
 
-    abstract boolean emitMatchingRel(Context context, Relationship rel, Receiver next);
+    abstract Response emitMatchingRel(Context context, Relationship rel, Receiver next);
 
     private boolean matches(Relationship rel) {
         return rel.getNeighborShape().isPresent()

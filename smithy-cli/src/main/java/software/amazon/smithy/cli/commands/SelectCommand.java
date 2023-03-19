@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.ArgumentReceiver;
@@ -40,6 +41,8 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.IoUtils;
 
 final class SelectCommand extends ClasspathCommand {
+
+    private static final Logger LOGGER = Logger.getLogger(SelectCommand.class.getName());
 
     SelectCommand(String parentCommandName, DependencyResolver.Factory dependencyResolverFactory) {
         super(parentCommandName, dependencyResolverFactory);
@@ -117,6 +120,7 @@ final class SelectCommand extends ClasspathCommand {
         Model model = CommandUtils.buildModel(arguments, models, env, env.stderr(), true, config);
         Selector selector = options.selector();
 
+        long startTime = System.nanoTime();
         if (!options.vars()) {
             sortShapeIds(selector.select(model)).forEach(stdout::println);
         } else {
@@ -130,6 +134,8 @@ final class SelectCommand extends ClasspathCommand {
             });
             stdout.println(Node.prettyPrintJson(new ArrayNode(result, SourceLocation.NONE)));
         }
+        long endTime = System.nanoTime();
+        LOGGER.fine(() -> "Select time: " + ((endTime - startTime) / 1000000) + "ms");
 
         return 0;
     }

@@ -38,12 +38,11 @@ final class VariableStoreSelector implements InternalSelector {
     }
 
     @Override
-    public boolean push(Context context, Shape shape, Receiver next) {
+    public Response push(Context context, Shape shape, Receiver next) {
         // Buffer the result of piping the shape through the selector
         // so that it can be retrieved through context vars.
-        Set<Shape> captures = new HashSet<>();
-        selector.push(context, shape, (c, s) -> captures.add(s));
-        context.putVar(variableName, captures);
+        Set<Shape> captures = selector.pushResultsToCollection(context, shape, new HashSet<>());
+        context.getVars().put(variableName, captures);
 
         // Now send the received shape to the next receiver.
         return next.apply(context, shape);

@@ -39,6 +39,7 @@ final class SelectorParser extends SimpleParser {
     private static final Logger LOGGER = Logger.getLogger(SelectorParser.class.getName());
     private static final Set<Character> BREAK_TOKENS = SetUtils.of(',', ']', ')');
     private static final Set<String> REL_TYPES = new HashSet<>();
+    private final List<InternalSelector> roots = new ArrayList<>();
 
     static {
         // Adds selector relationship labels for warnings when unknown relationship names are used.
@@ -52,7 +53,9 @@ final class SelectorParser extends SimpleParser {
     }
 
     static Selector parse(String selector) {
-        return new WrappedSelector(selector, new SelectorParser(selector).parse());
+        SelectorParser parser = new SelectorParser(selector);
+        List<InternalSelector> result = parser.parse();
+        return new WrappedSelector(selector, result, parser.roots);
     }
 
     List<InternalSelector> parse() {
@@ -227,6 +230,22 @@ final class SelectorParser extends SimpleParser {
                 return new TestSelector(selectors);
             case "is":
                 return IsSelector.of(selectors);
+            case "in":
+                if (selectors.size() != 1) {
+                    throw new SelectorSyntaxException(
+                            "The :in function requires a single selector argument",
+                            expression(), functionPosition, line(), column());
+                }
+                return new InSelector(selectors.get(0));
+            case "root":
+                if (selectors.size() != 1) {
+                    throw new SelectorSyntaxException(
+                            "The :root function requires a single selector argument",
+                            expression(), functionPosition, line(), column());
+                }
+                InternalSelector root = new RootSelector(selectors.get(0), roots.size());
+                roots.add(selectors.get(0));
+                return root;
             case "topdown":
                 if (selectors.size() > 2) {
                     throw new SelectorSyntaxException(
@@ -240,7 +259,7 @@ final class SelectorParser extends SimpleParser {
             default:
                 LOGGER.warning(String.format("Unknown function name `%s` found in selector: %s",
                                              name, expression()));
-                return (context, shape, next) -> true;
+                return (context, shape, next) -> InternalSelector.Response.CONTINUE;
         }
     }
 
