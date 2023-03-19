@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.model.selector;
 
+import java.util.Collection;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 
 final class ShapeTypeCategorySelector implements InternalSelector {
@@ -25,11 +27,21 @@ final class ShapeTypeCategorySelector implements InternalSelector {
     }
 
     @Override
-    public boolean push(Context ctx, Shape shape, Receiver next) {
+    public Response push(Context ctx, Shape shape, Receiver next) {
         if (shapeCategory.isInstance(shape)) {
             return next.apply(ctx, shape);
         }
 
-        return true;
+        return Response.CONTINUE;
+    }
+
+    @Override
+    public Collection<? extends Shape> getStartingShapes(Model model) {
+        return model.toSet(shapeCategory);
+    }
+
+    @Override
+    public ContainsShape containsShapeOptimization(Context context, Shape shape) {
+        return getStartingShapes(context.getModel()).contains(shape) ? ContainsShape.YES : ContainsShape.NO;
     }
 }

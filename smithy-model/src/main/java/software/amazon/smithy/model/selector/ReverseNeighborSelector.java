@@ -37,7 +37,7 @@ final class ReverseNeighborSelector extends AbstractNeighborSelector {
     }
 
     @Override
-    boolean emitMatchingRel(Context context, Relationship rel, Receiver next) {
+    Response emitMatchingRel(Context context, Relationship rel, Receiver next) {
         return next.apply(context, rel.getShape());
     }
 }

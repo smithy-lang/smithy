@@ -33,13 +33,13 @@ final class IsSelector implements InternalSelector {
     }
 
     @Override
-    public boolean push(Context context, Shape shape, Receiver next) {
+    public Response push(Context context, Shape shape, Receiver next) {
         for (InternalSelector selector : selectors) {
-            if (!selector.push(context, shape, next)) {
-                return false;
+            if (selector.push(context, shape, next) == Response.STOP) {
+                return Response.STOP;
             }
         }
 
-        return true;
+        return Response.CONTINUE;
     }
 }

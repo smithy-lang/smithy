@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -16,16 +16,14 @@
 package software.amazon.smithy.model.selector;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.in;
 
 import java.util.Set;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.shapes.Shape;
 
-public class ShapeTypeSelectorTest {
+public class ShapeTypeCategorySelectorTest {
 
     private static Model model;
 
@@ -38,23 +36,11 @@ public class ShapeTypeSelectorTest {
     }
 
     @Test
-    public void stringSelectsEnum() {
-        Set<String> ids = SelectorTest.ids(model, "string");
-        assertThat("smithy.example#String", in(ids));
-        assertThat("smithy.example#Enum", in(ids));
-    }
-
-    @Test
-    public void integerSelectsIntEnum() {
-        Set<String> ids = SelectorTest.ids(model, "integer");
-        assertThat("smithy.example#Integer", in(ids));
-        assertThat("smithy.example#IntEnum", in(ids));
-    }
-
-    @Test
     public void hasContainsOptimization() {
-        Set<String> ids = SelectorTest.ids(model, ":in(enum) [id|namespace = smithy.example]");
+        // "number" is a category. intEnum is considered a number, so it is returned. This example triggers the
+        // :in function optimization of the selector.
+        Set<String> ids = SelectorTest.ids(model, ":in(number) [id|namespace = smithy.example]");
 
-        assertThat("smithy.example#Enum", in(ids));
+        assertThat("smithy.example#IntEnum", in(ids));
     }
 }

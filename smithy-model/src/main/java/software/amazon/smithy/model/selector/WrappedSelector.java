@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
@@ -38,12 +37,12 @@ final class WrappedSelector implements Selector {
 
     private final String expression;
     private final InternalSelector delegate;
-    private final Function<Model, Collection<? extends Shape>> optimizer;
+    private final List<InternalSelector> roots;
 
-    WrappedSelector(String expression, List<InternalSelector> selectors) {
+    WrappedSelector(String expression, List<InternalSelector> selectors, List<InternalSelector> roots) {
         this.expression = expression;
-        delegate = AndSelector.of(selectors);
-        optimizer = selectors.get(0).optimize();
+        this.roots = roots;
+        this.delegate = AndSelector.of(selectors);
     }
 
     @Override
@@ -71,7 +70,7 @@ final class WrappedSelector implements Selector {
             // that aren't parallelized.
             pushShapes(model, (ctx, s) -> {
                 result.add(s);
-                return true;
+                return InternalSelector.Response.CONTINUE;
             });
             return result;
         }
@@ -84,59 +83,80 @@ final class WrappedSelector implements Selector {
         // pushing each shape into internal selectors.
         pushShapes(model, (ctx, s) -> {
             shapeMatchConsumer.accept(new ShapeMatch(s, ctx.getVars()));
-            return true;
+            return InternalSelector.Response.CONTINUE;
         });
     }
 
     @Override
     public Stream<Shape> shapes(Model model) {
+        NeighborProviderIndex index = NeighborProviderIndex.of(model);
+        List<Set<Shape>> computedRoots = computeRoots(model);
         return streamStartingShape(model).flatMap(shape -> {
-            List<Shape> result = new ArrayList<>();
-            delegate.push(createContext(model), shape, (ctx, s) -> {
-                result.add(s);
-                return true;
-            });
-            return result.stream();
+            Context context = new Context(model, index, computedRoots);
+            return delegate.pushResultsToCollection(context, shape, new ArrayList<>()).stream();
         });
     }
 
     @Override
     public Stream<ShapeMatch> matches(Model model) {
+        NeighborProviderIndex index = NeighborProviderIndex.of(model);
+        List<Set<Shape>> computedRoots = computeRoots(model);
         return streamStartingShape(model).flatMap(shape -> {
             List<ShapeMatch> result = new ArrayList<>();
-            delegate.push(createContext(model), shape, (ctx, s) -> {
+            delegate.push(new Context(model, index, computedRoots), shape, (ctx, s) -> {
                 result.add(new ShapeMatch(s, ctx.getVars()));
-                return true;
+                return InternalSelector.Response.CONTINUE;
             });
             return result.stream();
         });
     }
 
-    private Context createContext(Model model) {
-        return new Context(NeighborProviderIndex.of(model));
+    // Eagerly compute roots over all model shapes before evaluating shapes one at a time.
+    private List<Set<Shape>> computeRoots(Model model) {
+        NeighborProviderIndex index = NeighborProviderIndex.of(model);
+        List<Set<Shape>> rootResults = new ArrayList<>(roots.size());
+        for (InternalSelector selector : roots) {
+            Set<Shape> result = evalRoot(model, index, selector, rootResults);
+            rootResults.add(result);
+        }
+        return rootResults;
+    }
+
+    // Eagerly compute a root subexpression.
+    private Set<Shape> evalRoot(
+            Model model,
+            NeighborProviderIndex index,
+            InternalSelector selector,
+            List<Set<Shape>> results
+    ) {
+        Collection<? extends Shape> shapesToEmit = selector.getStartingShapes(model);
+        Context isolatedContext = new Context(model, index, results);
+        Set<Shape> captures = new HashSet<>();
+        for (Shape rootShape : shapesToEmit) {
+            isolatedContext.getVars().clear();
+            selector.push(isolatedContext, rootShape, (c, s) -> {
+                captures.add(s);
+                return InternalSelector.Response.CONTINUE;
+            });
+        }
+
+        return captures;
     }
 
     private void pushShapes(Model model, InternalSelector.Receiver acceptor) {
-        Context context = createContext(model);
-        Collection<? extends Shape> shapes = optimizer == null
-                ? model.toSet()
-                : optimizer.apply(model);
+        Context context = new Context(model, NeighborProviderIndex.of(model), computeRoots(model));
+        Collection<? extends Shape> shapes = delegate.getStartingShapes(model);
         for (Shape shape : shapes) {
-            delegate.push(context.clearVars(), shape, acceptor);
+            context.getVars().clear();
+            delegate.push(context, shape, acceptor);
         }
     }
 
     private Stream<? extends Shape> streamStartingShape(Model model) {
-        Stream<? extends Shape> stream = optimizer != null
-                ? optimizer.apply(model).stream()
-                : model.shapes();
-
-        // Use a parallel stream for larger models.
-        if (isParallel(model)) {
-            stream = stream.parallel();
-        }
-
-        return stream;
+        Collection<? extends Shape> startingShapes = delegate.getStartingShapes(model);
+        return startingShapes.size() > PARALLEL_THRESHOLD
+               ? startingShapes.parallelStream()
+               : startingShapes.stream();
     }
 
     private boolean isParallel(Model model) {

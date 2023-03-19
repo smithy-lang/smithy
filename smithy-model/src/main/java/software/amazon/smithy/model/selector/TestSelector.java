@@ -32,7 +32,7 @@ final class TestSelector implements InternalSelector {
     }
 
     @Override
-    public boolean push(Context context, Shape shape, Receiver next) {
+    public Response push(Context context, Shape shape, Receiver next) {
         for (InternalSelector predicate : selectors) {
             if (context.receivedShapes(shape, predicate)) {
                 // The instant something matches, stop testing selectors.
@@ -40,8 +40,7 @@ final class TestSelector implements InternalSelector {
             }
         }
 
-        // Note that this does not return false when there is not a match,
-        // since it should to continue to receive shapes to test.
-        return true;
+        // Continue to receive shapes because other shapes could match.
+        return Response.CONTINUE;
     }
 }
