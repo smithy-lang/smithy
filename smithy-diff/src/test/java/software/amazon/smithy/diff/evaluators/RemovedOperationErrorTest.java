@@ -17,6 +17,7 @@ package software.amazon.smithy.diff.evaluators;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.startsWith;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -51,5 +52,11 @@ public class RemovedOperationErrorTest {
 
         // Emits an event for each removal.
         assertThat(TestHelper.findEvents(events, "RemovedOperationError").size(), equalTo(2));
+        assertThat(TestHelper.findEvents(events, "RemovedOperationError").get(0).toString(),
+                startsWith("[WARNING] foo.baz#Operation: The `foo.baz#E1` error was removed " +
+                        "from the `foo.baz#Operation` operation. | RemovedOperationError"));
+        assertThat(TestHelper.findEvents(events, "RemovedOperationError").get(1).toString(),
+                startsWith("[WARNING] foo.baz#Operation: The `foo.baz#E2` error was removed " +
+                        "from the `foo.baz#Operation` operation. | RemovedOperationError"));
     }
 }

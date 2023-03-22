@@ -46,7 +46,7 @@ public final class RemovedOperationError extends AbstractDiffEvaluator {
             if (!change.getNewShape().getErrors().contains(id)) {
                 events.add(warning(change.getNewShape(), String.format(
                         "The `%s` error was removed from the `%s` operation.",
-                        change.getShapeId(), id)));
+                        id, change.getShapeId())));
             }
         }
 
