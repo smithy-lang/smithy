@@ -27,7 +27,6 @@ import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.SimpleShape;
-import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SimpleParser;
 
@@ -63,7 +62,7 @@ final class SelectorParser extends SimpleParser {
     }
 
     private List<InternalSelector> recursiveParse() {
-        List<InternalSelector> selectors = new ArrayList<>();
+        List<InternalSelector> selectors = new IgnoreIdentitySelectorArray();
 
         // createSelector() will strip leading ws.
         selectors.add(createSelector());
@@ -79,6 +78,16 @@ final class SelectorParser extends SimpleParser {
         }
 
         return selectors;
+    }
+
+    /**
+     * Filter out unnecessary identity selectors when creating the finalized AST to evaluate selectors.
+     */
+    private static final class IgnoreIdentitySelectorArray extends ArrayList<InternalSelector> {
+        @Override
+        public boolean add(InternalSelector o) {
+            return o != InternalSelector.IDENTITY && super.add(o);
+        }
     }
 
     private InternalSelector createSelector() {
@@ -99,7 +108,7 @@ final class SelectorParser extends SimpleParser {
                 }
             case '>': // forward undirected neighbor
                 skip();
-                return new ForwardNeighborSelector(ListUtils.of());
+                return NeighborSelector.forward(Collections.emptyList());
             case '<': // reverse [un]directed neighbor
                 skip();
                 if (peek() == '-') { // reverse directed neighbor (<-[X, Y, Z]-)
@@ -107,7 +116,7 @@ final class SelectorParser extends SimpleParser {
                     expect('[');
                     return parseSelectorDirectedReverseNeighbor();
                 } else { // reverse undirected neighbor (<)
-                    return new ReverseNeighborSelector(ListUtils.of());
+                    return NeighborSelector.reverse(Collections.emptyList());
                 }
             case '~': // ~>
                 skip();
@@ -180,13 +189,13 @@ final class SelectorParser extends SimpleParser {
         // Get the remainder of the "]->" token.
         expect('-');
         expect('>');
-        return new ForwardNeighborSelector(relationships);
+        return NeighborSelector.forward(relationships);
     }
 
     private InternalSelector parseSelectorDirectedReverseNeighbor() {
         List<String> relationships = parseSelectorDirectedRelationships();
         expect('-');
-        return new ReverseNeighborSelector(relationships);
+        return NeighborSelector.reverse(relationships);
     }
 
     private List<String> parseSelectorDirectedRelationships() {

@@ -42,7 +42,7 @@ interface InternalSelector {
      * {@code next} receiver _does not_ cause the top-level shapes of a
      * model to stop being sent through the selector. Only selectors that
      * send multiple values in a loop like the {@link VariableGetSelector},
-     * {@link AbstractNeighborSelector}, and {@link RecursiveNeighborSelector}
+     * {@link NeighborSelector}, and {@link RecursiveNeighborSelector}
      * act on the return value. As soon as these selectors see a false return
      * value, they stop sending shapes to the {@code next} receiver, and
      * they, in turn, return false, propagating the signal to stop.
