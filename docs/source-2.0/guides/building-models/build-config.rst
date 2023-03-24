@@ -1692,7 +1692,21 @@ model plugin
 
 The ``model`` plugin serializes a self-contained and filtered version of the
 model as a single file. All of the dependencies of the model are included
-in the file.
+in the file. By default the serialized model excludes :ref:`prelude <prelude>` shapes.
+
+To include prelude shapes in the serialized model, add the ``model`` plugin with an :ref:`artifact-name <plugin-id>`
+to the ``smithy-build.json`` file with the ``includePreludeShapes`` property set to ``true``.
+
+.. code-block:: json
+
+    {
+        "version": "1.0",
+        "plugins": {
+            "model::withPrelude": {
+                "includePreludeShapes": true
+            }
+        }
+    }
 
 
 .. _build-info-plugin:

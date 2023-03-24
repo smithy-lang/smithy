@@ -166,6 +166,44 @@ public class SmithyBuildTest {
     }
 
     @Test
+    public void modeExcludePreludeShapes() throws Exception {
+        SmithyBuildConfig config = SmithyBuildConfig.builder()
+                .load(Paths.get(getClass().getResource("exclude-prelude-shapes.json").toURI()))
+                .outputDirectory(outputDirectory.toString())
+                .build();
+        Model model = Model.assembler()
+                .assemble()
+                .unwrap();
+        SmithyBuildResult results = new SmithyBuild().config(config).model(model).build();
+        String content = IoUtils.readUtf8File(results.allArtifacts()
+                .filter(path -> path.toString().endsWith("withoutPrelude" + System.getProperty("file.separator") + "model.json"))
+                .findFirst()
+                .get());
+        assertThat(Files.isRegularFile(outputDirectory.resolve("source/withoutPrelude/model.json")), is(true));
+        assertThat(content, not(containsString("smithy.api#Boolean")));
+        assertThat(content, not(containsString("smithy.api#Integer")));
+    }
+
+    @Test
+    public void modeIncludePreludeShapes() throws Exception {
+        SmithyBuildConfig config = SmithyBuildConfig.builder()
+                .load(Paths.get(getClass().getResource("include-prelude-shapes.json").toURI()))
+                .outputDirectory(outputDirectory.toString())
+                .build();
+        Model model = Model.assembler()
+                .assemble()
+                .unwrap();
+        SmithyBuildResult results = new SmithyBuild().config(config).model(model).build();
+        String content = IoUtils.readUtf8File(results.allArtifacts()
+                .filter(path -> path.toString().endsWith("withPrelude" + System.getProperty("file.separator") + "model.json"))
+                .findFirst()
+                .get());
+        assertThat(Files.isRegularFile(outputDirectory.resolve("source/withPrelude/model.json")), is(true));
+        assertThat(content, containsString("smithy.api#Boolean"));
+        assertThat(content, containsString("smithy.api#Integer"));
+    }
+
+    @Test
     public void doesNotCopyErroneousModelsToBuildOutput() throws Exception {
         SmithyBuildConfig config = SmithyBuildConfig.builder()
                 .load(Paths.get(getClass().getResource("resource-model-config.json").toURI()))
