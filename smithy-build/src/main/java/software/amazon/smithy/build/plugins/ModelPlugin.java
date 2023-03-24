@@ -34,10 +34,11 @@ public final class ModelPlugin implements SmithyBuildPlugin {
 
     @Override
     public void execute(PluginContext context) {
-        context.getFileManifest().writeJson("model.json", serializeModel(context.getModel()));
+        boolean includePrelude = context.getSettings().getBooleanMemberOrDefault("includePreludeShapes");
+        context.getFileManifest().writeJson("model.json", serializeModel(context.getModel(), includePrelude));
     }
 
-    private static Node serializeModel(Model model) {
-        return ModelSerializer.builder().build().serialize(model);
+    private static Node serializeModel(Model model, boolean includePrelude) {
+        return ModelSerializer.builder().includePrelude(includePrelude).build().serialize(model);
     }
 }
