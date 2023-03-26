@@ -1,4 +1,4 @@
-[ERROR] smithy.example#GetForecastOutput: This shape contains members with conflicting property names that resolve to 'chanceOfRain': chanceOfRain, chancesOfRain | ResourceOperationInputOutput
-[ERROR] smithy.example#GetForecastInput: This shape contains members with conflicting property names that resolve to 'chanceOfRain': chancesOfRain, howLikelyToRain | ResourceOperationInputOutput
+[ERROR] smithy.example#GetForecastOutput: This shape contains members with conflicting resource property names that resolve to 'chanceOfRain': chanceOfRain, chancesOfRain | ResourceOperationInputOutput
+[ERROR] smithy.example#GetForecastInput: This shape contains members with conflicting resource property names that resolve to 'chanceOfRain': chancesOfRain, howLikelyToRain | ResourceOperationInputOutput
 [ERROR] smithy.example#GetForecastInput$memberIsNotProperty: Member `memberIsNotProperty` does not target a property or identifier for resource `smithy.example#Forecast` | ResourceOperationInputOutput
-[ERROR] smithy.example#Forecast: The resource property `booleanProperty` has a conflicting target shape `smithy.api#String` on the `read` operation which targets `smithy.api#Boolean`. | ResourceOperationInputOutput
+[ERROR] smithy.example#GetForecastInput$booleanProperty: This member must target `smithy.api#Boolean`. This member is used as part of the `read` operation of the `smithy.example#Forecast` resource and conflicts with its `booleanProperty` resource property. | ResourceOperationInputOutput
