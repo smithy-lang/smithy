@@ -15,16 +15,11 @@
 
 package software.amazon.smithy.model.validation;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.Formatter;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.loader.sourcecontext.SourceContextLoader;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
@@ -38,7 +33,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
  *
  * <pre>{@code
  * ERROR: aws.protocols.tests.ec2#IgnoresWrappingXmlName (Model)
- *     --> /foo/bar.smithy
+ *      @ /foo/bar.smithy
  *      |
  *  403 | apply MyShape @httpResponseTests([
  *      |                                  ^
@@ -46,6 +41,9 @@ import software.amazon.smithy.model.shapes.ShapeId;
  * }</pre>
  */
 public final class ContextualValidationEventFormatter implements ValidationEventFormatter {
+
+    private final SourceContextLoader sourceContextLoader = SourceContextLoader.createLineBasedLoader(1);
+
     @Override
     public String format(ValidationEvent event) {
         StringWriter writer = new StringWriter();
@@ -57,21 +55,17 @@ public final class ContextualValidationEventFormatter implements ValidationEvent
 
         if (event.getSourceLocation() != SourceLocation.NONE) {
             String humanReadableFilename = getHumanReadableFilename(event.getSourceLocation());
-            String contextualLine = null;
-            try {
-                contextualLine = loadContextualLine(event.getSourceLocation());
-            } catch (IOException e) {
-                // Do nothing.
-            }
+            Collection<SourceContextLoader.Line> lines = sourceContextLoader.loadContext(event.getSourceLocation());
 
-            if (contextualLine == null) {
+            if (lines.isEmpty()) {
                 formatter.format("     @ %s%n", event.getSourceLocation());
             } else {
                 // Show the filename.
                 formatter.format("     @ %s%n", humanReadableFilename);
                 formatter.format("     |%n");
                 // Show the line number and source code line.
-                formatter.format("%4d | %s%n", event.getSourceLocation().getLine(), contextualLine);
+                formatter.format("%4d | %s%n",
+                                 event.getSourceLocation().getLine(), lines.iterator().next().getContent());
                 // Add a carat to point to the column of the error.
                 formatter.format("     | %" + event.getSourceLocation().getColumn() + "s%n", "^");
             }
@@ -95,28 +89,5 @@ public final class ContextualValidationEventFormatter implements ValidationEvent
         }
 
         return filename;
-    }
-
-    // Attempts to load a specific line from the model.
-    private String loadContextualLine(SourceLocation source) throws IOException {
-        // Ensure that there's a scheme.
-        String normalizedFile = source.getFilename();
-        if (!source.getFilename().startsWith("file:") && !source.getFilename().startsWith("jar:")) {
-            normalizedFile = "file:" + normalizedFile;
-        }
-
-        // Loading from a JAR needs special treatment, but this can
-        // all actually be handled in a uniform way using URLs.
-        URL url = new URL(normalizedFile);
-        URLConnection connection = url.openConnection();
-        connection.setUseCaches(false);
-
-        try (InputStream input = connection.getInputStream();
-             BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))) {
-            return reader.lines()
-                    .skip(source.getLine() - 1)
-                    .findFirst()
-                    .orElse(null);
-        }
     }
 }

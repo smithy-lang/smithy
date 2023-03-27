@@ -19,7 +19,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.Arguments;
@@ -29,16 +33,18 @@ import software.amazon.smithy.cli.ColorFormatter;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.EnvironmentVariable;
 import software.amazon.smithy.cli.StandardOptions;
-import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
-import software.amazon.smithy.model.validation.ContextualValidationEventFormatter;
+import software.amazon.smithy.model.loader.sourcecontext.SourceContextLoader;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
+import software.amazon.smithy.model.validation.ValidationEvent;
 
 final class CommandUtils {
 
     private static final Logger LOGGER = Logger.getLogger(CommandUtils.class.getName());
+    private static final String CLEAR_LINE_ESCAPE = "\033[2K\r";
+    private static final int DEFAULT_CODE_LINES = 6;
 
     private CommandUtils() {}
 
@@ -52,37 +58,76 @@ final class CommandUtils {
     ) {
         ClassLoader classLoader = env.classLoader();
         ModelAssembler assembler = CommandUtils.createModelAssembler(classLoader);
-        ContextualValidationEventFormatter formatter = new ContextualValidationEventFormatter();
+        ColorFormatter colors = env.colors();
         StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
         BuildOptions buildOptions = arguments.getReceiver(BuildOptions.class);
         Severity minSeverity = buildOptions.severity(standardOptions);
-        ColorFormatter colors = env.colors();
+        CliPrinter stderr = env.stderr();
 
-        assembler.validationEventListener(event -> {
-            // Only log events that are >= --severity. Note that setting --quiet inherently
-            // configures events to need to be >= DANGER.
-            if (event.getSeverity().ordinal() >= minSeverity.ordinal()) {
-                if (event.getSeverity() == Severity.WARNING) {
-                    // Only log warnings when not quiet
-                    colors.println(printer, formatter.format(event), Style.YELLOW);
-                } else if (event.getSeverity() == Severity.DANGER || event.getSeverity() == Severity.ERROR) {
-                    // Always output error and danger events, even when quiet.
-                    colors.println(printer, formatter.format(event), Style.RED);
-                } else {
-                    printer.println(formatter.format(event));
-                }
-            }
-        });
+        // Emit status updates.
+        AtomicInteger issueCount = new AtomicInteger();
+        assembler.validationEventListener(createStatusUpdater(standardOptions, colors, stderr, issueCount));
 
         CommandUtils.handleModelDiscovery(buildOptions, assembler, classLoader, config);
         CommandUtils.handleUnknownTraitsOption(buildOptions, assembler);
         config.getSources().forEach(assembler::addImport);
         models.forEach(assembler::addImport);
         config.getImports().forEach(assembler::addImport);
-
         ValidatedResult<Model> result = assembler.assemble();
-        Validator.validate(quietValidation, colors, env.stderr(), result);
+
+        clearStatusUpdateIfPresent(issueCount, stderr);
+
+        // Sort events by file so that we can efficiently read files for context sequentially.
+        List<ValidationEvent> sortedEvents = new ArrayList<>(result.getValidationEvents());
+        sortedEvents.sort(Comparator.comparing(ValidationEvent::getSourceLocation));
+
+        SourceContextLoader sourceContextLoader = result.getResult()
+                .map(model -> SourceContextLoader.createModelAwareLoader(model, DEFAULT_CODE_LINES))
+                .orElseGet(() -> SourceContextLoader.createLineBasedLoader(DEFAULT_CODE_LINES));
+        PrettyAnsiValidationFormatter formatter = new PrettyAnsiValidationFormatter(sourceContextLoader, colors);
+
+        for (ValidationEvent event : sortedEvents) {
+            // Only log events that are >= --severity. Note that setting --quiet inherently
+            // configures events to need to be >= DANGER.
+            if (event.getSeverity().ordinal() >= minSeverity.ordinal()) {
+                printer.println(formatter.format(event));
+            }
+        }
+
+        Validator.validate(quietValidation, colors, stderr, result);
         return result.getResult().orElseThrow(() -> new RuntimeException("Expected Validator to throw"));
+    }
+
+    static Consumer<ValidationEvent> createStatusUpdater(
+            StandardOptions standardOptions,
+            ColorFormatter colors,
+            CliPrinter stderr,
+            AtomicInteger issueCount
+    ) {
+        // Only show the status if not quiet and the terminal supports ANSI.
+        if (standardOptions.quiet() || !colors.isColorEnabled()) {
+            return null;
+        }
+
+        return event -> {
+            if (event.getSeverity() != Severity.SUPPRESSED) {
+                int encountered = issueCount.incrementAndGet();
+                String line = "Validating model: " + encountered + " issues";
+                if (encountered > 1) {
+                    line = '\r' + line;
+                }
+                stderr.print(line);
+                stderr.flush();
+            }
+        };
+    }
+
+    // If a status update was printed, then clear it out.
+    static void clearStatusUpdateIfPresent(AtomicInteger issueCount, CliPrinter stderr) {
+        if (issueCount.get() > 0) {
+            stderr.print(CLEAR_LINE_ESCAPE);
+            stderr.flush();
+        }
     }
 
     static ModelAssembler createModelAssembler(ClassLoader classLoader) {

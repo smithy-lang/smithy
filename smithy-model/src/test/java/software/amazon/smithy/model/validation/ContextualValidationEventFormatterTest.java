@@ -9,6 +9,7 @@ import static org.hamcrest.Matchers.startsWith;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.loader.sourcecontext.SourceContextLoader;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
@@ -16,7 +17,8 @@ public class ContextualValidationEventFormatterTest {
     @Test
     public void loadsContext() {
         Model model = Model.assembler()
-                .addImport(getClass().getResource("context.smithy"))
+                // Use the shared context file.
+                .addImport(SourceContextLoader.class.getResource("context.smithy"))
                 .assemble()
                 .unwrap();
 

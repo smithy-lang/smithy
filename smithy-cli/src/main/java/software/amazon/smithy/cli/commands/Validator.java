@@ -52,23 +52,25 @@ final class Validator {
             output.append(' ').append('(');
             StringJoiner joiner = new StringJoiner(", ");
             if (errors > 0) {
-                appendSummaryCount(joiner, colors, "ERROR", errors, Style.BRIGHT_RED);
+                appendSummaryCount(joiner, "ERROR", errors);
             }
 
             if (dangers > 0) {
-                appendSummaryCount(joiner, colors, "DANGER", dangers, Style.RED);
+                appendSummaryCount(joiner, "DANGER", dangers);
             }
 
             if (warnings > 0) {
-                appendSummaryCount(joiner, colors, "WARNING", warnings, Style.YELLOW);
+                appendSummaryCount(joiner, "WARNING", warnings);
             }
 
             if (notes > 0) {
-                appendSummaryCount(joiner, colors, "NOTE", notes, Style.WHITE);
+                appendSummaryCount(joiner, "NOTE", notes);
             }
             output.append(joiner);
             output.append(')');
         }
+
+        output.append(System.lineSeparator());
 
         if (!result.getResult().isPresent() || errors + dangers > 0) {
             throw new CliError(output.toString());
@@ -77,12 +79,7 @@ final class Validator {
         }
     }
 
-    private static void appendSummaryCount(
-            StringJoiner joiner,
-            ColorFormatter colors,
-            String label,
-            int count,
-            Style color) {
-        joiner.add(colors.style(label, color) + ": " + count);
+    private static void appendSummaryCount(StringJoiner joiner, String label, int count) {
+        joiner.add(label + ": " + count);
     }
 }

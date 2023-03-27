@@ -1,0 +1,11 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "example.smithy#Foo": {
+            "type": "string",
+            "traits": {
+                "smithy.api#sensitive": {}
+            }
+        }
+    }
+}
