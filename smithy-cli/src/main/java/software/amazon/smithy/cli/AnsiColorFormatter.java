@@ -18,6 +18,7 @@ package software.amazon.smithy.cli;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * Styles text using ANSI color codes.
@@ -41,6 +42,16 @@ public enum AnsiColorFormatter implements ColorFormatter {
                 throw new UncheckedIOException(e);
             }
         }
+
+        @Override
+        public boolean isColorEnabled() {
+            return false;
+        }
+
+        @Override
+        public <T extends Appendable> void style(T appendable, Consumer<T> consumer, Style... styles) {
+            consumer.accept(appendable);
+        }
     },
 
     /**
@@ -57,24 +68,54 @@ public enum AnsiColorFormatter implements ColorFormatter {
         @Override
         public void style(Appendable appendable, String text, Style... styles) {
             try {
-                if (styles.length == 0) {
-                    appendable.append(text);
-                } else {
-                    appendable.append("\033[");
-                    boolean isAfterFirst = false;
-                    for (Style style : styles) {
-                        if (isAfterFirst) {
-                            appendable.append(';');
-                        }
-                        appendable.append(style.getAnsiColorCode());
-                        isAfterFirst = true;
+                startStyle(appendable, styles);
+                appendable.append(text);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            } finally {
+                closeStyle(appendable, styles);
+            }
+        }
+
+        @Override
+        public boolean isColorEnabled() {
+            return true;
+        }
+
+        @Override
+        public <T extends Appendable> void style(T appendable, Consumer<T> consumer, Style... styles) {
+            try {
+                startStyle(appendable, styles);
+                consumer.accept(appendable);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            } finally {
+                closeStyle(appendable, styles);
+            }
+        }
+
+        private void startStyle(Appendable appendable, Style... styles) throws IOException {
+            if (styles.length > 0) {
+                appendable.append("\033[");
+                boolean isAfterFirst = false;
+                for (Style style : styles) {
+                    if (isAfterFirst) {
+                        appendable.append(';');
                     }
-                    appendable.append('m');
-                    appendable.append(text);
+                    appendable.append(style.getAnsiColorCode());
+                    isAfterFirst = true;
+                }
+                appendable.append('m');
+            }
+        }
+
+        private void closeStyle(Appendable appendable, Style... styles) {
+            try {
+                if (styles.length > 0) {
                     appendable.append("\033[0m");
                 }
             } catch (IOException e) {
-                throw new CliError("Error writing output", 2, e);
+                throw new UncheckedIOException(e);
             }
         }
     },
@@ -93,6 +134,16 @@ public enum AnsiColorFormatter implements ColorFormatter {
         @Override
         public void style(Appendable appendable, String text, Style... styles) {
             delegate.style(appendable, text, styles);
+        }
+
+        @Override
+        public boolean isColorEnabled() {
+            return delegate.isColorEnabled();
+        }
+
+        @Override
+        public <T extends Appendable> void style(T appendable, Consumer<T> consumer, Style... styles) {
+            delegate.style(appendable, consumer, styles);
         }
     };
 

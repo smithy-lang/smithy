@@ -6,8 +6,13 @@ final class BufferPrinter implements CliPrinter {
 
     @Override
     public void println(String text) {
+        print(text + "\n");
+    }
+
+    @Override
+    public void print(String text) {
         synchronized (this) {
-            builder.append(text + "\n");
+            builder.append(text);
         }
     }
 

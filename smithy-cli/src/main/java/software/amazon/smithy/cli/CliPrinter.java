@@ -30,11 +30,20 @@ import java.nio.charset.StandardCharsets;
 public interface CliPrinter extends Flushable {
 
     /**
+     * Prints text to the writer.
+     *
+     * @param text Text to write.
+     */
+    void print(String text);
+
+    /**
      * Prints text to the writer and appends a new line.
      *
      * @param text Text to print.
      */
-    void println(String text);
+    default void println(String text) {
+        print(text + System.lineSeparator());
+    }
 
     /**
      * Flushes any buffers in the printer.
@@ -52,6 +61,11 @@ public interface CliPrinter extends Flushable {
             @Override
             public void println(String text) {
                 printWriter.println(text);
+            }
+
+            @Override
+            public void print(String text) {
+                printWriter.print(text);
             }
 
             @Override

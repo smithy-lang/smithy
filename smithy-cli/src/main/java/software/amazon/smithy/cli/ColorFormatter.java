@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.cli;
 
+import java.util.function.Consumer;
+
 /**
  * Styles text using color codes.
  *
@@ -38,6 +40,21 @@ public interface ColorFormatter {
      * @param styles Styles to apply.
      */
     void style(Appendable appendable, String text, Style... styles);
+
+    /**
+     * Adds styles around text written to an appendable by a consumer.
+     *
+     * @param appendable Appendable to write to.
+     * @param consumer   Consumer to write to the appendable using style.
+     * @param styles     Styles to apply to the text written by the consumer.
+     * @param <T>        Appendable type.
+     */
+    <T extends Appendable> void style(T appendable, Consumer<T> consumer, Style... styles);
+
+    /**
+     * @return Returns true if this formatter supports color output.
+     */
+    boolean isColorEnabled();
 
     /**
      * Print a styled line of text to the given {@code printer}.

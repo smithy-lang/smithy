@@ -18,6 +18,7 @@ package software.amazon.smithy.cli;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
@@ -141,6 +142,16 @@ public final class Cli {
             @Override
             public void style(Appendable appendable, String text, Style... styles) {
                 delegateSupplier.get().style(appendable, text, styles);
+            }
+
+            @Override
+            public boolean isColorEnabled() {
+                return delegateSupplier.get().isColorEnabled();
+            }
+
+            @Override
+            public <T extends Appendable> void style(T appendable, Consumer<T> consumer, Style... styles) {
+                delegateSupplier.get().style(appendable, consumer, styles);
             }
         };
     }
