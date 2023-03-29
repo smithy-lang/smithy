@@ -21,6 +21,15 @@ public class SelectTest {
     }
 
     @Test
+    public void doesNotShowWarnings() {
+        List<String> args = Arrays.asList("select", "--selector", "string [id|namespace=smithy.example]");
+        IntegUtils.run("model-with-warning", args, result -> {
+            assertThat(result.getExitCode(), equalTo(0));
+            assertThat(result.getOutput().trim(), equalTo("smithy.example#MyString"));
+        });
+    }
+
+    @Test
     public void selectsVariables() {
         List<String> args = Arrays.asList("select", "--vars", "--selector", "list $list(*) > member > string");
         IntegUtils.run("simple-config-sources", args, result -> {

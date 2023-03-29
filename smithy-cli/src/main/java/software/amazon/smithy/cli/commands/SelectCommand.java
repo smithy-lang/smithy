@@ -44,6 +44,7 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.selector.Selector;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.utils.IoUtils;
 
 final class SelectCommand extends ClasspathCommand {
@@ -140,7 +141,17 @@ final class SelectCommand extends ClasspathCommand {
     @Override
     int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env, List<String> models) {
         // Don't write the summary, but do write danger/errors to STDERR.
-        Model model = CommandUtils.buildModel(arguments, models, env, env.stderr(), true, config);
+        ValidationFlag flag = ValidationFlag.DISABLE;
+
+        // Force the severity to DANGER or ERROR to only see events if they'll fail the command.
+        BuildOptions buildOptions = arguments.getReceiver(BuildOptions.class);
+        buildOptions.severity(Severity.DANGER);
+
+        Model model = CommandUtils.buildModel(arguments, models, env, env.stderr(), flag, config);
+
+        // Flush outputs to ensure there is no interleaving with selection output.
+        env.stderr().flush();
+        env.stdout().flush();
 
         Options options = arguments.getReceiver(Options.class);
         Selector selector = options.selector();
