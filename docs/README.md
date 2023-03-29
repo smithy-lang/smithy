@@ -24,5 +24,6 @@ make html
 To view the output, just open up `build/html/index.html` in your browser:
 
 ```
-open build/html/index.html
+open build/html/1.0/index.html
+open build/html/2.0/index.html
 ```

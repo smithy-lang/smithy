@@ -392,6 +392,48 @@ deviates from the :ref:`shape name of the shape ID <shape-id>` of the resource.
         }
     }
 
+.. smithy-trait:: aws.iam#actionName
+.. _aws.iam#actionName-trait:
+
+----------------------------
+``aws.iam#actionName`` trait
+----------------------------
+
+Summary
+    Provides a custom IAM action name.
+Trait selector
+    ``operation``
+Value type
+    ``string``
+
+Operations not annotated with the ``actionName`` trait, default to the
+:ref:`shape name of the shape ID <shape-id>` of the targeted operation.
+
+The following example defines two operations:
+
+* ``OperationA`` is not annotated with the ``actionName`` trait, and
+  resolves the action name of ``OperationA``.
+* ``OperationB`` has the ``actionName`` trait, so has the action
+  name ``OverridingActionName``.
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.iam#actionName
+
+    service MyService {
+        version: "2020-07-02"
+        operations: [OperationA, OperationB]
+    }
+
+    operation OperationA {}
+
+    @actionName("OverridingActionName")
+    operation OperationB {}
+
 
 .. _deriving-condition-keys:
 

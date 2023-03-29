@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.ProjectionResult;
 import software.amazon.smithy.build.SmithyBuild;
@@ -40,6 +41,7 @@ import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.validation.Severity;
 
 final class BuildCommand extends ClasspathCommand {
@@ -102,7 +104,14 @@ final class BuildCommand extends ClasspathCommand {
         // Configure whether the build is quiet or not based on the --quiet option.
         Model model = CommandUtils.buildModel(arguments, models, env, env.stderr(), standardOptions.quiet(), config);
 
-        SmithyBuild smithyBuild = SmithyBuild.create(classLoader)
+        Supplier<ModelAssembler> modelAssemblerSupplier = () -> {
+            ModelAssembler assembler = Model.assembler(classLoader);
+            if (buildOptions.allowUnknownTraits()) {
+                assembler.putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true);
+            }
+            return assembler;
+        };
+        SmithyBuild smithyBuild = SmithyBuild.create(classLoader, modelAssemblerSupplier)
                 .config(config)
                 .model(model);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,26 +15,30 @@
 
 package software.amazon.smithy.model.selector;
 
-import java.util.Collections;
-import java.util.Set;
 import software.amazon.smithy.model.shapes.Shape;
 
 /**
- * Pushes the shapes stored in a specific variable to the next selector.
+ * Root expressions are rooted common subexpressions.
+ *
+ * <p>Roots are evaluated eagerly and then the result is retrieved by ID. This prevents needing to evaluate a root
+ * expression over and over for each shape given the result does not vary based on the current shape.
+ * Roots are evaluated in an isolated context, meaning it can't use variables defined outside the root, nor can it
+ * set variables that can be used outside the root.
  */
-final class VariableGetSelector implements InternalSelector {
-    private final String variableName;
+final class RootSelector implements InternalSelector {
 
-    VariableGetSelector(String variableName) {
-        this.variableName = variableName;
+    private final InternalSelector selector;
+    private final int id;
+
+    RootSelector(InternalSelector selector, int id) {
+        this.selector = selector;
+        this.id = id;
     }
 
     @Override
     public Response push(Context context, Shape shape, Receiver next) {
-        // Do not fail on invalid variable access.
-        for (Shape v : getShapes(context)) {
+        for (Shape v : context.getRootResult(id)) {
             if (next.apply(context, v) == Response.STOP) {
-                // Propagate the signal to stop upstream.
                 return Response.STOP;
             }
         }
@@ -42,12 +46,8 @@ final class VariableGetSelector implements InternalSelector {
         return Response.CONTINUE;
     }
 
-    private Set<Shape> getShapes(Context context) {
-        return context.getVars().getOrDefault(variableName, Collections.emptySet());
-    }
-
     @Override
     public ContainsShape containsShapeOptimization(Context context, Shape shape) {
-        return getShapes(context).contains(shape) ? ContainsShape.YES : ContainsShape.NO;
+        return context.getRootResult(id).contains(shape) ? ContainsShape.YES : ContainsShape.NO;
     }
 }

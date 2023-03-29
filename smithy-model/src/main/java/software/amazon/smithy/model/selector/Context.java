@@ -16,8 +16,10 @@
 package software.amazon.smithy.model.selector;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.shapes.Shape;
 
@@ -27,43 +29,31 @@ import software.amazon.smithy.model.shapes.Shape;
 final class Context {
 
     NeighborProviderIndex neighborIndex;
-    private final Map<String, Set<Shape>> variables;
+    private final Model model;
+    private final Map<String, Set<Shape>> variables = new HashMap<>();
+    private final List<Set<Shape>> roots;
 
-    Context(NeighborProviderIndex neighborIndex) {
+    Context(Model model, NeighborProviderIndex neighborIndex, List<Set<Shape>> roots) {
+        this.model = model;
         this.neighborIndex = neighborIndex;
-        this.variables = new HashMap<>();
+        this.roots = roots;
     }
 
     /**
-     * Clears the variables stored in the context.
+     * Gets the mutable map of captured variables.
      *
-     * @return Returns the current context.
-     */
-    Context clearVars() {
-        variables.clear();
-        return this;
-    }
-
-    /**
-     * Gets the currently set variables.
-     *
-     * <p>Note that this is a mutable array and needs to be copied to
-     * get a persistent snapshot of the variables.
-     *
-     * @return Returns the currently set variables.
+     * @return Returns the captured variables.
      */
     Map<String, Set<Shape>> getVars() {
         return variables;
     }
 
-    /**
-     * Puts a variable into the context using a variable name.
-     *
-     * @param variable Variable to set.
-     * @param shapes Shapes to associate with the variable.
-     */
-    void putVar(String variable, Set<Shape> shapes) {
-        variables.put(variable, shapes);
+    Set<Shape> getRootResult(int index) {
+        return roots.get(index);
+    }
+
+    Model getModel() {
+        return model;
     }
 
     /**
@@ -73,10 +63,10 @@ final class Context {
         boolean set;
 
         @Override
-        public boolean apply(Context context, Shape shape) {
+        public InternalSelector.Response apply(Context context, Shape shape) {
             set = true;
             // Stop receiving shapes once the first value is seen.
-            return false;
+            return InternalSelector.Response.STOP;
         }
     }
 

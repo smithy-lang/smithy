@@ -64,11 +64,11 @@ final class ScopedAttributeSelector implements InternalSelector {
     }
 
     @Override
-    public boolean push(Context context, Shape shape, Receiver next) {
+    public Response push(Context context, Shape shape, Receiver next) {
         if (matchesAssertions(shape, context.getVars())) {
             return next.apply(context, shape);
         } else {
-            return true;
+            return Response.CONTINUE;
         }
     }
 

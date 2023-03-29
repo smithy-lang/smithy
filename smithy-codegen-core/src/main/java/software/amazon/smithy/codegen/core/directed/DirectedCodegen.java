@@ -67,6 +67,15 @@ public interface DirectedCodegen<C extends CodegenContext<S, ?, I>, S, I extends
     }
 
     /**
+     * Generates the code needed for an operation shape.
+     *
+     * @param directive Directive to perform.
+     */
+    default void generateOperation(GenerateOperationDirective<C, S> directive) {
+        // Does nothing by default.
+    }
+
+    /**
      * Generates the code needed for a structure shape.
      *
      * <p>This method should not be invoked for structures marked with the

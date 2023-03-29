@@ -27,7 +27,6 @@ import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.SimpleShape;
-import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SimpleParser;
 
@@ -39,6 +38,7 @@ final class SelectorParser extends SimpleParser {
     private static final Logger LOGGER = Logger.getLogger(SelectorParser.class.getName());
     private static final Set<Character> BREAK_TOKENS = SetUtils.of(',', ']', ')');
     private static final Set<String> REL_TYPES = new HashSet<>();
+    private final List<InternalSelector> roots = new ArrayList<>();
 
     static {
         // Adds selector relationship labels for warnings when unknown relationship names are used.
@@ -52,7 +52,9 @@ final class SelectorParser extends SimpleParser {
     }
 
     static Selector parse(String selector) {
-        return new WrappedSelector(selector, new SelectorParser(selector).parse());
+        SelectorParser parser = new SelectorParser(selector);
+        List<InternalSelector> result = parser.parse();
+        return new WrappedSelector(selector, result, parser.roots);
     }
 
     List<InternalSelector> parse() {
@@ -60,7 +62,7 @@ final class SelectorParser extends SimpleParser {
     }
 
     private List<InternalSelector> recursiveParse() {
-        List<InternalSelector> selectors = new ArrayList<>();
+        List<InternalSelector> selectors = new IgnoreIdentitySelectorArray();
 
         // createSelector() will strip leading ws.
         selectors.add(createSelector());
@@ -76,6 +78,16 @@ final class SelectorParser extends SimpleParser {
         }
 
         return selectors;
+    }
+
+    /**
+     * Filter out unnecessary identity selectors when creating the finalized AST to evaluate selectors.
+     */
+    private static final class IgnoreIdentitySelectorArray extends ArrayList<InternalSelector> {
+        @Override
+        public boolean add(InternalSelector o) {
+            return o != InternalSelector.IDENTITY && super.add(o);
+        }
     }
 
     private InternalSelector createSelector() {
@@ -96,7 +108,7 @@ final class SelectorParser extends SimpleParser {
                 }
             case '>': // forward undirected neighbor
                 skip();
-                return new ForwardNeighborSelector(ListUtils.of());
+                return NeighborSelector.forward(Collections.emptyList());
             case '<': // reverse [un]directed neighbor
                 skip();
                 if (peek() == '-') { // reverse directed neighbor (<-[X, Y, Z]-)
@@ -104,7 +116,7 @@ final class SelectorParser extends SimpleParser {
                     expect('[');
                     return parseSelectorDirectedReverseNeighbor();
                 } else { // reverse undirected neighbor (<)
-                    return new ReverseNeighborSelector(ListUtils.of());
+                    return NeighborSelector.reverse(Collections.emptyList());
                 }
             case '~': // ~>
                 skip();
@@ -177,13 +189,13 @@ final class SelectorParser extends SimpleParser {
         // Get the remainder of the "]->" token.
         expect('-');
         expect('>');
-        return new ForwardNeighborSelector(relationships);
+        return NeighborSelector.forward(relationships);
     }
 
     private InternalSelector parseSelectorDirectedReverseNeighbor() {
         List<String> relationships = parseSelectorDirectedRelationships();
         expect('-');
-        return new ReverseNeighborSelector(relationships);
+        return NeighborSelector.reverse(relationships);
     }
 
     private List<String> parseSelectorDirectedRelationships() {
@@ -227,6 +239,22 @@ final class SelectorParser extends SimpleParser {
                 return new TestSelector(selectors);
             case "is":
                 return IsSelector.of(selectors);
+            case "in":
+                if (selectors.size() != 1) {
+                    throw new SelectorSyntaxException(
+                            "The :in function requires a single selector argument",
+                            expression(), functionPosition, line(), column());
+                }
+                return new InSelector(selectors.get(0));
+            case "root":
+                if (selectors.size() != 1) {
+                    throw new SelectorSyntaxException(
+                            "The :root function requires a single selector argument",
+                            expression(), functionPosition, line(), column());
+                }
+                InternalSelector root = new RootSelector(selectors.get(0), roots.size());
+                roots.add(selectors.get(0));
+                return root;
             case "topdown":
                 if (selectors.size() > 2) {
                     throw new SelectorSyntaxException(
@@ -240,7 +268,7 @@ final class SelectorParser extends SimpleParser {
             default:
                 LOGGER.warning(String.format("Unknown function name `%s` found in selector: %s",
                                              name, expression()));
-                return (context, shape, next) -> true;
+                return (context, shape, next) -> InternalSelector.Response.CONTINUE;
         }
     }
 
