@@ -77,9 +77,9 @@ final class BuildOptions implements ArgumentReceiver {
                 return value -> discoverClasspath = value;
             case SEVERITY:
                 return value -> {
-                    severity = Severity.fromString(value).orElseThrow(() -> {
+                    severity(Severity.fromString(value).orElseThrow(() -> {
                         return new CliError("Invalid severity level: " + value);
-                    });
+                    }));
                 };
             default:
                 return null;
@@ -100,6 +100,10 @@ final class BuildOptions implements ArgumentReceiver {
 
     String output() {
         return output;
+    }
+
+    void severity(Severity severity) {
+        this.severity = severity;
     }
 
     /**

@@ -102,7 +102,8 @@ final class BuildCommand extends ClasspathCommand {
 
         // Build the model and fail if there are errors. Prints errors to stdout.
         // Configure whether the build is quiet or not based on the --quiet option.
-        Model model = CommandUtils.buildModel(arguments, models, env, env.stderr(), standardOptions.quiet(), config);
+        ValidationFlag flag = ValidationFlag.from(standardOptions);
+        Model model = CommandUtils.buildModel(arguments, models, env, env.stderr(), flag, config);
 
         Supplier<ModelAssembler> modelAssemblerSupplier = () -> {
             ModelAssembler assembler = Model.assembler(classLoader);
