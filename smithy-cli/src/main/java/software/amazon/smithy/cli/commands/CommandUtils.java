@@ -53,7 +53,7 @@ final class CommandUtils {
             List<String> models,
             Command.Env env,
             CliPrinter printer,
-            boolean quietValidation,
+            ValidationFlag validationFlag,
             SmithyBuildConfig config
     ) {
         ClassLoader classLoader = env.classLoader();
@@ -63,6 +63,10 @@ final class CommandUtils {
         BuildOptions buildOptions = arguments.getReceiver(BuildOptions.class);
         Severity minSeverity = buildOptions.severity(standardOptions);
         CliPrinter stderr = env.stderr();
+
+        if (validationFlag == ValidationFlag.DISABLE) {
+            assembler.disableValidation();
+        }
 
         // Emit status updates.
         AtomicInteger issueCount = new AtomicInteger();
@@ -94,7 +98,8 @@ final class CommandUtils {
             }
         }
 
-        Validator.validate(quietValidation, colors, stderr, result);
+        // Note: disabling validation will still show a summary of failures if the model can't be loaded.
+        Validator.validate(validationFlag != ValidationFlag.ENABLE, colors, stderr, result);
         return result.getResult().orElseThrow(() -> new RuntimeException("Expected Validator to throw"));
     }
 

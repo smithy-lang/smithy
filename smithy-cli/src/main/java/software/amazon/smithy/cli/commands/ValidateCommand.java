@@ -43,7 +43,8 @@ final class ValidateCommand extends ClasspathCommand {
     @Override
     int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env, List<String> models) {
         StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
-        CommandUtils.buildModel(arguments, models, env, env.stdout(), standardOptions.quiet(), config);
+        ValidationFlag flag = ValidationFlag.from(standardOptions);
+        CommandUtils.buildModel(arguments, models, env, env.stdout(), flag, config);
         LOGGER.info("Smithy validation complete");
         return 0;
     }

@@ -41,7 +41,7 @@ final class AstCommand extends ClasspathCommand {
 
     @Override
     int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env, List<String> models) {
-        Model model = CommandUtils.buildModel(arguments, models, env, env.stderr(), true, config);
+        Model model = CommandUtils.buildModel(arguments, models, env, env.stderr(), ValidationFlag.QUIET, config);
         ModelSerializer serializer = ModelSerializer.builder().build();
         env.stdout().println(Node.prettyPrintJson(serializer.serialize(model)));
         return 0;

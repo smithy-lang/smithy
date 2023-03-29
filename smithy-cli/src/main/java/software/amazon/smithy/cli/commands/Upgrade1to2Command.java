@@ -41,6 +41,7 @@ import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
+import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.loader.ModelAssembler;
@@ -104,7 +105,8 @@ final class Upgrade1to2Command extends SimpleCommand {
         configBuilder.outputDirectory(tempDir.toString());
         SmithyBuildConfig temporaryConfig = configBuilder.build();
 
-        Model initialModel = CommandUtils.buildModel(arguments, models, env, env.stderr(), true, smithyBuildConfig);
+        ValidationFlag flag = ValidationFlag.from(arguments.getReceiver(StandardOptions.class));
+        Model initialModel = CommandUtils.buildModel(arguments, models, env, env.stderr(), flag, smithyBuildConfig);
 
         SmithyBuild smithyBuild = SmithyBuild.create(classLoader)
                 .config(temporaryConfig)
