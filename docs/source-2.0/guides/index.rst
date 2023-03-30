@@ -5,6 +5,7 @@ Guides
 .. toctree::
     :maxdepth: 1
 
+    smithy-cli/index
     building-models/index
     using-code-generation/index
     model-linters

@@ -6,7 +6,7 @@ author = u'Amazon Web Services'
 
 # -- General configuration ------------------------------------------------
 
-extensions = ['sphinx_copybutton', 'smithy']
+extensions = ['sphinx_copybutton', 'sphinx_substitution_extensions', 'smithy']
 templates_path = ['../_templates', '../root-redirects']
 
 pygments_style = "default"
