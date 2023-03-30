@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.cli.commands;
 
+import java.io.UncheckedIOException;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.regex.Pattern;
@@ -80,13 +81,20 @@ final class PrettyAnsiValidationFormatter implements ValidationEventFormatter {
             colors.style(writer, humanReadableFilename + ':' + line + ':' + column, Style.BLUE);
             writer.append(ls).append(ls);
 
-            Collection<SourceContextLoader.Line> lines = sourceContextLoader.loadContext(event);
-            if (!lines.isEmpty()) {
-                new CodeFormatter(writer, colors, LINE_LENGTH).writeCode(line, column, lines);
+            try {
+                Collection<SourceContextLoader.Line> lines = sourceContextLoader.loadContext(event);
+                if (!lines.isEmpty()) {
+                    new CodeFormatter(writer, colors, LINE_LENGTH).writeCode(line, column, lines);
+                }
+            } catch (UncheckedIOException e) {
+                colors.style(writer, "Invalid source file", Style.UNDERLINE);
+                writer.append(": ");
+                writeMessage(writer, e.getCause().getMessage());
+                writer.append(ls).append(ls);
             }
         }
 
-        writeMessage(writer, event);
+        writeMessage(writer, event.getMessage());
         writer.append(ls);
 
         return writer.toString();
@@ -115,8 +123,8 @@ final class PrettyAnsiValidationFormatter implements ValidationEventFormatter {
     }
 
     // Converts Markdown style ticks to use color highlights if colors are enabled.
-    private void writeMessage(StringBuilder writer, ValidationEvent event) {
-        String content = StringUtils.wrap(event.getMessage(), 80, System.lineSeparator(), false);
+    private void writeMessage(StringBuilder writer, String message) {
+        String content = StringUtils.wrap(message, 80, System.lineSeparator(), false);
 
         if (colors.isColorEnabled()) {
             content = TICK_PATTERN.matcher(content).replaceAll(colors.style("$1", Style.CYAN));

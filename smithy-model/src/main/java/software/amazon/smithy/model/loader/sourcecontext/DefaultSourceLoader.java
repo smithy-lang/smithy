@@ -194,7 +194,10 @@ final class DefaultSourceLoader implements SourceContextLoader {
         // Members should always crawl up to the defining shape in both the IDL and JSON.
         Shape container = model.getShape(member.getContainer()).orElse(null);
 
-        if (container != null) {
+        // This should never be null, but guard here just in case.
+        if (container == null) {
+            LOGGER.warning(() -> "Member container not found: " + member.getId() + " -> " + member.getTarget());
+        } else {
             SourceLocation containerLocation = container.getSourceLocation();
             // Some basic checking to ensure the member after the container in the same file.
             if (containerLocation.getFilename().equals(location.getFilename())
