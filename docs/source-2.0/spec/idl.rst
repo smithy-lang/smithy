@@ -93,7 +93,7 @@ The Smithy IDL is defined by the following ABNF which uses case-sensitive
 string support defined in :rfc:`7405`.
 
 .. productionlist:: smithy
-    idl:*`WS` `ControlSection` `MetadataSection` `ShapeSection`
+    idl:[`WS`] `ControlSection` `MetadataSection` `ShapeSection`
 
 .. rubric:: Whitespace
 
@@ -102,7 +102,7 @@ string support defined in :rfc:`7405`.
     SP   :1*(%x20 / %x09) ; one or more spaces or tabs
     NL   :%x0A / %x0D.0A ; Newline: \n and \r\n
     NotNL:%x09 / %x20-10FFFF ; Any character except newline
-    BR   :*`SP` 1*(`Comment` / `NL`) *`WS`; line break followed by whitespace
+    BR   :*`SP` 1*(`Comment` / `NL`) [`WS`]; line break followed by whitespace
 
 .. rubric:: Comments
 
@@ -131,9 +131,9 @@ string support defined in :rfc:`7405`.
                         :/ `Number`
                         :/ `NodeKeywords`
                         :/ `NodeStringValue`
-    NodeArray           :"[" *`WS` *(`NodeValue` *`WS`) "]"
-    NodeObject          :"{" *`WS` [`NodeObjectKvp` *(`WS` `NodeObjectKvp`)] *`WS` "}"
-    NodeObjectKvp       :`NodeObjectKey` *`WS` ":" *`WS` `NodeValue`
+    NodeArray           :"[" [`WS`] *(`NodeValue` [`WS`]) "]"
+    NodeObject          :"{" [`WS`] [`NodeObjectKvp` *(`WS` `NodeObjectKvp`)] [`WS`] "}"
+    NodeObjectKvp       :`NodeObjectKey` [`WS`] ":" [`WS`] `NodeValue`
     NodeObjectKey       :`QuotedText` / `Identifier`
     Number              :[`Minus`] `Int` [`Frac`] [`Exp`]
     DecimalPoint        :%x2E ; .
@@ -188,18 +188,18 @@ string support defined in :rfc:`7405`.
                             :/ %s"byte" / %s"short" / %s"integer" / %s"long"
                             :/ %s"float" / %s"double" / %s"bigInteger"
                             :/ %s"bigDecimal" / %s"timestamp"
-    Mixins                  :*`SP` %s"with" *`WS` "[" 1*(*`WS` `ShapeId`) *`WS` "]"
-    EnumShapeStatement      :`EnumTypeName` `SP` `Identifier` [`Mixins`] *`WS` `EnumShapeMembers`
+    Mixins                  :*`SP` %s"with" [`WS`] "[" 1*([`WS`] `ShapeId`) [`WS`] "]"
+    EnumShapeStatement      :`EnumTypeName` `SP` `Identifier` [`Mixins`] [`WS`] `EnumShapeMembers`
     EnumTypeName            :%s"enum" / %s"intEnum"
-    EnumShapeMembers        :"{" *`WS` 1*(`TraitStatements` `Identifier` [`ValueAssignment`] `*WS`) "}"
+    EnumShapeMembers        :"{" [`WS`] 1*(`TraitStatements` `Identifier` [`ValueAssignment`] [`WS`]) "}"
     ValueAssignment         :*`SP` "=" *`SP` `NodeValue` `BR`
-    ListStatement           :%s"list" `SP` `Identifier` [`Mixins`] *`WS` `ListMembers`
-    ListMembers             :"{" *`WS` [`ListMember`] *`WS` "}"
+    ListStatement           :%s"list" `SP` `Identifier` [`Mixins`] [`WS`] `ListMembers`
+    ListMembers             :"{" [`WS`] [`ListMember`] [`WS`] "}"
     ListMember              :`TraitStatements` (`ElidedListMember` / `ExplicitListMember`)
     ElidedListMember        :%s"$member"
     ExplicitListMember      :%s"member" *`SP` ":" *`SP` `ShapeId`
-    MapStatement            :%s"map" `SP` `Identifier` [`Mixins`] *`WS` `MapMembers`
-    MapMembers              :"{" *`WS` [`MapKey` / `MapValue` / (`MapKey` `WS` `MapValue`)] *`WS` "}"
+    MapStatement            :%s"map" `SP` `Identifier` [`Mixins`] [`WS`] `MapMembers`
+    MapMembers              :"{" [`WS`] [`MapKey` / `MapValue` / (`MapKey` `WS` `MapValue`)] [`WS`] "}"
     MapKey                  :`TraitStatements` (`ElidedMapKey` / `ExplicitMapKey`)
     MapValue                :`TraitStatements` (`ElidedMapValue` / `ExplicitMapValue`)
     ElidedMapKey            :%s"$key"
@@ -207,37 +207,37 @@ string support defined in :rfc:`7405`.
     ElidedMapValue          :%s"$value"
     ExplicitMapValue        :%s"value" *`SP` ":" *`SP` `ShapeId`
     StructureStatement      :%s"structure" `SP` `Identifier` [`StructureResource`]
-                            :        [`Mixins`] *`WS` `StructureMembers`
+                            :        [`Mixins`] [`WS`] `StructureMembers`
     StructureResource       :`SP` %s"for" `SP` `ShapeId`
-    StructureMembers        :"{" *`WS` *(`TraitStatements` `StructureMember` *`WS`) "}"
+    StructureMembers        :"{" [`WS`] *(`TraitStatements` `StructureMember` [`WS`]) "}"
     StructureMember         :(`ExplicitStructureMember` / `ElidedStructureMember`) [`ValueAssignment`]
     ExplicitStructureMember :`Identifier` *`SP` ":" *`SP` `ShapeId`
     ElidedStructureMember   :"$" `Identifier`
-    UnionStatement          :%s"union" `SP` `Identifier` [`Mixins`] *`WS` `UnionMembers`
-    UnionMembers            :"{" *`WS` *(`TraitStatements` `UnionMember` *`WS`) "}"
+    UnionStatement          :%s"union" `SP` `Identifier` [`Mixins`] [`WS`] `UnionMembers`
+    UnionMembers            :"{" [`WS`] *(`TraitStatements` `UnionMember` [`WS`]) "}"
     UnionMember             :(`ExplicitStructureMember` / `ElidedStructureMember`)
-    ServiceStatement        :%s"service" `SP` `Identifier` [`Mixins`] *`WS` `NodeObject`
-    ResourceStatement       :%s"resource" `SP` `Identifier` [`Mixins`] *`WS` `NodeObject`
-    OperationStatement      :%s"operation" `SP` `Identifier` [`Mixins`] *`WS` `OperationBody`
-    OperationBody           :"{" *`WS`
+    ServiceStatement        :%s"service" `SP` `Identifier` [`Mixins`] [`WS`] `NodeObject`
+    ResourceStatement       :%s"resource" `SP` `Identifier` [`Mixins`] [`WS`] `NodeObject`
+    OperationStatement      :%s"operation" `SP` `Identifier` [`Mixins`] [`WS`] `OperationBody`
+    OperationBody           :"{" [`WS`]
                             :    *([`OperationInput`] / [`OperationOutput`] / [`OperationErrors`])
-                            :    *`WS` "}"
+                            :    [`WS`] "}"
                             :    ; only one of each property can be specified.
-    OperationInput          :%s"input" *WS (`InlineStructure` / (":" *`WS` `ShapeId`)) `WS`
-    OperationOutput         :%s"output" *WS (`InlineStructure` / (":" *`WS` `ShapeId`)) `WS`
-    OperationErrors         :%s"errors" *WS ":" *WS "[" *(*`WS` `Identifier`) *`WS` "]" `WS`
-    InlineStructure         :":=" *`WS` `TraitStatements` [`StructureResource`]
-                            :        [`Mixins`] *`WS` `StructureMembers`
+    OperationInput          :%s"input" [`WS`] (`InlineStructure` / (":" [`WS`] `ShapeId`)) `WS`
+    OperationOutput         :%s"output" [`WS`] (`InlineStructure` / (":" [`WS`] `ShapeId`)) `WS`
+    OperationErrors         :%s"errors" [`WS`] ":" [`WS`] "[" *([`WS`] `Identifier`) [`WS`] "]" `WS`
+    InlineStructure         :":=" [`WS`] `TraitStatements` [`StructureResource`]
+                            :        [`Mixins`] [`WS`] `StructureMembers`
 
 .. rubric:: Traits
 
 .. productionlist:: smithy
-    TraitStatements         :*(*`WS` `Trait`) *`WS`
+    TraitStatements         :*([`WS`] `Trait`) [`WS`]
     Trait                   :"@" `ShapeId` [`TraitBody`]
-    TraitBody               :"(" *`WS` [`TraitBodyValue`] *`WS` ")"
+    TraitBody               :"(" [`WS`] [`TraitBodyValue`] [`WS`] ")"
     TraitBodyValue          :`TraitStructure` / `NodeValue`
-    TraitStructure          :`TraitStructureKvp` *(*`WS` `TraitStructureKvp`)
-    TraitStructureKvp       :`NodeObjectKey` *`WS` ":" *`WS` `NodeValue`
+    TraitStructure          :`TraitStructureKvp` *([`WS`] `TraitStructureKvp`)
+    TraitStructureKvp       :`NodeObjectKey` [`WS`] ":" [`WS`] `NodeValue`
     ApplyStatement          :`ApplyStatementSingular` / `ApplyStatementBlock`
     ApplyStatementSingular  :%s"apply" `SP` `ShapeId` `WS` `Trait`
     ApplyStatementBlock     :%s"apply" `SP` `ShapeId` `WS` "{" `TraitStatements` "}"
