@@ -43,6 +43,7 @@ final class CodeFormatter {
             return;
         }
 
+        // Determine the string length of the biggest number to pad the line gutter correctly.
         int numberLength = findLongestNumber(lines);
 
         try {
