@@ -61,7 +61,6 @@ final class LoadOperationProcessor implements Consumer<LoadOperation> {
             public boolean addAll(Collection<? extends ValidationEvent> validationEvents) {
                 for (ValidationEvent e : validationEvents) {
                     validationEventListener.accept(e);
-
                 }
                 return super.addAll(validationEvents);
             }
