@@ -17,7 +17,6 @@ package software.amazon.smithy.cli.commands;
 
 import java.util.List;
 import java.util.logging.Logger;
-import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
@@ -44,12 +43,8 @@ abstract class SimpleCommand implements Command {
 
     @Override
     public final int execute(Arguments arguments, Env env) {
-        List<ArgumentReceiver> receivers = createArgumentReceivers();
-        for (ArgumentReceiver receiver : receivers) {
-            arguments.addReceiver(receiver);
-        }
-
-        List<String> positionalArguments = arguments.finishParsing();
+        configureArgumentReceivers(arguments);
+        List<String> positionalArguments = arguments.getPositional();
 
         StandardOptions options = arguments.getReceiver(StandardOptions.class);
 
@@ -78,11 +73,11 @@ abstract class SimpleCommand implements Command {
     }
 
     /**
-     * Creates argument receivers for the command.
+     * Configure argument receivers for the command.
      *
-     * @return Returns the parsed positional arguments.
+     * @param arguments Arguments to add/remove argument receivers from.
      */
-    protected abstract List<ArgumentReceiver> createArgumentReceivers();
+    protected abstract void configureArgumentReceivers(Arguments arguments);
 
     /**
      * Run the non-help command after all arguments have been parsed.

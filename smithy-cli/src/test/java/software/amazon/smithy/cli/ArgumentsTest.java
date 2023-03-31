@@ -53,14 +53,14 @@ public class ArgumentsTest {
     public void allArgumentsMustHaveReceiver() {
         Arguments arguments = new Arguments(new String[]{"--a", "--b", "--c"});
 
-        Assertions.assertThrows(CliError.class, arguments::finishParsing);
+        Assertions.assertThrows(CliError.class, arguments::getPositional);
     }
 
     @Test
     public void evenSingleHyphenArgumentsMustHaveReceiver() {
         Arguments arguments = new Arguments(new String[]{"-h"});
 
-        Assertions.assertThrows(CliError.class, arguments::finishParsing);
+        Assertions.assertThrows(CliError.class, arguments::getPositional);
     }
 
     @Test
@@ -90,7 +90,7 @@ public class ArgumentsTest {
             }
         });
 
-        assertThat(arguments.finishParsing(), contains("foo", "bar"));
+        assertThat(arguments.getPositional(), contains("foo", "bar"));
         assertThat(received.keySet(), contains("--a", "--b", "--c"));
         assertThat(received.values(), contains("1", null, "2"));
     }
@@ -104,7 +104,7 @@ public class ArgumentsTest {
             received.addAll(positional);
         });
 
-        assertThat(arguments.finishParsing(), contains("foo", "bar"));
+        assertThat(arguments.getPositional(), contains("foo", "bar"));
         assertThat(received, contains("foo", "bar"));
     }
 
@@ -115,7 +115,7 @@ public class ArgumentsTest {
         assertThat(arguments.hasNext(), is(true));
         // Inherently skips "--" because it's handled by Arguments.
         assertThat(arguments.peek(), equalTo("--bar"));
-        assertThat(arguments.finishParsing(), contains("--bar"));
+        assertThat(arguments.getPositional(), contains("--bar"));
     }
 
     @Test
@@ -124,7 +124,7 @@ public class ArgumentsTest {
         Arguments arguments = new Arguments(new String[]{"--help"});
         arguments.addReceiver(options);
 
-        arguments.finishParsing();
+        arguments.getPositional();
         assertThat(arguments.getReceiver(StandardOptions.class), sameInstance(options));
         assertThat(arguments.getReceiver(StandardOptions.class).help(), is(true));
     }

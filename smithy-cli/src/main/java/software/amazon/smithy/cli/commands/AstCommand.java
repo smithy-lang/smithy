@@ -22,6 +22,7 @@ import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ModelSerializer;
+import software.amazon.smithy.model.validation.Severity;
 
 final class AstCommand extends ClasspathCommand {
 
@@ -40,8 +41,25 @@ final class AstCommand extends ClasspathCommand {
     }
 
     @Override
+    protected void configureArgumentReceivers(Arguments arguments) {
+        super.configureArgumentReceivers(arguments);
+
+        // The AST command isn't meant for validation. Events are only shown when they fail the command.
+        arguments.removeReceiver(SeverityOption.class);
+    }
+
+    @Override
     int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env, List<String> models) {
-        Model model = CommandUtils.buildModel(arguments, models, env, env.stderr(), ValidationFlag.QUIET, config);
+        Model model = new ModelBuilder()
+                .config(config)
+                .arguments(arguments)
+                .env(env)
+                .models(models)
+                .validationPrinter(env.stderr())
+                .validationMode(Validator.Mode.QUIET)
+                .severity(Severity.DANGER)
+                .build();
+
         ModelSerializer serializer = ModelSerializer.builder().build();
         env.stdout().println(Node.prettyPrintJson(serializer.serialize(model)));
         return 0;

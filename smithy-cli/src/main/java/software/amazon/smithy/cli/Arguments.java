@@ -27,9 +27,9 @@ import java.util.function.Consumer;
  * Command line arguments list to evaluate.
  *
  * <p>Arguments are parsed on demand. To finalize parsing arguments and
- * force validation of remaining arguments, call {@link #finishParsing()}.
+ * force validation of remaining arguments, call {@link #getPositional()}.
  * Note that because arguments are parsed on demand and whole set of
- * arguments isn't known before {@link #finishParsing()} is called, you
+ * arguments isn't known before {@link #getPositional()} is called, you
  * may need to delay configuring parts of the CLI or commands by adding
  * subscribers via {@link #onComplete(BiConsumer)}. These subscribers are
  * invoked when all arguments have been parsed.
@@ -39,6 +39,7 @@ public final class Arguments {
     private final String[] args;
     private final Map<Class<? extends ArgumentReceiver>, ArgumentReceiver> receivers = new LinkedHashMap<>();
     private final List<BiConsumer<Arguments, List<String>>> subscribers = new ArrayList<>();
+    private List<String> positional;
     private boolean inPositional = false;
     private int position = 0;
 
@@ -53,6 +54,28 @@ public final class Arguments {
      */
     public <T extends ArgumentReceiver> void addReceiver(T receiver) {
         receivers.put(receiver.getClass(), receiver);
+    }
+
+    /**
+     * Removes an argument receiver by class.
+     *
+     * @param receiverClass Class of receiver to remove.
+     * @return Returns the removed receiver if found, or null.
+     * @param <T> Kind of receiver to remove.
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends ArgumentReceiver> T removeReceiver(Class<T> receiverClass) {
+        return (T) receivers.remove(receiverClass);
+    }
+
+    /**
+     * Check if this class contains a receiver.
+     *
+     * @param receiverClass Class of receiver to detect.
+     * @return Returns true if found.
+     */
+    public boolean hasReceiver(Class<? extends ArgumentReceiver> receiverClass) {
+        return receivers.containsKey(receiverClass);
     }
 
     /**
@@ -97,7 +120,7 @@ public final class Arguments {
     }
 
     /**
-     * Peeks at the next value in the arguments list without shifting it.
+     * Peeks at the next value in the argument list without shifting it.
      *
      * <p>Note that arguments consumed by a {@link ArgumentReceiver} are never
      * peeked.
@@ -134,7 +157,7 @@ public final class Arguments {
     }
 
     /**
-     * Shifts off the next value in the arguments list or returns null.
+     * Shifts off the next value in the argument list or returns null.
      *
      * @return Returns the next value or null.
      */
@@ -166,41 +189,41 @@ public final class Arguments {
     }
 
     /**
-     * Expects that all remaining arguments are positional, and returns them.
+     * Gets the positional arguments.
+     *
+     * <p>Expects that all remaining arguments are positional, and returns them.
      *
      * <p>If an argument is "--", then it's skipped and remaining arguments are
      * considered positional. If any argument is encountered that isn't valid
      * for a registered Receiver, then an error is raised. Otherwise, all remaining
      * arguments are returned in a list.
      *
-     * <p>Subscribers for different receivers are called when this method is called.
+     * <p>Subscribers for different receivers are called when this method is first called.
      *
      * @return Returns remaining arguments.
      * @throws CliError if the next argument starts with "--" but isn't "--".
      */
-    public List<String> finishParsing() {
-        List<String> positional = new ArrayList<>();
+    public List<String> getPositional() {
+        if (positional == null) {
+            positional = new ArrayList<>();
 
-        while (hasNext()) {
-            String next = shift();
-            if (next != null) {
-                if (!inPositional && next.startsWith("-")) {
-                    throw new CliError("Unexpected CLI argument: " + next);
-                } else {
-                    inPositional = true;
-                    positional.add(next);
+            while (hasNext()) {
+                String next = shift();
+                if (next != null) {
+                    if (!inPositional && next.startsWith("-")) {
+                        throw new CliError("Unexpected CLI argument: " + next);
+                    } else {
+                        inPositional = true;
+                        positional.add(next);
+                    }
                 }
+            }
+
+            for (BiConsumer<Arguments, List<String>> subscriber : subscribers) {
+                subscriber.accept(this, positional);
             }
         }
 
-        invokeSubscribers(positional);
-
         return positional;
-    }
-
-    private void invokeSubscribers(List<String> positional) {
-        for (BiConsumer<Arguments, List<String>> subscriber : subscribers) {
-            subscriber.accept(this, positional);
-        }
     }
 }

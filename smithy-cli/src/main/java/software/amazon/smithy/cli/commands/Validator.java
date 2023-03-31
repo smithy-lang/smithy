@@ -19,6 +19,7 @@ import java.util.StringJoiner;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
 import software.amazon.smithy.cli.ColorFormatter;
+import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.validation.Severity;
@@ -28,6 +29,14 @@ import software.amazon.smithy.model.validation.ValidatedResult;
  * Shares logic for validating a model and printing out events.
  */
 final class Validator {
+
+    enum Mode {
+        QUIET, DISABLE, ENABLE;
+
+        static Mode from(StandardOptions standardOptions) {
+            return standardOptions.quiet() ? Mode.QUIET : Mode.ENABLE;
+        }
+    }
 
     private Validator() {}
 
