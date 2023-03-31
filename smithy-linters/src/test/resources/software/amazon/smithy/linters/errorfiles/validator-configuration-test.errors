@@ -1,0 +1,2 @@
+[DANGER] smithy.example#GetFooInput: This structure is the input of `smithy.example#GetFoo`, but it is not marked with the @input trait. The @input trait gives operations more flexibility to evolve their top-level input members in ways that would otherwise be backward incompatible. | CustomInputOutputStructureReuse.Input.GetFoo
+[DANGER] smithy.example#GetFooOutput: This structure is the output of `smithy.example#GetFoo`, but it is not marked with the @output trait. | CustomInputOutputStructureReuse.Output.GetFoo

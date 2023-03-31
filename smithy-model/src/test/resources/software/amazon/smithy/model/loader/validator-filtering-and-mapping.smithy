@@ -9,7 +9,7 @@ metadata validators = [
   },
   { // Picks up 4 shapes
     name: "hello",
-    id: "custom",
+    id: "customHello",
     message: "Test {super}"
   },
 ]
