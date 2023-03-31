@@ -220,7 +220,7 @@ string support defined in :rfc:`7405`.
     ResourceStatement       :%s"resource" `SP` `Identifier` [`Mixins`] [`WS`] `NodeObject`
     OperationStatement      :%s"operation" `SP` `Identifier` [`Mixins`] [`WS`] `OperationBody`
     OperationBody           :"{" [`WS`]
-                            :    *([`OperationInput`] / [`OperationOutput`] / [`OperationErrors`])
+                            :    *(`OperationInput` / `OperationOutput` / `OperationErrors`)
                             :    [`WS`] "}"
                             :    ; only one of each property can be specified.
     OperationInput          :%s"input" [`WS`] (`InlineStructure` / (":" [`WS`] `ShapeId`)) `WS`
