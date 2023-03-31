@@ -18,6 +18,7 @@ package software.amazon.smithy.cli.commands;
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.io.IOException;
@@ -36,11 +37,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import software.amazon.smithy.cli.CliUtils;
 import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.utils.IoUtils;
 
-public class Upgrade1to2CommandTest {
+public class MigrateCommandTest {
 
     @ParameterizedTest(name = "{1}")
     @MethodSource("source")
@@ -50,7 +52,7 @@ public class Upgrade1to2CommandTest {
         Path expectedPath = parentDir.resolve(expectedFileName);
 
         Model model = Model.assembler().addImport(initialPath).assemble().unwrap();
-        String actual = new Upgrade1to2Command("smithy").upgradeFile(model, initialPath);
+        String actual = new MigrateCommand("smithy").upgradeFile(model, initialPath);
         String expected = IoUtils.readUtf8File(expectedPath);
 
         if (!actual.equals(expected)) {
@@ -59,7 +61,7 @@ public class Upgrade1to2CommandTest {
     }
 
     public static Stream<Arguments> source() throws Exception {
-        Path start = Paths.get(Upgrade1to2CommandTest.class.getResource("upgrade/cases").toURI());
+        Path start = Paths.get(MigrateCommandTest.class.getResource("upgrade/cases").toURI());
         return Files.walk(start)
                 .filter(path -> path.getFileName().toString().endsWith(".v1.smithy"))
                 .map(path -> Arguments.of(path, path.getFileName().toString().replace(".v1.smithy", "")));
@@ -67,7 +69,7 @@ public class Upgrade1to2CommandTest {
 
     @Test
     public void testUpgradeDirectory() throws Exception {
-        Path baseDir = Paths.get(Upgrade1to2CommandTest.class.getResource(
+        Path baseDir = Paths.get(MigrateCommandTest.class.getResource(
                 "upgrade/directory-cases/all-local/v1").toURI()).toAbsolutePath();
 
         Path tempDir = Files.createTempDirectory("testUpgradeDirectory");
@@ -82,7 +84,7 @@ public class Upgrade1to2CommandTest {
 
     @Test
     public void testUpgradeDirectoryWithProjection() throws Exception {
-        Path baseDir = Paths.get(Upgrade1to2CommandTest.class.getResource(
+        Path baseDir = Paths.get(MigrateCommandTest.class.getResource(
                 "upgrade/directory-cases/ignores-projections/v1").toURI());
 
         Path tempDir = Files.createTempDirectory("testUpgradeDirectory");
@@ -96,7 +98,7 @@ public class Upgrade1to2CommandTest {
 
     @Test
     public void testUpgradeDirectoryWithJar() throws Exception {
-        Path baseDir = Paths.get(Upgrade1to2CommandTest.class.getResource(
+        Path baseDir = Paths.get(MigrateCommandTest.class.getResource(
                 "upgrade/directory-cases/with-jar/v1").toURI());
 
         Path tempDir = Files.createTempDirectory("testUpgradeDirectory");
@@ -182,5 +184,13 @@ public class Upgrade1to2CommandTest {
         public FileVisitResult visitFileFailed(Path file, IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    public void supportsDeprecatedAlias() {
+        CliUtils.Result result = CliUtils.runSmithy("upgrade-1-to-2", "--help");
+
+        assertThat(result.code(), equalTo(0));
+        assertThat(result.stderr(), containsString("upgrade-1-to-2 is deprecated"));
     }
 }

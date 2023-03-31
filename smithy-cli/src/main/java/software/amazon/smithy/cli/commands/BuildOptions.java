@@ -33,12 +33,12 @@ final class BuildOptions implements ArgumentReceiver {
 
     @Override
     public void registerHelp(HelpPrinter printer) {
-        printer.option(ALLOW_UNKNOWN_TRAITS, null, "Ignore unknown traits when validating models");
+        printer.option(ALLOW_UNKNOWN_TRAITS, null, "Ignore unknown traits when validating models.");
         printer.param("--output", null, "OUTPUT_PATH",
                       "Where to write Smithy artifacts, caches, and other files (defaults to './build/smithy').");
 
         if (!noPositionalArguments) {
-            printer.positional(MODELS, "Model files and directories to load");
+            printer.positional(MODELS, "Model files and directories to load.");
         }
     }
 

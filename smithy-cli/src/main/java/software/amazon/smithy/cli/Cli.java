@@ -17,10 +17,8 @@ package software.amazon.smithy.cli;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.logging.Logger;
 
 /**
  * This class provides a basic CLI abstraction.
@@ -32,8 +30,6 @@ import java.util.logging.Logger;
  * event a different language.
  */
 public final class Cli {
-
-    private static final Logger LOGGER = Logger.getLogger(Cli.class.getName());
 
     private ColorFormatter colorFormatter;
     private CliPrinter stdoutPrinter;
@@ -61,9 +57,6 @@ public final class Cli {
      * @throws CliError on error.
      */
     public int run(String[] args) {
-        Arguments arguments = new Arguments(args);
-        arguments.addReceiver(standardOptions);
-
         if (colorFormatter == null) {
             // CLI arguments haven't been parsed yet, so the CLI doesn't know if --force-color or --no-color
             // was passed. Defer the color setting implementation by asking StandardOptions before each write.
@@ -78,11 +71,11 @@ public final class Cli {
             stderr(CliPrinter.fromOutputStream(System.err));
         }
 
-        // Setup logging after parsing all arguments.
-        arguments.onComplete((opts, positional) -> {
-            LoggingUtil.configureLogging(opts.getReceiver(StandardOptions.class), colorFormatter, stderrPrinter);
-            LOGGER.fine(() -> "Running CLI command: " + Arrays.toString(args));
-        });
+
+        LoggingArgumentsHandler arguments = new LoggingArgumentsHandler(colorFormatter,
+                                                                        stderrPrinter,
+                                                                        Arguments.of(args));
+        arguments.addReceiver(standardOptions);
 
         try {
             try {
@@ -93,7 +86,7 @@ public final class Cli {
                 throw CliError.wrap(e);
             } finally {
                 try {
-                    LoggingUtil.restoreLogging();
+                    arguments.restoreLogging();
                 } catch (RuntimeException e) {
                     // Show the error, but don't fail the CLI since most invocations are one-time use.
                     printException(e, standardOptions.stackTrace());

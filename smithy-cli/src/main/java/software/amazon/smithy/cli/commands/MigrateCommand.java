@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -40,6 +40,9 @@ import software.amazon.smithy.build.SmithyBuild;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
+import software.amazon.smithy.cli.Command;
+import software.amazon.smithy.cli.StandardOptions;
+import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.loader.ModelAssembler;
@@ -62,34 +65,72 @@ import software.amazon.smithy.utils.SimpleParser;
 import software.amazon.smithy.utils.StringUtils;
 
 @SuppressWarnings("deprecation")
-final class Upgrade1to2Command extends SimpleCommand {
-    private static final Logger LOGGER = Logger.getLogger(Upgrade1to2Command.class.getName());
+final class MigrateCommand implements Command {
+
+    private static final Logger LOGGER = Logger.getLogger(MigrateCommand.class.getName());
     private static final Pattern VERSION_1 = Pattern.compile("(?m)^\\s*\\$\\s*version:\\s*\"1\\.0\"\\s*$");
     private static final Pattern VERSION_2 = Pattern.compile("(?m)^\\s*\\$\\s*version:\\s*\"2\\.0\"\\s*$");
+    private final String parentCommandName;
 
-    Upgrade1to2Command(String parentCommandName) {
-        super(parentCommandName);
+    MigrateCommand(String parentCommandName) {
+        this.parentCommandName = parentCommandName;
     }
 
-    @Override
-    protected void configureArgumentReceivers(Arguments arguments) {
-        arguments.addReceiver(new ConfigOptions());
-        arguments.addReceiver(new BuildOptions());
-        arguments.addReceiver(new DiscoveryOptions());
+    static Command createDeprecatedAlias(Command command) {
+        return new Command() {
+            @Override
+            public String getName() {
+                return "upgrade-1-to-2";
+            }
+
+            @Override
+            public String getSummary() {
+                return command.getSummary();
+            }
+
+            @Override
+            public int execute(Arguments arguments, Env env) {
+                if (!arguments.getReceiver(StandardOptions.class).quiet()) {
+                    String warning = env.colors().style(
+                            "upgrade-1-to-2 is deprecated. Use the migrate command instead.",
+                            Style.BG_YELLOW, Style.BLACK);
+                    env.stderr().println(warning + System.lineSeparator());
+                    env.stderr().flush();
+                }
+                return command.execute(arguments, env);
+            }
+
+            @Override
+            public boolean isHidden() {
+                return true;
+            }
+        };
     }
 
     @Override
     public String getName() {
-        return "upgrade-1-to-2";
+        return "migrate";
     }
 
     @Override
     public String getSummary() {
-        return "Upgrades Smithy IDL model files from 1.0 to 2.0 in place.";
+        return "Migrate Smithy IDL models from 1.0 to 2.0 in place.";
     }
 
     @Override
-    protected int run(Arguments arguments, Env env, List<String> models) {
+    public int execute(Arguments arguments, Env env) {
+        arguments.addReceiver(new ConfigOptions());
+        arguments.addReceiver(new BuildOptions());
+        arguments.addReceiver(new DiscoveryOptions());
+
+        CommandAction action = HelpActionWrapper.fromCommand(
+                this, parentCommandName, this::run);
+
+        return action.apply(arguments, env);
+    }
+
+    private int run(Arguments arguments, Env env) {
+        List<String> models = arguments.getPositional();
         ClassLoader classLoader = env.classLoader();
         ConfigOptions configOptions = arguments.getReceiver(ConfigOptions.class);
         SmithyBuildConfig smithyBuildConfig = configOptions.createSmithyBuildConfig();
@@ -99,7 +140,7 @@ final class Upgrade1to2Command extends SimpleCommand {
         SmithyBuildConfig.Builder configBuilder = smithyBuildConfig.toBuilder();
         Path tempDir;
         try {
-            tempDir = Files.createTempDirectory("smithyUpgrade");
+            tempDir = Files.createTempDirectory("smithyMigrate");
         } catch (IOException e) {
             throw new CliError("Unable to create temporary working directory: " + e);
         }
@@ -134,7 +175,7 @@ final class Upgrade1to2Command extends SimpleCommand {
         Model finalizedModel = resultConsumer.getResult().getModel();
 
         for (Path modelFile : resolveModelFiles(finalizedModel, models)) {
-            writeUpgradedFile(finalizedModel, modelFile);
+            writeMigratedFile(finalizedModel, modelFile);
         }
 
         return 0;
@@ -166,11 +207,11 @@ final class Upgrade1to2Command extends SimpleCommand {
                 .collect(Collectors.toList());
     }
 
-    private void writeUpgradedFile(Model completeModel, Path filePath) {
+    private void writeMigratedFile(Model completeModel, Path filePath) {
         try {
             Files.write(filePath, upgradeFile(completeModel, filePath).getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
-            throw new CliError(format("Unable to write upgraded model file to %s: %s", filePath, e));
+            throw new CliError(format("Unable to write migrated model file to %s: %s", filePath, e));
         }
     }
 
@@ -180,7 +221,7 @@ final class Upgrade1to2Command extends SimpleCommand {
             return contents;
         }
 
-        ShapeUpgradeVisitor visitor = new ShapeUpgradeVisitor(completeModel, contents);
+        ShapeMigrateVisitor visitor = new ShapeMigrateVisitor(completeModel, contents);
 
         completeModel.shapes()
                 .filter(shape -> shape.getSourceLocation().getFilename().equals(filePath.toString()))
@@ -225,11 +266,11 @@ final class Upgrade1to2Command extends SimpleCommand {
         }
     }
 
-    private static class ShapeUpgradeVisitor extends ShapeVisitor.Default<Void> {
+    private static class ShapeMigrateVisitor extends ShapeVisitor.Default<Void> {
         private final Model completeModel;
         private final ModelWriter writer;
 
-        ShapeUpgradeVisitor(Model completeModel, String modelString) {
+        ShapeMigrateVisitor(Model completeModel, String modelString) {
             this.completeModel = completeModel;
             this.writer = new ModelWriter(modelString);
         }

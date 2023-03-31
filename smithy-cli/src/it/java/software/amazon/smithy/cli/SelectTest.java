@@ -31,7 +31,7 @@ public class SelectTest {
 
     @Test
     public void selectsVariables() {
-        List<String> args = Arrays.asList("select", "--vars", "--selector", "list $list(*) > member > string");
+        List<String> args = Arrays.asList("select", "--show-vars", "--selector", "list $list(*) > member > string");
         IntegUtils.run("simple-config-sources", args, result -> {
             assertThat(result.getExitCode(), equalTo(0));
             String content = result.getOutput().trim();

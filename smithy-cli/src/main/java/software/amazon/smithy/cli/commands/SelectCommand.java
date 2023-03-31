@@ -32,6 +32,7 @@ import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
 import software.amazon.smithy.cli.ColorFormatter;
+import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.HelpPrinter;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.model.Model;
@@ -47,12 +48,15 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.utils.IoUtils;
 
-final class SelectCommand extends ClasspathCommand {
+final class SelectCommand implements Command {
 
     private static final Logger LOGGER = Logger.getLogger(SelectCommand.class.getName());
+    private final String parentCommandName;
+    private final DependencyResolver.Factory dependencyResolverFactory;
 
     SelectCommand(String parentCommandName, DependencyResolver.Factory dependencyResolverFactory) {
-        super(parentCommandName, dependencyResolverFactory);
+        this.parentCommandName = parentCommandName;;
+        this.dependencyResolverFactory = dependencyResolverFactory;
     }
 
     @Override
@@ -66,24 +70,45 @@ final class SelectCommand extends ClasspathCommand {
     }
 
     @Override
-    public String getDocumentation(ColorFormatter colors) {
-        return "By default, each matching shape ID is printed to stdout on a new line. Pass --vars to print out a "
-               + "JSON array that contains a 'shape' and 'vars' property, where the 'vars' property is a map of "
+    public int execute(Arguments arguments, Env env) {
+        arguments.addReceiver(new ConfigOptions());
+        arguments.addReceiver(new DiscoveryOptions());
+        arguments.addReceiver(new BuildOptions());
+        arguments.addReceiver(new Options());
+
+        CommandAction action = HelpActionWrapper.fromCommand(
+            this,
+            parentCommandName,
+            this::getDocumentation,
+            new ClasspathAction(dependencyResolverFactory, this::runWithClassLoader)
+        );
+
+        return action.apply(arguments, env);
+    }
+
+    private String getDocumentation(ColorFormatter colors) {
+        return "By default, each matching shape ID is printed to stdout on a new line. Pass --show-vars to print out "
+               + "a JSON array that contains a 'shape' and 'vars' property, where the 'vars' property is a map of "
                + "each variable that was captured when the shape was matched.";
     }
 
     private static final class Options implements ArgumentReceiver {
-        private boolean vars;
+        private boolean showVars;
         private Selector selector;
         private final List<ShapeId> showTraits = new ArrayList<>();
 
         @Override
         public boolean testOption(String name) {
-            if (name.equals("--vars")) {
-                vars = true;
-                return true;
+            switch (name) {
+                case "--vars":
+                    LOGGER.warning("--vars is deprecated. Use --show-vars instead.");
+                    // fall-through
+                case "--show-vars":
+                    showVars = true;
+                    return true;
+                default:
+                    return false;
             }
-            return false;
         }
 
         @Override
@@ -117,12 +142,12 @@ final class SelectCommand extends ClasspathCommand {
                           "Returns JSON output that includes the values of specific traits applied to matched shapes, "
                           + "stored in a 'traits' property. Provide a comma-separated list of trait shape IDs. "
                           + "Prelude traits may omit a namespace (e.g., 'required' or 'smithy.api#required').");
-            printer.option("--vars", null, "Returns JSON output that includes the variables that were captured when "
-                                           + "a shape was matched, stored in a 'vars' property.");
+            printer.option("--show-vars", null, "Returns JSON output that includes the variables that were captured "
+                                                + "when a shape was matched, stored in a 'vars' property.");
         }
 
-        public boolean vars() {
-            return vars;
+        public boolean showVars() {
+            return showVars;
         }
 
         public Selector selector() {
@@ -133,20 +158,12 @@ final class SelectCommand extends ClasspathCommand {
         }
     }
 
-    @Override
-    protected void configureArgumentReceivers(Arguments arguments) {
-        super.configureArgumentReceivers(arguments);
-        arguments.addReceiver(new Options());
-        arguments.removeReceiver(SeverityOption.class); // only show build-failing errors when selecting.
-    }
-
-    @Override
-    int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env, List<String> models) {
+    private int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env) {
         Model model = new ModelBuilder()
                 .config(config)
                 .arguments(arguments)
                 .env(env)
-                .models(models)
+                .models(arguments.getPositional())
                 .validationPrinter(env.stderr())
                 .validationMode(Validator.Mode.DISABLE)
                 .severity(Severity.DANGER)
@@ -207,8 +224,8 @@ final class SelectCommand extends ClasspathCommand {
         abstract void dumpResults(Selector selector, Model model, Options options, CliPrinter stdout);
 
         static OutputFormat determineFormat(Options options) {
-            // If --var isn't provided and --show-traits is empty, then use the SHAPE_ID_LINES output.
-            return !options.vars() && options.showTraits.isEmpty() ? SHAPE_ID_LINES : JSON;
+            // If --show-vars isn't provided and --show-traits is empty, then use the SHAPE_ID_LINES output.
+            return !options.showVars() && options.showTraits.isEmpty() ? SHAPE_ID_LINES : JSON;
         }
 
         private static Stream<String> sortShapeIds(Collection<Shape> shapes) {
