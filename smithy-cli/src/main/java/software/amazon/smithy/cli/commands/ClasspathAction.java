@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import software.amazon.smithy.build.model.MavenRepository;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
+import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.EnvironmentVariable;
 import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
@@ -38,52 +39,46 @@ import software.amazon.smithy.cli.dependencies.FileCacheResolver;
 import software.amazon.smithy.cli.dependencies.FilterCliVersionResolver;
 import software.amazon.smithy.cli.dependencies.ResolvedArtifact;
 
-abstract class ClasspathCommand extends SimpleCommand {
+/**
+ * A {@code CommandAction} that runs a wrapped action within a custom classpath.
+ */
+class ClasspathAction implements CommandAction {
 
-    private static final Logger LOGGER = Logger.getLogger(ClasspathCommand.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ClasspathAction.class.getName());
     private static final MavenRepository CENTRAL = MavenRepository.builder()
             .url("https://repo.maven.apache.org/maven2")
             .build();
     private final DependencyResolver.Factory dependencyResolverFactory;
+    private final CommandActionWithConfig action;
 
-    ClasspathCommand(String parentCommandName, DependencyResolver.Factory dependencyResolverFactory) {
-        super(parentCommandName);
+    ClasspathAction(DependencyResolver.Factory dependencyResolverFactory, CommandActionWithConfig action) {
         this.dependencyResolverFactory = dependencyResolverFactory;
+        this.action = action;
     }
 
     @Override
-    protected void configureArgumentReceivers(Arguments arguments) {
-        arguments.addReceiver(new ConfigOptions());
-        arguments.addReceiver(new DiscoveryOptions());
-        arguments.addReceiver(new SeverityOption());
-        arguments.addReceiver(new BuildOptions());
-    }
-
-    @Override
-    protected final int run(Arguments arguments, Env env, List<String> positional) {
+    public int apply(Arguments arguments, Command.Env env) {
         BuildOptions buildOptions = arguments.getReceiver(BuildOptions.class);
         ThreadResult threadResult = new ThreadResult();
         ConfigOptions configOptions = arguments.getReceiver(ConfigOptions.class);
         SmithyBuildConfig config = configOptions.createSmithyBuildConfig();
 
         runTaskWithClasspath(buildOptions, config, env, classLoader -> {
-            Env updatedEnv = env.withClassLoader(classLoader);
-            threadResult.returnCode = runWithClassLoader(config, arguments, updatedEnv, positional);
+            Command.Env updatedEnv = env.withClassLoader(classLoader);
+            threadResult.returnCode = action.apply(config, arguments, updatedEnv);
         });
 
         return threadResult.returnCode;
     }
 
-    private static final class ThreadResult {
+    static final class ThreadResult {
         int returnCode;
     }
-
-    abstract int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env, List<String> positional);
 
     private void runTaskWithClasspath(
             BuildOptions buildOptions,
             SmithyBuildConfig smithyBuildConfig,
-            Env env,
+            Command.Env env,
             Consumer<ClassLoader> consumer
     ) {
         Set<String> dependencies = smithyBuildConfig.getMaven()
@@ -133,7 +128,7 @@ abstract class ClasspathCommand extends SimpleCommand {
     private List<Path> resolveDependencies(
             BuildOptions buildOptions,
             SmithyBuildConfig smithyBuildConfig,
-            Env env,
+            Command.Env env,
             MavenConfig maven
     ) {
         DependencyResolver baseResolver = dependencyResolverFactory.create(smithyBuildConfig, env);

@@ -17,24 +17,20 @@ package software.amazon.smithy.cli.commands;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.logging.Logger;
 import software.amazon.smithy.build.SmithyBuild;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.Arguments;
+import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.utils.IoUtils;
 
-final class CleanCommand extends SimpleCommand {
+final class CleanCommand implements Command {
 
     private static final Logger LOGGER = Logger.getLogger(CleanCommand.class.getName());
+    private final String parentCommandName;
 
     CleanCommand(String parentCommandName) {
-        super(parentCommandName);
-    }
-
-    @Override
-    protected void configureArgumentReceivers(Arguments arguments) {
-        arguments.addReceiver(new ConfigOptions());
+        this.parentCommandName = parentCommandName;
     }
 
     @Override
@@ -48,7 +44,14 @@ final class CleanCommand extends SimpleCommand {
     }
 
     @Override
-    protected int run(Arguments arguments, Env env, List<String> positional) {
+    public int execute(Arguments arguments, Env env) {
+        arguments.addReceiver(new ConfigOptions());
+
+        CommandAction action = HelpActionWrapper.fromCommand(this, parentCommandName, this::run);
+        return action.apply(arguments, env);
+    }
+
+    private int run(Arguments arguments, Env env) {
         ConfigOptions options = arguments.getReceiver(ConfigOptions.class);
         SmithyBuildConfig config = options.createSmithyBuildConfig();
         Path dir = config.getOutputDirectory()

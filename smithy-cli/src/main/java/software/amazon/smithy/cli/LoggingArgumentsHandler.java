@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -28,67 +28,118 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 /**
- * Package-private utilities for configuring CLI logging.
+ * Wraps {@code Arguments} and configures logging based on arguments that aren't yet parsed.
  */
-final class LoggingUtil {
+final class LoggingArgumentsHandler implements Arguments {
 
     private static final SimpleDateFormat FORMAT = new SimpleDateFormat("HH:mm:ss.SSS");
-    private static final List<Runnable> RESTORE_FUNCTIONS = new ArrayList<>();
 
-    private LoggingUtil() {}
+    private final Arguments delegate;
+    private boolean configuredLogging;
+    private final List<Runnable> restoreFunctions = new ArrayList<>();
+    private final Logger rootLogger = Logger.getLogger("");
+    private final Handler smithyHandler;
 
-    static void configureLogging(StandardOptions options, ColorFormatter colors, CliPrinter printer) {
-        // Don't try to configure logging more than once.
-        if (!RESTORE_FUNCTIONS.isEmpty()) {
-            return;
-        }
+    LoggingArgumentsHandler(ColorFormatter colors, CliPrinter stderr, Arguments delegate) {
+        this.delegate = delegate;
 
-        Level level = options.logging();
-        Logger rootLogger = Logger.getLogger("");
+        // Setup preliminary logging support before --logging, --debug, and other params are parsed.
+        // This allows things like ArgumentReceivers to log when deprecated arguments are used.
+        this.smithyHandler = new CliLogHandler(new BasicFormatter(), colors, stderr);
+        rootLogger.addHandler(smithyHandler);
+        restoreFunctions.add(() -> rootLogger.removeHandler(smithyHandler));
 
-        // Set the root level, but try to restore it later.
-        Level previousRootLevel = rootLogger.getLevel();
-        RESTORE_FUNCTIONS.add(() -> rootLogger.setLevel(previousRootLevel));
-        rootLogger.setLevel(level);
-
+        // Remove existing console handlers.
         for (Handler h : rootLogger.getHandlers()) {
             if (h instanceof ConsoleHandler) {
-                // Remove any console log handlers.
                 rootLogger.removeHandler(h);
-                RESTORE_FUNCTIONS.add(() -> rootLogger.addHandler(h));
-            } else if (h.getLevel() != level) {
+                restoreFunctions.add(() -> rootLogger.addHandler(h));
+            }
+        }
+    }
+
+    @Override
+    public void addReceiver(ArgumentReceiver receiver) {
+        delegate.addReceiver(receiver);
+    }
+
+    @Override
+    public boolean hasReceiver(Class<? extends ArgumentReceiver> receiverClass) {
+        return delegate.hasReceiver(receiverClass);
+    }
+
+    @Override
+    public <T extends ArgumentReceiver> T getReceiver(Class<T> type) {
+        return delegate.getReceiver(type);
+    }
+
+    @Override
+    public Iterable<ArgumentReceiver> getReceivers() {
+        return delegate.getReceivers();
+    }
+
+    @Override
+    public boolean hasNext() {
+        return delegate.hasNext();
+    }
+
+    @Override
+    public String peek() {
+        return delegate.peek();
+    }
+
+    @Override
+    public String shift() {
+        return delegate.shift();
+    }
+
+    @Override
+    public String shiftFor(String parameter) {
+        return delegate.shiftFor(parameter);
+    }
+
+    @Override
+    public List<String> getPositional() {
+        List<String> result = delegate.getPositional();
+
+        if (!configuredLogging) {
+            configuredLogging = true;
+            configureLogging(delegate.getReceiver(StandardOptions.class));
+        }
+
+        return result;
+    }
+
+    void restoreLogging() {
+        for (Runnable runnable : restoreFunctions) {
+            runnable.run();
+        }
+        restoreFunctions.clear();
+    }
+
+    private void configureLogging(StandardOptions options) {
+        Level level = options.logging();
+
+        // Be sure to restore the rootLevel logging when done with the CLI.
+        Level previousRootLevel = rootLogger.getLevel();
+        restoreFunctions.add(() -> rootLogger.setLevel(previousRootLevel));
+        rootLogger.setLevel(level);
+
+        // Set the log level on each handler attached to the root handler.
+        for (Handler h : rootLogger.getHandlers()) {
+            if (h.getLevel() != level) {
                 // Change the log level if needed.
                 Level currentLevel = h.getLevel();
-                RESTORE_FUNCTIONS.add(() -> h.setLevel(currentLevel));
+                restoreFunctions.add(() -> h.setLevel(currentLevel));
                 h.setLevel(level);
             }
         }
 
-        // Add the CLI's custom CLI handler to output CLI-friendly messages to stderr.
-        addCliHandler(options.debug(), level, rootLogger, colors, printer);
-    }
-
-    static void restoreLogging() {
-        for (Runnable runnable : RESTORE_FUNCTIONS) {
-            runnable.run();
-        }
-        RESTORE_FUNCTIONS.clear();
-    }
-
-    private static void addCliHandler(
-            boolean debug,
-            Level level,
-            Logger rootLogger,
-            ColorFormatter colors,
-            CliPrinter printer) {
-        if (level != Level.OFF) {
-            Handler handler = debug
-                    // Debug ignores the given logging level and just logs everything.
-                    ? new CliLogHandler(new DebugFormatter(), colors, printer)
-                    : new CliLogHandler(new BasicFormatter(), colors, printer);
-            handler.setLevel(level);
-            rootLogger.addHandler(handler);
-            RESTORE_FUNCTIONS.add(() -> rootLogger.removeHandler(handler));
+        if (level == Level.OFF) {
+            // If logging was disabled with --logging OFF, then remove the smithy logger.
+            rootLogger.removeHandler(smithyHandler);
+        } else if (options.debug()) {
+            smithyHandler.setFormatter(new DebugFormatter());
         }
     }
 
@@ -124,20 +175,19 @@ final class LoggingUtil {
      * Logs messages to the CLI's redirect stderr.
      */
     private static final class CliLogHandler extends Handler {
-        private final Formatter formatter;
         private final ColorFormatter colors;
         private final CliPrinter printer;
 
         CliLogHandler(Formatter formatter, ColorFormatter colors, CliPrinter printer) {
-            this.formatter = formatter;
             this.colors = colors;
             this.printer = printer;
+            setFormatter(formatter);
         }
 
         @Override
         public void publish(LogRecord record) {
             if (isLoggable(record)) {
-                String formatted = formatter.format(record);
+                String formatted = getFormatter().format(record);
                 if (record.getLevel().equals(Level.SEVERE)) {
                     colors.println(printer, formatted, Style.RED);
                 } else if (record.getLevel().equals(Level.WARNING)) {
