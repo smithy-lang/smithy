@@ -2,7 +2,7 @@
 Smithy Model Validation Examples
 ========================================
 
-Smithy validators can be used to lint Smithy models to help avoid common pitfalls and bugs as well as
+Smithy :ref:`validator-definition` can be used to lint Smithy models to help avoid common pitfalls and bugs as well as
 to enforce a common style for APIs designed with Smithy.
 
 This document provides a kind of "cookbook" of examples for using, suppressing, and modifying Smithy Validators.
@@ -47,9 +47,9 @@ demonstrates how to suppress the `ShouldHaveUsedTimestamp` validator for all sha
 Execute Validator for All Shapes Matching Selector
 ==============================================================
 
-We can use selectors to only execute a validator for shapes matching that selector. The following example
+We can use selectors to only run a validator for shapes matching that selector. The following example
 demonstrates how to have the `MissingPaginatedTrait` built-in validator ignore any operations with the
-`@internal` trait. The `MissingPaginatedTrait` will execute for only shapes that are not operations with the `@internal`
+`@internal` trait. The `MissingPaginatedTrait` will run for only shapes that are not operations with the `@internal`
 trait.
 
 .. code-block:: smithy
@@ -76,7 +76,7 @@ ignore any shapes in the `smithy.*` or `com.example.*` namespaces.
     }
 
 
-Ignore Validator for specific shape id
+Ignore Validator for specific Shape ID
 ==========================================
 
 Selectors can also be used to ignore one or more shapes based on the shape's id. This example uses selectors to
@@ -88,6 +88,22 @@ is set to ignore the shape with the name "IgnorableShape".
     {
         name: "MissingPaginatedTrait",
         selector: ":not([id|name = 'IgnorableShape' i])"
+    }
+
+
+Set a Custom Severity for Built-in Validator
+=============================================
+
+The following example demonstrates how to update the :ref:`severity <severity-definition>` level of a built-in validator
+to a custom value. The following example will cause validation events emitted by the `MissingPaginatedTrait` validator
+to be emitted at a `WARNING` level instead of at the default `ERROR` severity.
+
+
+.. code-block:: smithy
+
+    {
+        name: "MissingPaginatedTrait",
+        severity: "WARNING""
     }
 
 
@@ -302,25 +318,24 @@ This example shows how to require all integers used in an operation input to hav
     }
 
 
-Pattern Trait Should Not Contain Character
-============================================
+Require @externalDocumentation Trait to Provide a Homepage Entry
+=================================================================
 
-The following example shows how to enforce that a character is not included in pattern traits.
+The following example shows how to enforce that all uses of the :ref:`externaldocumentation-trait` include a
+`Homepage` entry.
 
 .. code-block:: smithy
 
     {
         name: "EmitEachSelector",
-        id: "PatternCannotContainNewlineCharacter",
-        namespace: ["com.example.weather"],
+        id: "ExternalDocumentationMustIncludeHomePageValue",
         configuration: {
             messageTemplate: """
-            Pattern trait value on shape `@{id}` is `@{trait|pattern}` which contains a newline character. \
-            This pattern should only contain new-line characters if intended. Shapes with pattern traits \
-            intentionally containing new-line characters should be added explicitly to the list of suppressions \
-            for this validator.
+            @{id} has the `@@externalDocumentation` trait applied, but does not define a `"HomePage"` entry. \
+            The following keys `@{trait|externalDocumentation|(keys)}` were defined for `@@externalDocumentation`, \
+            but expected `"HomePage"` key.
             """,
-            selector: "[trait|pattern*=\"\n\"]"
+            selector: "[trait|externalDocumentation]:not([trait|externalDocumentation|(keys) = Homepage])"
         }
     }
 
@@ -593,6 +608,7 @@ operations are bound to resources and not to the service.
     {
         name: "EmitEachSelector",
         id: "PreferResourceBindingOverServiceBinding",
+        severity: "WARNING",
         configuration: {
             messageTemplate: """
                 Operation @{id|name} is bound directly to the service @{var|target|id|name}. \

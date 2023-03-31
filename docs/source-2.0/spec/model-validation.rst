@@ -9,13 +9,6 @@ API designers and organizations to ensure that their APIs adhere to their
 own standards and best practices.
 
 
-You can find examples uses of Smithy validators here:
-
-.. toctree::
-    :maxdepth: 1
-
-    model-validation-examples.rst
-
 ------------
 Introduction
 ------------

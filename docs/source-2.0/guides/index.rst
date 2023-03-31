@@ -14,4 +14,5 @@ Guides
     generating-cloudformation-resources
     migrating-idl-1-to-2
     building-codegen/index
+    model-validation-examples
     glossary
