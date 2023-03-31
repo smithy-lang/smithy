@@ -36,6 +36,7 @@ import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
 import software.amazon.smithy.cli.ColorFormatter;
+import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.HelpPrinter;
 import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.cli.Style;
@@ -44,10 +45,14 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.validation.Severity;
 
-final class BuildCommand extends ClasspathCommand {
+final class BuildCommand implements Command {
+
+    private final String parentCommandName;
+    private final DependencyResolver.Factory dependencyResolverFactory;
 
     BuildCommand(String parentCommandName, DependencyResolver.Factory dependencyResolverFactory) {
-        super(parentCommandName, dependencyResolverFactory);
+        this.parentCommandName = parentCommandName;
+        this.dependencyResolverFactory = dependencyResolverFactory;
     }
 
     @Override
@@ -58,6 +63,20 @@ final class BuildCommand extends ClasspathCommand {
     @Override
     public String getSummary() {
         return "Builds Smithy models and creates plugin artifacts for each projection found in smithy-build.json.";
+    }
+
+    @Override
+    public int execute(Arguments arguments, Env env) {
+        arguments.addReceiver(new ConfigOptions());
+        arguments.addReceiver(new DiscoveryOptions());
+        arguments.addReceiver(new SeverityOption());
+        arguments.addReceiver(new BuildOptions());
+        arguments.addReceiver(new Options());
+
+        CommandAction action = HelpActionWrapper.fromCommand(
+                this, parentCommandName, new ClasspathAction(dependencyResolverFactory, this::runWithClassLoader));
+
+        return action.apply(arguments, env);
     }
 
     private static final class Options implements ArgumentReceiver {
@@ -88,14 +107,8 @@ final class BuildCommand extends ClasspathCommand {
         }
     }
 
-    @Override
-    protected void configureArgumentReceivers(Arguments arguments) {
-        super.configureArgumentReceivers(arguments);
-        arguments.addReceiver(new Options());
-    }
-
-    @Override
-    int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env, List<String> models) {
+    private int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env) {
+        List<String> models = arguments.getPositional();
         Options options = arguments.getReceiver(Options.class);
         BuildOptions buildOptions = arguments.getReceiver(BuildOptions.class);
         StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);

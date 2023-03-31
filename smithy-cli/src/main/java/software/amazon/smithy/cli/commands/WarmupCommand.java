@@ -33,6 +33,7 @@ import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
+import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
@@ -41,9 +42,10 @@ import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.StringUtils;
 
-final class WarmupCommand extends SimpleCommand {
+final class WarmupCommand implements Command {
 
     private static final Logger LOGGER = Logger.getLogger(WarmupCommand.class.getName());
+    private final String parentCommandName;
 
     private enum Phase { WRAPPER, CLASSES, DUMP }
 
@@ -61,7 +63,7 @@ final class WarmupCommand extends SimpleCommand {
     }
 
     WarmupCommand(String parentCommandName) {
-        super(parentCommandName);
+        this.parentCommandName = parentCommandName;
     }
 
     @Override
@@ -70,8 +72,11 @@ final class WarmupCommand extends SimpleCommand {
     }
 
     @Override
-    protected void configureArgumentReceivers(Arguments arguments) {
+    public int execute(Arguments arguments, Env env) {
         arguments.addReceiver(new Config());
+
+        CommandAction action = HelpActionWrapper.fromCommand(this, parentCommandName, this::run);
+        return action.apply(arguments, env);
     }
 
     @Override
@@ -84,8 +89,7 @@ final class WarmupCommand extends SimpleCommand {
         return "Creates caches that speed up the CLI. This is typically performed during the installation.";
     }
 
-    @Override
-    public int run(Arguments arguments, Env env, List<String> models) {
+    private int run(Arguments arguments, Env env) {
         boolean isDebug = arguments.getReceiver(StandardOptions.class).debug();
         Phase phase = arguments.getReceiver(Config.class).phase;
         LOGGER.info(() -> "Optimizing the Smithy CLI: " + phase);

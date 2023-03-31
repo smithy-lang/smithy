@@ -35,14 +35,20 @@ public final class SmithyCommand implements Command {
 
     public SmithyCommand(DependencyResolver.Factory dependencyResolverFactory) {
         Objects.requireNonNull(dependencyResolverFactory);
+
+        Command migrateCommand = new MigrateCommand(getName());
+        Command deprecated1To2Command = MigrateCommand.createDeprecatedAlias(migrateCommand);
+
         commands = Arrays.asList(
+            new VersionCommand(),
             new ValidateCommand(getName(), dependencyResolverFactory),
             new BuildCommand(getName(), dependencyResolverFactory),
             new DiffCommand(getName(), dependencyResolverFactory),
             new AstCommand(getName(), dependencyResolverFactory),
             new SelectCommand(getName(), dependencyResolverFactory),
             new CleanCommand(getName()),
-            new Upgrade1to2Command(getName()),
+            migrateCommand,
+            deprecated1To2Command,
             new WarmupCommand(getName())
         );
     }
@@ -57,8 +63,7 @@ public final class SmithyCommand implements Command {
         return "";
     }
 
-    @Override
-    public void printHelp(Arguments arguments, ColorFormatter colors, CliPrinter printer) {
+    private void printHelp(ColorFormatter colors, CliPrinter printer) {
         printer.println(String.format("Usage: %s [-h | --help] [--version] <command> [<args>]",
                                       colors.style("smithy", Style.BRIGHT_WHITE, Style.UNDERLINE)));
         printer.println("");
@@ -95,16 +100,11 @@ public final class SmithyCommand implements Command {
         if (command == null) {
             arguments.getPositional();
 
-            StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
-
-            if (standardOptions.help()) {
-                printHelp(arguments, env.colors(), env.stdout());
-                return 0;
-            } else if (standardOptions.version()) {
-                env.stdout().println(SmithyCli.getVersion());
+            if (arguments.getReceiver(StandardOptions.class).help()) {
+                printHelp(env.colors(), env.stdout());
                 return 0;
             } else {
-                printHelp(arguments, env.colors(), env.stderr());
+                printHelp(env.colors(), env.stderr());
                 return 1;
             }
         }

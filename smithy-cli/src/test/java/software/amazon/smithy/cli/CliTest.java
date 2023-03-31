@@ -45,7 +45,7 @@ public class CliTest {
         CliUtils.Result result = CliUtils.runSmithy("validate", "--logging", "OFF");
 
         assertThat(result.code(), equalTo(0));
-        assertThat(result.stderr(), not(containsString("Running CLI command")));
+        assertThat(result.stderr(), not(containsString("Invoking Command")));
     }
 
     @Test
@@ -53,7 +53,7 @@ public class CliTest {
         CliUtils.Result result = CliUtils.runSmithy("validate", "--logging", "FINE");
 
         assertThat(result.code(), equalTo(0));
-        assertThat(result.stderr(), containsString("Running CLI command"));
+        assertThat(result.stderr(), containsString("Invoking Command"));
     }
 
     @Test
@@ -61,7 +61,7 @@ public class CliTest {
         CliUtils.Result result = CliUtils.runSmithy("validate", "--debug");
 
         assertThat(result.code(), equalTo(0));
-        assertThat(result.stderr(), containsString("Running CLI command"));
+        assertThat(result.stderr(), containsString("Invoking Command"));
     }
 
     @Test
