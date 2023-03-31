@@ -90,10 +90,15 @@ final class DiffCommand extends ClasspathCommand {
     protected void configureArgumentReceivers(Arguments arguments) {
         super.configureArgumentReceivers(arguments);
         arguments.addReceiver(new Options());
+        arguments.getReceiver(BuildOptions.class).noPositionalArguments(true);
     }
 
     @Override
     int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env, List<String> positional) {
+        if (!arguments.getPositional().isEmpty()) {
+            throw new CliError("Unexpected arguments: " + arguments.getPositional());
+        }
+
         StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
         Options options = arguments.getReceiver(Options.class);
         ClassLoader classLoader = env.classLoader();

@@ -108,4 +108,12 @@ public class BuildCommandTest {
     public void exceptionsThrownByProjectionsAreDetected() {
         // TODO: need to make a plugin throw an exception
     }
+
+    @Test
+    public void canHideModelsPositional() {
+        CliUtils.Result result = CliUtils.runSmithy("diff", "-h");
+
+        assertThat(result.code(), equalTo(0));
+        assertThat(result.stdout(), not(containsString("[<MODELS>]")));
+    }
 }
