@@ -17,6 +17,7 @@ package software.amazon.smithy.model.loader;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,14 @@ final class LoadOperationProcessor implements Consumer<LoadOperation> {
             public boolean add(ValidationEvent e) {
                 validationEventListener.accept(e);
                 return super.add(e);
+            }
+
+            @Override
+            public boolean addAll(Collection<? extends ValidationEvent> validationEvents) {
+                for (ValidationEvent e : validationEvents) {
+                    validationEventListener.accept(e);
+                }
+                return super.addAll(validationEvents);
             }
         };
 
