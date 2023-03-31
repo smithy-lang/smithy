@@ -70,8 +70,8 @@ final class WarmupCommand extends SimpleCommand {
     }
 
     @Override
-    protected List<ArgumentReceiver> createArgumentReceivers() {
-        return Collections.singletonList(new Config());
+    protected void configureArgumentReceivers(Arguments arguments) {
+        arguments.addReceiver(new Config());
     }
 
     @Override

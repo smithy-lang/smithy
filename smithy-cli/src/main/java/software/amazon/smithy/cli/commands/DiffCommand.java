@@ -87,8 +87,9 @@ final class DiffCommand extends ClasspathCommand {
     }
 
     @Override
-    protected void addAdditionalArgumentReceivers(List<ArgumentReceiver> receivers) {
-        receivers.add(new Options());
+    protected void configureArgumentReceivers(Arguments arguments) {
+        super.configureArgumentReceivers(arguments);
+        arguments.addReceiver(new Options());
     }
 
     @Override
@@ -101,7 +102,7 @@ final class DiffCommand extends ClasspathCommand {
         List<String> newModels = options.newModels;
         LOGGER.fine(() -> String.format("Setting old models to: %s; new models to: %s", oldModels, newModels));
 
-        ModelAssembler assembler = CommandUtils.createModelAssembler(classLoader);
+        ModelAssembler assembler = ModelBuilder.createModelAssembler(classLoader);
         Model oldModel = loadModel("old", assembler, oldModels);
         assembler.reset();
         Model newModel = loadModel("new", assembler, newModels);

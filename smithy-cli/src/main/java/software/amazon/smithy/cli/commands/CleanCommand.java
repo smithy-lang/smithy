@@ -21,10 +21,8 @@ import java.util.List;
 import java.util.logging.Logger;
 import software.amazon.smithy.build.SmithyBuild;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
-import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.utils.IoUtils;
-import software.amazon.smithy.utils.ListUtils;
 
 final class CleanCommand extends SimpleCommand {
 
@@ -35,8 +33,8 @@ final class CleanCommand extends SimpleCommand {
     }
 
     @Override
-    protected List<ArgumentReceiver> createArgumentReceivers() {
-        return ListUtils.of(new ConfigOptions());
+    protected void configureArgumentReceivers(Arguments arguments) {
+        arguments.addReceiver(new ConfigOptions());
     }
 
     @Override

@@ -89,8 +89,9 @@ final class BuildCommand extends ClasspathCommand {
     }
 
     @Override
-    protected void addAdditionalArgumentReceivers(List<ArgumentReceiver> receivers) {
-        receivers.add(new Options());
+    protected void configureArgumentReceivers(Arguments arguments) {
+        super.configureArgumentReceivers(arguments);
+        arguments.addReceiver(new Options());
     }
 
     @Override
@@ -99,11 +100,13 @@ final class BuildCommand extends ClasspathCommand {
         BuildOptions buildOptions = arguments.getReceiver(BuildOptions.class);
         StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
         ClassLoader classLoader = env.classLoader();
-
-        // Build the model and fail if there are errors. Prints errors to stdout.
-        // Configure whether the build is quiet or not based on the --quiet option.
-        ValidationFlag flag = ValidationFlag.from(standardOptions);
-        Model model = CommandUtils.buildModel(arguments, models, env, env.stderr(), flag, config);
+        Model model = new ModelBuilder()
+                .config(config)
+                .arguments(arguments)
+                .env(env)
+                .models(models)
+                .validationPrinter(env.stderr())
+                .build();
 
         Supplier<ModelAssembler> modelAssemblerSupplier = () -> {
             ModelAssembler assembler = Model.assembler(classLoader);

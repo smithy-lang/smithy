@@ -93,7 +93,7 @@ public final class SmithyCommand implements Command {
 
         // If no command was given, then finish parsing to check if -h, --help, or --version was given.
         if (command == null) {
-            arguments.finishParsing();
+            arguments.getPositional();
 
             StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -39,32 +39,84 @@ import software.amazon.smithy.model.loader.sourcecontext.SourceContextLoader;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.SmithyBuilder;
 
-final class CommandUtils {
+/**
+ * Loads, builds, and report validation issues with models.
+ */
+final class ModelBuilder {
 
-    private static final Logger LOGGER = Logger.getLogger(CommandUtils.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ModelBuilder.class.getName());
     private static final String CLEAR_LINE_ESCAPE = "\033[2K\r";
     private static final int DEFAULT_CODE_LINES = 6;
 
-    private CommandUtils() {}
+    private Validator.Mode validationMode;
+    private CliPrinter validationPrinter;
+    private Arguments arguments;
+    private List<String> models;
+    private Command.Env env;
+    private SmithyBuildConfig config;
+    private Severity severity;
 
-    static Model buildModel(
-            Arguments arguments,
-            List<String> models,
-            Command.Env env,
-            CliPrinter printer,
-            ValidationFlag validationFlag,
-            SmithyBuildConfig config
-    ) {
-        ClassLoader classLoader = env.classLoader();
-        ModelAssembler assembler = CommandUtils.createModelAssembler(classLoader);
-        ColorFormatter colors = env.colors();
+    public ModelBuilder arguments(Arguments arguments) {
+        this.arguments = arguments;
+        return this;
+    }
+
+    public ModelBuilder models(List<String> models) {
+        this.models = models;
+        return this;
+    }
+
+    public ModelBuilder env(Command.Env env) {
+        this.env = env;
+        return this;
+    }
+
+    public ModelBuilder validationPrinter(CliPrinter validationPrinter) {
+        this.validationPrinter = validationPrinter;
+        return this;
+    }
+
+    public ModelBuilder validationMode(Validator.Mode validationMode) {
+        this.validationMode = validationMode;
+        return this;
+    }
+
+    public ModelBuilder config(SmithyBuildConfig config) {
+        this.config = config;
+        return this;
+    }
+
+    public ModelBuilder severity(Severity severity) {
+        this.severity = severity;
+        return this;
+    }
+
+    public Model build() {
+        SmithyBuilder.requiredState("arguments", arguments);
+        SmithyBuilder.requiredState("models", models);
+        SmithyBuilder.requiredState("env", env);
+        SmithyBuilder.requiredState("config", config);
+
         StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
         BuildOptions buildOptions = arguments.getReceiver(BuildOptions.class);
-        Severity minSeverity = buildOptions.severity(standardOptions);
+        DiscoveryOptions discoveryOptions = arguments.getReceiver(DiscoveryOptions.class);
+        Severity minSeverity = resolveMinSeverity(standardOptions);
+        ClassLoader classLoader = env.classLoader();
+        ModelAssembler assembler = createModelAssembler(classLoader);
+        ColorFormatter colors = env.colors();
         CliPrinter stderr = env.stderr();
 
-        if (validationFlag == ValidationFlag.DISABLE) {
+        if (validationPrinter == null) {
+            validationPrinter = env.stderr();
+        }
+
+        if (validationMode == null) {
+            validationMode = Validator.Mode.from(standardOptions);
+        }
+
+        if (validationMode == Validator.Mode.DISABLE) {
             assembler.disableValidation();
         }
 
@@ -72,8 +124,8 @@ final class CommandUtils {
         AtomicInteger issueCount = new AtomicInteger();
         assembler.validationEventListener(createStatusUpdater(standardOptions, colors, stderr, issueCount));
 
-        CommandUtils.handleModelDiscovery(buildOptions, assembler, classLoader, config);
-        CommandUtils.handleUnknownTraitsOption(buildOptions, assembler);
+        handleModelDiscovery(discoveryOptions, assembler, classLoader, config);
+        handleUnknownTraitsOption(buildOptions, assembler);
         config.getSources().forEach(assembler::addImport);
         models.forEach(assembler::addImport);
         config.getImports().forEach(assembler::addImport);
@@ -94,12 +146,17 @@ final class CommandUtils {
             // Only log events that are >= --severity. Note that setting --quiet inherently
             // configures events to need to be >= DANGER.
             if (event.getSeverity().ordinal() >= minSeverity.ordinal()) {
-                printer.println(formatter.format(event));
+                validationPrinter.println(formatter.format(event));
             }
         }
 
         // Note: disabling validation will still show a summary of failures if the model can't be loaded.
-        Validator.validate(validationFlag != ValidationFlag.ENABLE, colors, stderr, result);
+        Validator.validate(validationMode != Validator.Mode.ENABLE, colors, stderr, result);
+
+        // Flush outputs to ensure there is no interleaving with subsequent command output.
+        env.stderr().flush();
+        env.stdout().flush();
+
         return result.getResult().orElseThrow(() -> new RuntimeException("Expected Validator to throw"));
     }
 
@@ -135,10 +192,6 @@ final class CommandUtils {
         }
     }
 
-    static ModelAssembler createModelAssembler(ClassLoader classLoader) {
-        return Model.assembler(classLoader).putProperty(ModelAssembler.DISABLE_JAR_CACHE, true);
-    }
-
     private static void handleUnknownTraitsOption(BuildOptions options, ModelAssembler assembler) {
         if (options.allowUnknownTraits()) {
             LOGGER.fine("Ignoring unknown traits");
@@ -147,7 +200,7 @@ final class CommandUtils {
     }
 
     private static void handleModelDiscovery(
-            BuildOptions options,
+            DiscoveryOptions options,
             ModelAssembler assembler,
             ClassLoader baseLoader,
             SmithyBuildConfig config
@@ -159,7 +212,7 @@ final class CommandUtils {
         }
     }
 
-    private static boolean shouldDiscoverDependencies(BuildOptions options, SmithyBuildConfig config) {
+    private static boolean shouldDiscoverDependencies(DiscoveryOptions options, SmithyBuildConfig config) {
         if (options.discover()) {
             return true;
         } else {
@@ -185,5 +238,20 @@ final class CommandUtils {
 
         URLClassLoader urlClassLoader = new URLClassLoader(urls);
         assembler.discoverModels(urlClassLoader);
+    }
+
+    // Determine a default severity if one wasn't given, by inspecting if there is a --severity option.
+    private Severity resolveMinSeverity(StandardOptions standardOptions) {
+        if (severity != null) {
+            return severity;
+        } else if (arguments.hasReceiver(SeverityOption.class)) {
+            return arguments.getReceiver(SeverityOption.class).severity(standardOptions);
+        } else {
+            return Severity.WARNING;
+        }
+    }
+
+    static ModelAssembler createModelAssembler(ClassLoader classLoader) {
+        return Model.assembler(classLoader).putProperty(ModelAssembler.DISABLE_JAR_CACHE, true);
     }
 }

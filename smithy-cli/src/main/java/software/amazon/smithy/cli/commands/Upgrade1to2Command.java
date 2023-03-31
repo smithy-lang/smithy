@@ -38,10 +38,8 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.build.ProjectionResult;
 import software.amazon.smithy.build.SmithyBuild;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
-import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
-import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.loader.ModelAssembler;
@@ -58,6 +56,7 @@ import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.transform.ModelTransformer;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.SimpleParser;
 import software.amazon.smithy.utils.StringUtils;
@@ -73,8 +72,10 @@ final class Upgrade1to2Command extends SimpleCommand {
     }
 
     @Override
-    protected List<ArgumentReceiver> createArgumentReceivers() {
-        return Arrays.asList(new ConfigOptions(), new BuildOptions());
+    protected void configureArgumentReceivers(Arguments arguments) {
+        arguments.addReceiver(new ConfigOptions());
+        arguments.addReceiver(new BuildOptions());
+        arguments.addReceiver(new DiscoveryOptions());
     }
 
     @Override
@@ -105,8 +106,14 @@ final class Upgrade1to2Command extends SimpleCommand {
         configBuilder.outputDirectory(tempDir.toString());
         SmithyBuildConfig temporaryConfig = configBuilder.build();
 
-        ValidationFlag flag = ValidationFlag.from(arguments.getReceiver(StandardOptions.class));
-        Model initialModel = CommandUtils.buildModel(arguments, models, env, env.stderr(), flag, smithyBuildConfig);
+        Model initialModel = new ModelBuilder()
+                .config(smithyBuildConfig)
+                .arguments(arguments)
+                .env(env)
+                .models(models)
+                .validationPrinter(env.stderr())
+                .severity(Severity.DANGER)
+                .build();
 
         SmithyBuild smithyBuild = SmithyBuild.create(classLoader)
                 .config(temporaryConfig)

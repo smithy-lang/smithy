@@ -134,24 +134,23 @@ final class SelectCommand extends ClasspathCommand {
     }
 
     @Override
-    protected void addAdditionalArgumentReceivers(List<ArgumentReceiver> receivers) {
-        receivers.add(new Options());
+    protected void configureArgumentReceivers(Arguments arguments) {
+        super.configureArgumentReceivers(arguments);
+        arguments.addReceiver(new Options());
+        arguments.removeReceiver(SeverityOption.class); // only show build-failing errors when selecting.
     }
 
     @Override
     int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env, List<String> models) {
-        // Don't write the summary, but do write danger/errors to STDERR.
-        ValidationFlag flag = ValidationFlag.DISABLE;
-
-        // Force the severity to DANGER or ERROR to only see events if they'll fail the command.
-        BuildOptions buildOptions = arguments.getReceiver(BuildOptions.class);
-        buildOptions.severity(Severity.DANGER);
-
-        Model model = CommandUtils.buildModel(arguments, models, env, env.stderr(), flag, config);
-
-        // Flush outputs to ensure there is no interleaving with selection output.
-        env.stderr().flush();
-        env.stdout().flush();
+        Model model = new ModelBuilder()
+                .config(config)
+                .arguments(arguments)
+                .env(env)
+                .models(models)
+                .validationPrinter(env.stderr())
+                .validationMode(Validator.Mode.DISABLE)
+                .severity(Severity.DANGER)
+                .build();
 
         Options options = arguments.getReceiver(Options.class);
         Selector selector = options.selector();

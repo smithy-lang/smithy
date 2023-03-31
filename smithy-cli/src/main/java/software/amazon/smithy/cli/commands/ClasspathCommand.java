@@ -28,7 +28,6 @@ import software.amazon.smithy.build.SmithyBuild;
 import software.amazon.smithy.build.model.MavenConfig;
 import software.amazon.smithy.build.model.MavenRepository;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
-import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.EnvironmentVariable;
@@ -53,12 +52,11 @@ abstract class ClasspathCommand extends SimpleCommand {
     }
 
     @Override
-    protected final List<ArgumentReceiver> createArgumentReceivers() {
-        List<ArgumentReceiver> receivers = new ArrayList<>();
-        receivers.add(new ConfigOptions());
-        receivers.add(new BuildOptions());
-        addAdditionalArgumentReceivers(receivers);
-        return receivers;
+    protected void configureArgumentReceivers(Arguments arguments) {
+        arguments.addReceiver(new ConfigOptions());
+        arguments.addReceiver(new DiscoveryOptions());
+        arguments.addReceiver(new SeverityOption());
+        arguments.addReceiver(new BuildOptions());
     }
 
     @Override
@@ -78,9 +76,6 @@ abstract class ClasspathCommand extends SimpleCommand {
 
     private static final class ThreadResult {
         int returnCode;
-    }
-
-    protected void addAdditionalArgumentReceivers(List<ArgumentReceiver> receivers) {
     }
 
     abstract int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env, List<String> positional);

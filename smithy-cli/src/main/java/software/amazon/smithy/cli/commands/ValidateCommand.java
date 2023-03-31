@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.logging.Logger;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.Arguments;
-import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
 
 final class ValidateCommand extends ClasspathCommand {
@@ -42,9 +41,13 @@ final class ValidateCommand extends ClasspathCommand {
 
     @Override
     int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env, List<String> models) {
-        StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
-        ValidationFlag flag = ValidationFlag.from(standardOptions);
-        CommandUtils.buildModel(arguments, models, env, env.stdout(), flag, config);
+        new ModelBuilder()
+                .config(config)
+                .arguments(arguments)
+                .env(env)
+                .models(models)
+                .validationPrinter(env.stdout())
+                .build();
         LOGGER.info("Smithy validation complete");
         return 0;
     }
