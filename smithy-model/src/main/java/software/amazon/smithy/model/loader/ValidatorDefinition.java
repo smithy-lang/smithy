@@ -72,7 +72,7 @@ final class ValidatorDefinition {
             } else {
                 // Modify the event by changing the id, severity, or message.
                 ValidationEvent.Builder builder = event.toBuilder();
-                builder.id(id != null ? id : event.getId());
+                builder.id(replaceId(event.getId(), id));
                 builder.severity(severity != null ? severity : event.getSeverity());
                 if (message != null) {
                     builder.message(message.replace("{super}", event.getMessage()));
@@ -96,5 +96,14 @@ final class ValidatorDefinition {
         }
 
         return true;
+    }
+
+    private String replaceId(String eventId, String validatorId) {
+        int index = eventId.indexOf(".");
+        if (index == -1) {
+            return validatorId;
+        } else {
+            return validatorId + eventId.substring(index);
+        }
     }
 }
