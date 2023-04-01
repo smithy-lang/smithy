@@ -150,11 +150,12 @@ public final class CfnResourceIndex implements KnowledgeIndex {
                         // setting, but gracefully handle if they're not.
                         model.getShape(additionalSchema)
                                 .map(Shape::asStructureShape)
-                                .map(Optional::get)
-                                .ifPresent(shape -> {
-                                    addAdditionalIdentifiers(builder, computeResourceAdditionalIdentifiers(shape));
-                                    updatePropertyMutabilities(builder, model, resourceId, null, shape,
-                                            SetUtils.of(), Function.identity());
+                                .ifPresent(optionalStructure -> {
+                                    optionalStructure.ifPresent(shape -> {
+                                        addAdditionalIdentifiers(builder, computeResourceAdditionalIdentifiers(shape));
+                                        updatePropertyMutabilities(builder, model, resourceId, null, shape,
+                                                SetUtils.of(), Function.identity());
+                                    });
                                 });
                     }
 
