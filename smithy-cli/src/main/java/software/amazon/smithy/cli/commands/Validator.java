@@ -18,6 +18,7 @@ package software.amazon.smithy.cli.commands;
 import java.util.StringJoiner;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
+import software.amazon.smithy.cli.ColorBuffer;
 import software.amazon.smithy.cli.ColorFormatter;
 import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.cli.Style;
@@ -49,42 +50,43 @@ final class Validator {
         boolean isFailed = errors > 0 || dangers > 0;
         boolean hasEvents = warnings > 0 || notes > 0 || isFailed;
 
-        StringBuilder output = new StringBuilder();
-        if (isFailed) {
-            output.append(colors.style("FAILURE: ", Style.RED, Style.BOLD));
-        } else {
-            output.append(colors.style("SUCCESS: ", Style.GREEN, Style.BOLD));
-        }
-        output.append("Validated ").append(shapeCount).append(" shapes");
+        try (ColorBuffer output = ColorBuffer.of(colors, new StringBuilder())) {
+            if (isFailed) {
+                output.append(colors.style("FAILURE: ", Style.RED, Style.BOLD));
+            } else {
+                output.append(colors.style("SUCCESS: ", Style.GREEN, Style.BOLD));
+            }
+            output.append("Validated " + shapeCount).append(" shapes");
 
-        if (hasEvents) {
-            output.append(' ').append('(');
-            StringJoiner joiner = new StringJoiner(", ");
-            if (errors > 0) {
-                appendSummaryCount(joiner, "ERROR", errors);
+            if (hasEvents) {
+                output.append(' ').append('(');
+                StringJoiner joiner = new StringJoiner(", ");
+                if (errors > 0) {
+                    appendSummaryCount(joiner, "ERROR", errors);
+                }
+
+                if (dangers > 0) {
+                    appendSummaryCount(joiner, "DANGER", dangers);
+                }
+
+                if (warnings > 0) {
+                    appendSummaryCount(joiner, "WARNING", warnings);
+                }
+
+                if (notes > 0) {
+                    appendSummaryCount(joiner, "NOTE", notes);
+                }
+                output.append(joiner.toString());
+                output.append(')');
             }
 
-            if (dangers > 0) {
-                appendSummaryCount(joiner, "DANGER", dangers);
+            output.append(System.lineSeparator());
+
+            if (!result.getResult().isPresent() || errors + dangers > 0) {
+                throw new CliError(output.toString());
+            } else if (!quiet) {
+                printer.println(output.toString());
             }
-
-            if (warnings > 0) {
-                appendSummaryCount(joiner, "WARNING", warnings);
-            }
-
-            if (notes > 0) {
-                appendSummaryCount(joiner, "NOTE", notes);
-            }
-            output.append(joiner);
-            output.append(')');
-        }
-
-        output.append(System.lineSeparator());
-
-        if (!result.getResult().isPresent() || errors + dangers > 0) {
-            throw new CliError(output.toString());
-        } else if (!quiet) {
-            printer.println(output.toString());
         }
     }
 

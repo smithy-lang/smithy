@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.cli.AnsiColorFormatter;
+import software.amazon.smithy.cli.ColorBuffer;
 import software.amazon.smithy.cli.ColorFormatter;
 import software.amazon.smithy.model.loader.sourcecontext.SourceContextLoader;
 
@@ -35,7 +36,7 @@ public class CodeFormatterTest {
     public void outputsSequentialLinesWithNoCursor() {
         StringBuilder builder = new StringBuilder();
         ColorFormatter colors = AnsiColorFormatter.NO_COLOR;
-        CodeFormatter formatter = new CodeFormatter(builder, colors, 80);
+        CodeFormatter formatter = new CodeFormatter(ColorBuffer.of(colors, builder), 80);
         List<SourceContextLoader.Line> lines = Arrays.asList(
             new SourceContextLoader.Line(2, "A"),
             new SourceContextLoader.Line(3, "B"),
@@ -54,7 +55,7 @@ public class CodeFormatterTest {
     public void outputsSequentialLinesWithCursor() {
         StringBuilder builder = new StringBuilder();
         ColorFormatter colors = AnsiColorFormatter.NO_COLOR;
-        CodeFormatter formatter = new CodeFormatter(builder, colors, 80);
+        CodeFormatter formatter = new CodeFormatter(ColorBuffer.of(colors, builder), 80);
         List<SourceContextLoader.Line> lines = Arrays.asList(
                 new SourceContextLoader.Line(2, "Aa"),
                 new SourceContextLoader.Line(3, "Bb"),
@@ -74,7 +75,7 @@ public class CodeFormatterTest {
     public void detectsLineSkips() {
         StringBuilder builder = new StringBuilder();
         ColorFormatter colors = AnsiColorFormatter.NO_COLOR;
-        CodeFormatter formatter = new CodeFormatter(builder, colors, 80);
+        CodeFormatter formatter = new CodeFormatter(ColorBuffer.of(colors, builder), 80);
         List<SourceContextLoader.Line> lines = Arrays.asList(
                 new SourceContextLoader.Line(2, "Aa"),
                 new SourceContextLoader.Line(8, "Bb"),
@@ -96,7 +97,7 @@ public class CodeFormatterTest {
     public void truncatesLongLines() {
         StringBuilder builder = new StringBuilder();
         ColorFormatter colors = AnsiColorFormatter.NO_COLOR;
-        CodeFormatter formatter = new CodeFormatter(builder, colors, 10);
+        CodeFormatter formatter = new CodeFormatter(ColorBuffer.of(colors, builder), 10);
         List<SourceContextLoader.Line> lines = Collections.singletonList(
                 new SourceContextLoader.Line(1, "abcdefghijklmnopqrstuvwxyz"));
 
@@ -109,7 +110,7 @@ public class CodeFormatterTest {
     public void ignoresEmptyLines() {
         StringBuilder builder = new StringBuilder();
         ColorFormatter colors = AnsiColorFormatter.NO_COLOR;
-        CodeFormatter formatter = new CodeFormatter(builder, colors, 80);
+        CodeFormatter formatter = new CodeFormatter(ColorBuffer.of(colors, builder), 80);
         List<SourceContextLoader.Line> lines = Collections.emptyList();
 
         formatter.writeCode(0, 0, lines);

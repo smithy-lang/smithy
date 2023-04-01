@@ -35,6 +35,7 @@ import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
+import software.amazon.smithy.cli.ColorBuffer;
 import software.amazon.smithy.cli.ColorFormatter;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.HelpPrinter;
@@ -200,44 +201,40 @@ final class BuildCommand implements Command {
 
         @Override
         public void accept(ProjectionResult result) {
-            try (ColorFormatter.PrinterBuffer buffer = colors.printerBuffer(printer)) {
-                printProjectionResult(buffer, result);
-            }
-        }
+            try (ColorBuffer buffer = ColorBuffer.of(colors, printer)) {
+                if (result.isBroken()) {
+                    // Write out validation errors as they occur.
+                    failedProjections.add(result.getProjectionName());
+                    buffer
+                            .println()
+                            .print(result.getProjectionName(), Style.RED)
+                            .println(" has a model that failed validation");
+                    result.getEvents().forEach(event -> {
+                        if (event.getSeverity() == Severity.DANGER || event.getSeverity() == Severity.ERROR) {
+                            buffer.println(event.toString(), Style.RED);
+                        }
+                    });
+                } else {
+                    // Only increment the projection count if it succeeded.
+                    projectionCount.incrementAndGet();
+                }
 
-        private void printProjectionResult(ColorFormatter.PrinterBuffer buffer, ProjectionResult result) {
-            if (result.isBroken()) {
-                // Write out validation errors as they occur.
-                failedProjections.add(result.getProjectionName());
-                buffer
-                        .println()
-                        .print(result.getProjectionName(), Style.RED)
-                        .println(" has a model that failed validation");
-                result.getEvents().forEach(event -> {
-                    if (event.getSeverity() == Severity.DANGER || event.getSeverity() == Severity.ERROR) {
-                        buffer.println(event.toString(), Style.RED);
-                    }
-                });
-            } else {
-                // Only increment the projection count if it succeeded.
-                projectionCount.incrementAndGet();
-            }
+                pluginCount.addAndGet(result.getPluginManifests().size());
 
-            pluginCount.addAndGet(result.getPluginManifests().size());
+                // Get the base directory of the projection.
+                Iterator<FileManifest> manifestIterator = result.getPluginManifests().values().iterator();
+                Path root = manifestIterator.hasNext() ? manifestIterator.next().getBaseDir().getParent() : null;
 
-            // Get the base directory of the projection.
-            Iterator<FileManifest> manifestIterator = result.getPluginManifests().values().iterator();
-            Path root = manifestIterator.hasNext() ? manifestIterator.next().getBaseDir().getParent() : null;
+                if (!quiet) {
+                    String message = String.format("Completed projection %s (%d shapes): %s",
+                                                   result.getProjectionName(), result.getModel().toSet().size(), root);
+                    buffer.println(message, Style.GREEN);
+                }
 
-            if (!quiet) {
-                String message = String.format("Completed projection %s (%d shapes): %s",
-                                               result.getProjectionName(), result.getModel().toSet().size(), root);
-                buffer.println(message, Style.GREEN);
-            }
-
-            // Increment the total number of artifacts written.
-            for (FileManifest manifest : result.getPluginManifests().values()) {
-                artifactCount.addAndGet(manifest.getFiles().size());
+                // Increment the total number of artifacts written.
+                for (FileManifest manifest : result.getPluginManifests().values()) {
+                    artifactCount.addAndGet(manifest.getFiles().size());
+                }
             }
         }
     }

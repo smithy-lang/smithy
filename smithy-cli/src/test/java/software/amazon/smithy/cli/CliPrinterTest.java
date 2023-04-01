@@ -24,7 +24,10 @@ public class CliPrinterTest {
     @Test
     public void printsWithNewlineByDefault() {
         StringBuilder builder = new StringBuilder();
-        CliPrinter printer = builder::append;
+        CliPrinter printer = c -> {
+            builder.append(c);
+            return null;
+        };
         printer.println("Hi");
 
         assertThat(builder.toString(), equalTo("Hi" + System.lineSeparator()));

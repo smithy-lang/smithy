@@ -15,7 +15,8 @@
 
 package software.amazon.smithy.cli;
 
-import java.util.function.Consumer;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 
 /**
  * Styles text using color codes.
@@ -23,6 +24,7 @@ import java.util.function.Consumer;
  * @see AnsiColorFormatter for the ANSI implementation.
  */
 public interface ColorFormatter {
+
     /**
      * Styles text using the given styles.
      *
@@ -30,7 +32,15 @@ public interface ColorFormatter {
      * @param styles Styles to apply.
      * @return Returns the styled text.
      */
-    String style(String text, Style... styles);
+    default String style(String text, Style... styles) {
+        if (!isColorEnabled()) {
+            return text;
+        } else {
+            StringBuilder builder = new StringBuilder();
+            style(builder, text, styles);
+            return builder.toString();
+        }
+    }
 
     /**
      * Styles text using the given styles and writes it to an Appendable.
@@ -39,141 +49,36 @@ public interface ColorFormatter {
      * @param text Text to write.
      * @param styles Styles to apply.
      */
-    void style(Appendable appendable, String text, Style... styles);
+    default void style(Appendable appendable, String text, Style... styles) {
+        try {
+            startStyle(appendable, styles);
+            appendable.append(text);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        } finally {
+            if (styles.length > 0) {
+                endStyle(appendable);
+            }
+        }
+    }
 
     /**
-     * Adds styles around text written to an appendable by a consumer.
+     * Print a styled line of text to the given {@code appendable}.
      *
-     * @param appendable Appendable to write to.
-     * @param consumer   Consumer to write to the appendable using style.
-     * @param styles     Styles to apply to the text written by the consumer.
-     * @param <T>        Appendable type.
+     * @param appendable Where to write.
+     * @param text Text to write.
+     * @param styles Styles to apply.
      */
-    <T extends Appendable> void style(T appendable, Consumer<T> consumer, Style... styles);
+    default void println(Appendable appendable, String text, Style... styles) {
+        style(appendable, text + System.lineSeparator(), styles);
+    }
 
     /**
      * @return Returns true if this formatter supports color output.
      */
     boolean isColorEnabled();
 
-    /**
-     * Print a styled line of text to the given {@code printer}.
-     *
-     * @param printer Printer to write to.
-     * @param text Text to write.
-     * @param styles Styles to apply.
-     */
-    default void println(CliPrinter printer, String text, Style... styles) {
-        printer.println(style(text, styles));
-    }
+    void startStyle(Appendable appendable, Style... style);
 
-    /**
-     * Creates a {@link PrinterBuffer} used to build up a long string of styled text.
-     *
-     * <p>Call {@link PrinterBuffer#close()} or use try-with-resources to write to the printer.
-     *
-     * @return Returns the buffer.
-     */
-    default PrinterBuffer printerBuffer(CliPrinter printer) {
-        return new PrinterBuffer(this, printer);
-    }
-
-    /**
-     * A buffer associated with a {@link CliPrinter} used to build up a string of colored text.
-     *
-     * <p>Use {@link #close()} to write to the associated {@link CliPrinter}, or wrap the buffer in a
-     * try-with-resources block.
-     */
-    final class PrinterBuffer implements Appendable, AutoCloseable {
-        private final ColorFormatter colors;
-        private final CliPrinter printer;
-        private final StringBuilder builder = new StringBuilder();
-        private boolean pendingNewline;
-        private final String newline = System.lineSeparator();
-
-        private PrinterBuffer(ColorFormatter colors, CliPrinter printer) {
-            this.colors = colors;
-            this.printer = printer;
-        }
-
-        @Override
-        public String toString() {
-            String result = builder.toString();
-            if (pendingNewline) {
-                result += newline;
-            }
-            return result;
-        }
-
-        @Override
-        public PrinterBuffer append(CharSequence csq) {
-            handleNewline();
-            builder.append(csq);
-            return this;
-        }
-
-        private void handleNewline() {
-            if (pendingNewline) {
-                builder.append(newline);
-                pendingNewline = false;
-            }
-        }
-
-        @Override
-        public PrinterBuffer append(CharSequence csq, int start, int end) {
-            handleNewline();
-            builder.append(csq, start, end);
-            return this;
-        }
-
-        @Override
-        public PrinterBuffer append(char c) {
-            handleNewline();
-            builder.append(c);
-            return this;
-        }
-
-        /**
-         * Writes styled text to the builder using the CliPrinter's color settings.
-         *
-         * @param text Text to write.
-         * @param styles Styles to apply to the text.
-         * @return Returns self.
-         */
-        public PrinterBuffer print(String text, Style... styles) {
-            handleNewline();
-            colors.style(this, text, styles);
-            return this;
-        }
-
-        /**
-         * Prints a line of styled text to the buffer.
-         *
-         * @param text Text to print.
-         * @param styles Styles to apply.
-         * @return Returns self.
-         */
-        public PrinterBuffer println(String text, Style... styles) {
-            print(text, styles);
-            return println();
-        }
-
-        /**
-         * Writes a system-dependent new line.
-         *
-         * @return Returns the buffer.
-         */
-        public PrinterBuffer println() {
-            handleNewline();
-            pendingNewline = true;
-            return this;
-        }
-
-        @Override
-        public void close() {
-            printer.println(builder.toString());
-            builder.setLength(0);
-            pendingNewline = false;
-        }
-    }
+    void endStyle(Appendable appendable);
 }

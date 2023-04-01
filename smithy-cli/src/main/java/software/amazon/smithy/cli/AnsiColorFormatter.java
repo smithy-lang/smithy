@@ -18,7 +18,6 @@ package software.amazon.smithy.cli;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 /**
  * Styles text using ANSI color codes.
@@ -30,28 +29,15 @@ public enum AnsiColorFormatter implements ColorFormatter {
      */
     NO_COLOR {
         @Override
-        public String style(String text, Style... styles) {
-            return text;
-        }
-
-        @Override
-        public void style(Appendable appendable, String text, Style... styles) {
-            try {
-                appendable.append(text);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        }
-
-        @Override
         public boolean isColorEnabled() {
             return false;
         }
 
         @Override
-        public <T extends Appendable> void style(T appendable, Consumer<T> consumer, Style... styles) {
-            consumer.accept(appendable);
-        }
+        public void startStyle(Appendable appendable, Style... style) { }
+
+        @Override
+        public void endStyle(Appendable appendable) { }
     },
 
     /**
@@ -59,61 +45,34 @@ public enum AnsiColorFormatter implements ColorFormatter {
      */
     FORCE_COLOR {
         @Override
-        public String style(String text, Style... styles) {
-            StringBuilder builder = new StringBuilder();
-            style(builder, text, styles);
-            return builder.toString();
-        }
-
-        @Override
-        public void style(Appendable appendable, String text, Style... styles) {
-            try {
-                startStyle(appendable, styles);
-                appendable.append(text);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            } finally {
-                closeStyle(appendable, styles);
-            }
-        }
-
-        @Override
         public boolean isColorEnabled() {
             return true;
         }
 
         @Override
-        public <T extends Appendable> void style(T appendable, Consumer<T> consumer, Style... styles) {
-            try {
-                startStyle(appendable, styles);
-                consumer.accept(appendable);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            } finally {
-                closeStyle(appendable, styles);
-            }
-        }
-
-        private void startStyle(Appendable appendable, Style... styles) throws IOException {
+        public void startStyle(Appendable appendable, Style... styles) {
             if (styles.length > 0) {
-                appendable.append("\033[");
-                boolean isAfterFirst = false;
-                for (Style style : styles) {
-                    if (isAfterFirst) {
-                        appendable.append(';');
+                try {
+                    appendable.append("\033[");
+                    boolean isAfterFirst = false;
+                    for (Style style : styles) {
+                        if (isAfterFirst) {
+                            appendable.append(';');
+                        }
+                        appendable.append(style.getAnsiColorCode());
+                        isAfterFirst = true;
                     }
-                    appendable.append(style.getAnsiColorCode());
-                    isAfterFirst = true;
+                    appendable.append('m');
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
                 }
-                appendable.append('m');
             }
         }
 
-        private void closeStyle(Appendable appendable, Style... styles) {
+        @Override
+        public void endStyle(Appendable appendable) {
             try {
-                if (styles.length > 0) {
-                    appendable.append("\033[0m");
-                }
+                appendable.append("\033[0m");
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
@@ -132,6 +91,11 @@ public enum AnsiColorFormatter implements ColorFormatter {
         }
 
         @Override
+        public void println(Appendable appendable, String text, Style... styles) {
+            delegate.println(appendable, text, styles);
+        }
+
+        @Override
         public void style(Appendable appendable, String text, Style... styles) {
             delegate.style(appendable, text, styles);
         }
@@ -142,8 +106,13 @@ public enum AnsiColorFormatter implements ColorFormatter {
         }
 
         @Override
-        public <T extends Appendable> void style(T appendable, Consumer<T> consumer, Style... styles) {
-            delegate.style(appendable, consumer, styles);
+        public void startStyle(Appendable appendable, Style... style) {
+            delegate.startStyle(appendable, style);
+        }
+
+        @Override
+        public void endStyle(Appendable appendable) {
+            delegate.endStyle(appendable);
         }
     };
 
