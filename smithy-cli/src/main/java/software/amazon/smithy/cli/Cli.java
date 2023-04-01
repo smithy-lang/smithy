@@ -17,7 +17,6 @@ package software.amazon.smithy.cli;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -111,10 +110,10 @@ public final class Cli {
     }
 
     private void printException(Throwable e, boolean stacktrace) {
-        if (!stacktrace) {
-            colorFormatter.println(stderrPrinter, e.getMessage(), Style.RED);
-        } else {
-            try (ColorFormatter.PrinterBuffer buffer = colorFormatter.printerBuffer(stderrPrinter)) {
+        try (ColorBuffer buffer = ColorBuffer.of(colorFormatter, stderrPrinter)) {
+            if (!stacktrace) {
+                colorFormatter.println(stderrPrinter, e.getMessage(), Style.RED);
+            } else {
                 StringWriter writer = new StringWriter();
                 e.printStackTrace(new PrintWriter(writer));
                 String result = writer.toString();
@@ -143,8 +142,18 @@ public final class Cli {
             }
 
             @Override
-            public <T extends Appendable> void style(T appendable, Consumer<T> consumer, Style... styles) {
-                delegateSupplier.get().style(appendable, consumer, styles);
+            public void println(Appendable appendable, String text, Style... styles) {
+                delegateSupplier.get().println(appendable, text, styles);
+            }
+
+            @Override
+            public void startStyle(Appendable appendable, Style... style) {
+                delegateSupplier.get().startStyle(appendable, style);
+            }
+
+            @Override
+            public void endStyle(Appendable appendable) {
+                delegateSupplier.get().endStyle(appendable);
             }
         };
     }

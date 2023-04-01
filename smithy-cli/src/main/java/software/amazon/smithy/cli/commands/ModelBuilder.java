@@ -178,7 +178,7 @@ final class ModelBuilder {
                 if (encountered > 1) {
                     line = '\r' + line;
                 }
-                stderr.print(line);
+                stderr.append(line);
                 stderr.flush();
             }
         };
@@ -187,7 +187,7 @@ final class ModelBuilder {
     // If a status update was printed, then clear it out.
     static void clearStatusUpdateIfPresent(AtomicInteger issueCount, CliPrinter stderr) {
         if (issueCount.get() > 0) {
-            stderr.print(CLEAR_LINE_ESCAPE);
+            stderr.append(CLEAR_LINE_ESCAPE);
             stderr.flush();
         }
     }
