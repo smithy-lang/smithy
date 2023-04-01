@@ -60,8 +60,8 @@ public class PrettyAnsiValidationFormatterTest {
                 + "\u001B[90mShape: \u001B[0m\u001B[34msmithy.example#Foo\u001B[0m\n"
                 + "\u001B[90mFile:  \u001B[0m\u001B[34mbuild/resources/test/software/amazon/smithy/cli/commands/valid-model.smithy:5:1\u001B[0m\n"
                 + "\n"
-                + "\u001B[90m4\u001B[90m| \u001B[0m\u001B[0m\n"
-                + "\u001B[90m5\u001B[90m| \u001B[0m\u001B[0mresource Foo {\n"
+                + "\u001B[90m4| \u001B[0m\n"
+                + "\u001B[90m5| \u001B[0mresource Foo {\n"
                 + "\u001B[90m |\u001B[0m \u001B[31m^\u001B[0m\n"
                 + "\n"
                 + "Hello, \u001B[36mthere\u001B[0m\n"));

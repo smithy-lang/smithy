@@ -91,10 +91,8 @@ final class MigrateCommand implements Command {
             @Override
             public int execute(Arguments arguments, Env env) {
                 if (!arguments.getReceiver(StandardOptions.class).quiet()) {
-                    String warning = env.colors().style(
-                            "upgrade-1-to-2 is deprecated. Use the migrate command instead.",
-                            Style.BG_YELLOW, Style.BLACK);
-                    env.stderr().println(warning + System.lineSeparator());
+                    env.colors().style(env.stderr(), "upgrade-1-to-2 is deprecated. Use the migrate command instead."
+                                                     + System.lineSeparator(), Style.BG_YELLOW, Style.BLACK);
                     env.stderr().flush();
                 }
                 return command.execute(arguments, env);
