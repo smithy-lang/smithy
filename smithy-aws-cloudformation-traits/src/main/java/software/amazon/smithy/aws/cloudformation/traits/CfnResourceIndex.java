@@ -149,13 +149,11 @@ public final class CfnResourceIndex implements KnowledgeIndex {
                         // These shapes should be present given the @idRef failWhenMissing
                         // setting, but gracefully handle if they're not.
                         model.getShape(additionalSchema)
-                                .map(Shape::asStructureShape)
-                                .ifPresent(optionalStructure -> {
-                                    optionalStructure.ifPresent(shape -> {
-                                        addAdditionalIdentifiers(builder, computeResourceAdditionalIdentifiers(shape));
-                                        updatePropertyMutabilities(builder, model, resourceId, null, shape,
-                                                SetUtils.of(), Function.identity());
-                                    });
+                                .flatMap(Shape::asStructureShape)
+                                .ifPresent(shape -> {
+                                    addAdditionalIdentifiers(builder, computeResourceAdditionalIdentifiers(shape));
+                                    updatePropertyMutabilities(builder, model, resourceId, null, shape,
+                                            SetUtils.of(), Function.identity());
                                 });
                     }
 
@@ -288,7 +286,7 @@ public final class CfnResourceIndex implements KnowledgeIndex {
             Function<Set<Mutability>, Set<Mutability>> updater
     ) {
         return definition -> {
-            CfnResourceProperty.Builder builder =  definition.toBuilder().addShapeId(member.getId());
+            CfnResourceProperty.Builder builder = definition.toBuilder().addShapeId(member.getId());
 
             if (explicitMutability.isEmpty()) {
                 // Update the existing mutabilities.
