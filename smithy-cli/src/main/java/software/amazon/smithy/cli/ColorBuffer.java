@@ -64,9 +64,7 @@ public final class ColorBuffer implements Appendable, AutoCloseable {
      */
     public static ColorBuffer of(ColorFormatter colors, CliPrinter sink) {
         StringBuilder buffer = new StringBuilder();
-        return new ColorBuffer(colors, buffer, s -> {
-            sink.append(s.toString());
-        });
+        return new ColorBuffer(colors, buffer, s -> sink.append(s.toString()));
     }
 
     @Override

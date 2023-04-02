@@ -22,11 +22,11 @@ import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
 import software.amazon.smithy.cli.ColorFormatter;
+import software.amazon.smithy.cli.ColorTheme;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.EnvironmentVariable;
 import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.cli.StandardOptions;
-import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
 
 public final class SmithyCommand implements Command {
@@ -65,7 +65,7 @@ public final class SmithyCommand implements Command {
 
     private void printHelp(ColorFormatter colors, CliPrinter printer) {
         printer.println(String.format("Usage: %s [-h | --help] [--version] <command> [<args>]",
-                                      colors.style("smithy", Style.BRIGHT_WHITE, Style.UNDERLINE)));
+                                      colors.style("smithy", ColorTheme.EM_UNDERLINE)));
         printer.println("");
         printer.println("Available commands:");
 
@@ -81,7 +81,7 @@ public final class SmithyCommand implements Command {
         for (Command command : commands) {
             if (!command.isHidden()) {
                 printer.println(String.format("    %-" + longestName + "s %s",
-                                              colors.style(command.getName(), Style.YELLOW),
+                                              colors.style(command.getName(), ColorTheme.LITERAL),
                                               command.getSummary()));
             }
         }
