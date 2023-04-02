@@ -33,6 +33,7 @@ import software.amazon.smithy.cli.ColorFormatter;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.EnvironmentVariable;
 import software.amazon.smithy.cli.StandardOptions;
+import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.loader.sourcecontext.SourceContextLoader;
@@ -57,6 +58,9 @@ final class ModelBuilder {
     private Command.Env env;
     private SmithyBuildConfig config;
     private Severity severity;
+    private ValidatedResult<Model> validatedResult;
+    private String titleLabel;
+    private Style[] titleLabelStyles;
 
     public ModelBuilder arguments(Arguments arguments) {
         this.arguments = arguments;
@@ -64,6 +68,7 @@ final class ModelBuilder {
     }
 
     public ModelBuilder models(List<String> models) {
+        validatedResult = null;
         this.models = models;
         return this;
     }
@@ -93,6 +98,17 @@ final class ModelBuilder {
         return this;
     }
 
+    public ModelBuilder validatedResult(ValidatedResult<Model> validatedResult) {
+        this.validatedResult = validatedResult;
+        return this;
+    }
+
+    public ModelBuilder titleLabel(String titleLabel, Style... styles) {
+        this.titleLabel = titleLabel;
+        this.titleLabelStyles = styles;
+        return this;
+    }
+
     public Model build() {
         SmithyBuilder.requiredState("arguments", arguments);
         SmithyBuilder.requiredState("models", models);
@@ -104,7 +120,6 @@ final class ModelBuilder {
         DiscoveryOptions discoveryOptions = arguments.getReceiver(DiscoveryOptions.class);
         Severity minSeverity = resolveMinSeverity(standardOptions);
         ClassLoader classLoader = env.classLoader();
-        ModelAssembler assembler = createModelAssembler(classLoader);
         ColorFormatter colors = env.colors();
         CliPrinter stderr = env.stderr();
 
@@ -116,31 +131,38 @@ final class ModelBuilder {
             validationMode = Validator.Mode.from(standardOptions);
         }
 
-        if (validationMode == Validator.Mode.DISABLE) {
-            assembler.disableValidation();
+        if (validatedResult == null) {
+            ModelAssembler assembler = createModelAssembler(classLoader);
+
+            if (validationMode == Validator.Mode.DISABLE) {
+                assembler.disableValidation();
+            }
+
+            // Emit status updates.
+            AtomicInteger issueCount = new AtomicInteger();
+            assembler.validationEventListener(createStatusUpdater(standardOptions, colors, stderr, issueCount));
+
+            handleModelDiscovery(discoveryOptions, assembler, classLoader, config);
+            handleUnknownTraitsOption(buildOptions, assembler);
+            config.getSources().forEach(assembler::addImport);
+            models.forEach(assembler::addImport);
+            config.getImports().forEach(assembler::addImport);
+            validatedResult = assembler.assemble();
+            clearStatusUpdateIfPresent(issueCount, stderr);
         }
 
-        // Emit status updates.
-        AtomicInteger issueCount = new AtomicInteger();
-        assembler.validationEventListener(createStatusUpdater(standardOptions, colors, stderr, issueCount));
-
-        handleModelDiscovery(discoveryOptions, assembler, classLoader, config);
-        handleUnknownTraitsOption(buildOptions, assembler);
-        config.getSources().forEach(assembler::addImport);
-        models.forEach(assembler::addImport);
-        config.getImports().forEach(assembler::addImport);
-        ValidatedResult<Model> result = assembler.assemble();
-
-        clearStatusUpdateIfPresent(issueCount, stderr);
-
         // Sort events by file so that we can efficiently read files for context sequentially.
-        List<ValidationEvent> sortedEvents = new ArrayList<>(result.getValidationEvents());
+        List<ValidationEvent> sortedEvents = new ArrayList<>(validatedResult.getValidationEvents());
         sortedEvents.sort(Comparator.comparing(ValidationEvent::getSourceLocation));
 
-        SourceContextLoader sourceContextLoader = result.getResult()
+        SourceContextLoader sourceContextLoader = validatedResult.getResult()
                 .map(model -> SourceContextLoader.createModelAwareLoader(model, DEFAULT_CODE_LINES))
                 .orElseGet(() -> SourceContextLoader.createLineBasedLoader(DEFAULT_CODE_LINES));
-        PrettyAnsiValidationFormatter formatter = new PrettyAnsiValidationFormatter(sourceContextLoader, colors);
+        PrettyAnsiValidationFormatter formatter = PrettyAnsiValidationFormatter.builder()
+                .sourceContextLoader(sourceContextLoader)
+                .colors(colors)
+                .titleLabel(titleLabel, titleLabelStyles)
+                .build();
 
         for (ValidationEvent event : sortedEvents) {
             // Only log events that are >= --severity. Note that setting --quiet inherently
@@ -151,13 +173,13 @@ final class ModelBuilder {
         }
 
         // Note: disabling validation will still show a summary of failures if the model can't be loaded.
-        Validator.validate(validationMode != Validator.Mode.ENABLE, colors, stderr, result);
+        Validator.validate(validationMode != Validator.Mode.ENABLE, colors, stderr, validatedResult);
 
         // Flush outputs to ensure there is no interleaving with subsequent command output.
         env.stderr().flush();
         env.stdout().flush();
 
-        return result.getResult().orElseThrow(() -> new RuntimeException("Expected Validator to throw"));
+        return validatedResult.getResult().orElseThrow(() -> new RuntimeException("Expected Validator to throw"));
     }
 
     static Consumer<ValidationEvent> createStatusUpdater(

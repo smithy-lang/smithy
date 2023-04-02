@@ -19,20 +19,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
-import software.amazon.smithy.cli.ColorBuffer;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.HelpPrinter;
-import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.diff.ModelDiff;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -111,7 +107,6 @@ final class DiffCommand implements Command {
             throw new CliError("Unexpected arguments: " + arguments.getPositional());
         }
 
-        StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
         Options options = arguments.getReceiver(Options.class);
         ClassLoader classLoader = env.classLoader();
 
@@ -119,50 +114,30 @@ final class DiffCommand implements Command {
         List<String> newModels = options.newModels;
         LOGGER.fine(() -> String.format("Setting old models to: %s; new models to: %s", oldModels, newModels));
 
-        ModelAssembler assembler = ModelBuilder.createModelAssembler(classLoader);
-        Model oldModel = loadModel("old", assembler, oldModels);
-        assembler.reset();
-        Model newModel = loadModel("new", assembler, newModels);
+        ModelBuilder modelBuilder = new ModelBuilder()
+                .config(config)
+                .arguments(arguments)
+                .env(env)
+                .validationPrinter(env.stderr())
+                .validationMode(Validator.Mode.DISABLE)
+                .severity(Severity.DANGER);
+        Model oldModel = modelBuilder
+                .models(oldModels)
+                .titleLabel("OLD", Style.BG_BRIGHT_BLUE, Style.BLACK)
+                .build();
+        Model newModel = modelBuilder
+                .models(newModels)
+                .titleLabel("NEW", Style.BG_BRIGHT_BLUE, Style.BLACK)
+                .build();
 
+        // Diff the models and report on the events, failing if necessary.
         List<ValidationEvent> events = ModelDiff.compare(classLoader, oldModel, newModel);
-        boolean hasError = events.stream().anyMatch(event -> event.getSeverity() == Severity.ERROR);
-        boolean hasDanger = events.stream().anyMatch(event -> event.getSeverity() == Severity.DANGER);
-        boolean hasWarning = events.stream().anyMatch(event -> event.getSeverity() == Severity.DANGER);
-        String result = events.stream().map(ValidationEvent::toString).collect(Collectors.joining("\n"));
-
-        if (hasError) {
-            throw new CliError(String.format("Model diff detected errors: %n%s", result));
-        }
-
-        if (!result.isEmpty()) {
-            env.stdout().println(result);
-        }
-
-        // Print the "framing" style output to stderr only if !quiet.
-        if (!standardOptions.quiet()) {
-            try (ColorBuffer buffer = ColorBuffer.of(env.colors(), env.stderr())) {
-                if (hasDanger) {
-                    buffer.println("Smithy diff detected danger", Style.BRIGHT_RED, Style.BOLD);
-                } else if (hasWarning) {
-                    buffer.println("Smithy diff detected warnings", Style.BRIGHT_YELLOW, Style.BOLD);
-                } else {
-                    buffer.println("Smithy diff complete", Style.BRIGHT_GREEN, Style.BOLD);
-                }
-            }
-        }
+        modelBuilder
+                .titleLabel("DIFF", Style.BG_BRIGHT_BLACK, Style.WHITE)
+                .validatedResult(new ValidatedResult<>(newModel, events))
+                .severity(null) // reset so it takes on standard option settings.
+                .build();
 
         return 0;
-    }
-
-    private Model loadModel(String descriptor, ModelAssembler assembler, List<String> models) {
-        models.forEach(assembler::addImport);
-        ValidatedResult<Model> result = assembler.assemble();
-        if (result.isBroken()) {
-            throw new CliError("Error loading " + descriptor + " models: \n" + result.getValidationEvents().stream()
-                    .map(ValidationEvent::toString)
-                    .collect(Collectors.joining("\n")));
-        }
-
-        return result.unwrap();
     }
 }

@@ -26,6 +26,7 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.loader.sourcecontext.SourceContextLoader;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationEventFormatter;
+import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.StringUtils;
 
 final class PrettyAnsiValidationFormatter implements ValidationEventFormatter {
@@ -35,10 +36,18 @@ final class PrettyAnsiValidationFormatter implements ValidationEventFormatter {
     private final SourceContextLoader sourceContextLoader;
     private final ColorFormatter colors;
     private final String rootPath = Paths.get("").normalize().toAbsolutePath().toString();
+    private final String titleLabel;
+    private final Style[] titleLabelStyles;
 
-    PrettyAnsiValidationFormatter(SourceContextLoader loader, ColorFormatter colors) {
-        this.sourceContextLoader = loader;
-        this.colors = colors;
+    PrettyAnsiValidationFormatter(Builder builder) {
+        this.sourceContextLoader = SmithyBuilder.requiredState("sourceContextLoader", builder.sourceContextLoader);
+        this.colors = SmithyBuilder.requiredState("colors", builder.colors);
+        this.titleLabel = SmithyBuilder.requiredState("titleLabel", builder.titleLabel);
+        this.titleLabelStyles = builder.titleLabelStyles;
+    }
+
+    static Builder builder() {
+        return new Builder();
     }
 
     @Override
@@ -104,13 +113,21 @@ final class PrettyAnsiValidationFormatter implements ValidationEventFormatter {
 
     private void printTitle(ColorBuffer writer, ValidationEvent event, Style borderColor, Style... styles) {
         colors.style(writer, "── ", borderColor);
-        String severity = ' ' + event.getSeverity().toString() + ' ';
-        colors.style(writer, severity, styles);
+
+        if (!titleLabel.isEmpty()) {
+            colors.style(writer, ' ' + titleLabel + ' ', titleLabelStyles);
+            colors.style(writer, "─", borderColor);
+        }
+
+        colors.style(writer, ' ' + event.getSeverity().toString() + ' ', styles);
+
+        // dash+padding, [padding + titleLabel + padding + padding], severity, padding+dash, padding, padding.
+        int prefixLength = 3 + (titleLabel.isEmpty() ? 0 : titleLabel.length() + 3)
+                           + 1 + event.getSeverity().toString().length() + 1 + 3 + 1;
 
         writer.style(w -> {
             w.append(" ──");
-            int currentLength = severity.length() + 3 + 3 + 1; // severity, dash+padding, padding+dash, padding.
-            int remainingLength = LINE_LENGTH - currentLength;
+            int remainingLength = LINE_LENGTH - prefixLength;
             int padding = remainingLength - event.getId().length();
             for (int i = 0; i < padding; i++) {
                 w.append("─");
@@ -146,5 +163,32 @@ final class PrettyAnsiValidationFormatter implements ValidationEventFormatter {
         }
 
         return filename;
+    }
+
+    static final class Builder {
+        private SourceContextLoader sourceContextLoader;
+        private ColorFormatter colors;
+        private String titleLabel = "";
+        private Style[] titleLabelStyles;
+
+        Builder sourceContextLoader(SourceContextLoader sourceContextLoader) {
+            this.sourceContextLoader = sourceContextLoader;
+            return this;
+        }
+
+        Builder colors(ColorFormatter colors) {
+            this.colors = colors;
+            return this;
+        }
+
+        Builder titleLabel(String titleLabel, Style... styles) {
+            this.titleLabel = titleLabel == null ? "" : titleLabel;
+            titleLabelStyles = styles;
+            return this;
+        }
+
+        PrettyAnsiValidationFormatter build() {
+            return new PrettyAnsiValidationFormatter(this);
+        }
     }
 }
