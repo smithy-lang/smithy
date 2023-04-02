@@ -24,9 +24,18 @@ public class CliPrinterTest {
     @Test
     public void printsWithNewlineByDefault() {
         StringBuilder builder = new StringBuilder();
-        CliPrinter printer = c -> {
-            builder.append(c);
-            return null;
+        CliPrinter printer = new CliPrinter() {
+            @Override
+            public CliPrinter append(char c) {
+                builder.append(c);
+                return this;
+            }
+
+            @Override
+            public CliPrinter append(CharSequence csq, int start, int end) {
+                builder.append(csq, start, end);
+                return this;
+            }
         };
         printer.println("Hi");
 

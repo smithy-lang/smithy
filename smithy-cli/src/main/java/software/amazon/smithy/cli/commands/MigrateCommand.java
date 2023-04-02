@@ -40,9 +40,9 @@ import software.amazon.smithy.build.SmithyBuild;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
+import software.amazon.smithy.cli.ColorTheme;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.StandardOptions;
-import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.loader.ModelAssembler;
@@ -92,7 +92,7 @@ final class MigrateCommand implements Command {
             public int execute(Arguments arguments, Env env) {
                 if (!arguments.getReceiver(StandardOptions.class).quiet()) {
                     env.colors().style(env.stderr(), "upgrade-1-to-2 is deprecated. Use the migrate command instead."
-                                                     + System.lineSeparator(), Style.BG_YELLOW, Style.BLACK);
+                                                     + System.lineSeparator(), ColorTheme.DEPRECATED);
                     env.stderr().flush();
                 }
                 return command.execute(arguments, env);

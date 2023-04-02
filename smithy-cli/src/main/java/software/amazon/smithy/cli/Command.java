@@ -86,6 +86,11 @@ public interface Command {
             return classLoader == null ? getClass().getClassLoader() : classLoader;
         }
 
+        public void flush() {
+            stderr.flush();
+            stdout.flush();
+        }
+
         public Env withClassLoader(ClassLoader classLoader) {
             return classLoader == this.classLoader ? this : new Env(colors, stdout, stderr, classLoader);
         }

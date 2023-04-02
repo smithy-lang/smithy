@@ -189,9 +189,9 @@ final class LoggingArgumentsHandler implements Arguments {
             if (isLoggable(record)) {
                 String formatted = getFormatter().format(record);
                 if (record.getLevel().equals(Level.SEVERE)) {
-                    colors.println(printer, formatted, Style.RED);
+                    colors.println(printer, formatted, ColorTheme.ERROR);
                 } else if (record.getLevel().equals(Level.WARNING)) {
-                    colors.println(printer, formatted, Style.YELLOW);
+                    colors.println(printer, formatted, ColorTheme.WARNING);
                 } else {
                     printer.println(formatted);
                 }

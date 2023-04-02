@@ -91,7 +91,7 @@ public final class IntegUtils {
         throw new RuntimeException("No SMITHY_BINARY location was set. Did you build the Smithy jlink CLI?");
     }
 
-    private static void withTempDir(String name, Consumer<Path> consumer) {
+    static void withTempDir(String name, Consumer<Path> consumer) {
         try {
             Path path = Files.createTempDirectory(name.replace("/", "_"));
             try {

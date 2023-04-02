@@ -16,6 +16,12 @@ final class BufferPrinter implements CliPrinter {
     }
 
     @Override
+    public CliPrinter append(CharSequence csq, int start, int end) {
+        builder.append(csq, start, end);
+        return this;
+    }
+
+    @Override
     public BufferPrinter append(CharSequence text) {
         synchronized (this) {
             builder.append(text);

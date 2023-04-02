@@ -18,7 +18,7 @@ package software.amazon.smithy.cli.commands;
 import java.util.Collection;
 import java.util.Iterator;
 import software.amazon.smithy.cli.ColorBuffer;
-import software.amazon.smithy.cli.Style;
+import software.amazon.smithy.cli.ColorTheme;
 import software.amazon.smithy.model.loader.sourcecontext.SourceContextLoader;
 
 /**
@@ -81,7 +81,7 @@ final class CodeFormatter {
                 }
                 writer.append("| ");
             }
-        }, Style.BRIGHT_BLACK);
+        }, ColorTheme.MUTED);
 
         if (content.length() > 0) {
             writeStringWithMaxWidth(content, numberLength);
@@ -96,12 +96,12 @@ final class CodeFormatter {
                 w.append(' ');
             }
             w.append("|");
-        }, Style.BRIGHT_BLACK);
+        }, ColorTheme.MUTED);
 
         for (int j = 0; j < cursorColumn; j++) {
             writer.append(' ');
         }
-        writer.print("^", Style.RED);
+        writer.print("^", ColorTheme.ERROR);
         writer.println();
     }
 

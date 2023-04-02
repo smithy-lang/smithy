@@ -21,11 +21,13 @@ import java.util.Collection;
 import java.util.regex.Pattern;
 import software.amazon.smithy.cli.ColorBuffer;
 import software.amazon.smithy.cli.ColorFormatter;
+import software.amazon.smithy.cli.ColorTheme;
 import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.loader.sourcecontext.SourceContextLoader;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationEventFormatter;
+import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.StringUtils;
 
 final class PrettyAnsiValidationFormatter implements ValidationEventFormatter {
@@ -35,10 +37,18 @@ final class PrettyAnsiValidationFormatter implements ValidationEventFormatter {
     private final SourceContextLoader sourceContextLoader;
     private final ColorFormatter colors;
     private final String rootPath = Paths.get("").normalize().toAbsolutePath().toString();
+    private final String titleLabel;
+    private final Style[] titleLabelStyles;
 
-    PrettyAnsiValidationFormatter(SourceContextLoader loader, ColorFormatter colors) {
-        this.sourceContextLoader = loader;
-        this.colors = colors;
+    PrettyAnsiValidationFormatter(Builder builder) {
+        this.sourceContextLoader = SmithyBuilder.requiredState("sourceContextLoader", builder.sourceContextLoader);
+        this.colors = SmithyBuilder.requiredState("colors", builder.colors);
+        this.titleLabel = SmithyBuilder.requiredState("titleLabel", builder.titleLabel);
+        this.titleLabelStyles = builder.titleLabelStyles;
+    }
+
+    static Builder builder() {
+        return new Builder();
     }
 
     @Override
@@ -49,26 +59,26 @@ final class PrettyAnsiValidationFormatter implements ValidationEventFormatter {
 
             switch (event.getSeverity()) {
                 case WARNING:
-                    printTitle(writer, event, Style.YELLOW, Style.BG_YELLOW, Style.BLACK);
+                    printTitle(writer, event, ColorTheme.WARNING, ColorTheme.WARNING_TITLE);
                     break;
                 case ERROR:
-                    printTitle(writer, event, Style.RED, Style.BG_RED, Style.BLACK);
+                    printTitle(writer, event, ColorTheme.ERROR, ColorTheme.ERROR_TITLE);
                     break;
                 case DANGER:
-                    printTitle(writer, event, Style.MAGENTA, Style.BG_MAGENTA, Style.BLACK);
+                    printTitle(writer, event, ColorTheme.DANGER, ColorTheme.DANGER_TITLE);
                     break;
                 case NOTE:
-                    printTitle(writer, event, Style.CYAN, Style.BG_CYAN, Style.BLACK);
+                    printTitle(writer, event, ColorTheme.NOTE, ColorTheme.NOTE_TITLE);
                     break;
                 case SUPPRESSED:
                 default:
-                    printTitle(writer, event, Style.GREEN, Style.BG_GREEN, Style.BLACK);
+                    printTitle(writer, event, ColorTheme.SUPPRESSED, ColorTheme.SUPPRESSED_TITLE);
             }
 
             // Only write an event ID if there is an associated ID.
             event.getShapeId().ifPresent(id -> {
-                colors.style(writer, "Shape: ", Style.BRIGHT_BLACK);
-                colors.style(writer, id.toString(), Style.BLUE);
+                colors.style(writer, "Shape: ", ColorTheme.MUTED);
+                colors.style(writer, id.toString(), ColorTheme.EVENT_SHAPE_ID);
                 writer.append(ls);
             });
 
@@ -78,8 +88,8 @@ final class PrettyAnsiValidationFormatter implements ValidationEventFormatter {
                 String humanReadableFilename = getHumanReadableFilename(event.getSourceLocation().getFilename());
                 int line = event.getSourceLocation().getLine();
                 int column = event.getSourceLocation().getColumn();
-                colors.style(writer, "File:  ", Style.BRIGHT_BLACK);
-                colors.style(writer, humanReadableFilename + ':' + line + ':' + column, Style.BLUE);
+                colors.style(writer, "File:  ", ColorTheme.MUTED);
+                colors.style(writer, humanReadableFilename + ':' + line + ':' + column, ColorTheme.MUTED);
                 writer.append(ls).append(ls);
 
                 try {
@@ -88,7 +98,7 @@ final class PrettyAnsiValidationFormatter implements ValidationEventFormatter {
                         new CodeFormatter(writer, LINE_LENGTH).writeCode(line, column, lines);
                     }
                 } catch (UncheckedIOException e) {
-                    colors.style(writer, "Invalid source file", Style.UNDERLINE);
+                    colors.style(writer, "Invalid source file", ColorTheme.EM_UNDERLINE);
                     writer.append(": ");
                     writeMessage(writer, e.getCause().getMessage());
                     writer.append(ls).append(ls);
@@ -102,31 +112,38 @@ final class PrettyAnsiValidationFormatter implements ValidationEventFormatter {
         }
     }
 
-    private void printTitle(ColorBuffer writer, ValidationEvent event, Style borderColor, Style... styles) {
-        colors.style(writer, "── ", borderColor);
-        String severity = ' ' + event.getSeverity().toString() + ' ';
-        colors.style(writer, severity, styles);
+    private void printTitle(ColorBuffer writer, ValidationEvent event, Style border, Style styles) {
+        colors.style(writer, "── ", border);
+
+        if (!titleLabel.isEmpty()) {
+            colors.style(writer, ' ' + titleLabel + ' ', titleLabelStyles);
+        }
+
+        colors.style(writer, ' ' + event.getSeverity().toString() + ' ', styles);
+
+        // dash+padding, [padding + titleLabel + padding + padding], severity, padding+dash, padding, padding.
+        int prefixLength = 3 + (titleLabel.isEmpty() ? 0 : (titleLabel.length() + 2))
+                           + 1 + event.getSeverity().toString().length() + 1 + 3 + 1;
 
         writer.style(w -> {
             w.append(" ──");
-            int currentLength = severity.length() + 3 + 3 + 1; // severity, dash+padding, padding+dash, padding.
-            int remainingLength = LINE_LENGTH - currentLength;
+            int remainingLength = LINE_LENGTH - prefixLength;
             int padding = remainingLength - event.getId().length();
             for (int i = 0; i < padding; i++) {
                 w.append("─");
             }
             w.append(' ');
-        }, borderColor);
+        }, border);
 
         writer.append(event.getId()).append(System.lineSeparator());
     }
 
     // Converts Markdown style ticks to use color highlights if colors are enabled.
     private void writeMessage(ColorBuffer writer, String message) {
-        String content = StringUtils.wrap(message, 80, System.lineSeparator(), false);
+        String content = StringUtils.wrap(message, LINE_LENGTH, System.lineSeparator(), false);
 
         if (colors.isColorEnabled()) {
-            content = TICK_PATTERN.matcher(content).replaceAll(colors.style("$1", Style.CYAN));
+            content = TICK_PATTERN.matcher(content).replaceAll(colors.style("$1", ColorTheme.LITERAL));
         }
 
         writer.append(content);
@@ -146,5 +163,32 @@ final class PrettyAnsiValidationFormatter implements ValidationEventFormatter {
         }
 
         return filename;
+    }
+
+    static final class Builder {
+        private SourceContextLoader sourceContextLoader;
+        private ColorFormatter colors;
+        private String titleLabel = "";
+        private Style[] titleLabelStyles;
+
+        Builder sourceContextLoader(SourceContextLoader sourceContextLoader) {
+            this.sourceContextLoader = sourceContextLoader;
+            return this;
+        }
+
+        Builder colors(ColorFormatter colors) {
+            this.colors = colors;
+            return this;
+        }
+
+        Builder titleLabel(String titleLabel, Style... styles) {
+            this.titleLabel = titleLabel == null ? "" : titleLabel;
+            titleLabelStyles = styles;
+            return this;
+        }
+
+        PrettyAnsiValidationFormatter build() {
+            return new PrettyAnsiValidationFormatter(this);
+        }
     }
 }

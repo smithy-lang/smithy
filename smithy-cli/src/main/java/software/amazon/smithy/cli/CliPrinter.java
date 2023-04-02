@@ -26,7 +26,6 @@ import java.nio.charset.StandardCharsets;
 /**
  * Handles text output of the CLI.
  */
-@FunctionalInterface
 public interface CliPrinter extends Appendable, Flushable {
 
     @Override
@@ -38,12 +37,7 @@ public interface CliPrinter extends Appendable, Flushable {
     }
 
     @Override
-    default CliPrinter append(CharSequence csq, int start, int end) {
-        for (int i = start; i < end; i++) {
-            append(csq.charAt(i));
-        }
-        return this;
-    }
+    CliPrinter append(CharSequence csq, int start, int end);
 
     /**
      * Prints text to the writer and appends a new line.

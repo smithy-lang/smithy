@@ -81,6 +81,8 @@ public final class Cli {
                 Command.Env env = new Command.Env(colorFormatter, stdoutPrinter, stderrPrinter, classLoader);
                 return command.execute(arguments, env);
             } catch (Exception e) {
+                stdoutPrinter.flush();
+                stderrPrinter.flush();
                 printException(e, standardOptions.stackTrace());
                 throw CliError.wrap(e);
             } finally {
@@ -112,13 +114,13 @@ public final class Cli {
     private void printException(Throwable e, boolean stacktrace) {
         try (ColorBuffer buffer = ColorBuffer.of(colorFormatter, stderrPrinter)) {
             if (!stacktrace) {
-                colorFormatter.println(stderrPrinter, e.getMessage(), Style.RED);
+                colorFormatter.println(stderrPrinter, e.getMessage(), ColorTheme.ERROR);
             } else {
                 StringWriter writer = new StringWriter();
                 e.printStackTrace(new PrintWriter(writer));
                 String result = writer.toString();
                 int positionOfName = result.indexOf(':');
-                buffer.print(result.substring(0, positionOfName), Style.RED, Style.UNDERLINE);
+                buffer.print(result.substring(0, positionOfName), ColorTheme.ERROR);
                 buffer.println(result.substring(positionOfName));
             }
         }

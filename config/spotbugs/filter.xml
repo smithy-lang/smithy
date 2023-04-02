@@ -154,6 +154,10 @@
         <Class name="software.amazon.smithy.cli.commands.WarmupCommand"/>
         <Bug pattern="DM_DEFAULT_ENCODING"/>
     </Match>
+    <Match>
+        <Class name="software.amazon.smithy.cli.DiffCommandTest"/>
+        <Bug pattern="DM_DEFAULT_ENCODING"/>
+    </Match>
 
     <!-- SecurityManager is deprecated and scheduled for removal, so this isn't a good check. -->
     <Match>

@@ -20,8 +20,8 @@ import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
 import software.amazon.smithy.cli.ColorBuffer;
 import software.amazon.smithy.cli.ColorFormatter;
+import software.amazon.smithy.cli.ColorTheme;
 import software.amazon.smithy.cli.StandardOptions;
-import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
@@ -52,9 +52,9 @@ final class Validator {
 
         try (ColorBuffer output = ColorBuffer.of(colors, new StringBuilder())) {
             if (isFailed) {
-                output.append(colors.style("FAILURE: ", Style.RED, Style.BOLD));
+                output.append(colors.style("FAILURE: ", ColorTheme.ERROR));
             } else {
-                output.append(colors.style("SUCCESS: ", Style.GREEN, Style.BOLD));
+                output.append(colors.style("SUCCESS: ", ColorTheme.SUCCESS));
             }
             output.append("Validated " + shapeCount).append(" shapes");
 

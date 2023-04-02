@@ -37,6 +37,7 @@ import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
 import software.amazon.smithy.cli.ColorBuffer;
 import software.amazon.smithy.cli.ColorFormatter;
+import software.amazon.smithy.cli.ColorTheme;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.HelpPrinter;
 import software.amazon.smithy.cli.StandardOptions;
@@ -44,6 +45,7 @@ import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
+import software.amazon.smithy.model.loader.sourcecontext.SourceContextLoader;
 import software.amazon.smithy.model.validation.Severity;
 
 final class BuildCommand implements Command {
@@ -122,6 +124,11 @@ final class BuildCommand implements Command {
                 .validationPrinter(env.stderr())
                 .build();
 
+        if (!standardOptions.quiet()) {
+            env.colors().println(env.stderr(), "Validated model, now starting projections...", ColorTheme.MUTED);
+            env.stderr().println("");
+        }
+
         Supplier<ModelAssembler> modelAssemblerSupplier = () -> {
             ModelAssembler assembler = Model.assembler(classLoader);
             if (buildOptions.allowUnknownTraits()) {
@@ -151,25 +158,30 @@ final class BuildCommand implements Command {
         ResultConsumer resultConsumer = new ResultConsumer(env.colors(), env.stderr(), standardOptions.quiet());
         smithyBuild.build(resultConsumer, resultConsumer);
 
+        env.flush();
+
         if (!standardOptions.quiet()) {
-            Style ansiColor = resultConsumer.failedProjections.isEmpty()
-                              ? Style.BRIGHT_GREEN
-                              : Style.BRIGHT_YELLOW;
-            env.colors().println(env.stderr(),
-                                 String.format("Smithy built %s projection(s), %s plugin(s), and %s artifacts",
-                                               resultConsumer.projectionCount,
-                                               resultConsumer.pluginCount,
-                                               resultConsumer.artifactCount),
-                                 Style.BOLD, ansiColor);
+            try (ColorBuffer buffer = ColorBuffer.of(env.colors(), env.stderr())) {
+                buffer.print("Summary", ColorTheme.EM_UNDERLINE);
+                buffer.println(String.format(": Smithy built %s projection(s), %s plugin(s), and %s artifacts",
+                                       resultConsumer.projectionCount,
+                                       resultConsumer.pluginCount,
+                                       resultConsumer.artifactCount));
+            }
         }
 
         // Throw an exception if any errors occurred.
         if (!resultConsumer.failedProjections.isEmpty()) {
             resultConsumer.failedProjections.sort(String::compareTo);
-            throw new CliError(String.format(
-                    "The following %d Smithy build projection(s) failed: %s",
-                    resultConsumer.failedProjections.size(),
-                    resultConsumer.failedProjections));
+            StringBuilder error = new StringBuilder();
+            try (ColorBuffer buffer = ColorBuffer.of(env.colors(), error)) {
+                buffer.println();
+                buffer.println(String.format(
+                        "The following %d Smithy build projection(s) failed: %s",
+                        resultConsumer.failedProjections.size(),
+                        resultConsumer.failedProjections));
+            }
+            throw new CliError(error.toString());
         }
 
         return 0;
@@ -196,45 +208,74 @@ final class BuildCommand implements Command {
             StringWriter writer = new StringWriter();
             writer.write(String.format("%nProjection %s failed: %s%n", name, exception.toString()));
             exception.printStackTrace(new PrintWriter(writer));
-            colors.println(printer, writer.toString(), Style.RED);
+            colors.println(printer, writer.toString(), ColorTheme.ERROR);
         }
 
         @Override
         public void accept(ProjectionResult result) {
             try (ColorBuffer buffer = ColorBuffer.of(colors, printer)) {
+                String status;
+                Style statusStyle;
+
                 if (result.isBroken()) {
-                    // Write out validation errors as they occur.
                     failedProjections.add(result.getProjectionName());
-                    buffer
-                            .println()
-                            .print(result.getProjectionName(), Style.RED)
-                            .println(" has a model that failed validation");
-                    result.getEvents().forEach(event -> {
-                        if (event.getSeverity() == Severity.DANGER || event.getSeverity() == Severity.ERROR) {
-                            buffer.println(event.toString(), Style.RED);
-                        }
-                    });
+                    statusStyle = ColorTheme.ERROR;
+                    status = "Failed";
                 } else {
                     // Only increment the projection count if it succeeded.
                     projectionCount.incrementAndGet();
+                    statusStyle = ColorTheme.SUCCESS;
+                    status = "Completed";
                 }
 
                 pluginCount.addAndGet(result.getPluginManifests().size());
+
+                // Increment the total number of artifacts written.
+                for (FileManifest manifest : result.getPluginManifests().values()) {
+                    artifactCount.addAndGet(manifest.getFiles().size());
+                }
 
                 // Get the base directory of the projection.
                 Iterator<FileManifest> manifestIterator = result.getPluginManifests().values().iterator();
                 Path root = manifestIterator.hasNext() ? manifestIterator.next().getBaseDir().getParent() : null;
 
                 if (!quiet) {
-                    String message = String.format("Completed projection %s (%d shapes): %s",
-                                                   result.getProjectionName(), result.getModel().toSet().size(), root);
-                    buffer.println(message, Style.GREEN);
+                    int remainingLength = 80 - 6 - result.getProjectionName().length();
+                    buffer.style(w -> {
+                        w.append("──  ");
+                        w.append(result.getProjectionName());
+                        w.append("  ");
+                        for (int i = 0; i < remainingLength; i++) {
+                            w.append('─');
+                        }
+                        w.println();
+                    }, statusStyle);
+                    buffer
+                            .print(status)
+                            .append(" projection ")
+                            .append(result.getProjectionName())
+                            .append(" (")
+                            .append(String.valueOf(result.getModel().toSet().size()))
+                            .append("): ")
+                            .append(String.valueOf(root))
+                            .println();
                 }
 
-                // Increment the total number of artifacts written.
-                for (FileManifest manifest : result.getPluginManifests().values()) {
-                    artifactCount.addAndGet(manifest.getFiles().size());
+                if (result.isBroken()) {
+                    SourceContextLoader loader = SourceContextLoader.createModelAwareLoader(result.getModel(), 4);
+                    PrettyAnsiValidationFormatter formatter = PrettyAnsiValidationFormatter.builder()
+                            .sourceContextLoader(loader)
+                            .colors(colors)
+                            .titleLabel(result.getProjectionName(), statusStyle)
+                            .build();
+                    result.getEvents().forEach(event -> {
+                        if (event.getSeverity() == Severity.DANGER || event.getSeverity() == Severity.ERROR) {
+                            buffer.println(formatter.format(event));
+                        }
+                    });
                 }
+
+                buffer.println();
             }
         }
     }
