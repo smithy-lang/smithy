@@ -1,6 +1,6 @@
 # Smithy Changelog
 
-## 1.29.0 (4/3/2023)
+## 1.29.0 (2023-04-03)
 
 ### Features
 * Added EnumTrait validation protocol test ([#1679](https://github.com/awslabs/smithy/pull/1679))
