@@ -1567,8 +1567,75 @@ trait applied to it:</p>
 </pre></div>
 </div>
 </div>
+<div class="section" id="in">
+<span id="selector-in-function"></span><h3><span class="section-number">16.8.4. </span><code class="docutils literal notranslate"><span class="pre">:in</span></code><a class="headerlink" href="#in" title="Permalink to this headline">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">:in</span></code> function is used to test if a shape is contained within the
+result of an expression. This function is most useful when testing if a
+<a class="reference internal" href="#selector-variables"><span class="std std-ref">variable</span></a> or the result of a
+<a class="reference internal" href="#selector-root-function"><span class="std std-ref">root</span></a> function contains a shape. The <code class="docutils literal notranslate"><span class="pre">:in</span></code>
+function requires exactly one selector. If a shape is contained in the
+result of evaluating the selector, the shape is yielded from the function.</p>
+<p>The following example finds all numbers that are used in service operation
+inputs and not used in service operation outputs:</p>
+<div class="literal-block-wrapper docutils container" id="in-variable-input-output-example">
+<div class="code-block-caption"><span class="caption-text">:in example using variables</span><a class="headerlink" href="#in-variable-input-output-example" title="Permalink to this code">#</a></div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>service
+$outputs(~&gt; operation -[output]-&gt; ~&gt; number)
+~&gt; operation -[input]-&gt; ~&gt; number
+:not(:in(${outputs}))
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The above example returns the aggregate results of applying the selector
+to every shape: if a model contains multiple services, and one of the
+services uses a number 'X' in input and not output, but another service
+uses 'X' in both input and output, 'X' is part of the matched shapes.
+Use the <a class="reference internal" href="#selector-root-function"><span class="std std-ref">:root function</span></a> to match shapes
+globally.</p>
+</div>
+</div>
+<div class="section" id="root">
+<span id="selector-root-function"></span><h3><span class="section-number">16.8.5. </span><code class="docutils literal notranslate"><span class="pre">:root</span></code><a class="headerlink" href="#root" title="Permalink to this headline">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">:root</span></code> function evaluates a subexpression against <em>all</em> shapes in the
+model and yields all matches. The <code class="docutils literal notranslate"><span class="pre">:root</span></code> function is useful for breaking
+a selector down into smaller operations, and it works best when used with
+<a class="reference internal" href="#selector-variables"><span class="std std-ref">variables</span></a> or the <a class="reference internal" href="#selector-in-function"><span class="std std-ref">:in function</span></a>.
+The <code class="docutils literal notranslate"><span class="pre">:root</span></code> function requires exactly one selector.</p>
+<p>The following example finds all numbers that are used in any operation inputs
+and not used in any operation outputs:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>number
+:in(:root(service ~&gt; operation -[input]-&gt; ~&gt; number))
+:not(:in(:root(service ~&gt; operation -[output]-&gt; ~&gt; number)))
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The above example is similar to &quot;<a class="reference internal" href="#in-variable-input-output-example"><span class="std std-ref">:in example using variables</span></a>&quot;
+but works independent of services. That is, if a model contains multiple
+services, and one of the services uses a number 'X' in input and not
+output, but another service uses 'X' in both input and output, 'X'
+<em>is not</em> part of the matched shapes.</p>
+</div>
+<div class="section" id="root-functions-are-isolated-subexpressions">
+<h4><span class="section-number">16.8.5.1. </span>:root functions are isolated subexpressions<a class="headerlink" href="#root-functions-are-isolated-subexpressions" title="Permalink to this headline">#</a></h4>
+<p>The expression evaluated by a <code class="docutils literal notranslate"><span class="pre">:root</span></code> expression is evaluated in an isolated
+context from the rest of the expression. The selector provided to a <code class="docutils literal notranslate"><span class="pre">:root</span></code>
+function cannot access variables defined outside the function, and variables
+defined in the selector do not persist outside the selector.</p>
+</div>
+<div class="section" id="root-functions-are-evaluated-at-most-once">
+<h4><span class="section-number">16.8.5.2. </span>:root functions are evaluated at most once<a class="headerlink" href="#root-functions-are-evaluated-at-most-once" title="Permalink to this headline">#</a></h4>
+<p>There is no need to store the result of a <code class="docutils literal notranslate"><span class="pre">:root</span></code> function in a variable
+because <code class="docutils literal notranslate"><span class="pre">:root</span></code> selector functions are considered global common
+subexpressions and are evaluated at most once during the selection process.
+Implementations MAY choose to evaluate <code class="docutils literal notranslate"><span class="pre">:root</span></code> expressions eagerly or
+lazily, though they MUST evaluate <code class="docutils literal notranslate"><span class="pre">:root</span></code> expressions no more than once.</p>
+</div>
+</div>
 <div class="section" id="topdown">
-<h3><span class="section-number">16.8.4. </span><code class="docutils literal notranslate"><span class="pre">:topdown</span></code><a class="headerlink" href="#topdown" title="Permalink to this headline">#</a></h3>
+<h3><span class="section-number">16.8.6. </span><code class="docutils literal notranslate"><span class="pre">:topdown</span></code><a class="headerlink" href="#topdown" title="Permalink to this headline">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">:topdown</span></code> function matches service, resource, and operation shapes
 and resource and operation shapes within their containment hierarchy. The
 <code class="docutils literal notranslate"><span class="pre">:topdown</span></code> function starts at each given shape and forward-traverses
@@ -2054,7 +2121,13 @@ of the Smithy Github repository.</p>
 <li><a class="reference internal" href="#test">16.8.1. <code class="docutils literal notranslate"><span class="pre">:test</span></code></a></li>
 <li><a class="reference internal" href="#is">16.8.2. <code class="docutils literal notranslate"><span class="pre">:is</span></code></a></li>
 <li><a class="reference internal" href="#not">16.8.3. <code class="docutils literal notranslate"><span class="pre">:not</span></code></a></li>
-<li><a class="reference internal" href="#topdown">16.8.4. <code class="docutils literal notranslate"><span class="pre">:topdown</span></code></a></li>
+<li><a class="reference internal" href="#in">16.8.4. <code class="docutils literal notranslate"><span class="pre">:in</span></code></a></li>
+<li><a class="reference internal" href="#root">16.8.5. <code class="docutils literal notranslate"><span class="pre">:root</span></code></a><ul>
+<li><a class="reference internal" href="#root-functions-are-isolated-subexpressions">16.8.5.1. :root functions are isolated subexpressions</a></li>
+<li><a class="reference internal" href="#root-functions-are-evaluated-at-most-once">16.8.5.2. :root functions are evaluated at most once</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#topdown">16.8.6. <code class="docutils literal notranslate"><span class="pre">:topdown</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#variables">16.9. Variables</a><ul>

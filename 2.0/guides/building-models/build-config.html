@@ -378,8 +378,8 @@ projection. Imports are relative to the configuration file.</p>
 <tr class="row-odd"><td>plugins</td>
 <td><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">object&gt;</span></code></td>
 <td>Defines the plugins to apply to the model when building every
-projection. Plugins are a mapping of plugin names to an arbitrary
-plugin configuration object.</td>
+projection. Plugins are a mapping of <a class="reference internal" href="#plugin-id"><span class="std std-ref">plugin IDs</span></a> to
+plugin-specific configuration objects.</td>
 </tr>
 <tr class="row-even"><td>ignoreMissingPlugins</td>
 <td><code class="docutils literal notranslate"><span class="pre">bool</span></code></td>
@@ -404,7 +404,7 @@ validators, transforms, and other extensions.</td>
 <span class="w">    </span><span class="nt">&quot;imports&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;foo.json&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;some/directory&quot;</span><span class="p">],</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;maven&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.28.1&quot;</span><span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.29.0&quot;</span><span class="w"></span>
 <span class="w">        </span><span class="p">]</span><span class="w"></span>
 <span class="w">    </span><span class="p">},</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -431,6 +431,9 @@ validators, transforms, and other extensions.</td>
 <span class="w">                </span><span class="nt">&quot;plugin-name&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">                    </span><span class="nt">&quot;plugin-config&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;value&quot;</span><span class="w"></span>
 <span class="w">                </span><span class="p">},</span><span class="w"></span>
+<span class="w">                </span><span class="nt">&quot;run::custom-artifact-name&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                    </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;my-codegenerator&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;--debug&quot;</span><span class="p">]</span><span class="w"></span>
+<span class="w">                </span><span class="p">},</span><span class="w"></span>
 <span class="w">                </span><span class="nt">&quot;...&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
 <span class="w">            </span><span class="p">}</span><span class="w"></span>
 <span class="w">        </span><span class="p">}</span><span class="w"></span>
@@ -443,6 +446,44 @@ validators, transforms, and other extensions.</td>
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </pre></div>
+</div>
+</div>
+<div class="section" id="plugin-id-and-artifact-names">
+<span id="plugin-id"></span><h2>Plugin ID and artifact names<a class="headerlink" href="#plugin-id-and-artifact-names" title="Permalink to this headline">#</a></h2>
+<p>A plugin ID defines a <em>plugin name</em> and <em>artifact name</em> in the form of
+<code class="docutils literal notranslate"><span class="pre">plugin-name::artifact-name</span></code>.</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">plugin-name</span></code> is the name of the plugin Smithy finds and runs with the
+plugin-specific configuration.</li>
+<li><code class="docutils literal notranslate"><span class="pre">artifact-name</span></code> is the optional artifact name and directory where the
+plugin writes artifacts. If no <code class="docutils literal notranslate"><span class="pre">::artifact-name</span></code> is specific,
+the artifact name defaults to the plugin name. No two plugin IDs in a
+single projection can use the same artifact name.</li>
+</ul>
+<p>The following example shows that the <a class="reference internal" href="#run-plugin"><span class="std std-ref">run plugin</span></a> can be used in the
+same projection multiple times using a custom artifact name.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;source&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                </span><span class="nt">&quot;run::foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                    </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;sh&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;foo.sh&quot;</span><span class="p">]</span><span class="w"></span>
+<span class="w">                </span><span class="p">},</span><span class="w"></span>
+<span class="w">                </span><span class="nt">&quot;run::baz&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                    </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;baz&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;-a&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;A&quot;</span><span class="p">]</span><span class="w"></span>
+<span class="w">                </span><span class="p">}</span><span class="w"></span>
+<span class="w">            </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>The above example will generate source projection artifacts in the
+&quot;source/foo&quot; and &quot;source/baz&quot; directories.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#projection-artifacts"><span class="std std-ref">Projection artifacts</span></a></p>
 </div>
 </div>
 <div class="section" id="maven-configuration">
@@ -493,9 +534,9 @@ requirements of the dependencies on that project. If no version satisfies
 all the hard requirements, dependency resolution fails.</p>
 <p>The following table demonstrates version requirement syntax as defined in
 the <a class="reference external" href="https://maven.apache.org/pom.html#dependency-version-requirement-specification">official Maven documentation</a>:</p>
-<div class="table-wrapper colwidths-given docutils container" id="id13">
-<table border="1" class="colwidths-given docutils align-default" id="id13">
-<caption><span class="caption-text">Dependency version syntax</span><a class="headerlink" href="#id13" title="Permalink to this table">#</a></caption>
+<div class="table-wrapper colwidths-given docutils container" id="id14">
+<table border="1" class="colwidths-given docutils align-default" id="id14">
+<caption><span class="caption-text">Dependency version syntax</span><a class="headerlink" href="#id14" title="Permalink to this table">#</a></caption>
 <colgroup>
 <col width="20%" />
 <col width="80%" />
@@ -594,7 +635,7 @@ keep credentials out of source control.</p>
 <span class="w">            </span><span class="p">}</span><span class="w"></span>
 <span class="w">        </span><span class="p">],</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.28.1&quot;</span><span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.29.0&quot;</span><span class="w"></span>
 <span class="w">        </span><span class="p">]</span><span class="w"></span>
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
@@ -632,7 +673,10 @@ useful to companies that maintain internal and external versions of an API
 or include parameters and operations that are available to only a subset of
 their customers.</p>
 <p>Projections are defined in the smithy-build.json file in the <code class="docutils literal notranslate"><span class="pre">projections</span></code>
-property. Projection names MUST match the following pattern: <code class="docutils literal notranslate"><span class="pre">^[A-Za-z0-9\-_.]+$</span></code>.</p>
+property. Projection names MUST match the following pattern:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>^[A-Za-z0-9]+[A-Za-z0-9\\-_.]*$
+</pre></div>
+</div>
 <p>A projection accepts the following configuration:</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
@@ -672,11 +716,12 @@ projection. Transforms are applied in the order defined.</td>
 <tr class="row-odd"><td>plugins</td>
 <td><code class="docutils literal notranslate"><span class="pre">map&lt;string,</span> <span class="pre">object&gt;</span></code></td>
 <td>Defines the plugins to apply to the model when building this
-projection. Plugins are a mapping of plugin names to an arbitrary
-plugin configuration object. smithy-build will attempt to resolve
-plugin names using <a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">Java SPI</a> to locate an instance of <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.build.SmithyBuildPlugin</span></code>
-that returns a matching name when calling <code class="docutils literal notranslate"><span class="pre">getName</span></code>. smithy-build will
-emit a warning when a plugin cannot be resolved.</td>
+projection. <code class="docutils literal notranslate"><span class="pre">plugins</span></code> is a mapping of a <a class="reference internal" href="#plugin-id"><span class="std std-ref">plugin IDs</span></a>
+to plugin-specific configuration objects. smithy-build will attempt
+to resolve plugin names using <a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">Java SPI</a> to locate an instance of
+<code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.build.SmithyBuildPlugin</span></code> that returns a
+matching name when calling <code class="docutils literal notranslate"><span class="pre">getName</span></code>. smithy-build will emit a
+warning when a plugin cannot be resolved.</td>
 </tr>
 </tbody>
 </table>
@@ -690,12 +735,9 @@ emit a warning when a plugin cannot be resolved.</td>
 <li>Build information about the projection build result, including the
 configuration of the projection and the validation events encountered when
 validating the projected model, are written to <code class="docutils literal notranslate"><span class="pre">${outputDirectory}/${projectionName}/build-info/smithy-build-info.json</span></code>.</li>
-<li>All plugin artifacts are written to <code class="docutils literal notranslate"><span class="pre">${outputDirectory}/${projectionName}/${pluginName}/${artifactName}</span></code>,
-where <code class="docutils literal notranslate"><span class="pre">${artifactName}</span></code> is the name of an artifact contributed by an
-instance of <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.build.SmithyBuildPlugin</span></code>. The relative
-path of each artifact is resolved against <code class="docutils literal notranslate"><span class="pre">${outputDirectory}/${projectionName}/${pluginName}/</span></code>.
-For example, given an artifact path of <code class="docutils literal notranslate"><span class="pre">foo/baz.json</span></code>, the resolved path
-would become <code class="docutils literal notranslate"><span class="pre">${outputDirectory}/${projectionName}/${pluginName}/foo/baz.json</span></code>.</li>
+<li>All plugin artifacts are written to <code class="docutils literal notranslate"><span class="pre">${outputDirectory}/${projectionName}/${artifactName}/${files...}</span></code>,
+where <code class="docutils literal notranslate"><span class="pre">${artifactName}</span></code> is the artifact name of the <a class="reference internal" href="#plugin-id"><span class="std std-ref">plugin ID</span></a>,
+and <code class="docutils literal notranslate"><span class="pre">${files...}</span></code> are the artifacts created by a plugin.</li>
 </ul>
 </div>
 </div>
@@ -2035,6 +2077,26 @@ environment variable set to &quot;hi&quot;, this file is equivalent to:</p>
 <span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
+<p>In addition to environment variables of the process, smithy-build.json
+files have access to the following environment variables:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">SMITHY_ROOT_DIR</span></code></td>
+<td>The root directory of the build (e.g., where the Smithy CLI was invoked).</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div class="section" id="plugins">
 <span id="id9"></span><h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">#</a></h2>
@@ -2044,7 +2106,10 @@ Plugins defined at the top-level of the configuration file are applied to
 every projection. Projections that define plugins of the same name as a
 top-level plugin completely overwrite the top-level plugin for that projection;
 projection settings are not merged in any way.</p>
-<p>Plugin names MUST match the following pattern: <code class="docutils literal notranslate"><span class="pre">^[A-Za-z0-9\-_.]+$</span></code>.</p>
+<p>Plugin names MUST match the following pattern:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>^[A-Za-z0-9]+[A-Za-z0-9\\-_.]*(::[A-Za-z0-9]+[A-Za-z0-9\\-_.]*)?$
+</pre></div>
+</div>
 <p>smithy-build will attempt to resolve plugin names using <a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">Java SPI</a>
 to locate an instance of <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.build.SmithyBuildPlugin</span></code>
 that matches the given plugin name (via <code class="docutils literal notranslate"><span class="pre">matchesPluginName</span></code>). smithy-build
@@ -2058,7 +2123,19 @@ always run in every non-abstract projection.</p>
 <span id="id10"></span><h3>model plugin<a class="headerlink" href="#model-plugin" title="Permalink to this headline">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">model</span></code> plugin serializes a self-contained and filtered version of the
 model as a single file. All of the dependencies of the model are included
-in the file.</p>
+in the file. By default the serialized model excludes <a class="reference internal" href="../../spec/model.html#prelude"><span class="std std-ref">prelude</span></a> shapes.</p>
+<p>To include prelude shapes in the serialized model, add the <code class="docutils literal notranslate"><span class="pre">model</span></code> plugin with an <a class="reference internal" href="#plugin-id"><span class="std std-ref">artifact-name</span></a>
+to the <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> file with the <code class="docutils literal notranslate"><span class="pre">includePreludeShapes</span></code> property set to <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;model::withPrelude&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="nt">&quot;includePreludeShapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="build-info-plugin">
 <span id="id11"></span><h3>build-info plugin<a class="headerlink" href="#build-info-plugin" title="Permalink to this headline">#</a></h3>
@@ -2082,6 +2159,129 @@ relative path from the manifest file to each model file created by the
 sources plugin. Lines that start with a number sign (#) are comments and are
 ignored. A Smithy manifest file is stored in a JAR as <code class="docutils literal notranslate"><span class="pre">META-INF/smithy/manifest</span></code>.
 All model files referenced by the manifest are relative to <code class="docutils literal notranslate"><span class="pre">META-INF/smithy/</span></code>.</p>
+</div>
+<div class="section" id="run-plugin">
+<span id="id13"></span><h3>run plugin<a class="headerlink" href="#run-plugin" title="Permalink to this headline">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">run</span></code> plugin runs an external program during the build. This plugin is
+useful when integrating Smithy's build process with Smithy implementations
+that are not written in Java.</p>
+<p>When invoking the process, the Smithy model of the projection is serialized
+using the <a class="reference internal" href="../../spec/json-ast.html#json-ast"><span class="std std-ref">JSON AST</span></a> and sent to the standard input of the
+process.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">The <code class="docutils literal notranslate"><span class="pre">run</span></code> plugin requires a custom artifact name in its
+<a class="reference internal" href="#plugin-id"><span class="std std-ref">plugin ID</span></a> (e.g., <code class="docutils literal notranslate"><span class="pre">run::artifact-name</span></code>).</p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">run</span></code> plugin supports the following properties:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>command</td>
+<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
+<td><strong>REQUIRED</strong> The name of the program to run, followed by an optional
+list of arguments. If the command uses a relative path, Smithy will
+first check if the command can be found relative to the current working
+directory. Otherwise, the program must use an absolute path or be
+available on the user's <code class="docutils literal notranslate"><span class="pre">$PATH</span></code> if Unix-like environments or its
+equivalent in other operating systems. No arguments are sent other
+than the arguments configured in the <code class="docutils literal notranslate"><span class="pre">command</span></code> setting.</td>
+</tr>
+<tr class="row-odd"><td>env</td>
+<td><code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">String&gt;</span></code></td>
+<td>A map of environment variables to send to the process. The process
+will inherit the environment variables of the containing process.
+The values defined in <code class="docutils literal notranslate"><span class="pre">env</span></code> add new variables or overwrite
+inherited variables.</td>
+</tr>
+<tr class="row-even"><td>sendPrelude</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>Set to true to include prelude shapes when sending the Smithy model to
+the standard input of the process. By default, the prelude is omitted.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Smithy will make the following environment variables available to the program:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">SMITHY_ROOT_DIR</span></code></td>
+<td>The root directory of the build (e.g., where the Smithy CLI was invoked).</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">SMITHY_PLUGIN_DIR</span></code></td>
+<td>The working directory of the program. All files written by the program
+should be relative to this directory.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">SMITHY_PROJECTION_NAME</span></code></td>
+<td>The projection name the program was called within (e.g., &quot;source&quot;).</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">SMITHY_ARTIFACT_NAME</span></code></td>
+<td>The <a class="reference internal" href="#plugin-id"><span class="std std-ref">plugin ID</span></a> artifact name.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">SMITHY_INCLUDES_PRELUDE</span></code></td>
+<td>Contains the value of <code class="docutils literal notranslate"><span class="pre">sendPrelude</span></code> in the form of <code class="docutils literal notranslate"><span class="pre">true</span></code> or
+<code class="docutils literal notranslate"><span class="pre">false</span></code> to tell the process if the prelude is included in the
+serialized model.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The following example applies the <code class="docutils literal notranslate"><span class="pre">run</span></code> command with an artifact name
+of <code class="docutils literal notranslate"><span class="pre">custom-process</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;source&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                </span><span class="nt">&quot;run::hello&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                    </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;hello.sh&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;--arg&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;arg-value&quot;</span><span class="p">]</span><span class="w"></span>
+<span class="w">                </span><span class="p">}</span><span class="w"></span>
+<span class="w">            </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Assuming <code class="docutils literal notranslate"><span class="pre">hello.sh</span></code> is on the PATH and might look something like:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+
+<span class="c1"># Command line arguments are provided.</span>
+<span class="nb">echo</span> <span class="s2">&quot;--arg: </span><span class="nv">$2</span><span class="s2">&quot;</span>
+
+<span class="c1"># Print out the provided environment variables.</span>
+<span class="nb">echo</span> <span class="s2">&quot;SMITHY_ROOT_DIR: </span><span class="si">${</span><span class="nv">SMITHY_ROOT_DIR</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="nb">echo</span> <span class="s2">&quot;SMITHY_PLUGIN_DIR: </span><span class="si">${</span><span class="nv">SMITHY_PLUGIN_DIR</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="nb">echo</span> <span class="s2">&quot;SMITHY_PROJECTION_NAME: </span><span class="si">${</span><span class="nv">SMITHY_PROJECTION_NAME</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="nb">echo</span> <span class="s2">&quot;SMITHY_ARTIFACT_NAME: </span><span class="si">${</span><span class="nv">SMITHY_ARTIFACT_NAME</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="nb">echo</span> <span class="s2">&quot;SMITHY_INCLUDES_PRELUDE: </span><span class="si">${</span><span class="nv">SMITHY_INCLUDES_PRELUDE</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="c1"># Copy the model from stdin and write it to copy-model.json.</span>
+<span class="c1"># The process is run in the appropriate working directory for the</span>
+<span class="c1"># plugin ID&#39;s artifact name.</span>
+cat &gt;&gt; copy-model.json
+</pre></div>
+</div>
 </div>
 </div>
 </div>
@@ -2150,6 +2350,7 @@ All model files referenced by the manifest are relative to <code class="docutils
             <ul>
 <li><a class="reference internal" href="#">smithy-build</a><ul>
 <li><a class="reference internal" href="#using-smithy-build-json">Using <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code></a></li>
+<li><a class="reference internal" href="#plugin-id-and-artifact-names">Plugin ID and artifact names</a></li>
 <li><a class="reference internal" href="#maven-configuration">Maven configuration</a><ul>
 <li><a class="reference internal" href="#dependency-versions">Dependency versions</a><ul>
 <li><a class="reference internal" href="#unsupported-version-requirements">Unsupported version requirements</a></li>
@@ -2193,6 +2394,7 @@ All model files referenced by the manifest are relative to <code class="docutils
 <li><a class="reference internal" href="#model-plugin">model plugin</a></li>
 <li><a class="reference internal" href="#build-info-plugin">build-info plugin</a></li>
 <li><a class="reference internal" href="#sources-plugin">sources plugin</a></li>
+<li><a class="reference internal" href="#run-plugin">run plugin</a></li>
 </ul>
 </li>
 </ul>

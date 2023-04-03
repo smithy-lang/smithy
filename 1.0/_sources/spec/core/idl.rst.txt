@@ -86,7 +86,7 @@ The Smithy IDL is defined by the following ABNF which uses case-sensitive
 string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
 
 .. productionlist:: smithy
-    idl:*`WS` `ControlSection` `MetadataSection` `ShapeSection`
+    idl:[`WS`] `ControlSection` `MetadataSection` `ShapeSection`
 
 .. rubric:: Whitespace
 
@@ -95,7 +95,7 @@ string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
     SP           :1*(%x20 / %x09) ; one or more spaces or tabs
     NL           :%x0A / %x0D.0A ; Newline: \n and \r\n
     NotNL        :%x09 / %x20-10FFFF ; Any character except newline
-    BR           :*`SP` 1*(`Comment` / `NL`) *`WS`; line break followed by whitespace
+    BR           :*`SP` 1*(`Comment` / `NL`) [`WS`]; line break followed by whitespace
 
 .. rubric:: Comments
 
@@ -124,19 +124,19 @@ string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
                         :/ `Number`
                         :/ `NodeKeywords`
                         :/ `NodeStringValue`
-    NodeArray           :"[" *`WS`
-                        :      [`NodeValue` *`WS`
-                        :          *(`Comma` `NodeValue` *`WS`)
+    NodeArray           :"[" [`WS`]
+                        :      [`NodeValue` [`WS`]
+                        :          *(`Comma` `NodeValue` [`WS`])
                         :      `TrailingComma`]
                         :  "]"
-    Comma               :"," *`WS`
+    Comma               :"," [`WS`]
     TrailingComma       :[`Comma`]
-    NodeObject          :"{" *`WS`
-                        :      [`NodeObjectKvp` *`WS`
-                        :          *(`Comma` `NodeObjectKvp` *`WS`)
+    NodeObject          :"{" [`WS`]
+                        :      [`NodeObjectKvp` [`WS`]
+                        :          *(`Comma` `NodeObjectKvp` [`WS`])
                         :      `TrailingComma`]
                         :  "}"
-    NodeObjectKvp       :`NodeObjectKey` *`WS` ":" *`WS` `NodeValue`
+    NodeObjectKvp       :`NodeObjectKey` [`WS`] ":" [`WS`] `NodeValue`
     NodeObjectKey       :`QuotedText` / `Identifier`
     Number              :[`Minus`] `Int` [`Frac`] [`Exp`]
     DecimalPoint        :%x2E ; .
@@ -190,51 +190,51 @@ string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
                             :/ %s"byte" / %s"short" / %s"integer" / %s"long"
                             :/ %s"float" / %s"double" / %s"bigInteger"
                             :/ %s"bigDecimal" / %s"timestamp"
-    ListStatement           :%s"list" `SP` `Identifier` *`WS` `ListMembers`
-    ListMembers             :"{" *`WS` `ListMember` *`WS` "}"
+    ListStatement           :%s"list" `SP` `Identifier` [`WS`] `ListMembers`
+    ListMembers             :"{" [`WS`] `ListMember` [`WS`] "}"
     ListMember              :`TraitStatements` `ExplicitListMember`
     ExplicitListMember      :%s"member" *`SP` ":" *`SP` `ShapeId`
-    SetStatement            :%s"set" `SP` `Identifier` *`WS` `SetMembers`
-    SetMembers              :"{" *`WS` `SetMember` *`WS` "}"
+    SetStatement            :%s"set" `SP` `Identifier` [`WS`] `SetMembers`
+    SetMembers              :"{" [`WS`] `SetMember` [`WS`] "}"
     SetMember               :`TraitStatements` `ExplicitSetMember`
     ExplicitSetMember       :%s"member" *`SP` ":" *`SP` `ShapeId`
-    MapStatement            :%s"map" `SP` `Identifier` *`WS` `MapMembers`
-    MapMembers              :"{" *`WS` `MapKey` `WS` `MapValue` *`WS` "}"
+    MapStatement            :%s"map" `SP` `Identifier` [`WS`] `MapMembers`
+    MapMembers              :"{" [`WS`] `MapKey` `WS` `MapValue` [`WS`] "}"
     MapKey                  :`TraitStatements` `ExplicitMapKey`
     ExplicitMapKey          :%s"key" *`SP` ":" *`SP` `ShapeId`
     MapValue                :`TraitStatements` `ExplicitMapValue`
     ExplicitMapValue        :%s"value" *`SP` ":" *`SP` `ShapeId`
-    StructureStatement      :%s"structure" `SP` `Identifier` *`WS` `StructureMembers`
-    StructureMembers        :"{" *`WS`
-                            :      [`StructureMember` *`WS`
-                            :          *(`Comma` `StructureMember` *`WS`)
+    StructureStatement      :%s"structure" `SP` `Identifier` [`WS`] `StructureMembers`
+    StructureMembers        :"{" [`WS`]
+                            :      [`StructureMember` [`WS`]
+                            :          *(`Comma` `StructureMember` [`WS`])
                             :      `TrailingComma`]
                             :  "}"
     StructureMember         :`TraitStatements` `ExplicitStructureMember`                        
     ExplicitStructureMember :`Identifier` *`SP` ":" *`SP` `ShapeId`
-    UnionStatement          :%s"union" `SP` `Identifier` *`WS` `UnionMembers`
-    UnionMembers            :"{" *`WS`
-                            :      `UnionMember` *`WS`
-                            :          *(`Comma` `UnionMember` *`WS`)
+    UnionStatement          :%s"union" `SP` `Identifier` [`WS`] `UnionMembers`
+    UnionMembers            :"{" [`WS`]
+                            :      `UnionMember` [`WS`]
+                            :          *(`Comma` `UnionMember` [`WS`])
                             :      `TrailingComma`
                             :  "}"
     UnionMember             :`TraitStatements` `ExplicitUnionMember`
     ExplicitUnionMember     :`Identifier` *`SP` ":" *`SP` `ShapeId`
-    ServiceStatement        :%s"service" `SP` `Identifier` *`WS` `NodeObject`
-    ResourceStatement       :%s"resource" `SP` `Identifier` *`WS` `NodeObject`
-    OperationStatement      :%s"operation" `SP` `Identifier` *`WS` `NodeObject`
+    ServiceStatement        :%s"service" `SP` `Identifier` [`WS`] `NodeObject`
+    ResourceStatement       :%s"resource" `SP` `Identifier` [`WS`] `NodeObject`
+    OperationStatement      :%s"operation" `SP` `Identifier` [`WS`] `NodeObject`
 
 .. rubric:: Traits
 
 .. productionlist:: smithy
-    TraitStatements         :*(*`WS` `Trait`) *`WS`
+    TraitStatements         :*([`WS`] `Trait`) [`WS`]
     Trait                   :"@" `ShapeId` [`TraitBody`]
-    TraitBody               :"(" *`WS` [`TraitBodyValue`] *`WS` ")"
+    TraitBody               :"(" [`WS`] [`TraitBodyValue`] [`WS`] ")"
     TraitBodyValue          :`TraitStructure` / `NodeValue`
-    TraitStructure          :`TraitStructureKvp` *`WS`
-                            :      *(`Comma` `TraitStructureKvp` *`WS`)
+    TraitStructure          :`TraitStructureKvp` [`WS`]
+                            :      *(`Comma` `TraitStructureKvp` [`WS`])
                             :  `TrailingComma`
-    TraitStructureKvp       :`NodeObjectKey` *`WS` ":" *`WS` `NodeValue`
+    TraitStructureKvp       :`NodeObjectKey` [`WS`] ":" [`WS`] `NodeValue`
     ApplyStatement          :%s"apply" `SP` `ShapeId` `WS` `Trait` `BR`
 
 .. rubric:: Shape ID

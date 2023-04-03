@@ -356,16 +356,16 @@ Smithy models SHOULD resemble the following example:</p>
 <span class="kd">structure </span><span class="nc">MyMixin</span><span class="w"> </span>{}<span class="w"></span>
 
 <span class="c">// When using a single mixin, place &quot;with&quot; and the shape on the same line</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">UsesMixin</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="vc">MyMixin</span><span class="w"> </span>{<span class="w"></span>
+<span class="kd">structure </span><span class="nc">UsesMixin</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">MyMixin</span>]<span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
 }<span class="w"></span>
 
 <span class="c">// When using multiple mixins, place each shape ID on its own line,</span><span class="w"></span>
 <span class="c">// followed by a line that contains the opening brace.</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">UsesMixin</span><span class="w"> </span><span class="k">with</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">UsesMixin</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="w"></span>
 <span class="w">    </span><span class="vc">MyMixin</span><span class="w"></span>
 <span class="w">    </span><span class="vc">SomeOtherMixin</span><span class="w"></span>
-{<span class="w"></span>
+]<span class="w"> </span>{<span class="w"></span>
 <span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
 }<span class="w"></span>
 </pre></div>
