@@ -1,5 +1,37 @@
 # Smithy Changelog
 
+## 1.29.0 (2023-04-03)
+
+### Features
+* Added EnumTrait validation protocol test ([#1679](https://github.com/awslabs/smithy/pull/1679))
+* Added process based plugins to Smithy build ([#1672](https://github.com/awslabs/smithy/pull/1672))
+* Added GenerateOperationDirective to generate operation shapes separate from resources and services ([#1676](https://github.com/awslabs/smithy/pull/1679))
+* Added :root and :in selectors ([#1690](https://github.com/awslabs/smithy/pull/1690))
+* Added --show-traits to select command ([#1692](https://github.com/awslabs/smithy/pull/1692))
+* Added includePreludeShapes in model plugin ([#1693](https://github.com/awslabs/smithy/pull/1693))
+* Added aws.iam#actionName trait to override using the API operation name ([#1679](https://github.com/awslabs/smithy/pull/1665))
+* Improved resource property validation and error messages ([#1694](https://github.com/awslabs/smithy/pull/1694))
+* Improved CLI outputs for validation commands ([#1695](https://github.com/awslabs/smithy/pull/1695))
+* Optimized identity and neighbor selectors ([#1691](https://github.com/awslabs/smithy/pull/1691))
+* Refactored CLI to remove --severity from some commands ([#1700](https://github.com/awslabs/smithy/pull/1700))
+* Removed unused positional [<MODEL>] from diff command ([#1703](https://github.com/awslabs/smithy/pull/1703))
+
+### Bug Fixes
+* Ensured that the ValidationEvent listener gets all events when batch inclusions are used ([#1698](https://github.com/awslabs/smithy/pull/1698))
+* Fixed cp-R for linux, xcopy for windows in smithy-cli installers ([#1686](https://github.com/awslabs/smithy/pull/1686))
+* Fixed allowUnknownTraits for projection with import ([#1685](https://github.com/awslabs/smithy/pull/1685))
+* Fixed reversed parameters in diff message for RemovedOperationError ([#1689](https://github.com/awslabs/smithy/pull/1689))
+* Fixed hierarchical event ids lost when specifying a custom linter validator id or severity level ([#1705](https://github.com/awslabs/smithy/pull/1705))
+* Improved handling additionalSchema targeting an invalid shape ([#1708](https://github.com/awslabs/smithy/pull/1708))
+* Reduced IDL ambiguity by replacing *WS with [WS] ([#1699](https://github.com/awslabs/smithy/pull/1699))
+
+### Documentation
+* Added compatibility note to evolving models ([#1669](https://github.com/awslabs/smithy/pull/1669))
+* Fixed mixins usage examples in style guide ([#1670](https://github.com/awslabs/smithy/pull/1670))
+* Fixed type in primitive root-level example ([#1687](https://github.com/awslabs/smithy/pull/1687))
+* Removed recommendation to implement presence tracking when handling default values ([#1682](https://github.com/awslabs/smithy/pull/1682))
+* Removed OperationBody indefinite repetition in IDL ([#1707](https://github.com/awslabs/smithy/pull/1707))
+
 ## 1.28.1 (2023-03-09)
 
 ### Features
