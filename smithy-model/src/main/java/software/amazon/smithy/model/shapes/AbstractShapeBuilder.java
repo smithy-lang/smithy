@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.MixinTrait;
@@ -204,6 +205,15 @@ public abstract class AbstractShapeBuilder<B extends AbstractShapeBuilder<B, S>,
     public B clearTraits() {
         traits.clear();
         return (B) this;
+    }
+
+    /**
+     * Gets the optional member with the given name.
+     *
+     * @return Returns the optional member with the given name.
+     */
+    public Optional<MemberShape> getMember(String memberName) {
+        return Optional.empty();
     }
 
     /**
