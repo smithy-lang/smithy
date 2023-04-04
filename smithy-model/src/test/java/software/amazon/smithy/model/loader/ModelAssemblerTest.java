@@ -392,6 +392,26 @@ public class ModelAssemblerTest {
     }
 
     @Test
+    public void metadataIsNotAffectedByTheSourceName() {
+        Model model1 = new ModelAssembler()
+                .addUnparsedModel("a1.smithy", "metadata items = [1]")
+                .addUnparsedModel("a2.smithy", "metadata items = [2]")
+                .addUnparsedModel("a3.smithy", "metadata items = [3]")
+                .assemble()
+                .unwrap();
+        Model model2 = new ModelAssembler()
+                .addUnparsedModel("b1.smithy", "metadata items = [1]")
+                .addUnparsedModel("b2.smithy", "metadata items = [2]")
+                .addUnparsedModel("b3.smithy", "metadata items = [3]")
+                .assemble()
+                .unwrap();
+        List<Number> metadata1 = model1.getMetadata().get("items").expectArrayNode().getElements().stream().map(s -> s.expectNumberNode().getValue()).toList();
+        List<Number> metadata2 = model2.getMetadata().get("items").expectArrayNode().getElements().stream().map(s -> s.expectNumberNode().getValue()).toList();
+        assertThat(metadata1, is(metadata2));
+    }
+
+
+    @Test
     public void mergesMultipleModels() {
         Model model = new ModelAssembler()
                 .addImport(getClass().getResource("merges-1.json"))
