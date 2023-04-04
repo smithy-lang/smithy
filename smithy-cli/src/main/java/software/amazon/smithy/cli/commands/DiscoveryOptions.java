@@ -22,7 +22,7 @@ import software.amazon.smithy.cli.HelpPrinter;
 /**
  * Arguments available to commands that use model discovery.
  *
- * <p>TODO: It would be great to just always do model discovery and remove these hidden options.
+ * <p>This is currently only used by the build and validate commands as hidden options to support the Gradle plugin.
  */
 final class DiscoveryOptions implements ArgumentReceiver {
 

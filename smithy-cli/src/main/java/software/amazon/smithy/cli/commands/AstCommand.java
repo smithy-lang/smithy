@@ -47,7 +47,6 @@ final class AstCommand implements Command {
     @Override
     public int execute(Arguments arguments, Env env) {
         arguments.addReceiver(new ConfigOptions());
-        arguments.addReceiver(new DiscoveryOptions());
         arguments.addReceiver(new BuildOptions());
 
         CommandAction action = HelpActionWrapper.fromCommand(

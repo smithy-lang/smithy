@@ -119,7 +119,6 @@ final class MigrateCommand implements Command {
     public int execute(Arguments arguments, Env env) {
         arguments.addReceiver(new ConfigOptions());
         arguments.addReceiver(new BuildOptions());
-        arguments.addReceiver(new DiscoveryOptions());
 
         CommandAction action = HelpActionWrapper.fromCommand(
                 this, parentCommandName, this::run);
