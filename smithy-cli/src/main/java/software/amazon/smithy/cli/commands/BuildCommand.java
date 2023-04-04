@@ -246,7 +246,7 @@ final class BuildCommand implements Command {
                         w.append(result.getProjectionName());
                         w.append("  ");
                         for (int i = 0; i < remainingLength; i++) {
-                            w.append('─');
+                            w.append("─");
                         }
                         w.println();
                     }, statusStyle);
