@@ -47,6 +47,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
@@ -405,8 +407,8 @@ public class ModelAssemblerTest {
                 .addUnparsedModel("b3.smithy", "metadata items = [3]")
                 .assemble()
                 .unwrap();
-        List<Number> metadata1 = model1.getMetadata().get("items").expectArrayNode().getElements().stream().map(s -> s.expectNumberNode().getValue()).toList();
-        List<Number> metadata2 = model2.getMetadata().get("items").expectArrayNode().getElements().stream().map(s -> s.expectNumberNode().getValue()).toList();
+        List<Number> metadata1 = model1.getMetadata().get("items").expectArrayNode().getElements().stream().map(s -> s.expectNumberNode().getValue()).collect(Collectors.toList());
+        List<Number> metadata2 = model2.getMetadata().get("items").expectArrayNode().getElements().stream().map(s -> s.expectNumberNode().getValue()).collect(Collectors.toList());
         assertThat(metadata1, is(metadata2));
     }
 
