@@ -18,12 +18,14 @@ package software.amazon.smithy.cli;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.utils.ListUtils;
 
@@ -94,5 +96,28 @@ public class DiffCommandTest {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    @Test
+    public void doesNotUseImportsOrSourcesWithArbitraryMode() {
+        IntegUtils.withProject("simple-config-sources", dir -> {
+            Path file = dir.resolve("a.smithy");
+            // The model from simple-config-sources defines a MyString. This would fail if we used imports/sources.
+            writeFile(file, "$version: \"2.0\"\nnamespace smithy.example\ninteger MyString\n");
+
+            RunResult result = IntegUtils.run(dir, ListUtils.of("diff",
+                                                                "-c", dir.resolve("smithy-build.json").toString(),
+                                                                "--old", file.toString(),
+                                                                "--new", file.toString()));
+            assertThat(result.getExitCode(), equalTo(0));
+        });
+    }
+
+    @Test
+    public void requiresOldAndNewForArbitraryMode() {
+        RunResult result = IntegUtils.run(Paths.get("."), ListUtils.of("diff"));
+
+        assertThat(result.getExitCode(), is(1));
+        assertThat(result.getOutput(), containsString("Missing required --old argument"));
     }
 }

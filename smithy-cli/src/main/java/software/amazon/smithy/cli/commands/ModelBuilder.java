@@ -61,6 +61,7 @@ final class ModelBuilder {
     private ValidatedResult<Model> validatedResult;
     private String titleLabel;
     private Style[] titleLabelStyles;
+    private boolean disableConfigModels;
 
     public ModelBuilder arguments(Arguments arguments) {
         this.arguments = arguments;
@@ -109,6 +110,11 @@ final class ModelBuilder {
         return this;
     }
 
+    public ModelBuilder disableConfigModels(boolean disableConfigModels) {
+        this.disableConfigModels = disableConfigModels;
+        return this;
+    }
+
     public Model build() {
         SmithyBuilder.requiredState("arguments", arguments);
         SmithyBuilder.requiredState("models", models);
@@ -143,9 +149,14 @@ final class ModelBuilder {
 
             handleModelDiscovery(assembler, classLoader, config);
             handleUnknownTraitsOption(buildOptions, assembler);
-            config.getSources().forEach(assembler::addImport);
+
+            // Add imports and sources from the config by default, but this can be disabled (e.g., smithy diff).
+            if (!disableConfigModels) {
+                config.getSources().forEach(assembler::addImport);
+                config.getImports().forEach(assembler::addImport);
+            }
+
             models.forEach(assembler::addImport);
-            config.getImports().forEach(assembler::addImport);
             validatedResult = assembler.assemble();
             clearStatusUpdateIfPresent(issueCount, stderr);
         }

@@ -15,7 +15,7 @@
 
 package software.amazon.smithy.cli.commands;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -69,8 +69,8 @@ final class DiffCommand implements Command {
     }
 
     private static final class Options implements ArgumentReceiver {
-        private final List<String> oldModels = new ArrayList<>();
-        private final List<String> newModels = new ArrayList<>();
+        private String oldModel;
+        private String newModel;
 
         @Override
         public boolean testOption(String name) {
@@ -80,9 +80,9 @@ final class DiffCommand implements Command {
         @Override
         public Consumer<String> testParameter(String name) {
             if (name.equals("--old")) {
-                return oldModels::add;
+                return m -> oldModel = m;
             } else if (name.equals("--new")) {
-                return newModels::add;
+                return n -> newModel = n;
             } else {
                 return null;
             }
@@ -90,53 +90,78 @@ final class DiffCommand implements Command {
 
         @Override
         public void registerHelp(HelpPrinter printer) {
-            printer.param("--old", null, "OLD_MODELS...",
-                          "Path to an old Smithy model or directory that contains models. This option can be "
-                          + "repeated to merge multiple files or directories "
-                          + "(e.g., --old /path/old/one --old /path/old/two).");
-            printer.param("--new", null, "NEW_MODELS...",
-                          "Path to the new Smithy model or directory that contains models. This option can be "
-                          + "repeated to merge multiple files or directories."
-                          + "(e.g., --new /path/new/one --new /path/new/two).");
+            printer.param("--old", null, "OLD_MODEL",
+                          "Path to an old Smithy model file or directory that contains model files.");
+            printer.param("--new", null, "NEW_MODEL",
+                          "Path to the new Smithy model file or directory that contains model files.");
         }
     }
 
     int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env) {
+        Options options = arguments.getReceiver(Options.class);
+
         if (!arguments.getPositional().isEmpty()) {
             throw new CliError("Unexpected arguments: " + arguments.getPositional());
         }
 
-        Options options = arguments.getReceiver(Options.class);
-        ClassLoader classLoader = env.classLoader();
+        // TODO: Add checks here for `mode` to change the DiffMode. Defaults to arbitrary.
+        return DiffMode.ARBITRARY.diff(config, arguments, options, env);
+    }
 
-        List<String> oldModels = options.oldModels;
-        List<String> newModels = options.newModels;
-        LOGGER.fine(() -> String.format("Setting old models to: %s; new models to: %s", oldModels, newModels));
+    private enum DiffMode {
+        ARBITRARY {
+            @Override
+            int diff(SmithyBuildConfig config, Arguments arguments, Options options, Env env) {
+                String oldModelOpt = options.oldModel;
+                if (oldModelOpt == null) {
+                    throw new CliError("Missing required --old argument");
+                }
 
-        ModelBuilder modelBuilder = new ModelBuilder()
-                .config(config)
-                .arguments(arguments)
-                .env(env)
-                .validationPrinter(env.stderr())
-                .validationMode(Validator.Mode.DISABLE)
-                .severity(Severity.DANGER);
-        Model oldModel = modelBuilder
-                .models(oldModels)
-                .titleLabel("OLD", ColorTheme.DIFF_EVENT_TITLE)
-                .build();
-        Model newModel = modelBuilder
-                .models(newModels)
-                .titleLabel("NEW", ColorTheme.DIFF_EVENT_TITLE)
-                .build();
+                String newModelOpt = options.newModel;
+                if (newModelOpt == null) {
+                    throw new CliError("Missing required --new argument");
+                }
 
-        // Diff the models and report on the events, failing if necessary.
-        List<ValidationEvent> events = ModelDiff.compare(classLoader, oldModel, newModel);
-        modelBuilder
-                .titleLabel("DIFF", ColorTheme.DIFF_TITLE)
-                .validatedResult(new ValidatedResult<>(newModel, events))
-                .severity(null) // reset so it takes on standard option settings.
-                .build();
+                LOGGER.fine(() -> String.format("Setting old models to: %s; new models to: %s",
+                                                oldModelOpt, newModelOpt));
 
-        return 0;
+                ModelBuilder modelBuilder = new ModelBuilder()
+                        .config(config)
+                        .arguments(arguments)
+                        .env(env)
+                        .validationPrinter(env.stderr())
+                        // Don't use imports or sources from the model config file.
+                        .disableConfigModels(true)
+                        // Only report issues that fail the build.
+                        .validationMode(Validator.Mode.DISABLE)
+                        .severity(Severity.DANGER);
+
+                // Use the ModelBuilder template to build the old model.
+                Model oldModel = modelBuilder
+                        .models(Collections.singletonList(oldModelOpt))
+                        .titleLabel("OLD", ColorTheme.DIFF_EVENT_TITLE)
+                        .build();
+
+                // Use the same ModelBuilder template to build the new model.
+                Model newModel = modelBuilder
+                        .models(Collections.singletonList(newModelOpt))
+                        .titleLabel("NEW", ColorTheme.DIFF_EVENT_TITLE)
+                        .build();
+
+                // Diff the models and report on the events, failing if necessary.
+                // We *do* use dependencies in smithy-build.json (if present) to find custom diff evaluators.
+                ClassLoader classLoader = env.classLoader();
+                List<ValidationEvent> events = ModelDiff.compare(classLoader, oldModel, newModel);
+                modelBuilder
+                        .titleLabel("DIFF", ColorTheme.DIFF_TITLE)
+                        .validatedResult(new ValidatedResult<>(newModel, events))
+                        .severity(null) // reset so it takes on standard option settings.
+                        .build();
+
+                return 0;
+            }
+        };
+
+        abstract int diff(SmithyBuildConfig config, Arguments arguments, Options options, Env env);
     }
 }
