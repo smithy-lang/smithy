@@ -109,11 +109,9 @@ public class MigrateCommandTest {
         SmithyCli.create().run(
                 "upgrade-1-to-2",
                 "--config", config.toString(),
-                "--discover-classpath", tempDir.toAbsolutePath().resolve("jar-import.jar").toString(),
                 modelsDir.toString()
         );
         assertDirEqual(baseDir.getParent().resolve("v2"), tempDir);
-
     }
 
     private void assertDirEqual(Path actualDir, Path expectedDir) throws Exception {

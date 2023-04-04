@@ -34,16 +34,7 @@ public class AstCommandTest {
     }
 
     @Test
-    public void convertsSyntacticallyCorrectModels() {
-        IntegUtils.run("invalid-model", ListUtils.of("ast"), result -> {
-            assertThat(result.getExitCode(), equalTo(0));
-            assertThat(result.getOutput(), containsString("\"smithy\""));
-            assertThat(result.getOutput(), not(containsString("WARNING")));
-        });
-    }
-
-    @Test
-    public void showsErrorsForSyntacticallyIncorrectModels() {
+    public void showsErrorsForInvalidModels() {
         IntegUtils.run("model-with-syntax-error", ListUtils.of("ast"), result -> {
             assertThat(result.getExitCode(), equalTo(1));
             assertThat(result.getOutput(), containsString("ERROR"));

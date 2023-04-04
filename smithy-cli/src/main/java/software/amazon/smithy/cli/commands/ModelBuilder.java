@@ -117,7 +117,6 @@ final class ModelBuilder {
 
         StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
         BuildOptions buildOptions = arguments.getReceiver(BuildOptions.class);
-        DiscoveryOptions discoveryOptions = arguments.getReceiver(DiscoveryOptions.class);
         Severity minSeverity = resolveMinSeverity(standardOptions);
         ClassLoader classLoader = env.classLoader();
         ColorFormatter colors = env.colors();
@@ -142,7 +141,7 @@ final class ModelBuilder {
             AtomicInteger issueCount = new AtomicInteger();
             assembler.validationEventListener(createStatusUpdater(standardOptions, colors, stderr, issueCount));
 
-            handleModelDiscovery(discoveryOptions, assembler, classLoader, config);
+            handleModelDiscovery(assembler, classLoader, config);
             handleUnknownTraitsOption(buildOptions, assembler);
             config.getSources().forEach(assembler::addImport);
             models.forEach(assembler::addImport);
@@ -219,21 +218,24 @@ final class ModelBuilder {
         }
     }
 
-    private static void handleModelDiscovery(
-            DiscoveryOptions options,
-            ModelAssembler assembler,
-            ClassLoader baseLoader,
-            SmithyBuildConfig config
-    ) {
-        if (options.discoverClasspath() != null) {
-            discoverModelsWithClasspath(options.discoverClasspath(), assembler);
-        } else if (shouldDiscoverDependencies(options, config)) {
+    private void handleModelDiscovery(ModelAssembler assembler, ClassLoader baseLoader, SmithyBuildConfig config) {
+        String discoverClasspath = null;
+        boolean discover = false;
+        if (arguments.hasReceiver(DiscoveryOptions.class)) {
+            DiscoveryOptions discoveryOptions = arguments.getReceiver(DiscoveryOptions.class);
+            discoverClasspath = discoveryOptions.discoverClasspath();
+            discover = discoveryOptions.discover();
+        }
+
+        if (discoverClasspath != null) {
+            discoverModelsWithClasspath(discoverClasspath, assembler);
+        } else if (shouldDiscoverDependencies(config, discover)) {
             assembler.discoverModels(baseLoader);
         }
     }
 
-    private static boolean shouldDiscoverDependencies(DiscoveryOptions options, SmithyBuildConfig config) {
-        if (options.discover()) {
+    private boolean shouldDiscoverDependencies(SmithyBuildConfig config, boolean discoverModels) {
+        if (discoverModels) {
             return true;
         } else {
             return config.getMaven().isPresent()
