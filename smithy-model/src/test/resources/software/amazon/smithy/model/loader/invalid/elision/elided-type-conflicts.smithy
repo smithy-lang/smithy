@@ -1,4 +1,4 @@
-// smithy.example#Invalid$id: Member conflicts with an inherited mixin member: smithy.example#MixinStructure$id
+// smithy.example#Invalid$id: Member conflicts with an inherited mixin member: `smithy.example#MixinStructure$id`
 $version: "2.0"
 
 namespace smithy.example

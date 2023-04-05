@@ -90,6 +90,17 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
     }
 
     @Override
+    public Optional<MemberShape> getMember(String memberName) {
+        if ("key".equals(memberName)) {
+            return Optional.of(key);
+        }
+        if ("value".equals(memberName)) {
+            return Optional.of(value);
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public Map<String, MemberShape> getAllMembers() {
         Map<String, MemberShape> result = memberMap;
 

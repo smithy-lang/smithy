@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
@@ -52,7 +53,6 @@ final class ApplyMixin implements ShapeModifier {
         if (memberBuilder.getTarget() != null) {
             return;
         }
-
         // Members inherited from mixins can have their targets elided, so here we set them
         // to the target defined in the mixin.
         Shape mixinShape = shapeMap.apply(mixin);
@@ -82,9 +82,24 @@ final class ApplyMixin implements ShapeModifier {
             ShapeId targetId = builder.getId().withMember(member.getMemberName());
             // Claim traits from the trait map that were applied to synthesized shapes.
             Map<ShapeId, Trait> introducedTraits = unclaimedTraits.apply(targetId);
-
+            String memberName = member.getMemberName();
             MemberShape introducedMember = null;
-            if (memberBuilders.containsKey(member.getMemberName())) {
+            Optional<MemberShape> previouslyAdded = builder.getMember(memberName);
+            if (previouslyAdded.isPresent()) {
+                // The member was previously introduced, check if it inherits from another mixin to
+                // avoid overwriting it.
+                MemberShape previous = previouslyAdded.get();
+                if (!previous.getMixins().isEmpty()) {
+                    MemberShape.Builder previouslyAddedBuilder = previous.toBuilder();
+                    introducedMember = previouslyAddedBuilder
+                            .addMixin(member)
+                            .build();
+                    if (!previous.getTarget().equals(member.getTarget())) {
+                        mixinMemberConflict(previouslyAddedBuilder, member);
+                    }
+                }
+            }
+            if (introducedMember == null && memberBuilders.containsKey(member.getMemberName())) {
                 MemberShape.Builder original = memberBuilders.get(member.getMemberName());
                 introducedMember = original.addMixin(member).build();
                 if (!introducedMember.getTarget().equals(member.getTarget())) {
@@ -119,7 +134,7 @@ final class ApplyMixin implements ShapeModifier {
                 .id(Validator.MODEL_ERROR)
                 .shapeId(conflict.getId())
                 .sourceLocation(conflict.getSourceLocation())
-                .message("Member conflicts with an inherited mixin member: " + other.getId())
+                .message("Member conflicts with an inherited mixin member: `" + other.getId() + "`")
                 .build());
     }
 
