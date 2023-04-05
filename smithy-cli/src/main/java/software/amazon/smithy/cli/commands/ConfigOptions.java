@@ -35,6 +35,7 @@ final class ConfigOptions implements ArgumentReceiver {
     private static final Logger LOGGER = Logger.getLogger(ConfigOptions.class.getName());
     private final List<String> config = new ArrayList<>();
     private boolean noConfig = false;
+    private Path root;
 
     @Override
     public void registerHelp(HelpPrinter printer) {
@@ -65,12 +66,18 @@ final class ConfigOptions implements ArgumentReceiver {
         }
     }
 
+    void root(Path root) {
+        this.root = root;
+    }
+
     List<String> config() {
         List<String> config = this.config;
 
         // Don't find the default config if --no-config is passed.
         if (config.isEmpty() && !noConfig) {
-            Path defaultConfig = Paths.get("smithy-build.json").toAbsolutePath();
+            Path defaultConfig = root != null
+                    ? root.resolve("smithy-build.json").toAbsolutePath()
+                    : Paths.get("smithy-build.json").toAbsolutePath();
             if (Files.exists(defaultConfig)) {
                 LOGGER.fine("Detected smithy-build.json at " + defaultConfig);
                 config = Collections.singletonList(defaultConfig.toString());
