@@ -229,6 +229,11 @@ task integ(type: Test) {
     testClassesDirs = sourceSets["it"].output.classesDirs
     classpath = sourceSets["it"].runtimeClasspath
     maxParallelForks = Runtime.getRuntime().availableProcessors() / 2
+
+    testLogging {
+        events = ["passed", "skipped", "failed"]
+        exceptionFormat = "full"
+    }
 }
 
 // Runtime images need to be created before integration tests can run.

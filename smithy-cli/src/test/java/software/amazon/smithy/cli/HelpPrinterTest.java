@@ -2,6 +2,7 @@ package software.amazon.smithy.cli;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.startsWith;
 
 import org.junit.jupiter.api.Test;
@@ -173,7 +174,7 @@ public class HelpPrinterTest {
                            + "Goodbye18 Goodbye19 Goodbye20 Goodbye21.");
         help.print(AnsiColorFormatter.NO_COLOR, printer);
 
-        assertThat(printer.toString(), startsWith(
+        assertThat(printer.toString().trim(), equalTo(
                 "Usage: foo [--foo | -f] \n"
                 + "\n"
                 + "Hello1 Hello2 Hello3 Hello4 Hello5 Hello6 Hello7 Hello8 Hello9 Hello10 Hello11 Hello12 Hello13 \n"
@@ -184,8 +185,7 @@ public class HelpPrinterTest {
                 + "        The foo value\n"
                 + "    \n"
                 + "Goodbye1 Goodbye2 Goodbye3 Goodbye4 Goodbye5 Goodbye6 Goodbye7 Goodbye8 Goodbye9 Goodbye10 Goodbye11\n"
-                + " Goodbye12 Goodbye13 Goodbye14 Goodbye15 Goodbye16 Goodbye17 Goodbye18 Goodbye19 Goodbye20 \n"
-                + "Goodbye21."));
+                + "Goodbye12 Goodbye13 Goodbye14 Goodbye15 Goodbye16 Goodbye17 Goodbye18 Goodbye19 Goodbye20 Goodbye21."));
     }
 
     @Test
