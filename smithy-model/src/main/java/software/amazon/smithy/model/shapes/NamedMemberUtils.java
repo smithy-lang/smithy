@@ -62,6 +62,7 @@ final class NamedMemberUtils {
                         validateMixinMemberConflict(member, previouslyDefined);
                         computedMembers.put(name,
                                 previouslyDefined.toBuilder()
+                                .source(member.getSourceLocation())
                                 .addMixin(member)
                                 .addTraits(member.getAllTraits().values())
                                 .build());
@@ -69,7 +70,7 @@ final class NamedMemberUtils {
                         computedMembers.put(name, MemberShape.builder()
                                 .id(shapeId.withMember(name))
                                 .target(member.getTarget())
-                                .source(sourceLocation)
+                                .source(member.getSourceLocation())
                                 .addMixin(member)
                                 .build());
                     }
@@ -117,7 +118,7 @@ final class NamedMemberUtils {
                         .target(member.getTarget())
                         .addTraits(previousTraits)
                         .addTraits(member.getAllTraits().values())
-                        .source(sourceLocation)
+                        .source(member.getSourceLocation())
                         .build());
             }
         }

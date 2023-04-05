@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.Trait;
@@ -50,6 +51,14 @@ public abstract class CollectionShape extends Shape {
      */
     public final MemberShape getMember() {
         return member;
+    }
+
+    @Override
+    public Optional<MemberShape> getMember(String memberName) {
+        if ("member".equals(memberName)) {
+            return Optional.of(member);
+        }
+        return Optional.empty();
     }
 
     @Override
