@@ -260,6 +260,12 @@ public final class HelpPrinter {
         LineWrapper appendWithinLine(String text) {
             if (column + text.length() > maxLength) {
                 newLine();
+                // If the text starts with a space, then eat the space since it isn't needed to separate words now.
+                if (text.startsWith(" ")) {
+                    builder.append(text, 1, text.length());
+                    column += text.length() - 1;
+                    return this;
+                }
             }
 
             builder.append(text);

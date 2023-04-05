@@ -17,9 +17,7 @@ package software.amazon.smithy.cli;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -27,7 +25,11 @@ import java.io.PrintWriter;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
 
 public class DiffCommandTest {
@@ -38,7 +40,7 @@ public class DiffCommandTest {
             writeFile(a, "$version: \"2.0\"\nnamespace example\nstring A\n");
 
             RunResult result = IntegUtils.run(dir, ListUtils.of("diff", "--old", a.toString(), "--new", a.toString()));
-            assertThat(result.getExitCode(), equalTo(0));
+            assertThat("Not 0: output [" + result.getOutput() + ']', result.getExitCode(), is(0));
         });
     }
 
@@ -49,7 +51,7 @@ public class DiffCommandTest {
             writeFile(a, "$version: \"2.0\"\nnamespace example\n@aaaaaa\nstring A\n");
 
             RunResult result = IntegUtils.run(dir, ListUtils.of("diff", "--old", a.toString(), "--new", a.toString()));
-            assertThat(result.getExitCode(), equalTo(1));
+            assertThat("Not 1: output [" + result.getOutput() + ']', result.getExitCode(), is(1));
             assertThat(result.getOutput(), containsString("──  OLD  ERROR  ──"));
         });
     }
@@ -64,7 +66,7 @@ public class DiffCommandTest {
             writeFile(b, "$version: \"2.0\"\nnamespace example\n@aaaaaa\nstring A\n");
 
             RunResult result = IntegUtils.run(dir, ListUtils.of("diff", "--old", a.toString(), "--new", b.toString()));
-            assertThat(result.getExitCode(), equalTo(1));
+            assertThat("Not 1: output [" + result.getOutput() + ']', result.getExitCode(), is(1));
             assertThat(result.getOutput(), containsString("──  NEW  ERROR  ──"));
         });
     }
@@ -83,7 +85,7 @@ public class DiffCommandTest {
                     "--old", a.toString(),
                     "--new", b.toString(),
                     "--severity", "NOTE")); // Note that this is required since the default severity is WARNING.
-            assertThat(result.getExitCode(), equalTo(0));
+            assertThat("Not 0: output [" + result.getOutput() + ']', result.getExitCode(), is(0));
             assertThat(result.getOutput(), containsString("──  DIFF  NOTE  ──"));
         });
     }
@@ -110,7 +112,7 @@ public class DiffCommandTest {
                                                                 "-c", dir.resolve("smithy-build.json").toString(),
                                                                 "--old", file.toString(),
                                                                 "--new", file.toString()));
-            assertThat(result.getExitCode(), equalTo(0));
+            assertThat("Not 0: output [" + result.getOutput() + ']', result.getExitCode(), is(0));
         });
     }
 
@@ -118,7 +120,7 @@ public class DiffCommandTest {
     public void requiresOldAndNewForArbitraryMode() {
         RunResult result = IntegUtils.run(Paths.get("."), ListUtils.of("diff"));
 
-        assertThat(result.getExitCode(), is(1));
+        assertThat("Not 1: output [" + result.getOutput() + ']', result.getExitCode(), is(1));
         assertThat(result.getOutput(), containsString("Missing required --old argument"));
     }
 
@@ -129,7 +131,7 @@ public class DiffCommandTest {
                                                                        "--new", "x",
                                                                        "--old", "y"));
 
-        assertThat(result.getExitCode(), is(1));
+        assertThat("Not 1: output [" + result.getOutput() + ']', result.getExitCode(), is(1));
         assertThat(result.getOutput(), containsString("--new cannot be used with this diff mode"));
     }
 
@@ -143,8 +145,9 @@ public class DiffCommandTest {
                         "project",
                         "--old",
                         outer.toString()));
+
+                assertThat("Not 1: output [" + result.getOutput() + ']', result.getExitCode(), is(1));
                 assertThat(result.getOutput(), containsString("ChangedShapeType"));
-                assertThat(result.getExitCode(), equalTo(1));
             });
         });
     }
@@ -159,7 +162,151 @@ public class DiffCommandTest {
                     "project",
                     "--old",
                     dir.resolve("model").resolve("main.smithy").toString()));
-            assertThat(result.getExitCode(), equalTo(0));
+
+            assertThat("Not 0: output [" + result.getOutput() + ']', result.getExitCode(), is(0));
+        });
+    }
+
+    @Test
+    public void gitDiffAgainstLastCommit() {
+        // Diff against itself (the only model file of the project), so there should be no differences.
+        IntegUtils.withProject("simple-config-sources", dir -> {
+            initRepo(dir);
+            commitChanges(dir);
+
+            RunResult result = runDiff(dir);
+
+            assertThat("Not 0: output [" + result.getOutput() + ']', result.getExitCode(), is(0));
+        });
+    }
+
+    private RunResult runDiff(Path dir) {
+        return runDiff(dir, null);
+    }
+
+    private RunResult runDiff(Path dir, String oldCommit) {
+        List<String> args = new ArrayList<>();
+        args.add("diff");
+        args.add("--mode");
+        args.add("git");
+        if (oldCommit != null) {
+            args.add("--old");
+            args.add(oldCommit);
+        }
+
+        return IntegUtils.run(dir, args);
+    }
+
+    @Test
+    public void canDiffAgainstLastCommitWithFailure() {
+        IntegUtils.withProject("simple-config-sources", dir -> {
+            initRepo(dir);
+            commitChanges(dir);
+
+            Path file = dir.resolve("model").resolve("main.smithy");
+            writeFile(file, "$version: \"2.0\"\nnamespace smithy.example\ninteger MyString\n");
+            RunResult result = IntegUtils.run(dir, ListUtils.of("diff", "--mode", "git"));
+
+            assertThat("Not 1: output [" + result.getOutput() + ']', result.getExitCode(), is(1));
+            assertThat(result.getOutput(), containsString("ChangedShapeType"));
+        });
+    }
+
+    private void initRepo(Path dir) {
+        run(ListUtils.of("git", "init"), dir);
+        run(ListUtils.of("git", "config", "user.email", "you@example.com"), dir);
+        run(ListUtils.of("git", "config", "user.name", "Your Name"), dir);
+    }
+
+    private void commitChanges(Path dir) {
+        run(ListUtils.of("git", "add", "-A"), dir);
+        run(ListUtils.of("git", "commit", "-m", "Foo"), dir);
+    }
+
+    private void run(List<String> args, Path root) {
+        StringBuilder output = new StringBuilder();
+        int result = IoUtils.runCommand(args, root, output, Collections.emptyMap());
+        if (result != 0) {
+            throw new RuntimeException("Error running command: " + args + ": " + output);
+        }
+    }
+
+    @Test
+    public void gitDiffAgainstLastCommitAfterClean() {
+        IntegUtils.withProject("simple-config-sources", dir -> {
+            initRepo(dir);
+            commitChanges(dir);
+            RunResult result = runDiff(dir);
+            assertThat("Not zero: output [" + result.getOutput() + ']', result.getExitCode(), is(0));
+
+            // This will remove the previously created worktree.
+            IntegUtils.run(dir, ListUtils.of("clean"));
+
+            // Running diff again ensures that we handle the case where there's a prunable worktree.
+            result = runDiff(dir);
+
+            assertThat("Not zero: output [" + result.getOutput() + ']', result.getExitCode(), is(0));
+        });
+    }
+
+    @Test
+    public void gitDiffEnsuresHeadUpdatesAsCommitsAreMade() {
+        IntegUtils.withProject("simple-config-sources", dir -> {
+            initRepo(dir);
+            commitChanges(dir);
+
+            // Run with HEAD (the default)
+            RunResult result = runDiff(dir);
+            assertThat("Not zero: output [" + result.getOutput() + ']', result.getExitCode(), is(0));
+
+            // Now make another commit, which updates HEAD and ensures the worktree updates too.
+            Path file = dir.resolve("model").resolve("main.smithy");
+            writeFile(file, "$version: \"2.0\"\nnamespace smithy.example\ninteger MyString\n");
+            commitChanges(dir);
+
+            // Run diff again, which won't fail because the last commit is the change that broke the model, meaning
+            // the current state of the model is valid.
+            result = runDiff(dir);
+
+            assertThat("Not zero: output [" + result.getOutput() + ']', result.getExitCode(), is(0));
+        });
+    }
+
+    @Test
+    public void gitDiffAgainstSpecificCommit() {
+        IntegUtils.withProject("simple-config-sources", dir -> {
+            initRepo(dir);
+            commitChanges(dir);
+
+            // Run with explicit HEAD
+            RunResult result = runDiff(dir, "HEAD");
+            assertThat("Not zero: output [" + result.getOutput() + ']', result.getExitCode(), is(0));
+
+            // Now make another commit, which updates HEAD and ensures the worktree updates too.
+            Path file = dir.resolve("model").resolve("main.smithy");
+            writeFile(file, "$version: \"2.0\"\nnamespace smithy.example\ninteger MyString\n");
+            commitChanges(dir);
+
+            // Run diff again, which won't fail because the last commit is the change that broke the model, meaning
+            // the current state of the model is valid.
+            result = runDiff(dir, "HEAD~1");
+
+            assertThat("Not 1: output [" + result.getOutput() + ']', result.getExitCode(), is(1));
+            assertThat(result.getOutput(), containsString("ChangedShapeType"));
+        });
+    }
+
+    @Test
+    public void gitModeDoesNotAllowNewArgument() {
+        IntegUtils.withProject("simple-config-sources", dir -> {
+            initRepo(dir);
+            commitChanges(dir);
+
+            // Now that it's running in a git repo, it won't fail due to that and will validate that --new is invalid.
+            RunResult result = IntegUtils.run(dir, ListUtils.of("diff", "--mode", "git", "--new", "some-file.smithy"));
+
+            assertThat("Not 1: output [" + result.getOutput() + ']', result.getExitCode(), is(1));
+            assertThat(result.getOutput(), containsString("--new cannot be used with this diff mode"));
         });
     }
 }

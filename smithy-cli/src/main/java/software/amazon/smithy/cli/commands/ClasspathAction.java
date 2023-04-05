@@ -17,14 +17,12 @@ package software.amazon.smithy.cli.commands;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
-import software.amazon.smithy.build.SmithyBuild;
 import software.amazon.smithy.build.model.MavenConfig;
 import software.amazon.smithy.build.model.MavenRepository;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
@@ -134,7 +132,9 @@ class ClasspathAction implements CommandAction {
         DependencyResolver baseResolver = dependencyResolverFactory.create(smithyBuildConfig, env);
         long lastModified = smithyBuildConfig.getLastModifiedInMillis();
         DependencyResolver delegate = new FilterCliVersionResolver(SmithyCli.getVersion(), baseResolver);
-        DependencyResolver resolver = new FileCacheResolver(getCacheFile(buildOptions), lastModified, delegate);
+        DependencyResolver resolver = new FileCacheResolver(getCacheFile(buildOptions, smithyBuildConfig),
+                                                            lastModified,
+                                                            delegate);
         addConfiguredMavenRepos(smithyBuildConfig, resolver);
         maven.getDependencies().forEach(resolver::addDependency);
         List<ResolvedArtifact> artifacts = resolver.resolve();
@@ -171,9 +171,7 @@ class ClasspathAction implements CommandAction {
         }
     }
 
-    private File getCacheFile(BuildOptions buildOptions) {
-        String output = buildOptions.output();
-        Path buildPath = output == null ? SmithyBuild.getDefaultOutputDirectory() : Paths.get(output);
-        return buildPath.resolve("classpath.json").toFile();
+    private File getCacheFile(BuildOptions buildOptions, SmithyBuildConfig config) {
+        return buildOptions.resolveOutput(config).resolve("classpath.json").toFile();
     }
 }

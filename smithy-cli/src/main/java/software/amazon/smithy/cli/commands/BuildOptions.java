@@ -15,7 +15,11 @@
 
 package software.amazon.smithy.cli.commands;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.function.Consumer;
+import software.amazon.smithy.build.SmithyBuild;
+import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.HelpPrinter;
 
@@ -69,5 +73,22 @@ final class BuildOptions implements ArgumentReceiver {
 
     void noPositionalArguments(boolean noPositionalArguments) {
         this.noPositionalArguments = noPositionalArguments;
+    }
+
+    /**
+     * Resolves the correct build directory by looking at the --output argument, outputDirectory config setting,
+     * and finally the default build directory.
+     *
+     * @param config Config to check.
+     * @return Returns the resolved build directory.
+     */
+    Path resolveOutput(SmithyBuildConfig config) {
+        if (output != null) {
+            return Paths.get(output);
+        } else {
+            return config.getOutputDirectory()
+                    .map(Paths::get)
+                    .orElseGet(SmithyBuild::getDefaultOutputDirectory);
+        }
     }
 }

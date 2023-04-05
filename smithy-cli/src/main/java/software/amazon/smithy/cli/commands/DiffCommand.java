@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.cli.commands;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
@@ -28,15 +30,20 @@ import software.amazon.smithy.cli.ColorFormatter;
 import software.amazon.smithy.cli.ColorTheme;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.HelpPrinter;
+import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.diff.ModelDiff;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.utils.IoUtils;
+import software.amazon.smithy.utils.ListUtils;
 
 final class DiffCommand implements Command {
 
+    private static final String DIFF_WORKTREE_BRANCH = "__smithy-diff-worktree";
+    private static final String DIFF_WORKTREE_PATH = "diff-worktree";
     private final String parentCommandName;
     private final DependencyResolver.Factory dependencyResolverFactory;
 
@@ -88,6 +95,11 @@ final class DiffCommand implements Command {
                 + "is specified."
                 + ls
                 + ls
+                + "    smithy diff --old /path/old --new /path/new"
+                + ls
+                + "    smithy diff --mode arbitrary --old /path/old --new /path/new"
+                + ls
+                + ls
                 + "`--mode project`:"
                 + ls
                 + "Compares the current state of a project against another project. `--old` is required and points "
@@ -97,8 +109,26 @@ final class DiffCommand implements Command {
                 + "loaded using any dependencies defined by the current project. If the `--old` argument points to "
                 + "a directory that contains a `smithy-build.json` file, any `imports` or `sources` defined in that "
                 + "config file will be used when loading the old model, though the dependencies of the old model "
-                + "are ignored.";
-
+                + "are ignored."
+                + ls
+                + ls
+                + "    smithy diff --mode project --old /path/old"
+                + ls
+                + ls
+                + "`--mode git`:"
+                + ls
+                + "Compares the current state of a Smithy project to another commit in the current git repo. This "
+                + "command must be run from within a git repo. The `--old` argument can be provided to specify a "
+                + "specific revision to compare against. If `--old` is not provided, the commit defaults to `HEAD` "
+                + "(the last commit on the current branch). This mode is a wrapper around `--mode project`, so its "
+                + "restrictions apply."
+                + ls
+                + ls
+                + "    smithy diff --mode git"
+                + ls
+                + "    smithy diff --mode git --old main"
+                + ls
+                + "    smithy diff --mode git --old HEAD~2";
         return StyleHelper.markdownLiterals(content, colors);
     }
 
@@ -134,12 +164,14 @@ final class DiffCommand implements Command {
 
         @Override
         public void registerHelp(HelpPrinter printer) {
-            printer.param("--old", null, "OLD_MODEL",
-                          "Path to an old Smithy model file or directory that contains model files.");
-            printer.param("--new", null, "NEW_MODEL",
-                          "Path to the new Smithy model file or directory that contains model files.");
             printer.param("--mode", null, "DIFF_MODE",
-                          "The diff mode to use: 'arbitrary' (default mode), 'project'.");
+                          "The diff mode to use: 'arbitrary' (the default mode), 'project', 'git'.");
+            printer.param("--old", null, "OLD_MODEL",
+                          "Path to an old Smithy model file or directory that contains model files. When using "
+                          + "git mode, this argument refers to a Git commit or branch.");
+            printer.param("--new", null, "NEW_MODEL",
+                          "Path to the new Smithy model file or directory that contains model files. This argument "
+                          + "is not allowed in project or git mode.");
         }
     }
 
@@ -212,10 +244,58 @@ final class DiffCommand implements Command {
                 runDiff(modelBuilder, env, oldModel, newModel);
                 return 0;
             }
+        },
+
+        GIT {
+            @Override
+            int diff(SmithyBuildConfig config, Arguments arguments, Options options, Env env) {
+                // Note: newModel is validated in PROJECT. Old model defaults to HEAD of current branch.
+                if (options.oldModel == null) {
+                    options.oldModel = "HEAD";
+                }
+
+                if (!arguments.getReceiver(StandardOptions.class).quiet()) {
+                    env.colors().println(env.stderr(), "Comparing current project to git " + options.oldModel,
+                                         ColorTheme.MUTED);
+                }
+
+                // Setup a worktree if one isn't present.
+                Path outputRoot = arguments.getReceiver(BuildOptions.class).resolveOutput(config);
+                Path worktreePath = outputRoot.resolve(DIFF_WORKTREE_PATH);
+                Path root = Paths.get(".");
+
+                // Determine the SHA of the given --old branch in the root git directory.
+                String sha = getSha(root, options.oldModel);
+
+                if (!Files.isDirectory(worktreePath)) {
+                    // First, prune old work trees in case smithy clean was run and left a prunable diff worktree.
+                    exec(ListUtils.of("git", "worktree", "prune"), root, "Error pruning worktrees");
+                    // Now create the worktree using a dedicated branch. The branch allows other worktrees to checkout
+                    // the same branch or SHA without conflicting.
+                    exec(ListUtils.of("git", "worktree", "add", "--quiet", "--force", "-B", DIFF_WORKTREE_BRANCH,
+                                      worktreePath.toString(), sha),
+                        root, "Unable to create git worktree");
+                } else {
+                    // Checkout the right commit in the worktree.
+                    exec(ListUtils.of("git", "reset", "--quiet", "--hard", sha),
+                         worktreePath, "Unable to checkout " + options.oldModel + " in git worktree");
+                }
+
+                // Now run a project mode build using the worktree.
+                options.diffMode = PROJECT;
+                options.oldModel = worktreePath.toString();
+                return PROJECT.diff(config, arguments, options, env);
+            }
+
+            private String getSha(Path root, String commitish) {
+                // Determine the SHA of the given --old branch in the root git directory.
+                List<String> args = ListUtils.of("git", "rev-parse", commitish);
+                return exec(args, root, "Invalid git revision '" + commitish + "'").trim();
+            }
         };
 
         // Create a ModelBuilder template to load the old, then new, then diff both.
-        protected ModelBuilder createModelBuilder(SmithyBuildConfig config, Arguments arguments, Env env) {
+        protected final ModelBuilder createModelBuilder(SmithyBuildConfig config, Arguments arguments, Env env) {
             return new ModelBuilder()
                     .config(config)
                     .arguments(arguments)
@@ -227,7 +307,7 @@ final class DiffCommand implements Command {
         }
 
         // Creating a new model is the same for each diff mode.
-        protected Model createNewModel(ModelBuilder builder, List<String> models, SmithyBuildConfig config) {
+        protected final Model createNewModel(ModelBuilder builder, List<String> models, SmithyBuildConfig config) {
             return builder
                     .models(models)
                     .titleLabel("NEW", ColorTheme.DIFF_EVENT_TITLE)
@@ -236,7 +316,7 @@ final class DiffCommand implements Command {
         }
 
         // Running the diff is the same for each diff mode.
-        protected void runDiff(ModelBuilder builder, Env env, Model oldModel, Model newModel) {
+        protected final void runDiff(ModelBuilder builder, Env env, Model oldModel, Model newModel) {
             ClassLoader classLoader = env.classLoader();
             List<ValidationEvent> events = ModelDiff.compare(classLoader, oldModel, newModel);
             builder
@@ -247,5 +327,14 @@ final class DiffCommand implements Command {
         }
 
         abstract int diff(SmithyBuildConfig config, Arguments arguments, Options options, Env env);
+    }
+
+    private static String exec(List<String> args, Path root, String errorPrefix) {
+        StringBuilder output = new StringBuilder();
+        int code = IoUtils.runCommand(args, root, output, Collections.emptyMap());
+        if (code != 0) {
+            throw new CliError(errorPrefix + ": " + output);
+        }
+        return output.toString();
     }
 }
