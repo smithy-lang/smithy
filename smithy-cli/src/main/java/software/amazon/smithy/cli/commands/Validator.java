@@ -32,7 +32,7 @@ import software.amazon.smithy.model.validation.ValidatedResult;
 final class Validator {
 
     enum Mode {
-        QUIET, DISABLE, ENABLE;
+        QUIET, QUIET_CORE_ONLY, ENABLE;
 
         static Mode from(StandardOptions standardOptions) {
             return standardOptions.quiet() ? Mode.QUIET : Mode.ENABLE;

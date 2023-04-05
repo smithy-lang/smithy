@@ -18,7 +18,6 @@ package software.amazon.smithy.cli.commands;
 import java.io.UncheckedIOException;
 import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.regex.Pattern;
 import software.amazon.smithy.cli.ColorBuffer;
 import software.amazon.smithy.cli.ColorFormatter;
 import software.amazon.smithy.cli.ColorTheme;
@@ -28,12 +27,10 @@ import software.amazon.smithy.model.loader.sourcecontext.SourceContextLoader;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationEventFormatter;
 import software.amazon.smithy.utils.SmithyBuilder;
-import software.amazon.smithy.utils.StringUtils;
 
 final class PrettyAnsiValidationFormatter implements ValidationEventFormatter {
 
     private static final int LINE_LENGTH = 80;
-    private static final Pattern TICK_PATTERN = Pattern.compile("`(.*?)`");
     private final SourceContextLoader sourceContextLoader;
     private final ColorFormatter colors;
     private final String rootPath = Paths.get("").normalize().toAbsolutePath().toString();
@@ -140,13 +137,7 @@ final class PrettyAnsiValidationFormatter implements ValidationEventFormatter {
 
     // Converts Markdown style ticks to use color highlights if colors are enabled.
     private void writeMessage(ColorBuffer writer, String message) {
-        String content = StringUtils.wrap(message, LINE_LENGTH, System.lineSeparator(), false);
-
-        if (colors.isColorEnabled()) {
-            content = TICK_PATTERN.matcher(content).replaceAll(colors.style("$1", ColorTheme.LITERAL));
-        }
-
-        writer.append(content);
+        writer.append(StyleHelper.formatMessage(message, LINE_LENGTH, colors));
     }
 
     private String getHumanReadableFilename(String filename) {

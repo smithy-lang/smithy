@@ -139,7 +139,7 @@ final class ModelBuilder {
         if (validatedResult == null) {
             ModelAssembler assembler = createModelAssembler(classLoader);
 
-            if (validationMode == Validator.Mode.DISABLE) {
+            if (validationMode == Validator.Mode.QUIET_CORE_ONLY) {
                 assembler.disableValidation();
             }
 

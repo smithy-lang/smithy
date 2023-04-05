@@ -164,7 +164,7 @@ final class SelectCommand implements Command {
                 .env(env)
                 .models(arguments.getPositional())
                 .validationPrinter(env.stderr())
-                .validationMode(Validator.Mode.DISABLE)
+                .validationMode(Validator.Mode.QUIET_CORE_ONLY)
                 .severity(Severity.DANGER)
                 .build();
 

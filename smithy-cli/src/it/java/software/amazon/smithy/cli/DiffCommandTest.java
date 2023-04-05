@@ -19,6 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -119,5 +120,46 @@ public class DiffCommandTest {
 
         assertThat(result.getExitCode(), is(1));
         assertThat(result.getOutput(), containsString("Missing required --old argument"));
+    }
+
+    @Test
+    public void doesNotAllowNewWithProjectMode() {
+        RunResult result = IntegUtils.run(Paths.get("."), ListUtils.of("diff",
+                                                                       "--mode", "project",
+                                                                       "--new", "x",
+                                                                       "--old", "y"));
+
+        assertThat(result.getExitCode(), is(1));
+        assertThat(result.getOutput(), containsString("--new cannot be used with this diff mode"));
+    }
+
+    @Test
+    public void projectModeUsesConfigOfOldModel() {
+        IntegUtils.withProject("diff-example-conflict-with-simple", outer -> {
+            IntegUtils.withProject("simple-config-sources", dir -> {
+                RunResult result = IntegUtils.run(dir, ListUtils.of(
+                        "diff",
+                        "--mode",
+                        "project",
+                        "--old",
+                        outer.toString()));
+                assertThat(result.getOutput(), containsString("ChangedShapeType"));
+                assertThat(result.getExitCode(), equalTo(1));
+            });
+        });
+    }
+
+    @Test
+    public void projectModeCanDiffAgainstSingleFile() {
+        // Diff against itself (the only model file of the project), so there should be no differences.
+        IntegUtils.withProject("simple-config-sources", dir -> {
+            RunResult result = IntegUtils.run(dir, ListUtils.of(
+                    "diff",
+                    "--mode",
+                    "project",
+                    "--old",
+                    dir.resolve("model").resolve("main.smithy").toString()));
+            assertThat(result.getExitCode(), equalTo(0));
+        });
     }
 }
