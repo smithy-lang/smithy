@@ -47,6 +47,7 @@ public final class SmithyCommand implements Command {
             new AstCommand(getName(), dependencyResolverFactory),
             new SelectCommand(getName(), dependencyResolverFactory),
             new CleanCommand(getName()),
+            new LspCommand(getName(), dependencyResolverFactory),
             migrateCommand,
             deprecated1To2Command,
             new WarmupCommand(getName())

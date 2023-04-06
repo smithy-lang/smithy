@@ -39,7 +39,6 @@ public class MavenDependencyResolverTest {
             Arguments.of("smithy.foo:bar:1.25.0-SNAPSHOT"),
             Arguments.of("smithy.foo:bar:RELEASE"),
             Arguments.of("smithy.foo:bar:latest-status"),
-            Arguments.of("smithy.foo:bar:LATEST"),
             Arguments.of("smithy.foo:bar:1.25.0+"),
             Arguments.of("a::1.2.0"),
             Arguments.of(":b:1.2.0"),

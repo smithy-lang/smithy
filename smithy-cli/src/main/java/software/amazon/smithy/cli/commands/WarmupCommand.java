@@ -20,7 +20,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -105,13 +104,10 @@ final class WarmupCommand implements Command {
     }
 
     private int orchestrate(boolean isDebug, CliPrinter printer) {
-        List<String> baseArgs = new ArrayList<>();
         String classpath = getOrThrowIfUndefinedProperty("java.class.path");
-        Path javaHome = Paths.get(getOrThrowIfUndefinedProperty("java.home"));
+        Path javaHome = JavaHelper.getJavaHome();
+        Path javaBinary = JavaHelper.getJavaBinary();
         Path lib = javaHome.resolve("lib");
-        Path bin = javaHome.resolve("bin");
-        Path windowsBinary = bin.resolve("java.exe");
-        Path posixBinary = bin.resolve("java");
         Path jsaFile = lib.resolve("smithy.jsa");
         Path classListFile = lib.resolve("classlist");
 
@@ -119,16 +115,8 @@ final class WarmupCommand implements Command {
         classListFile.toFile().delete();
         jsaFile.toFile().delete();
 
-        if (!Files.isDirectory(bin)) {
-            throw new CliError("$JAVA_HOME/bin directory not found: " + bin);
-        } else if (Files.exists(windowsBinary)) {
-            baseArgs.add(windowsBinary.toString());
-        } else if (Files.exists(posixBinary)) {
-            baseArgs.add(posixBinary.toString());
-        } else {
-            throw new CliError("No java binary found in " + bin);
-        }
-
+        List<String> baseArgs = new ArrayList<>();
+        baseArgs.add(javaBinary.toString());
         baseArgs.add("-classpath");
         baseArgs.add(classpath);
 

@@ -161,10 +161,11 @@ public final class MavenDependencyResolver implements DependencyResolver {
 
     private static void validateDependencyVersion(Artifact artifact) {
         String version = artifact.getVersion();
-        if (version.equals("LATEST")) {
-            throw new DependencyResolverException("LATEST dependencies are not supported: " + artifact);
-        } else if (version.equals("latest-status") || version.startsWith("latest.")) {
-            throw new DependencyResolverException("Gradle style latest dependencies are not supported: " + artifact);
+        if (version.equals("latest.release")) {
+            // Change latest.release to LATEST.
+            artifact.setVersion("LATEST");
+        } else if (version.equals("latest-status")) {
+            throw new DependencyResolverException("latest-status is not supported: " + artifact);
         } else if (version.equals("RELEASE")) {
             throw new DependencyResolverException("RELEASE dependencies are not supported: " + artifact);
         } else if (version.contains("+")) {
