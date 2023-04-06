@@ -104,7 +104,11 @@ public final class ExpectedEndpoint implements FromSourceLocation, ToSmithyBuild
         }
         if (!properties.isEmpty()) {
             sb.append("properties:\n");
-            properties.forEach((k, v) -> sb.append(StringUtils.indent(String.format("%s: %s", k, v), 2)));
+            properties.forEach((k, v) -> sb
+                    .append(
+                            StringUtils.indent(
+                                    String.format("%s: %s", k, Node.prettyPrintJson(v)), 2)
+                    ));
         }
         return sb.toString();
     }
