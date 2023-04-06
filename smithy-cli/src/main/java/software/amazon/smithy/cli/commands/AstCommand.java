@@ -16,12 +16,15 @@
 package software.amazon.smithy.cli.commands;
 
 import software.amazon.smithy.build.model.SmithyBuildConfig;
+import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.Command;
+import software.amazon.smithy.cli.HelpPrinter;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ModelSerializer;
+import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.Severity;
 
 final class AstCommand implements Command {
@@ -48,11 +51,31 @@ final class AstCommand implements Command {
     public int execute(Arguments arguments, Env env) {
         arguments.addReceiver(new ConfigOptions());
         arguments.addReceiver(new BuildOptions());
+        arguments.addReceiver(new Options());
 
         CommandAction action = HelpActionWrapper.fromCommand(
                 this, parentCommandName, new ClasspathAction(dependencyResolverFactory, this::runWithClassLoader));
 
         return action.apply(arguments, env);
+    }
+
+    private static final class Options implements ArgumentReceiver {
+        static final String FLATTEN_OPTION = "--flatten";
+        private boolean flatten = false;
+
+        @Override
+        public boolean testOption(String name) {
+            if (FLATTEN_OPTION.equals(name)) {
+                flatten = true;
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void registerHelp(HelpPrinter printer) {
+            printer.option(FLATTEN_OPTION, null, "Flattens and removes mixins from the model.");
+        }
     }
 
     private int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env) {
@@ -67,6 +90,10 @@ final class AstCommand implements Command {
                 .build();
 
         ModelSerializer serializer = ModelSerializer.builder().build();
+        Options options = arguments.getReceiver(Options.class);
+        if (options.flatten) {
+            model = ModelTransformer.create().flattenAndRemoveMixins(model);
+        }
         env.stdout().println(Node.prettyPrintJson(serializer.serialize(model)));
         return 0;
     }
