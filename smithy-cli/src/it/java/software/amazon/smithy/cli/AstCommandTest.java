@@ -41,4 +41,20 @@ public class AstCommandTest {
             assertThat(result.getOutput(), containsString("bar // <- invalid syntax"));
         });
     }
+
+    @Test
+    public void doesNotFlattenModelsWithoutFlattenOption() {
+        IntegUtils.run("model-with-mixins", ListUtils.of("ast"), result -> {
+            assertThat(result.getExitCode(), equalTo(0));
+            assertThat(result.getOutput(), containsString("\"smithy.api#mixin\": {}"));
+        });
+    }
+
+    @Test
+    public void flattensModelsWithFlattenOption() {
+        IntegUtils.run("model-with-mixins", ListUtils.of("ast", "--flatten"), result -> {
+            assertThat(result.getExitCode(), equalTo(0));
+            assertThat(result.getOutput(), not(containsString("\"smithy.api#mixin\": {}")));
+        });
+    }
 }
