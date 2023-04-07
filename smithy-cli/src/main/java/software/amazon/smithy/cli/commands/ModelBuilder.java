@@ -48,7 +48,6 @@ import software.amazon.smithy.utils.SmithyBuilder;
 final class ModelBuilder {
 
     private static final Logger LOGGER = Logger.getLogger(ModelBuilder.class.getName());
-    private static final String CLEAR_LINE_ESCAPE = "\033[2K\r";
     private static final int DEFAULT_CODE_LINES = 6;
 
     private Validator.Mode validationMode;
@@ -217,8 +216,7 @@ final class ModelBuilder {
     // If a status update was printed, then clear it out.
     static void clearStatusUpdateIfPresent(AtomicInteger issueCount, CliPrinter stderr) {
         if (issueCount.get() > 0) {
-            stderr.append(CLEAR_LINE_ESCAPE);
-            stderr.flush();
+            stderr.append(StyleHelper.CLEAR_LINE_ESCAPE).flush();
         }
     }
 

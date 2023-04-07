@@ -22,6 +22,7 @@ import software.amazon.smithy.utils.StringUtils;
 
 final class StyleHelper {
 
+    static final String CLEAR_LINE_ESCAPE = "\033[2K\r";
     private static final Pattern TICK_PATTERN = Pattern.compile("`(.*?)`");
 
     private StyleHelper() {}

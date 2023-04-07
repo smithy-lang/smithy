@@ -135,7 +135,7 @@ class ClasspathAction implements CommandAction {
         DependencyResolver resolver = new FileCacheResolver(getCacheFile(buildOptions, smithyBuildConfig),
                                                             lastModified,
                                                             delegate);
-        addConfiguredMavenRepos(smithyBuildConfig, resolver);
+        DependencyHelper.addConfiguredMavenRepos(smithyBuildConfig, resolver);
         maven.getDependencies().forEach(resolver::addDependency);
         List<ResolvedArtifact> artifacts = resolver.resolve();
         LOGGER.fine(() -> "Classpath resolved with Maven: " + artifacts);
@@ -146,29 +146,6 @@ class ClasspathAction implements CommandAction {
         }
 
         return result;
-    }
-
-    private static void addConfiguredMavenRepos(SmithyBuildConfig config, DependencyResolver resolver) {
-        // Environment variables take precedence over config files.
-        String envRepos = EnvironmentVariable.SMITHY_MAVEN_REPOS.get();
-        if (envRepos != null) {
-            for (String repo : envRepos.split("\\|")) {
-                resolver.addRepository(MavenRepository.builder().url(repo.trim()).build());
-            }
-        }
-
-        Set<MavenRepository> configuredRepos = config.getMaven()
-                .map(MavenConfig::getRepositories)
-                .orElse(Collections.emptySet());
-
-        if (!configuredRepos.isEmpty()) {
-            configuredRepos.forEach(resolver::addRepository);
-        } else if (envRepos == null) {
-            LOGGER.finest(() -> String.format("maven.repositories is not defined in smithy-build.json and the %s "
-                                              + "environment variable is not set. Defaulting to Maven Central.",
-                                              EnvironmentVariable.SMITHY_MAVEN_REPOS));
-            resolver.addRepository(CENTRAL);
-        }
     }
 
     private File getCacheFile(BuildOptions buildOptions, SmithyBuildConfig config) {
