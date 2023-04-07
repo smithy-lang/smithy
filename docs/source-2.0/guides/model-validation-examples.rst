@@ -6,7 +6,7 @@ Model Validation Examples
 common pitfalls and bugs as well as to enforce a common style for APIs
 designed with Smithy.
 
-This document provides a kind of "cookbook" of examples for using,
+This document provides a "cookbook" of examples for using,
 suppressing, and modifying Smithy Validators.
 
 
@@ -555,7 +555,7 @@ Exceptions thrown from operations must have an ``@httpError`` trait
 ===================================================================
 
 This example shows how to enforce that all errors bound to an operation have
-an httpError trait (and therefore httpError code) defined.
+an ``@httpError`` trait (and therefore ``httpError`` code) defined.
 
 .. code-block:: smithy
 
@@ -572,13 +572,13 @@ an httpError trait (and therefore httpError code) defined.
     }
 
 .. note::
-    This example only makes sense for services using an httpProtocol.
+    This example only makes sense for services using an http protocol.
 
 
 Prefix headers with X-
 ======================
 
-Case insensitive check for "X-" prefix on all custom httpHeaders used in your
+Case insensitive check for "X-" prefix on all custom ``@httpHeaders`` used in your
 model.
 
 .. code-block:: smithy
@@ -596,7 +596,7 @@ model.
     }
 
 .. note::
-    This example only makes sense for services using an httpProtocol.
+    This example only makes sense for services using an http protocol.
 
 .. tip::
     If you prefer to not prefix custom headers with "X-" then you can flip the logic of this validator by changing the
