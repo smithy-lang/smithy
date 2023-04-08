@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.model.shapes;
 
-import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -50,13 +49,11 @@ import software.amazon.smithy.model.traits.IdRefTrait;
 import software.amazon.smithy.model.traits.InputTrait;
 import software.amazon.smithy.model.traits.OutputTrait;
 import software.amazon.smithy.model.traits.Trait;
-import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.utils.AbstractCodeWriter;
 import software.amazon.smithy.utils.CodeWriter;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.ListUtils;
-import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -69,6 +66,7 @@ public final class SmithyIdlModelSerializer {
     private final Predicate<Trait> traitFilter;
     private final Function<Shape, Path> shapePlacer;
     private final Path basePath;
+    private final SmithyIdlComponentOrder componentOrder;
 
     /**
      * Trait serialization features.
@@ -114,6 +112,7 @@ public final class SmithyIdlModelSerializer {
         } else {
             this.shapePlacer = builder.shapePlacer;
         }
+        this.componentOrder = builder.componentOrder;
     }
 
     /**
@@ -162,11 +161,12 @@ public final class SmithyIdlModelSerializer {
 
         Set<ShapeId> inlineableShapes = getInlineableShapes(fullModel, shapes);
         ShapeSerializer shapeSerializer = new ShapeSerializer(
-                codeWriter, nodeSerializer, traitFilter, fullModel, inlineableShapes);
+                codeWriter, nodeSerializer, traitFilter, fullModel, inlineableShapes, componentOrder);
+        Comparator<Shape> comparator = componentOrder.shapeComparator();
         shapes.stream()
                 .filter(FunctionalUtils.not(Shape::isMemberShape))
                 .filter(shape -> !inlineableShapes.contains(shape.getId()))
-                .sorted(new ShapeComparator())
+                .sorted(comparator)
                 .forEach(shape -> shape.accept(shapeSerializer));
 
         return serializeHeader(fullModel, namespace) + codeWriter.toString();
@@ -203,11 +203,13 @@ public final class SmithyIdlModelSerializer {
 
         codeWriter.write("$$version: \"$L\"", Model.MODEL_VERSION).write("");
 
+        Comparator<Map.Entry<String, Node>> comparator = componentOrder.metadataComparator();
+
         // Write the full metadata into every output. When loaded back together the conflicts will be ignored,
         // but if they're separated out then each file will still have all the context.
         fullModel.getMetadata().entrySet().stream()
                 .filter(entry -> metadataFilter.test(entry.getKey()))
-                .sorted(Map.Entry.comparingByKey())
+                .sorted(comparator)
                 .forEach(entry -> {
                     codeWriter.trimTrailingSpaces(false)
                             .writeInline("metadata $K = ", entry.getKey())
@@ -248,54 +250,6 @@ public final class SmithyIdlModelSerializer {
     }
 
     /**
-     * Comparator used to sort shapes.
-     */
-    private static final class ShapeComparator implements Comparator<Shape>, Serializable {
-        private static final Map<ShapeType, Integer> PRIORITY = MapUtils.of(
-                ShapeType.SERVICE, 0,
-                ShapeType.RESOURCE, 1,
-                ShapeType.OPERATION, 2,
-                ShapeType.STRUCTURE, 3,
-                ShapeType.UNION, 4,
-                ShapeType.LIST, 5,
-                ShapeType.SET, 6,
-                ShapeType.MAP, 7
-        );
-
-
-        @Override
-        public int compare(Shape s1, Shape s2) {
-            // Traits go first
-            if (s1.hasTrait(TraitDefinition.class) || s2.hasTrait(TraitDefinition.class)) {
-                if (!s1.hasTrait(TraitDefinition.class)) {
-                    return 1;
-                }
-                if (!s2.hasTrait(TraitDefinition.class)) {
-                    return -1;
-                }
-                // The other sorting rules don't matter for traits.
-                return s1.compareTo(s2);
-            }
-            // If the shapes are the same type, just compare their shape ids.
-            if (s1.getType().equals(s2.getType())) {
-                return s1.compareTo(s2);
-            }
-            // If one shape is prioritized, compare by priority.
-            if (PRIORITY.containsKey(s1.getType()) || PRIORITY.containsKey(s2.getType())) {
-                // If only one shape is prioritized, that shape is "greater".
-                if (!PRIORITY.containsKey(s1.getType())) {
-                    return 1;
-                }
-                if (!PRIORITY.containsKey(s2.getType())) {
-                    return -1;
-                }
-                return PRIORITY.get(s1.getType()) - PRIORITY.get(s2.getType());
-            }
-            return s1.compareTo(s2);
-        }
-    }
-
-    /**
      * Builder used to create {@link SmithyIdlModelSerializer}.
      */
     public static final class Builder implements SmithyBuilder<SmithyIdlModelSerializer> {
@@ -305,6 +259,7 @@ public final class SmithyIdlModelSerializer {
         private Function<Shape, Path> shapePlacer = SmithyIdlModelSerializer::placeShapesByNamespace;
         private Path basePath = null;
         private boolean serializePrelude = false;
+        private SmithyIdlComponentOrder componentOrder = SmithyIdlComponentOrder.PREFERRED;
 
         public Builder() {}
 
@@ -381,6 +336,20 @@ public final class SmithyIdlModelSerializer {
             return this;
         }
 
+        /**
+         * Defines how components are sorted in the model, changing the default behavior of sorting alphabetically.
+         *
+         * <p>You can serialize metadata, shapes, and traits in the original order they were defined by setting
+         * this to {@link SmithyIdlComponentOrder#SOURCE_LOCATION}.
+         *
+         * @param componentOrder Change how components are sorted.
+         * @return Returns the builder.
+         */
+        public Builder componentOrder(SmithyIdlComponentOrder componentOrder) {
+            this.componentOrder = Objects.requireNonNull(componentOrder);
+            return this;
+        }
+
         @Override
         public SmithyIdlModelSerializer build() {
             return new SmithyIdlModelSerializer(this);
@@ -396,19 +365,22 @@ public final class SmithyIdlModelSerializer {
         private final Predicate<Trait> traitFilter;
         private final Model model;
         private final Set<ShapeId> inlineableShapes;
+        private final SmithyIdlComponentOrder componentOrder;
 
         ShapeSerializer(
                 SmithyCodeWriter codeWriter,
                 NodeSerializer nodeSerializer,
                 Predicate<Trait> traitFilter,
                 Model model,
-                Set<ShapeId> inlineableShapes
+                Set<ShapeId> inlineableShapes,
+                SmithyIdlComponentOrder componentOrder
         ) {
             this.codeWriter = codeWriter;
             this.nodeSerializer = nodeSerializer;
             this.traitFilter = traitFilter;
             this.model = model;
             this.inlineableShapes = inlineableShapes;
+            this.componentOrder = componentOrder;
         }
 
         @Override
@@ -535,6 +507,8 @@ public final class SmithyIdlModelSerializer {
                 }
             }
 
+            Comparator<Trait> traitComparator = componentOrder.toShapeIdComparator();
+
             traits.values().stream()
                     .filter(trait -> noSpecialDocsSyntax || !(trait instanceof DocumentationTrait))
                     // The default and enumValue traits are serialized using the assignment syntactic sugar.
@@ -547,7 +521,7 @@ public final class SmithyIdlModelSerializer {
                         }
                     })
                     .filter(traitFilter)
-                    .sorted(Comparator.comparing(Trait::toShapeId))
+                    .sorted(traitComparator)
                     .forEach(this::serializeTrait);
         }
 
@@ -560,9 +534,10 @@ public final class SmithyIdlModelSerializer {
 
         private void serializeTrait(Trait trait) {
             Node node = trait.toNode();
-            Shape shape = model.expectShape(trait.toShapeId());
+            // We won't fail if the trait can't be found.
+            Shape shape = model.getShape(trait.toShapeId()).orElse(null);
 
-            if (trait instanceof AnnotationTrait || isEmptyStructure(node, shape)) {
+            if (shape != null && (trait instanceof AnnotationTrait || isEmptyStructure(node, shape))) {
                 // Traits that inherit from AnnotationTrait specifically can omit a value.
                 // Traits that are simply boolean shapes which don't implement AnnotationTrait cannot.
                 // Additionally, empty structure traits can omit a value.
