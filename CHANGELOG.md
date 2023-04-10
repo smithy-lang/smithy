@@ -1,5 +1,28 @@
 # Smithy Changelog
 
+## 1.30.0 (2023-04-10)
+
+### Features
+* Updated smithy-diff and smithy-build to use pretty validation output and color theming options ([#1712](https://github.com/awslabs/smithy/pull/1712))
+* Added --mode flag to smithy diff command with support for `aribtrary`, `project`, and `git` modes 
+  ([#1724](https://github.com/awslabs/smithy/pull/1724), [#1721](https://github.com/awslabs/smithy/pull/1721), [#1718](https://github.com/awslabs/smithy/pull/1718)) 
+* Added --flatten flag to AST command which flattens and removes mixins from the model ([#1723](https://github.com/awslabs/smithy/pull/1723))
+* Expose functions to make ruleEvaluator more flexible to support coverage checking ([#1681](https://github.com/awslabs/smithy/pull/1681))
+
+### Bug Fixes
+* Updated mixins to allow multiple mixins to override the same member if they all target the same shape ([#1715](https://github.com/awslabs/smithy/pull/1715))
+* Fixed an issue where source file names impacted the ordering of metadata ([#1716](https://github.com/awslabs/smithy/pull/1716))
+* Fixed error messages for invalid operation input/output bindings ([#1728](https://github.com/awslabs/smithy/pull/1728))
+* Fixed bugs in smithy-rules-engine boolEquals and stringEquals which could cause unexpected results when visitors are 
+  invoked ([#1681](https://github.com/awslabs/smithy/pull/1681))
+* Remove unnecessary member from `aws.iam#actionName` ([#1726](https://github.com/awslabs/smithy/pull/1726))
+
+### Documentation
+* Added guide on how to install the Smithy CLI ([#1697](https://github.com/awslabs/smithy/pull/1697))
+* Added examples of how smithy validators can be used to prevent common bugs and enforce common style ([#1702](https://github.com/awslabs/smithy/pull/1702))
+* Added clarification on meaning and use of `@httpApiKeyAuth` `scheme` property ([#1714](https://github.com/awslabs/smithy/pull/1714))
+* Reduced IDL ambiguity by replacing *SP with [SP] ([#1711](https://github.com/awslabs/smithy/pull/1711))
+
 ## 1.29.0 (2023-04-03)
 
 ### Features
