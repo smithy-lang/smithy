@@ -1,0 +1,907 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Building Smithy Models" href="../building-models/index.html" /><link rel="prev" title="The Smithy CLI" href="index.html" />
+
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+        <title>Installation - Smithy 2.0</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --admonition-font-size: 100%;
+  --admonition-title-font-size: 100%;
+  --color-brand-primary: #C44536;
+  --color-brand-content: #00808b;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Smithy 2.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../_static/smithy.svg" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quick start</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../spec/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/model.html">1. The Smithy model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/simple-types.html">2. Simple types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/aggregate-types.html">3. Aggregate types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/service-types.html">4. Service types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/mixins.html">5. Mixins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/constraint-traits.html">6. Constraint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/type-refinement-traits.html">7. Type refinement traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/documentation-traits.html">8. Documentation traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/behavior-traits.html">9. Behavior traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/resource-traits.html">10. Resource traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/authentication-traits.html">11. Authentication traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/protocol-traits.html">12. Serialization and Protocol traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/streaming.html">13. Streaming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/http-bindings.html">14. HTTP bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/endpoint-traits.html">15. Endpoint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/selectors.html">16. Selectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/model-validation.html">17. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/idl.html">18. Smithy IDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spec/json-ast.html">19. JSON AST</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../trait-index.html">Trait index</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">Guides</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">The Smithy CLI</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-models/build-config.html">smithy-build</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../using-code-generation/index.html">Using Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/update-model.html">Updating the Smithy Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../using-code-generation/generating-a-client.html">Generating a client</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../model-linters.html">Model linters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../model-validation-examples.html">Model Validation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../style-guide.html">Style Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../building-codegen/index.html">Creating a Smithy Code Generator</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/overview-and-concepts.html">Overview and Concepts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/mapping-shapes-to-languages.html">Mapping Smithy Shapes to Your Language</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/creating-codegen-repo.html">Creating a Codegen Repo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/configuring-the-generator.html">Configuring the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/implementing-the-generator.html">Implementing the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/making-codegen-pluggable.html">Making Codegen Pluggable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/generating-code.html">Generating Code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/decoupling-codegen-with-symbols.html">Decoupling Codegen with Symbols</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../building-codegen/using-the-semantic-model.html">Using the Semantic Model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../additional-specs/index.html">Additional specs</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/waiters.html">Waiters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../aws/index.html">AWS integrations</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-core.html">AWS Core Specification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-auth.html">AWS Authentication Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-iam.html">AWS IAM traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../aws/aws-cloudformation.html">AWS CloudFormation Traits</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/protocols/index.html">AWS Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-restxml-protocol.html">AWS restXml protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-query-protocol.html">AWS query protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/protocols/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../implementations.html">Implementations</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-2.0/guides/smithy-cli/cli_installation.rst" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <span class="target" id="cli-installation"></span><div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">#</a></h1>
+<p>The Smithy CLI is supported on the following platforms:</p>
+<ul class="simple">
+<li>MacOS (x86, ARM)</li>
+<li>Linux (x86, ARM)</li>
+<li>Windows (x64)</li>
+</ul>
+<p>Releases of the Smithy CLI can be found on the <a class="reference external" href="https://github.com/awslabs/smithy/releases">Smithy GitHub releases</a> page.</p>
+<div class="tab-set docutils container">
+<input checked="True" class="tab-input" id="tab-set--3-input--1" name="tab-set--3" type="radio"><label class="tab-label" for="tab-set--3-input--1">MacOS</label><div class="tab-content docutils container">
+<div class="tab-set docutils container">
+<input checked="True" class="tab-input" id="tab-set--0-input--1" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--1">Homebrew</label><div class="tab-content docutils container">
+<p>You can get the CLI via Homebrew by first tapping the official
+<a class="reference external" href="https://github.com/aws/homebrew-tap">AWS Homebrew Tap</a>, and then installing the <code class="docutils literal notranslate"><span class="pre">smithy-cli</span></code> formula.</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id1" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ brew tap aws/tap <span class="o">&amp;&amp;</span> brew install smithy-cli
+</pre></div>
+</div>
+</div>
+<p>After the install completes, you may run <code class="docutils literal notranslate"><span class="pre">smithy</span> <span class="pre">--help</span></code> to verify
+your installation.</p>
+</div>
+<input class="tab-input" id="tab-set--0-input--2" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--2">Manual (x86)</label><div class="tab-content docutils container">
+<p>First, retrieve the latest smithy installation from the
+<a class="reference external" href="https://github.com/awslabs/smithy/releases">Smithy GitHub releases</a>.</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id2" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ mkdir -p smithy-install/smithy <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    curl -L https://github.com/awslabs/smithy/releases/download/1.30.0/smithy-cli-darwin-x86_64.tar.gz -o smithy-install/smithy-cli-darwin-x86_64.tar.gz <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    tar xvzf smithy-install/smithy-cli-darwin-x86_64.tar.gz -C smithy-install/smithy
+</pre></div>
+</div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Please refer to <a class="reference internal" href="#cli-verification"><span class="std std-ref">Verification (Optional)</span></a> for instructions
+on how to verify downloaded artifacts.</p>
+</div>
+<p>Now, run the installer (<code class="docutils literal notranslate"><span class="pre">./install</span></code>) located in the newly created
+directory (<code class="docutils literal notranslate"><span class="pre">smithy-install/smithy</span></code>).</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">The following command typically requires using <code class="docutils literal notranslate"><span class="pre">sudo</span></code>
+to install the CLI in the default location (<code class="docutils literal notranslate"><span class="pre">/usr/local/smithy</span></code>).
+Alternatively, you may set your own install path, which should
+mitigate permissions issues when not running with <code class="docutils literal notranslate"><span class="pre">sudo</span></code>.</p>
+</div>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id3" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ sudo smithy-install/smithy/install
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you've already installed the CLI and want to update to the
+latest version, you can use the <code class="docutils literal notranslate"><span class="pre">--update</span></code> flag.
+You may also choose where to install the CLI - for more information,
+run the installer using the <code class="docutils literal notranslate"><span class="pre">--help</span></code> flag.</p>
+</div>
+<p>After the install completes, you may run <code class="docutils literal notranslate"><span class="pre">smithy</span> <span class="pre">--help</span></code> to verify
+your installation. You may also delete all the files downloaded for
+performing the installation (under <code class="docutils literal notranslate"><span class="pre">smithy-install/</span></code>):</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id4" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ rm -rf smithy-install/
+</pre></div>
+</div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--0-input--3" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--3">Manual (ARM)</label><div class="tab-content docutils container">
+<p>First, retrieve the latest smithy installation from the
+<a class="reference external" href="https://github.com/awslabs/smithy/releases">Smithy GitHub releases</a>.</p>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id5" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ mkdir -p smithy-install/smithy <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    curl -L https://github.com/awslabs/smithy/releases/download/1.30.0/smithy-cli-darwin-aarch64.tar.gz -o smithy-install/smithy-cli-darwin-aarch64.tar.gz <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    tar xvzf smithy-install/smithy-cli-darwin-aarch64.tar.gz -C smithy-install/smithy
+</pre></div>
+</div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Please refer to <a class="reference internal" href="#cli-verification"><span class="std std-ref">Verification (Optional)</span></a> for instructions
+on how to verify downloaded artifacts.</p>
+</div>
+<p>Now, run the installer (<code class="docutils literal notranslate"><span class="pre">./install</span></code>) located in the newly created
+directory (<code class="docutils literal notranslate"><span class="pre">smithy-install/smithy</span></code>).</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">The following command typically requires using <code class="docutils literal notranslate"><span class="pre">sudo</span></code>
+to install the CLI in the default location (<code class="docutils literal notranslate"><span class="pre">/usr/local/smithy</span></code>).
+Alternatively, you may set your own install path, which should
+mitigate permissions issues when not running with <code class="docutils literal notranslate"><span class="pre">sudo</span></code>.</p>
+</div>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id6" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ sudo smithy-install/smithy/install
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you've already installed the CLI and want to update to the
+latest version, you can use the <code class="docutils literal notranslate"><span class="pre">--update</span></code> flag.
+You may also choose where to install the CLI - for more information,
+run the installer using the <code class="docutils literal notranslate"><span class="pre">--help</span></code> flag.</p>
+</div>
+<p>After the install completes, you may run <code class="docutils literal notranslate"><span class="pre">smithy</span> <span class="pre">--help</span></code> to verify
+your installation. You may also delete all the files downloaded for
+performing the installation (under <code class="docutils literal notranslate"><span class="pre">smithy-install/</span></code>):</p>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id7" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ rm -rf smithy-install/
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--3-input--2" name="tab-set--3" type="radio"><label class="tab-label" for="tab-set--3-input--2">Linux</label><div class="tab-content docutils container">
+<div class="tab-set docutils container">
+<input checked="True" class="tab-input" id="tab-set--1-input--1" name="tab-set--1" type="radio"><label class="tab-label" for="tab-set--1-input--1">Manual (x86)</label><div class="tab-content docutils container">
+<p>First, retrieve the latest smithy installation from the
+<a class="reference external" href="https://github.com/awslabs/smithy/releases">Smithy GitHub releases</a>.</p>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id8" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ mkdir -p smithy-install/smithy <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    curl -L https://github.com/awslabs/smithy/releases/download/1.30.0/smithy-cli-linux-x86_64.tar.gz -o smithy-install/smithy-cli-linux-x86_64.tar.gz <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    tar xvzf smithy-install/smithy-cli-linux-x86_64.tar.gz -C smithy-install/smithy
+</pre></div>
+</div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Please refer to <a class="reference internal" href="#cli-verification"><span class="std std-ref">Verification (Optional)</span></a> for instructions
+on how to verify downloaded artifacts.</p>
+</div>
+<p>Now, run the installer (<code class="docutils literal notranslate"><span class="pre">./install</span></code>) located in the newly created
+directory (<code class="docutils literal notranslate"><span class="pre">smithy-install/smithy</span></code>).</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">The following command typically requires using <code class="docutils literal notranslate"><span class="pre">sudo</span></code>
+to install the CLI in the default location (<code class="docutils literal notranslate"><span class="pre">/usr/local/smithy</span></code>).
+Alternatively, you may set your own install path, which should
+mitigate permissions issues when not running with <code class="docutils literal notranslate"><span class="pre">sudo</span></code>.</p>
+</div>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id9" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ sudo smithy-install/smithy/install
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you've already installed the CLI and want to update to the
+latest version, you can use the <code class="docutils literal notranslate"><span class="pre">--update</span></code> flag.
+You may also choose where to install the CLI - for more information,
+run the installer using the <code class="docutils literal notranslate"><span class="pre">--help</span></code> flag.</p>
+</div>
+<p>After the install completes, you may run <code class="docutils literal notranslate"><span class="pre">smithy</span> <span class="pre">--help</span></code> to verify
+your installation. You may also delete all the files downloaded for
+performing the installation (under <code class="docutils literal notranslate"><span class="pre">smithy-install/</span></code>):</p>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id10" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ rm -rf smithy-install/
+</pre></div>
+</div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--1-input--2" name="tab-set--1" type="radio"><label class="tab-label" for="tab-set--1-input--2">Manual (ARM)</label><div class="tab-content docutils container">
+<p>First, retrieve the latest smithy installation from the
+<a class="reference external" href="https://github.com/awslabs/smithy/releases">Smithy GitHub releases</a>.</p>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id11" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ mkdir -p smithy-install/smithy <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    curl -L https://github.com/awslabs/smithy/releases/download/1.30.0/smithy-cli-linux-aarch64.tar.gz -o smithy-install/smithy-cli-linux-aarch64.tar.gz <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    tar xvzf smithy-install/smithy-cli-linux-aarch64.tar.gz -C smithy-install/smithy
+</pre></div>
+</div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Please refer to <a class="reference internal" href="#cli-verification"><span class="std std-ref">Verification (Optional)</span></a> for instructions
+on how to verify downloaded artifacts.</p>
+</div>
+<p>Now, run the installer (<code class="docutils literal notranslate"><span class="pre">./install</span></code>) located in the newly created
+directory (<code class="docutils literal notranslate"><span class="pre">smithy-install/smithy</span></code>).</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">The following command typically requires using <code class="docutils literal notranslate"><span class="pre">sudo</span></code>
+to install the CLI in the default location (<code class="docutils literal notranslate"><span class="pre">/usr/local/smithy</span></code>).
+Alternatively, you may set your own install path, which should
+mitigate permissions issues when not running with <code class="docutils literal notranslate"><span class="pre">sudo</span></code>.</p>
+</div>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id12" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ sudo smithy-install/smithy/install
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you've already installed the CLI and want to update to the
+latest version, you can use the <code class="docutils literal notranslate"><span class="pre">--update</span></code> flag.
+You may also choose where to install the CLI - for more information,
+run the installer using the <code class="docutils literal notranslate"><span class="pre">--help</span></code> flag.</p>
+</div>
+<p>After the install completes, you may run <code class="docutils literal notranslate"><span class="pre">smithy</span> <span class="pre">--help</span></code> to verify
+your installation. You may also delete all the files downloaded for
+performing the installation (under <code class="docutils literal notranslate"><span class="pre">smithy-install/</span></code>):</p>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id13" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ rm -rf smithy-install/
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--3-input--3" name="tab-set--3" type="radio"><label class="tab-label" for="tab-set--3-input--3">Windows</label><div class="tab-content docutils container">
+<div class="tab-set docutils container">
+<input checked="True" class="tab-input" id="tab-set--2-input--1" name="tab-set--2" type="radio"><label class="tab-label" for="tab-set--2-input--1">Manual (x64)</label><div class="tab-content docutils container">
+<p>First, retrieve the latest smithy installation from the
+<a class="reference external" href="https://github.com/awslabs/smithy/releases">Smithy GitHub releases</a>.</p>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id14" title="Permalink to this code">#</a></div>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">PS </span><span class="p">&gt;</span> <span class="p">(</span><span class="n">mkdir</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy</span> <span class="n">-Force</span><span class="p">)</span> <span class="o">-and</span>
+    <span class="p">(</span><span class="nb">wget </span><span class="n">https</span><span class="p">://</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">awslabs</span><span class="p">/</span><span class="n">smithy</span><span class="p">/</span><span class="n">releases</span><span class="p">/</span><span class="n">download</span><span class="p">/</span><span class="n">1</span><span class="p">.</span><span class="n">30</span><span class="p">.</span><span class="n">0</span><span class="p">/</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span> <span class="n">-outfile</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Please refer to <a class="reference internal" href="#cli-verification"><span class="std std-ref">Verification (Optional)</span></a> for instructions
+on how to verify downloaded artifacts.</p>
+</div>
+<p>Now, untar the installation in the newly created directory and run
+the installer (<code class="docutils literal notranslate"><span class="pre">install.bat</span></code>).</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">The following command typically requires running
+powershell with administrator access in order to install the
+CLI into the default location (<code class="docutils literal notranslate"><span class="pre">&lt;Letter&gt;:\Program</span> <span class="pre">Files\Smithy</span></code>).
+Alternatively, you may specify your own path, which can mitigate
+permissions issues when not running as administrator.</p>
+</div>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id15" title="Permalink to this code">#</a></div>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">PS </span><span class="p">&gt;</span> <span class="p">(</span><span class="n">tar</span> <span class="n">-xf</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span> <span class="n">-C</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy</span><span class="p">)</span> <span class="o">-and</span>
+    <span class="p">(</span><span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy</span><span class="p">\</span><span class="n">install</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Follow the installer prompts accordingly to complete the installation.</p>
+<p>After the install completes, you may run <code class="docutils literal notranslate"><span class="pre">smithy</span> <span class="pre">--help</span></code> to verify
+your installation. You may also delete all the files downloaded for
+performing the installation (under <code class="docutils literal notranslate"><span class="pre">smithy-install\</span></code>):</p>
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id16" title="Permalink to this code">#</a></div>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">PS </span><span class="p">&gt;</span> <span class="nb">rm </span><span class="n">-r</span> <span class="n">-force</span> <span class="n">smithy-install</span><span class="p">\</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">If the location where the CLI is installed is not captured in
+your <cite>PATH</cite> environment variable, you will have to run the executable with
+the full path.</p>
+</div>
+<div class="section" id="verification-optional">
+<span id="cli-verification"></span><h2>Verification (Optional)<a class="headerlink" href="#verification-optional" title="Permalink to this headline">#</a></h2>
+<p>The Smithy CLI distributables are PGP-signed and hashed before they are
+released. You should verify the signatures and hashes of the archives to
+ensure the validity and integrity of what you are downloading. You can follow
+the steps below to do so for your given platform.</p>
+<p>Before proceeding, please make sure you have both the GnuPG utility (<code class="docutils literal notranslate"><span class="pre">gpg</span></code>)
+and a sha256-checksum utility (<code class="docutils literal notranslate"><span class="pre">sha256sum</span></code>) installed on your system.
+We'll be using these to perform the verification.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This is only applicable to manual installations - Homebrew verifies
+checksums before install.</p>
+</div>
+<div class="tab-set docutils container">
+<input checked="True" class="tab-input" id="tab-set--7-input--1" name="tab-set--7" type="radio"><label class="tab-label" for="tab-set--7-input--1">MacOS</label><div class="tab-content docutils container">
+<p>Download the detached signature file (<code class="docutils literal notranslate"><span class="pre">.asc</span></code>) and the sha256-checksum
+file (<code class="docutils literal notranslate"><span class="pre">.sha256</span></code>) corresponding to the tarball (which you already
+downloaded) from the <a class="reference external" href="https://github.com/awslabs/smithy/releases">Smithy GitHub releases</a>.</p>
+<div class="tab-set docutils container">
+<input checked="True" class="tab-input" id="tab-set--4-input--1" name="tab-set--4" type="radio"><label class="tab-label" for="tab-set--4-input--1">Manual (x86)</label><div class="tab-content docutils container">
+<div class="literal-block-wrapper docutils container" id="id17">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id17" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ curl -L <span class="s1">&#39;https://github.com/awslabs/smithy/releases/download/1.30.0/smithy-cli-darwin-x86_64.tar.gz.{asc,sha256}&#39;</span> -o <span class="s1">&#39;smithy-install/smithy-cli-darwin-x86_64.tar.gz.#1&#39;</span>
+</pre></div>
+</div>
+</div>
+<p>Verify the checksum of the tarball using the <cite>sha256sum</cite> utility.</p>
+<div class="literal-block-wrapper docutils container" id="id18">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id18" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ <span class="o">(</span><span class="nb">cd</span> smithy-install <span class="o">&amp;&amp;</span> sha256sum -c smithy-cli-darwin-x86_64.tar.gz.sha256<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<p>Now, retrieve the public PGP key from the <a class="reference external" href="https://github.com/awslabs/smithy/releases/download/1.30.0">release</a>, and import
+it into your key-chain.</p>
+<div class="literal-block-wrapper docutils container" id="id19">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id19" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ curl -L https://github.com/awslabs/smithy/releases/download/1.30.0/smithy.asc -o smithy-install/smithy.asc <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    gpg --import smithy-install/smithy.asc
+</pre></div>
+</div>
+</div>
+<p>Finally, after importing the key, verify the signature of the
+tarball with gpg.</p>
+<div class="literal-block-wrapper docutils container" id="id20">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id20" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ gpg --verify smithy-install/smithy-cli-darwin-x86_64.tar.gz.asc smithy-install/smithy-cli-darwin-x86_64.tar.gz
+</pre></div>
+</div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--4-input--2" name="tab-set--4" type="radio"><label class="tab-label" for="tab-set--4-input--2">Manual (ARM)</label><div class="tab-content docutils container">
+<div class="literal-block-wrapper docutils container" id="id21">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id21" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ curl -L <span class="s1">&#39;https://github.com/awslabs/smithy/releases/download/1.30.0/smithy-cli-darwin-aarch64.tar.gz.{asc,sha256}&#39;</span> -o <span class="s1">&#39;smithy-install/smithy-cli-darwin-aarch64.tar.gz.#1&#39;</span>
+</pre></div>
+</div>
+</div>
+<p>Verify the checksum of the tarball using the <cite>sha256sum</cite> utility.</p>
+<div class="literal-block-wrapper docutils container" id="id22">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id22" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ <span class="o">(</span><span class="nb">cd</span> smithy-install <span class="o">&amp;&amp;</span> sha256sum -c smithy-cli-darwin-aarch64.tar.gz.sha256<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<p>Now, retrieve the public PGP key from the <a class="reference external" href="https://github.com/awslabs/smithy/releases/download/1.30.0">release</a>, and import
+it into your key-chain.</p>
+<div class="literal-block-wrapper docutils container" id="id23">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id23" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ curl -L https://github.com/awslabs/smithy/releases/download/1.30.0/smithy.asc -o smithy-install/smithy.asc <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    gpg --import smithy-install/smithy.asc
+</pre></div>
+</div>
+</div>
+<p>Finally, after importing the key, verify the signature of the
+tarball with gpg.</p>
+<div class="literal-block-wrapper docutils container" id="id24">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id24" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ gpg --verify smithy-install/smithy-cli-darwin-aarch64.tar.gz.asc smithy-install/smithy-cli-darwin-aarch64.tar.gz
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--7-input--2" name="tab-set--7" type="radio"><label class="tab-label" for="tab-set--7-input--2">Linux</label><div class="tab-content docutils container">
+<p>Download the detached signature file (<code class="docutils literal notranslate"><span class="pre">.asc</span></code>) and the sha256-checksum
+file (<code class="docutils literal notranslate"><span class="pre">.sha256</span></code>) corresponding to the tarball (which you already
+downloaded) from the <a class="reference external" href="https://github.com/awslabs/smithy/releases">Smithy GitHub releases</a>.</p>
+<div class="tab-set docutils container">
+<input checked="True" class="tab-input" id="tab-set--5-input--1" name="tab-set--5" type="radio"><label class="tab-label" for="tab-set--5-input--1">Manual (x86)</label><div class="tab-content docutils container">
+<div class="literal-block-wrapper docutils container" id="id25">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id25" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ curl -L <span class="s1">&#39;https://github.com/awslabs/smithy/releases/download/1.30.0/smithy-cli-linux-x86_64.tar.gz.{asc,sha256}&#39;</span> -o <span class="s1">&#39;smithy-install/smithy-cli-linux-x86_64.tar.gz.#1&#39;</span>
+</pre></div>
+</div>
+</div>
+<p>Verify the checksum of the tarball using the <cite>sha256sum</cite> utility.</p>
+<div class="literal-block-wrapper docutils container" id="id26">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id26" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ <span class="o">(</span><span class="nb">cd</span> smithy-install <span class="o">&amp;&amp;</span> sha256sum -c smithy-cli-linux-x86_64.tar.gz.sha256<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<p>Now, retrieve the public PGP key from the <a class="reference external" href="https://github.com/awslabs/smithy/releases/download/1.30.0">release</a>, and import
+it into your key-chain.</p>
+<div class="literal-block-wrapper docutils container" id="id27">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id27" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ curl -L https://github.com/awslabs/smithy/releases/download/1.30.0/smithy.asc -o smithy-install/smithy.asc <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    gpg --import smithy-install/smithy.asc
+</pre></div>
+</div>
+</div>
+<p>Finally, after importing the key, verify the signature of the
+tarball with gpg.</p>
+<div class="literal-block-wrapper docutils container" id="id28">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id28" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ gpg --verify smithy-install/smithy-cli-linux-x86_64.tar.gz.asc smithy-install/smithy-cli-linux-x86_64.tar.gz
+</pre></div>
+</div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--5-input--2" name="tab-set--5" type="radio"><label class="tab-label" for="tab-set--5-input--2">Manual (ARM)</label><div class="tab-content docutils container">
+<div class="literal-block-wrapper docutils container" id="id29">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id29" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ curl -L <span class="s1">&#39;https://github.com/awslabs/smithy/releases/download/1.30.0/smithy-cli-linux-aarch64.tar.gz.{asc,sha256}&#39;</span> -o <span class="s1">&#39;smithy-install/smithy-cli-linux-aarch64.tar.gz.#1&#39;</span>
+</pre></div>
+</div>
+</div>
+<p>Verify the checksum of the tarball using the <cite>sha256sum</cite> utility.</p>
+<div class="literal-block-wrapper docutils container" id="id30">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id30" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ <span class="o">(</span><span class="nb">cd</span> smithy-install <span class="o">&amp;&amp;</span> sha256sum -c smithy-cli-linux-aarch64.tar.gz.sha256<span class="o">)</span>
+</pre></div>
+</div>
+</div>
+<p>Now, retrieve the public PGP key from the <a class="reference external" href="https://github.com/awslabs/smithy/releases/download/1.30.0">release</a>, and import
+it into your key-chain.</p>
+<div class="literal-block-wrapper docutils container" id="id31">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id31" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ curl -L https://github.com/awslabs/smithy/releases/download/1.30.0/smithy.asc -o smithy-install/smithy.asc <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    gpg --import smithy-install/smithy.asc
+</pre></div>
+</div>
+</div>
+<p>Finally, after importing the key, verify the signature of the
+tarball with gpg.</p>
+<div class="literal-block-wrapper docutils container" id="id32">
+<div class="code-block-caption"><span class="caption-text">/bin/sh</span><a class="headerlink" href="#id32" title="Permalink to this code">#</a></div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ gpg --verify smithy-install/smithy-cli-linux-aarch64.tar.gz.asc smithy-install/smithy-cli-linux-aarch64.tar.gz
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--7-input--3" name="tab-set--7" type="radio"><label class="tab-label" for="tab-set--7-input--3">Windows</label><div class="tab-content docutils container">
+<p>Download the detached signature file (<code class="docutils literal notranslate"><span class="pre">.asc</span></code>) and the sha256-checksum
+file (<code class="docutils literal notranslate"><span class="pre">.sha256</span></code>) corresponding to the tarball (which you already
+downloaded) from the <a class="reference external" href="https://github.com/awslabs/smithy/releases">Smithy GitHub releases</a>.</p>
+<div class="tab-set docutils container">
+<input checked="True" class="tab-input" id="tab-set--6-input--1" name="tab-set--6" type="radio"><label class="tab-label" for="tab-set--6-input--1">Manual (x64)</label><div class="tab-content docutils container">
+<div class="literal-block-wrapper docutils container" id="id33">
+<div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id33" title="Permalink to this code">#</a></div>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">PS </span><span class="p">&gt;</span> <span class="p">(</span><span class="nb">wget </span><span class="n">https</span><span class="p">://</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">awslabs</span><span class="p">/</span><span class="n">smithy</span><span class="p">/</span><span class="n">releases</span><span class="p">/</span><span class="n">download</span><span class="p">/</span><span class="n">1</span><span class="p">.</span><span class="n">30</span><span class="p">.</span><span class="n">0</span><span class="p">/</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span><span class="p">.</span><span class="n">asc</span> <span class="n">-outfile</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span><span class="p">.</span><span class="n">asc</span><span class="p">)</span> <span class="o">-and</span>
+    <span class="p">(</span><span class="nb">wget </span><span class="n">https</span><span class="p">://</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">awslabs</span><span class="p">/</span><span class="n">smithy</span><span class="p">/</span><span class="n">releases</span><span class="p">/</span><span class="n">download</span><span class="p">/</span><span class="n">1</span><span class="p">.</span><span class="n">30</span><span class="p">.</span><span class="n">0</span><span class="p">/</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span><span class="p">.</span><span class="n">sha256</span> <span class="n">-outfile</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span><span class="p">.</span><span class="n">sha256</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Compute the actual checksum of the tarball using <code class="docutils literal notranslate"><span class="pre">certutil</span></code>.</p>
+<div class="literal-block-wrapper docutils container" id="id34">
+<div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id34" title="Permalink to this code">#</a></div>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">PS </span><span class="p">&gt;</span> <span class="n">certutil</span> <span class="n">-hashfile</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span><span class="p">.</span><span class="n">sha256</span> <span class="n">SHA256</span>
+</pre></div>
+</div>
+</div>
+<p>Now, print out the expected checksum from the file that you
+downloaded (<code class="docutils literal notranslate"><span class="pre">.sha256</span></code>).</p>
+<div class="literal-block-wrapper docutils container" id="id35">
+<div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id35" title="Permalink to this code">#</a></div>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">PS </span><span class="p">&gt;</span> <span class="nb">cat </span><span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span><span class="p">.</span><span class="n">sha256</span>
+</pre></div>
+</div>
+</div>
+<p>Verify that the output from the two commands matches. There may be a
+file-path appended to the latter command output - you
+may safely ignore that.</p>
+<p>Now, retrieve the public PGP key from the <a class="reference external" href="https://github.com/awslabs/smithy/releases/download/1.30.0">release</a>, and import it into your key-chain.</p>
+<div class="literal-block-wrapper docutils container" id="id36">
+<div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id36" title="Permalink to this code">#</a></div>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">PS </span><span class="p">&gt;</span> <span class="p">(</span><span class="nb">wget </span><span class="n">https</span><span class="p">://</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">awslabs</span><span class="p">/</span><span class="n">smithy</span><span class="p">/</span><span class="n">releases</span><span class="p">/</span><span class="n">download</span><span class="p">/</span><span class="n">1</span><span class="p">.</span><span class="n">30</span><span class="p">.</span><span class="n">0</span><span class="p">/</span><span class="n">smithy</span><span class="p">.</span><span class="n">asc</span> <span class="n">-outfile</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy</span><span class="p">.</span><span class="n">asc</span><span class="p">)</span> <span class="o">-and</span> <span class="p">(</span><span class="n">gpg</span> <span class="p">-</span><span class="n">-import</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy</span><span class="p">.</span><span class="n">asc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Finally, after importing the key, verify the signature of the
+tarball with gpg.</p>
+<div class="literal-block-wrapper docutils container" id="id37">
+<div class="code-block-caption"><span class="caption-text">powershell</span><a class="headerlink" href="#id37" title="Permalink to this code">#</a></div>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">PS </span><span class="p">&gt;</span> <span class="n">gpg</span> <span class="p">-</span><span class="n">-verify</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span><span class="p">.</span><span class="n">asc</span> <span class="n">smithy-install</span><span class="p">\</span><span class="n">smithy-cli-windows-x64</span><span class="p">.</span><span class="n">tar</span><span class="p">.</span><span class="n">gz</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>Upon verifying the signature, you will receive a
+<code class="docutils literal notranslate"><span class="pre">WARNING</span></code> message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>gpg: WARNING: This key is not certified with a trusted signature!
+gpg:          There is no indication that the signature belongs to the owner.
+</pre></div>
+</div>
+<p class="last">This is expected since there is no established chain of trust between
+you and the smithy key. For more information on this topic, see the
+<a class="reference external" href="https://www.gnupg.org/gph/en/manual/x334.html">key validation</a> section from the GNU Privacy Handbook.</p>
+</div>
+</div>
+</div>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../building-models/index.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Building Smithy Models</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="index.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">The Smithy CLI</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Amazon Web Services
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Installation</a><ul>
+<li><a class="reference internal" href="#verification-optional">Verification (Optional)</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/scripts/furo.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/tabs.js"></script>
+    </body>
+</html>

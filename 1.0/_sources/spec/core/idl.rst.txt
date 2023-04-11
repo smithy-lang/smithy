@@ -95,7 +95,7 @@ string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
     SP           :1*(%x20 / %x09) ; one or more spaces or tabs
     NL           :%x0A / %x0D.0A ; Newline: \n and \r\n
     NotNL        :%x09 / %x20-10FFFF ; Any character except newline
-    BR           :*`SP` 1*(`Comment` / `NL`) [`WS`]; line break followed by whitespace
+    BR           :[`SP`] 1*(`Comment` / `NL`) [`WS`]; line break followed by whitespace
 
 .. rubric:: Comments
 
@@ -108,13 +108,13 @@ string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
 
 .. productionlist:: smithy
     ControlSection   :*(`ControlStatement`)
-    ControlStatement :"$" `NodeObjectKey` *`SP` ":" *`SP` `NodeValue` `BR`
+    ControlStatement :"$" `NodeObjectKey` [`SP`] ":" [`SP`] `NodeValue` `BR`
 
 .. rubric:: Metadata
 
 .. productionlist:: smithy
     MetadataSection   :*(`MetadataStatement`)
-    MetadataStatement :%s"metadata" `SP` `NodeObjectKey` *`SP` "=" *`SP` `NodeValue` `BR`
+    MetadataStatement :%s"metadata" `SP` `NodeObjectKey` [`SP`] "=" [`SP`] `NodeValue` `BR`
 
 .. rubric:: Node values
 
@@ -164,7 +164,7 @@ string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
     Hex                 :DIGIT / %x41-46 / %x61-66
     PreservedDouble     :`Escape` (%x20-21 / %x23-5B / %x5D-10FFFF)
     Escape              :%x5C ; backslash
-    TextBlock           :`ThreeDquotes` *`SP` `NL` *`QuotedChar` `ThreeDquotes`
+    TextBlock           :`ThreeDquotes` [`SP`] `NL` *`QuotedChar` `ThreeDquotes`
     ThreeDquotes        :DQUOTE DQUOTE DQUOTE
 
 .. rubric:: Shapes
@@ -193,17 +193,17 @@ string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
     ListStatement           :%s"list" `SP` `Identifier` [`WS`] `ListMembers`
     ListMembers             :"{" [`WS`] `ListMember` [`WS`] "}"
     ListMember              :`TraitStatements` `ExplicitListMember`
-    ExplicitListMember      :%s"member" *`SP` ":" *`SP` `ShapeId`
+    ExplicitListMember      :%s"member" [`SP`] ":" [`SP`] `ShapeId`
     SetStatement            :%s"set" `SP` `Identifier` [`WS`] `SetMembers`
     SetMembers              :"{" [`WS`] `SetMember` [`WS`] "}"
     SetMember               :`TraitStatements` `ExplicitSetMember`
-    ExplicitSetMember       :%s"member" *`SP` ":" *`SP` `ShapeId`
+    ExplicitSetMember       :%s"member" [`SP`] ":" [`SP`] `ShapeId`
     MapStatement            :%s"map" `SP` `Identifier` [`WS`] `MapMembers`
     MapMembers              :"{" [`WS`] `MapKey` `WS` `MapValue` [`WS`] "}"
     MapKey                  :`TraitStatements` `ExplicitMapKey`
-    ExplicitMapKey          :%s"key" *`SP` ":" *`SP` `ShapeId`
+    ExplicitMapKey          :%s"key" [`SP`] ":" [`SP`] `ShapeId`
     MapValue                :`TraitStatements` `ExplicitMapValue`
-    ExplicitMapValue        :%s"value" *`SP` ":" *`SP` `ShapeId`
+    ExplicitMapValue        :%s"value" [`SP`] ":" [`SP`] `ShapeId`
     StructureStatement      :%s"structure" `SP` `Identifier` [`WS`] `StructureMembers`
     StructureMembers        :"{" [`WS`]
                             :      [`StructureMember` [`WS`]
@@ -211,7 +211,7 @@ string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
                             :      `TrailingComma`]
                             :  "}"
     StructureMember         :`TraitStatements` `ExplicitStructureMember`                        
-    ExplicitStructureMember :`Identifier` *`SP` ":" *`SP` `ShapeId`
+    ExplicitStructureMember :`Identifier` [`SP`] ":" [`SP`] `ShapeId`
     UnionStatement          :%s"union" `SP` `Identifier` [`WS`] `UnionMembers`
     UnionMembers            :"{" [`WS`]
                             :      `UnionMember` [`WS`]
@@ -219,7 +219,7 @@ string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
                             :      `TrailingComma`
                             :  "}"
     UnionMember             :`TraitStatements` `ExplicitUnionMember`
-    ExplicitUnionMember     :`Identifier` *`SP` ":" *`SP` `ShapeId`
+    ExplicitUnionMember     :`Identifier` [`SP`] ":" [`SP`] `ShapeId`
     ServiceStatement        :%s"service" `SP` `Identifier` [`WS`] `NodeObject`
     ResourceStatement       :%s"resource" `SP` `Identifier` [`WS`] `NodeObject`
     OperationStatement      :%s"operation" `SP` `Identifier` [`WS`] `NodeObject`

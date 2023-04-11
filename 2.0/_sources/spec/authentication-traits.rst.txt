@@ -182,8 +182,10 @@ properties:
         This value can be set to ``header`` or ``query``.
     * - scheme
       - ``string``
-      - Defines the security scheme to use on the ``Authorization`` header value
-        This can only be set if the "in" property is set to ``header``.
+      - Defines the scheme to use on the ``Authorization`` header value. As
+        defined in :rfc:`9110#section-11.4`. This scheme SHOULD be one of the
+        schemes defined in the `IANA Authentication Scheme Registry`_. This can
+        only be set if the "in" property is set to ``header``.
 
 The following example defines a service that accepts an API key in the "X-Api-Key"
 HTTP header:
@@ -367,3 +369,6 @@ authentication scheme trait that is not applied to the service:
 
     @auth([httpBasicAuth]) // <-- Invalid!
     operation OperationA {}
+
+
+.. _IANA Authentication Scheme Registry: https://www.iana.org/assignments/http-authschemes

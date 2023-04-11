@@ -1,0 +1,1003 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Evolving Models" href="evolving-models.html" /><link rel="prev" title="Model linters" href="model-linters.html" />
+
+    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+        <title>Model Validation Examples - Smithy 2.0</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --admonition-font-size: 100%;
+  --admonition-title-font-size: 100%;
+  --color-brand-primary: #C44536;
+  --color-brand-content: #00808b;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Smithy 2.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/smithy.svg" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick start</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../spec/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../spec/model.html">1. The Smithy model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/simple-types.html">2. Simple types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/aggregate-types.html">3. Aggregate types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/service-types.html">4. Service types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/mixins.html">5. Mixins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/constraint-traits.html">6. Constraint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/type-refinement-traits.html">7. Type refinement traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/documentation-traits.html">8. Documentation traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/behavior-traits.html">9. Behavior traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/resource-traits.html">10. Resource traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/authentication-traits.html">11. Authentication traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/protocol-traits.html">12. Serialization and Protocol traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/streaming.html">13. Streaming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/http-bindings.html">14. HTTP bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/endpoint-traits.html">15. Endpoint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/selectors.html">16. Selectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/model-validation.html">17. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/idl.html">18. Smithy IDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/json-ast.html">19. JSON AST</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../trait-index.html">Trait index</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Guides</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="smithy-cli/index.html">The Smithy CLI</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="smithy-cli/cli_installation.html">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="building-models/build-config.html">smithy-build</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="using-code-generation/index.html">Using Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="using-code-generation/update-model.html">Updating the Smithy Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="using-code-generation/generating-a-client.html">Generating a client</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="model-linters.html">Model linters</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Model Validation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="style-guide.html">Style Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="building-codegen/index.html">Creating a Smithy Code Generator</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="building-codegen/overview-and-concepts.html">Overview and Concepts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="building-codegen/mapping-shapes-to-languages.html">Mapping Smithy Shapes to Your Language</a></li>
+<li class="toctree-l3"><a class="reference internal" href="building-codegen/creating-codegen-repo.html">Creating a Codegen Repo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="building-codegen/configuring-the-generator.html">Configuring the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="building-codegen/implementing-the-generator.html">Implementing the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="building-codegen/making-codegen-pluggable.html">Making Codegen Pluggable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="building-codegen/generating-code.html">Generating Code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="building-codegen/decoupling-codegen-with-symbols.html">Decoupling Codegen with Symbols</a></li>
+<li class="toctree-l3"><a class="reference internal" href="building-codegen/using-the-semantic-model.html">Using the Semantic Model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="glossary.html">Glossary</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../additional-specs/index.html">Additional specs</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../additional-specs/waiters.html">Waiters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../aws/index.html">AWS integrations</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../aws/aws-core.html">AWS Core Specification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/aws-auth.html">AWS Authentication Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/aws-iam.html">AWS IAM traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/aws-cloudformation.html">AWS CloudFormation Traits</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/protocols/index.html">AWS Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-restxml-protocol.html">AWS restXml protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-query-protocol.html">AWS query protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/protocols/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../implementations.html">Implementations</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-2.0/guides/model-validation-examples.rst" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <div class="section" id="model-validation-examples">
+<h1>Model Validation Examples<a class="headerlink" href="#model-validation-examples" title="Permalink to this headline">#</a></h1>
+<p><a class="reference internal" href="../spec/model-validation.html#validator-definition"><span class="std std-ref">Validators</span></a> can be used to lint Smithy models to help avoid
+common pitfalls and bugs as well as to enforce a common style for APIs
+designed with Smithy.</p>
+<p>This document provides a &quot;cookbook&quot; of examples for using,
+suppressing, and modifying Smithy Validators.</p>
+<div class="section" id="suppress-a-validator-for-a-single-shape-or-member">
+<h2>Suppress a validator for a single shape or member<a class="headerlink" href="#suppress-a-validator-for-a-single-shape-or-member" title="Permalink to this headline">#</a></h2>
+<p>Use the <a class="reference internal" href="../spec/model-validation.html#suppress-trait"><span class="std std-ref">&#64;suppress</span></a> trait to suppress a validator on
+a single shape or member. The example below shows the use of the suppress
+trait to suppress the <code class="docutils literal notranslate"><span class="pre">Foo</span></code> and <code class="docutils literal notranslate"><span class="pre">Bar</span></code> validators.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">// This trait cannot pass Foo or Bar validators</span><span class="w"></span>
+<span class="nt">@suppress</span>([<span class="s2">&quot;Foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Bar&quot;</span>])<span class="w"></span>
+<span class="kd">structure </span><span class="nc">exampleStructure</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">fieldA</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">fieldB</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">It is generally recommended to add a comment above the <code class="docutils literal notranslate"><span class="pre">&#64;suppress</span></code>
+trait to explain the reason for the suppression.</p>
+</div>
+</div>
+<div class="section" id="suppress-a-validator-for-a-namespace">
+<h2>Suppress a validator for a namespace<a class="headerlink" href="#suppress-a-validator-for-a-namespace" title="Permalink to this headline">#</a></h2>
+<p>Validators can be suppressed for an entire namespace rather than just for a
+single shape. The following example demonstrates how to suppress the
+<code class="docutils literal notranslate"><span class="pre">ShouldHaveUsedTimestamp</span></code> validator for all shapes within the <code class="docutils literal notranslate"><span class="pre">com.example</span>
+<span class="pre">.weather</span></code> namespace.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata </span><span class="nc">suppressions </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ShouldHaveUsedTimestamp&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">namespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.example.weather&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">reason</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ignore `ShouldHaveUsedTimestamp` validator for `com.example.weather` namespace.&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
+]<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="execute-validator-for-all-shapes-matching-selector">
+<h2>Execute validator for all shapes matching selector<a class="headerlink" href="#execute-validator-for-all-shapes-matching-selector" title="Permalink to this headline">#</a></h2>
+<p>We can use selectors to only run a validator for shapes matching that
+selector. The following example demonstrates how to have the
+<code class="docutils literal notranslate"><span class="pre">MissingPaginatedTrait</span></code> built-in validator ignore any operations with the
+<code class="docutils literal notranslate"><span class="pre">&#64;internal</span></code> trait. The <code class="docutils literal notranslate"><span class="pre">MissingPaginatedTrait</span></code> will run for only shapes
+that are not operations with the <code class="docutils literal notranslate"><span class="pre">&#64;internal</span></code> trait.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingPaginatedTrait&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:not(operation[trait|internal])&quot;</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ignore-built-in-validator-for-multiple-namespaces">
+<h2>Ignore built-in validator for multiple namespaces<a class="headerlink" href="#ignore-built-in-validator-for-multiple-namespaces" title="Permalink to this headline">#</a></h2>
+<p>Selectors can be used to ignore a validator for specific namespaces such as
+the root smithy namespace. This can be useful when you want a validator to
+ignore imported shapes from another smithy package. The following example
+shows how to have the <code class="docutils literal notranslate"><span class="pre">MissingPaginatedTrait</span></code> built-in validator ignore any
+shapes in the <code class="docutils literal notranslate"><span class="pre">smithy.*</span></code> or <code class="docutils literal notranslate"><span class="pre">com.example.*</span></code> namespaces.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingPaginatedTrait&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:not([id|namespace ^= &#39;com.example&#39;, &#39;smithy.&#39;])&quot;</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ignore-validator-for-specific-shape-id">
+<h2>Ignore validator for specific shape id<a class="headerlink" href="#ignore-validator-for-specific-shape-id" title="Permalink to this headline">#</a></h2>
+<p>Selectors can also be used to ignore one or more shapes based on the shape's
+id. This example uses selectors to ignore a validator for a shape with a
+specific name. In this case the <code class="docutils literal notranslate"><span class="pre">MissingPaginatedTrait</span></code> built-in validator
+is set to ignore the shape with the name &quot;IgnorableShape&quot;.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingPaginatedTrait&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:not([id|name = &#39;IgnorableShape&#39; i])&quot;</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-a-custom-severity-for-built-in-validator">
+<h2>Set a custom severity for built-in validator<a class="headerlink" href="#set-a-custom-severity-for-built-in-validator" title="Permalink to this headline">#</a></h2>
+<p>The following example demonstrates how to update the <a class="reference internal" href="../spec/model-validation.html#severity-definition"><span class="std std-ref">severity</span></a> level of a built-in validator to a custom value. The
+following example will cause validation events emitted by the
+<code class="docutils literal notranslate"><span class="pre">MissingPaginatedTrait</span></code> validator to be emitted at a <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> level
+instead of at the default <code class="docutils literal notranslate"><span class="pre">ERROR</span></code> severity.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingPaginatedTrait&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;WARNING&quot;&quot;</span>
+<span class="s2">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="common-suffix-on-all-operation-inputs">
+<h2>Common suffix on all operation inputs<a class="headerlink" href="#common-suffix-on-all-operation-inputs" title="Permalink to this headline">#</a></h2>
+<p>You may want to enforce a convention of all operation inputs ending with a
+specific string such as &quot;Request&quot;. The following example creates a custom
+linter that checks that all operation input names end with &quot;Request&quot;.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationInputName&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            `@{id}` is bound as an input of `@{var|operation|id}` </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">            but does not have a name ending with &#39;Request&#39;.</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;$operation(*) -[input]-&gt; :not([id|name$=Request])&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="common-suffix-on-all-operation-outputs">
+<h2>Common suffix on all operation outputs<a class="headerlink" href="#common-suffix-on-all-operation-outputs" title="Permalink to this headline">#</a></h2>
+<p>You may want to enforce a convention of all operation outputs ending with a
+specific string such as &quot;Response&quot;. The following example linter checks that
+all operation output names end with &quot;Response&quot;.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationOutputName&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            `@{id}` is bound as an output of `@{var|operation|id}` </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">            but does not have a name ending with &#39;Response&#39;</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;$operation(*) -[output]-&gt; :not([id|name$=Response])&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="common-suffix-on-all-error-shapes">
+<h2>Common suffix on all error shapes<a class="headerlink" href="#common-suffix-on-all-error-shapes" title="Permalink to this headline">#</a></h2>
+<p>The following example creates a linter that checks that all error shapes end
+with &quot;Exception&quot;.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationErrorName&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            `@{id}` is bound as an error but does not have a name ending with &#39;Exception&#39;. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">            Perhaps you should rename this shape to `@{id|name}Exception`.</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation -[error]-&gt; :not([id|name$=Exception])&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="forbid-prefix-on-shape-members">
+<h2>Forbid prefix on shape members<a class="headerlink" href="#forbid-prefix-on-shape-members" title="Permalink to this headline">#</a></h2>
+<p>This example checks that no member names begin with &quot;is&quot; or &quot;Is&quot;. This
+particular case is useful to prevent problems when using libraries such as
+Jackson which changes behavior when object fields have &quot;is&quot; prefixes.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ForbiddenIsPrefix&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This member starts with forbidden prefix &#39;is&#39;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[id|member ^=&#39;is&#39;,&#39;Is&#39;]&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="require-integers-to-have-a-range-constraint">
+<h2>Require integers to have a <code class="docutils literal notranslate"><span class="pre">&#64;range</span></code> constraint<a class="headerlink" href="#require-integers-to-have-a-range-constraint" title="Permalink to this headline">#</a></h2>
+<p>This example shows how to require all integers used in an operation input
+have a range constraint with both a minimum and maximum value. The first
+validator checks that the range trait exists on the shape, while the other
+two validators check that both the maximum and minimum values of the range
+are both filled out. This validation is split across three separate linters
+to have clear, actionable error messages.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;RawIntegerWithoutRange&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        This number shape in member `@{id}` of the operation input `@{var|structure}` </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        does not have a range constraint on both its minimum or maximum value. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        Add the `@@range` trait to this integer shape and provide both minimum and maximum values. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        For example, `@@range(min: 1, max: 500)`.</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            operation -[input]-&gt; $structure(*) &gt; member</span>
+<span class="s2">            :test(&gt; number:not([trait|range|min]):not([trait|range|max]))</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="p">,</span><span class="w"></span>
+{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;RawIntegerWithoutRangeMin&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        This number shape in member `@{id}` of the operation input `@{var|structure}` </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        does not have a maximum range constraint. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        Add a minimum value to the `@@range` trait on this shape. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        For example, `@@range(&gt;&gt;&gt; min: 1 &lt;&lt;&lt;, max: 500)`.</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            operation -[input]-&gt; $structure(*) &gt; member</span>
+<span class="s2">            :test(&gt; number[trait|range]:not([trait|range|min]))</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="p">,</span><span class="w"></span>
+{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;RawIntegerWithoutRangeMax&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        This number shape in member `@{id}` of the operation input `@{var|structure}` </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        does not have a maximum range constraint. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        Add a maximum value to the `@@range` trait on this shape. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        For example, `@@range(min: 1, &gt;&gt;&gt; max: 500 &lt;&lt;&lt;)`.</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            operation -[input]-&gt; $structure(*) &gt; member</span>
+<span class="s2">            :test(&gt; number[trait|range]:not([trait|range|max]))</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="require-lists-to-have-an-length-constraint">
+<h2>Require lists to have an <code class="docutils literal notranslate"><span class="pre">&#64;length</span></code> constraint<a class="headerlink" href="#require-lists-to-have-an-length-constraint" title="Permalink to this headline">#</a></h2>
+<p>This example shows how to require all List shapes in the <code class="docutils literal notranslate"><span class="pre">com.example.weather</span></code>
+namespace to apply the <code class="docutils literal notranslate"><span class="pre">&#64;length</span></code> constraint trait with both a
+minimum and maximum value. This validation is split across three separate
+linters to have clear, actionable error messages.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ListWithoutLengthConstraint&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        List shape `@{id}` does not have a length constraint specified. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        Add the `@@length` trait to the list shape. For example, `@@length(min: 1, max: 2)`.</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;list:not([trait|length])&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="p">,</span><span class="w"></span>
+{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ListWithoutLengthConstraintMinimum&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        List shape `@{id}` does not have a minimum length specified. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        Add a `min` value to the `@@length` trait on the list shape. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        For example, `@@length(&gt;&gt;&gt; min: 1 &lt;&lt;&lt;, max: 2)`.</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;list[trait|length]:not([trait|length|min])&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="p">,</span><span class="w"></span>
+{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ListWithoutLengthConstraintMaximum&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        List shape `@{id}` does not have a maximum length specified. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        Add a `max` value to the `@@length` trait on the list shape. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        For example, `@@length(min: 1, &gt;&gt;&gt; max: 2 &lt;&lt;&lt;)`.</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;list[trait|length]:not([trait|length|max])&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="require-strings-to-have-a-pattern-constraint">
+<h2>Require strings to have a <code class="docutils literal notranslate"><span class="pre">&#64;pattern</span></code> constraint<a class="headerlink" href="#require-strings-to-have-a-pattern-constraint" title="Permalink to this headline">#</a></h2>
+<p>This example shows how to require all integers used in an operation input to
+have a <code class="docutils literal notranslate"><span class="pre">&#64;pattern</span></code> constraint trait.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;RawStringWithoutPattern&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">namespace</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;com.example.weather&quot;</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        This String shape in member `@{id}` of the operation input `@{var|structure}` </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        does not have a pattern constraint. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        Add the `@@pattern` trait to this string shape and provide a regex pattern. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        For example, `@@pattern(&quot;^[</span><span class="se">\\</span><span class="s2">S</span><span class="se">\\</span><span class="s2">s]+$&quot;)`.</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            operation -[input]-&gt; $structure(*) &gt; member</span>
+<span class="s2">            :test(&gt; string:not([trait|enum]):not([trait|pattern]))</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="require-externaldocumentation-trait-to-provide-a-homepage-entry">
+<h2>Require <code class="docutils literal notranslate"><span class="pre">&#64;externalDocumentation</span></code> trait to provide a homepage entry<a class="headerlink" href="#require-externaldocumentation-trait-to-provide-a-homepage-entry" title="Permalink to this headline">#</a></h2>
+<p>The following example shows how to enforce that all uses of the
+<a class="reference internal" href="../spec/documentation-traits.html#externaldocumentation-trait"><span class="std std-ref">&#64;externaldocumentation</span></a> include a
+<code class="docutils literal notranslate"><span class="pre">Homepage</span></code> entry.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ExternalDocumentationMustIncludeHomePageValue&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        @{id} has the `@@externalDocumentation` trait applied, but does not define a `&quot;HomePage&quot;` entry. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        The following keys `@{trait|externalDocumentation|(keys)}` were defined for `@@externalDocumentation`, </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        but expected `&quot;HomePage&quot;` key.</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|externalDocumentation]:not([trait|externalDocumentation|(keys) = Homepage])&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="limit-shape-name-length">
+<h2>Limit shape name length<a class="headerlink" href="#limit-shape-name-length" title="Permalink to this headline">#</a></h2>
+<p>The following example limits the length of shape names within the <code class="docutils literal notranslate"><span class="pre">com.example.weather</span></code>
+namespace to between 3 and 80 characters.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ShapeNameLength&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">namespace</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;com.example.weather&quot;</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        Shape name @{id|name} is @{id|name|(length)} characters long.</span>
+<span class="s2">        Shape names must be less than 60 characters and longer than 3 characters.</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:not([@id|name: @{(length)} &lt;= 60 &amp;&amp; @{(length)} &gt;= 3])&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="limit-nesting-depth-of-input-and-output-shape-members">
+<h2>Limit nesting depth of input and output shape members<a class="headerlink" href="#limit-nesting-depth-of-input-and-output-shape-members" title="Permalink to this headline">#</a></h2>
+<p>This example checks that resources are not deeply nested. In this case, it
+will check that the nesting depth is less than 4.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LimitNestingDepthToFourLayers&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="s2">&quot;configuration&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            `@{id}`, bound to operation `@{var|operation}` has a nesting depth &gt;4. This is typically not advised.</span>
+<span class="s2">            You should look for ways to reduce the nesting depth of this shape.</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            $operation(*) -[input, output, error]-&gt;</span>
+<span class="s2">            :test(&gt; member &gt; * &gt; member &gt; * &gt; member &gt; * member &gt; *)</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="operations-should-have-documentation">
+<h2>Operations should have documentation<a class="headerlink" href="#operations-should-have-documentation" title="Permalink to this headline">#</a></h2>
+<p>This example checks for documentation on all operation shapes.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingOperationDocumentation&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            Operation `@{id|name}` is missing documentation. Add the `@@documentation` </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">            trait to this operation.</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation :not([trait|documentation])&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="examples-on-all-operations">
+<h2>Examples on all operations<a class="headerlink" href="#examples-on-all-operations" title="Permalink to this headline">#</a></h2>
+<p>This example checks for examples on all operation shapes.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingOperationExamples&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            Operation `@{id|name}` is missing examples. Add the `@@examples` </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">            trait to this operation.</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation :not([trait|examples])&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="operations-should-have-common-exception">
+<h2>Operations should have common exception<a class="headerlink" href="#operations-should-have-common-exception" title="Permalink to this headline">#</a></h2>
+<p>The following example shows how to check that all operations throw a common
+exception.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationErrorsIncludesCommonException&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        Expected error `CommonException` is not bound to operation @{id|name} . Add </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        `CommonException` to the list of errors bound to this operation.</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation :not(:test(-[error]-&gt; [id|name=CommonException]))&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">If you want an operation to throw multiple common errors, you likely want
+to use a validator that checks for a common mixin rather than a single
+error. See <a class="reference internal" href="#operations-should-use-common-mixin"><span class="std std-ref">Operations Should Use Common Mixin</span></a></p>
+</div>
+</div>
+<div class="section" id="operations-should-use-common-mixin">
+<span id="id1"></span><h2>Operations should use common mixin<a class="headerlink" href="#operations-should-use-common-mixin" title="Permalink to this headline">#</a></h2>
+<p>The following example checks that an operation uses a common <a class="reference internal" href="../spec/type-refinement-traits.html#mixin-trait"><span class="std std-ref">mixin</span></a>, <code class="docutils literal notranslate"><span class="pre">CommonMixin</span></code>. This is useful when you want operations to
+have a common set of errors added via a common mixin.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationShouldUseCommonMixin&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">namespace</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;com.example.weather&quot;</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        Operation `@{id|name}` does not use expected mixin `CommonMixin`. Add the </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        mixin to this operation. For example, `operation @{id|name} with [ CommonMixin ]`.</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation :not(-[mixin]-&gt; [id = CommonMixin])&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="check-that-models-do-not-use-an-internal-name">
+<h2>Check that models do not use an internal name<a class="headerlink" href="#check-that-models-do-not-use-an-internal-name" title="Permalink to this headline">#</a></h2>
+<p>The following example shows how to prevent the use of internal codewords
+within a smithy model. In this case we want to prevent our models from using
+the word &quot;spork&quot; in any member, structure, resource, operation, or service
+name or within any trait or comment.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DontUseInternalNamesValidator&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ReservedWords&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">reserved</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">            </span>{<span class="w"></span>
+<span class="w">                </span><span class="py">words</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;*spork*&quot;</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="py">reason</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                Sporks are a secret type of silverware. We can&#39;t let the rest of the world know about them.</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="w"></span>
+<span class="w">            </span>}<span class="w"></span>
+<span class="w">        </span>]<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="check-that-models-use-a-trait-at-least-once">
+<h2>Check that models use a trait at least once<a class="headerlink" href="#check-that-models-use-a-trait-at-least-once" title="Permalink to this headline">#</a></h2>
+<p>The built-in <code class="docutils literal notranslate"><span class="pre">EmitNoneSelector</span></code> can be used to ensure at least one instance
+of a trait is found in a model. The following example checks that at least
+one usage of the <code class="docutils literal notranslate"><span class="pre">&#64;length</span></code> trait is found within models in the <code class="docutils literal notranslate"><span class="pre">com.example</span>
+<span class="pre">.weather</span></code> namespace.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitNoneSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NoInstancesOfLengthTrait&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;No instances of the length trait were found.&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="s2">&quot;namespace&quot;</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;com.example.weather&quot;</span>]<span class="w"></span>
+<span class="w">    </span><span class="s2">&quot;configuration&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="s2">&quot;selector&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|length]&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">It is usually concerning if a model does not use common constraint traits
+such as <code class="docutils literal notranslate"><span class="pre">&#64;range</span></code>, <code class="docutils literal notranslate"><span class="pre">&#64;pattern</span></code>, or <code class="docutils literal notranslate"><span class="pre">&#64;length</span></code> at all.</p>
+</div>
+</div>
+<div class="section" id="exceptions-thrown-from-operations-must-have-an-httperror-trait">
+<h2>Exceptions thrown from operations must have an <code class="docutils literal notranslate"><span class="pre">&#64;httpError</span></code> trait<a class="headerlink" href="#exceptions-thrown-from-operations-must-have-an-httperror-trait" title="Permalink to this headline">#</a></h2>
+<p>This example shows how to enforce that all errors bound to an operation have
+an <code class="docutils literal notranslate"><span class="pre">&#64;httpError</span></code> trait (and therefore <code class="docutils literal notranslate"><span class="pre">httpError</span></code> code) defined.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ErrorHasHttpErrorTrait&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        `@{id|name}` is bound as an error but does not have the `@@httpErrorTrait`. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        Apply the `@@httpErrorTrait` to this shape.</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation -[error]-&gt; :not([trait|httpError])&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This example only makes sense for services using an http protocol.</p>
+</div>
+</div>
+<div class="section" id="prefix-headers-with-x">
+<h2>Prefix headers with X-<a class="headerlink" href="#prefix-headers-with-x" title="Permalink to this headline">#</a></h2>
+<p>Case insensitive check for &quot;X-&quot; prefix on all custom <code class="docutils literal notranslate"><span class="pre">&#64;httpHeaders</span></code> used in your
+model.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CustomHeadersHaveXDashPrefix&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            @{id|name} applies the `@@httpHeader` with a custom header value of `@{trait|httpHeader}` that does not begin with `x-`.</span>
+<span class="s2">            Custom headers should be prefixed with `x-`.</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|httpHeader]:not([trait|httpHeader^=&#39;x-&#39; i])&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This example only makes sense for services using an http protocol.</p>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">If you prefer to not prefix custom headers with &quot;X-&quot; then you can flip the logic of this validator by changing the
+selector to <code class="docutils literal notranslate"><span class="pre">[trait|httpHeader^=&quot;x-&quot;</span> <span class="pre">i]</span></code></p>
+</div>
+</div>
+<div class="section" id="lifecycle-operation-naming">
+<h2>Lifecycle operation naming<a class="headerlink" href="#lifecycle-operation-naming" title="Permalink to this headline">#</a></h2>
+<p>Checks that operation names match with the lifecycle (CRUD) operations they
+are bound to. This example shows how to check that the operation shape bound
+to the &quot;create&quot; lifecycle operation prefixed with &quot;create&quot; (case insensitive).</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LifecycleCreateName&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        Operation `@{id|name}` is bound to Lifecycle operation &#39;create&#39; on resource @{var|resource}. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        `Create` operation names should begin with &#39;Create&#39;. Did you mean `Create@{id|name}`?</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;$resource(*) -[create]-&gt; :not([id|name^=Create i])&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="prefer-binding-operations-to-resource-over-binding-directly-to-a-service">
+<h2>Prefer binding operations to resource over binding directly to a service<a class="headerlink" href="#prefer-binding-operations-to-resource-over-binding-directly-to-a-service" title="Permalink to this headline">#</a></h2>
+<p>While it is occasionally necessary to bind operations directly to a service,
+in most cases it is preferable to bind operations to a resource over binding
+to the service directly. The example below shows how to validate that
+operations are bound to resources and not to the service.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PreferResourceBindingOverServiceBinding&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;WARNING&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            Operation @{id|name} is bound directly to the service @{var|target|id|name}. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">            Consider binding this operation to a resource instead.</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;$target(service) ${target} &gt; operation&quot;</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+</div>
+</div>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="evolving-models.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Evolving Models</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="model-linters.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Model linters</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Amazon Web Services
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Model Validation Examples</a><ul>
+<li><a class="reference internal" href="#suppress-a-validator-for-a-single-shape-or-member">Suppress a validator for a single shape or member</a></li>
+<li><a class="reference internal" href="#suppress-a-validator-for-a-namespace">Suppress a validator for a namespace</a></li>
+<li><a class="reference internal" href="#execute-validator-for-all-shapes-matching-selector">Execute validator for all shapes matching selector</a></li>
+<li><a class="reference internal" href="#ignore-built-in-validator-for-multiple-namespaces">Ignore built-in validator for multiple namespaces</a></li>
+<li><a class="reference internal" href="#ignore-validator-for-specific-shape-id">Ignore validator for specific shape id</a></li>
+<li><a class="reference internal" href="#set-a-custom-severity-for-built-in-validator">Set a custom severity for built-in validator</a></li>
+<li><a class="reference internal" href="#common-suffix-on-all-operation-inputs">Common suffix on all operation inputs</a></li>
+<li><a class="reference internal" href="#common-suffix-on-all-operation-outputs">Common suffix on all operation outputs</a></li>
+<li><a class="reference internal" href="#common-suffix-on-all-error-shapes">Common suffix on all error shapes</a></li>
+<li><a class="reference internal" href="#forbid-prefix-on-shape-members">Forbid prefix on shape members</a></li>
+<li><a class="reference internal" href="#require-integers-to-have-a-range-constraint">Require integers to have a <code class="docutils literal notranslate"><span class="pre">&#64;range</span></code> constraint</a></li>
+<li><a class="reference internal" href="#require-lists-to-have-an-length-constraint">Require lists to have an <code class="docutils literal notranslate"><span class="pre">&#64;length</span></code> constraint</a></li>
+<li><a class="reference internal" href="#require-strings-to-have-a-pattern-constraint">Require strings to have a <code class="docutils literal notranslate"><span class="pre">&#64;pattern</span></code> constraint</a></li>
+<li><a class="reference internal" href="#require-externaldocumentation-trait-to-provide-a-homepage-entry">Require <code class="docutils literal notranslate"><span class="pre">&#64;externalDocumentation</span></code> trait to provide a homepage entry</a></li>
+<li><a class="reference internal" href="#limit-shape-name-length">Limit shape name length</a></li>
+<li><a class="reference internal" href="#limit-nesting-depth-of-input-and-output-shape-members">Limit nesting depth of input and output shape members</a></li>
+<li><a class="reference internal" href="#operations-should-have-documentation">Operations should have documentation</a></li>
+<li><a class="reference internal" href="#examples-on-all-operations">Examples on all operations</a></li>
+<li><a class="reference internal" href="#operations-should-have-common-exception">Operations should have common exception</a></li>
+<li><a class="reference internal" href="#operations-should-use-common-mixin">Operations should use common mixin</a></li>
+<li><a class="reference internal" href="#check-that-models-do-not-use-an-internal-name">Check that models do not use an internal name</a></li>
+<li><a class="reference internal" href="#check-that-models-use-a-trait-at-least-once">Check that models use a trait at least once</a></li>
+<li><a class="reference internal" href="#exceptions-thrown-from-operations-must-have-an-httperror-trait">Exceptions thrown from operations must have an <code class="docutils literal notranslate"><span class="pre">&#64;httpError</span></code> trait</a></li>
+<li><a class="reference internal" href="#prefix-headers-with-x">Prefix headers with X-</a></li>
+<li><a class="reference internal" href="#lifecycle-operation-naming">Lifecycle operation naming</a></li>
+<li><a class="reference internal" href="#prefer-binding-operations-to-resource-over-binding-directly-to-a-service">Prefer binding operations to resource over binding directly to a service</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/scripts/furo.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/tabs.js"></script>
+    </body>
+</html>

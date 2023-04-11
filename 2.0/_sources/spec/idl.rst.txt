@@ -102,7 +102,7 @@ string support defined in :rfc:`7405`.
     SP   :1*(%x20 / %x09) ; one or more spaces or tabs
     NL   :%x0A / %x0D.0A ; Newline: \n and \r\n
     NotNL:%x09 / %x20-10FFFF ; Any character except newline
-    BR   :*`SP` 1*(`Comment` / `NL`) [`WS`]; line break followed by whitespace
+    BR   :[`SP`] 1*(`Comment` / `NL`) [`WS`]; line break followed by whitespace
 
 .. rubric:: Comments
 
@@ -115,13 +115,13 @@ string support defined in :rfc:`7405`.
 
 .. productionlist:: smithy
     ControlSection   :*(`ControlStatement`)
-    ControlStatement :"$" `NodeObjectKey` *`SP` ":" *`SP` `NodeValue` `BR`
+    ControlStatement :"$" `NodeObjectKey` [`SP`] ":" [`SP`] `NodeValue` `BR`
 
 .. rubric:: Metadata
 
 .. productionlist:: smithy
     MetadataSection   :*(`MetadataStatement`)
-    MetadataStatement :%s"metadata" `SP` `NodeObjectKey` *`SP` "=" *`SP` `NodeValue` `BR`
+    MetadataStatement :%s"metadata" `SP` `NodeObjectKey` [`SP`] "=" [`SP`] `NodeValue` `BR`
 
 .. rubric:: Node values
 
@@ -160,7 +160,7 @@ string support defined in :rfc:`7405`.
     UnicodeEscape       :%s"u" `Hex` `Hex` `Hex` `Hex`
     Hex                 :DIGIT / %x41-46 / %x61-66
     Escape              :%x5C ; backslash
-    TextBlock           :`ThreeDquotes` *`SP` `NL` *`TextBlockContent` `ThreeDquotes`
+    TextBlock           :`ThreeDquotes` [`SP`] `NL` *`TextBlockContent` `ThreeDquotes`
     TextBlockContent    :`QuotedChar` / (1*2DQUOTE 1*`QuotedChar`)
     ThreeDquotes        :DQUOTE DQUOTE DQUOTE
 
@@ -188,30 +188,30 @@ string support defined in :rfc:`7405`.
                             :/ %s"byte" / %s"short" / %s"integer" / %s"long"
                             :/ %s"float" / %s"double" / %s"bigInteger"
                             :/ %s"bigDecimal" / %s"timestamp"
-    Mixins                  :*`SP` %s"with" [`WS`] "[" 1*([`WS`] `ShapeId`) [`WS`] "]"
+    Mixins                  :[`SP`] %s"with" [`WS`] "[" 1*([`WS`] `ShapeId`) [`WS`] "]"
     EnumShapeStatement      :`EnumTypeName` `SP` `Identifier` [`Mixins`] [`WS`] `EnumShapeMembers`
     EnumTypeName            :%s"enum" / %s"intEnum"
     EnumShapeMembers        :"{" [`WS`] 1*(`TraitStatements` `Identifier` [`ValueAssignment`] [`WS`]) "}"
-    ValueAssignment         :*`SP` "=" *`SP` `NodeValue` `BR`
+    ValueAssignment         :[`SP`] "=" [`SP`] `NodeValue` `BR`
     ListStatement           :%s"list" `SP` `Identifier` [`Mixins`] [`WS`] `ListMembers`
     ListMembers             :"{" [`WS`] [`ListMember`] [`WS`] "}"
     ListMember              :`TraitStatements` (`ElidedListMember` / `ExplicitListMember`)
     ElidedListMember        :%s"$member"
-    ExplicitListMember      :%s"member" *`SP` ":" *`SP` `ShapeId`
+    ExplicitListMember      :%s"member" [`SP`] ":" [`SP`] `ShapeId`
     MapStatement            :%s"map" `SP` `Identifier` [`Mixins`] [`WS`] `MapMembers`
     MapMembers              :"{" [`WS`] [`MapKey` / `MapValue` / (`MapKey` `WS` `MapValue`)] [`WS`] "}"
     MapKey                  :`TraitStatements` (`ElidedMapKey` / `ExplicitMapKey`)
     MapValue                :`TraitStatements` (`ElidedMapValue` / `ExplicitMapValue`)
     ElidedMapKey            :%s"$key"
-    ExplicitMapKey          :%s"key" *`SP` ":" *`SP` `ShapeId`
+    ExplicitMapKey          :%s"key" [`SP`] ":" [`SP`] `ShapeId`
     ElidedMapValue          :%s"$value"
-    ExplicitMapValue        :%s"value" *`SP` ":" *`SP` `ShapeId`
+    ExplicitMapValue        :%s"value" [`SP`] ":" [`SP`] `ShapeId`
     StructureStatement      :%s"structure" `SP` `Identifier` [`StructureResource`]
                             :        [`Mixins`] [`WS`] `StructureMembers`
     StructureResource       :`SP` %s"for" `SP` `ShapeId`
     StructureMembers        :"{" [`WS`] *(`TraitStatements` `StructureMember` [`WS`]) "}"
     StructureMember         :(`ExplicitStructureMember` / `ElidedStructureMember`) [`ValueAssignment`]
-    ExplicitStructureMember :`Identifier` *`SP` ":" *`SP` `ShapeId`
+    ExplicitStructureMember :`Identifier` [`SP`] ":" [`SP`] `ShapeId`
     ElidedStructureMember   :"$" `Identifier`
     UnionStatement          :%s"union" `SP` `Identifier` [`Mixins`] [`WS`] `UnionMembers`
     UnionMembers            :"{" [`WS`] *(`TraitStatements` `UnionMember` [`WS`]) "}"
