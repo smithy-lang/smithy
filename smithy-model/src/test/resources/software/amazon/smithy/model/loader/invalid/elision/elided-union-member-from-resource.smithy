@@ -1,4 +1,4 @@
-// Parse error at line 12, column 15 near `for`: Expected: '{', but found 'f'
+// Syntax error at line 12, column 15: Expected LBRACE('{') but found IDENTIFIER('for') | Model
 $version: "2.0"
 
 namespace smithy.example

@@ -1,4 +1,4 @@
-// Parse error at line 5, column 10 near `\n`: Unexpected shape type: stringFoo | Model
+// Syntax error at line 5, column 1: Unknown shape type: stringFoo | Model
 $version: "2.0"
 namespace smithy.example
 

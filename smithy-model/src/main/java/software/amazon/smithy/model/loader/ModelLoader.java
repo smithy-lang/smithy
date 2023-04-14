@@ -21,6 +21,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.SourceException;
@@ -61,14 +62,15 @@ final class ModelLoader {
             Map<String, Object> properties,
             String filename,
             Consumer<LoadOperation> operationConsumer,
-            Supplier<InputStream> contentSupplier
+            Supplier<InputStream> contentSupplier,
+            Function<CharSequence, String> stringTable
     ) {
         try (InputStream inputStream = contentSupplier.get()) {
             if (filename.endsWith(".smithy")) {
                 String contents = IoUtils.toUtf8String(inputStream);
-                new IdlModelParser(filename, contents).parse(operationConsumer);
+                new IdlModelLoader(filename, contents, stringTable).parse(operationConsumer);
             } else if (filename.endsWith(".jar")) {
-                loadJar(traitFactory, properties, filename, operationConsumer);
+                loadJar(traitFactory, properties, filename, operationConsumer, stringTable);
             } else if (filename.endsWith(".json") || filename.equals(SourceLocation.NONE.getFilename())) {
                 // Assume it's JSON if there's a N/A filename.
                 loadParsedNode(Node.parse(inputStream, filename), operationConsumer);
@@ -104,7 +106,8 @@ final class ModelLoader {
             TraitFactory traitFactory,
             Map<String, Object> properties,
             String filename,
-            Consumer<LoadOperation> operationConsumer
+            Consumer<LoadOperation> operationConsumer,
+            Function<CharSequence, String> stringTable
     ) {
         URL manifestUrl = ModelDiscovery.createSmithyJarManifestUrl(filename);
         LOGGER.fine(() -> "Loading Smithy model imports from JAR: " + manifestUrl);
@@ -123,7 +126,7 @@ final class ModelLoader {
                     } catch (IOException e) {
                         throw throwIoJarException(model, e);
                     }
-                });
+                }, stringTable);
             } catch (IOException e) {
                 throw throwIoJarException(model, e);
             }

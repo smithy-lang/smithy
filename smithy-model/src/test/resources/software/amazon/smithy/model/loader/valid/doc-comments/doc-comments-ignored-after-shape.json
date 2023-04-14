@@ -4,6 +4,7 @@
         "smithy.example#Features": {
             "type": "string",
             "traits": {
+                "smithy.api#documentation": "Hello",
                 "smithy.api#enum": [
                     {
                         "name": "X",

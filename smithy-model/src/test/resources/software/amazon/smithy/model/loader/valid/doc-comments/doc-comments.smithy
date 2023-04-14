@@ -14,7 +14,7 @@ string MyString
 /// Structure
 structure MyStructure {
     /// Docs on member!
-    foo: String,
+    foo: String = "hi",
 
     /// Docs on another member!
     @required

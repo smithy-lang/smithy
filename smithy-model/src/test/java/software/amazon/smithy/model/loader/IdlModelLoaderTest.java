@@ -17,7 +17,6 @@ package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
@@ -35,6 +34,7 @@ import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
@@ -158,7 +158,7 @@ public class IdlModelLoaderTest {
             Model.assembler().addUnparsedModel("/foo.smithy", nodeBuilder.toString()).assemble().unwrap();
         });
 
-        assertThat(e.getMessage(), containsString("Parser exceeded the maximum allowed depth of"));
+        assertThat(e.getMessage(), containsString("Parser exceeded maximum allowed depth of"));
     }
 
     @Test
@@ -285,7 +285,7 @@ public class IdlModelLoaderTest {
     @Test
     public void emitsVersionWhenNotSet() {
         List<LoadOperation> operations = new ArrayList<>();
-        IdlModelParser parser = new IdlModelParser("foo.smithy", "namespace smithy.example\n");
+        IdlModelLoader parser = new IdlModelLoader("foo.smithy", "namespace smithy.example\n", CharSequence::toString);
         parser.parse(operations::add);
 
         assertThat(operations, hasSize(1));
@@ -312,5 +312,31 @@ public class IdlModelLoaderTest {
 
         StringShape stringShape = model.expectShape(ShapeId.from("smithy.example#MyString"), StringShape.class);
         assertEquals(0, stringShape.getAllTraits().size());
+    }
+
+    @Test
+    public void setsCorrectLocationForEnum() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("valid/enums/enums.smithy"))
+                .addImport(getClass().getResource("valid/enums/enum-docs.smithy"))
+                .assemble()
+                .unwrap();
+
+        EnumShape enumWithoutValueTraits = model.expectShape(ShapeId.from("smithy.example#EnumWithoutValueTraits"),
+                                                             EnumShape.class);
+        MemberShape barMember = enumWithoutValueTraits.getMember("BAR").orElseThrow(AssertionFailedError::new);
+
+        assertThat(enumWithoutValueTraits.getSourceLocation().getLine(), is(5));
+        assertThat(enumWithoutValueTraits.getSourceLocation().getColumn(), is(1));
+        assertThat(barMember.getSourceLocation().getLine(), is(7));
+        assertThat(barMember.getSourceLocation().getColumn(), is(5));
+
+        EnumShape foo = model.expectShape(ShapeId.from("smithy.example#Foo"), EnumShape.class);
+        MemberShape fooBarMember = foo.getMember("BAR").orElseThrow(AssertionFailedError::new);
+
+        assertThat(foo.getSourceLocation().getLine(), is(5));
+        assertThat(foo.getSourceLocation().getColumn(), is(1));
+        assertThat(fooBarMember.getSourceLocation().getLine(), is(7));
+        assertThat(fooBarMember.getSourceLocation().getColumn(), is(5));
     }
 }

@@ -1,5 +1,5 @@
 {
-    "smithy": "1.0",
+    "smithy": "2.0",
     "shapes": {
         "smithy.example#NotDocumented": {
             "type": "string"
@@ -16,7 +16,8 @@
                 "foo": {
                     "target": "smithy.api#String",
                     "traits": {
-                        "smithy.api#documentation": "Docs on member!"
+                        "smithy.api#documentation": "Docs on member!",
+                        "smithy.api#default": "hi"
                     }
                 },
                 "baz": {

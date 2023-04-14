@@ -6,6 +6,7 @@
 $version: "2.0"
 namespace smithy.example
 
+/// Hello
 @enum([
     /// Invalid!
     { name: "X", value: "X"}
