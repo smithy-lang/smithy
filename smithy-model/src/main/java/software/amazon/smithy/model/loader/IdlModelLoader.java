@@ -232,44 +232,48 @@ final class IdlModelLoader {
         Set<CharSequence> definedKeys = new HashSet<>();
 
         while (tokenizer.getCurrentToken() == IdlToken.DOLLAR) {
-            tokenizer.next();
-            tokenizer.expect(IdlToken.IDENTIFIER, IdlToken.STRING);
-            String key = tokenizer.internString(tokenizer.getCurrentTokenStringSlice());
+            try {
+                tokenizer.next();
+                tokenizer.expect(IdlToken.IDENTIFIER, IdlToken.STRING);
+                String key = tokenizer.internString(tokenizer.getCurrentTokenStringSlice());
 
-            tokenizer.next();
-            tokenizer.skipSpaces();
-            tokenizer.expect(IdlToken.COLON);
-            tokenizer.next();
-            tokenizer.skipSpaces();
+                tokenizer.next();
+                tokenizer.skipSpaces();
+                tokenizer.expect(IdlToken.COLON);
+                tokenizer.next();
+                tokenizer.skipSpaces();
 
-            if (!definedKeys.add(key)) {
-                throw syntax(format("Duplicate control statement `%s`", key));
+                if (!definedKeys.add(key)) {
+                    throw syntax(format("Duplicate control statement `%s`", key));
+                }
+
+                Node value = IdlNodeParser.expectAndSkipNode(tokenizer, resolver);
+
+                switch (key) {
+                    case "version":
+                        onVersion(value);
+                        break;
+                    case "operationInputSuffix":
+                        operationInputSuffix = value.expectStringNode().getValue();
+                        break;
+                    case "operationOutputSuffix":
+                        operationOutputSuffix = value.expectStringNode().getValue();
+                        break;
+                    default:
+                        emit(ValidationEvent.builder()
+                                     .id(Validator.MODEL_ERROR)
+                                     .sourceLocation(value)
+                                     .severity(Severity.WARNING)
+                                     .message(format("Unknown control statement `%s` with value `%s",
+                                                     key, Node.printJson(value)))
+                                     .build());
+                        break;
+                }
+
+                tokenizer.expectAndSkipBr();
+            } catch (ModelSyntaxException e) {
+                errorRecovery(e);
             }
-
-            Node value = IdlNodeParser.expectAndSkipNode(tokenizer, resolver);
-
-            switch (key) {
-                case "version":
-                    onVersion(value);
-                    break;
-                case "operationInputSuffix":
-                    operationInputSuffix = value.expectStringNode().getValue();
-                    break;
-                case "operationOutputSuffix":
-                    operationOutputSuffix = value.expectStringNode().getValue();
-                    break;
-                default:
-                    emit(ValidationEvent.builder()
-                                 .id(Validator.MODEL_ERROR)
-                                 .sourceLocation(value)
-                                 .severity(Severity.WARNING)
-                                 .message(format("Unknown control statement `%s` with value `%s",
-                                                 key, Node.printJson(value)))
-                                 .build());
-                    break;
-            }
-
-            tokenizer.expectAndSkipBr();
         }
     }
 
@@ -293,19 +297,23 @@ final class IdlModelLoader {
 
     private void parseMetadataSection() {
         while (tokenizer.doesCurrentIdentifierStartWith('m')) {
-            tokenizer.expectCurrentLexeme("metadata");
-            tokenizer.next(); // skip "metadata"
-            tokenizer.expectAndSkipSpaces();
-            tokenizer.expect(IdlToken.IDENTIFIER, IdlToken.STRING);
-            String key = tokenizer.internString(tokenizer.getCurrentTokenStringSlice());
-            tokenizer.next();
-            tokenizer.skipSpaces();
-            tokenizer.expect(IdlToken.EQUAL);
-            tokenizer.next();
-            tokenizer.skipSpaces();
-            Node value = IdlNodeParser.expectAndSkipNode(tokenizer, resolver);
-            operations.accept(new LoadOperation.PutMetadata(modelVersion, key, value));
-            tokenizer.expectAndSkipBr();
+            try {
+                tokenizer.expectCurrentLexeme("metadata");
+                tokenizer.next(); // skip "metadata"
+                tokenizer.expectAndSkipSpaces();
+                tokenizer.expect(IdlToken.IDENTIFIER, IdlToken.STRING);
+                String key = tokenizer.internString(tokenizer.getCurrentTokenStringSlice());
+                tokenizer.next();
+                tokenizer.skipSpaces();
+                tokenizer.expect(IdlToken.EQUAL);
+                tokenizer.next();
+                tokenizer.skipSpaces();
+                Node value = IdlNodeParser.expectAndSkipNode(tokenizer, resolver);
+                operations.accept(new LoadOperation.PutMetadata(modelVersion, key, value));
+                tokenizer.expectAndSkipBr();
+            } catch (ModelSyntaxException e) {
+                errorRecovery(e);
+            }
         }
     }
 
@@ -415,48 +423,89 @@ final class IdlModelLoader {
 
     private void parseFirstShapeStatement(SourceLocation possibleDocCommentLocation) {
         if (tokenizer.getCurrentToken() != IdlToken.EOF) {
-            if (tokenizer.doesCurrentIdentifierStartWith('a')) {
-                parseApplyStatement();
-            } else {
-                List<IdlTraitParser.Result> traits;
-                boolean hasDocComment = tokenizer.getCurrentToken() == IdlToken.DOC_COMMENT;
-
-                if (possibleDocCommentLocation == null) {
-                    traits = IdlTraitParser.parseDocsAndTraitsBeforeShape(tokenizer, resolver);
+            try {
+                if (tokenizer.doesCurrentIdentifierStartWith('a')) {
+                    parseApplyStatement();
                 } else {
-                    // In this case, this is the first shape encountered for a model file that doesn't have any
-                    // use statements. We need to take the previously skipped documentation comments to parse
-                    // potential use statements and apply them to this first shape.
-                    String docLines = tokenizer.removePendingDocCommentLines();
-                    traits = IdlTraitParser.parseDocsAndTraitsBeforeShape(tokenizer, resolver);
-                    // Note that possibleDocCommentLocation is just a mark of where docs _could be_.
-                    if (docLines != null) {
-                        hasDocComment = true;
-                        traits.add(new IdlTraitParser.Result(DocumentationTrait.ID.toString(),
-                                                             new StringNode(docLines, possibleDocCommentLocation),
-                                                             IdlTraitParser.TraitType.DOC_COMMENT));
+                    List<IdlTraitParser.Result> traits;
+                    boolean hasDocComment = tokenizer.getCurrentToken() == IdlToken.DOC_COMMENT;
+
+                    if (possibleDocCommentLocation == null) {
+                        traits = IdlTraitParser.parseDocsAndTraitsBeforeShape(tokenizer, resolver);
+                    } else {
+                        // In this case, this is the first shape encountered for a model file that doesn't have any
+                        // use statements. We need to take the previously skipped documentation comments to parse
+                        // potential use statements and apply them to this first shape.
+                        String docLines = tokenizer.removePendingDocCommentLines();
+                        traits = IdlTraitParser.parseDocsAndTraitsBeforeShape(tokenizer, resolver);
+                        // Note that possibleDocCommentLocation is just a mark of where docs _could be_.
+                        if (docLines != null) {
+                            hasDocComment = true;
+                            traits.add(new IdlTraitParser.Result(DocumentationTrait.ID.toString(),
+                                                                 new StringNode(docLines, possibleDocCommentLocation),
+                                                                 IdlTraitParser.TraitType.DOC_COMMENT));
+                        }
+                    }
+
+                    if (parseShapeDefinition(traits, hasDocComment)) {
+                        parseShape(traits);
                     }
                 }
-
-                if (parseShapeDefinition(traits, hasDocComment)) {
-                    parseShape(traits);
-                }
+            } catch (ModelSyntaxException e) {
+                errorRecovery(e);
             }
         }
     }
 
     private void parseSubsequentShapeStatements() {
-        while (tokenizer.getCurrentToken() != IdlToken.EOF) {
-            if (tokenizer.doesCurrentIdentifierStartWith('a')) {
-                parseApplyStatement();
-            } else {
-                List<IdlTraitParser.Result> traits;
-                boolean hasDocComment = tokenizer.getCurrentToken() == IdlToken.DOC_COMMENT;
-                traits = IdlTraitParser.parseDocsAndTraitsBeforeShape(tokenizer, resolver);
-                if (parseShapeDefinition(traits, hasDocComment)) {
-                    parseShape(traits);
+        while (tokenizer.hasNext()) {
+            try {
+                if (tokenizer.doesCurrentIdentifierStartWith('a')) {
+                    parseApplyStatement();
+                } else {
+                    List<IdlTraitParser.Result> traits;
+                    boolean hasDocComment = tokenizer.getCurrentToken() == IdlToken.DOC_COMMENT;
+                    traits = IdlTraitParser.parseDocsAndTraitsBeforeShape(tokenizer, resolver);
+                    if (parseShapeDefinition(traits, hasDocComment)) {
+                        parseShape(traits);
+                    }
                 }
+            } catch (ModelSyntaxException e) {
+                errorRecovery(e);
             }
+        }
+    }
+
+    private void errorRecovery(ModelSyntaxException e) {
+        if (!tokenizer.hasNext()) {
+            throw e;
+        }
+
+        // Here we do rudimentary error recovery to attempt to make sense of the remaining model.
+        // We do this by scanning tokens until we find the next "$", identifier, docs, or trait at the start of a line.
+        // The model is still invalid and will fail to validate, but things like IDEs should still be able to do
+        // things like goto definition.
+        emit(ValidationEvent.fromSourceException(e));
+
+        do {
+            // Always skip the current token since it was the one that failed.
+            IdlToken token = tokenizer.next();
+            if (tokenizer.getCurrentTokenColumn() == 1 && isErrorRecoveryToken(token)) {
+                break;
+            }
+        } while (tokenizer.hasNext());
+    }
+
+    // These tokens are good signals that the next shape is starting.
+    private boolean isErrorRecoveryToken(IdlToken token) {
+        switch (token) {
+            case IDENTIFIER:
+            case DOC_COMMENT:
+            case AT:
+            case DOLLAR:
+                return true;
+            default:
+                return false;
         }
     }
 
