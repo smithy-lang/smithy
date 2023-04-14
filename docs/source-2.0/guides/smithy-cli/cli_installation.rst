@@ -44,7 +44,7 @@ Releases of the Smithy CLI can be found on the `Smithy GitHub releases`_ page.
         .. code-block:: sh
             :caption: /bin/sh
 
-            $ brew tap aws/tap && brew install smithy-cli
+            brew tap aws/tap && brew install smithy-cli
 
         After the install completes, you may run ``smithy --help`` to verify
         your installation.
@@ -58,7 +58,7 @@ Releases of the Smithy CLI can be found on the `Smithy GitHub releases`_ page.
             :caption: /bin/sh
             :substitutions:
 
-            $ mkdir -p smithy-install/smithy && \
+            mkdir -p smithy-install/smithy && \
                 curl -L |release-uri|/|mac-tar| -o smithy-install/|mac-tar| && \
                 tar xvzf smithy-install/|mac-tar| -C smithy-install/smithy
 
@@ -74,7 +74,7 @@ Releases of the Smithy CLI can be found on the `Smithy GitHub releases`_ page.
         .. code-block:: sh
             :caption: /bin/sh
 
-            $ sudo smithy-install/smithy/install
+            sudo smithy-install/smithy/install
 
         .. note::
             |install-note|
@@ -86,7 +86,7 @@ Releases of the Smithy CLI can be found on the `Smithy GitHub releases`_ page.
         .. code-block:: sh
             :caption: /bin/sh
 
-            $ rm -rf smithy-install/
+            rm -rf smithy-install/
 
 
     .. tab:: Manual (ARM)
@@ -98,7 +98,7 @@ Releases of the Smithy CLI can be found on the `Smithy GitHub releases`_ page.
             :caption: /bin/sh
             :substitutions:
 
-            $ mkdir -p smithy-install/smithy && \
+            mkdir -p smithy-install/smithy && \
                 curl -L |release-uri|/|mac-arm-tar| -o smithy-install/|mac-arm-tar| && \
                 tar xvzf smithy-install/|mac-arm-tar| -C smithy-install/smithy
 
@@ -114,7 +114,7 @@ Releases of the Smithy CLI can be found on the `Smithy GitHub releases`_ page.
         .. code-block:: sh
             :caption: /bin/sh
 
-            $ sudo smithy-install/smithy/install
+            sudo smithy-install/smithy/install
 
         .. note::
             |install-note|
@@ -126,7 +126,7 @@ Releases of the Smithy CLI can be found on the `Smithy GitHub releases`_ page.
         .. code-block:: sh
             :caption: /bin/sh
 
-            $ rm -rf smithy-install/
+            rm -rf smithy-install/
 
 
 .. tab:: Linux
@@ -140,7 +140,7 @@ Releases of the Smithy CLI can be found on the `Smithy GitHub releases`_ page.
             :caption: /bin/sh
             :substitutions:
 
-            $ mkdir -p smithy-install/smithy && \
+            mkdir -p smithy-install/smithy && \
                 curl -L |release-uri|/|linux-tar| -o smithy-install/|linux-tar| && \
                 tar xvzf smithy-install/|linux-tar| -C smithy-install/smithy
 
@@ -156,7 +156,7 @@ Releases of the Smithy CLI can be found on the `Smithy GitHub releases`_ page.
         .. code-block:: sh
             :caption: /bin/sh
 
-            $ sudo smithy-install/smithy/install
+            sudo smithy-install/smithy/install
 
         .. note::
             |install-note|
@@ -168,7 +168,7 @@ Releases of the Smithy CLI can be found on the `Smithy GitHub releases`_ page.
         .. code-block:: sh
             :caption: /bin/sh
 
-            $ rm -rf smithy-install/
+            rm -rf smithy-install/
 
     .. tab:: Manual (ARM)
 
@@ -179,7 +179,7 @@ Releases of the Smithy CLI can be found on the `Smithy GitHub releases`_ page.
             :caption: /bin/sh
             :substitutions:
 
-            $ mkdir -p smithy-install/smithy && \
+            mkdir -p smithy-install/smithy && \
                 curl -L |release-uri|/|linux-arm-tar| -o smithy-install/|linux-arm-tar| && \
                 tar xvzf smithy-install/|linux-arm-tar| -C smithy-install/smithy
 
@@ -195,7 +195,7 @@ Releases of the Smithy CLI can be found on the `Smithy GitHub releases`_ page.
         .. code-block:: sh
             :caption: /bin/sh
 
-            $ sudo smithy-install/smithy/install
+            sudo smithy-install/smithy/install
 
         .. note::
             |install-note|
@@ -207,7 +207,7 @@ Releases of the Smithy CLI can be found on the `Smithy GitHub releases`_ page.
         .. code-block:: sh
             :caption: /bin/sh
 
-            $ rm -rf smithy-install/
+            rm -rf smithy-install/
 
 
 .. tab:: Windows
@@ -221,7 +221,7 @@ Releases of the Smithy CLI can be found on the `Smithy GitHub releases`_ page.
             :caption: powershell
             :substitutions:
 
-            PS > (mkdir smithy-install\smithy -Force) -and
+            (mkdir smithy-install\smithy -Force) -and
                 (wget |release-uri|/|windows-tar| -outfile smithy-install\|windows-tar|)
 
         .. seealso::
@@ -240,7 +240,7 @@ Releases of the Smithy CLI can be found on the `Smithy GitHub releases`_ page.
             :caption: powershell
             :substitutions:
 
-            PS > (tar -xf smithy-install\|windows-tar| -C smithy-install\smithy) -and
+            (tar -xf smithy-install\|windows-tar| -C smithy-install\smithy) -and
                 (smithy-install\smithy\install)
 
         Follow the installer prompts accordingly to complete the installation.
@@ -252,7 +252,7 @@ Releases of the Smithy CLI can be found on the `Smithy GitHub releases`_ page.
         .. code-block:: powershell
             :caption: powershell
 
-            PS > rm -r -force smithy-install\
+            rm -r -force smithy-install\
 
 .. important:: If the location where the CLI is installed is not captured in
     your `PATH` environment variable, you will have to run the executable with
@@ -288,7 +288,7 @@ We'll be using these to perform the verification.
             :caption: /bin/sh
             :substitutions:
 
-            $ curl -L '|release-uri|/|mac-tar|.{asc,sha256}' -o 'smithy-install/|mac-tar|.#1'
+            curl -L '|release-uri|/|mac-tar|.{asc,sha256}' -o 'smithy-install/|mac-tar|.#1'
 
         Verify the checksum of the tarball using the `sha256sum` utility.
 
@@ -296,7 +296,7 @@ We'll be using these to perform the verification.
             :caption: /bin/sh
             :substitutions:
 
-            $ (cd smithy-install && sha256sum -c |mac-tar|.sha256)
+            (cd smithy-install && sha256sum -c |mac-tar|.sha256)
 
         Now, retrieve the public PGP key from the `release`_, and import
         it into your key-chain.
@@ -305,7 +305,7 @@ We'll be using these to perform the verification.
             :caption: /bin/sh
             :substitutions:
 
-            $ curl -L |release-uri|/smithy.asc -o smithy-install/smithy.asc && \
+            curl -L |release-uri|/smithy.asc -o smithy-install/smithy.asc && \
                 gpg --import smithy-install/smithy.asc
 
         Finally, after importing the key, verify the signature of the
@@ -315,7 +315,7 @@ We'll be using these to perform the verification.
             :caption: /bin/sh
             :substitutions:
 
-            $ gpg --verify smithy-install/|mac-tar|.asc smithy-install/|mac-tar|
+            gpg --verify smithy-install/|mac-tar|.asc smithy-install/|mac-tar|
 
 
     .. tab:: Manual (ARM)
@@ -324,7 +324,7 @@ We'll be using these to perform the verification.
             :caption: /bin/sh
             :substitutions:
 
-            $ curl -L '|release-uri|/|mac-arm-tar|.{asc,sha256}' -o 'smithy-install/|mac-arm-tar|.#1'
+            curl -L '|release-uri|/|mac-arm-tar|.{asc,sha256}' -o 'smithy-install/|mac-arm-tar|.#1'
 
         Verify the checksum of the tarball using the `sha256sum` utility.
 
@@ -332,7 +332,7 @@ We'll be using these to perform the verification.
             :caption: /bin/sh
             :substitutions:
 
-            $ (cd smithy-install && sha256sum -c |mac-arm-tar|.sha256)
+            (cd smithy-install && sha256sum -c |mac-arm-tar|.sha256)
 
         Now, retrieve the public PGP key from the `release`_, and import
         it into your key-chain.
@@ -341,7 +341,7 @@ We'll be using these to perform the verification.
             :caption: /bin/sh
             :substitutions:
 
-            $ curl -L |release-uri|/smithy.asc -o smithy-install/smithy.asc && \
+            curl -L |release-uri|/smithy.asc -o smithy-install/smithy.asc && \
                 gpg --import smithy-install/smithy.asc
 
         Finally, after importing the key, verify the signature of the
@@ -351,7 +351,7 @@ We'll be using these to perform the verification.
             :caption: /bin/sh
             :substitutions:
 
-            $ gpg --verify smithy-install/|mac-arm-tar|.asc smithy-install/|mac-arm-tar|
+            gpg --verify smithy-install/|mac-arm-tar|.asc smithy-install/|mac-arm-tar|
 
 
 .. tab:: Linux
@@ -366,7 +366,7 @@ We'll be using these to perform the verification.
             :caption: /bin/sh
             :substitutions:
 
-            $ curl -L '|release-uri|/|linux-tar|.{asc,sha256}' -o 'smithy-install/|linux-tar|.#1'
+            curl -L '|release-uri|/|linux-tar|.{asc,sha256}' -o 'smithy-install/|linux-tar|.#1'
 
         Verify the checksum of the tarball using the `sha256sum` utility.
 
@@ -374,7 +374,7 @@ We'll be using these to perform the verification.
             :caption: /bin/sh
             :substitutions:
 
-            $ (cd smithy-install && sha256sum -c |linux-tar|.sha256)
+            (cd smithy-install && sha256sum -c |linux-tar|.sha256)
 
         Now, retrieve the public PGP key from the `release`_, and import
         it into your key-chain.
@@ -383,7 +383,7 @@ We'll be using these to perform the verification.
             :caption: /bin/sh
             :substitutions:
 
-            $ curl -L |release-uri|/smithy.asc -o smithy-install/smithy.asc && \
+            curl -L |release-uri|/smithy.asc -o smithy-install/smithy.asc && \
                 gpg --import smithy-install/smithy.asc
 
         Finally, after importing the key, verify the signature of the
@@ -393,7 +393,7 @@ We'll be using these to perform the verification.
             :caption: /bin/sh
             :substitutions:
 
-            $ gpg --verify smithy-install/|linux-tar|.asc smithy-install/|linux-tar|
+            gpg --verify smithy-install/|linux-tar|.asc smithy-install/|linux-tar|
 
 
     .. tab:: Manual (ARM)
@@ -402,7 +402,7 @@ We'll be using these to perform the verification.
             :caption: /bin/sh
             :substitutions:
 
-            $ curl -L '|release-uri|/|linux-arm-tar|.{asc,sha256}' -o 'smithy-install/|linux-arm-tar|.#1'
+            curl -L '|release-uri|/|linux-arm-tar|.{asc,sha256}' -o 'smithy-install/|linux-arm-tar|.#1'
 
         Verify the checksum of the tarball using the `sha256sum` utility.
 
@@ -410,7 +410,7 @@ We'll be using these to perform the verification.
             :caption: /bin/sh
             :substitutions:
 
-            $ (cd smithy-install && sha256sum -c |linux-arm-tar|.sha256)
+            (cd smithy-install && sha256sum -c |linux-arm-tar|.sha256)
 
         Now, retrieve the public PGP key from the `release`_, and import
         it into your key-chain.
@@ -419,7 +419,7 @@ We'll be using these to perform the verification.
             :caption: /bin/sh
             :substitutions:
 
-            $ curl -L |release-uri|/smithy.asc -o smithy-install/smithy.asc && \
+            curl -L |release-uri|/smithy.asc -o smithy-install/smithy.asc && \
                 gpg --import smithy-install/smithy.asc
 
         Finally, after importing the key, verify the signature of the
@@ -429,7 +429,7 @@ We'll be using these to perform the verification.
             :caption: /bin/sh
             :substitutions:
 
-            $ gpg --verify smithy-install/|linux-arm-tar|.asc smithy-install/|linux-arm-tar|
+            gpg --verify smithy-install/|linux-arm-tar|.asc smithy-install/|linux-arm-tar|
 
 
 .. tab:: Windows
@@ -444,7 +444,7 @@ We'll be using these to perform the verification.
             :caption: powershell
             :substitutions:
 
-            PS > (wget |release-uri|/|windows-tar|.asc -outfile smithy-install\|windows-tar|.asc) -and
+            (wget |release-uri|/|windows-tar|.asc -outfile smithy-install\|windows-tar|.asc) -and
                 (wget |release-uri|/|windows-tar|.sha256 -outfile smithy-install\|windows-tar|.sha256)
 
         Compute the actual checksum of the tarball using ``certutil``.
@@ -453,7 +453,7 @@ We'll be using these to perform the verification.
             :caption: powershell
             :substitutions:
 
-            PS > certutil -hashfile smithy-install\|windows-tar|.sha256 SHA256
+            certutil -hashfile smithy-install\|windows-tar|.sha256 SHA256
 
         Now, print out the expected checksum from the file that you
         downloaded (``.sha256``).
@@ -462,7 +462,7 @@ We'll be using these to perform the verification.
             :caption: powershell
             :substitutions:
 
-            PS > cat smithy-install\|windows-tar|.sha256
+            cat smithy-install\|windows-tar|.sha256
 
         Verify that the output from the two commands matches. There may be a
         file-path appended to the latter command output - you
@@ -474,7 +474,7 @@ We'll be using these to perform the verification.
             :caption: powershell
             :substitutions:
 
-            PS > (wget |release-uri|/smithy.asc -outfile smithy-install\smithy.asc) -and (gpg --import smithy-install\smithy.asc)
+            (wget |release-uri|/smithy.asc -outfile smithy-install\smithy.asc) -and (gpg --import smithy-install\smithy.asc)
 
         Finally, after importing the key, verify the signature of the
         tarball with gpg.
@@ -483,7 +483,7 @@ We'll be using these to perform the verification.
             :caption: powershell
             :substitutions:
 
-            PS > gpg --verify smithy-install\|windows-tar|.asc smithy-install\|windows-tar|
+            gpg --verify smithy-install\|windows-tar|.asc smithy-install\|windows-tar|
 
 .. warning:: Upon verifying the signature, you will receive a
     ``WARNING`` message:
