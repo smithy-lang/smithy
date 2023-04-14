@@ -18,6 +18,9 @@
                         "smithy.api#enumValue": "there"
                     }
                 }
+            },
+            "traits": {
+                "smithy.api#documentation": "Hello!"
             }
         }
     }

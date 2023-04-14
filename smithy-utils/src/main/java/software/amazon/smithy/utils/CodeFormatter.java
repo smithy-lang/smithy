@@ -91,7 +91,7 @@ final class CodeFormatter {
         void apply(Sink sink, AbstractCodeWriter<?> writer) throws IOException;
 
         // Writes literal segments of the input string.
-        static Operation stringSlice(String source, int start, int end) {
+        static Operation stringSlice(CharSequence source, int start, int end) {
             return (sink, writer) -> Sink.writeString(sink, source, start, end);
         }
 
@@ -432,7 +432,7 @@ final class CodeFormatter {
             } else {
                 // Output any pending captured text before the output of the expression.
                 if (pendingTextStart > -1) {
-                    pushOperation(Operation.stringSlice(parser.expression(), pendingTextStart, parser.position() - 1));
+                    pushOperation(Operation.stringSlice(parser.input(), pendingTextStart, parser.position() - 1));
                 }
                 pushOperation(parseNormalArgument());
             }
@@ -456,7 +456,7 @@ final class CodeFormatter {
                 parser.skip();
                 if (pendingTextStart > -1) {
                     while (startPosition > pendingTextStart
-                           && Character.isWhitespace(parser.expression().charAt(startPosition - 1))) {
+                           && Character.isWhitespace(parser.input().charAt(startPosition - 1))) {
                         startPosition--;
                     }
                 }
@@ -474,7 +474,7 @@ final class CodeFormatter {
 
             // Output any pending captured text before the output of the expression.
             if (pendingTextStart > -1) {
-                pushOperation(Operation.stringSlice(parser.expression(), pendingTextStart, startPosition));
+                pushOperation(Operation.stringSlice(parser.input(), pendingTextStart, startPosition));
             }
 
             Operation operation = parseNormalArgument();
@@ -583,16 +583,16 @@ final class CodeFormatter {
             if (parser.peek() != '\r' && parser.peek() != '\n' && parser.peek() != Character.MIN_VALUE) {
                 // If the expression is not followed directly by a newline, then all leading text.
                 if (pendingTextStart > -1) {
-                    pushOperation(Operation.stringSlice(parser.expression(), pendingTextStart, startPosition));
+                    pushOperation(Operation.stringSlice(parser.input(), pendingTextStart, startPosition));
                 }
             } else if (isAllLeadingWhitespaceOnLine(startPosition, startColumn)) {
                 if (pendingTextStart > -1) {
-                    pushOperation(Operation.stringSlice(parser.expression(), pendingTextStart,
+                    pushOperation(Operation.stringSlice(parser.input(), pendingTextStart,
                                                         startPosition - startColumn));
                 }
                 parser.skip();
             } else if (pendingTextStart > -1) {
-                pushOperation(Operation.stringSlice(parser.expression(), pendingTextStart, startPosition));
+                pushOperation(Operation.stringSlice(parser.input(), pendingTextStart, startPosition));
             }
         }
 

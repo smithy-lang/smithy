@@ -185,10 +185,10 @@ public final class EmitEachSelectorValidator extends AbstractValidator {
      * an {@link AttributeValue} and returns a String.
      */
     private static final class MessageTemplate {
-        private final String template;
-        private final List<Function<AttributeValue, String>> parts;
+        private final CharSequence template;
+        private final List<Function<AttributeValue, CharSequence>> parts;
 
-        private MessageTemplate(String template, List<Function<AttributeValue, String>> parts) {
+        private MessageTemplate(CharSequence template, List<Function<AttributeValue, CharSequence>> parts) {
             this.template = template;
             this.parts = parts;
         }
@@ -205,7 +205,7 @@ public final class EmitEachSelectorValidator extends AbstractValidator {
          */
         private String expand(AttributeValue value) {
             StringBuilder builder = new StringBuilder();
-            for (Function<AttributeValue, String> part : parts) {
+            for (Function<AttributeValue, CharSequence> part : parts) {
                 builder.append(part.apply(value));
             }
             return builder.toString();
@@ -213,7 +213,7 @@ public final class EmitEachSelectorValidator extends AbstractValidator {
 
         @Override
         public String toString() {
-            return template;
+            return template.toString();
         }
     }
 
@@ -225,7 +225,7 @@ public final class EmitEachSelectorValidator extends AbstractValidator {
      */
     private static final class MessageTemplateParser extends SimpleParser {
         private int mark = 0;
-        private final List<Function<AttributeValue, String>> parts = new ArrayList<>();
+        private final List<Function<AttributeValue, CharSequence>> parts = new ArrayList<>();
 
         private MessageTemplateParser(String expression) {
             super(expression);
@@ -250,7 +250,7 @@ public final class EmitEachSelectorValidator extends AbstractValidator {
             }
 
             addLiteralPartIfNecessary();
-            return new MessageTemplate(expression(), parts);
+            return new MessageTemplate(input(), parts);
         }
 
         @Override
@@ -260,8 +260,8 @@ public final class EmitEachSelectorValidator extends AbstractValidator {
         }
 
         private void addLiteralPartIfNecessary() {
-            String slice = sliceFrom(mark);
-            if (!slice.isEmpty()) {
+            CharSequence slice = borrowSliceFrom(mark);
+            if (slice.length() > 0) {
                 parts.add(ignoredAttribute -> slice);
             }
             mark = position();

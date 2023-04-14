@@ -1,4 +1,4 @@
-// Parse error at line 4, column 1 near `$v`: Expected a valid identifier character, but found '$'
+// Syntax error at line 4, column 1: Expected IDENTIFIER but found DOLLAR('$') | Model
 namespace foo.baz
 
 $version: "2.0"

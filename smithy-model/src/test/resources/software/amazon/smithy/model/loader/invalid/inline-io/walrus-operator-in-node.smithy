@@ -1,4 +1,4 @@
-// The `:=` syntax may only be used when defining inline operation input and output shapes.
+// Syntax error at line 5, column 13: Expected COLON(':') but found WALRUS(':=') | Model
 $version: "2.0"
 
 metadata foo = {

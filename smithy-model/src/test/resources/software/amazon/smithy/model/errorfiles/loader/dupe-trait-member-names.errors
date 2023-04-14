@@ -1,1 +1,1 @@
-[ERROR] -: Parse error at line 8, column 1 | Model
+[ERROR] -: Duplicate member of trait: 'message' | Model

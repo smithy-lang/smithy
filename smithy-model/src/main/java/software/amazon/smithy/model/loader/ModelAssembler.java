@@ -104,6 +104,7 @@ public final class ModelAssembler {
     private final Map<String, Object> properties = new HashMap<>();
     private boolean disablePrelude;
     private Consumer<ValidationEvent> validationEventListener = DEFAULT_EVENT_LISTENER;
+    private StringTable stringTable;
 
     // Lazy initialization holder class idiom to hold a default trait factory.
     static final class LazyTraitFactoryHolder {
@@ -130,6 +131,7 @@ public final class ModelAssembler {
         assembler.properties.putAll(properties);
         assembler.disableValidation = disableValidation;
         assembler.validationEventListener = validationEventListener;
+        assembler.stringTable = stringTable;
         return assembler;
     }
 
@@ -540,10 +542,14 @@ public final class ModelAssembler {
             }
         }
 
+        if (stringTable == null) {
+            stringTable = new StringTable();
+        }
+
         // Load model files into the processor.
         for (Map.Entry<String, Supplier<InputStream>> entry : inputStreamModels.entrySet()) {
             try {
-                ModelLoader.load(traitFactory, properties, entry.getKey(), processor, entry.getValue());
+                ModelLoader.load(traitFactory, properties, entry.getKey(), processor, entry.getValue(), stringTable);
             } catch (SourceException e) {
                 processor.accept(new LoadOperation.Event(ValidationEvent.fromSourceException(e)));
             }
