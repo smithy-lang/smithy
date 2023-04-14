@@ -321,7 +321,7 @@ public final class IdlTokenizer implements Iterator<IdlToken> {
         switch (c) {
             case SimpleParser.EOF:
                 if (currentTokenType == IdlToken.EOF) {
-                    throw new NoSuchElementException("Expected another token but traversed beyond EOF");
+                    throw new NoSuchElementException("Expected another token but reached EOF");
                 }
                 currentTokenEnd = parser.position();
                 return currentTokenType = IdlToken.EOF;
@@ -750,9 +750,15 @@ public final class IdlTokenizer implements Iterator<IdlToken> {
     }
 
     private IdlToken parseIdentifier() {
-        ParserUtils.consumeIdentifier(parser);
+        try {
+            ParserUtils.consumeIdentifier(parser);
+            currentTokenType = IdlToken.IDENTIFIER;
+        } catch (RuntimeException e) {
+            currentTokenType = IdlToken.ERROR;
+            currentTokenError = e.getMessage();
+        }
         currentTokenEnd = parser.position();
-        return currentTokenType = IdlToken.IDENTIFIER;
+        return currentTokenType;
     }
 
     private IdlToken parseString() {
