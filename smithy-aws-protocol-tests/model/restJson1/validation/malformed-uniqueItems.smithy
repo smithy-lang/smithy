@@ -457,6 +457,37 @@ apply MalformedUniqueItems @httpMalformedRequestTests([
         }
     },
     {
+        id: "RestJsonMalformedUniqueItemsStructureMissingKeyList",
+        documentation: """
+        When a list of structures does not contain required keys,
+        the response should be a 400 ValidationException and not
+        a 500 error.""",
+        protocol: restJson1,
+        request: {
+            method: "POST",
+            uri: "/MalformedUniqueItems",
+            body: """
+            { "structureListWithNoKey" : [{"hi2": "bar"}] }""",
+            headers: {
+                "content-type": "application/json"
+            }
+        },
+        response: {
+            code: 400,
+            headers: {
+                "x-amzn-errortype": "ValidationException"
+            },
+            body: {
+                mediaType: "application/json",
+                assertion: {
+                    contents: """
+                    { "message" : "1 validation error detected. Value at '/structureListWithNoKey/0/hi' failed to satisfy constraint: Member must not be null",
+                      "fieldList" : [{"message": "Value at '/structureListWithNoKey/0/hi' failed to satisfy constraint: Member must not be null", "path": "/structureListWithNoKey/0/hi"}]}"""
+                }
+            }
+        }
+    },
+    {
         id: "RestJsonMalformedUniqueItemsUnionList",
         documentation: """
         When an list of unions contains non-unique values,
@@ -491,6 +522,19 @@ apply MalformedUniqueItems @httpMalformedRequestTests([
     },
 ])
 
+
+string MyStringKey
+
+structure MissingKeyStructure {
+  @required
+  hi: MyStringKey
+}
+
+@uniqueItems
+list StructureSetWithNoKey {
+  member: MissingKeyStructure
+}
+
 structure MalformedUniqueItemsInput {
     blobList: BlobSet
     booleanList: BooleanSet
@@ -504,7 +548,8 @@ structure MalformedUniqueItemsInput {
     httpDateList: HttpDateSet
     enumList: FooEnumSet
     intEnumList: IntegerEnumSet
-    listList: ListSet,
+    listList: ListSet
     structureList: StructureSet
+    structureListWithNoKey: StructureSetWithNoKey
     unionList: UnionSet
 }
