@@ -641,7 +641,7 @@ public final class IdlTokenizer implements Iterator<IdlToken> {
     }
 
     private IdlToken tokenizeSpace() {
-        parser.consumeUntilNoLongerMatches(c -> c == ' ' || c == '\t');
+        parser.consumeWhile(c -> c == ' ' || c == '\t');
         currentTokenEnd = parser.position();
         return currentTokenType = IdlToken.SPACE;
     }

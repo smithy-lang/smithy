@@ -17,6 +17,7 @@ package software.amazon.smithy.utils;
 
 import java.nio.CharBuffer;
 import java.util.Objects;
+import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 
 /**
@@ -303,7 +304,11 @@ public class SimpleParser {
      * the contents of the skipped characters using {@link #sliceFrom(int)}.
      */
     public void consumeRemainingCharactersOnLine() {
-        consumeUntilNoLongerMatches(c -> c != '\n' && c != '\r');
+        char ch = peek();
+        while (ch != EOF && ch != '\n' && ch != '\r') {
+            skip();
+            ch = peek();
+        }
     }
 
     /**
@@ -340,23 +345,30 @@ public class SimpleParser {
         return CharBuffer.wrap(input, start, position - removeRight);
     }
 
+    @Deprecated
+    public final int consumeUntilNoLongerMatches(Predicate<Character> predicate) {
+        int startPosition = position;
+        char ch = peek();
+        while (ch != EOF && predicate.test(ch)) {
+            skip();
+            ch = peek();
+        }
+        return position - startPosition;
+    }
+
     /**
-     * Reads a lexeme from the expression while the given {@code predicate}
-     * matches each peeked character.
+     * Reads a lexeme from the expression while the given {@code predicate} matches each peeked character.
      *
      * @param predicate Predicate that filters characters.
      * @return Returns the consumed lexeme (or an empty string on no matches).
      */
-    public final int consumeUntilNoLongerMatches(Predicate<Character> predicate) {
+    public final int consumeWhile(IntPredicate predicate) {
         int startPosition = position;
-        while (!eof()) {
-            char peekedChar = peek();
-            if (!predicate.test(peekedChar)) {
-                break;
-            }
+        char ch = peek();
+        while (ch != EOF && predicate.test(ch)) {
             skip();
+            ch = peek();
         }
-
         return position - startPosition;
     }
 

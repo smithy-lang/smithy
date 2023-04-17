@@ -225,7 +225,7 @@ public final class MediaType {
 
         private String parseToken() {
             int start = position();
-            consumeUntilNoLongerMatches(TOKEN::contains);
+            consumeWhile(c -> TOKEN.contains((char) c));
 
             // Fail if the token was empty.
             if (start == position()) {
