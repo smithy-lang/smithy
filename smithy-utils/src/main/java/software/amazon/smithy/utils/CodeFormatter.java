@@ -482,7 +482,7 @@ final class CodeFormatter {
             if (parser.peek() == '@') {
                 parser.skip();
                 int start = parser.position();
-                parser.consumeUntilNoLongerMatches(this::isNameCharacter);
+                parser.consumeWhile(this::isNameCharacter);
                 String sectionName = parser.sliceFrom(start);
                 ensureNameIsValid(sectionName);
                 operation = Operation.inlineSection(sectionName, operation);
@@ -518,7 +518,7 @@ final class CodeFormatter {
         }
 
         void skipTrailingWhitespaceInParser() {
-            parser.consumeUntilNoLongerMatches(Character::isWhitespace);
+            parser.consumeWhile(Character::isWhitespace);
         }
 
         private boolean isAllLeadingWhitespaceOnLine(int startPosition, int startColumn) {
@@ -549,13 +549,13 @@ final class CodeFormatter {
                         parser.expect('s');
                         parser.sp();
                         int startPos = parser.position();
-                        parser.consumeUntilNoLongerMatches(this::isNameCharacter);
+                        parser.consumeWhile(this::isNameCharacter);
                         keyPrefix = parser.sliceFrom(startPos);
                         ensureNameIsValid(keyPrefix);
                         parser.expect(',');
                         parser.sp();
                         startPos = parser.position();
-                        parser.consumeUntilNoLongerMatches(this::isNameCharacter);
+                        parser.consumeWhile(this::isNameCharacter);
                         value = parser.sliceFrom(startPos);
                         ensureNameIsValid(value);
                     }
@@ -646,7 +646,7 @@ final class CodeFormatter {
 
         private String parseArgumentName() {
             int start = parser.position();
-            parser.consumeUntilNoLongerMatches(this::isNameCharacter);
+            parser.consumeWhile(this::isNameCharacter);
             String name = parser.sliceFrom(start);
             ensureNameIsValid(name);
             return name;
@@ -694,7 +694,7 @@ final class CodeFormatter {
 
             relativeIndex = -1;
             int startPosition = parser.position();
-            parser.consumeUntilNoLongerMatches(Character::isDigit);
+            parser.consumeWhile(Character::isDigit);
             int index = Integer.parseInt(parser.sliceFrom(startPosition)) - 1;
 
             if (index < 0 || index >= arguments.length) {
@@ -713,7 +713,7 @@ final class CodeFormatter {
             }
         }
 
-        private boolean isNameCharacter(char c) {
+        private boolean isNameCharacter(int c) {
             return (c >= 'a' && c <= 'z')
                    || (c >= 'A' && c <= 'Z')
                    || (c >= '0' && c <= '9')

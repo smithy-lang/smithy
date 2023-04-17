@@ -233,7 +233,7 @@ public final class EmitEachSelectorValidator extends AbstractValidator {
 
         MessageTemplate parse() {
             while (!eof()) {
-                consumeUntilNoLongerMatches(c -> c != '@');
+                consumeWhile(c -> c != '@');
                 // '@' followed by '@' is an escaped '@", so keep parsing
                 // the marked literal if that's the case.
                 if (peek(1) == '@') {
