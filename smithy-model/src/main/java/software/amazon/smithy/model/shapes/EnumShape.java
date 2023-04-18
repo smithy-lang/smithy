@@ -29,6 +29,7 @@ import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.EnumValueTrait;
+import software.amazon.smithy.model.traits.InternalTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
@@ -232,6 +233,9 @@ public final class EnumShape extends StringShape {
             }
             if (definition.isDeprecated()) {
                 builder.addTrait(DeprecatedTrait.builder().build());
+            }
+            if (definition.hasTag("internal")) {
+                builder.addTrait(new InternalTrait());
             }
 
             return Optional.of(builder.build());
