@@ -200,6 +200,12 @@ public final class EnumShape extends StringShape {
     /**
      * Converts an enum definition to the equivalent enum member shape.
      *
+     * <p>If an enum definition is marked as deprecated, the DeprecatedTrait
+     * is applied to the converted enum member shape.
+     *
+     * <p>If an enum definition has an "internal" tag, the InternalTrait is
+     * applied ot the converted enum member shape.
+     *
      * @param parentId The {@link ShapeId} of the enum shape.
      * @param synthesizeName Whether to synthesize a name if possible.
      * @return An optional member shape representing the enum definition,
