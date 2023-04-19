@@ -472,6 +472,53 @@ Applies the transforms defined in the given projection names.
         }
     }
 
+.. _changeStringEnumsToEnumShapes:
+
+changeStringEnumsToEnumShapes
+-----------------------------
+
+Changes string shapes with enum traits into enum shapes.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - synthesizeNames
+      - ``boolean``
+      - Whether enums without names should have names synthesized if possible.
+
+This transformer will attempt to convert strings with :ref:`enum traits <enum-trait>`
+into enum shapes. To successfully convert to an enum shape, each enum
+definition within the source enum trait must have a ``name`` property, or the
+``synthesizeNames`` transform config option must be enabled. By default, ``synthesizeNames``
+is disabled. If an enum definition from the enum trait is marked as deprecated, the
+:ref:`deprecated trait <deprecated-trait>` will be applied to the resulting
+enum shape member. Tags on the enum definition will be converted to a :ref:`tags trait <tags-trait>`
+on the enum shape member. Additionally, if the enum definition is tagged as
+internal, the enum shape member will have the :ref:`internal trait <internal-trait>`
+applied.
+
+.. code-block:: json
+
+    {
+        "version": "1.0",
+        "projections": {
+            "exampleProjection": {
+                "transforms": [
+                    {
+                        "name": "changeStringEnumsToEnumShapes",
+                        "args": {
+                            "synthesizeNames": true
+                        }
+                    }
+                ]
+            }
+        }
+    }
+
 
 .. _changeTypes:
 
@@ -490,6 +537,9 @@ Changes the types of shapes.
     * - shapeTypes
       - ``Map<ShapeId, String>``
       - A map of shape IDs to the type to assign to the shape.
+    * - synthesizeEnumNames
+      - ``boolean``
+      - Whether enums without names should have names synthesized if possible.
 
 Only the following shape type changes are supported:
 
@@ -498,6 +548,7 @@ Only the following shape type changes are supported:
 * Set to list
 * Structure to union
 * Union to structure
+* String to enum
 
 .. code-block:: json
 
@@ -511,14 +562,19 @@ Only the following shape type changes are supported:
                         "args": {
                             "shapeTypes": {
                                 "smithy.example#Foo": "string",
-                                "smithy.example#Baz": "union"
-                            }
+                                "smithy.example#Baz": "union",
+                                "smithy.example#Qux": "enum"
+                            },
+                            "synthesizeEnumNames": true
                         }
                     }
                 ]
             }
         }
     }
+
+
+.. seealso:: :ref:`changeStringEnumsToEnumShapes`
 
 
 .. _excludeShapesBySelector-transform:
