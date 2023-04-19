@@ -498,6 +498,7 @@ model that are not connected to the service being generated.
     Set<Shape> closure = walker.walkShapes(someService);
     model = ModelTransformer.create().removeShapesIf(shape -> !closure.contains(shape));
 
+.. _codegen-selectors:
 
 Selectors
 =========
