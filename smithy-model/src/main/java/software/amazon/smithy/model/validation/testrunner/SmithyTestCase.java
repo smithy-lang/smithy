@@ -132,13 +132,19 @@ public final class SmithyTestCase {
         if (actual.getSuppressionReason().isPresent()) {
             normalizedActualMessage += " (" + actual.getSuppressionReason().get() + ")";
         }
+        normalizedActualMessage = normalizeMessage(normalizedActualMessage);
 
-        String comparedMessage = expected.getMessage().replace("\n", "\\n").replace("\r", "\\n");
+        String comparedMessage = normalizeMessage(expected.getMessage());
         return expected.getSeverity() == actual.getSeverity()
                && actual.containsId(expected.getId())
                && expected.getShapeId().equals(actual.getShapeId())
                // Normalize new lines.
                && normalizedActualMessage.startsWith(comparedMessage);
+    }
+
+    // Newlines in persisted validation events are escaped.
+    private static String normalizeMessage(String message) {
+        return message.replace("\n", "\\n").replace("\r", "\\n");
     }
 
     private boolean isModelDeprecationEvent(ValidationEvent event) {

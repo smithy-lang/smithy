@@ -23,8 +23,10 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.SimpleParser;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -51,11 +53,13 @@ public final class IdlTokenizer implements Iterator<IdlToken> {
     private CharSequence currentTokenStringSlice;
     private String currentTokenError;
     private final Deque<CharSequence> docCommentLines = new ArrayDeque<>();
+    private final Consumer<ValidationEvent> validationEventListener;
 
     private IdlTokenizer(Builder builder) {
         this.filename = builder.filename;
         this.stringTable = builder.stringTable;
         this.parser = new SimpleParser(SmithyBuilder.requiredState("model", builder.model), MAX_NESTING_LEVEL);
+        this.validationEventListener = builder.validationEventListener;
     }
 
     public static Builder builder() {
@@ -66,6 +70,7 @@ public final class IdlTokenizer implements Iterator<IdlToken> {
         private String filename = SourceLocation.NONE.getFilename();
         private CharSequence model;
         private Function<CharSequence, String> stringTable = CharSequence::toString;
+        private Consumer<ValidationEvent> validationEventListener = event -> { };
 
         private Builder() { }
 
@@ -104,6 +109,19 @@ public final class IdlTokenizer implements Iterator<IdlToken> {
          */
         public Builder stringTable(Function<CharSequence, String> stringTable) {
             this.stringTable = Objects.requireNonNull(stringTable);
+            return this;
+        }
+
+        /**
+         * Sets a listener to receive warnings about syntax issues in the model.
+         *
+         * <p>This is currently package private and only used to warn about invalid documentation comments.
+         *
+         * @param validationEventListener Listener that receives warnings.
+         * @return Returns the builder.
+         */
+        Builder validationEventListener(Consumer<ValidationEvent> validationEventListener) {
+            this.validationEventListener = Objects.requireNonNull(validationEventListener);
             return this;
         }
 
@@ -622,9 +640,9 @@ public final class IdlTokenizer implements Iterator<IdlToken> {
     }
 
     private void clearDocCommentLinesForBr() {
-        // No known cases should encounter this code path unless we add error correction to the parser.
         if (!docCommentLines.isEmpty()) {
-            docCommentLines.clear();
+            validationEventListener.accept(LoaderUtils.emitBadDocComment(getCurrentTokenLocation(),
+                                                                         removePendingDocCommentLines()));
         }
     }
 
