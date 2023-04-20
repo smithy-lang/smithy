@@ -30,6 +30,7 @@ import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.EnumValueTrait;
+import software.amazon.smithy.model.traits.InternalTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
@@ -125,6 +126,7 @@ public class EnumShapeTest {
         EnumDefinition enumDefinition = EnumDefinition.builder()
                 .name("foo")
                 .value("bar")
+                .tags(ListUtils.of("internal"))
                 .build();
         EnumShape shape = builder.setMembersFromEnumTrait(EnumTrait.builder().addEnum(enumDefinition).build()).build();
 
@@ -133,6 +135,8 @@ public class EnumShapeTest {
                         .id(shape.getId().withMember("foo"))
                         .target(UnitTypeTrait.UNIT)
                         .addTrait(EnumValueTrait.builder().stringValue("bar").build())
+                        .addTrait(new InternalTrait())
+                        .addTrait(TagsTrait.builder().addValue("internal").build())
                         .build());
 
         assertTrue(shape.hasTrait(EnumTrait.class));

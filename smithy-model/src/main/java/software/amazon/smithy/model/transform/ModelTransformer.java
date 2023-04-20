@@ -515,6 +515,10 @@ public final class ModelTransformer {
      *
      * <p>A member will be created on the shape for each entry in the {@link EnumTrait}.
      *
+     * <p>When the enum definition from the enum trait has been marked as deprecated, or
+     * tagged as "internal", the corresponding enum shape member will be marked with the
+     * DeprecatedTrait or InternalTrait accordingly.
+     *
      * @param model Model to transform.
      * @param synthesizeEnumNames Whether enums without names should have names synthesized if possible.
      * @return Returns the transformed model.
