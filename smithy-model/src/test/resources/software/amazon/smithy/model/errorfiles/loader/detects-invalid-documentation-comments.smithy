@@ -12,7 +12,7 @@ use smithy.api#Boolean
     { name: "X", value: "X"}
 ])
 /// Invalid 5 (not before traits)
-string Features
+string Features /// Valid docs for Foo
 
 @sensitive
 /// Invalid 6 (not before traits)

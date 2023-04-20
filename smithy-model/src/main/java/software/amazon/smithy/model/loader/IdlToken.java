@@ -23,37 +23,65 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 @SmithyUnstableApi
 public enum IdlToken {
 
-    SPACE(" ", true),
-    NEWLINE("\\n", true),
-    COMMA(",", true),
-    COMMENT("//", true),
-    DOC_COMMENT("///", false),
-    AT("@", false),
-    STRING("\"", false),
-    TEXT_BLOCK("\"\"\"", false),
-    COLON(":", false),
-    WALRUS(":=", false),
-    IDENTIFIER("", false),
-    DOT(".", false),
-    POUND("#", false),
-    DOLLAR("$", false),
-    NUMBER("", false),
-    LBRACE("{", false),
-    RBRACE("}", false),
-    LBRACKET("[", false),
-    RBRACKET("]", false),
-    LPAREN("(", false),
-    RPAREN(")", false),
-    EQUAL("=", false),
-    EOF("", false),
-    ERROR("", false);
+    SPACE(" ") {
+        @Override
+        public boolean canSkipBeforeBr() {
+            return true;
+        }
+
+        @Override
+        public boolean isWhitespace() {
+            return true;
+        }
+    },
+    NEWLINE("\\n") {
+        @Override
+        public boolean isWhitespace() {
+            return true;
+        }
+    },
+    COMMA(",") {
+        @Override
+        public boolean canSkipBeforeBr() {
+            return true;
+        }
+
+        @Override
+        public boolean isWhitespace() {
+            return true;
+        }
+    },
+    COMMENT("//") {
+        @Override
+        public boolean isWhitespace() {
+            return true;
+        }
+    },
+    DOC_COMMENT("///"),
+    AT("@"),
+    STRING("\""),
+    TEXT_BLOCK("\"\"\""),
+    COLON(":"),
+    WALRUS(":="),
+    IDENTIFIER(""),
+    DOT("."),
+    POUND("#"),
+    DOLLAR("$"),
+    NUMBER(""),
+    LBRACE("{"),
+    RBRACE("}"),
+    LBRACKET("["),
+    RBRACKET("]"),
+    LPAREN("("),
+    RPAREN(")"),
+    EQUAL("="),
+    EOF(""),
+    ERROR("");
 
     private final String exampleLexeme;
-    private final boolean isWhitespace;
 
-    IdlToken(String exampleLexeme, boolean isWhitespace) {
+    IdlToken(String exampleLexeme) {
         this.exampleLexeme = exampleLexeme;
-        this.isWhitespace = isWhitespace;
     }
 
     public String getDebug() {
@@ -68,6 +96,15 @@ public enum IdlToken {
     }
 
     public boolean isWhitespace() {
-        return isWhitespace;
+        return false;
+    }
+
+    /**
+     * Can this token be skipped when looking for a newline as part of a "BR" production?
+     *
+     * @return Returns true if the token can be skipped before a BR production.
+     */
+    boolean canSkipBeforeBr() {
+        return false;
     }
 }

@@ -615,7 +615,13 @@ public final class IdlTokenizer implements Iterator<IdlToken> {
     }
 
     /**
-     * Expects that the current token is a newline or is whitespaces or comments followed by a newline.
+     * Expects that the current token is zero or more spaces/commas followed by a newline, comment, documentation
+     * comment, or EOF.
+     *
+     * <p>If a documentation comment is detected, the current token remains the documentation comment. If an EOF is
+     * detected, the current token remains the EOF token. If a comment, newline, or whitespace are detected, they are
+     * all skipped, leaving the current token the next token after encountering the matched token. Other kinds of
+     * tokens will raise an exception.
      *
      * <p>This method mimics the {@code br} production from the Smithy grammar. When this method is called, any
      * previously parsed and buffered documentation comments are discarded.
@@ -623,19 +629,32 @@ public final class IdlTokenizer implements Iterator<IdlToken> {
      * @throws ModelSyntaxException if the current token is not a newline or followed by a newline.
      */
     public void expectAndSkipBr() {
-        if (getCurrentToken() == IdlToken.NEWLINE) {
-            clearDocCommentLinesForBr();
+        // Skip spaces and commas leading up to a required newline.
+        getCurrentToken();
+        while (currentTokenType.canSkipBeforeBr()) {
             next();
-            skipWs();
-        } else {
-            int line = getLine();
-            clearDocCommentLinesForBr();
-            skipWs();
-            if (line == getLine() && hasNext()) {
+        }
+
+        // The following tokens are allowed tokens that contain newlines.
+        switch (getCurrentToken()) {
+            case NEWLINE:
+            case COMMENT:
+                clearDocCommentLinesForBr();
+                next();
+                skipWs();
+                break;
+            case DOC_COMMENT:
+                // A doc comment was found at the end of a line. Keep this comment, but remove previous comments.
+                CharSequence latestLine = docCommentLines.removeLast();
+                clearDocCommentLinesForBr();
+                docCommentLines.add(latestLine);
+                break;
+            case EOF:
+                break;
+            default:
                 throw syntax("Expected a line break, but found "
                              + getCurrentToken().getDebug(getCurrentTokenLexeme()),
                              getCurrentTokenLocation());
-            }
         }
     }
 

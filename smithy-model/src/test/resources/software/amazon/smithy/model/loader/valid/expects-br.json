@@ -1,0 +1,29 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "com.example#Bam": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "Doc comment on Bam"
+            }
+        },
+        "com.example#Bar": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "Doc comment on Bar"
+            }
+        },
+        "com.example#Baz": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "Doc comment on Baz"
+            }
+        },
+        "com.example#Foo": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "Doc comment on Foo"
+            }
+        }
+    }
+}
