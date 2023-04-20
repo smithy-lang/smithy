@@ -428,27 +428,16 @@ final class IdlModelLoader {
                 if (tokenizer.doesCurrentIdentifierStartWith('a')) {
                     parseApplyStatement();
                 } else {
+                    tokenizer.skipWsAndDocs();
+                    String docLines = tokenizer.removePendingDocCommentLines();
                     List<IdlTraitParser.Result> traits;
-                    boolean hasDocComment = tokenizer.getCurrentToken() == IdlToken.DOC_COMMENT;
-
-                    if (possibleDocCommentLocation == null) {
-                        traits = IdlTraitParser.parseDocsAndTraitsBeforeShape(tokenizer, resolver);
-                    } else {
-                        // In this case, this is the first shape encountered for a model file that doesn't have any
-                        // use statements. We need to take the previously skipped documentation comments to parse
-                        // potential use statements and apply them to this first shape.
-                        String docLines = tokenizer.removePendingDocCommentLines();
-                        traits = IdlTraitParser.parseDocsAndTraitsBeforeShape(tokenizer, resolver);
-                        // Note that possibleDocCommentLocation is just a mark of where docs _could be_.
-                        if (docLines != null) {
-                            hasDocComment = true;
-                            traits.add(new IdlTraitParser.Result(DocumentationTrait.ID.toString(),
-                                                                 new StringNode(docLines, possibleDocCommentLocation),
-                                                                 IdlTraitParser.TraitType.DOC_COMMENT));
-                        }
+                    traits = IdlTraitParser.parseDocsAndTraitsBeforeShape(tokenizer, resolver);
+                    if (docLines != null) {
+                        traits.add(new IdlTraitParser.Result(DocumentationTrait.ID.toString(),
+                                                             new StringNode(docLines, possibleDocCommentLocation),
+                                                             IdlTraitParser.TraitType.DOC_COMMENT));
                     }
-
-                    if (parseShapeDefinition(traits, hasDocComment)) {
+                    if (parseShapeDefinition(traits, docLines != null)) {
                         parseShape(traits);
                     }
                 }
