@@ -1,0 +1,122 @@
+name: update-brew
+on:
+  release:
+    types: [released]
+  workflow_dispatch: # on button click
+
+env:
+  release_prefix: https://github.com/awslabs/smithy/releases/download
+
+jobs:
+  download-and-save:
+    runs-on: ubuntu-latest
+    steps:
+      - name: mac
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          version="${GITHUB_REF##*/}"
+          hash_url="${{ env.release_prefix }}/${version}/smithy-cli-darwin-x86_64.tar.gz"
+          echo $hash_url
+          curl -fJLO $hash_url.sha256
+      - name: mac-arm
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          version="${GITHUB_REF##*/}"
+          hash_url="${{ env.release_prefix }}/${version}/smithy-cli-darwin-aarch64.tar.gz"
+          echo $hash_url
+          curl -fJLO $hash_url.sha256
+      - name: linux
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          version="${GITHUB_REF##*/}"
+          hash_url="${{ env.release_prefix }}/${version}/smithy-cli-linux-x86_64.tar.gz"
+          echo $hash_url
+          curl -fJLO $hash_url.sha256
+      - name: linux-arm
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          version="${GITHUB_REF##*/}"
+          hash_url="${{ env.release_prefix }}/${version}/smithy-cli-linux-aarch64.tar.gz"
+          echo $hash_url
+          curl -fJLO $hash_url.sha256
+      - name: Save artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: brew-artifacts
+          path: '*.sha256'
+          retention-days: 7
+
+  create-pr:
+    runs-on: ubuntu-latest
+    needs: download-and-save
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Get artifacts
+        id: download
+        uses: actions/download-artifact@v2
+        with:
+          name: brew-artifacts
+      - name: Checkout bottle repo
+        uses: actions/checkout@v2
+        with:
+          repository: 'aws/homebrew-tap'
+          path: 'homebrew-tap'
+          ref: 'master'
+      - name: Update version
+        run: |
+          version="${GITHUB_REF##*/}"
+          tmp=$(mktemp)
+          jq --arg version "${version}" '.version = $version' homebrew-tap/bottle-configs/smithy-cli.json > "$tmp" && mv "$tmp" homebrew-tap/bottle-configs/smithy-cli.json
+      - name: Update root_url
+        run: |
+          version="${GITHUB_REF##*/}"
+          tmp=$(mktemp)
+          jq --arg release_url "${{ env.release_prefix }}" --arg version "${version}" '.bottle.root_url = "\($release_url)/\($version)/smithy-cli"' homebrew-tap/bottle-configs/smithy-cli.json > "$tmp" && mv "$tmp" homebrew-tap/bottle-configs/smithy-cli.json
+      - name: Update mac
+        run: |
+          version="${GITHUB_REF##*/}"
+          sha=$(cut -d " " -f1 ${{steps.download.outputs.download-path}}/smithy-cli-darwin-x86_64.tar.gz.sha256)
+          tmp=$(mktemp)
+          jq --arg sha "$sha" '.bottle.sha256.sierra = "'$sha'"' homebrew-tap/bottle-configs/smithy-cli.json > "$tmp" && mv "$tmp" homebrew-tap/bottle-configs/smithy-cli.json
+      - name: Update mac-arm
+        run: |
+          version="${GITHUB_REF##*/}"
+          sha=$(cut -d " " -f1 ${{steps.download.outputs.download-path}}/smithy-cli-darwin-aarch64.tar.gz.sha256)
+          tmp=$(mktemp)
+          jq --arg sha "$sha" '.bottle.sha256.arm64_big_sur = "'$sha'"' homebrew-tap/bottle-configs/smithy-cli.json > "$tmp" && mv "$tmp" homebrew-tap/bottle-configs/smithy-cli.json
+      - name: Update linux
+        run: |
+          version="${GITHUB_REF##*/}"
+          sha=$(cut -d " " -f1 ${{steps.download.outputs.download-path}}/smithy-cli-linux-x86_64.tar.gz.sha256)
+          tmp=$(mktemp)
+          jq --arg sha "$sha" '.bottle.sha256.linux = "'$sha'"' homebrew-tap/bottle-configs/smithy-cli.json > "$tmp" && mv "$tmp" homebrew-tap/bottle-configs/smithy-cli.json
+      - name: Update linux-arm
+        run: |
+          version="${GITHUB_REF##*/}"
+          sha=$(cut -d " " -f1 ${{steps.download.outputs.download-path}}/smithy-cli-linux-aarch64.tar.gz.sha256)
+          tmp=$(mktemp)
+          jq --arg sha "$sha" '.bottle.sha256.linux_arm = "'$sha'"' homebrew-tap/bottle-configs/smithy-cli.json > "$tmp" && mv "$tmp" homebrew-tap/bottle-configs/smithy-cli.json
+      - name: Create commits
+        run: |
+          cd homebrew-tap
+          git config user.name 'smithy-automation'
+          git config user.email 'github-smithy-automation@amazon.com'
+          git add bottle-configs/smithy-cli.json
+          git commit -m "chore: upgrade smithy-cli to ${GITHUB_REF##*/}"
+      - name: Set pull-request variables
+        id: vars
+        run: |
+          echo version="${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
+          echo pr_title="chore: upgrade smithy-cli to ${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
+          echo pr_body="Created by ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" >> $GITHUB_OUTPUT
+      - name: Create pull-request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          path: homebrew-tap
+          delete-branch: true
+          push-to-fork: smithy-automation/homebrew-tap
+          title: ${{ steps.vars.outputs.pr_title }}
+          body: ${{ steps.vars.outputs.pr_body }}
+          branch: "upgrade-smithy-cli-${{ steps.vars.outputs.version }}"
+          token: ${{ secrets.PR_TOKEN }}
