@@ -9,7 +9,7 @@ shapes within a model. Selectors are used to build custom
 :ref:`validators <EmitEachSelector>` and to specify where it is valid to
 apply a :ref:`trait <defining-traits>`.
 
-For information about how to use selectors within a code generator see
+For information about how to use selectors within a code generator, see
 :ref:`Using the Semantic Model <codegen-selectors>`.
 
 Introduction
