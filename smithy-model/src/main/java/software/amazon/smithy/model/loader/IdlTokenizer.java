@@ -18,8 +18,6 @@ package software.amazon.smithy.model.loader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.CharBuffer;
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -50,7 +48,6 @@ public final class IdlTokenizer implements Iterator<IdlToken> {
     private Number currentTokenNumber;
     private CharSequence currentTokenStringSlice;
     private String currentTokenError;
-    private final Deque<CharSequence> docCommentLines = new ArrayDeque<>();
 
     private IdlTokenizer(Builder builder) {
         this.filename = builder.filename;
@@ -455,13 +452,42 @@ public final class IdlTokenizer implements Iterator<IdlToken> {
     }
 
     /**
-     * Skip until the current token is not {@link IdlToken#SPACE}, {@link IdlToken#COMMA}, {@link IdlToken#COMMENT},
-     * or {@link IdlToken#NEWLINE}, or {@link IdlToken#DOC_COMMENT}.
+     * Parse successive documentation comments into a CharSequence.
+     *
+     * @return Skips over documentation comment lines and returns the combined and parsed contents.
      */
-    public void skipWsAndDocs() {
-        getCurrentToken();
-        while ((currentTokenType.isWhitespace() || currentTokenType == IdlToken.DOC_COMMENT)) {
+    public CharSequence expectAndParseDocs() {
+        expect(IdlToken.DOC_COMMENT);
+        StringBuilder result = new StringBuilder();
+        appendDocCommentLine(result);
+        next();
+        skipSpaces();
+
+        while (currentTokenType == IdlToken.DOC_COMMENT) {
+            result.append('\n');
+            appendDocCommentLine(result);
             next();
+            skipSpaces();
+        }
+
+        return result;
+    }
+
+    private void appendDocCommentLine(StringBuilder builder) {
+        CharSequence lexeme = getCurrentTokenLexeme();
+        int length = lexeme.length();
+        if (length <= 3) {
+            builder.append('\n');
+        } else {
+            int start = lexeme.charAt(3) == ' ' ? 4 : 3;
+            if (lexeme.charAt(length - 1) != '\n') {
+                // There's no newline at the end
+                builder.append(lexeme, start, length);
+            } else if (lexeme.charAt(length - 2) == '\r') {
+                builder.append(lexeme, start, length - 2);
+            } else {
+                builder.append(lexeme, start, length - 1);
+            }
         }
     }
 
@@ -593,7 +619,7 @@ public final class IdlTokenizer implements Iterator<IdlToken> {
             throw syntax("Expected one or more whitespace characters, but found "
                          + getCurrentToken().getDebug(getCurrentTokenLexeme()), getCurrentTokenLocation());
         }
-        skipWsAndDocs();
+        skipWs();
     }
 
     /**
@@ -606,25 +632,16 @@ public final class IdlTokenizer implements Iterator<IdlToken> {
      */
     public void expectAndSkipBr() {
         if (getCurrentToken() == IdlToken.NEWLINE) {
-            clearDocCommentLinesForBr();
             next();
             skipWs();
         } else {
             int line = getLine();
-            clearDocCommentLinesForBr();
             skipWs();
             if (line == getLine() && hasNext()) {
                 throw syntax("Expected a line break, but found "
                              + getCurrentToken().getDebug(getCurrentTokenLexeme()),
                              getCurrentTokenLocation());
             }
-        }
-    }
-
-    private void clearDocCommentLinesForBr() {
-        // No known cases should encounter this code path unless we add error correction to the parser.
-        if (!docCommentLines.isEmpty()) {
-            docCommentLines.clear();
         }
     }
 
@@ -679,13 +696,7 @@ public final class IdlTokenizer implements Iterator<IdlToken> {
         if (parser.peek() == '/') {
             parser.expect('/');
             type = IdlToken.DOC_COMMENT;
-            // When capturing the doc comment lexeme, skip a single leading space if found.
-            if (parser.peek() == ' ') {
-                parser.skip();
-            }
-            int lineStart = parser.position();
             parser.consumeRemainingCharactersOnLine();
-            docCommentLines.add(getInput(lineStart, parser.position()));
         } else {
             parser.consumeRemainingCharactersOnLine();
         }
@@ -697,24 +708,6 @@ public final class IdlTokenizer implements Iterator<IdlToken> {
 
         currentTokenEnd = parser.position();
         return currentTokenType = type;
-    }
-
-    /**
-     * Removes any buffered documentation comment lines, and returns a concatenated string value.
-     *
-     * @return Returns the combined documentation comment string for the given lines. Returns null if no lines.
-     */
-    String removePendingDocCommentLines() {
-        if (docCommentLines.isEmpty()) {
-            return null;
-        } else {
-            StringBuilder result = new StringBuilder();
-            result.append(docCommentLines.removeFirst());
-            while (!docCommentLines.isEmpty()) {
-                result.append('\n').append(docCommentLines.removeFirst());
-            }
-            return result.toString();
-        }
     }
 
     private IdlToken parseNumber() {

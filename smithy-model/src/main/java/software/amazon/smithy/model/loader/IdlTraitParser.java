@@ -78,31 +78,24 @@ final class IdlTraitParser {
         // Mark the position of where documentation comments start if on a doc comment.
         if (tokenizer.getCurrentToken() == IdlToken.DOC_COMMENT) {
             SourceLocation documentationLocation = tokenizer.getCurrentTokenLocation();
-            tokenizer.skipWsAndDocs();
             docComment = parseDocComment(tokenizer, documentationLocation);
-        } else {
-            tokenizer.skipWsAndDocs();
         }
 
         // Parse traits, if any.
-        tokenizer.skipWsAndDocs();
+        tokenizer.skipWs();
         List<Result> traits = expectAndSkipTraits(tokenizer, resolver);
         if (docComment != null) {
             traits.add(docComment);
         }
-        tokenizer.skipWsAndDocs();
+        tokenizer.skipWs();
 
         return traits;
     }
 
     private static Result parseDocComment(IdlTokenizer tokenizer, SourceLocation location) {
-        String result = tokenizer.removePendingDocCommentLines();
-        if (result == null) {
-            return null;
-        } else {
-            Node value = new StringNode(result, location);
-            return new Result(DocumentationTrait.ID.toString(), value, TraitType.DOC_COMMENT);
-        }
+        String result = tokenizer.expectAndParseDocs().toString();
+        Node value = new StringNode(result, location);
+        return new Result(DocumentationTrait.ID.toString(), value, TraitType.DOC_COMMENT);
     }
 
     /**
@@ -116,7 +109,7 @@ final class IdlTraitParser {
         List<Result> results = new ArrayList<>();
         while (tokenizer.getCurrentToken() == IdlToken.AT) {
             results.add(expectAndSkipTrait(tokenizer, resolver));
-            tokenizer.skipWsAndDocs();
+            tokenizer.skipWs();
         }
         return results;
     }
@@ -141,7 +134,7 @@ final class IdlTraitParser {
         }
 
         tokenizer.next();
-        tokenizer.skipWsAndDocs();
+        tokenizer.skipWs();
 
         // (): it's also an annotation trait.
         if (tokenizer.getCurrentToken() == IdlToken.RPAREN) {
@@ -151,7 +144,7 @@ final class IdlTraitParser {
 
         // The trait has a value between the '(' and ')'.
         Node value = parseTraitValueBody(tokenizer, resolver, location);
-        tokenizer.skipWsAndDocs();
+        tokenizer.skipWs();
         tokenizer.expect(IdlToken.RPAREN);
         tokenizer.next();
 
@@ -170,26 +163,26 @@ final class IdlTraitParser {
             case LBRACE:
             case LBRACKET:
                 Node result = IdlNodeParser.expectAndSkipNode(tokenizer, resolver, location);
-                tokenizer.skipWsAndDocs();
+                tokenizer.skipWs();
                 return result;
             case TEXT_BLOCK:
                 Node textBlockResult = new StringNode(tokenizer.getCurrentTokenStringSlice().toString(), location);
                 tokenizer.next();
-                tokenizer.skipWsAndDocs();
+                tokenizer.skipWs();
                 return textBlockResult;
             case NUMBER:
                 Number number = tokenizer.getCurrentTokenNumberValue();
                 tokenizer.next();
-                tokenizer.skipWsAndDocs();
+                tokenizer.skipWs();
                 return new NumberNode(number, location);
             case STRING:
                 String stringValue = tokenizer.getCurrentTokenStringSlice().toString();
                 StringNode stringNode = new StringNode(stringValue, location);
                 tokenizer.next();
-                tokenizer.skipWsAndDocs();
+                tokenizer.skipWs();
                 if (tokenizer.getCurrentToken() == IdlToken.COLON) {
                     tokenizer.next();
-                    tokenizer.skipWsAndDocs();
+                    tokenizer.skipWs();
                     return parseStructuredTrait(tokenizer, resolver, stringNode);
                 } else {
                     return stringNode;
@@ -198,10 +191,10 @@ final class IdlTraitParser {
             default:
                 String identifier = tokenizer.internString(tokenizer.getCurrentTokenLexeme());
                 tokenizer.next();
-                tokenizer.skipWsAndDocs();
+                tokenizer.skipWs();
                 if (tokenizer.getCurrentToken() == IdlToken.COLON) {
                     tokenizer.next();
-                    tokenizer.skipWsAndDocs();
+                    tokenizer.skipWs();
                     return parseStructuredTrait(tokenizer, resolver, new StringNode(identifier, location));
                 } else {
                     return IdlNodeParser.parseIdentifier(resolver, identifier, location);
@@ -221,23 +214,23 @@ final class IdlTraitParser {
         // This put call can be done safely without checking for duplicates,
         // as it's always the first member of the trait.
         entries.put(firstKey, firstValue);
-        tokenizer.skipWsAndDocs();
+        tokenizer.skipWs();
 
         while (tokenizer.getCurrentToken() != IdlToken.RPAREN) {
             tokenizer.expect(IdlToken.IDENTIFIER, IdlToken.STRING);
             String key = tokenizer.internString(tokenizer.getCurrentTokenStringSlice());
             StringNode keyNode = new StringNode(key, tokenizer.getCurrentTokenLocation());
             tokenizer.next();
-            tokenizer.skipWsAndDocs();
+            tokenizer.skipWs();
             tokenizer.expect(IdlToken.COLON);
             tokenizer.next();
-            tokenizer.skipWsAndDocs();
+            tokenizer.skipWs();
             Node nextValue = IdlNodeParser.expectAndSkipNode(tokenizer, resolver);
             Node previous = entries.put(keyNode, nextValue);
             if (previous != null) {
                 throw new ModelSyntaxException("Duplicate member of trait: '" + keyNode.getValue() + '\'', keyNode);
             }
-            tokenizer.skipWsAndDocs();
+            tokenizer.skipWs();
         }
 
         tokenizer.decreaseNestingLevel();

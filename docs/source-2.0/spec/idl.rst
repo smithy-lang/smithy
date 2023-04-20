@@ -103,13 +103,7 @@ string support defined in :rfc:`7405`.
     NL   :%x0A / %x0D.0A ; Newline: \n and \r\n
     NotNL:%x09 / %x20-10FFFF ; Any character except newline
     BR   :[`SP`] 1*(`Comment` / `NL`) [`WS`]; line break followed by whitespace
-
-.. rubric:: Comments
-
-.. productionlist:: smithy
-    Comment              : `DocumentationComment` / `LineComment`
-    DocumentationComment :"///" *`NotNL` `NL`
-    LineComment          : "//" *`NotNL` `NL`
+    Comment: "//" *`NotNL` `NL`
 
 .. rubric:: Control
 
@@ -173,7 +167,7 @@ string support defined in :rfc:`7405`.
     UseStatement            :%s"use" `SP` `AbsoluteRootShapeId` `BR`
     ShapeStatements         :`ShapeOrApplyStatement` *(`BR` `ShapeOrApplyStatement`)
     ShapeOrApplyStatement   :`ShapeStatement` / `ApplyStatement`
-    ShapeStatement          :`TraitStatements` `ShapeBody`
+    ShapeStatement          :`TraitStatementsWithDocs` `ShapeBody`
     ShapeBody               :`SimpleShapeStatement`
                             :/ `EnumShapeStatement`
                             :/ `ListStatement`
@@ -191,17 +185,17 @@ string support defined in :rfc:`7405`.
     Mixins                  :[`SP`] %s"with" [`WS`] "[" 1*([`WS`] `ShapeId`) [`WS`] "]"
     EnumShapeStatement      :`EnumTypeName` `SP` `Identifier` [`Mixins`] [`WS`] `EnumShapeMembers`
     EnumTypeName            :%s"enum" / %s"intEnum"
-    EnumShapeMembers        :"{" [`WS`] 1*(`TraitStatements` `Identifier` [`ValueAssignment`] [`WS`]) "}"
+    EnumShapeMembers        :"{" [`WS`] 1*(`TraitStatementsWithDocs` `Identifier` [`ValueAssignment`] [`WS`]) "}"
     ValueAssignment         :[`SP`] "=" [`SP`] `NodeValue` `BR`
     ListStatement           :%s"list" `SP` `Identifier` [`Mixins`] [`WS`] `ListMembers`
     ListMembers             :"{" [`WS`] [`ListMember`] [`WS`] "}"
-    ListMember              :`TraitStatements` (`ElidedListMember` / `ExplicitListMember`)
+    ListMember              :`TraitStatementsWithDocs` (`ElidedListMember` / `ExplicitListMember`)
     ElidedListMember        :%s"$member"
     ExplicitListMember      :%s"member" [`SP`] ":" [`SP`] `ShapeId`
     MapStatement            :%s"map" `SP` `Identifier` [`Mixins`] [`WS`] `MapMembers`
     MapMembers              :"{" [`WS`] [`MapKey` / `MapValue` / (`MapKey` `WS` `MapValue`)] [`WS`] "}"
-    MapKey                  :`TraitStatements` (`ElidedMapKey` / `ExplicitMapKey`)
-    MapValue                :`TraitStatements` (`ElidedMapValue` / `ExplicitMapValue`)
+    MapKey                  :`TraitStatementsWithDocs` (`ElidedMapKey` / `ExplicitMapKey`)
+    MapValue                :`TraitStatementsWithDocs` (`ElidedMapValue` / `ExplicitMapValue`)
     ElidedMapKey            :%s"$key"
     ExplicitMapKey          :%s"key" [`SP`] ":" [`SP`] `ShapeId`
     ElidedMapValue          :%s"$value"
@@ -209,12 +203,12 @@ string support defined in :rfc:`7405`.
     StructureStatement      :%s"structure" `SP` `Identifier` [`StructureResource`]
                             :        [`Mixins`] [`WS`] `StructureMembers`
     StructureResource       :`SP` %s"for" `SP` `ShapeId`
-    StructureMembers        :"{" [`WS`] *(`TraitStatements` `StructureMember` [`WS`]) "}"
+    StructureMembers        :"{" [`WS`] *(`TraitStatementsWithDocs` `StructureMember` [`WS`]) "}"
     StructureMember         :(`ExplicitStructureMember` / `ElidedStructureMember`) [`ValueAssignment`]
     ExplicitStructureMember :`Identifier` [`SP`] ":" [`SP`] `ShapeId`
     ElidedStructureMember   :"$" `Identifier`
     UnionStatement          :%s"union" `SP` `Identifier` [`Mixins`] [`WS`] `UnionMembers`
-    UnionMembers            :"{" [`WS`] *(`TraitStatements` `UnionMember` [`WS`]) "}"
+    UnionMembers            :"{" [`WS`] *(`TraitStatementsWithDocs` `UnionMember` [`WS`]) "}"
     UnionMember             :(`ExplicitStructureMember` / `ElidedStructureMember`)
     ServiceStatement        :%s"service" `SP` `Identifier` [`Mixins`] [`WS`] `NodeObject`
     ResourceStatement       :%s"resource" `SP` `Identifier` [`Mixins`] [`WS`] `NodeObject`
@@ -226,12 +220,14 @@ string support defined in :rfc:`7405`.
     OperationInput          :%s"input" [`WS`] (`InlineStructure` / (":" [`WS`] `ShapeId`)) `WS`
     OperationOutput         :%s"output" [`WS`] (`InlineStructure` / (":" [`WS`] `ShapeId`)) `WS`
     OperationErrors         :%s"errors" [`WS`] ":" [`WS`] "[" *([`WS`] `Identifier`) [`WS`] "]" `WS`
-    InlineStructure         :":=" [`WS`] `TraitStatements` [`StructureResource`]
+    InlineStructure         :":=" [`WS`] `TraitStatementsWithDocs` [`StructureResource`]
                             :        [`Mixins`] [`WS`] `StructureMembers`
 
 .. rubric:: Traits
 
 .. productionlist:: smithy
+    TraitStatementsWithDocs :*([`SP`] `DocumentationComment`) `TraitStatements`
+    DocumentationComment    :"///" *`NotNL` `NL`
     TraitStatements         :*([`WS`] `Trait`) [`WS`]
     Trait                   :"@" `ShapeId` [`TraitBody`]
     TraitBody               :"(" [`WS`] [`TraitBodyValue`] [`WS`] ")"
@@ -268,11 +264,6 @@ forward slashes followed by any character. A newline terminates a comment.
 
     // Another comment
     string MyString
-
-.. note::
-
-    Three forward slashes can be used to define the documentation of a shape
-    using a special :ref:`documentation comment <documentation-comment>`.
 
 
 .. _control-statement:
@@ -1625,11 +1616,13 @@ be checked first. The following example is invalid:
 Documentation comment
 =====================
 
-:token:`Documentation comments <smithy:DocumentationComment>` are a
-special kind of :token:`smithy:Comment` that provide
+:token:`Documentation comments <smithy:DocumentationComment>` provide
 :ref:`documentation <documentation-trait>` for shapes. A documentation
 comment is formed when three forward slashes (``"///"``) appear as the
-first non-whitespace characters on a line.
+first non-whitespace characters on a line. Documentation comments are
+distinct from normal comments. They can only appear before a shape or
+member. If a shape or member defines traits, documentation comments MUST
+appear before the traits.
 
 Documentation comments are defined using CommonMark_. The text after the
 forward slashes is considered the contents of the line. If the text starts
@@ -1680,13 +1673,10 @@ is equivalent to the following JSON AST model:
 
 .. rubric:: Placement
 
-Documentation comments are only treated as shape documentation when the
-comment appears immediately before a shape, and documentation comments MUST
-appear **before** any :ref:`traits <traits>` applied to the shape in order
-for the documentation to be applied to a shape.
+Documentation comments can only appear immediately before a shape or member,
+and documentation comments MUST appear **before** any :ref:`traits <traits>`.
 
-The following example applies a documentation trait to the shape because the
-documentation comment comes before the traits applied to a shape:
+The following example applies a valid documentation trait to a shape.
 
 .. code-block:: smithy
 
@@ -1694,16 +1684,35 @@ documentation comment comes before the traits applied to a shape:
     @deprecated
     string MyString
 
-Documentation comments can also be applied to members of a shape.
+Documentation comments can also be applied to members.
 
 .. code-block:: smithy
 
     /// Documentation about the structure.
+    /// Documentation continues...
     structure Example {
         /// Documentation about the member.
         @required
         foo: String,
     }
+
+The following dangling documentation comment is invalid:
+
+.. code-block:: smithy
+
+    $version: "2.0"
+    namespace smithy.example
+
+    /// This documents nothing and is invalid
+
+The following documentation is invalid because it does not come before a shape:
+
+.. code-block:: smithy
+
+    $version: "2.0"
+
+    /// This documentation comment is invalid.
+    namespace smithy.example
 
 .. rubric:: Semantic model
 

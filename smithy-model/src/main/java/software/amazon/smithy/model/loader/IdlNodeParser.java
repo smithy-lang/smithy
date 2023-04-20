@@ -180,14 +180,14 @@ final class IdlNodeParser {
 
         tokenizer.expect(IdlToken.LBRACKET);
         tokenizer.next();
-        tokenizer.skipWsAndDocs();
+        tokenizer.skipWs();
 
         do {
             if (tokenizer.getCurrentToken() == IdlToken.RBRACKET) {
                 break;
             } else {
                 builder.withValue(expectAndSkipNode(tokenizer, resolver));
-                tokenizer.skipWsAndDocs();
+                tokenizer.skipWs();
             }
         } while (true);
 
@@ -204,7 +204,7 @@ final class IdlNodeParser {
     ) {
         tokenizer.expect(IdlToken.LBRACE);
         tokenizer.next();
-        tokenizer.skipWsAndDocs();
+        tokenizer.skipWs();
         tokenizer.increaseNestingLevel();
         ObjectNode.Builder builder = ObjectNode.builder().sourceLocation(location);
 
@@ -216,17 +216,17 @@ final class IdlNodeParser {
             String key = tokenizer.internString(tokenizer.getCurrentTokenStringSlice());
             SourceLocation keyLocation = tokenizer.getCurrentTokenLocation();
             tokenizer.next();
-            tokenizer.skipWsAndDocs();
+            tokenizer.skipWs();
             tokenizer.expect(IdlToken.COLON);
             tokenizer.next();
-            tokenizer.skipWsAndDocs();
+            tokenizer.skipWs();
 
             Node value = expectAndSkipNode(tokenizer, resolver);
             if (builder.hasMember(key)) {
                 throw new ModelSyntaxException("Duplicate member: '" + key + '\'', keyLocation);
             }
             builder.withMember(key, value);
-            tokenizer.skipWsAndDocs();
+            tokenizer.skipWs();
         }
 
         tokenizer.expect(IdlToken.RBRACE);

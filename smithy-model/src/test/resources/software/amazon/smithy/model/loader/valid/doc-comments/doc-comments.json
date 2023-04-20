@@ -60,7 +60,7 @@
         "smithy.example#MyOperationOutput": {
             "type": "structure",
             "traits": {
-                "smithy.api#documentation": "These are not ignored because they come AFTER the walrus\noperator.",
+                "smithy.api#documentation": "These are valid because they come AFTER the walrus\noperator.",
                 "smithy.api#output": {}
             }
         }

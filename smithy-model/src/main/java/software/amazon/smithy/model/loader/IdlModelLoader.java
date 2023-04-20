@@ -48,7 +48,6 @@ import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.DefaultTrait;
-import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.model.traits.InputTrait;
 import software.amazon.smithy.model.traits.OutputTrait;
@@ -116,7 +115,7 @@ final class IdlModelLoader {
 
     void parse(Consumer<LoadOperation> operationConsumer) {
         operations = operationConsumer;
-        tokenizer.skipWsAndDocs();
+        tokenizer.skipWs();
         parseControlSection();
 
         // Emit a version from the current location if the assumed 1.0 is used.
@@ -124,7 +123,7 @@ final class IdlModelLoader {
             addOperation(new LoadOperation.ModelVersion(modelVersion, tokenizer.getCurrentTokenLocation()));
         }
 
-        tokenizer.skipWsAndDocs();
+        tokenizer.skipWs();
         parseMetadataSection();
         parseShapeSection();
     }
@@ -322,20 +321,11 @@ final class IdlModelLoader {
             tokenizer.expectCurrentLexeme("namespace");
             tokenizer.next(); // skip "namespace"
             tokenizer.expectAndSkipSpaces();
-
             // Parse the namespace.
             namespace = tokenizer.internString(IdlShapeIdParser.expectAndSkipShapeIdNamespace(tokenizer));
             tokenizer.expectAndSkipBr();
-
-            // An unfortunate side effect of allowing insignificant documentation comments:
-            // Keep track of a potential documentation comment location because we need to skip doc comments to parse
-            // a potential `use statement`. If a `use` statement is present, captured documentation comments are
-            // correctly cleared from the lexer. If not found, the captured comments are applied to the first shape.
-            SourceLocation possibleDocCommentLocation = tokenizer.getCurrentTokenLocation();
-            tokenizer.skipWsAndDocs();
             parseUseSection();
-            parseFirstShapeStatement(possibleDocCommentLocation);
-            parseSubsequentShapeStatements();
+            parseShapeStatements();
         } else if (tokenizer.hasNext()) {
             throw syntax("Expected a namespace definition but found "
                          + tokenizer.getCurrentToken().getDebug(tokenizer.getCurrentTokenLexeme()));
@@ -384,7 +374,7 @@ final class IdlModelLoader {
             });
 
             tokenizer.expectAndSkipBr();
-            tokenizer.skipWsAndDocs();
+            tokenizer.skipWs();
         }
     }
 
@@ -402,9 +392,9 @@ final class IdlModelLoader {
         } else {
             // Parse a trait block.
             tokenizer.next(); // skip opening LBRACE.
-            tokenizer.skipWsAndDocs();
+            tokenizer.skipWs();
             traitsToApply = IdlTraitParser.expectAndSkipTraits(tokenizer, resolver);
-            tokenizer.skipWsAndDocs();
+            tokenizer.skipWs();
             tokenizer.expect(IdlToken.RBRACE);
             tokenizer.next();
         }
@@ -421,52 +411,15 @@ final class IdlModelLoader {
         tokenizer.expectAndSkipBr();
     }
 
-    private void parseFirstShapeStatement(SourceLocation possibleDocCommentLocation) {
-        if (tokenizer.getCurrentToken() != IdlToken.EOF) {
-            try {
-                if (tokenizer.doesCurrentIdentifierStartWith('a')) {
-                    parseApplyStatement();
-                } else {
-                    List<IdlTraitParser.Result> traits;
-                    boolean hasDocComment = tokenizer.getCurrentToken() == IdlToken.DOC_COMMENT;
-
-                    if (possibleDocCommentLocation == null) {
-                        traits = IdlTraitParser.parseDocsAndTraitsBeforeShape(tokenizer, resolver);
-                    } else {
-                        // In this case, this is the first shape encountered for a model file that doesn't have any
-                        // use statements. We need to take the previously skipped documentation comments to parse
-                        // potential use statements and apply them to this first shape.
-                        String docLines = tokenizer.removePendingDocCommentLines();
-                        traits = IdlTraitParser.parseDocsAndTraitsBeforeShape(tokenizer, resolver);
-                        // Note that possibleDocCommentLocation is just a mark of where docs _could be_.
-                        if (docLines != null) {
-                            hasDocComment = true;
-                            traits.add(new IdlTraitParser.Result(DocumentationTrait.ID.toString(),
-                                                                 new StringNode(docLines, possibleDocCommentLocation),
-                                                                 IdlTraitParser.TraitType.DOC_COMMENT));
-                        }
-                    }
-
-                    if (parseShapeDefinition(traits, hasDocComment)) {
-                        parseShape(traits);
-                    }
-                }
-            } catch (ModelSyntaxException e) {
-                errorRecovery(e);
-            }
-        }
-    }
-
-    private void parseSubsequentShapeStatements() {
+    private void parseShapeStatements() {
         while (tokenizer.hasNext()) {
             try {
                 if (tokenizer.doesCurrentIdentifierStartWith('a')) {
                     parseApplyStatement();
                 } else {
                     List<IdlTraitParser.Result> traits;
-                    boolean hasDocComment = tokenizer.getCurrentToken() == IdlToken.DOC_COMMENT;
                     traits = IdlTraitParser.parseDocsAndTraitsBeforeShape(tokenizer, resolver);
-                    if (parseShapeDefinition(traits, hasDocComment)) {
+                    if (parseShapeDefinition(traits)) {
                         parseShape(traits);
                     }
                 }
@@ -509,15 +462,12 @@ final class IdlModelLoader {
         }
     }
 
-    private boolean parseShapeDefinition(List<IdlTraitParser.Result> traits, boolean hasDocComment) {
+    private boolean parseShapeDefinition(List<IdlTraitParser.Result> traits) {
         if (tokenizer.getCurrentToken() != IdlToken.EOF) {
             // Continue to parse if not at the end of the file.
             return true;
-        } else if (hasDocComment) {
-            // Ignore a standalone documentation comment and treat it like a normal comment.
-            return traits.size() > 1;
         } else {
-            // Fail because there are traits, it's not just a documentation comment, and there's no more IDL to parse.
+            // Fail because there are traits.
             return !traits.isEmpty();
         }
     }
@@ -635,10 +585,10 @@ final class IdlModelLoader {
         }
 
         tokenizer.next();
-        tokenizer.skipWsAndDocs();
+        tokenizer.skipWs();
         tokenizer.expect(IdlToken.LBRACKET);
         tokenizer.next();
-        tokenizer.skipWsAndDocs();
+        tokenizer.skipWs();
 
         do {
             String target = tokenizer.internString(IdlShapeIdParser.expectAndSkipShapeId(tokenizer));
@@ -646,7 +596,7 @@ final class IdlModelLoader {
                 operation.addDependency(resolved);
                 operation.addModifier(new ApplyMixin(resolved));
             });
-            tokenizer.skipWsAndDocs();;
+            tokenizer.skipWs();;
         } while (tokenizer.getCurrentToken() != IdlToken.RBRACKET);
 
         tokenizer.expect(IdlToken.RBRACKET);
@@ -657,12 +607,12 @@ final class IdlModelLoader {
     private void parseCollection(ShapeId id, SourceLocation location, CollectionShape.Builder<?, ?> builder) {
         LoadOperation.DefineShape operation = createShape(builder.id(id).source(location));
         parseMixins(operation);
-        tokenizer.skipWsAndDocs();
+        tokenizer.skipWs();
         tokenizer.expect(IdlToken.LBRACE);
         tokenizer.next();
         tokenizer.skipWs();
         parsePossiblyElidedMember(operation, "member");
-        tokenizer.skipWsAndDocs();
+        tokenizer.skipWs();
         tokenizer.expect(IdlToken.RBRACE);
         tokenizer.next();
         operations.accept(operation);
@@ -699,10 +649,10 @@ final class IdlModelLoader {
         tokenizer.next();
 
         if (!isElided) {
-            tokenizer.skipWsAndDocs();
+            tokenizer.skipWs();
             tokenizer.expect(IdlToken.COLON);
             tokenizer.next();
-            tokenizer.skipWsAndDocs();
+            tokenizer.skipWs();
             String id = tokenizer.internString(IdlShapeIdParser.expectAndSkipShapeId(tokenizer));
             addForwardReference(id, memberBuilder::target);
         }
@@ -714,7 +664,7 @@ final class IdlModelLoader {
     private void parseEnumShape(ShapeId id, SourceLocation location, AbstractShapeBuilder<?, ?> builder) {
         LoadOperation.DefineShape operation = createShape(builder.id(id).source(location));
         parseMixins(operation);
-        tokenizer.skipWsAndDocs();
+        tokenizer.skipWs();
         tokenizer.expect(IdlToken.LBRACE);
         tokenizer.next();
         tokenizer.skipWs();
@@ -756,14 +706,14 @@ final class IdlModelLoader {
     private void parseMapStatement(ShapeId id, SourceLocation location) {
         LoadOperation.DefineShape operation = createShape(MapShape.builder().id(id).source(location));
         parseMixins(operation);
-        tokenizer.skipWsAndDocs();
+        tokenizer.skipWs();
         tokenizer.expect(IdlToken.LBRACE);
         tokenizer.next();
         tokenizer.skipWs();
         parsePossiblyElidedMember(operation, "key");
         tokenizer.skipWs();
         parsePossiblyElidedMember(operation, "value");
-        tokenizer.skipWsAndDocs();
+        tokenizer.skipWs();
         tokenizer.expect(IdlToken.RBRACE);
         tokenizer.next();
         operations.accept(operation);
@@ -821,7 +771,7 @@ final class IdlModelLoader {
     private void parseMembers(LoadOperation.DefineShape op, MemberParsing memberParsing) {
         Set<String> definedMembers = new HashSet<>();
 
-        tokenizer.skipWsAndDocs();
+        tokenizer.skipWs();
         tokenizer.expect(IdlToken.LBRACE);
         tokenizer.next();
         tokenizer.skipWs();
@@ -935,7 +885,7 @@ final class IdlModelLoader {
         ServiceShape.Builder builder = new ServiceShape.Builder().id(id).source(location);
         LoadOperation.DefineShape operation = createShape(builder);
         parseMixins(operation);
-        tokenizer.skipWsAndDocs();
+        tokenizer.skipWs();
         tokenizer.expect(IdlToken.LBRACE);
         ObjectNode shapeNode = IdlNodeParser.expectAndSkipNode(tokenizer, resolver).expectObjectNode();
         LoaderUtils.checkForAdditionalProperties(shapeNode, id, SERVICE_PROPERTY_NAMES).ifPresent(this::emit);
@@ -967,7 +917,7 @@ final class IdlModelLoader {
         LoadOperation.DefineShape operation = createShape(builder);
 
         parseMixins(operation);
-        tokenizer.skipWsAndDocs();
+        tokenizer.skipWs();
         tokenizer.expect(IdlToken.LBRACE);
         ObjectNode shapeNode = IdlNodeParser.expectAndSkipNode(tokenizer, resolver).expectObjectNode();
 
@@ -1009,10 +959,10 @@ final class IdlModelLoader {
         OperationShape.Builder builder = OperationShape.builder().id(id).source(location);
         LoadOperation.DefineShape operation = createShape(builder);
         parseMixins(operation);
-        tokenizer.skipWsAndDocs();
+        tokenizer.skipWs();
         tokenizer.expect(IdlToken.LBRACE);
         tokenizer.next();
-        tokenizer.skipWsAndDocs();
+        tokenizer.skipWs();
 
         Set<String> defined = new HashSet<>();
         while (tokenizer.hasNext() && tokenizer.getCurrentToken() != IdlToken.RBRACE) {
@@ -1023,7 +973,7 @@ final class IdlModelLoader {
             }
 
             tokenizer.next();
-            tokenizer.skipWsAndDocs();
+            tokenizer.skipWs();
 
             switch (key) {
                 case "input":
@@ -1049,7 +999,7 @@ final class IdlModelLoader {
                     throw syntax(id, String.format("Unknown property %s for %s", key, id));
             }
             tokenizer.expectAndSkipWhitespace();
-            tokenizer.skipWsAndDocs();
+            tokenizer.skipWs();
         }
 
         tokenizer.expect(IdlToken.RBRACE);
@@ -1069,14 +1019,11 @@ final class IdlModelLoader {
                 throw syntax(id, "Inlined operation inputs and outputs can only be used with Smithy version 2 or "
                                  + "later. Attempted to use inlined IO with version `" + modelVersion + "`.");
             }
-            // Remove any pending, invalid docs that may have come before the inline shape.
-            tokenizer.removePendingDocCommentLines();
             tokenizer.next();
-            // don't skip docs here in case there are docs on the inlined structure.
             tokenizer.skipWs();
             consumer.accept(parseInlineStructure(id.getName() + suffix, defaultTrait));
         } else {
-            tokenizer.skipWsAndDocs();
+            tokenizer.skipWs();
             String target = tokenizer.internString(IdlShapeIdParser.expectAndSkipShapeId(tokenizer));
             addForwardReference(target, consumer);
         }
@@ -1101,16 +1048,16 @@ final class IdlModelLoader {
 
     private void parseIdList(Consumer<ShapeId> consumer) {
         tokenizer.increaseNestingLevel();
-        tokenizer.skipWsAndDocs();
+        tokenizer.skipWs();
         tokenizer.expect(IdlToken.LBRACKET);
         tokenizer.next();
-        tokenizer.skipWsAndDocs();
+        tokenizer.skipWs();
 
         while (tokenizer.hasNext() && tokenizer.getCurrentToken() != IdlToken.RBRACKET) {
             tokenizer.expect(IdlToken.IDENTIFIER);
             String target = tokenizer.internString(IdlShapeIdParser.expectAndSkipShapeId(tokenizer));
             addForwardReference(target, consumer);
-            tokenizer.skipWsAndDocs();
+            tokenizer.skipWs();
         }
 
         tokenizer.expect(IdlToken.RBRACKET);

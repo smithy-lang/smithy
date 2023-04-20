@@ -335,17 +335,6 @@ public class TokenizerTest {
     }
 
     @Test
-    public void skipDocsAndWhitespace() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model(" \n\n /// Docs\n/// Docs\n\n hi").build();
-
-        tokenizer.skipWsAndDocs();
-
-        assertThat(tokenizer.getCurrentToken(), is(IdlToken.IDENTIFIER));
-        assertThat(tokenizer.getCurrentTokenLine(), is(6));
-        assertThat(tokenizer.getCurrentTokenColumn(), is(2));
-    }
-
-    @Test
     public void expectsAndSkipsBr() {
         IdlTokenizer tokenizer = IdlTokenizer.builder().model("\n  Hi").build();
 
@@ -477,7 +466,7 @@ public class TokenizerTest {
     }
 
     @Test
-    public void returnsCapturedDocsInRange() {
+    public void parsesDocs() {
         IdlTokenizer tokenizer = IdlTokenizer
                 .builder()
                 .model("/// Hi\n"
@@ -486,11 +475,9 @@ public class TokenizerTest {
                        + "/// 456\n")
                 .build();
 
-        tokenizer.skipWsAndDocs();
-        String lines = tokenizer.removePendingDocCommentLines();
+        String docs = tokenizer.expectAndParseDocs().toString();
 
-        assertThat(lines, equalTo("Hi\nThere\n123\n456"));
-        assertThat(tokenizer.removePendingDocCommentLines(), nullValue());
+        assertThat(docs, equalTo("Hi\nThere\n123\n456"));
     }
 
     @Test
