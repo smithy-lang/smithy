@@ -204,7 +204,7 @@ public final class EnumShape extends StringShape {
      * is applied to the converted enum member shape.
      *
      * <p>If an enum definition has an "internal" tag, the InternalTrait is
-     * applied ot the converted enum member shape.
+     * applied to the converted enum member shape.
      *
      * @param parentId The {@link ShapeId} of the enum shape.
      * @param synthesizeName Whether to synthesize a name if possible.
