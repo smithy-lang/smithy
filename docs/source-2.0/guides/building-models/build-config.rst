@@ -519,6 +519,11 @@ applied.
         }
     }
 
+.. note::
+
+    The :ref:`enum trait <enum-trait>` is deprecated. It is recommended to
+    use an :ref:`enum shape <enum>` instead to avoid needing to use this
+    transform.
 
 .. _changeTypes:
 
