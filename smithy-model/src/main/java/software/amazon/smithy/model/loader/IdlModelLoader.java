@@ -110,6 +110,7 @@ final class IdlModelLoader {
                 .filename(filename)
                 .model(model)
                 .stringTable(stringTable)
+                .validationEventListener(this::emit)
                 .build();
         this.resolver = this::addForwardReference;
     }
@@ -514,8 +515,18 @@ final class IdlModelLoader {
             // Continue to parse if not at the end of the file.
             return true;
         } else if (hasDocComment) {
-            // Ignore a standalone documentation comment and treat it like a normal comment.
-            return traits.size() > 1;
+            // When hasDocComment is true and the number of traits is 1, then the only trait is a documentation trait
+            // created from parsing "///". In this case, warn that a dangling documentation comment was detected
+            // but don't fail.
+            if (traits.size() == 1) {
+                emit(LoaderUtils.emitBadDocComment(tokenizer.getCurrentTokenLocation(),
+                                                   traits.get(0).getValue().expectStringNode().getValue()));
+                return false;
+            } else {
+                // If more than 1 trait is present when hasDocComment is true, then other traits were defined, and
+                // we do want to fail.
+                return true;
+            }
         } else {
             // Fail because there are traits, it's not just a documentation comment, and there's no more IDL to parse.
             return !traits.isEmpty();
