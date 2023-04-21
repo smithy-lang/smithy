@@ -1,0 +1,1 @@
+[ERROR] com.foo#RequestCompressionOperation: There must be at least one compression algorithm in `encodings` for the `requestCompression` trait applied to `com.foo#RequestCompressionOperation` | RequestCompressionTrait

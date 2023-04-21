@@ -1,0 +1,1 @@
+[ERROR] com.foo#RequestCompressionOperation: Invalid compression algorithms found in `requestCompression` trait applied to `com.foo#RequestCompressionOperation`: `brotli`, `custom` | RequestCompressionTrait

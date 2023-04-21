@@ -52,6 +52,7 @@ software.amazon.smithy.model.traits.RangeTrait$Provider
 software.amazon.smithy.model.traits.ReadonlyTrait$Provider
 software.amazon.smithy.model.traits.RecommendedTrait$Provider
 software.amazon.smithy.model.traits.ReferencesTrait$Provider
+software.amazon.smithy.model.traits.RequestCompressionTrait$Provider
 software.amazon.smithy.model.traits.RequiredTrait$Provider
 software.amazon.smithy.model.traits.RequiresLengthTrait$Provider
 software.amazon.smithy.model.traits.ResourceIdentifierTrait$Provider

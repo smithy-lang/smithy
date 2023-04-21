@@ -1,0 +1,1 @@
+[ERROR] com.foo#RequestCompressionOperation: Error creating trait `requestCompression`: Missing expected member `encodings`. | Model

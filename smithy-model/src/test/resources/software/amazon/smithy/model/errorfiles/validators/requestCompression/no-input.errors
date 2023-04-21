@@ -1,0 +1,1 @@
+[ERROR] com.foo#RequestCompressionOperation: The `requestCompression` trait can only be applied to operations which have an input shape defined | RequestCompressionTrait
