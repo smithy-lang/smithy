@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.SimpleParser;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -648,6 +649,17 @@ public final class IdlTokenizer implements Iterator<IdlToken> {
                 CharSequence latestLine = docCommentLines.removeLast();
                 clearDocCommentLinesForBr();
                 docCommentLines.add(latestLine);
+                // Warn because using doc comments at the end of a line is bad.
+                ValidationEvent event = ValidationEvent.builder()
+                                .id(LoaderUtils.BAD_DOCUMENTATION_COMMENT)
+                                .sourceLocation(getCurrentTokenLocation())
+                                .severity(Severity.WARNING)
+                                .message("Found a document comment at the end of a line. This is confusing and adds "
+                                         + "documentation to the next shape after this line. Given how confusing this "
+                                         + "is, support for this kind of comment may be removed in future versions "
+                                         + "of Smithy.")
+                                .build();
+                validationEventListener.accept(event);
                 break;
             case EOF:
                 break;

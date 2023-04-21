@@ -46,4 +46,7 @@ operation MyOperation {
         {}
 }
 
+/// This is treated as a comment because it comes before apply.
+apply MyOperation @deprecated
+
 /// This is treated as a comment.
