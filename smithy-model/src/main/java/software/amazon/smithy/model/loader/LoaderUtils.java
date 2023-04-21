@@ -111,8 +111,8 @@ final class LoaderUtils {
     }
 
     static ValidationEvent emitBadDocComment(SourceLocation location, String comments) {
-        String message = "Documentation comments ('///') attached to nothing prior to this line. Documentation "
-                         + "comments must appear directly before shapes and members, and before any traits.";
+        String message = "Found documentation comments ('///') attached to nothing. Documentation comments must "
+                         + "appear on their own lines, directly before shapes and members, and before any traits.";
         if (comments != null) {
             message += " The invalid comments were: " + comments;
         }

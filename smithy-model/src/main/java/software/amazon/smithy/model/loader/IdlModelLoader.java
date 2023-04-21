@@ -443,8 +443,7 @@ final class IdlModelLoader {
             try {
                 tokenizer.skipWsAndDocs();
                 String docLines = tokenizer.removePendingDocCommentLines();
-                List<IdlTraitParser.Result> traits;
-                traits = IdlTraitParser.parseDocsAndTraitsBeforeShape(tokenizer, resolver);
+                List<IdlTraitParser.Result> traits = IdlTraitParser.parseDocsAndTraitsBeforeShape(tokenizer, resolver);
                 if (docLines != null) {
                     traits.add(new IdlTraitParser.Result(DocumentationTrait.ID.toString(),
                                                          new StringNode(docLines, possibleDocCommentLocation),
@@ -462,9 +461,8 @@ final class IdlModelLoader {
     private void parseSubsequentShapeStatements() {
         while (tokenizer.hasNext()) {
             try {
-                List<IdlTraitParser.Result> traits;
                 boolean hasDocComment = tokenizer.getCurrentToken() == IdlToken.DOC_COMMENT;
-                traits = IdlTraitParser.parseDocsAndTraitsBeforeShape(tokenizer, resolver);
+                List<IdlTraitParser.Result> traits = IdlTraitParser.parseDocsAndTraitsBeforeShape(tokenizer, resolver);
                 if (parseShapeDefinition(traits, hasDocComment)) {
                     parseShapeOrApply(traits);
                 }
