@@ -49,6 +49,9 @@
             },
             "output": {
                 "target": "smithy.example#MyOperationOutput"
+            },
+            "traits": {
+                "smithy.api#deprecated": {}
             }
         },
         "smithy.example#MyOperationInput": {
