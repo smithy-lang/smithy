@@ -2,28 +2,16 @@
     "smithy": "2.0",
     "shapes": {
         "com.example#Bam": {
-            "type": "string",
-            "traits": {
-                "smithy.api#documentation": "Doc comment on Bam"
-            }
+            "type": "string"
         },
         "com.example#Bar": {
-            "type": "string",
-            "traits": {
-                "smithy.api#documentation": "Doc comment on Bar"
-            }
+            "type": "string"
         },
         "com.example#Baz": {
-            "type": "string",
-            "traits": {
-                "smithy.api#documentation": "Doc comment on Baz"
-            }
+            "type": "string"
         },
         "com.example#Foo": {
-            "type": "string",
-            "traits": {
-                "smithy.api#documentation": "Doc comment on Foo"
-            }
+            "type": "string"
         }
     }
 }

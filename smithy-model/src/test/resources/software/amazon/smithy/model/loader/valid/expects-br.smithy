@@ -1,11 +1,11 @@
 $version: "2" /// Ignore me
 
-namespace com.example /// Doc comment on Foo
+namespace com.example /// Ignored
 
-string Foo /// Doc comment on Bar
+string Foo /// Ignored
 
-string Bar /// Doc comment on Baz
+string Bar /// Ignored
 
-string Baz, /// Doc comment on Bam
+string Baz, /// Ignored
 
-string Bam,,,/// Dangling
+string Bam,,,/// Ignored
