@@ -111,7 +111,7 @@ jobs:
           echo pr_title="chore: upgrade smithy-cli to ${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
           echo pr_body="Created by ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" >> $GITHUB_OUTPUT
       - name: Create pull-request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v5
         with:
           path: homebrew-tap
           delete-branch: true
