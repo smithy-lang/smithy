@@ -1,5 +1,19 @@
 # Smithy Changelog
 
+## 1.31.0 (2023-04-25)
+
+### Features
+* Added `@requestCompression` trait which indicates whether an operation supports compressed requests ([#1748](https://github.com/awslabs/smithy/pull/1748))
+* Improved IDL parser and added basic error recovery ([#1733](https://github.com/awslabs/smithy/pull/1733))
+* Added restJson1 protocol test for a list of structures missing a required key ([#1735](https://github.com/awslabs/smithy/pull/1735))
+* Added ability to order the output of the IDL serializer ([#1727](https://github.com/awslabs/smithy/pull/1727))
+ 
+### Bug Fixes
+* Updated conversion from string shape with `@enum` trait to enum shape to convert `internal` tag to `@internal` trait ([#1739](https://github.com/awslabs/smithy/pull/1739))
+
+### Documentation
+* Added documentation for changeStringEnumsToEnumShapes transformation ([#1740](https://github.com/awslabs/smithy/pull/1740))
+
 ## 1.30.0 (2023-04-10)
 
 ### Features
