@@ -35,7 +35,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * Iterates over a Smithy IDL model as a series of tokens.
  */
 @SmithyUnstableApi
-public final class IdlTokenizer implements Iterator<IdlToken> {
+final class IdlTokenizer implements Iterator<IdlToken> {
 
     /** Only allow nesting up to 64 arrays/objects in node values. */
     private static final int MAX_NESTING_LEVEL = 64;
