@@ -30,6 +30,7 @@ software.amazon.smithy.model.validation.validators.PatternTraitValidator
 software.amazon.smithy.model.validation.validators.PrivateAccessValidator
 software.amazon.smithy.model.validation.validators.RangeTraitValidator
 software.amazon.smithy.model.validation.validators.ReferencesTraitValidator
+software.amazon.smithy.model.validation.validators.RequestCompressionTraitValidator
 software.amazon.smithy.model.validation.validators.ResourceCycleValidator
 software.amazon.smithy.model.validation.validators.ResourceIdentifierBindingValidator
 software.amazon.smithy.model.validation.validators.ResourceIdentifierValidator
