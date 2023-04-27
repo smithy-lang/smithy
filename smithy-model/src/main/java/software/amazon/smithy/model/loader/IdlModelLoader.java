@@ -1083,7 +1083,6 @@ final class IdlModelLoader {
             }
             // Remove any pending, invalid docs that may have come before the inline shape.
             tokenizer.removePendingDocCommentLines();
-            tokenizer.next();
             // don't skip docs here in case there are docs on the inlined structure.
             tokenizer.skipWs();
             consumer.accept(parseInlineStructure(id.getName() + suffix, defaultTrait));

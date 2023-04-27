@@ -30,7 +30,8 @@ structure NameBearer {
 }
 
 operation UsesMixins {
-    input := with [NameBearer] {
+    // Parser handles weird/missing SP
+    input :=with [NameBearer] {
         id: String
     }
 
