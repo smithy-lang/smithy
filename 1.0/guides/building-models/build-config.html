@@ -567,8 +567,60 @@ No cycles are allowed in <code class="docutils literal notranslate"><span class=
 </div>
 </div></div>
 </div>
+<div class="section" id="changestringenumstoenumshapes">
+<span id="id4"></span><h3>changeStringEnumsToEnumShapes<a class="headerlink" href="#changestringenumstoenumshapes" title="Permalink to this headline">#</a></h3>
+<p>Changes string shapes with enum traits into enum shapes.</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>synthesizeNames</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>Whether enums without names should have names synthesized if possible.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>This transformer will attempt to convert strings with <a class="reference internal" href="../../spec/core/constraint-traits.html#enum-trait"><span class="std std-ref">enum traits</span></a>
+into enum shapes. To successfully convert to an enum shape, each enum
+definition within the source enum trait must have a <code class="docutils literal notranslate"><span class="pre">name</span></code> property, or the
+<code class="docutils literal notranslate"><span class="pre">synthesizeNames</span></code> transform config option must be enabled. By default, <code class="docutils literal notranslate"><span class="pre">synthesizeNames</span></code>
+is disabled. If an enum definition from the enum trait is marked as deprecated, the
+<a class="reference internal" href="../../spec/core/documentation-traits.html#deprecated-trait"><span class="std std-ref">deprecated trait</span></a> will be applied to the resulting
+enum shape member. Tags on the enum definition will be converted to a <a class="reference internal" href="../../spec/core/documentation-traits.html#tags-trait"><span class="std std-ref">tags trait</span></a>
+on the enum shape member. Additionally, if the enum definition is tagged as
+internal, the enum shape member will have the <a class="reference internal" href="../../spec/core/documentation-traits.html#internal-trait"><span class="std std-ref">internal trait</span></a>
+applied.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="nt">&quot;transforms&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
+<span class="w">                </span><span class="p">{</span><span class="w"></span>
+<span class="w">                    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;changeStringEnumsToEnumShapes&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                    </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                        </span><span class="nt">&quot;synthesizeNames&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<span class="w">                    </span><span class="p">}</span><span class="w"></span>
+<span class="w">                </span><span class="p">}</span><span class="w"></span>
+<span class="w">            </span><span class="p">]</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="changetypes">
-<span id="id4"></span><h3>changeTypes<a class="headerlink" href="#changetypes" title="Permalink to this headline">#</a></h3>
+<span id="id5"></span><h3>changeTypes<a class="headerlink" href="#changetypes" title="Permalink to this headline">#</a></h3>
 <p>Changes the types of shapes.</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
@@ -588,6 +640,10 @@ No cycles are allowed in <code class="docutils literal notranslate"><span class=
 <td><code class="docutils literal notranslate"><span class="pre">Map&lt;ShapeId,</span> <span class="pre">String&gt;</span></code></td>
 <td>A map of shape IDs to the type to assign to the shape.</td>
 </tr>
+<tr class="row-odd"><td>synthesizeEnumNames</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>Whether enums without names should have names synthesized if possible.</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -598,9 +654,9 @@ No cycles are allowed in <code class="docutils literal notranslate"><span class=
 <li>Set to list</li>
 <li>Structure to union</li>
 <li>Union to structure</li>
+<li>String to enum</li>
 </ul>
-<div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-2-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-2-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-2-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -610,8 +666,10 @@ No cycles are allowed in <code class="docutils literal notranslate"><span class=
 <span class="w">                    </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">                        </span><span class="nt">&quot;shapeTypes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">                            </span><span class="nt">&quot;smithy.example#Foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                            </span><span class="nt">&quot;smithy.example#Baz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;union&quot;</span><span class="w"></span>
-<span class="w">                        </span><span class="p">}</span><span class="w"></span>
+<span class="w">                            </span><span class="nt">&quot;smithy.example#Baz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;union&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                            </span><span class="nt">&quot;smithy.example#Qux&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;enum&quot;</span><span class="w"></span>
+<span class="w">                        </span><span class="p">},</span><span class="w"></span>
+<span class="w">                        </span><span class="nt">&quot;synthesizeEnumNames&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
 <span class="w">                    </span><span class="p">}</span><span class="w"></span>
 <span class="w">                </span><span class="p">}</span><span class="w"></span>
 <span class="w">            </span><span class="p">]</span><span class="w"></span>
@@ -620,7 +678,10 @@ No cycles are allowed in <code class="docutils literal notranslate"><span class=
 <span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
-</div></div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#changestringenumstoenumshapes"><span class="std std-ref">changeStringEnumsToEnumShapes</span></a></p>
+</div>
 </div>
 <div class="section" id="excludeshapesbytag">
 <span id="excludeshapesbytag-transform"></span><h3>excludeShapesByTag<a class="headerlink" href="#excludeshapesbytag" title="Permalink to this headline">#</a></h3>
@@ -648,7 +709,7 @@ the <a class="reference internal" href="../../spec/core/documentation-traits.htm
 </table>
 </div>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-3-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-3-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-3-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-2-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-2-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-2-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -699,7 +760,7 @@ shape IDs are assumed to be in the <code class="docutils literal notranslate"><s
 </table>
 </div>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-4-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-4-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-4-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-3-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-3-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-3-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -744,7 +805,7 @@ via the <a class="reference internal" href="../../spec/core/documentation-traits
 </table>
 </div>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-5-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-5-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-5-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-5-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-4-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-4-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-4-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -793,7 +854,7 @@ Note that this does not filter out traits based on namespaces.</p>
 </table>
 </div>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-6-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-6-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-6-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-6-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-5-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-5-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-5-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-5-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -843,7 +904,7 @@ a valid service shape ID.</td>
 </table>
 </div>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-7-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-7-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-7-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-7-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-6-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-6-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-6-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-6-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -888,7 +949,7 @@ provided <code class="docutils literal notranslate"><span class="pre">tags</span
 </table>
 </div>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-8-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-8-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-8-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-8-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-7-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-7-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-7-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-7-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -940,7 +1001,7 @@ shape IDs that are relative are assumed to be part of the
 </table>
 </div>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-9-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-9-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-9-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-9-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-8-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-8-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-8-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-8-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -962,7 +1023,7 @@ shape IDs that are relative are assumed to be part of the
 arguments with &quot;#&quot;. For example, the following configuration excludes
 all traits in the &quot;example.foo&quot; namespace:</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-10-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-10-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-10-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-10-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-9-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-9-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-9-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-9-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -1011,7 +1072,7 @@ orphaned shapes.</p>
 </table>
 </div>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-11-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-11-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-11-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-11-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-10-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-10-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-10-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-10-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -1114,7 +1175,7 @@ in this list, including &quot;*&quot;, will be removed.</p>
 <p>The following example removes suppressions that have no effect in the
 <code class="docutils literal notranslate"><span class="pre">exampleProjection</span></code>:</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-12-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-12-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-12-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-12-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-11-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-11-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-11-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-11-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -1135,7 +1196,7 @@ in this list, including &quot;*&quot;, will be removed.</p>
 <p>The following example removes suppressions from metadata that refer to
 deny-listed namespaces:</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-13-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-13-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-13-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-13-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-12-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-12-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-12-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-12-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -1156,7 +1217,7 @@ deny-listed namespaces:</p>
 <p>The following example removes suppressions from metadata that refer to
 namespaces outside of the allow-listed namespaces:</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-14-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-14-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-14-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-14-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-13-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-13-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-13-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-13-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -1176,7 +1237,7 @@ namespaces outside of the allow-listed namespaces:</p>
 </div></div>
 <p>The following example removes suppressions that refer to deny-listed event IDs:</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-15-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-15-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-15-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-15-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-14-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-14-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-14-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-14-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -1197,7 +1258,7 @@ namespaces outside of the allow-listed namespaces:</p>
 <p>The following example removes suppressions that refer to event IDs outside
 of the event ID allow list:</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-16-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-16-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-16-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-16-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-15-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-15-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-15-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-15-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -1218,7 +1279,7 @@ of the event ID allow list:</p>
 <p>The following example removes the <code class="docutils literal notranslate"><span class="pre">reason</span></code> property from metadata
 suppressions:</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-17-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-17-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-17-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-17-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-16-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-16-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-16-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-16-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -1263,7 +1324,7 @@ list.</p>
 </table>
 </div>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-18-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-18-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-18-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-18-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-17-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-17-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-17-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-17-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -1315,7 +1376,7 @@ prelude namespace.</td>
 </table>
 </div>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-19-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-19-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-19-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-19-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-18-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-18-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-18-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-18-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -1337,7 +1398,7 @@ prelude namespace.</td>
 arguments with &quot;#&quot;. For example, the following configuration includes
 all traits in the &quot;smithy.api&quot; namespace:</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-20-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-20-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-20-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-20-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-19-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-19-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-19-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-19-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -1387,7 +1448,7 @@ in the filtered model.</td>
 </table>
 </div>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-21-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-21-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-21-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-21-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-20-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-20-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-20-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-20-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -1436,7 +1497,7 @@ key is in the provided <code class="docutils literal notranslate"><span class="p
 </table>
 </div>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-22-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-22-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-22-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-22-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-21-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-21-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-21-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-21-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -1481,7 +1542,7 @@ key is not in the provided <code class="docutils literal notranslate"><span clas
 </table>
 </div>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-23-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-23-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-23-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-23-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-22-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-22-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-22-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-22-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -1501,7 +1562,7 @@ key is not in the provided <code class="docutils literal notranslate"><span clas
 </div></div>
 </div>
 <div class="section" id="flattennamespaces">
-<span id="id5"></span><h3>flattenNamespaces<a class="headerlink" href="#flattennamespaces" title="Permalink to this headline">#</a></h3>
+<span id="id6"></span><h3>flattenNamespaces<a class="headerlink" href="#flattennamespaces" title="Permalink to this headline">#</a></h3>
 <p>Flattens namespaces of any shapes connected to a service into a target
 namespace. Shapes not connected to a service will not be flattened.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -1548,7 +1609,7 @@ them through the service shape's <code class="docutils literal notranslate"><spa
 long as they don't conflict with a shape within the
 <a class="reference internal" href="../../spec/core/model.html#service-closure"><span class="std std-ref">service closure</span></a>.</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-24-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-24-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-24-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-24-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-23-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-23-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-23-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-23-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -1600,7 +1661,7 @@ to be retained in the transformed model.</td>
 <p>The following example removes trait definitions but keeps the instances of the
 trait intact on shapes in the model:</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-25-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-25-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-25-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-25-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-24-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-24-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-24-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-24-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -1655,7 +1716,7 @@ to a service.</td>
 <p>The following example removes shapes that are not connected to any service,
 but keeps the shape if it has any of the provided tags:</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-26-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-26-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-26-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-26-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-25-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-25-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-25-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-25-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -1707,7 +1768,7 @@ be an absolute shape ID.</td>
 <p>The following example renames the <code class="docutils literal notranslate"><span class="pre">ns.foo#Bar</span></code> shape to <code class="docutils literal notranslate"><span class="pre">ns.foo#Baz</span></code>.
 Any references to <code class="docutils literal notranslate"><span class="pre">ns.foo#Bar</span></code> on other shapes will also be updated.</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-27-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-27-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-27-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-27-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-26-SlNPTg==" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-26-SlNPTg==" name="SlNPTg==" role="tab" tabindex="0">JSON</button></div><div aria-labelledby="tab-26-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" id="panel-26-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -1779,7 +1840,7 @@ environment variable set to &quot;hi&quot;, this file is equivalent to:</p>
 </div>
 </div>
 <div class="section" id="plugins">
-<span id="id6"></span><h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">#</a></h2>
+<span id="id7"></span><h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">#</a></h2>
 <p>Plugins are defined in either the top-level &quot;plugins&quot; key-value pair of the
 configuration file, or in the &quot;plugins&quot; key-value pair of a projection.
 Plugins defined at the top-level of the configuration file are applied to
@@ -1797,18 +1858,18 @@ them to be discovered.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">model</span></code>, <code class="docutils literal notranslate"><span class="pre">build-info</span></code>, and <code class="docutils literal notranslate"><span class="pre">sources</span></code> plugins are plugins that are
 always run in every non-abstract projection.</p>
 <div class="section" id="model-plugin">
-<span id="id7"></span><h3>model plugin<a class="headerlink" href="#model-plugin" title="Permalink to this headline">#</a></h3>
+<span id="id8"></span><h3>model plugin<a class="headerlink" href="#model-plugin" title="Permalink to this headline">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">model</span></code> plugin serializes a self-contained and filtered version of the
 model as a single file. All of the dependencies of the model are included
 in the file.</p>
 </div>
 <div class="section" id="build-info-plugin">
-<span id="id8"></span><h3>build-info plugin<a class="headerlink" href="#build-info-plugin" title="Permalink to this headline">#</a></h3>
+<span id="id9"></span><h3>build-info plugin<a class="headerlink" href="#build-info-plugin" title="Permalink to this headline">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">build-info</span></code> plugin produces a JSON document that contains information
 about the projection and model.</p>
 </div>
 <div class="section" id="sources-plugin">
-<span id="id9"></span><h3>sources plugin<a class="headerlink" href="#sources-plugin" title="Permalink to this headline">#</a></h3>
+<span id="id10"></span><h3>sources plugin<a class="headerlink" href="#sources-plugin" title="Permalink to this headline">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">sources</span></code> plugin copies the source models and creates a manifest.
 When building the <code class="docutils literal notranslate"><span class="pre">source</span></code> projection, the models that were used to build the
 model are copied over literally. When a JAR is used as a source model, the
@@ -1898,6 +1959,7 @@ All model files referenced by the manifest are relative to <code class="docutils
 </li>
 <li><a class="reference internal" href="#transforms">Transforms</a><ul>
 <li><a class="reference internal" href="#apply">apply</a></li>
+<li><a class="reference internal" href="#changestringenumstoenumshapes">changeStringEnumsToEnumShapes</a></li>
 <li><a class="reference internal" href="#changetypes">changeTypes</a></li>
 <li><a class="reference internal" href="#excludeshapesbytag">excludeShapesByTag</a></li>
 <li><a class="reference internal" href="#excludeshapesbytrait">excludeShapesByTrait</a></li>

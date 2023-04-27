@@ -409,7 +409,7 @@ validators, transforms, and other extensions.</td>
 <span class="w">    </span><span class="nt">&quot;imports&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;foo.json&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;some/directory&quot;</span><span class="p">],</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;maven&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.30.0&quot;</span><span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.31.0&quot;</span><span class="w"></span>
 <span class="w">        </span><span class="p">]</span><span class="w"></span>
 <span class="w">    </span><span class="p">},</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -539,9 +539,9 @@ requirements of the dependencies on that project. If no version satisfies
 all the hard requirements, dependency resolution fails.</p>
 <p>The following table demonstrates version requirement syntax as defined in
 the <a class="reference external" href="https://maven.apache.org/pom.html#dependency-version-requirement-specification">official Maven documentation</a>:</p>
-<div class="table-wrapper colwidths-given docutils container" id="id14">
-<table border="1" class="colwidths-given docutils align-default" id="id14">
-<caption><span class="caption-text">Dependency version syntax</span><a class="headerlink" href="#id14" title="Permalink to this table">#</a></caption>
+<div class="table-wrapper colwidths-given docutils container" id="id15">
+<table border="1" class="colwidths-given docutils align-default" id="id15">
+<caption><span class="caption-text">Dependency version syntax</span><a class="headerlink" href="#id15" title="Permalink to this table">#</a></caption>
 <colgroup>
 <col width="20%" />
 <col width="80%" />
@@ -640,7 +640,7 @@ keep credentials out of source control.</p>
 <span class="w">            </span><span class="p">}</span><span class="w"></span>
 <span class="w">        </span><span class="p">],</span><span class="w"></span>
 <span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.30.0&quot;</span><span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.31.0&quot;</span><span class="w"></span>
 <span class="w">        </span><span class="p">]</span><span class="w"></span>
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
@@ -830,8 +830,66 @@ No cycles are allowed in <code class="docutils literal notranslate"><span class=
 </pre></div>
 </div>
 </div>
+<div class="section" id="changestringenumstoenumshapes">
+<span id="id7"></span><h3>changeStringEnumsToEnumShapes<a class="headerlink" href="#changestringenumstoenumshapes" title="Permalink to this headline">#</a></h3>
+<p>Changes string shapes with enum traits into enum shapes.</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>synthesizeNames</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>Whether enums without names should have names synthesized if possible.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>This transformer will attempt to convert strings with <a class="reference internal" href="../../spec/constraint-traits.html#enum-trait"><span class="std std-ref">enum traits</span></a>
+into enum shapes. To successfully convert to an enum shape, each enum
+definition within the source enum trait must have a <code class="docutils literal notranslate"><span class="pre">name</span></code> property, or the
+<code class="docutils literal notranslate"><span class="pre">synthesizeNames</span></code> transform config option must be enabled. By default, <code class="docutils literal notranslate"><span class="pre">synthesizeNames</span></code>
+is disabled. If an enum definition from the enum trait is marked as deprecated, the
+<a class="reference internal" href="../../spec/documentation-traits.html#deprecated-trait"><span class="std std-ref">deprecated trait</span></a> will be applied to the resulting
+enum shape member. Tags on the enum definition will be converted to a <a class="reference internal" href="../../spec/documentation-traits.html#tags-trait"><span class="std std-ref">tags trait</span></a>
+on the enum shape member. Additionally, if the enum definition is tagged as
+internal, the enum shape member will have the <a class="reference internal" href="../../spec/documentation-traits.html#internal-trait"><span class="std std-ref">internal trait</span></a>
+applied.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nt">&quot;exampleProjection&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="nt">&quot;transforms&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
+<span class="w">                </span><span class="p">{</span><span class="w"></span>
+<span class="w">                    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;changeStringEnumsToEnumShapes&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                    </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                        </span><span class="nt">&quot;synthesizeNames&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<span class="w">                    </span><span class="p">}</span><span class="w"></span>
+<span class="w">                </span><span class="p">}</span><span class="w"></span>
+<span class="w">            </span><span class="p">]</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <a class="reference internal" href="../../spec/constraint-traits.html#enum-trait"><span class="std std-ref">enum trait</span></a> is deprecated. It is recommended to
+use an <a class="reference internal" href="../../spec/simple-types.html#enum"><span class="std std-ref">enum shape</span></a> instead to avoid needing to use this
+transform.</p>
+</div>
+</div>
 <div class="section" id="changetypes">
-<span id="id7"></span><h3>changeTypes<a class="headerlink" href="#changetypes" title="Permalink to this headline">#</a></h3>
+<span id="id8"></span><h3>changeTypes<a class="headerlink" href="#changetypes" title="Permalink to this headline">#</a></h3>
 <p>Changes the types of shapes.</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
@@ -851,6 +909,10 @@ No cycles are allowed in <code class="docutils literal notranslate"><span class=
 <td><code class="docutils literal notranslate"><span class="pre">Map&lt;ShapeId,</span> <span class="pre">String&gt;</span></code></td>
 <td>A map of shape IDs to the type to assign to the shape.</td>
 </tr>
+<tr class="row-odd"><td>synthesizeEnumNames</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>Whether enums without names should have names synthesized if possible.</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -861,6 +923,7 @@ No cycles are allowed in <code class="docutils literal notranslate"><span class=
 <li>Set to list</li>
 <li>Structure to union</li>
 <li>Union to structure</li>
+<li>String to enum</li>
 </ul>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
@@ -872,8 +935,10 @@ No cycles are allowed in <code class="docutils literal notranslate"><span class=
 <span class="w">                    </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">                        </span><span class="nt">&quot;shapeTypes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">                            </span><span class="nt">&quot;smithy.example#Foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                            </span><span class="nt">&quot;smithy.example#Baz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;union&quot;</span><span class="w"></span>
-<span class="w">                        </span><span class="p">}</span><span class="w"></span>
+<span class="w">                            </span><span class="nt">&quot;smithy.example#Baz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;union&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                            </span><span class="nt">&quot;smithy.example#Qux&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;enum&quot;</span><span class="w"></span>
+<span class="w">                        </span><span class="p">},</span><span class="w"></span>
+<span class="w">                        </span><span class="nt">&quot;synthesizeEnumNames&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
 <span class="w">                    </span><span class="p">}</span><span class="w"></span>
 <span class="w">                </span><span class="p">}</span><span class="w"></span>
 <span class="w">            </span><span class="p">]</span><span class="w"></span>
@@ -881,6 +946,10 @@ No cycles are allowed in <code class="docutils literal notranslate"><span class=
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#changestringenumstoenumshapes"><span class="std std-ref">changeStringEnumsToEnumShapes</span></a></p>
 </div>
 </div>
 <div class="section" id="excludeshapesbyselector">
@@ -1814,7 +1883,7 @@ key is not in the provided <code class="docutils literal notranslate"><span clas
 </div>
 </div>
 <div class="section" id="flattennamespaces">
-<span id="id8"></span><h3>flattenNamespaces<a class="headerlink" href="#flattennamespaces" title="Permalink to this headline">#</a></h3>
+<span id="id9"></span><h3>flattenNamespaces<a class="headerlink" href="#flattennamespaces" title="Permalink to this headline">#</a></h3>
 <p>Flattens namespaces of any shapes connected to a service into a target
 namespace. Shapes not connected to a service will not be flattened.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -2104,7 +2173,7 @@ files have access to the following environment variables:</p>
 </div>
 </div>
 <div class="section" id="plugins">
-<span id="id9"></span><h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">#</a></h2>
+<span id="id10"></span><h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">#</a></h2>
 <p>Plugins are defined in either the top-level &quot;plugins&quot; key-value pair of the
 configuration file, or in the &quot;plugins&quot; key-value pair of a projection.
 Plugins defined at the top-level of the configuration file are applied to
@@ -2125,7 +2194,7 @@ them to be discovered.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">model</span></code>, <code class="docutils literal notranslate"><span class="pre">build-info</span></code>, and <code class="docutils literal notranslate"><span class="pre">sources</span></code> plugins are plugins that are
 always run in every non-abstract projection.</p>
 <div class="section" id="model-plugin">
-<span id="id10"></span><h3>model plugin<a class="headerlink" href="#model-plugin" title="Permalink to this headline">#</a></h3>
+<span id="id11"></span><h3>model plugin<a class="headerlink" href="#model-plugin" title="Permalink to this headline">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">model</span></code> plugin serializes a self-contained and filtered version of the
 model as a single file. All of the dependencies of the model are included
 in the file. By default the serialized model excludes <a class="reference internal" href="../../spec/model.html#prelude"><span class="std std-ref">prelude</span></a> shapes.</p>
@@ -2143,12 +2212,12 @@ to the <code class="docutils literal notranslate"><span class="pre">smithy-build
 </div>
 </div>
 <div class="section" id="build-info-plugin">
-<span id="id11"></span><h3>build-info plugin<a class="headerlink" href="#build-info-plugin" title="Permalink to this headline">#</a></h3>
+<span id="id12"></span><h3>build-info plugin<a class="headerlink" href="#build-info-plugin" title="Permalink to this headline">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">build-info</span></code> plugin produces a JSON document that contains information
 about the projection and model.</p>
 </div>
 <div class="section" id="sources-plugin">
-<span id="id12"></span><h3>sources plugin<a class="headerlink" href="#sources-plugin" title="Permalink to this headline">#</a></h3>
+<span id="id13"></span><h3>sources plugin<a class="headerlink" href="#sources-plugin" title="Permalink to this headline">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">sources</span></code> plugin copies the source models and creates a manifest.
 When building the <code class="docutils literal notranslate"><span class="pre">source</span></code> projection, the models that were used to build the
 model are copied over literally. When a JAR is used as a source model, the
@@ -2166,7 +2235,7 @@ ignored. A Smithy manifest file is stored in a JAR as <code class="docutils lite
 All model files referenced by the manifest are relative to <code class="docutils literal notranslate"><span class="pre">META-INF/smithy/</span></code>.</p>
 </div>
 <div class="section" id="run-plugin">
-<span id="id13"></span><h3>run plugin<a class="headerlink" href="#run-plugin" title="Permalink to this headline">#</a></h3>
+<span id="id14"></span><h3>run plugin<a class="headerlink" href="#run-plugin" title="Permalink to this headline">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">run</span></code> plugin runs an external program during the build. This plugin is
 useful when integrating Smithy's build process with Smithy implementations
 that are not written in Java.</p>
@@ -2371,6 +2440,7 @@ cat &gt;&gt; copy-model.json
 </li>
 <li><a class="reference internal" href="#transforms">Transforms</a><ul>
 <li><a class="reference internal" href="#apply">apply</a></li>
+<li><a class="reference internal" href="#changestringenumstoenumshapes">changeStringEnumsToEnumShapes</a></li>
 <li><a class="reference internal" href="#changetypes">changeTypes</a></li>
 <li><a class="reference internal" href="#excludeshapesbyselector">excludeShapesBySelector</a></li>
 <li><a class="reference internal" href="#excludeshapesbytag">excludeShapesByTag</a></li>

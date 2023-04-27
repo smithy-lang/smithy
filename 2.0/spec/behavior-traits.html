@@ -745,6 +745,184 @@ to the <code class="docutils literal notranslate"><span class="pre">paginated</s
 </ol>
 </div>
 </div>
+<div class="section" id="compression">
+<span id="id7"></span><h2><span class="section-number">9.3. </span>Compression<a class="headerlink" href="#compression" title="Permalink to this headline">#</a></h2>
+<p>Compression is the process of encoding, restructuring or otherwise modifying
+data in order to reduce its size and bandwidth capacity, with content encodings
+referenced in <span class="target" id="index-2"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc9110.html"><strong>RFC 9110</strong></a>.</p>
+<p>Smithy supports operations compressing requests from clients to services through
+the <a class="reference internal" href="#requestcompression-trait"><span class="std std-ref">requestCompression trait</span></a>.</p>
+<div class="section" id="requestcompression-trait">
+<span id="smithy-api-requestcompression-trait"></span><span id="id8"></span><h3><span class="section-number">9.3.1. </span><code class="docutils literal notranslate"><span class="pre">requestCompression</span></code> trait<a class="headerlink" href="#requestcompression-trait" title="Permalink to this headline">#</a></h3>
+<dl class="docutils">
+<dt>Summary</dt><dd>Indicates that an operation supports compressing requests from clients to
+services.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+<dt>Validation</dt><dd><ol class="arabic simple">
+<li>Operation input members must not have both the <a class="reference internal" href="streaming.html#streaming-trait"><span class="std std-ref">streaming trait</span></a> and
+<a class="reference internal" href="streaming.html#requireslength-trait"><span class="std std-ref">requiresLength trait</span></a> applied.
+This avoids the client reading and compressing the entire stream for the
+length of the compressed data to set the <code class="docutils literal notranslate"><span class="pre">Content-Length</span></code> header.</li>
+<li><code class="docutils literal notranslate"><span class="pre">encodings</span></code> must not be empty, and all members must be valid,
+case-insensitive, supported compression algorithm values.</li>
+</ol>
+</dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">requestCompression</span></code> trait is a structure that contains the following
+members:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>encodings</td>
+<td><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></td>
+<td>Defines the priority-ordered list of compression algorithms supported by
+the service operation. Supported compression algorithms are: &quot;gzip&quot;.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The following example defines an operation that supports <code class="docutils literal notranslate"><span class="pre">gzip</span></code> compression
+for requests from clients to services with both a streaming and non-streaming
+member.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="nt">@requestCompression</span>(<span class="w"></span>
+<span class="w">    </span><span class="py">encodings</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;gzip&quot;</span>]<span class="w"></span>
+)<span class="w"></span>
+<span class="kd">operation </span><span class="nc">GetFoos</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="py">streamingMember</span><span class="p">:</span><span class="w"> </span><span class="vc">StreamingFoo</span><span class="w"></span>
+<span class="w">        </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@streaming</span><span class="w"></span>
+<span class="kd">blob </span><span class="nc">StreamingFoo</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="request-compression-behavior">
+<h3><span class="section-number">9.3.2. </span>Request compression behavior<a class="headerlink" href="#request-compression-behavior" title="Permalink to this headline">#</a></h3>
+<p>Operations with the <code class="docutils literal notranslate"><span class="pre">requestCompression</span></code> trait applied direct clients to
+compress requests sent to services and set the corresponding encoding in the
+<code class="docutils literal notranslate"><span class="pre">Content-Encoding</span></code> header.</p>
+<p>Operations with the <code class="docutils literal notranslate"><span class="pre">requestCompression</span></code> trait applied have request
+compression enabled by default, and clients SHOULD attempt to compress a request
+when a compression algorithm is supported (see <code class="docutils literal notranslate"><span class="pre">DISABLE_REQUEST_COMPRESSION</span></code>
+in <a class="reference internal" href="#compression-client-implementation"><span class="std std-ref">Client Implementation</span></a> to disable request compression).</p>
+<p>Since compression is NOT required, services supporting operations with the
+<code class="docutils literal notranslate"><span class="pre">requestCompression</span></code> trait applied MUST be able to receive non-compressed
+requests, for cases such as clients not supporting certain compression
+algorithms or older versions of clients that have out-of-date supported
+compression algorithms.</p>
+<p>The client MUST only compress the request using the first supported algorithm in
+<code class="docutils literal notranslate"><span class="pre">encodings</span></code> and stop considering algorithms that appear later in the list.</p>
+<p>If a client does compress the request, they MUST also set the
+<code class="docutils literal notranslate"><span class="pre">Content-Encoding</span></code> header per <span class="target" id="index-3"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc9110.html#section-8.4"><strong>RFC 9110#section-8.4</strong></a>:</p>
+<blockquote>
+<div>If one or more encodings have been applied to a representation, the sender
+that applied the encodings MUST generate a Content-Encoding header field
+that lists the content codings in the order in which they were applied.</div></blockquote>
+<p>If a request has a structure member bound to the <code class="docutils literal notranslate"><span class="pre">Content-Encoding</span></code> header,
+the trait MAY still be applied. If the request is compressed, then the
+compression encoding MUST be appended to the <code class="docutils literal notranslate"><span class="pre">Content-Encoding</span></code> header after
+any user-provided encoding(s).</p>
+<p>As an example, using the <code class="docutils literal notranslate"><span class="pre">PutWithContentEncoding</span></code> operation below with the
+<code class="docutils literal notranslate"><span class="pre">customEncoding</span></code> member set to <code class="docutils literal notranslate"><span class="pre">brotli</span></code>, the header would be
+<code class="docutils literal notranslate"><span class="pre">&quot;Content-Encoding&quot;:</span> <span class="pre">&quot;brotli,</span> <span class="pre">gzip&quot;</span></code>.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+
+<span class="nt">@requestCompression</span>(<span class="w"></span>
+<span class="w">    </span><span class="py">encodings</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;gzip&quot;</span>]<span class="w"></span>
+)<span class="w"></span>
+<span class="kd">operation </span><span class="nc">PutWithContentEncoding</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutWithContentEncodingInput</span><span class="w"></span>
+}<span class="w"></span>
+
+<span class="nt">@input</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">PutWithContentEncodingInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;Content-Encoding&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="py">customEncoding</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"> </span><span class="c">// brotli</span><span class="w"></span>
+
+<span class="w">    </span><span class="nt">@httpPayload</span><span class="w"></span>
+<span class="w">    </span><span class="py">data</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
+</pre></div>
+</div>
+<p>Clients MUST encode the request content prior to request signing, otherwise the
+request signature will mismatch.</p>
+<p>Because small payloads may become longer when compressed, operations SHOULD only
+be compressed when the payload size is greater than or equal to the value of the
+minimum compression threshold (see <code class="docutils literal notranslate"><span class="pre">REQUEST_MIN_COMPRESSION_SIZE_BYTES</span></code> in
+<a class="reference internal" href="#compression-client-implementation"><span class="std std-ref">Client Implementation</span></a>).</p>
+<p>If the request contains a member with the <a class="reference internal" href="streaming.html#streaming-trait"><span class="std std-ref">streaming trait</span></a> applied without
+the <a class="reference internal" href="streaming.html#requireslength-trait"><span class="std std-ref">requiresLength trait</span></a> applied, the request MUST be compressed if
+enabled regardless of the minimum compression threshold.</p>
+<p>Operations with input members with both <a class="reference internal" href="streaming.html#streaming-trait"><span class="std std-ref">streaming trait</span></a> and
+<a class="reference internal" href="streaming.html#requireslength-trait"><span class="std std-ref">requiresLength trait</span></a> are not allowed to use request compression. This
+avoids the client reading and compressing the entire stream for the length of
+the compressed data to set the <code class="docutils literal notranslate"><span class="pre">Content-Length</span></code> header.</p>
+</div>
+<div class="section" id="client-implementation">
+<span id="compression-client-implementation"></span><h3><span class="section-number">9.3.3. </span>Client Implementation<a class="headerlink" href="#client-implementation" title="Permalink to this headline">#</a></h3>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The client configuration settings defined in this specification are still
+evolving and subject to change.</p>
+</div>
+<p>Smithy clients MUST expose a setting <code class="docutils literal notranslate"><span class="pre">DISABLE_REQUEST_COMPRESSION</span></code> to disable
+request compression. The value MUST be a boolean value which defaults to
+<code class="docutils literal notranslate"><span class="pre">false</span></code>. In order of precedence from highest to lowest, the setting shall be
+exposed:</p>
+<ul class="simple">
+<li>Per-request configuration (SHOULD, if request-level configuration is supported
+by the client)</li>
+<li>Service client configuration - <code class="docutils literal notranslate"><span class="pre">DisableRequestCompression</span></code> (MUST, with
+idiomatic casing/spacing for that client programming language)</li>
+</ul>
+<p>Smithy clients MUST expose a setting <code class="docutils literal notranslate"><span class="pre">REQUEST_MIN_COMPRESSION_SIZE_BYTES</span></code> to
+specify the minimum size in bytes that a request body should be to trigger
+compression. The value MUST be a non-negative integer in the range <code class="docutils literal notranslate"><span class="pre">0</span></code> and
+<code class="docutils literal notranslate"><span class="pre">10485760</span></code> inclusive, and defaults to <code class="docutils literal notranslate"><span class="pre">10240</span></code> bytes. If the value is outside
+of the range, the client MUST throw an error. In order of precedence from
+highest to lowest, the setting shall be exposed:</p>
+<ul class="simple">
+<li>Per-request configuration (SHOULD, if request-level configuration is supported
+by that client)</li>
+<li>Service client configuration - <code class="docutils literal notranslate"><span class="pre">RequestMinCompressionSizeBytes</span></code> (MUST, with
+idiomatic casing/spacing for that client programming language)</li>
+</ul>
+<p>If a client's language or standard library does not support a compression
+algorithm, they are not required to implement that algorithm. If none of the
+compression algorithms are supported by the client, then the request does not
+need to be compressed.</p>
+<p>If the client's language or standard library exposes a &quot;level&quot; or &quot;quality&quot;
+setting to control the tradeoff between speed and the compressed size, clients
+MUST set this setting to an idiomatic default (either the default value for
+their language, or else a &quot;balanced&quot; mode).</p>
+</div>
+<div class="section" id="id9">
+<h3><span class="section-number">9.3.4. </span>Backward compatibility<a class="headerlink" href="#id9" title="Permalink to this headline">#</a></h3>
+<p>Once a compression algorithm is added to <code class="docutils literal notranslate"><span class="pre">encodings</span></code>, the algorithm SHOULD NOT
+be removed. If an algorithm is removed, the service MUST continue to support the
+removed algorithm on the server-side because older clients or non-official
+clients may continue sending compressed requests.</p>
+</div>
+</div>
 </div>
 
         </article>
@@ -823,6 +1001,13 @@ to the <code class="docutils literal notranslate"><span class="pre">paginated</s
 <li><a class="reference internal" href="#client-behavior">9.2.3. Client behavior</a></li>
 <li><a class="reference internal" href="#continuation-tokens">9.2.4. Continuation tokens</a></li>
 <li><a class="reference internal" href="#backward-compatibility">9.2.5. Backward compatibility</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#compression">9.3. Compression</a><ul>
+<li><a class="reference internal" href="#requestcompression-trait">9.3.1. <code class="docutils literal notranslate"><span class="pre">requestCompression</span></code> trait</a></li>
+<li><a class="reference internal" href="#request-compression-behavior">9.3.2. Request compression behavior</a></li>
+<li><a class="reference internal" href="#client-implementation">9.3.3. Client Implementation</a></li>
+<li><a class="reference internal" href="#id9">9.3.4. Backward compatibility</a></li>
 </ul>
 </li>
 </ul>

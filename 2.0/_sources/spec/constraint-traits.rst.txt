@@ -436,6 +436,13 @@ An *enum definition* is a structure that supports the following members:
         the Smithy model.
 
 
+.. note::
+
+    While the :ref:`changeStringEnumsToEnumShapes <changeStringEnumsToEnumShapes>`
+    transform can be used to convert to an enum shape, it is recommended to use
+    the :ref:`enum shape <enum>` instead.
+
+
 .. _ECMA 262 regular expression dialect: https://www.ecma-international.org/ecma-262/8.0/index.html#sec-patterns
 .. _CommonMark: https://spec.commonmark.org/
 .. _OWASP Regular expression Denial of Service: https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS

@@ -468,3 +468,203 @@ The following changes are considered backward compatible:
 1. Adding the ``paginated`` trait to an existing operation.
 2. Adding the ``pageSize`` member to an existing ``paginated`` trait.
 
+
+.. _compression:
+
+Compression
+===========
+
+Compression is the process of encoding, restructuring or otherwise modifying
+data in order to reduce its size and bandwidth capacity, with content encodings
+referenced in :rfc:`9110`.
+
+Smithy supports operations compressing requests from clients to services through
+the :ref:`requestCompression-trait`.
+
+.. smithy-trait:: smithy.api#requestCompression
+.. _requestCompression-trait:
+
+``requestCompression`` trait
+----------------------------
+
+Summary
+    Indicates that an operation supports compressing requests from clients to
+    services.
+Trait selector
+    ``operation``
+Value type
+    ``structure``
+Validation
+    1. Operation input members must not have both the :ref:`streaming-trait` and
+       :ref:`requiresLength-trait` applied.
+       This avoids the client reading and compressing the entire stream for the
+       length of the compressed data to set the ``Content-Length`` header.
+    2. ``encodings`` must not be empty, and all members must be valid,
+       case-insensitive, supported compression algorithm values.
+
+
+The ``requestCompression`` trait is a structure that contains the following
+members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 10 80
+
+    * - Property
+      - Type
+      - Description
+    * - encodings
+      - ``list<string>``
+      - Defines the priority-ordered list of compression algorithms supported by
+        the service operation. Supported compression algorithms are: "gzip".
+
+
+The following example defines an operation that supports ``gzip`` compression
+for requests from clients to services with both a streaming and non-streaming
+member.
+
+.. code-block:: smithy
+
+    $version: "2"
+    namespace smithy.example
+
+    @requestCompression(
+        encodings: ["gzip"]
+    )
+    operation GetFoos {
+        input := {
+            streamingMember: StreamingFoo
+            member: String
+        }
+    }
+
+    @streaming
+    blob StreamingFoo
+
+
+Request compression behavior
+----------------------------
+
+Operations with the ``requestCompression`` trait applied direct clients to
+compress requests sent to services and set the corresponding encoding in the
+``Content-Encoding`` header.
+
+Operations with the ``requestCompression`` trait applied have request
+compression enabled by default, and clients SHOULD attempt to compress a request
+when a compression algorithm is supported (see ``DISABLE_REQUEST_COMPRESSION``
+in :ref:`compression-client-implementation` to disable request compression).
+
+Since compression is NOT required, services supporting operations with the
+``requestCompression`` trait applied MUST be able to receive non-compressed
+requests, for cases such as clients not supporting certain compression
+algorithms or older versions of clients that have out-of-date supported
+compression algorithms.
+
+The client MUST only compress the request using the first supported algorithm in
+``encodings`` and stop considering algorithms that appear later in the list.
+
+If a client does compress the request, they MUST also set the
+``Content-Encoding`` header per :rfc:`9110#section-8.4`:
+
+    If one or more encodings have been applied to a representation, the sender
+    that applied the encodings MUST generate a Content-Encoding header field
+    that lists the content codings in the order in which they were applied.
+
+If a request has a structure member bound to the ``Content-Encoding`` header,
+the trait MAY still be applied. If the request is compressed, then the
+compression encoding MUST be appended to the ``Content-Encoding`` header after
+any user-provided encoding(s).
+
+As an example, using the ``PutWithContentEncoding`` operation below with the
+``customEncoding`` member set to ``brotli``, the header would be
+``"Content-Encoding": "brotli, gzip"``.
+
+.. code-block:: smithy
+
+    $version: "2"
+    namespace smithy.example
+
+    @requestCompression(
+        encodings: ["gzip"]
+    )
+    operation PutWithContentEncoding {
+        input: PutWithContentEncodingInput
+    }
+
+    @input
+    structure PutWithContentEncodingInput {
+        @httpHeader("Content-Encoding")
+        customEncoding: String // brotli
+
+        @httpPayload
+        data: String
+    }
+
+Clients MUST encode the request content prior to request signing, otherwise the
+request signature will mismatch.
+
+Because small payloads may become longer when compressed, operations SHOULD only
+be compressed when the payload size is greater than or equal to the value of the
+minimum compression threshold (see ``REQUEST_MIN_COMPRESSION_SIZE_BYTES`` in
+:ref:`compression-client-implementation`).
+
+If the request contains a member with the :ref:`streaming-trait` applied without
+the :ref:`requiresLength-trait` applied, the request MUST be compressed if
+enabled regardless of the minimum compression threshold.
+
+Operations with input members with both :ref:`streaming-trait` and
+:ref:`requiresLength-trait` are not allowed to use request compression. This
+avoids the client reading and compressing the entire stream for the length of
+the compressed data to set the ``Content-Length`` header.
+
+
+.. _compression-client-implementation:
+
+Client Implementation
+---------------------
+
+.. warning::
+
+    The client configuration settings defined in this specification are still
+    evolving and subject to change.
+
+Smithy clients MUST expose a setting ``DISABLE_REQUEST_COMPRESSION`` to disable
+request compression. The value MUST be a boolean value which defaults to
+``false``. In order of precedence from highest to lowest, the setting shall be
+exposed:
+
+- Per-request configuration (SHOULD, if request-level configuration is supported
+  by the client)
+- Service client configuration - ``DisableRequestCompression`` (MUST, with
+  idiomatic casing/spacing for that client programming language)
+
+Smithy clients MUST expose a setting ``REQUEST_MIN_COMPRESSION_SIZE_BYTES`` to
+specify the minimum size in bytes that a request body should be to trigger
+compression. The value MUST be a non-negative integer in the range ``0`` and
+``10485760`` inclusive, and defaults to ``10240`` bytes. If the value is outside
+of the range, the client MUST throw an error. In order of precedence from
+highest to lowest, the setting shall be exposed:
+
+- Per-request configuration (SHOULD, if request-level configuration is supported
+  by that client)
+- Service client configuration - ``RequestMinCompressionSizeBytes`` (MUST, with
+  idiomatic casing/spacing for that client programming language)
+
+If a client's language or standard library does not support a compression
+algorithm, they are not required to implement that algorithm. If none of the
+compression algorithms are supported by the client, then the request does not
+need to be compressed.
+
+If the client's language or standard library exposes a "level" or "quality"
+setting to control the tradeoff between speed and the compressed size, clients
+MUST set this setting to an idiomatic default (either the default value for
+their language, or else a "balanced" mode).
+
+
+Backward compatibility
+----------------------
+
+Once a compression algorithm is added to ``encodings``, the algorithm SHOULD NOT
+be removed. If an algorithm is removed, the service MUST continue to support the
+removed algorithm on the server-side because older clients or non-official
+clients may continue sending compressed requests.
