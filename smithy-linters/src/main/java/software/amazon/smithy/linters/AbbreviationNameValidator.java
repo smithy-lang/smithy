@@ -124,6 +124,12 @@ public final class AbbreviationNameValidator extends AbstractValidator {
     }
 
     private boolean isInvalidWord(String word) {
-        return word.chars().filter(c -> c >= 'A' && c <= 'Z').count() > 1;
+        for (int idx = 0; idx < word.length(); idx++) {
+            char ch = word.charAt(idx);
+            if (ch >= 'A' && ch <= 'Z') {
+                return true;
+            }
+        }
+        return false;
     }
 }
