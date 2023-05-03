@@ -17,6 +17,7 @@ use aws.api#service
 use aws.auth#sigv4
 use aws.customizations#s3UnwrappedXmlOutput
 use aws.protocols#restXml
+use aws.protocols#httpChecksum
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
@@ -42,6 +43,7 @@ service AmazonS3 {
     operations: [
         ListObjectsV2,
         GetBucketLocation,
+        DeleteObjectTagging
     ],
 }
 
@@ -272,6 +274,76 @@ operation ListObjectsV2 {
 }
 
 
+@httpRequestTests([
+    {
+        id: "S3EscapeObjectKeyInUriLabel",
+        documentation: """
+            S3 clients should escape special characters in Object Keys
+            when the Object Key is used as a URI label binding.
+        """,
+        protocol: restXml,
+        method: "DELETE",
+        uri: "/my%20key.txt",
+        host: "s3.us-west-2.amazonaws.com",
+        resolvedHost: "mybucket.s3.us-west-2.amazonaws.com",
+        body: "",
+        queryParams: [
+            "tagging"
+        ],
+        params: {
+            Bucket: "mybucket",
+            Key: "my key.txt"
+        },
+        vendorParamsShape: aws.protocoltests.config#AwsConfig,
+        vendorParams: {
+            scopedConfig: {
+                client: {
+                    region: "us-west-2",
+                },
+            },
+        },
+    },
+    {
+        id: "S3EscapePathObjectKeyInUriLabel",
+        documentation: """
+            S3 clients should preserve an Object Key representing a path
+            when the Object Key is used as a URI label binding, but still
+            escape special characters.
+        """,
+        protocol: restXml,
+        method: "DELETE",
+        uri: "/foo/bar/my%20key.txt",
+        host: "s3.us-west-2.amazonaws.com",
+        resolvedHost: "mybucket.s3.us-west-2.amazonaws.com",
+        body: "",
+        queryParams: [
+            "tagging"
+        ],
+        params: {
+            Bucket: "mybucket",
+            Key: "foo/bar/my key.txt"
+        },
+        vendorParamsShape: aws.protocoltests.config#AwsConfig,
+        vendorParams: {
+            scopedConfig: {
+                client: {
+                    region: "us-west-2",
+                },
+            },
+        },
+    }
+])
+@http(
+    method: "DELETE",
+    uri: "/{Bucket}/{Key+}?tagging",
+    code: 204
+)
+operation DeleteObjectTagging {
+    input: DeleteObjectTaggingRequest
+    output: DeleteObjectTaggingOutput
+}
+
+
 @httpResponseTests([{
         id: "GetBucketLocationUnwrappedOutput",
         documentation: """
@@ -369,6 +441,29 @@ structure ListObjectsV2Output {
     StartAfter: StartAfter,
 }
 
+@input
+structure DeleteObjectTaggingRequest {
+    @httpLabel
+    @required
+    Bucket: BucketName
+
+    @httpLabel
+    @required
+    Key: ObjectKey
+
+    @httpQuery("versionId")
+    VersionId: ObjectVersionId
+
+    @httpHeader("x-amz-expected-bucket-owner")
+    ExpectedBucketOwner: AccountId
+}
+
+@output
+structure DeleteObjectTaggingOutput {
+    @httpHeader("x-amz-version-id")
+    VersionId: ObjectVersionId
+}
+
 @error("client")
 structure NoSuchBucket {}
 
@@ -462,3 +557,6 @@ enum BucketLocationConstraint {
     @suppress(["EnumShape"])
     us_west_2 = "us-west-2"
 }
+
+string ObjectVersionId
+
