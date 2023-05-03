@@ -15,7 +15,7 @@ any protocol.
 Smithy models define a service as a collection of resources, operations, and
 shapes.
 
-```
+```smithy
 $version: "2"
 
 namespace example.weather
@@ -62,7 +62,7 @@ plugins {
 
 Finally, create your first model `model/main.smithy`:
 
-```
+```smithy
 $version: "2"
 
 namespace com.example
