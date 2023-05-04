@@ -221,8 +221,9 @@ Releases of the Smithy CLI can be found on the `Smithy GitHub releases`_ page.
             :caption: powershell
             :substitutions:
 
-            (mkdir smithy-install\smithy -Force) -and
-                (wget |release-uri|/|windows-tar| -outfile smithy-install\|windows-tar|)
+            New-Item -Type Directory -Path smithy-install\smithy -Force; `
+                Invoke-WebRequest -Uri |release-uri|/|windows-tar| `
+                                  -OutFile smithy-install\|windows-tar|
 
         .. seealso::
             |verification-note|
@@ -240,8 +241,8 @@ Releases of the Smithy CLI can be found on the `Smithy GitHub releases`_ page.
             :caption: powershell
             :substitutions:
 
-            (tar -xf smithy-install\|windows-tar| -C smithy-install\smithy) -and
-                (smithy-install\smithy\install)
+            tar -xf smithy-install\|windows-tar| -C smithy-install\smithy;
+                 smithy-install\smithy\install
 
         Follow the installer prompts accordingly to complete the installation.
 
@@ -444,8 +445,10 @@ We'll be using these to perform the verification.
             :caption: powershell
             :substitutions:
 
-            (wget |release-uri|/|windows-tar|.asc -outfile smithy-install\|windows-tar|.asc) -and
-                (wget |release-uri|/|windows-tar|.sha256 -outfile smithy-install\|windows-tar|.sha256)
+            Invoke-WebRequest -Uri |release-uri|/|windows-tar|.asc `
+                -OutFile smithy-install\smithy-cli-windows-x64.tar.gz.asc;
+            Invoke-WebRequest -Uri |release-uri|/|windows-tar|.sha256 `
+                -OutFile smithy-install\smithy-cli-windows-x64.tar.gz.sha256
 
         Compute the actual checksum of the tarball using ``certutil``.
 
@@ -453,7 +456,7 @@ We'll be using these to perform the verification.
             :caption: powershell
             :substitutions:
 
-            certutil -hashfile smithy-install\|windows-tar|.sha256 SHA256
+            certutil -hashfile smithy-install\|windows-tar| SHA256
 
         Now, print out the expected checksum from the file that you
         downloaded (``.sha256``).
@@ -474,7 +477,8 @@ We'll be using these to perform the verification.
             :caption: powershell
             :substitutions:
 
-            (wget |release-uri|/smithy.asc -outfile smithy-install\smithy.asc) -and (gpg --import smithy-install\smithy.asc)
+            Invoke-WebRequest -Uri |release-uri|/smithy.asc -OutFile smithy-install\smithy.asc; 
+            gpg --import smithy-install\smithy.asc
 
         Finally, after importing the key, verify the signature of the
         tarball with gpg.
