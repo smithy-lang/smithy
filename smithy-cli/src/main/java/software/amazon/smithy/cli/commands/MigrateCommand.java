@@ -60,7 +60,9 @@ import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.model.validation.Severity;
+import software.amazon.smithy.model.validation.ValidatedResultException;
 import software.amazon.smithy.utils.IoUtils;
+import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SimpleParser;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -171,8 +173,31 @@ final class MigrateCommand implements Command {
         smithyBuild.build(resultConsumer, resultConsumer);
         Model finalizedModel = resultConsumer.getResult().getModel();
 
-        for (Path modelFile : resolveModelFiles(finalizedModel, models)) {
-            writeMigratedFile(finalizedModel, modelFile);
+        List<Path> resolvedModelFiles = resolveModelFiles(finalizedModel, models);
+
+        // Validate upgraded models before writing
+        ModelAssembler assembler = ModelBuilder.createModelAssembler(classLoader);
+        smithyBuildConfig.getImports().forEach(assembler::addImport);
+
+        List<Pair<Path, String>> upgradedModels = new ArrayList<>();
+        for (Path modelFilePath : resolvedModelFiles) {
+            String upgradedModelString = upgradeFile(finalizedModel, modelFilePath);
+            upgradedModels.add(Pair.of(modelFilePath, upgradedModelString));
+            // Replace existing models with upgraded models for a Smithy IDL model file
+            assembler.addUnparsedModel(modelFilePath.toAbsolutePath().toString(), upgradedModelString);
+        }
+
+
+        try {
+            assembler.assemble().validate();
+        } catch (ValidatedResultException e) {
+            throw new RuntimeException("Upgraded Smithy models are invalid. "
+                    + "Please report the following errors to Smithy team.\n"
+                    + e.getMessage());
+        }
+
+        for (Pair<Path, String> upgradedModel : upgradedModels) {
+            writeMigratedFile(upgradedModel.right, upgradedModel.left);
         }
 
         return 0;
@@ -204,9 +229,9 @@ final class MigrateCommand implements Command {
                 .collect(Collectors.toList());
     }
 
-    private void writeMigratedFile(Model completeModel, Path filePath) {
+    private void writeMigratedFile(String upgradeFileString, Path filePath) {
         try {
-            Files.write(filePath, upgradeFile(completeModel, filePath).getBytes(StandardCharsets.UTF_8));
+            Files.write(filePath, upgradeFileString.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new CliError(format("Unable to write migrated model file to %s: %s", filePath, e));
         }
