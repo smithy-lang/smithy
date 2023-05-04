@@ -34,6 +34,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -266,6 +267,62 @@ public class SmithyBuildTest {
         });
 
         assertThat(e.getMessage(), containsString("Unable to find a plugin for `unknown1`"));
+    }
+
+    @Test
+    public void defersFailureUntilAfterAllPluginsApplied() throws Exception {
+        SmithyBuildConfig config = SmithyBuildConfig.builder()
+                .load(Paths.get(getClass().getResource("defers-failure.json").toURI()))
+                .outputDirectory(outputDirectory.toString())
+                .build();
+
+        RuntimeException canned = new RuntimeException("broken");
+
+        // "broken" will run before "test1Serial" because of natural ordering
+        Map<String, SmithyBuildPlugin> plugins = new HashMap<>();
+        plugins.put("broken", new SmithyBuildPlugin() {
+            @Override
+            public String getName() {
+                        return "broken";
+                    }
+            @Override
+            public void execute(PluginContext context) {
+                        throw canned;
+                    }
+        });
+        plugins.put("test1Serial", new Test1SerialPlugin());
+
+        Function<String, Optional<SmithyBuildPlugin>> factory = SmithyBuildPlugin.createServiceFactory();
+        Function<String, Optional<SmithyBuildPlugin>> composed = name -> OptionalUtils.or(
+                Optional.ofNullable(plugins.get(name)), () -> factory.apply(name));
+
+        // Because the build will fail, we need a way to access the file manifests
+        List<FileManifest> manifests = new ArrayList<>();
+        Function<Path, FileManifest> fileManifestFactory = pluginBaseDir -> {
+            FileManifest fileManifest = new MockManifest(pluginBaseDir);
+            manifests.add(fileManifest);
+            return fileManifest;
+        };
+
+        SmithyBuild builder = new SmithyBuild()
+                .pluginFactory(composed)
+                .fileManifestFactory(fileManifestFactory)
+                .config(config);
+
+        SmithyBuildException e = Assertions.assertThrows(SmithyBuildException.class, builder::build);
+
+        // "broken" plugin produces the error that causes the build to fail
+        assertThat(e.getMessage(), containsString("java.lang.RuntimeException: broken"));
+        assertThat(e.getSuppressed(), equalTo(new Throwable[]{canned}));
+
+        List<Path> files = manifests.stream()
+                .flatMap(fm -> fm.getFiles().stream())
+                .collect(Collectors.toList());
+        assertThat(files, containsInAnyOrder(
+                outputDirectory.resolve("source/sources/manifest"),
+                outputDirectory.resolve("source/model/model.json"),
+                outputDirectory.resolve("source/build-info/smithy-build-info.json"),
+                outputDirectory.resolve("source/test1Serial/hello1Serial")));
     }
 
     @Test
