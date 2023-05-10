@@ -46,6 +46,8 @@ import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.EnumValueTrait;
+import software.amazon.smithy.model.traits.InternalTrait;
+import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
 import software.amazon.smithy.utils.ListUtils;
@@ -269,6 +271,7 @@ public class ChangeShapeTypeTest {
                 .addEnum(EnumDefinition.builder()
                         .name("foo")
                         .value("bar")
+                        .addTag("internal")
                         .build())
                 .build();
         SourceLocation source = new SourceLocation("/foo", 1, 1);
@@ -280,7 +283,6 @@ public class ChangeShapeTypeTest {
                 .build();
         Model model = Model.assembler().addShape(startShape).assemble().unwrap();
         Model result = ModelTransformer.create().changeShapeType(model, MapUtils.of(id, ShapeType.ENUM));
-
         assertThat(result.expectShape(id).getType(), Matchers.is(ShapeType.ENUM));
         assertThat(result.expectShape(id).getSourceLocation(), Matchers.equalTo(source));
         assertThat(result.expectShape(id).members(), Matchers.hasSize(1));
@@ -288,6 +290,8 @@ public class ChangeShapeTypeTest {
                 .id(id.withMember("foo"))
                 .target(UnitTypeTrait.UNIT)
                 .addTrait(EnumValueTrait.builder().stringValue("bar").build())
+                .addTrait(new InternalTrait())
+                .addTrait(TagsTrait.builder().addValue("internal").build())
                 .build()));
     }
 

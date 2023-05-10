@@ -33,10 +33,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.MapUtils;
 
 public final class IntegUtils {
+
+    private static final Logger LOGGER = Logger.getLogger(IntegUtils.class.getName());
 
     private IntegUtils() {}
 
@@ -91,13 +95,17 @@ public final class IntegUtils {
         throw new RuntimeException("No SMITHY_BINARY location was set. Did you build the Smithy jlink CLI?");
     }
 
-    private static void withTempDir(String name, Consumer<Path> consumer) {
+    static void withTempDir(String name, Consumer<Path> consumer) {
         try {
             Path path = Files.createTempDirectory(name.replace("/", "_"));
             try {
                 consumer.accept(path);
             } finally {
-                IoUtils.rmdir(path);
+                try {
+                    IoUtils.rmdir(path);
+                } catch (Exception e) {
+                    LOGGER.log(Level.INFO, "Unable to delete temp directory", e);
+                }
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);

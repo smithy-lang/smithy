@@ -2,3 +2,4 @@ software.amazon.smithy.build.plugins.BuildInfoPlugin
 software.amazon.smithy.build.plugins.ModelPlugin
 software.amazon.smithy.build.plugins.SourcesPlugin
 software.amazon.smithy.build.plugins.NullabilityReportPlugin
+software.amazon.smithy.build.plugins.RunPlugin

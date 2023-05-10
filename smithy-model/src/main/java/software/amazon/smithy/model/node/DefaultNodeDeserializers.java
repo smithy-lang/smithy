@@ -186,6 +186,13 @@ final class DefaultNodeDeserializers {
 
                 // Extract out the expected generic type of the collection.
                 Type memberType = Object.class;
+
+                // If given a Class, then attempt to find the generic superclass (e.g., extending ArrayList with a
+                // concrete generic type).
+                if (targetType instanceof Class) {
+                    targetType = ((Class<?>) target).getGenericSuperclass();
+                }
+
                 if (targetType instanceof ParameterizedType) {
                     Type[] genericTypes = ((ParameterizedType) targetType).getActualTypeArguments();
                     if (genericTypes.length > 0) {

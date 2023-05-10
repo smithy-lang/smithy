@@ -45,7 +45,6 @@ import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StringShape;
@@ -1115,5 +1114,53 @@ public class SelectorTest {
                 .select(resourceModel);
         assertThat(shapesTargettedByCityOnly.size(), equalTo(2));
         assertThat(shapesTargettedByCityOnly, containsInAnyOrder(coordinatesShape, stringShape));
+    }
+
+    @Test
+    public void rootFunctionReturnsAllShapes() {
+        Selector selector = Selector.parse("string"
+                                           + ":in(:root(-[input]-> ~> *))"
+                                           + ":not(:in(:root(-[output]-> ~> *)))");
+        Set<Shape> result = selector.select(resourceModel);
+
+        // This is the only string used in input but not output.
+        assertThat(result, contains(resourceModel.expectShape(ShapeId.from("example.weather#CityId"))));
+    }
+
+    @Test
+    public void inefficientIfNotCached() {
+        Selector selector = Selector.parse(":in(:root(service ~> number))");
+        Set<Shape> result = selector.select(resourceModel);
+
+        // This is the only number used in any service.
+        assertThat(result, contains(resourceModel.expectShape(ShapeId.from("smithy.api#Float"))));
+    }
+
+    @Test
+    public void allowsNestedRoots() {
+        Selector selector = Selector.parse(":root(:root(:root(*)))");
+        Set<Shape> result = selector.select(resourceModel);
+
+        assertThat(result, equalTo(resourceModel.toSet()));
+    }
+
+    @Test
+    public void inDoesNotSupportMoreThanOneSelector() {
+        Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse(":in(*, *)"));
+    }
+
+    @Test
+    public void inRequiresOneSelector() {
+        Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse(":in()"));
+    }
+
+    @Test
+    public void rootDoesNotSupportMoreThanOneSelector() {
+        Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse(":root(*, *)"));
+    }
+
+    @Test
+    public void rootRequiresOneSelector() {
+        Assertions.assertThrows(SelectorSyntaxException.class, () -> Selector.parse(":root()"));
     }
 }

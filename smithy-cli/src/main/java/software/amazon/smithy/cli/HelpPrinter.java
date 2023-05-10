@@ -129,7 +129,7 @@ public final class HelpPrinter {
         LineWrapper builder = new LineWrapper(maxWidth);
 
         builder.appendWithinLine("Usage: ")
-                .appendWithinLine(colors.style(name, Style.BRIGHT_WHITE, Style.UNDERLINE))
+                .appendWithinLine(colors.style(name, ColorTheme.EM_UNDERLINE))
                 .space();
 
         // Calculate the column manually to account for possible styles interfering with the current column number.
@@ -168,13 +168,13 @@ public final class HelpPrinter {
 
     private void writeArgHelp(ColorFormatter colors, LineWrapper builder, Arg arg) {
         if (arg.longName != null) {
-            builder.appendWithinLine(colors.style(arg.longName, Style.YELLOW));
+            builder.appendWithinLine(colors.style(arg.longName, ColorTheme.LITERAL));
             if (arg.shortName != null) {
                 builder.appendWithinLine(", ");
             }
         }
         if (arg.shortName != null) {
-            builder.appendWithinLine(colors.style(arg.shortName, Style.YELLOW));
+            builder.appendWithinLine(colors.style(arg.shortName, ColorTheme.LITERAL));
         }
         if (arg.exampleValue != null) {
             builder.space().appendWithinLine(arg.exampleValue);
@@ -213,13 +213,13 @@ public final class HelpPrinter {
             StringBuilder builder = new StringBuilder();
             builder.append('[');
             if (longName != null) {
-                builder.append(colors.style(longName, Style.YELLOW));
+                builder.append(colors.style(longName, ColorTheme.LITERAL));
                 if (shortName != null) {
                     builder.append(" | ");
                 }
             }
             if (shortName != null) {
-                builder.append(colors.style(shortName, Style.YELLOW));
+                builder.append(colors.style(shortName, ColorTheme.LITERAL));
             }
             if (exampleValue != null) {
                 builder.append(' ').append(exampleValue);
@@ -260,6 +260,12 @@ public final class HelpPrinter {
         LineWrapper appendWithinLine(String text) {
             if (column + text.length() > maxLength) {
                 newLine();
+                // If the text starts with a space, then eat the space since it isn't needed to separate words now.
+                if (text.startsWith(" ")) {
+                    builder.append(text, 1, text.length());
+                    column += text.length() - 1;
+                    return this;
+                }
             }
 
             builder.append(text);

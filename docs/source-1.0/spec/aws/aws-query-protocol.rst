@@ -87,6 +87,9 @@ that affect serialization:
         ``awsQuery`` errors and an :ref:`HTTP response code <awsQuery-error-response-code>`.
         The "Code" of an ``awsQuery`` error is used by clients to determine
         which type of error was encountered.
+    * - :ref:`requestCompression <requestCompression-trait>`
+      - Indicates that an operation supports compressing requests from clients
+        to services.
 
 .. |quoted shape name| replace:: ``awsQuery``
 .. |name resolution text| replace:: The :ref:`xmlName-trait` can be used to serialize a property using a custom name

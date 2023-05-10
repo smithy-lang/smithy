@@ -61,9 +61,13 @@ final class SmithyBuildUtils {
             path = Paths.get(sourceLocation.getFilename()).getParent();
         }
         if (path == null) {
-            path = Paths.get(".");
+            path = getCurrentWorkingDirectory();
         }
         return path;
+    }
+
+    static Path getCurrentWorkingDirectory() {
+        return Paths.get(".").toAbsolutePath().normalize();
     }
 
     static ObjectNode expandNode(Node node) {
@@ -128,6 +132,11 @@ final class SmithyBuildUtils {
         }
 
         private static String expand(SourceLocation sourceLocation, String variable) {
+            // TODO: Add support for SMITHY_VERSION.
+            if (variable.equals("SMITHY_ROOT_DIR")) {
+                return SmithyBuildUtils.getCurrentWorkingDirectory().toString();
+            }
+
             String replacement = Optional.ofNullable(System.getProperty(variable))
                     .orElseGet(() -> System.getenv(variable));
 

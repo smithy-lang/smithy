@@ -95,11 +95,11 @@ public class ValidateCommandTest {
         CliUtils.Result cliResult = runValidationEventsTest(Severity.NOTE);
         String result = cliResult.stdout();
 
-        assertThat(result, not(containsString("EmitSuppressed")));
-        assertThat(result, containsString("EmitNotes"));
-        assertThat(result, containsString("EmitWarnings"));
-        assertThat(result, containsString("EmitDangers"));
-        assertThat(result, containsString("TraitTarget"));
+        assertThat(result, not(containsString("─ EmitSuppressed")));
+        assertThat(result, containsString("─ EmitNotes"));
+        assertThat(result, containsString("─ EmitWarnings"));
+        assertThat(result, containsString("─ EmitDangers"));
+        assertThat(result, containsString("─ TraitTarget"));
     }
 
     @Test

@@ -6,12 +6,12 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -216,5 +216,31 @@ public class SmithyIdlModelSerializerTest {
         assertThat(model2.expectShape(ShapeId.from("smithy.example#PrimitiveBool")).hasTrait(DefaultTrait.ID),
                    is(true));
         assertThat(model2, equalTo(model2));
+    }
+
+    @Test
+    public void usesOriginalSourceLocation() {
+        URL resource = getClass().getResource("idl-serialization/out-of-order.smithy");
+        Model model = Model.assembler().addImport(resource).assemble().unwrap();
+        Map<Path, String> reserialized = SmithyIdlModelSerializer.builder()
+                .componentOrder(SmithyIdlComponentOrder.SOURCE_LOCATION)
+                .build()
+                .serialize(model);
+        String modelResult = reserialized.values().iterator().next().replace("\r\n", "\n");
+
+        assertThat(modelResult, equalTo(IoUtils.readUtf8Url(resource).replace("\r\n", "\n")));
+    }
+
+    @Test
+    public void sortsAlphabetically() {
+        URL resource = getClass().getResource("idl-serialization/alphabetical.smithy");
+        Model model = Model.assembler().addImport(resource).assemble().unwrap();
+        Map<Path, String> reserialized = SmithyIdlModelSerializer.builder()
+                .componentOrder(SmithyIdlComponentOrder.ALPHA_NUMERIC)
+                .build()
+                .serialize(model);
+        String modelResult = reserialized.values().iterator().next().replace("\r\n", "\n");
+
+        assertThat(modelResult, equalTo(IoUtils.readUtf8Url(resource).replace("\r\n", "\n")));
     }
 }

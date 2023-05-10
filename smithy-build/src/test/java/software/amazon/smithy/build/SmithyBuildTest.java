@@ -28,10 +28,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -42,6 +45,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.model.ProjectionConfig;
@@ -163,6 +167,44 @@ public class SmithyBuildTest {
     }
 
     @Test
+    public void modeExcludePreludeShapes() throws Exception {
+        SmithyBuildConfig config = SmithyBuildConfig.builder()
+                .load(Paths.get(getClass().getResource("exclude-prelude-shapes.json").toURI()))
+                .outputDirectory(outputDirectory.toString())
+                .build();
+        Model model = Model.assembler()
+                .assemble()
+                .unwrap();
+        SmithyBuildResult results = new SmithyBuild().config(config).model(model).build();
+        String content = IoUtils.readUtf8File(results.allArtifacts()
+                .filter(path -> path.toString().endsWith("withoutPrelude" + System.getProperty("file.separator") + "model.json"))
+                .findFirst()
+                .get());
+        assertThat(Files.isRegularFile(outputDirectory.resolve("source/withoutPrelude/model.json")), is(true));
+        assertThat(content, not(containsString("smithy.api#Boolean")));
+        assertThat(content, not(containsString("smithy.api#Integer")));
+    }
+
+    @Test
+    public void modeIncludePreludeShapes() throws Exception {
+        SmithyBuildConfig config = SmithyBuildConfig.builder()
+                .load(Paths.get(getClass().getResource("include-prelude-shapes.json").toURI()))
+                .outputDirectory(outputDirectory.toString())
+                .build();
+        Model model = Model.assembler()
+                .assemble()
+                .unwrap();
+        SmithyBuildResult results = new SmithyBuild().config(config).model(model).build();
+        String content = IoUtils.readUtf8File(results.allArtifacts()
+                .filter(path -> path.toString().endsWith("withPrelude" + System.getProperty("file.separator") + "model.json"))
+                .findFirst()
+                .get());
+        assertThat(Files.isRegularFile(outputDirectory.resolve("source/withPrelude/model.json")), is(true));
+        assertThat(content, containsString("smithy.api#Boolean"));
+        assertThat(content, containsString("smithy.api#Integer"));
+    }
+
+    @Test
     public void doesNotCopyErroneousModelsToBuildOutput() throws Exception {
         SmithyBuildConfig config = SmithyBuildConfig.builder()
                 .load(Paths.get(getClass().getResource("resource-model-config.json").toURI()))
@@ -224,7 +266,63 @@ public class SmithyBuildTest {
             builder.build();
         });
 
-        assertThat(e.getMessage(), containsString("Unable to find a plugin named `unknown1`"));
+        assertThat(e.getMessage(), containsString("Unable to find a plugin for `unknown1`"));
+    }
+
+    @Test
+    public void defersFailureUntilAfterAllPluginsApplied() throws Exception {
+        SmithyBuildConfig config = SmithyBuildConfig.builder()
+                .load(Paths.get(getClass().getResource("defers-failure.json").toURI()))
+                .outputDirectory(outputDirectory.toString())
+                .build();
+
+        RuntimeException canned = new RuntimeException("broken");
+
+        // "broken" will run before "test1Serial" because of natural ordering
+        Map<String, SmithyBuildPlugin> plugins = new HashMap<>();
+        plugins.put("broken", new SmithyBuildPlugin() {
+            @Override
+            public String getName() {
+                        return "broken";
+                    }
+            @Override
+            public void execute(PluginContext context) {
+                        throw canned;
+                    }
+        });
+        plugins.put("test1Serial", new Test1SerialPlugin());
+
+        Function<String, Optional<SmithyBuildPlugin>> factory = SmithyBuildPlugin.createServiceFactory();
+        Function<String, Optional<SmithyBuildPlugin>> composed = name -> OptionalUtils.or(
+                Optional.ofNullable(plugins.get(name)), () -> factory.apply(name));
+
+        // Because the build will fail, we need a way to access the file manifests
+        List<FileManifest> manifests = new ArrayList<>();
+        Function<Path, FileManifest> fileManifestFactory = pluginBaseDir -> {
+            FileManifest fileManifest = new MockManifest(pluginBaseDir);
+            manifests.add(fileManifest);
+            return fileManifest;
+        };
+
+        SmithyBuild builder = new SmithyBuild()
+                .pluginFactory(composed)
+                .fileManifestFactory(fileManifestFactory)
+                .config(config);
+
+        SmithyBuildException e = Assertions.assertThrows(SmithyBuildException.class, builder::build);
+
+        // "broken" plugin produces the error that causes the build to fail
+        assertThat(e.getMessage(), containsString("java.lang.RuntimeException: broken"));
+        assertThat(e.getSuppressed(), equalTo(new Throwable[]{canned}));
+
+        List<Path> files = manifests.stream()
+                .flatMap(fm -> fm.getFiles().stream())
+                .collect(Collectors.toList());
+        assertThat(files, containsInAnyOrder(
+                outputDirectory.resolve("source/sources/manifest"),
+                outputDirectory.resolve("source/model/model.json"),
+                outputDirectory.resolve("source/build-info/smithy-build-info.json"),
+                outputDirectory.resolve("source/test1Serial/hello1Serial")));
     }
 
     @Test
@@ -386,11 +484,6 @@ public class SmithyBuildTest {
         assertPluginPresent("test1Serial", "hello1Serial", a, b);
         assertPluginPresent("test1Parallel", "hello1Parallel", a);
         assertPluginPresent("test2Parallel", "hello2Parallel", b);
-
-        // The order of execution should be: test1Parallel (a), test1Serial (a), test1Serial (b), test2Parallel (b)
-        assertTrue(getPluginFileContents(a, "test1Parallel") < getPluginFileContents(a, "test1Serial"));
-        assertTrue(getPluginFileContents(a, "test1Serial") < getPluginFileContents(b, "test1Serial"));
-        assertTrue(getPluginFileContents(b, "test1Serial") < getPluginFileContents(b, "test2Parallel"));
     }
 
     private long getPluginFileContents(ProjectionResult projection, String pluginName) {
@@ -658,4 +751,152 @@ public class SmithyBuildTest {
             throw new SourceException("Unable to serialize trait!", SourceLocation.none());
         }
     }
+
+    @Test
+    public void canRunMultiplePluginsWithDifferentArtifactNames() throws URISyntaxException {
+        Map<String, SmithyBuildPlugin> plugins = MapUtils.of("test1", new Test1SerialPlugin(),
+                                                             "test2", new Test2ParallelPlugin());
+        Function<String, Optional<SmithyBuildPlugin>> factory = SmithyBuildPlugin.createServiceFactory();
+        Function<String, Optional<SmithyBuildPlugin>> composed = name -> OptionalUtils.or(
+                Optional.ofNullable(plugins.get(name)), () -> factory.apply(name));
+
+        SmithyBuild builder = new SmithyBuild().pluginFactory(composed);
+        builder.fileManifestFactory(MockManifest::new);
+        builder.config(SmithyBuildConfig.builder()
+                .load(Paths.get(getClass().getResource("artifact-names.json").toURI()))
+                .outputDirectory("/foo")
+                .build());
+
+        SmithyBuildResult results = builder.build();
+        ProjectionResult source = results.getProjectionResult("source").get();
+        ProjectionResult a = results.getProjectionResult("a").get();
+        ProjectionResult b = results.getProjectionResult("b").get();
+
+        assertPluginPresent("test1", "hello1Serial", source, a, b);
+        assertPluginPresent("foo1", "hello1Serial", source, a, b);
+        assertPluginPresent("foo2", "hello1Serial", source, a, b);
+        assertPluginPresent("foo3", "hello2Parallel", source, a, b);
+
+        assertPluginPresent("test2", "hello2Parallel", a, b);
+    }
+
+    @Test
+    public void runsCommand() throws Exception {
+        Assumptions.assumeTrue(isPosix());
+
+        String output = runPosixTestAndGetOutput("run-plugin/run-plugin-test.json", "test-process");
+
+        assertThat(output, containsString("argv1: a"));
+        assertThat(output, containsString("SMITHY_ROOT_DIR: " + Paths.get(".").toAbsolutePath().normalize()));
+        assertThat(output, containsString("SMITHY_PLUGIN_DIR: " + outputDirectory.toString()));
+        assertThat(output, containsString("SMITHY_PROJECTION_NAME: source"));
+        assertThat(output, containsString("SMITHY_ARTIFACT_NAME: test-process"));
+        assertThat(output, containsString("SMITHY_INCLUDES_PRELUDE: false"));
+        assertThat(output, containsString("FOO_BAR: BAZ"));
+        assertThat(output, containsString("FOO_PATH: "));
+        assertThat(output, containsString("\"smithy\":\"" + Model.MODEL_VERSION + "\",\"shapes\":{}}"));
+        // No prelude by default.
+        assertThat(output, not(containsString("smithy.api#String")));
+    }
+
+    @Test
+    public void runsCommandAndSendsPrelude() throws Exception {
+        Assumptions.assumeTrue(isPosix());
+
+        String output = runPosixTestAndGetOutput("run-plugin/run-plugin-with-sendprelude.json", "test-process");
+
+        assertThat(output, containsString("SMITHY_INCLUDES_PRELUDE: true"));
+        assertThat(output, containsString("smithy.api#String"));
+    }
+
+    // Assumes that `Assumptions.assumeTrue(isPosix());` was already called.
+    private String runPosixTestAndGetOutput(String buildFile, String artifactName) throws Exception {
+        SmithyBuild builder = new SmithyBuild();
+
+        // Use a real working temporary directory.
+        // Note that this won't change the directory based on the artifact name.
+        FileManifest manifest = FileManifest.create(outputDirectory);
+        builder.fileManifestFactory(path -> manifest);
+
+        // Copy the test shell files to the output directory.
+        Path testProcessSh = manifest.getBaseDir().resolve("test-process.sh");
+        Path returnErrorSh = manifest.getBaseDir().resolve("return-error.sh");
+        Files.createDirectories(testProcessSh.getParent());
+        Files.copy(getClass().getResource("run-plugin/test-process.sh").openStream(), testProcessSh);
+        Files.copy(getClass().getResource("run-plugin/return-error.sh").openStream(), returnErrorSh);
+
+        builder.config(SmithyBuildConfig.builder()
+                .load(Paths.get(getClass().getResource(buildFile).toURI()))
+                .build());
+
+        SmithyBuildResult results = builder.build();
+        ProjectionResult result = results.getProjectionResultsMap().get("source");
+        Path outputFile = result.getPluginManifest(artifactName).get().getBaseDir().resolve("output.txt");
+
+        return IoUtils.readUtf8File(outputFile);
+    }
+
+    private boolean isPosix() {
+        return FileSystems.getDefault().supportedFileAttributeViews().contains("posix");
+    }
+
+    @Test
+    public void invalidArtifactName() throws URISyntaxException {
+        simpleAssertThrows("run-plugin/invalid-artifact-name-malformed.json");
+    }
+
+    @Test
+    public void commandNotArray() throws URISyntaxException {
+        simpleAssertThrows("run-plugin/invalid-command-not-array.json");
+    }
+
+    @Test
+    public void missingCommand() throws URISyntaxException {
+        simpleAssertThrows("run-plugin/invalid-missing-command.json");
+    }
+
+    @Test
+    public void exitsNonZero() {
+        Assumptions.assumeTrue(isPosix());
+
+        SmithyBuildException e = Assertions.assertThrows(
+            SmithyBuildException.class,
+            () -> runPosixTestAndGetOutput("run-plugin/invalid-exit-code.json", "invalid-exit-code")
+        );
+
+        assertThat(e.getMessage(), containsString("Error exit code 2 returned from: `sh return-error.sh 2`"));
+    }
+
+    private SmithyBuildException simpleAssertThrows(String invalidCase) throws URISyntaxException {
+        SmithyBuild builder = new SmithyBuild();
+        builder.config(SmithyBuildConfig.builder()
+                .load(Paths.get(getClass().getResource(invalidCase).toURI()))
+                .build());
+
+        return Assertions.assertThrows(SmithyBuildException.class, builder::build);
+    }
+
+    @Test
+    public void detectsConflictingArtifactNames() throws Exception {
+        // Setup fake test1 and test2 plugins just to create a conflict in the test between artifact names
+        // but without conflicting JSON keys.
+        Map<String, SmithyBuildPlugin> plugins = MapUtils.of(
+                "test1", new Test1SerialPlugin(),
+                "test2", new Test2ParallelPlugin());
+        Function<String, Optional<SmithyBuildPlugin>> factory = SmithyBuildPlugin.createServiceFactory();
+        Function<String, Optional<SmithyBuildPlugin>> composed = name -> OptionalUtils.or(
+                Optional.ofNullable(plugins.get(name)), () -> factory.apply(name));
+
+        URI build = getClass().getResource("run-plugin/invalid-conflicting-artifact-names.json").toURI();
+        SmithyBuild builder = new SmithyBuild()
+                .pluginFactory(composed)
+                .fileManifestFactory(MockManifest::new)
+                .config(SmithyBuildConfig.builder().load(Paths.get(build)).build());
+
+        SmithyBuildException e = Assertions.assertThrows(SmithyBuildException.class, builder::build);
+
+        assertThat(e.getMessage(), containsString("Multiple plugins use the same artifact name 'foo' in "
+                                                  + "the 'source' projection"));
+    }
 }
+

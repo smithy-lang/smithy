@@ -1,4 +1,4 @@
-// Parse error at line 5, column 17 near `use`: Expected a line break | Model
+// Syntax error at line 5, column 17: Expected a line break, but found IDENTIFIER('use') | Model
 $version: "2.0"
 namespace smithy.example
 

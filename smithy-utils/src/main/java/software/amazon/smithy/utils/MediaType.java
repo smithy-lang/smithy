@@ -55,7 +55,7 @@ public final class MediaType {
     public static MediaType from(String value) {
         Parser parser = new Parser(value);
         parser.parse();
-        return new MediaType(parser.expression(), parser.type, parser.subtype, parser.parameters);
+        return new MediaType(parser.input().toString(), parser.type, parser.subtype, parser.parameters);
     }
 
     /**
@@ -225,7 +225,7 @@ public final class MediaType {
 
         private String parseToken() {
             int start = position();
-            consumeUntilNoLongerMatches(TOKEN::contains);
+            consumeWhile(c -> TOKEN.contains((char) c));
 
             // Fail if the token was empty.
             if (start == position()) {

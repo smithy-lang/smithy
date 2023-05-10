@@ -29,6 +29,7 @@ import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.EnumValueTrait;
+import software.amazon.smithy.model.traits.InternalTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
@@ -199,6 +200,12 @@ public final class EnumShape extends StringShape {
     /**
      * Converts an enum definition to the equivalent enum member shape.
      *
+     * <p>If an enum definition is marked as deprecated, the DeprecatedTrait
+     * is applied to the converted enum member shape.
+     *
+     * <p>If an enum definition has an "internal" tag, the InternalTrait is
+     * applied to the converted enum member shape.
+     *
      * @param parentId The {@link ShapeId} of the enum shape.
      * @param synthesizeName Whether to synthesize a name if possible.
      * @return An optional member shape representing the enum definition,
@@ -232,6 +239,9 @@ public final class EnumShape extends StringShape {
             }
             if (definition.isDeprecated()) {
                 builder.addTrait(DeprecatedTrait.builder().build());
+            }
+            if (definition.hasTag("internal")) {
+                builder.addTrait(new InternalTrait());
             }
 
             return Optional.of(builder.build());

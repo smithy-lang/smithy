@@ -29,6 +29,8 @@ import software.amazon.smithy.model.validation.Validator;
 
 final class LoaderUtils {
 
+    static final String BAD_DOCUMENTATION_COMMENT = "Model.BadDocumentationComment";
+
     private LoaderUtils() {}
 
     /**
@@ -106,5 +108,19 @@ final class LoaderUtils {
             }
         }
         return false;
+    }
+
+    static ValidationEvent emitBadDocComment(SourceLocation location, String comments) {
+        String message = "Found documentation comments ('///') attached to nothing. Documentation comments must "
+                         + "appear on their own lines, directly before shapes and members, and before any traits.";
+        if (comments != null) {
+            message += " The invalid comments were: " + comments;
+        }
+        return ValidationEvent.builder()
+                .id(BAD_DOCUMENTATION_COMMENT)
+                .severity(Severity.WARNING)
+                .message(message)
+                .sourceLocation(location)
+                .build();
     }
 }

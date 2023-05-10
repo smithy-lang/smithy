@@ -8,6 +8,7 @@ Smithy provides a customizable validation system that can be used by
 API designers and organizations to ensure that their APIs adhere to their
 own standards and best practices.
 
+
 ------------
 Introduction
 ------------

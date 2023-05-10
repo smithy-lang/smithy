@@ -54,7 +54,7 @@ metadata suppressions = [
 
 namespace smithy.example
 
-@suppress(["IngoreMe"])
+@suppress(["IgnoreMe"])
 service MyService {
     version: "XYZ",
     operations: [GetFoo],

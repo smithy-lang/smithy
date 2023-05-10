@@ -1,4 +1,4 @@
-// Parse error at line 6, column 24 near `baz`: Expected a line break | Model
+// Syntax error at line 6, column 24: Expected a line break, but found IDENTIFIER('baz') | Model
 $version: "2.0"
 namespace com.foo
 

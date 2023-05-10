@@ -22,11 +22,11 @@ import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
 import software.amazon.smithy.cli.ColorFormatter;
+import software.amazon.smithy.cli.ColorTheme;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.EnvironmentVariable;
 import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.cli.StandardOptions;
-import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
 
 public final class SmithyCommand implements Command {
@@ -35,14 +35,20 @@ public final class SmithyCommand implements Command {
 
     public SmithyCommand(DependencyResolver.Factory dependencyResolverFactory) {
         Objects.requireNonNull(dependencyResolverFactory);
+
+        Command migrateCommand = new MigrateCommand(getName());
+        Command deprecated1To2Command = MigrateCommand.createDeprecatedAlias(migrateCommand);
+
         commands = Arrays.asList(
+            new VersionCommand(),
             new ValidateCommand(getName(), dependencyResolverFactory),
             new BuildCommand(getName(), dependencyResolverFactory),
             new DiffCommand(getName(), dependencyResolverFactory),
             new AstCommand(getName(), dependencyResolverFactory),
             new SelectCommand(getName(), dependencyResolverFactory),
             new CleanCommand(getName()),
-            new Upgrade1to2Command(getName()),
+            migrateCommand,
+            deprecated1To2Command,
             new WarmupCommand(getName())
         );
     }
@@ -57,10 +63,9 @@ public final class SmithyCommand implements Command {
         return "";
     }
 
-    @Override
-    public void printHelp(Arguments arguments, ColorFormatter colors, CliPrinter printer) {
+    private void printHelp(ColorFormatter colors, CliPrinter printer) {
         printer.println(String.format("Usage: %s [-h | --help] [--version] <command> [<args>]",
-                                      colors.style("smithy", Style.BRIGHT_WHITE, Style.UNDERLINE)));
+                                      colors.style("smithy", ColorTheme.EM_UNDERLINE)));
         printer.println("");
         printer.println("Available commands:");
 
@@ -76,7 +81,7 @@ public final class SmithyCommand implements Command {
         for (Command command : commands) {
             if (!command.isHidden()) {
                 printer.println(String.format("    %-" + longestName + "s %s",
-                                              colors.style(command.getName(), Style.YELLOW),
+                                              colors.style(command.getName(), ColorTheme.LITERAL),
                                               command.getSummary()));
             }
         }
@@ -93,18 +98,13 @@ public final class SmithyCommand implements Command {
 
         // If no command was given, then finish parsing to check if -h, --help, or --version was given.
         if (command == null) {
-            arguments.finishParsing();
+            arguments.getPositional();
 
-            StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
-
-            if (standardOptions.help()) {
-                printHelp(arguments, env.colors(), env.stdout());
-                return 0;
-            } else if (standardOptions.version()) {
-                env.stdout().println(SmithyCli.getVersion());
+            if (arguments.getReceiver(StandardOptions.class).help()) {
+                printHelp(env.colors(), env.stdout());
                 return 0;
             } else {
-                printHelp(arguments, env.colors(), env.stderr());
+                printHelp(env.colors(), env.stderr());
                 return 1;
             }
         }

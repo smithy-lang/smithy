@@ -39,7 +39,8 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * Events with a severity less than ERROR can be suppressed. All events contain
  * a message, severity, and eventId.
  */
-public final class ValidationEvent implements Comparable<ValidationEvent>, ToNode, ToSmithyBuilder<ValidationEvent> {
+public final class ValidationEvent
+        implements FromSourceLocation, Comparable<ValidationEvent>, ToNode, ToSmithyBuilder<ValidationEvent> {
     private static final ValidationEventFormatter DEFAULT_FORMATTER = new LineValidationEventFormatter();
     private final SourceLocation sourceLocation;
     private final String message;

@@ -38,8 +38,8 @@ Smithy code generation plugins should use a naming pattern of
 
 Examples:
 
-* ``foo-service-codegen``: generate a hypothetical Foo language service
 * ``foo-client-codegen``: generate a hypothetical Foo language client
+* ``foo-server-codegen``: generate a hypothetical Foo language server
 
 
 Recommended properties

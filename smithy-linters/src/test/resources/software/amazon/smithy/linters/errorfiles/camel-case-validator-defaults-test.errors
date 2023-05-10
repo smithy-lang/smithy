@@ -11,6 +11,8 @@
 [DANGER] ns.foo#Structure$ThirdUpperCamelCase: Member shape member name, `ThirdUpperCamelCase`, is not lower camel case; members in the MyService must all use lower camel case. | LowerCamelCase
 [DANGER] ns.foo#Structure$FourthUpperCamelCase: Member shape member name, `FourthUpperCamelCase`, is not lower camel case; members in the MyService must all use lower camel case. | LowerCamelCase
 [DANGER] ns.foo#Structure$snake_case: Member shape member name, `snake_case`, is not lower camel case; members in the MyService must all use lower camel case. | LowerCamelCase
+[DANGER] ns.foo#Structure$List: Member shape member name, `List`, is not lower camel case; members in the MyService must all use lower camel case. | LowerCamelCase
+[DANGER] ns.foo#Structure$Map: Member shape member name, `Map`, is not lower camel case; members in the MyService must all use lower camel case. | LowerCamelCase
 
 
 [DANGER] ns.foo#InvalidTrait: string trait definition, `InvalidTrait`, is not lower camel case | UpperCamelCase

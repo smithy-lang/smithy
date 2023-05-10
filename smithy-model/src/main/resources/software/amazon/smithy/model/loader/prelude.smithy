@@ -1032,3 +1032,62 @@ list LocalMixinTraitList {
             must target a valid trait.""")
 @private
 string LocalMixinTrait
+
+/// Defines the priority-ordered list of compression algorithms supported by the
+/// service operation.
+@private
+list RequestCompressionEncodingsList {
+    // Encodings are NOT constrained in a Smithy enum since supported encodings
+    // are case-insensitive
+    member: String
+}
+
+/// Indicates that an operation supports compressing requests from clients to
+/// services.
+@trait(
+    selector: "operation"
+    breakingChanges: [
+        {
+            change: "remove"
+            severity: "DANGER"
+            message: """
+            Trait was removed so newly generated clients will no longer compress requests, \
+            but the service MUST continue to support removed compression algorithms in `encodings`."""
+        }
+        {
+            change: "remove"
+            path: "/encodings"
+            message: "`encodings` was removed, but is required for the requestCompression trait."
+        }
+        {
+            change: "add"
+            severity: "NOTE"
+            path: "/encodings/member"
+            message: """
+            Members of `encodings` were added. Once a compression algorithm is added, \
+            the service MUST support the compression algorithm."""
+        }
+        {
+            change: "remove"
+            severity: "DANGER"
+            path: "/encodings/member"
+            message: """
+            Members of `encodings` were removed so newly generated clients will no longer compress requests \
+            for removed compression algorithms. The service MUST continue to support old clients by supporting \
+            removed compression algorithms."""
+        }
+        {
+            change: "update"
+            severity: "DANGER"
+            path: "/encodings/member"
+            message: """
+            Members of `encodings` were updated so newly generated clients will no longer compress requests \
+            for compression algorithms prior to the updates. The service MUST continue to support old clients by \
+            supporting compression algorithms prior to the updates."""
+        }
+    ]
+)
+structure requestCompression {
+    @required
+    encodings: RequestCompressionEncodingsList
+}

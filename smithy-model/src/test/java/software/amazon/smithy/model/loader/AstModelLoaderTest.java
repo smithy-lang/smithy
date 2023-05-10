@@ -27,7 +27,7 @@ public class AstModelLoaderTest {
     @Test
     public void failsToLoadPropertiesFromV1() {
         ValidatedResult<Model> model = Model.assembler()
-            .addImport(getClass().getResource("invalid/properties-v2-only.json"))
+            .addImport(getClass().getResource("invalid/version/properties-v2-only.json"))
             .assemble();
         assertEquals(1, model.getValidationEvents(Severity.ERROR).size());
         assertTrue(model.getValidationEvents(Severity.ERROR).get(0).getMessage()

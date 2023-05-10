@@ -622,7 +622,7 @@ structure XmlNamespacesOutput {
     nested: XmlNamespaceNested
 }
 
-// Ingored since it's not at the top-level
+// Ignored since it's not at the top-level
 @xmlNamespace(uri: "http://foo.com")
 structure XmlNamespaceNested {
     @xmlNamespace(uri: "http://baz.com", prefix: "baz")

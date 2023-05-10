@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.ProjectionResult;
 import software.amazon.smithy.build.SmithyBuild;
@@ -34,18 +35,27 @@ import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
 import software.amazon.smithy.cli.CliError;
 import software.amazon.smithy.cli.CliPrinter;
+import software.amazon.smithy.cli.ColorBuffer;
 import software.amazon.smithy.cli.ColorFormatter;
+import software.amazon.smithy.cli.ColorTheme;
+import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.HelpPrinter;
 import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.cli.Style;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.loader.ModelAssembler;
+import software.amazon.smithy.model.loader.sourcecontext.SourceContextLoader;
 import software.amazon.smithy.model.validation.Severity;
 
-final class BuildCommand extends ClasspathCommand {
+final class BuildCommand implements Command {
+
+    private final String parentCommandName;
+    private final DependencyResolver.Factory dependencyResolverFactory;
 
     BuildCommand(String parentCommandName, DependencyResolver.Factory dependencyResolverFactory) {
-        super(parentCommandName, dependencyResolverFactory);
+        this.parentCommandName = parentCommandName;
+        this.dependencyResolverFactory = dependencyResolverFactory;
     }
 
     @Override
@@ -56,6 +66,20 @@ final class BuildCommand extends ClasspathCommand {
     @Override
     public String getSummary() {
         return "Builds Smithy models and creates plugin artifacts for each projection found in smithy-build.json.";
+    }
+
+    @Override
+    public int execute(Arguments arguments, Env env) {
+        arguments.addReceiver(new ConfigOptions());
+        arguments.addReceiver(new DiscoveryOptions());
+        arguments.addReceiver(new SeverityOption());
+        arguments.addReceiver(new BuildOptions());
+        arguments.addReceiver(new Options());
+
+        CommandAction action = HelpActionWrapper.fromCommand(
+                this, parentCommandName, new ClasspathAction(dependencyResolverFactory, this::runWithClassLoader));
+
+        return action.apply(arguments, env);
     }
 
     private static final class Options implements ArgumentReceiver {
@@ -86,23 +110,33 @@ final class BuildCommand extends ClasspathCommand {
         }
     }
 
-    @Override
-    protected void addAdditionalArgumentReceivers(List<ArgumentReceiver> receivers) {
-        receivers.add(new Options());
-    }
-
-    @Override
-    int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env, List<String> models) {
+    private int runWithClassLoader(SmithyBuildConfig config, Arguments arguments, Env env) {
+        List<String> models = arguments.getPositional();
         Options options = arguments.getReceiver(Options.class);
         BuildOptions buildOptions = arguments.getReceiver(BuildOptions.class);
         StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
         ClassLoader classLoader = env.classLoader();
+        Model model = new ModelBuilder()
+                .config(config)
+                .arguments(arguments)
+                .env(env)
+                .models(models)
+                .validationPrinter(env.stderr())
+                .build();
 
-        // Build the model and fail if there are errors. Prints errors to stdout.
-        // Configure whether the build is quiet or not based on the --quiet option.
-        Model model = CommandUtils.buildModel(arguments, models, env, env.stderr(), standardOptions.quiet(), config);
+        if (!standardOptions.quiet()) {
+            env.colors().println(env.stderr(), "Validated model, now starting projections...", ColorTheme.MUTED);
+            env.stderr().println("");
+        }
 
-        SmithyBuild smithyBuild = SmithyBuild.create(classLoader)
+        Supplier<ModelAssembler> modelAssemblerSupplier = () -> {
+            ModelAssembler assembler = Model.assembler(classLoader);
+            if (buildOptions.allowUnknownTraits()) {
+                assembler.putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true);
+            }
+            return assembler;
+        };
+        SmithyBuild smithyBuild = SmithyBuild.create(classLoader, modelAssemblerSupplier)
                 .config(config)
                 .model(model);
 
@@ -124,25 +158,30 @@ final class BuildCommand extends ClasspathCommand {
         ResultConsumer resultConsumer = new ResultConsumer(env.colors(), env.stderr(), standardOptions.quiet());
         smithyBuild.build(resultConsumer, resultConsumer);
 
+        env.flush();
+
         if (!standardOptions.quiet()) {
-            Style ansiColor = resultConsumer.failedProjections.isEmpty()
-                              ? Style.BRIGHT_GREEN
-                              : Style.BRIGHT_YELLOW;
-            env.colors().println(env.stderr(),
-                                 String.format("Smithy built %s projection(s), %s plugin(s), and %s artifacts",
-                                               resultConsumer.projectionCount,
-                                               resultConsumer.pluginCount,
-                                               resultConsumer.artifactCount),
-                                 Style.BOLD, ansiColor);
+            try (ColorBuffer buffer = ColorBuffer.of(env.colors(), env.stderr())) {
+                buffer.print("Summary", ColorTheme.EM_UNDERLINE);
+                buffer.println(String.format(": Smithy built %s projection(s), %s plugin(s), and %s artifacts",
+                                       resultConsumer.projectionCount,
+                                       resultConsumer.pluginCount,
+                                       resultConsumer.artifactCount));
+            }
         }
 
         // Throw an exception if any errors occurred.
         if (!resultConsumer.failedProjections.isEmpty()) {
             resultConsumer.failedProjections.sort(String::compareTo);
-            throw new CliError(String.format(
-                    "The following %d Smithy build projection(s) failed: %s",
-                    resultConsumer.failedProjections.size(),
-                    resultConsumer.failedProjections));
+            StringBuilder error = new StringBuilder();
+            try (ColorBuffer buffer = ColorBuffer.of(env.colors(), error)) {
+                buffer.println();
+                buffer.println(String.format(
+                        "The following %d Smithy build projection(s) failed: %s",
+                        resultConsumer.failedProjections.size(),
+                        resultConsumer.failedProjections));
+            }
+            throw new CliError(error.toString());
         }
 
         return 0;
@@ -169,49 +208,74 @@ final class BuildCommand extends ClasspathCommand {
             StringWriter writer = new StringWriter();
             writer.write(String.format("%nProjection %s failed: %s%n", name, exception.toString()));
             exception.printStackTrace(new PrintWriter(writer));
-            colors.println(printer, writer.toString(), Style.RED);
+            colors.println(printer, writer.toString(), ColorTheme.ERROR);
         }
 
         @Override
         public void accept(ProjectionResult result) {
-            try (ColorFormatter.PrinterBuffer buffer = colors.printerBuffer(printer)) {
-                printProjectionResult(buffer, result);
-            }
-        }
+            try (ColorBuffer buffer = ColorBuffer.of(colors, printer)) {
+                String status;
+                Style statusStyle;
 
-        private void printProjectionResult(ColorFormatter.PrinterBuffer buffer, ProjectionResult result) {
-            if (result.isBroken()) {
-                // Write out validation errors as they occur.
-                failedProjections.add(result.getProjectionName());
-                buffer
-                        .println()
-                        .print(result.getProjectionName(), Style.RED)
-                        .println(" has a model that failed validation");
-                result.getEvents().forEach(event -> {
-                    if (event.getSeverity() == Severity.DANGER || event.getSeverity() == Severity.ERROR) {
-                        buffer.println(event.toString(), Style.RED);
-                    }
-                });
-            } else {
-                // Only increment the projection count if it succeeded.
-                projectionCount.incrementAndGet();
-            }
+                if (result.isBroken()) {
+                    failedProjections.add(result.getProjectionName());
+                    statusStyle = ColorTheme.ERROR;
+                    status = "Failed";
+                } else {
+                    // Only increment the projection count if it succeeded.
+                    projectionCount.incrementAndGet();
+                    statusStyle = ColorTheme.SUCCESS;
+                    status = "Completed";
+                }
 
-            pluginCount.addAndGet(result.getPluginManifests().size());
+                pluginCount.addAndGet(result.getPluginManifests().size());
 
-            // Get the base directory of the projection.
-            Iterator<FileManifest> manifestIterator = result.getPluginManifests().values().iterator();
-            Path root = manifestIterator.hasNext() ? manifestIterator.next().getBaseDir().getParent() : null;
+                // Increment the total number of artifacts written.
+                for (FileManifest manifest : result.getPluginManifests().values()) {
+                    artifactCount.addAndGet(manifest.getFiles().size());
+                }
 
-            if (!quiet) {
-                String message = String.format("Completed projection %s (%d shapes): %s",
-                                               result.getProjectionName(), result.getModel().toSet().size(), root);
-                buffer.println(message, Style.GREEN);
-            }
+                // Get the base directory of the projection.
+                Iterator<FileManifest> manifestIterator = result.getPluginManifests().values().iterator();
+                Path root = manifestIterator.hasNext() ? manifestIterator.next().getBaseDir().getParent() : null;
 
-            // Increment the total number of artifacts written.
-            for (FileManifest manifest : result.getPluginManifests().values()) {
-                artifactCount.addAndGet(manifest.getFiles().size());
+                if (!quiet) {
+                    int remainingLength = 80 - 6 - result.getProjectionName().length();
+                    buffer.style(w -> {
+                        w.append("──  ");
+                        w.append(result.getProjectionName());
+                        w.append("  ");
+                        for (int i = 0; i < remainingLength; i++) {
+                            w.append("─");
+                        }
+                        w.println();
+                    }, statusStyle);
+                    buffer
+                            .print(status)
+                            .append(" projection ")
+                            .append(result.getProjectionName())
+                            .append(" (")
+                            .append(String.valueOf(result.getModel().toSet().size()))
+                            .append("): ")
+                            .append(String.valueOf(root))
+                            .println();
+                }
+
+                if (result.isBroken()) {
+                    SourceContextLoader loader = SourceContextLoader.createModelAwareLoader(result.getModel(), 4);
+                    PrettyAnsiValidationFormatter formatter = PrettyAnsiValidationFormatter.builder()
+                            .sourceContextLoader(loader)
+                            .colors(colors)
+                            .titleLabel(result.getProjectionName(), statusStyle)
+                            .build();
+                    result.getEvents().forEach(event -> {
+                        if (event.getSeverity() == Severity.DANGER || event.getSeverity() == Severity.ERROR) {
+                            buffer.println(formatter.format(event));
+                        }
+                    });
+                }
+
+                buffer.println();
             }
         }
     }

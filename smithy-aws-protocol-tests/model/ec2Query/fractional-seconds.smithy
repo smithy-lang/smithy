@@ -22,16 +22,16 @@ apply FractionalSeconds @httpResponseTests([
         protocol: ec2Query,
         code: 200,
         body: """
-              <FractionalSecondsOutput xmlns="https://example.com/">
+              <FractionalSecondsResponse xmlns="https://example.com/">
                   <datetime>2000-01-02T20:34:56.123Z</datetime>
                   <RequestId>requestid</RequestId>
-              </FractionalSecondsOutput>
+              </FractionalSecondsResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {
             "Content-Type": "text/xml;charset=UTF-8"
         },
-        params: { datetime: 1398796238.789 }
+        params: { datetime: 946845296.123 }
     },
     {
         id: "Ec2QueryHttpDateWithFractionalSeconds",
@@ -40,10 +40,10 @@ apply FractionalSeconds @httpResponseTests([
         protocol: ec2Query,
         code: 200,
         body: """
-              <FractionalSecondsOutput xmlns="https://example.com/">
+              <FractionalSecondsResponse xmlns="https://example.com/">
                   <httpdate>Sun, 02 Jan 2000 20:34:56.456 GMT</httpdate>
                   <RequestId>requestid</RequestId>
-              </FractionalSecondsOutput>
+              </FractionalSecondsResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {

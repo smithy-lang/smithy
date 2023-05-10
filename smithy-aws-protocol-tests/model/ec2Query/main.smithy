@@ -82,5 +82,8 @@ service AwsEc2 {
         // client-only timestamp parsing tests
         DatetimeOffsets,
         FractionalSeconds,
+
+        // requestCompression trait tests
+        PutWithContentEncoding
     ]
 }

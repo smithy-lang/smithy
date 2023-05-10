@@ -31,7 +31,9 @@ public class SmithyValidateTest {
     public void validatesModelFailure() {
         IntegUtils.run("invalid-model", ListUtils.of("validate", "model"), result -> {
             assertThat(result.getExitCode(), equalTo(1));
-            assertThat(result.getOutput(), containsString("ERROR: smithy.example#MyString (TraitTarget)"));
+            assertThat(result.getOutput(), containsString("ERROR"));
+            assertThat(result.getOutput(), containsString("smithy.example#MyString"));
+            assertThat(result.getOutput(), containsString("TraitTarget"));
             assertThat(result.getOutput(), containsString("invalid.smithy"));
             assertThat(result.getOutput(), containsString("@range(min: 10, max: 100) // not valid for strings!"));
             assertThat(result.getOutput(), containsString("ERROR: 1"));

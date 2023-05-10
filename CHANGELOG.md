@@ -1,5 +1,117 @@
 # Smithy Changelog
 
+## 1.31.0 (2023-04-25)
+
+### Features
+* Added `@requestCompression` trait which indicates whether an operation supports compressed requests ([#1748](https://github.com/awslabs/smithy/pull/1748))
+* Improved IDL parser and added basic error recovery ([#1733](https://github.com/awslabs/smithy/pull/1733))
+* Added restJson1 protocol test for a list of structures missing a required key ([#1735](https://github.com/awslabs/smithy/pull/1735))
+* Added ability to order the output of the IDL serializer ([#1727](https://github.com/awslabs/smithy/pull/1727))
+ 
+### Bug Fixes
+* Updated conversion from string shape with `@enum` trait to enum shape to convert `internal` tag to `@internal` trait ([#1739](https://github.com/awslabs/smithy/pull/1739))
+
+### Documentation
+* Added documentation for changeStringEnumsToEnumShapes transformation ([#1740](https://github.com/awslabs/smithy/pull/1740))
+
+## 1.30.0 (2023-04-10)
+
+### Features
+* Updated smithy-diff and smithy-build to use pretty validation output and color theming options ([#1712](https://github.com/awslabs/smithy/pull/1712))
+* Added --mode flag to smithy diff command with support for `aribtrary`, `project`, and `git` modes 
+  ([#1724](https://github.com/awslabs/smithy/pull/1724), [#1721](https://github.com/awslabs/smithy/pull/1721), [#1718](https://github.com/awslabs/smithy/pull/1718)) 
+* Added --flatten flag to AST command which flattens and removes mixins from the model ([#1723](https://github.com/awslabs/smithy/pull/1723))
+* Expose functions to make ruleEvaluator more flexible to support coverage checking ([#1681](https://github.com/awslabs/smithy/pull/1681))
+
+### Bug Fixes
+* Updated mixins to allow multiple mixins to override the same member if they all target the same shape ([#1715](https://github.com/awslabs/smithy/pull/1715))
+* Fixed an issue where source file names impacted the ordering of metadata ([#1716](https://github.com/awslabs/smithy/pull/1716))
+* Fixed error messages for invalid operation input/output bindings ([#1728](https://github.com/awslabs/smithy/pull/1728))
+* Fixed bugs in smithy-rules-engine boolEquals and stringEquals which could cause unexpected results when visitors are 
+  invoked ([#1681](https://github.com/awslabs/smithy/pull/1681))
+* Remove unnecessary member from `aws.iam#actionName` ([#1726](https://github.com/awslabs/smithy/pull/1726))
+
+### Documentation
+* Added guide on how to install the Smithy CLI ([#1697](https://github.com/awslabs/smithy/pull/1697))
+* Added examples of how smithy validators can be used to prevent common bugs and enforce common style ([#1702](https://github.com/awslabs/smithy/pull/1702))
+* Added clarification on meaning and use of `@httpApiKeyAuth` `scheme` property ([#1714](https://github.com/awslabs/smithy/pull/1714))
+* Reduced IDL ambiguity by replacing *SP with [SP] ([#1711](https://github.com/awslabs/smithy/pull/1711))
+
+## 1.29.0 (2023-04-03)
+
+### Features
+* Added EnumTrait validation protocol test ([#1679](https://github.com/awslabs/smithy/pull/1679))
+* Added process based plugins to Smithy build ([#1672](https://github.com/awslabs/smithy/pull/1672))
+* Added GenerateOperationDirective to generate operation shapes separate from resources and services ([#1676](https://github.com/awslabs/smithy/pull/1679))
+* Added :root and :in selectors ([#1690](https://github.com/awslabs/smithy/pull/1690))
+* Added --show-traits to select command ([#1692](https://github.com/awslabs/smithy/pull/1692))
+* Added includePreludeShapes in model plugin ([#1693](https://github.com/awslabs/smithy/pull/1693))
+* Added aws.iam#actionName trait to override using the API operation name ([#1679](https://github.com/awslabs/smithy/pull/1665))
+* Improved resource property validation and error messages ([#1694](https://github.com/awslabs/smithy/pull/1694))
+* Improved CLI outputs for validation commands ([#1695](https://github.com/awslabs/smithy/pull/1695))
+* Optimized identity and neighbor selectors ([#1691](https://github.com/awslabs/smithy/pull/1691))
+* Refactored CLI to remove --severity from some commands ([#1700](https://github.com/awslabs/smithy/pull/1700))
+* Removed unused positional [<MODEL>] from diff command ([#1703](https://github.com/awslabs/smithy/pull/1703))
+
+### Bug Fixes
+* Ensured that the ValidationEvent listener gets all events when batch inclusions are used ([#1698](https://github.com/awslabs/smithy/pull/1698))
+* Fixed cp-R for linux, xcopy for windows in smithy-cli installers ([#1686](https://github.com/awslabs/smithy/pull/1686))
+* Fixed allowUnknownTraits for projection with import ([#1685](https://github.com/awslabs/smithy/pull/1685))
+* Fixed reversed parameters in diff message for RemovedOperationError ([#1689](https://github.com/awslabs/smithy/pull/1689))
+* Fixed hierarchical event ids lost when specifying a custom linter validator id or severity level ([#1705](https://github.com/awslabs/smithy/pull/1705))
+* Improved handling additionalSchema targeting an invalid shape ([#1708](https://github.com/awslabs/smithy/pull/1708))
+* Reduced IDL ambiguity by replacing *WS with [WS] ([#1699](https://github.com/awslabs/smithy/pull/1699))
+
+### Documentation
+* Added compatibility note to evolving models ([#1669](https://github.com/awslabs/smithy/pull/1669))
+* Fixed mixins usage examples in style guide ([#1670](https://github.com/awslabs/smithy/pull/1670))
+* Fixed type in primitive root-level example ([#1687](https://github.com/awslabs/smithy/pull/1687))
+* Removed recommendation to implement presence tracking when handling default values ([#1682](https://github.com/awslabs/smithy/pull/1682))
+* Removed OperationBody indefinite repetition in IDL ([#1707](https://github.com/awslabs/smithy/pull/1707))
+
+## 1.28.1 (2023-03-09)
+
+### Features
+* Added a suite of compliance tests for selectors ([#1643](https://github.com/awslabs/smithy/pull/1643))
+
+### Bug Fixes
+* Fixed an issue with generating CloudFormation Resource Schemas when using the `@nestedProperties` trait ([#1641](https://github.com/awslabs/smithy/pull/1641))
+* Fixed an issue where `enum` shapes could not be used as `resource` identifiers ([#1644](https://github.com/awslabs/smithy/pull/1644))
+* Fixed an issue when comparing event ids for deprecated shapes ([#1640](https://github.com/awslabs/smithy/pull/1640))
+* Fixed an issue where "core" validation events were not suppressible ([#1646](https://github.com/awslabs/smithy/pull/1646))
+* Fixed an issue with `NodeMapper`'s handling of lists of generic types ([#1635](https://github.com/awslabs/smithy/pull/1635))
+* Fixed various typos of the word "ignore", including for the `NodeMapper.WhenMissing` enum ([#1652](https://github.com/awslabs/smithy/pull/1652))
+* Fixed an issue where `enum` members were flagged by the `MissingSensitiveTrait` validator ([#1661](https://github.com/awslabs/smithy/pull/1661))
+* Updated the validation messages for `uniqueItems` malformed request tests ([#1639](https://github.com/awslabs/smithy/pull/1639))
+* Updated the validation messages for `enum` malformed request tests to not return internal values ([#1658](https://github.com/awslabs/smithy/pull/1658))
+* Fixed various issues with protocol tests ([#1642](https://github.com/awslabs/smithy/pull/1642), [#1648](https://github.com/awslabs/smithy/pull/1648),
+  [#1645](https://github.com/awslabs/smithy/pull/1645))
+
+## 1.28.0 (2023-02-24)
+
+### Features
+* Add client-only protocol tests for fractional second parsing ([#1627](https://github.com/awslabs/smithy/pull/1627))
+* Add protocol test for omitting empty http-query lists ([#1629](https://github.com/awslabs/smithy/pull/1629))
+* Add support for JSON Schema draft2020-12 ([#1617](https://github.com/awslabs/smithy/pull/1617))
+* Add hierarchical eventIds ([#1527](https://github.com/awslabs/smithy/pull/1527), [#1631](https://github.com/awslabs/smithy/pull/1631))
+* Preserve tag order in generated OpenAPI specification ([#1604](https://github.com/awslabs/smithy/pull/1604))
+* Add shapes generation order in CodegenDirector ([#1615](https://github.com/awslabs/smithy/pull/1615))
+
+### Bug Fixes
+* Remove reflected input values from validation protocol tests ([#1622](https://github.com/awslabs/smithy/pull/1622))
+* Fail ExamplesTraitValidator when both output and error are defined ([#1599](https://github.com/awslabs/smithy/pull/1599))
+* Fix mixin cycles being incorrectly detected ([#1628](https://github.com/awslabs/smithy/pull/1628))
+* Fix warnings in AST Loader for Resource and Operation Shapes with mixins ([#1626](https://github.com/awslabs/smithy/pull/1626))
+* Fix referenced components removed in openapi schema ([#1595](https://github.com/awslabs/smithy/pull/1595))
+* Fix OR condition in scoped attribute selector ([#1618](https://github.com/awslabs/smithy/pull/1618))
+* Fix passthroughBehavior casing on x-amzn-apigateway-integration ([#1619](https://github.com/awslabs/smithy/pull/1619))
+
+### Documentation
+* Clarify rules for escaping shapes bound to URIs ([#1630](https://github.com/awslabs/smithy/pull/1630))
+* Document Tree Sitter implementation ([#1621](https://github.com/awslabs/smithy/pull/1621))
+* Clarify handling of date-time offsets ([#1597](https://github.com/awslabs/smithy/pull/1597))
+* Add Smithy code generation guide ([#1586](https://github.com/awslabs/smithy/pull/1586), [#1592](https://github.com/awslabs/smithy/pull/1592))
+
 ## 1.27.2 (2023-01-30)
 
 ### Features

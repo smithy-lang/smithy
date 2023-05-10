@@ -25,7 +25,6 @@ public final class StandardOptions implements ArgumentReceiver {
 
     public static final String HELP_SHORT = "-h";
     public static final String HELP = "--help";
-    public static final String VERSION = "--version";
     public static final String DEBUG = "--debug";
     public static final String QUIET = "--quiet";
     public static final String STACKTRACE = "--stacktrace";
@@ -34,7 +33,6 @@ public final class StandardOptions implements ArgumentReceiver {
     public static final String LOGGING = "--logging";
 
     private boolean help;
-    private boolean version;
     private Level logging = Level.WARNING;
     private boolean quiet;
     private boolean debug;
@@ -43,12 +41,12 @@ public final class StandardOptions implements ArgumentReceiver {
 
     @Override
     public void registerHelp(HelpPrinter printer) {
-        printer.option(HELP, HELP_SHORT, "Print help output");
-        printer.option(DEBUG, null, "Display debug information");
-        printer.option(QUIET, null, "Silence output except errors");
-        printer.option(NO_COLOR, null, "Disable ANSI colors");
-        printer.option(FORCE_COLOR, null, "Force the use of ANSI colors");
-        printer.option(STACKTRACE, null, "Display a stacktrace on error");
+        printer.option(HELP, HELP_SHORT, "Print this help output.");
+        printer.option(DEBUG, null, "Display debug information.");
+        printer.option(QUIET, null, "Silence output except errors.");
+        printer.option(NO_COLOR, null, "Disable ANSI colors.");
+        printer.option(FORCE_COLOR, null, "Force the use of ANSI colors.");
+        printer.option(STACKTRACE, null, "Display a stacktrace on error.");
         printer.param(LOGGING, null, "LOG_LEVEL",
                             "Set the log level (defaults to WARNING). Set to one of OFF, SEVERE, WARNING, INFO, "
                             + "FINE, ALL.");
@@ -60,9 +58,6 @@ public final class StandardOptions implements ArgumentReceiver {
             case HELP:
             case HELP_SHORT:
                 help = true;
-                return true;
-            case VERSION:
-                version = true;
                 return true;
             case DEBUG:
                 debug = true;
@@ -106,10 +101,6 @@ public final class StandardOptions implements ArgumentReceiver {
 
     public boolean help() {
         return help;
-    }
-
-    public boolean version() {
-        return version;
     }
 
     public Level logging() {

@@ -328,12 +328,10 @@ The default value of a member that targets a shape with a default value
 MUST NOT be removed (by changing the value to `null`) since that would
 transition the member from non-optional to optional in generated code.
 
-The default value of a member that targets a shape without a default value
-SHOULD NOT be changed. However, it MAY be necessary in extreme cases to change
-a default value if changing the default value addresses a customer-impacting
-issue or availability issue for a service. Changing default values can result
-in parties disagreeing on the default value of a member because they are using
-different versions of the same model.
+The default value of a member SHOULD NOT be changed. However, it MAY be
+necessary in rare cases to change a default value. Changing default values can
+result in parties disagreeing on the default value of a member because they are
+using different versions of the same model.
 
 
 ### Readers MUST NOT differentiate from omitted or defaulted
@@ -368,21 +366,12 @@ an appropriate default value for the member:
 
 ### Default value serialization
 
-Authoritative model consumers like servers SHOULD always serialize default
-values to remove any ambiguity about the value of the most up to date default
-value. However, to avoid information disclosure, servers SHOULD NOT serialize
-default values if the member is marked with the `@internal` trait.
-
-To allow servers to change default values if necessary, clients SHOULD NOT
-serialize default values unless the member is explicitly set to the default
-value. This implies that clients SHOULD implement a kind of "presence tracking"
-of defaulted members.
-
-A member that is both `@default` and `@required` SHOULD always be serialized,
-and implementations SHOULD NOT use any form of presence tracking to omit a
-member if the member is not explicitly set to the default value. It is a
-protocol-specific decision whether this is enforced in serialized messages;
-some protocols follow this strictly, whereas others may not.
+1. All default values SHOULD be serialized. This ensures that messages are
+   unambiguous, and ensures that messages do not change during deserialization
+   if the default value for a member changes after the message was serialized.
+2. To avoid information disclosure, implementations MAY choose to not serialize
+   a default values if the member is marked with the `@internal` trait.
+3. A member that is both `@default` and `@required` MUST be serialized.
 
 
 ### Impact on API design
@@ -671,8 +660,7 @@ then it would be possible to omit far more default values on the wire, because
 any time a required member is missing, a deserializer can safely assume the
 member transitioned from `@required` to `@default` and fill in the default
 zero value. This helps to avoid unintended information disclosure and can
-reduce payload sizes. The other major benefit is that presence tracking isn't
-needed because default values can never change.
+reduce payload sizes.
 
 However, only supporting default zero values means that service teams will need
 to add confusing enum values like `""` and `0` to enums and intEnums. It also
@@ -684,19 +672,35 @@ processes to ensure that a service team understands the implications of
 changing a default value.
 
 
-### Always send default values
+### Omit default values or implement presence tracking
 
-Always sending default values would be a big simplification to clients because
-it removes presence tracking. Always sending defaults would make it explicit
-as to what each party thinks the default value is. However, this would remove
-the ability for a service to change a default value if ever needed. While the
-service can change the default value and wait their consumers upgrade their
-clients the change will take effect, there is usually an extremely long-tail of
-users that will not upgrade to the latest version. If a service needs to change
-a default value due to an operational or customer impacting issue, then that
-change needs to take effect across all currently deployed clients as soon as
-possible, hence the need for presence tracking in clients to only send default
-values if they are explicitly set.
+If clients omit default values, then the default value for a member becomes
+the complete discretion of servers. This allows services to change default
+values for members and see the change take effect immediately with all
+previously generated clients. This can be achieved by always omitting the
+serialization of default values or through presence tracking.
+
+If clients simply omit the serialization of default values, then it could be
+problematic if a client actually wants to use whatever it thinks the current
+default value for a member is instead of an updated default value on the
+service. For example, if the client wants to use the default value of `10`,
+but the service has since updated the default value to `11`, the client will
+omit the serialization of `10` because it thinks that is the default, and the
+server will use the newly updated default value of `11`. Until the client
+updates to the latest version of the client, it is impossible for the client
+to use the previous default value with the service.
+
+Presence tracking is the act of tracking which structure members were set
+explicitly to a value vs which structure members were set by a default value.
+If a member was set by a default value, the client can omit the serialization
+of the member and delegate the default value to the server. If the member was
+explicitly set to a value, including the default value, the client will send
+the default value to the server, ensuring that even if the default is changed,
+the server will honor the client's choice. The major issue with presence
+tracking is that it has steep complexity and size tradeoffs because it
+requires tracking internal state changes on what could otherwise be stateless
+types. Implementations are free to use presence tracking, though it isn't a
+requirement of integrating with Smithy's default values.
 
 
 ## FAQ

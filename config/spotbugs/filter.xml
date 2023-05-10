@@ -154,6 +154,10 @@
         <Class name="software.amazon.smithy.cli.commands.WarmupCommand"/>
         <Bug pattern="DM_DEFAULT_ENCODING"/>
     </Match>
+    <Match>
+        <Class name="software.amazon.smithy.cli.DiffCommandTest"/>
+        <Bug pattern="DM_DEFAULT_ENCODING"/>
+    </Match>
 
     <!-- SecurityManager is deprecated and scheduled for removal, so this isn't a good check. -->
     <Match>
@@ -164,6 +168,12 @@
     <Match>
         <Class name="software.amazon.smithy.cli.commands.WarmupCommand"/>
         <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"/>
+    </Match>
+
+    <!-- Intentional fall through to handle aliased args -->
+    <Match>
+        <Class name="software.amazon.smithy.cli.commands.SelectCommand$Options"/>
+        <Bug pattern="SF_SWITCH_FALLTHROUGH"/>
     </Match>
 
 </FindBugsFilter>

@@ -9,7 +9,6 @@ use smithy.test#httpResponseTests
 // These tests are for verifying the client can correctly parse
 // the `DateTime` timestamp with an offset
 @tags(["client-only"])
-@http(uri: "/DatetimeOffsets", method: "POST")
 operation DatetimeOffsets {
     output: DatetimeOffsetsOutput
 }

@@ -48,8 +48,8 @@ public final class StringEquals extends Function {
      * @param right the right expression.
      * @return a function instance representing the StringEquals comparison.
      */
-    public static Function ofExpressions(Expression left, Expression right) {
-        return LibraryFunction.ofExpressions(DEFINITION, left, right);
+    public static StringEquals ofExpressions(Expression left, Expression right) {
+        return new StringEquals(FunctionNode.ofExpressions(DEFINITION.getId(), left, right));
     }
 
     @Override

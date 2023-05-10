@@ -187,6 +187,18 @@ runtime {
     }
 }
 
+// Add finishing touches to the distributables, such as an install script
+tasks.runtime.doLast {
+    targetPlatforms.each { targetPlatform ->
+        copy {
+            from "config"
+            include targetPlatform.value.name.contains("windows") ? "install.bat" : "install"
+            into Paths.get(
+                    "${project.buildDir}", "image", "smithy-cli-${targetPlatform.value.name}").toString()
+        }
+    }
+}
+
 tasks.register("optimize", Exec) {
     commandLine("$smithyBinary", "warmup")
 }
@@ -217,6 +229,11 @@ task integ(type: Test) {
     testClassesDirs = sourceSets["it"].output.classesDirs
     classpath = sourceSets["it"].runtimeClasspath
     maxParallelForks = Runtime.getRuntime().availableProcessors() / 2
+
+    testLogging {
+        events = ["passed", "skipped", "failed"]
+        exceptionFormat = "full"
+    }
 }
 
 // Runtime images need to be created before integration tests can run.

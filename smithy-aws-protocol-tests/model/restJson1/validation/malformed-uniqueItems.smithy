@@ -53,8 +53,8 @@ apply MalformedUniqueItems @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value with repeated values at '/blobList' failed to satisfy constraint: Member must have unique values",
-                      "fieldList" : [{"message": "Value with repeated values at '/blobList' failed to satisfy constraint: Member must have unique values", "path": "/blobList"}]}"""
+                    { "message" : "1 validation error detected. Value at '/blobList' failed to satisfy constraint: Member must have unique values",
+                      "fieldList" : [{"message": "Value at '/blobList' failed to satisfy constraint: Member must have unique values", "path": "/blobList"}]}"""
                 }
             }
         }
@@ -83,8 +83,8 @@ apply MalformedUniqueItems @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value with repeated values at '/booleanList' failed to satisfy constraint: Member must have unique values",
-                      "fieldList" : [{"message": "Value with repeated values at '/booleanList' failed to satisfy constraint: Member must have unique values", "path": "/booleanList"}]}"""
+                    { "message" : "1 validation error detected. Value at '/booleanList' failed to satisfy constraint: Member must have unique values",
+                      "fieldList" : [{"message": "Value at '/booleanList' failed to satisfy constraint: Member must have unique values", "path": "/booleanList"}]}"""
                 }
             }
         },
@@ -117,8 +117,8 @@ apply MalformedUniqueItems @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value with repeated values at '/stringList' failed to satisfy constraint: Member must have unique values",
-                      "fieldList" : [{"message": "Value with repeated values at '/stringList' failed to satisfy constraint: Member must have unique values", "path": "/stringList"}]}"""
+                    { "message" : "1 validation error detected. Value at '/stringList' failed to satisfy constraint: Member must have unique values",
+                      "fieldList" : [{"message": "Value at '/stringList' failed to satisfy constraint: Member must have unique values", "path": "/stringList"}]}"""
                 }
             }
         }
@@ -147,8 +147,8 @@ apply MalformedUniqueItems @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value with repeated values at '/byteList' failed to satisfy constraint: Member must have unique values",
-                      "fieldList" : [{"message": "Value with repeated values at '/byteList' failed to satisfy constraint: Member must have unique values", "path": "/byteList"}]}"""
+                    { "message" : "1 validation error detected. Value at '/byteList' failed to satisfy constraint: Member must have unique values",
+                      "fieldList" : [{"message": "Value at '/byteList' failed to satisfy constraint: Member must have unique values", "path": "/byteList"}]}"""
                 }
             }
         }
@@ -177,8 +177,8 @@ apply MalformedUniqueItems @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value with repeated values at '/shortList' failed to satisfy constraint: Member must have unique values",
-                      "fieldList" : [{"message": "Value with repeated values at '/shortList' failed to satisfy constraint: Member must have unique values", "path": "/shortList"}]}"""
+                    { "message" : "1 validation error detected. Value at '/shortList' failed to satisfy constraint: Member must have unique values",
+                      "fieldList" : [{"message": "Value at '/shortList' failed to satisfy constraint: Member must have unique values", "path": "/shortList"}]}"""
                 }
             }
         }
@@ -207,8 +207,8 @@ apply MalformedUniqueItems @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value with repeated values at '/integerList' failed to satisfy constraint: Member must have unique values",
-                      "fieldList" : [{"message": "Value with repeated values at '/integerList' failed to satisfy constraint: Member must have unique values", "path": "/integerList"}]}"""
+                    { "message" : "1 validation error detected. Value at '/integerList' failed to satisfy constraint: Member must have unique values",
+                      "fieldList" : [{"message": "Value at '/integerList' failed to satisfy constraint: Member must have unique values", "path": "/integerList"}]}"""
                 }
             }
         }
@@ -237,8 +237,8 @@ apply MalformedUniqueItems @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value with repeated values at '/longList' failed to satisfy constraint: Member must have unique values",
-                      "fieldList" : [{"message": "Value with repeated values at '/longList' failed to satisfy constraint: Member must have unique values", "path": "/longList"}]}"""
+                    { "message" : "1 validation error detected. Value at '/longList' failed to satisfy constraint: Member must have unique values",
+                      "fieldList" : [{"message": "Value at '/longList' failed to satisfy constraint: Member must have unique values", "path": "/longList"}]}"""
                 }
             }
         }
@@ -267,8 +267,8 @@ apply MalformedUniqueItems @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value with repeated values at '/timestampList' failed to satisfy constraint: Member must have unique values",
-                      "fieldList" : [{"message": "Value with repeated values at '/timestampList' failed to satisfy constraint: Member must have unique values", "path": "/timestampList"}]}"""
+                    { "message" : "1 validation error detected. Value at '/timestampList' failed to satisfy constraint: Member must have unique values",
+                      "fieldList" : [{"message": "Value at '/timestampList' failed to satisfy constraint: Member must have unique values", "path": "/timestampList"}]}"""
                 }
             }
         }
@@ -297,8 +297,8 @@ apply MalformedUniqueItems @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value with repeated values at '/dateTimeList' failed to satisfy constraint: Member must have unique values",
-                      "fieldList" : [{"message": "Value with repeated values at '/dateTimeList' failed to satisfy constraint: Member must have unique values", "path": "/dateTimeList"}]}"""
+                    { "message" : "1 validation error detected. Value at '/dateTimeList' failed to satisfy constraint: Member must have unique values",
+                      "fieldList" : [{"message": "Value at '/dateTimeList' failed to satisfy constraint: Member must have unique values", "path": "/dateTimeList"}]}"""
                 }
             }
         }
@@ -327,8 +327,8 @@ apply MalformedUniqueItems @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value with repeated values at '/httpDateList' failed to satisfy constraint: Member must have unique values",
-                      "fieldList" : [{"message": "Value with repeated values at '/httpDateList' failed to satisfy constraint: Member must have unique values", "path": "/httpDateList"}]}"""
+                    { "message" : "1 validation error detected. Value at '/httpDateList' failed to satisfy constraint: Member must have unique values",
+                      "fieldList" : [{"message": "Value at '/httpDateList' failed to satisfy constraint: Member must have unique values", "path": "/httpDateList"}]}"""
                 }
             }
         },
@@ -360,8 +360,8 @@ apply MalformedUniqueItems @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value with repeated values at '/enumList' failed to satisfy constraint: Member must have unique values",
-                      "fieldList" : [{"message": "Value with repeated values at '/enumList' failed to satisfy constraint: Member must have unique values", "path": "/enumList"}]}"""
+                    { "message" : "1 validation error detected. Value at '/enumList' failed to satisfy constraint: Member must have unique values",
+                      "fieldList" : [{"message": "Value at '/enumList' failed to satisfy constraint: Member must have unique values", "path": "/enumList"}]}"""
                 }
             }
         }
@@ -390,8 +390,8 @@ apply MalformedUniqueItems @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value with repeated values at '/intEnumList' failed to satisfy constraint: Member must have unique values",
-                      "fieldList" : [{"message": "Value with repeated values at '/intEnumList' failed to satisfy constraint: Member must have unique values", "path": "/intEnumList"}]}"""
+                    { "message" : "1 validation error detected. Value at '/intEnumList' failed to satisfy constraint: Member must have unique values",
+                      "fieldList" : [{"message": "Value at '/intEnumList' failed to satisfy constraint: Member must have unique values", "path": "/intEnumList"}]}"""
                 }
             }
         }
@@ -420,8 +420,8 @@ apply MalformedUniqueItems @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value with repeated values at '/listList' failed to satisfy constraint: Member must have unique values",
-                      "fieldList" : [{"message": "Value with repeated values at '/listList' failed to satisfy constraint: Member must have unique values", "path": "/listList"}]}"""
+                    { "message" : "1 validation error detected. Value at '/listList' failed to satisfy constraint: Member must have unique values",
+                      "fieldList" : [{"message": "Value at '/listList' failed to satisfy constraint: Member must have unique values", "path": "/listList"}]}"""
                 }
             }
         }
@@ -450,8 +450,39 @@ apply MalformedUniqueItems @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value with repeated values at '/structureList' failed to satisfy constraint: Member must have unique values",
-                      "fieldList" : [{"message": "Value with repeated values at '/structureList' failed to satisfy constraint: Member must have unique values", "path": "/structureList"}]}"""
+                    { "message" : "1 validation error detected. Value at '/structureList' failed to satisfy constraint: Member must have unique values",
+                      "fieldList" : [{"message": "Value at '/structureList' failed to satisfy constraint: Member must have unique values", "path": "/structureList"}]}"""
+                }
+            }
+        }
+    },
+    {
+        id: "RestJsonMalformedUniqueItemsStructureMissingKeyList",
+        documentation: """
+        When a list of structures does not contain required keys,
+        the response should be a 400 ValidationException and not
+        a 500 error.""",
+        protocol: restJson1,
+        request: {
+            method: "POST",
+            uri: "/MalformedUniqueItems",
+            body: """
+            { "structureListWithNoKey" : [{"hi2": "bar"}] }""",
+            headers: {
+                "content-type": "application/json"
+            }
+        },
+        response: {
+            code: 400,
+            headers: {
+                "x-amzn-errortype": "ValidationException"
+            },
+            body: {
+                mediaType: "application/json",
+                assertion: {
+                    contents: """
+                    { "message" : "1 validation error detected. Value at '/structureListWithNoKey/0/hi' failed to satisfy constraint: Member must not be null",
+                      "fieldList" : [{"message": "Value at '/structureListWithNoKey/0/hi' failed to satisfy constraint: Member must not be null", "path": "/structureListWithNoKey/0/hi"}]}"""
                 }
             }
         }
@@ -480,8 +511,8 @@ apply MalformedUniqueItems @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value with repeated values at '/unionList' failed to satisfy constraint: Member must have unique values",
-                      "fieldList" : [{"message": "Value with repeated values at '/unionList' failed to satisfy constraint: Member must have unique values", "path": "/unionList"}]}"""
+                    { "message" : "1 validation error detected. Value at '/unionList' failed to satisfy constraint: Member must have unique values",
+                      "fieldList" : [{"message": "Value at '/unionList' failed to satisfy constraint: Member must have unique values", "path": "/unionList"}]}"""
                 }
             }
         },
@@ -490,6 +521,19 @@ apply MalformedUniqueItems @httpMalformedRequestTests([
         }
     },
 ])
+
+
+string MyStringKey
+
+structure MissingKeyStructure {
+  @required
+  hi: MyStringKey
+}
+
+@uniqueItems
+list StructureSetWithNoKey {
+  member: MissingKeyStructure
+}
 
 structure MalformedUniqueItemsInput {
     blobList: BlobSet
@@ -504,7 +548,8 @@ structure MalformedUniqueItemsInput {
     httpDateList: HttpDateSet
     enumList: FooEnumSet
     intEnumList: IntegerEnumSet
-    listList: ListSet,
+    listList: ListSet
     structureList: StructureSet
+    structureListWithNoKey: StructureSetWithNoKey
     unionList: UnionSet
 }

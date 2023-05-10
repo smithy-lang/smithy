@@ -132,8 +132,9 @@ public final class SmithyTestCase {
         if (actual.getSuppressionReason().isPresent()) {
             normalizedActualMessage += " (" + actual.getSuppressionReason().get() + ")";
         }
+        normalizedActualMessage = normalizeMessage(normalizedActualMessage);
 
-        String comparedMessage = expected.getMessage().replace("\n", "\\n").replace("\r", "\\n");
+        String comparedMessage = normalizeMessage(expected.getMessage());
         return expected.getSeverity() == actual.getSeverity()
                && actual.containsId(expected.getId())
                && expected.getShapeId().equals(actual.getShapeId())
@@ -141,11 +142,16 @@ public final class SmithyTestCase {
                && normalizedActualMessage.startsWith(comparedMessage);
     }
 
+    // Newlines in persisted validation events are escaped.
+    private static String normalizeMessage(String message) {
+        return message.replace("\n", "\\n").replace("\r", "\\n");
+    }
+
     private boolean isModelDeprecationEvent(ValidationEvent event) {
-        return event.getId().equals(Validator.MODEL_DEPRECATION)
+        return event.containsId(Validator.MODEL_DEPRECATION)
                // Trait vendors should be free to deprecate a trait without breaking consumers.
-               || event.getId().equals("DeprecatedTrait")
-               || event.getId().equals("DeprecatedShape");
+               || event.containsId("DeprecatedTrait")
+               || event.containsId("DeprecatedShape");
     }
 
     private static String inferErrorFileLocation(String modelLocation) {

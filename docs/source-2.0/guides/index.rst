@@ -5,9 +5,11 @@ Guides
 .. toctree::
     :maxdepth: 1
 
+    smithy-cli/index
     building-models/index
     using-code-generation/index
     model-linters
+    model-validation-examples
     evolving-models
     style-guide
     converting-to-openapi

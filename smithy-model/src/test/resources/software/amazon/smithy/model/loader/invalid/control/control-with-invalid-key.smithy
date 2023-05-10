@@ -1,2 +1,2 @@
-// Parse error at line 2, column 2 near `!f`: Expected a valid identifier character, but found '!'
+// Syntax error at line 2, column 2: Unexpected character: '!' | Model
 $!foo: "1.0"

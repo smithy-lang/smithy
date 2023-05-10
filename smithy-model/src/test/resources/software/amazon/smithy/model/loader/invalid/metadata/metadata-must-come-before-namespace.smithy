@@ -1,4 +1,4 @@
-// Parse error at line 5, column 9 near ` foo`: Metadata statements must appear before a namespace statement
+// Syntax error at line 5, column 1: Unknown shape type: metadata | Model
 $version: "2.0"
 namespace com.foo
 

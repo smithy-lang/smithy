@@ -48,8 +48,8 @@ public final class BooleanEquals extends Function {
      * @param right the right hand-side expression.
      * @return the function defining the BooleanEquals of the left and right expressions.
      */
-    public static Function ofExpressions(Expression left, Expression right) {
-        return LibraryFunction.ofExpressions(DEFINITION, left, right);
+    public static BooleanEquals ofExpressions(Expression left, Expression right) {
+        return new BooleanEquals(FunctionNode.ofExpressions(DEFINITION.getId(), left, right));
     }
 
     @Override

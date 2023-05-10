@@ -219,7 +219,7 @@ public final class TargetValidator extends AbstractValidator {
     }
 
     private void validateIdentifier(Shape shape, Shape target, List<ValidationEvent> events) {
-        if (target.getType() != ShapeType.STRING) {
+        if (target.getType() != ShapeType.STRING && target.getType() != ShapeType.ENUM) {
             events.add(badType(shape, target, RelationshipType.IDENTIFIER, ShapeType.STRING));
         }
     }

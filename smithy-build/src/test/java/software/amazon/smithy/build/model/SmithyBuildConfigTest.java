@@ -205,7 +205,7 @@ public class SmithyBuildConfigTest {
                 .expectObjectNode();
         SmithyBuildConfig config = SmithyBuildConfig.fromNode(value);
 
-        Path cwd = Paths.get(".");
+        Path cwd = SmithyBuildUtils.getCurrentWorkingDirectory();
 
         assertThat(config.getImports(), contains(cwd.resolve("foo.json").toString()));
         assertThat(config.getProjections().get("a").getImports(), contains(cwd.resolve("baz.json").toString()));
