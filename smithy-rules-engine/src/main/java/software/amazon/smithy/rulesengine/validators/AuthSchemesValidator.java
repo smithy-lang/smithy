@@ -36,6 +36,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 @SmithyUnstableApi
 public final class AuthSchemesValidator {
     private static final Identifier DISABLE_DOUBLE_ENCODING = Identifier.of("disableDoubleEncoding");
+    private static final Identifier DISABLE_NORMALIZE_PATH = Identifier.of("disableNormalizePath");
     private static final Identifier SIGNING_NAME = Identifier.of("signingName");
     private static final Identifier SIGNING_REGION_SET = Identifier.of("signingRegionSet");
     private static final Identifier NAME = Identifier.of("name");
@@ -117,7 +118,8 @@ public final class AuthSchemesValidator {
                 SourceLocation sourceLocation
         ) {
             List<ValidationError> extraKeys = noExtraKeys(authScheme,
-                    ListUtils.of(SIGNING_NAME, SIGNING_REGION_SET, NAME, DISABLE_DOUBLE_ENCODING), sourceLocation)
+                    ListUtils.of(SIGNING_NAME, SIGNING_REGION_SET, NAME,
+                            DISABLE_DOUBLE_ENCODING, DISABLE_NORMALIZE_PATH), sourceLocation)
                     .collect(Collectors.toList());
             if (!extraKeys.isEmpty()) {
                 return extraKeys.stream();
@@ -131,7 +133,8 @@ public final class AuthSchemesValidator {
                 SourceLocation sourceLocation
         ) {
             List<ValidationError> extraKeys = noExtraKeys(authScheme,
-                    ListUtils.of(SIGNING_NAME, SIGNING_REGION, NAME, DISABLE_DOUBLE_ENCODING), sourceLocation)
+                    ListUtils.of(SIGNING_NAME, SIGNING_REGION, NAME,
+                            DISABLE_DOUBLE_ENCODING, DISABLE_NORMALIZE_PATH), sourceLocation)
                     .collect(Collectors.toList());
             if (!extraKeys.isEmpty()) {
                 return extraKeys.stream();
