@@ -449,6 +449,10 @@ public final class OpenApiConverter {
                         .map(DocumentationTrait::getValue)
                         .ifPresent(description -> result.getOperation().description(description));
 
+                // The externalDocumentation trait of the operation maps to externalDocs.
+                OpenApiJsonSchemaMapper.getResolvedExternalDocs(shape, context.getConfig())
+                        .ifPresent(result.getOperation()::externalDocs);
+
                 OperationObject builtOperation = result.getOperation().build();
 
                 // Pass the operation through the plugin system.

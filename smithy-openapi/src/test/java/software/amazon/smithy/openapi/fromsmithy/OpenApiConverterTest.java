@@ -524,6 +524,22 @@ public class OpenApiConverterTest {
     }
 
     @Test
+    public void convertsExternalDocumentation() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("externaldocs-test.smithy"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("smithy.example#MyDocs"));
+        Node result = OpenApiConverter.create().config(config).convertToNode(model);
+        Node expectedNode = Node.parse(IoUtils.toUtf8String(
+                getClass().getResourceAsStream("externaldocs-test.openapi.json")));
+
+        Node.assertEquals(result, expectedNode);
+    }
+
+    @Test
     public void properlyDealsWithServiceRenames() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("service-with-renames.json"))
