@@ -70,8 +70,8 @@ import software.amazon.smithy.utils.StringUtils;
 final class MigrateCommand implements Command {
 
     private static final Logger LOGGER = Logger.getLogger(MigrateCommand.class.getName());
-    private static final Pattern VERSION_1 = Pattern.compile("(?m)^\\s*\\$\\s*version:\\s*\"1\\.0\"\\s*$");
-    private static final Pattern VERSION_2 = Pattern.compile("(?m)^\\s*\\$\\s*version:\\s*\"2\\.0\"\\s*$");
+    private static final Pattern VERSION_1 = Pattern.compile("(?m)^\\s*\\$\\s*version:\\s*\"1(\\.0)?\"\\s*$");
+    private static final Pattern VERSION_2 = Pattern.compile("(?m)^\\s*\\$\\s*version:\\s*\"2(\\.0)?\"\\s*$");
     private final String parentCommandName;
 
     MigrateCommand(String parentCommandName) {
