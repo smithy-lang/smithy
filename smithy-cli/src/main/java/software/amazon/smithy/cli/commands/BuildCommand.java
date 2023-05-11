@@ -75,6 +75,7 @@ final class BuildCommand implements Command {
         arguments.addReceiver(new SeverityOption());
         arguments.addReceiver(new BuildOptions());
         arguments.addReceiver(new Options());
+        arguments.addReceiver(new ActionEnvOptions());
 
         CommandAction action = HelpActionWrapper.fromCommand(
                 this, parentCommandName, new ClasspathAction(dependencyResolverFactory, this::runWithClassLoader));
