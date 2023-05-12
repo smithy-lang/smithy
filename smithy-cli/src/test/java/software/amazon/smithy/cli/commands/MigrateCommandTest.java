@@ -114,6 +114,25 @@ public class MigrateCommandTest {
         assertDirEqual(baseDir.getParent().resolve("v2"), tempDir);
     }
 
+    @ParameterizedTest(name = "{1}")
+    @MethodSource("noopSource")
+    public void testUpgradeV2Noop(Path noopTestFilePath, String name) {
+        Model model = Model.assembler().addImport(noopTestFilePath).assemble().unwrap();
+        String actual = new MigrateCommand("smithy").upgradeFile(model, noopTestFilePath);
+        String expected = IoUtils.readUtf8File(noopTestFilePath);
+
+        if (!actual.equals(expected)) {
+            Assertions.fail("Expected models to be equal:\n\nActual:\n\n" + actual + "\n\nExpected:\n\n" + expected);
+        }
+    }
+
+    public static Stream<Arguments> noopSource() throws Exception {
+        Path start = Paths.get(MigrateCommandTest.class.getResource("upgrade/no-op").toURI());
+        return Files.walk(start)
+                .filter(path -> Files.isRegularFile(path))
+                .map(path -> Arguments.of(path, path.getFileName().toString().replace(".v2.smithy", "")));
+    }
+
     private void assertDirEqual(Path actualDir, Path expectedDir) throws Exception {
         Set<Path> files = Files.walk(actualDir)
                 .filter(Files::isRegularFile)
