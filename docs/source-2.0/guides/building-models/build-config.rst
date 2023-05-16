@@ -734,7 +734,7 @@ Includes only the shapes matching the given :ref:`selector <selectors>`.
                         "name": "includeShapesBySelector",
                         "args": {
                             // Includes only shapes in the FooService closure.
-                            "selector": "[id=smithy.example#FooService] is(*, ~> *)"
+                            "selector": "[id=smithy.example#FooService] :is(*, ~> *)"
                         }
                     }
                 ]
