@@ -42,7 +42,7 @@ public class SdkServiceIdValidatorTest {
                 .discoverModels(getClass().getClassLoader())
                 .assemble();
 
-        assertThat(result.getValidationEvents(Severity.ERROR), not(empty()));
+        assertThat(result.getValidationEvents(Severity.DANGER), not(empty()));
     }
 
     @Test

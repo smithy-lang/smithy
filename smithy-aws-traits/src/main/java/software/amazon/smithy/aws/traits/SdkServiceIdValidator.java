@@ -133,7 +133,7 @@ public final class SdkServiceIdValidator extends AbstractValidator {
             validateServiceId(value);
             return Optional.empty();
         } catch (IllegalArgumentException e) {
-            return Optional.of(error(service, trait, e.getMessage()));
+            return Optional.of(danger(service, trait, e.getMessage()));
         }
     }
 
