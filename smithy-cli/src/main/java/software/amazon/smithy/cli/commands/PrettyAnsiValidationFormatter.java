@@ -104,6 +104,13 @@ final class PrettyAnsiValidationFormatter implements ValidationEventFormatter {
 
             writeMessage(writer, event.getMessage());
             writer.append(ls);
+            event.getHint().ifPresent(hint -> {
+                String hintLabel = "HINT: ";
+                writer.append(ls);
+                colors.style(writer, hintLabel, ColorTheme.HINT_TITLE);
+                writer.append(StyleHelper.formatMessage(hint, LINE_LENGTH - hintLabel.length(), colors));
+                writer.append(ls);
+            });
 
             return writer.toString();
         }

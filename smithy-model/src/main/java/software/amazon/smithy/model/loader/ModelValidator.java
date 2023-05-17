@@ -32,6 +32,7 @@ import software.amazon.smithy.model.traits.SuppressTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.ValidationEventDecorator;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.model.validation.ValidatorFactory;
 import software.amazon.smithy.model.validation.suppressions.Suppression;
@@ -65,6 +66,7 @@ final class ModelValidator {
     );
 
     private final List<Validator> validators = new ArrayList<>();
+    private final List<ValidationEventDecorator> decorators = new ArrayList<>();
     private final List<Suppression> suppressions = new ArrayList<>();
     private final List<ValidationEvent> includeEvents = new ArrayList<>();
     private ValidatorFactory validatorFactory;
@@ -90,6 +92,29 @@ final class ModelValidator {
      */
     public ModelValidator addValidator(Validator validator) {
         validators.add(Objects.requireNonNull(validator));
+        return this;
+    }
+
+    /**
+     * Adds a custom {@link ValidationEventDecorator} to the ModelValidator.
+     *
+     * @param decorator Decorator to add.
+     * @return Returns the ModelValidator.
+     */
+    public ModelValidator addDecorator(ValidationEventDecorator decorator) {
+        decorators.add(Objects.requireNonNull(decorator));
+        return this;
+    }
+
+    /**
+     * Sets the custom {@link ValidationEventDecorator}s to use when running the ModelValidator.
+     *
+     * @param decorators Decorators to set.
+     * @return Returns the ModelValidator.
+     */
+    public ModelValidator decorators(Collection<? extends ValidationEventDecorator> decorators) {
+        this.decorators.clear();
+        decorators.forEach(this::addDecorator);
         return this;
     }
 
@@ -169,6 +194,7 @@ final class ModelValidator {
         }
 
         List<Validator> staticValidators = resolveStaticValidators();
+        List<ValidationEventDecorator> staticDecorators = resolveStaticDecorators();
 
         return model -> {
             List<ValidationEvent> coreEvents = new ArrayList<>();
@@ -186,6 +212,8 @@ final class ModelValidator {
             // which will only obscure the root cause.
             coreEvents.addAll(suppressEvents(model, new TargetValidator().validate(model), modelSuppressions));
             coreEvents.addAll(suppressEvents(model, new ResourceCycleValidator().validate(model), modelSuppressions));
+            // Decorate all the events
+            coreEvents = decorateEvents(staticDecorators, coreEvents);
             // Emit any events that have already occurred.
             coreEvents.forEach(eventListener);
 
@@ -194,7 +222,9 @@ final class ModelValidator {
             }
 
             List<ValidationEvent> result = modelValidators.parallelStream()
-                    .flatMap(validator -> validator.validate(model).stream())
+                    .map(validator -> validator.validate(model))
+                    .map(events -> decorateEvents(staticDecorators, events))
+                    .flatMap(Collection::stream)
                     .filter(ModelValidator::filterPrelude)
                     .map(event -> suppressEvent(model, event, modelSuppressions))
                     // Emit events as they occur during validation.
@@ -214,12 +244,32 @@ final class ModelValidator {
         };
     }
 
+    private List<ValidationEvent> decorateEvents(List<ValidationEventDecorator> decorators,
+                                                 List<ValidationEvent> events) {
+        if (!decorators.isEmpty()) {
+            List<ValidationEvent> decorated = new ArrayList<>(events.size());
+            for (ValidationEventDecorator decorator : decorators) {
+                for (ValidationEvent event : events) {
+                    decorated.add(decorator.decorate(event));
+                }
+            }
+            return decorated;
+        }
+        return events;
+    }
+
     private List<Validator> resolveStaticValidators() {
         List<Validator> resolvedValidators = new ArrayList<>(validatorFactory.loadBuiltinValidators());
         resolvedValidators.addAll(validators);
         // These core validators are applied first, so don't run them again.
         resolvedValidators.removeIf(v -> CORE_VALIDATORS.contains(v.getClass()));
         return resolvedValidators;
+    }
+
+    private List<ValidationEventDecorator> resolveStaticDecorators() {
+        List<ValidationEventDecorator> resolvedDecorators = new ArrayList<>(validatorFactory.loadBuiltinDecorators());
+        resolvedDecorators.addAll(decorators);
+        return resolvedDecorators;
     }
 
     private static boolean filterPrelude(ValidationEvent event) {

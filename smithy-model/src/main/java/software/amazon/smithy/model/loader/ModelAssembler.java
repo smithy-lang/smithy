@@ -50,6 +50,7 @@ import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.ValidationEventDecorator;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.model.validation.ValidatorFactory;
 import software.amazon.smithy.utils.Pair;
@@ -96,6 +97,7 @@ public final class ModelAssembler {
     private boolean disableValidation;
     private final Map<String, Supplier<InputStream>> inputStreamModels = new LinkedHashMap<>();
     private final List<Validator> validators = new ArrayList<>();
+    private final List<ValidationEventDecorator> decorators = new ArrayList<>();
     private final List<Node> documentNodes = new ArrayList<>();
     private final List<Model> mergeModels = new ArrayList<>();
     private final List<Shape> shapes = new ArrayList<>();
@@ -122,6 +124,7 @@ public final class ModelAssembler {
         assembler.validatorFactory = validatorFactory;
         assembler.inputStreamModels.putAll(inputStreamModels);
         assembler.validators.addAll(validators);
+        assembler.decorators.addAll(decorators);
         assembler.documentNodes.addAll(documentNodes);
         assembler.mergeModels.addAll(mergeModels);
         assembler.shapes.addAll(shapes);
@@ -165,6 +168,7 @@ public final class ModelAssembler {
         mergeModels.clear();
         inputStreamModels.clear();
         validators.clear();
+        decorators.clear();
         documentNodes.clear();
         disablePrelude = false;
         disableValidation = false;
@@ -206,6 +210,17 @@ public final class ModelAssembler {
      */
     public ModelAssembler addValidator(Validator validator) {
         validators.add(Objects.requireNonNull(validator));
+        return this;
+    }
+
+    /**
+     * Registers a validation event decorator to be used when validating the model.
+     *
+     * @param decorator Decorator to register.
+     * @return Returns the assembler.
+     */
+    public ModelAssembler addDecorator(ValidationEventDecorator decorator) {
+        decorators.add(Objects.requireNonNull(decorator));
         return this;
     }
 
@@ -604,6 +619,7 @@ public final class ModelAssembler {
         // Note the ModelValidator handles emitting events to the validationEventListener.
         List<ValidationEvent> mergedEvents = new ModelValidator()
                 .validators(validators)
+                .decorators(decorators)
                 .validatorFactory(validatorFactory)
                 .eventListener(validationEventListener)
                 .includeEvents(events)
