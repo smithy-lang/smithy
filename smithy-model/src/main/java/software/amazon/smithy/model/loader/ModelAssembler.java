@@ -51,6 +51,7 @@ import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationEventDecorator;
+import software.amazon.smithy.model.validation.ValidationEventDecoratorFactory;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.model.validation.ValidatorFactory;
 import software.amazon.smithy.utils.Pair;
@@ -94,10 +95,11 @@ public final class ModelAssembler {
 
     private TraitFactory traitFactory;
     private ValidatorFactory validatorFactory;
+    private ValidationEventDecoratorFactory validationEventDecoratorFactory;
     private boolean disableValidation;
     private final Map<String, Supplier<InputStream>> inputStreamModels = new LinkedHashMap<>();
     private final List<Validator> validators = new ArrayList<>();
-    private final List<ValidationEventDecorator> decorators = new ArrayList<>();
+    private final List<ValidationEventDecorator> validationEventDecorators = new ArrayList<>();
     private final List<Node> documentNodes = new ArrayList<>();
     private final List<Model> mergeModels = new ArrayList<>();
     private final List<Shape> shapes = new ArrayList<>();
@@ -113,6 +115,12 @@ public final class ModelAssembler {
         static final TraitFactory INSTANCE = TraitFactory.createServiceFactory(ModelAssembler.class.getClassLoader());
     }
 
+    // Lazy initialization holder class idiom to hold a default event validation decorator factory.
+    static final class LazyValidationEventDecoratorFactoryHolder {
+        static final ValidationEventDecoratorFactory INSTANCE =
+            ValidationEventDecoratorFactory.createServiceFactory(ModelAssembler.class.getClassLoader());
+    }
+
     /**
      * Creates a copy of the current model assembler.
      *
@@ -122,9 +130,10 @@ public final class ModelAssembler {
         ModelAssembler assembler = new ModelAssembler();
         assembler.traitFactory = traitFactory;
         assembler.validatorFactory = validatorFactory;
+        assembler.validationEventDecoratorFactory = validationEventDecoratorFactory;
         assembler.inputStreamModels.putAll(inputStreamModels);
         assembler.validators.addAll(validators);
-        assembler.decorators.addAll(decorators);
+        assembler.validationEventDecorators.addAll(validationEventDecorators);
         assembler.documentNodes.addAll(documentNodes);
         assembler.mergeModels.addAll(mergeModels);
         assembler.shapes.addAll(shapes);
@@ -168,7 +177,7 @@ public final class ModelAssembler {
         mergeModels.clear();
         inputStreamModels.clear();
         validators.clear();
-        decorators.clear();
+        validationEventDecorators.clear();
         documentNodes.clear();
         disablePrelude = false;
         disableValidation = false;
@@ -203,6 +212,22 @@ public final class ModelAssembler {
     }
 
     /**
+     * Sets a custom {@link ValidationEventDecoratorFactory} used to resolve validation event decorator definitions.
+     *
+     * <p>Note that if you do not provide an explicit decoratorFactory, a
+     * default factory is utilized that uses service discovery.
+     *
+     * @param validationEventDecoratorFactory ValidationEventDecorator factory to use.
+     * @return Returns the assembler.
+     */
+    public ModelAssembler validationEventDecoratorFactory(
+        ValidationEventDecoratorFactory validationEventDecoratorFactory
+    ) {
+        this.validationEventDecoratorFactory = Objects.requireNonNull(validationEventDecoratorFactory);
+        return this;
+    }
+
+    /**
      * Registers a validator to be used when validating the model.
      *
      * @param validator Validator to register.
@@ -219,8 +244,8 @@ public final class ModelAssembler {
      * @param decorator Decorator to register.
      * @return Returns the assembler.
      */
-    public ModelAssembler addDecorator(ValidationEventDecorator decorator) {
-        decorators.add(Objects.requireNonNull(decorator));
+    public ModelAssembler addValidationEventDecorator(ValidationEventDecorator decorator) {
+        validationEventDecorators.add(Objects.requireNonNull(decorator));
         return this;
     }
 
@@ -524,6 +549,9 @@ public final class ModelAssembler {
         if (traitFactory == null) {
             traitFactory = LazyTraitFactoryHolder.INSTANCE;
         }
+        if (validationEventDecoratorFactory == null) {
+            validationEventDecoratorFactory = LazyValidationEventDecoratorFactoryHolder.INSTANCE;
+        }
 
         Model prelude = disablePrelude ? null : Prelude.getPreludeModel();
         LoadOperationProcessor processor = new LoadOperationProcessor(
@@ -587,7 +615,7 @@ public final class ModelAssembler {
         // If ERROR validation events occur while loading, then performing more
         // granular semantic validation will only obscure the root cause of errors.
         if (LoaderUtils.containsErrorEvents(events)) {
-            return returnOnlyErrors(transformed, events);
+            return returnOnlyErrors(transformed, events, resolveDecorators());
         }
 
         if (disableValidation) {
@@ -602,16 +630,28 @@ public final class ModelAssembler {
         }
     }
 
+    private List<ValidationEventDecorator> resolveDecorators() {
+        List<ValidationEventDecorator> resolvedDecorators =
+            new ArrayList<>(validationEventDecoratorFactory.loadDecorators());
+        resolvedDecorators.addAll(validationEventDecorators);
+        return resolvedDecorators;
+    }
+
     private void addMetadataToProcessor(Map<String, Node> metadataMap, LoadOperationProcessor processor) {
         for (Map.Entry<String, Node> entry : metadataMap.entrySet()) {
             processor.accept(new LoadOperation.PutMetadata(Version.UNKNOWN, entry.getKey(), entry.getValue()));
         }
     }
 
-    private ValidatedResult<Model> returnOnlyErrors(Model model, List<ValidationEvent> events) {
-        return new ValidatedResult<>(model, events.stream()
-                .filter(event -> event.getSeverity() == Severity.ERROR)
-                .collect(Collectors.toList()));
+    private ValidatedResult<Model> returnOnlyErrors(
+        Model model,
+        List<ValidationEvent> events,
+        List<ValidationEventDecorator> decorators
+    ) {
+        List<ValidationEvent> filteredEvents = events.stream()
+                  .filter(event -> event.getSeverity() == Severity.ERROR)
+                  .collect(Collectors.toList());
+        return new ValidatedResult<>(model, ModelValidator.decorateEvents(decorators, filteredEvents));
     }
 
     private ValidatedResult<Model> validate(Model model, List<ValidationEvent> events) {
@@ -619,7 +659,7 @@ public final class ModelAssembler {
         // Note the ModelValidator handles emitting events to the validationEventListener.
         List<ValidationEvent> mergedEvents = new ModelValidator()
                 .validators(validators)
-                .decorators(decorators)
+                .validationEventDecorators(resolveDecorators())
                 .validatorFactory(validatorFactory)
                 .eventListener(validationEventListener)
                 .includeEvents(events)

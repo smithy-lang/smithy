@@ -37,7 +37,7 @@ public class ValidationEventDecoratorTest {
         ValidatedResult<Model> result = Model.assembler()
                                              .addImport(NodeValidationVisitorTest.class.getResource("node-validator"
                                                                                                     + ".json"))
-                                             .addDecorator(new DumpHintValidationEventDecorator())
+                                             .addValidationEventDecorator(new DummyHintValidationEventDecorator())
                                              .assemble();
         for (ValidationEvent event : result.getValidationEvents()) {
             ShapeId eventShapeId = event.getShapeId().orElse(null);
@@ -50,17 +50,16 @@ public class ValidationEventDecoratorTest {
         }
     }
 
-    static class DumpHintValidationEventDecorator implements ValidationEventDecorator {
+    static class DummyHintValidationEventDecorator implements ValidationEventDecorator {
+
+        @Override
+        public boolean canDecorate(ValidationEvent ev) {
+            return ev.containsId(UNREFERENCED_SHAPE_EVENT_ID) && ev.getMessage().contains("The structure ");
+        }
+
         @Override
         public ValidationEvent decorate(ValidationEvent ev) {
-            if (ev.containsId(UNREFERENCED_SHAPE_EVENT_ID)) {
-                // This is fragile and might fail if we change the message, but the message is all we currently have
-                // to tell apart specific instances apart.
-                if (ev.getMessage().contains("The structure ")) {
-                    return ev.toBuilder().hint(HINT).build();
-                }
-            }
-            return ev;
+            return ev.toBuilder().hint(HINT).build();
         }
     }
 }

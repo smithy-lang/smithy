@@ -21,8 +21,14 @@ package software.amazon.smithy.model.validation;
  * information that is not relevant for all cases such as links to internal knowledge sites or explicit instructions
  * relevant only to the context where Smithy is being used.
  */
-@FunctionalInterface
 public interface ValidationEventDecorator {
+    /**
+     * Returns true if this decorator knows how to decorate this event, usually by looking at the event id.
+     *
+     * @param ev The event to test against
+     * @return true if this decorator knows how to decorate this event
+     */
+    boolean canDecorate(ValidationEvent ev);
 
     /**
      * Takes an event and potentially updates it to decorate it. Returns the same event if this decorators does not know
