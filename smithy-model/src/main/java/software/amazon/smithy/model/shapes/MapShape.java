@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
+import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.ListUtils;
@@ -43,7 +44,19 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
     private MapShape(Builder builder) {
         super(builder, false);
         key = getRequiredMixinMember(builder, builder.key, "key");
+        ShapeId expectedKeyId = getId().withMember("key");
+        if (!key.getId().equals(expectedKeyId)) {
+            throw new SourceException(String.format(
+                    "Expected member of `%s` to have an ID of `%s` but found `%s`",
+                    getId(), expectedKeyId, key.getId()), key);
+        }
         value = getRequiredMixinMember(builder, builder.value, "value");
+        ShapeId expectedValueId = getId().withMember("key");
+        if (!key.getId().equals(expectedValueId)) {
+            throw new SourceException(String.format(
+                    "Expected member of `%s` to have an ID of `%s` but found `%s`",
+                    getId(), expectedValueId, value.getId()), value);
+        }
         validateMemberShapeIds();
     }
 
@@ -204,7 +217,9 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
             } else if (member.getMemberName().equals("value")) {
                 return value(member);
             } else {
-                throw new IllegalStateException("Invalid member given to MapShape builder: " + member.getId());
+                String message = String.format("Map shapes may only have `key` and `value` members, but found `%s`",
+                        member.getMemberName());
+                throw new SourceException(message, member);
             }
         }
 

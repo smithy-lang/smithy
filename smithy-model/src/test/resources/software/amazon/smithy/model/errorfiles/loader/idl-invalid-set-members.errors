@@ -1,0 +1,3 @@
+[ERROR] com.test#NoMemberSet: Missing required member of shape `com.test#NoMemberSet`: member | Model
+[ERROR] com.test#WrongMemberSet: Collection shapes may only have a `member` member, but found `foo` | Model
+[ERROR] com.test#ExtraMemberSet: Collection shapes may only have a `member` member, but found `foo` | Model

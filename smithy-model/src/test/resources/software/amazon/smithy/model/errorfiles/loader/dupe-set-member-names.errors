@@ -1,1 +1,1 @@
-[ERROR] -: Syntax error at line 7, column 5: Expected RBRACE('}') but found IDENTIFIER('member') | Model
+[ERROR] com.foo#Set: Syntax error at line 7, column 5: Duplicate member of `com.foo#Set`: 'member' | Model

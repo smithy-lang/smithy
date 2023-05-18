@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.Trait;
 
@@ -97,6 +98,11 @@ public abstract class CollectionShape extends Shape {
          */
         @SuppressWarnings("unchecked")
         public B member(MemberShape member) {
+            if (member != null && !member.getMemberName().equals("member")) {
+                String message = String.format("Collection shapes may only have a `member` member, but found `%s`",
+                        member.getMemberName());
+                throw new SourceException(message, member);
+            }
             this.member = Objects.requireNonNull(member);
             return (B) this;
         }

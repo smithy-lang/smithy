@@ -1,0 +1,77 @@
+{
+  "smithy": "2.0",
+  "shapes": {
+    "com.test#NoMemberList": {
+      "type": "list"
+    },
+    "com.test#NoMemberMap": {
+      "type": "map"
+    },
+    "com.test#MissingValueMap": {
+      "type": "map",
+      "key": {
+        "target": "smithy.api#String"
+      }
+    },
+    "com.test#MissingKeyMap": {
+      "type": "map",
+      "value": {
+        "target": "smithy.api#String"
+      }
+    },
+    "com.test#WrongMemberList": {
+      "type": "list",
+      "foo": {
+        "target": "smithy.api#String"
+      }
+    },
+    "com.test#WrongMemberMap": {
+      "type": "map",
+      "foo": {
+        "target": "smithy.api#String"
+      },
+      "value": {
+        "target": "smithy.api#String"
+      }
+    },
+    "com.test#OtherWrongMemberMap": {
+      "type": "map",
+      "key": {
+        "target": "smithy.api#String"
+      },
+      "foo": {
+        "target": "smithy.api#String"
+      }
+    },
+    "com.test#BothWrongMembersMap": {
+      "type": "map",
+      "foo": {
+        "target": "smithy.api#String"
+      },
+      "bar": {
+        "target": "smithy.api#String"
+      }
+    },
+    "com.test#ExtraMemberList": {
+      "type": "list",
+      "member": {
+        "target": "smithy.api#String"
+      },
+      "foo": {
+        "target": "smithy.api#String"
+      }
+    },
+    "com.test#ExtraMemberMap": {
+      "type": "map",
+      "key": {
+        "target": "smithy.api#String"
+      },
+      "value": {
+        "target": "smithy.api#String"
+      },
+      "foo": {
+        "target": "smithy.api#String"
+      }
+    }
+  }
+}
