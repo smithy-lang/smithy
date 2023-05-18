@@ -858,6 +858,10 @@ final class IdlModelLoader {
         if (tokenizer.getCurrentToken() == IdlToken.RBRACE) {
             if (memberTraits.size() == 1
                     && memberTraits.get(0).getTraitType() == IdlTraitParser.TraitType.DOC_COMMENT) {
+                IdlTraitParser.Result danglingDocComment = memberTraits.get(0);
+                SourceLocation sourceLocation = danglingDocComment.getValue().getSourceLocation();
+                String value = danglingDocComment.getValue().toString();
+                emit(LoaderUtils.emitBadDocComment(sourceLocation, value));
                 return;
             }
         }
