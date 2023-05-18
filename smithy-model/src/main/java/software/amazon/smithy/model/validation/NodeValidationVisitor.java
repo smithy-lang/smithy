@@ -428,14 +428,14 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
     private List<ValidationEvent> applyPlugins(Shape shape) {
         List<ValidationEvent> events = new ArrayList<>();
-        timestampValidationStrategy.apply(shape, value, validationContext,
-                (location, severity, message, additionalEventIdParts) ->
-                        events.add(event(message, severity, location.getSourceLocation(), additionalEventIdParts)));
+        timestampValidationStrategy.apply(shape, value, validationContext, (location, severity, message) -> {
+            events.add(event(message, severity, location.getSourceLocation()));
+        });
 
         for (NodeValidatorPlugin plugin : BUILTIN) {
-            plugin.apply(shape, value, validationContext,
-                    (location, severity, message, additionalEventIdParts) ->
-                            events.add(event(message, severity, location.getSourceLocation(), additionalEventIdParts)));
+            plugin.apply(shape, value, validationContext, (location, severity, message) -> {
+                events.add(event(message, severity, location.getSourceLocation()));
+            });
         }
 
         return events;
