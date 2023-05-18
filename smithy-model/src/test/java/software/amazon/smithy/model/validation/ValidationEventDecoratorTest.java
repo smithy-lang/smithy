@@ -17,7 +17,10 @@ package software.amazon.smithy.model.validation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.notNullValue;
 
+import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
@@ -33,7 +36,7 @@ public class ValidationEventDecoratorTest {
                                                              ShapeId.from("ns.foo#Structure3"));
 
     @Test
-    public void something() {
+    public void canDecorateValidationEvents() {
         ValidatedResult<Model> result = Model.assembler()
                                              .addImport(NodeValidationVisitorTest.class.getResource("node-validator"
                                                                                                     + ".json"))
@@ -50,6 +53,21 @@ public class ValidationEventDecoratorTest {
         }
     }
 
+    @Test
+    public void returnsOriginalEventsWhenDecoratorsThrow() {
+        ValidatedResult<Model> result = Model.assembler()
+                                             .addImport(NodeValidationVisitorTest.class.getResource("node-validator"
+                                                                                                    + ".json"))
+                                             .addValidationEventDecorator(new ThrowingValidationEventDecorator())
+                                             .assemble();
+        List<ValidationEvent> events = result.getValidationEvents();
+        assertThat(events, notNullValue());
+        assertThat(events, hasSize(31));
+        for (ValidationEvent event : result.getValidationEvents()) {
+            assertThat(event.getHint().isPresent(), equalTo(false));
+        }
+    }
+
     static class DummyHintValidationEventDecorator implements ValidationEventDecorator {
 
         @Override
@@ -60,6 +78,19 @@ public class ValidationEventDecoratorTest {
         @Override
         public ValidationEvent decorate(ValidationEvent ev) {
             return ev.toBuilder().hint(HINT).build();
+        }
+    }
+
+    static class ThrowingValidationEventDecorator implements ValidationEventDecorator {
+
+        @Override
+        public boolean canDecorate(ValidationEvent ev) {
+            return ev.containsId(UNREFERENCED_SHAPE_EVENT_ID) && ev.getMessage().contains("The structure ");
+        }
+
+        @Override
+        public ValidationEvent decorate(ValidationEvent ev) {
+            throw new RuntimeException("ups");
         }
     }
 }
