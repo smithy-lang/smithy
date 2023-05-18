@@ -37,6 +37,7 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  */
 @SmithyInternalApi
 public interface NodeValidatorPlugin {
+     String[] EMPTY_STRING_ARRAY = new String[0];
 
     /**
      * Applies the plugin to the given shape, node value, and model.
@@ -125,10 +126,17 @@ public interface NodeValidatorPlugin {
     @SmithyInternalApi
     @FunctionalInterface
     interface Emitter {
-        void accept(FromSourceLocation sourceLocation, Severity severity, String message);
+        void accept(FromSourceLocation sourceLocation,
+                    Severity severity,
+                    String message,
+                    String... additionalEventIdParts);
 
         default void accept(FromSourceLocation sourceLocation, String message) {
-            accept(sourceLocation, Severity.ERROR, message);
+            accept(sourceLocation, Severity.ERROR, message, EMPTY_STRING_ARRAY);
+        }
+
+        default void accept(FromSourceLocation sourceLocation, Severity severity, String message) {
+            accept(sourceLocation, severity, message, EMPTY_STRING_ARRAY);
         }
     }
 }
