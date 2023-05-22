@@ -24,4 +24,11 @@ map Foo
     /// Invalid 8 (dangling)
 }
 
-/// Invalid 9 (dangling)
+structure Bar {
+    @required
+    /// Invalid 9 (not before traits)
+    baz: Boolean
+    /// Invalid 10 (dangling)
+}
+
+/// Invalid 11 (dangling)
