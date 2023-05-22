@@ -16,7 +16,7 @@
 package software.amazon.smithy.model.validation;
 
 /**
- * Validation events decorators take validations events and transform them by adding more contextual information,
+ * Validation event decorators take validation events and transform them by adding more contextual information,
  * usually adding a hint to let the user know what can it be done to solve the issue. This might add context specific
  * information that is not relevant for all cases such as links to internal knowledge sites or explicit instructions
  * relevant only to the context where Smithy is being used.
