@@ -98,7 +98,8 @@ string support defined in :rfc:`7405`.
 .. rubric:: Whitespace
 
 .. productionlist:: smithy
-    WS   :1*(`SP` / `NL` / `Comment` / ",") ; whitespace
+    WS   :1*(`SP` / `NL` / `Comment` / `Comma`) ; whitespace
+    Comma:","
     SP   :1*(%x20 / %x09) ; one or more spaces or tabs
     NL   :%x0A / %x0D.0A ; Newline: \n and \r\n
     NotNL:%x09 / %x20-10FFFF ; Any character except newline
@@ -129,7 +130,7 @@ string support defined in :rfc:`7405`.
     NodeValue           :`NodeArray`
                         :/ `NodeObject`
                         :/ `Number`
-                        :/ `NodeKeywords`
+                        :/ `NodeKeyword`
                         :/ `NodeStringValue`
     NodeArray           :"[" [`WS`] *(`NodeValue` [`WS`]) "]"
     NodeObject          :"{" [`WS`] [`NodeObjectKvp` *(`WS` `NodeObjectKvp`)] [`WS`] "}"
@@ -145,7 +146,7 @@ string support defined in :rfc:`7405`.
     Minus               :%x2D ; -
     Plus                :%x2B ; +
     Zero                :%x30 ; 0
-    NodeKeywords        :%s"true" / %s"false" / %s"null"
+    NodeKeyword         :%s"true" / %s"false" / %s"null"
     NodeStringValue     :`ShapeId` / `TextBlock` / `QuotedText`
     QuotedText          :DQUOTE *`QuotedChar` DQUOTE
     QuotedChar          :%x09        ; tab
@@ -175,7 +176,7 @@ string support defined in :rfc:`7405`.
     ShapeOrApplyStatement   :`ShapeStatement` / `ApplyStatement`
     ShapeStatement          :`TraitStatements` `ShapeBody`
     ShapeBody               :`SimpleShapeStatement`
-                            :/ `EnumShapeStatement`
+                            :/ `EnumStatement`
                             :/ `ListStatement`
                             :/ `MapStatement`
                             :/ `StructureStatement`
@@ -188,11 +189,11 @@ string support defined in :rfc:`7405`.
                             :/ %s"byte" / %s"short" / %s"integer" / %s"long"
                             :/ %s"float" / %s"double" / %s"bigInteger"
                             :/ %s"bigDecimal" / %s"timestamp"
-    Mixins                  :[`SP`] %s"with" [`WS`] "[" 1*([`WS`] `ShapeId`) [`WS`] "]"
-    EnumShapeStatement      :`EnumTypeName` `SP` `Identifier` [`Mixins`] [`WS`] `EnumShapeMembers`
+    Mixins                  :[`SP`] %s"with" [`WS`] "[" [`WS`] 1*(`ShapeId` [`WS`]) "]"
+    EnumStatement           :`EnumTypeName` `SP` `Identifier` [`Mixins`] [`WS`] `EnumShapeMembers`
     EnumTypeName            :%s"enum" / %s"intEnum"
     EnumShapeMembers        :"{" [`WS`] 1*(`TraitStatements` `Identifier` [`ValueAssignment`] [`WS`]) "}"
-    ValueAssignment         :[`SP`] "=" [`SP`] `NodeValue` `BR`
+    ValueAssignment         :[`SP`] "=" [`SP`] `NodeValue` [`SP`] [`Comma`] `BR`
     ListStatement           :%s"list" `SP` `Identifier` [`Mixins`] [`WS`] `ListMembers`
     ListMembers             :"{" [`WS`] [`ListMember`] [`WS`] "}"
     ListMember              :`TraitStatements` (`ElidedListMember` / `ExplicitListMember`)
@@ -223,9 +224,9 @@ string support defined in :rfc:`7405`.
                             :    *(`OperationInput` / `OperationOutput` / `OperationErrors`)
                             :    [`WS`] "}"
                             :    ; only one of each property can be specified.
-    OperationInput          :%s"input" [`WS`] (`InlineStructure` / (":" [`WS`] `ShapeId`)) `WS`
-    OperationOutput         :%s"output" [`WS`] (`InlineStructure` / (":" [`WS`] `ShapeId`)) `WS`
-    OperationErrors         :%s"errors" [`WS`] ":" [`WS`] "[" *([`WS`] `Identifier`) [`WS`] "]" `WS`
+    OperationInput          :%s"input" [`WS`] (`InlineStructure` / (":" [`WS`] `ShapeId`))
+    OperationOutput         :%s"output" [`WS`] (`InlineStructure` / (":" [`WS`] `ShapeId`))
+    OperationErrors         :%s"errors" [`WS`] ":" [`WS`] "[" [`WS`] *(`ShapeId` [`WS`]) "]"
     InlineStructure         :":=" [`WS`] `TraitStatements` [`StructureResource`]
                             :        [`Mixins`] [`WS`] `StructureMembers`
 
@@ -784,7 +785,7 @@ The following example defines an ``integer`` shape with a :ref:`range-trait`:
 Enum shapes
 -----------
 
-The :ref:`enum` shape is defined using an :token:`smithy:EnumShapeStatement`.
+The :ref:`enum` shape is defined using an :token:`smithy:EnumStatement`.
 
 The following example defines an :ref:`enum` shape:
 
@@ -847,7 +848,7 @@ IntEnum shapes
 --------------
 
 The :ref:`intEnum` shape is defined using an
-:token:`smithy:EnumShapeStatement`.
+:token:`smithy:EnumStatement`.
 
 .. note::
     The :ref:`enumValue trait <enumValue-trait>` is required on all
