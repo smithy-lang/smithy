@@ -13,18 +13,27 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.model.validation;
+package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.validation.NodeValidationVisitorTest;
+import software.amazon.smithy.model.validation.ValidatedResult;
+import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.ValidationEventDecorator;
+import software.amazon.smithy.model.validation.Validator;
+import software.amazon.smithy.model.validation.ValidatorFactory;
 import software.amazon.smithy.utils.SetUtils;
 
 public class ValidationEventDecoratorTest {
@@ -40,7 +49,7 @@ public class ValidationEventDecoratorTest {
         ValidatedResult<Model> result = Model.assembler()
                                              .addImport(NodeValidationVisitorTest.class.getResource("node-validator"
                                                                                                     + ".json"))
-                                             .addValidationEventDecorator(new DummyHintValidationEventDecorator())
+                                             .validatorFactory(testFactory(new DummyHintValidationEventDecorator()))
                                              .assemble();
         for (ValidationEvent event : result.getValidationEvents()) {
             ShapeId eventShapeId = event.getShapeId().orElse(null);
@@ -58,7 +67,7 @@ public class ValidationEventDecoratorTest {
         ValidatedResult<Model> result = Model.assembler()
                                              .addImport(NodeValidationVisitorTest.class.getResource("node-validator"
                                                                                                     + ".json"))
-                                             .addValidationEventDecorator(new ThrowingValidationEventDecorator())
+                                             .validatorFactory(testFactory(new ThrowingValidationEventDecorator()))
                                              .assemble();
         List<ValidationEvent> events = result.getValidationEvents();
         assertThat(events, notNullValue());
@@ -66,6 +75,26 @@ public class ValidationEventDecoratorTest {
         for (ValidationEvent event : result.getValidationEvents()) {
             assertThat(event.getHint().isPresent(), equalTo(false));
         }
+    }
+
+    static ValidatorFactory testFactory(ValidationEventDecorator decorator) {
+        ValidatorFactory defaultValidatorFactory = ModelValidator.defaultValidationFactory();
+        return new ValidatorFactory() {
+            @Override
+            public List<Validator> loadBuiltinValidators() {
+                return defaultValidatorFactory.loadBuiltinValidators();
+            }
+
+            @Override
+            public List<ValidationEventDecorator> loadBuiltinDecorators() {
+                return Arrays.asList(decorator);
+            }
+
+            @Override
+            public Optional<Validator> createValidator(String name, ObjectNode configuration) {
+                return defaultValidatorFactory.createValidator(name, configuration);
+            }
+        };
     }
 
     static class DummyHintValidationEventDecorator implements ValidationEventDecorator {

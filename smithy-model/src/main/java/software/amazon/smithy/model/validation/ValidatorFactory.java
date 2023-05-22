@@ -40,6 +40,15 @@ public interface ValidatorFactory {
     List<Validator> loadBuiltinValidators();
 
     /**
+     * Returns a list of decorators.
+     *
+     * @return Returns the loaded decorators.
+     */
+    default List<ValidationEventDecorator> loadBuiltinDecorators() {
+        return Collections.emptyList();
+    }
+
+    /**
      * Creates and configures a Validator by name.
      *
      * @param name Name of the validator to create.
@@ -63,16 +72,27 @@ public interface ValidatorFactory {
      * @param services ValidatorService instances to use to create validators.
      * @return Returns the created ValidatorFactory.
      */
-    static ValidatorFactory createServiceFactory(Iterable<Validator> validators, Iterable<ValidatorService> services) {
+    static ValidatorFactory createServiceFactory(
+        Iterable<Validator> validators,
+        Iterable<ValidatorService> services,
+        Iterable<ValidationEventDecorator> decorators
+    ) {
         List<ValidatorService> serviceList = new ArrayList<>();
         services.forEach(serviceList::add);
         List<Validator> validatorsList = new ArrayList<>();
         validators.forEach(validatorsList::add);
+        List<ValidationEventDecorator> decoratorsList = new ArrayList<>();
+        decorators.forEach(decoratorsList::add);
 
         return new ValidatorFactory() {
             @Override
             public List<Validator> loadBuiltinValidators() {
                 return Collections.unmodifiableList(validatorsList);
+            }
+
+            @Override
+            public List<ValidationEventDecorator> loadBuiltinDecorators() {
+                return Collections.unmodifiableList(decoratorsList);
             }
 
             @Override
@@ -95,6 +115,7 @@ public interface ValidatorFactory {
     static ValidatorFactory createServiceFactory(ClassLoader classLoader) {
         return createServiceFactory(
                 ServiceLoader.load(Validator.class, classLoader),
-                ServiceLoader.load(ValidatorService.class, classLoader));
+                ServiceLoader.load(ValidatorService.class, classLoader),
+                ServiceLoader.load(ValidationEventDecorator.class, classLoader));
     }
 }
