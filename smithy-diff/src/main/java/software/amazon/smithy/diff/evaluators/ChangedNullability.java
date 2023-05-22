@@ -163,7 +163,6 @@ public class ChangedNullability extends AbstractDiffEvaluator {
                 .shapeId(shape)
                 .message(actualMessage)
                 .severity(severity)
-                .message(message)
                 .build();
     }
 }
