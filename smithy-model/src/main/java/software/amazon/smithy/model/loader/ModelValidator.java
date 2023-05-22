@@ -271,7 +271,7 @@ final class ModelValidator {
                 }
                 return decorated;
             } catch (Throwable e) {
-                LOGGER.log(Level.WARNING, e, () -> "A validation events decorator throw an exception, "
+                LOGGER.log(Level.WARNING, e, () -> "A validation event decorator threw an exception, "
                                                    + "using the original set of events.");
             }
         }
