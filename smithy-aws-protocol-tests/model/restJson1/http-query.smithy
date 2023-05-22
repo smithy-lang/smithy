@@ -149,12 +149,12 @@ apply AllQueryStringTypes @httpRequestTests([
         uri: "/AllQueryStringTypesInput",
         body: "",
         queryParams: [
-		"String=%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9",
+		"String=%20%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9",
         ],
         params: {
-		queryString: "%:/?#[]@!$&'()*+,;=😹",
+		queryString: " %:/?#[]@!$&'()*+,;=😹",
 		queryParamsMapOfStringList: {
-                    "String": ["%:/?#[]@!$&'()*+,;=😹"]
+                    "String": [" %:/?#[]@!$&'()*+,;=😹"]
                 }
         }
     },

@@ -44,10 +44,10 @@ apply HttpRequestWithLabels @httpRequestTests([
         documentation: "Sends a GET request that uses URI label bindings",
         protocol: restJson1,
         method: "GET",
-        uri: "/HttpRequestWithLabels/%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18Z",
+        uri: "/HttpRequestWithLabels/%20%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18Z",
         body: "",
         params: {
-            string: "%:/?#[]@!$&'()*+,;=😹",
+            string: " %:/?#[]@!$&'()*+,;=😹",
             short: 1,
             integer: 2,
             long: 3,
