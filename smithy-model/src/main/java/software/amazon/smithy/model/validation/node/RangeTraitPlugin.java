@@ -29,6 +29,8 @@ import software.amazon.smithy.model.validation.Severity;
  * Validates the range trait on number shapes or members that target them.
  */
 class RangeTraitPlugin implements NodeValidatorPlugin {
+    private static final String MEMBER = "Member";
+    private static final String TARGET = "Target";
 
     @Override
     public final void apply(Shape shape, Node value, Context context, Emitter emitter) {
@@ -55,13 +57,15 @@ class RangeTraitPlugin implements NodeValidatorPlugin {
             if (trait.getMin().isPresent() && value.equals(NonNumericFloat.NEGATIVE_INFINITY)) {
                 emitter.accept(node, Severity.ERROR, String.format(
                         "Value provided for `%s` must be greater than or equal to %s, but found \"%s\"",
-                        shape.getId(), trait.getMin().get(), node.getValue()));
+                        shape.getId(), trait.getMin().get(), node.getValue()),
+                        shape.isMemberShape() ? MEMBER : TARGET);
             }
 
             if (trait.getMax().isPresent() && value.equals(NonNumericFloat.POSITIVE_INFINITY)) {
                 emitter.accept(node, Severity.ERROR, String.format(
                         "Value provided for `%s` must be less than or equal to %s, but found \"%s\"",
-                        shape.getId(), trait.getMax().get(), node.getValue()));
+                        shape.getId(), trait.getMax().get(), node.getValue()),
+                        shape.isMemberShape() ? MEMBER : TARGET);
             }
         });
     }
@@ -76,7 +80,8 @@ class RangeTraitPlugin implements NodeValidatorPlugin {
             if (decimal.compareTo(new BigDecimal(min.toString())) < 0) {
                 emitter.accept(node, getSeverity(node, zeroValueWarning), String.format(
                         "Value provided for `%s` must be greater than or equal to %s, but found %s",
-                        shape.getId(), min, number));
+                        shape.getId(), min, number),
+                        shape.isMemberShape() ? MEMBER : TARGET);
             }
         });
 
@@ -84,7 +89,8 @@ class RangeTraitPlugin implements NodeValidatorPlugin {
             if (decimal.compareTo(new BigDecimal(max.toString())) > 0) {
                 emitter.accept(node, getSeverity(node, zeroValueWarning), String.format(
                         "Value provided for `%s` must be less than or equal to %s, but found %s",
-                        shape.getId(), max, number));
+                        shape.getId(), max, number),
+                        shape.isMemberShape() ? MEMBER : TARGET);
             }
         });
     }
