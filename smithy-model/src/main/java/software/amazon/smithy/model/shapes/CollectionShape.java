@@ -24,6 +24,7 @@ import java.util.function.Consumer;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Abstract class representing Set and List shapes.
@@ -99,8 +100,9 @@ public abstract class CollectionShape extends Shape {
         @SuppressWarnings("unchecked")
         public B member(MemberShape member) {
             if (member != null && !member.getMemberName().equals("member")) {
-                String message = String.format("Collection shapes may only have a `member` member, but found `%s`",
-                        member.getMemberName());
+                String shapeTypeName = StringUtils.capitalize(this.getShapeType().toString());
+                String message = String.format("%s shapes may only have a `member` member, but found `%s`",
+                        shapeTypeName, member.getMemberName());
                 throw new SourceException(message, member);
             }
             this.member = Objects.requireNonNull(member);

@@ -2,9 +2,9 @@
 [ERROR] com.test#NoMemberMap: Missing required member of shape `com.test#NoMemberMap`: key | Model
 [ERROR] com.test#MissingKeyMap: Missing required member of shape `com.test#MissingKeyMap`: key | Model
 [ERROR] com.test#MissingValueMap: Missing required member of shape `com.test#MissingValueMap`: value | Model
-[ERROR] com.test#WrongMemberList: Collection shapes may only have a `member` member, but found `foo` | Model
+[ERROR] com.test#WrongMemberList: List shapes may only have a `member` member, but found `foo` | Model
 [ERROR] com.test#WrongMemberMap: Map shapes may only have `key` and `value` members, but found `foo` | Model
 [ERROR] com.test#OtherWrongMemberMap: Map shapes may only have `key` and `value` members, but found `foo` | Model
 [ERROR] com.test#BothWrongMembersMap: Map shapes may only have `key` and `value` members, but found `foo` | Model
-[ERROR] com.test#ExtraMemberList: Collection shapes may only have a `member` member, but found `foo` | Model
+[ERROR] com.test#ExtraMemberList: List shapes may only have a `member` member, but found `foo` | Model
 [ERROR] com.test#ExtraMemberMap: Map shapes may only have `key` and `value` members, but found `foo` | Model
