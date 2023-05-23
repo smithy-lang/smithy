@@ -371,7 +371,13 @@ final class LoaderShapeMap {
                 }
                 MemberShape member = buildMember(memberBuilder);
                 if (member != null) {
-                    builder.addMember(member);
+                    // Adding a member may throw, but we want to continue execution, so we collect all
+                    // errors that occur.
+                    try {
+                        builder.addMember(member);
+                    } catch (SourceException e) {
+                        events.add(ValidationEvent.fromSourceException(e, "", builder.getId()));
+                    }
                 }
             }
 
