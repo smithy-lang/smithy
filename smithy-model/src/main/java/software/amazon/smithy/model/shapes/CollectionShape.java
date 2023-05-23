@@ -37,13 +37,7 @@ public abstract class CollectionShape extends Shape {
     CollectionShape(Builder<?, ?> builder) {
         super(builder, false);
         member = getRequiredMixinMember(builder, builder.member, "member");
-
-        ShapeId expected = getId().withMember("member");
-        if (!member.getId().equals(expected)) {
-            throw new IllegalArgumentException(String.format(
-                    "Expected member of `%s` to have an ID of `%s` but found `%s`",
-                    getId(), expected, member.getId()));
-        }
+        validateMemberShapeIds();
     }
 
     /**

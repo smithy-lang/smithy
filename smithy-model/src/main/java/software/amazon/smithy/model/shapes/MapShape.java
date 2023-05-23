@@ -44,19 +44,7 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
     private MapShape(Builder builder) {
         super(builder, false);
         key = getRequiredMixinMember(builder, builder.key, "key");
-        ShapeId expectedKeyId = getId().withMember("key");
-        if (!key.getId().equals(expectedKeyId)) {
-            throw new SourceException(String.format(
-                    "Expected member of `%s` to have an ID of `%s` but found `%s`",
-                    getId(), expectedKeyId, key.getId()), key);
-        }
         value = getRequiredMixinMember(builder, builder.value, "value");
-        ShapeId expectedValueId = getId().withMember("key");
-        if (!key.getId().equals(expectedValueId)) {
-            throw new SourceException(String.format(
-                    "Expected member of `%s` to have an ID of `%s` but found `%s`",
-                    getId(), expectedValueId, value.getId()), value);
-        }
         validateMemberShapeIds();
     }
 
