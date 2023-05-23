@@ -33,16 +33,12 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
-import software.amazon.smithy.model.shapes.CollectionShape;
 import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.IntEnumShape;
-import software.amazon.smithy.model.shapes.ListShape;
-import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
-import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StructureShape;
@@ -560,13 +556,9 @@ final class IdlModelLoader {
                 parseSimpleShape(id, location, type.createBuilderForType());
                 break;
             case LIST:
-                parseCollection(id, location, ListShape.builder());
-                break;
             case SET:
-                parseCollection(id, location, SetShape.builder());
-                break;
             case MAP:
-                parseMapStatement(id, location);
+                parseAggregateShape(id, location, type.createBuilderForType());
                 break;
             case ENUM:
                 parseEnumShape(id, location, EnumShape.builder());
@@ -664,14 +656,6 @@ final class IdlModelLoader {
         tokenizer.next();
     }
 
-    // See parseMap for information on why members are parsed before the list/set is registered with the ModelFile.
-    private void parseCollection(ShapeId id, SourceLocation location, CollectionShape.Builder<?, ?> builder) {
-        LoadOperation.DefineShape operation = createShape(builder.id(id).source(location));
-        parseMixins(operation);
-        parseMembers(operation);
-        operations.accept(operation);
-    }
-
     private void parseEnumShape(ShapeId id, SourceLocation location, AbstractShapeBuilder<?, ?> builder) {
         LoadOperation.DefineShape operation = createShape(builder.id(id).source(location));
         parseMixins(operation);
@@ -714,8 +698,8 @@ final class IdlModelLoader {
         operations.accept(operation);
     }
 
-    private void parseMapStatement(ShapeId id, SourceLocation location) {
-        LoadOperation.DefineShape operation = createShape(MapShape.builder().id(id).source(location));
+    private void parseAggregateShape(ShapeId id, SourceLocation location, AbstractShapeBuilder<?, ?> builder) {
+        LoadOperation.DefineShape operation = createShape(builder.id(id).source(location));
         parseMixins(operation);
         parseMembers(operation);
         operations.accept(operation);
