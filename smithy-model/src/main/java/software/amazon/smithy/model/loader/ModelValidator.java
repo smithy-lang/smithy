@@ -23,8 +23,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
@@ -52,7 +50,6 @@ import software.amazon.smithy.utils.SetUtils;
  * loaded from metadata.
  */
 final class ModelValidator {
-    private static final Logger LOGGER = Logger.getLogger(ModelValidator.class.getName());
     private static final String SUPPRESSIONS = "suppressions";
 
     // Lazy initialization holder class idiom to hold a default validator factory.
@@ -235,19 +232,13 @@ final class ModelValidator {
     }
 
     static ValidationEvent decorateEvent(List<ValidationEventDecorator> decorators, ValidationEvent event) {
-        try {
-            ValidationEvent decoratedEvent = event;
-            for (ValidationEventDecorator decorator : decorators) {
-                if (decorator.canDecorate(event)) {
-                    decoratedEvent = decorator.decorate(decoratedEvent);
-                }
+        ValidationEvent decoratedEvent = event;
+        for (ValidationEventDecorator decorator : decorators) {
+            if (decorator.canDecorate(event)) {
+                decoratedEvent = decorator.decorate(decoratedEvent);
             }
-            return decoratedEvent;
-        } catch (Throwable e) {
-            LOGGER.log(Level.WARNING, e, () -> "A validation events decorator throw an exception, "
-                                               + "using the original set of events.");
         }
-        return event;
+        return decoratedEvent;
     }
 
     static ValidatorFactory defaultValidationFactory() {

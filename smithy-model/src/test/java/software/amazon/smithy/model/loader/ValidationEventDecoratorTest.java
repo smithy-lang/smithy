@@ -19,11 +19,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -63,18 +65,14 @@ public class ValidationEventDecoratorTest {
     }
 
     @Test
-    public void returnsOriginalEventsWhenDecoratorsThrow() {
-        ValidatedResult<Model> result = Model.assembler()
-                                             .addImport(NodeValidationVisitorTest.class.getResource("node-validator"
-                                                                                                    + ".json"))
-                                             .validatorFactory(testFactory(new ThrowingValidationEventDecorator()))
-                                             .assemble();
-        List<ValidationEvent> events = result.getValidationEvents();
-        assertThat(events, notNullValue());
-        assertThat(events, hasSize(31));
-        for (ValidationEvent event : result.getValidationEvents()) {
-            assertThat(event.getHint().isPresent(), equalTo(false));
-        }
+    public void exceptionsAreNotCaughtWhenDecoratorsThrow() {
+        assertThrows(RuntimeException.class, () -> {
+            Model.assembler()
+                 .addImport(NodeValidationVisitorTest.class.getResource("node-validator"
+                                                                        + ".json"))
+                 .validatorFactory(testFactory(new ThrowingValidationEventDecorator()))
+                 .assemble();
+        });
     }
 
     static ValidatorFactory testFactory(ValidationEventDecorator decorator) {
