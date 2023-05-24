@@ -88,13 +88,13 @@ public final class Reference extends Expression {
 
     @Override
     public String toString() {
-        return name.asString();
+        return name.toString();
     }
 
     @Override
     public Node toNode() {
         return ObjectNode.builder()
-                .withMember("ref", name.asString())
+                .withMember("ref", name.toString())
                 .build();
     }
 }

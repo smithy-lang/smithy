@@ -72,7 +72,7 @@ public final class Endpoint implements FromSourceLocation, ToNode, ToSmithyBuild
         List<Literal> authSchemes = new ArrayList<>();
         for (Pair<Identifier, Map<Identifier, Literal>> authScheme : builder.authSchemes.get()) {
             Map<Identifier, Literal> base = new TreeMap<>(Comparator.comparing(Identifier::toString));
-            base.put(Identifier.of("name"), Literal.of(authScheme.left.asString()));
+            base.put(Identifier.of("name"), Literal.of(authScheme.left.toString()));
             base.putAll(authScheme.right);
             authSchemes.add(Literal.recordLiteral(base));
         }

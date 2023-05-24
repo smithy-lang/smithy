@@ -38,4 +38,9 @@ public final class EmptyValue extends Value {
     public Node toNode() {
         return Node.nullNode();
     }
+
+    @Override
+    public String toString() {
+        return "<empty>";
+    }
 }

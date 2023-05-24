@@ -81,9 +81,9 @@ public final class EndpointTestsTest {
                                 .url("https://example.com")
                                 .properties(MapUtils.of(
                                         "authSchemes", ArrayNode.arrayNode(ObjectNode.builder()
-                                                .withMember("name", "v4")
+                                                .withMember("name", "sigv4")
                                                 .withMember("signingName", "example")
-                                                .withMember("signingScope", "us-west-2")
+                                                .withMember("signingRegion", "us-west-2")
                                                 .build())
                                 ))
                                 .headers(MapUtils.of(

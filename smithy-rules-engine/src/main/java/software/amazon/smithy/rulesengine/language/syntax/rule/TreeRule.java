@@ -31,7 +31,7 @@ import software.amazon.smithy.utils.StringUtils;
 public final class TreeRule extends Rule {
     private final List<Rule> rules;
 
-    protected TreeRule(Builder builder, List<Rule> rules) {
+    TreeRule(Builder builder, List<Rule> rules) {
         super(builder);
         this.rules = rules;
     }
