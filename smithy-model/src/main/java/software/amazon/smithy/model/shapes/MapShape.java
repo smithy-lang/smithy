@@ -43,9 +43,9 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
 
     private MapShape(Builder builder) {
         super(builder, false);
-        Map<String, MemberShape> members = getRequiredMembers(builder, "key", "value");
-        key = members.get("key");
-        value = members.get("value");
+        MemberShape[] members = getRequiredMembers(builder, "key", "value");
+        key = members[0];
+        value = members[1];
         validateMemberShapeIds();
     }
 

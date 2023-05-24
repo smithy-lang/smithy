@@ -36,8 +36,8 @@ public abstract class CollectionShape extends Shape {
 
     CollectionShape(Builder<?, ?> builder) {
         super(builder, false);
-        Map<String, MemberShape> members = getRequiredMembers(builder, "member");
-        member = members.get("member");
+        MemberShape[] members = getRequiredMembers(builder, "member");
+        member = members[0];
         validateMemberShapeIds();
     }
 
