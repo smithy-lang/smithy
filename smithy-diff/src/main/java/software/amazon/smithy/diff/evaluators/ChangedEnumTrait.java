@@ -27,6 +27,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.Pair;
@@ -38,6 +39,8 @@ import software.amazon.smithy.utils.Pair;
  * list of existing values.
  */
 public final class ChangedEnumTrait extends AbstractDiffEvaluator {
+    private static final String INSERTED = "Inserted";
+
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.changedShapes()
@@ -93,10 +96,17 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
         for (EnumDefinition definition : newTrait.getValues()) {
             if (!oldTrait.getEnumDefinitionValues().contains(definition.getValue())) {
                 if (newPosition <= oldEndPosition) {
-                    events.add(error(change.getNewShape(), String.format(
-                            "Enum value `%s` was inserted before the end of the list of existing values. This can "
-                                    + "cause compatibility issues when ordinal values are used for iteration, "
-                                    + "serialization, etc.", definition.getValue())));
+                    events.add(
+                            ValidationEvent.builder()
+                                    .severity(Severity.ERROR)
+                                    .message(String.format(
+                                    "Enum value `%s` was inserted before the end of the list of existing values. This "
+                                            + "can cause compatibility issues when ordinal values are used for "
+                                            + "iteration, serialization, etc.", definition.getValue()))
+                                    .shape(change.getNewShape())
+                                    .id(getEventId() + "." + INSERTED)
+                                    .build()
+                    );
                 } else {
                     events.add(note(change.getNewShape(), String.format(
                             "Enum value `%s` was appended", definition.getValue())));

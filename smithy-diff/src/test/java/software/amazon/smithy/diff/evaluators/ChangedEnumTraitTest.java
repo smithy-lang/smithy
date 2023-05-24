@@ -269,8 +269,8 @@ public class ChangedEnumTraitTest {
         Model modelB = Model.assembler().addShape(s2).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").size(), equalTo(1));
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").get(0).getSeverity(), equalTo(Severity.ERROR));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Inserted").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Inserted").get(0).getSeverity(), equalTo(Severity.ERROR));
     }
 
     @Test
@@ -293,6 +293,7 @@ public class ChangedEnumTraitTest {
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").size(), equalTo(2));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Inserted").size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").stream()
                 .allMatch(e -> e.getSeverity() == Severity.ERROR), equalTo(true));
     }
@@ -317,8 +318,8 @@ public class ChangedEnumTraitTest {
         Model modelB = Model.assembler().addShape(s2).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").size(), equalTo(1));
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").stream()
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Inserted").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Inserted").stream()
                 .allMatch(e -> e.getSeverity() == Severity.ERROR), equalTo(true));
     }
 
