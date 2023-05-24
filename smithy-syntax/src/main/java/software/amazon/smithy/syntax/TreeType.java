@@ -15,7 +15,10 @@
 
 package software.amazon.smithy.syntax;
 
+import software.amazon.smithy.model.loader.IdlToken;
 import software.amazon.smithy.model.loader.IdlTokenizer;
+import software.amazon.smithy.model.loader.ModelSyntaxException;
+import software.amazon.smithy.model.shapes.ShapeType;
 
 /**
  * Defines the tree type.
@@ -30,112 +33,1023 @@ import software.amazon.smithy.model.loader.IdlTokenizer;
  *     <li>The {@code QuotedText} production is combined into a single {@link #QUOTED_TEXT} node.
  *     <li>The {@code TextBlock} production is combined into a single {@link #TEXT_BLOCK} node.
  * </ul>
- *
- * TODO: Document the other deltas.
  */
 public enum TreeType {
-    IDL,
+    // idl = [WS] ControlSection MetadataSection ShapeSection
+    IDL {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            optionalWs(tokenizer);
+            CONTROL_SECTION.parse(tokenizer);
+            METADATA_SECTION.parse(tokenizer);
+            SHAPE_SECTION.parse(tokenizer);
+            tokenizer.expect(IdlToken.EOF);
+        }
+    },
 
-    CONTROL_SECTION,
-    CONTROL_STATEMENT,
+    CONTROL_SECTION {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                while (tokenizer.getCurrentToken() == IdlToken.DOLLAR) {
+                    CONTROL_STATEMENT.parse(tokenizer);
+                }
+            });
+        }
+    },
 
-    METADATA_SECTION,
-    METADATA_STATEMENT,
+    CONTROL_STATEMENT {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.next(); // $
+                NODE_OBJECT_KEY.parse(tokenizer);
+                optionalSpaces(tokenizer);
+                tokenizer.expect(IdlToken.COLON);
+                tokenizer.next();
+                optionalSpaces(tokenizer);
+                NODE_VALUE.parse(tokenizer);
+                BR.parse(tokenizer);
+            });
+        }
+    },
 
-    SHAPE_SECTION,
+    METADATA_SECTION {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                while (tokenizer.isCurrentLexeme("metadata")) {
+                    METADATA_STATEMENT.parse(tokenizer);
+                }
+            });
+        }
+    },
 
-    NAMESPACE_STATEMENT,
+    METADATA_STATEMENT {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.next(); // append metadata
+                optionalSpaces(tokenizer);
+                NODE_OBJECT_KEY.parse(tokenizer);
+                optionalSpaces(tokenizer);
+                tokenizer.expect(IdlToken.EQUAL);
+                tokenizer.next();
+                optionalSpaces(tokenizer);
+                NODE_VALUE.parse(tokenizer);
+                BR.parse(tokenizer);
+            });
+        }
+    },
 
-    USE_SECTION,
-    USE_STATEMENT,
+    SHAPE_SECTION {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                NAMESPACE_STATEMENT.parse(tokenizer);
+                USE_SECTION.parse(tokenizer);
+                SHAPE_STATEMENTS.parse(tokenizer);
+            });
+        }
+    },
 
-    SHAPE_STATEMENTS,
-    SHAPE_OR_APPLY_STATEMENT,
-    SHAPE_STATEMENT,
-    SHAPE_BODY,
+    NAMESPACE_STATEMENT {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            if (tokenizer.isCurrentLexeme("namespace")) {
+                tokenizer.withState(this, () -> {
+                    tokenizer.next(); // skip "namespace"
+                    SP.parse(tokenizer);
+                    NAMESPACE.parse(tokenizer);
+                    BR.parse(tokenizer);
+                });
+            } else if (tokenizer.hasNext()) {
+                throw new ModelSyntaxException(
+                        "Expected a namespace definition but found "
+                        + tokenizer.getCurrentToken().getDebug(tokenizer.getCurrentTokenLexeme()),
+                        tokenizer.getCurrentTokenLocation());
+            }
+        }
+    },
 
-    SIMPLE_SHAPE_STATEMENT,
-    ENUM_STATEMENT,
-    INT_ENUM_STATEMENT,
+    USE_SECTION {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                while (tokenizer.getCurrentToken() == IdlToken.IDENTIFIER) {
+                    // Don't over-parse here for unions.
+                    String keyword = tokenizer.internString(tokenizer.getCurrentTokenLexeme());
+                    if (!keyword.equals("use")) {
+                        break;
+                    }
+                    USE_STATEMENT.parse(tokenizer);
+                }
+            });
+        }
+    },
 
-    LIST_STATEMENT,
-    LIST_MEMBERS,
-    LIST_MEMBER,
-    ELIDED_LIST_MEMBER,
-    EXPLICIT_LIST_MEMBER,
+    USE_STATEMENT {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.next();
+                SP.parse(tokenizer);
+                ABSOLUTE_ROOT_SHAPE_ID.parse(tokenizer);
+                BR.parse(tokenizer);
+            });
+        }
+    },
 
-    MAP_STATEMENT,
-    MAP_MEMBERS,
-    MAP_KEY,
-    ELIDED_MAP_KEY,
-    EXPLICIT_MAP_KEY,
-    MAP_VALUE,
-    ELIDED_MAP_VALUE,
-    EXPLICIT_MAP_VALUE,
+    SHAPE_STATEMENTS {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                while (tokenizer.hasNext()) {
+                    SHAPE_OR_APPLY_STATEMENT.parse(tokenizer);
+                    BR.parse(tokenizer);
+                }
+            });
+        }
+    },
 
-    STRUCTURE_STATEMENT,
-    STRUCTURE_MEMBER,
-    EXPLICIT_STRUCTURE_MEMBER,
-    ELIDED_STRUCTURE_MEMBER,
+    SHAPE_OR_APPLY_STATEMENT {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                if (tokenizer.expect(IdlToken.IDENTIFIER, IdlToken.AT) == IdlToken.AT) {
+                    SHAPE_STATEMENT.parse(tokenizer);
+                } else if (tokenizer.isCurrentLexeme("apply")) {
+                    APPLY_STATEMENT.parse(tokenizer);
+                } else {
+                    SHAPE_STATEMENT.parse(tokenizer);
+                }
+            });
+        }
+    },
 
-    UNION_STATEMENT,
-    UNION_MEMBER,
+    SHAPE_STATEMENT {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                TRAIT_STATEMENTS.parse(tokenizer);
+                SHAPE_BODY.parse(tokenizer);
+            });
+        }
+    },
 
-    SERVICE_STATEMENT,
-    RESOURCE_STATEMENT,
+    SHAPE_BODY {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                ShapeType type = ShapeType.fromString(tokenizer.internString(tokenizer.getCurrentTokenLexeme()))
+                        .orElseThrow(() -> new ModelSyntaxException("Expected a valid shape type",
+                                                                    tokenizer.getCurrentTokenLocation()));
+                switch (type) {
+                    case ENUM:
+                    case INT_ENUM:
+                        ENUM_SHAPE_STATEMENT.parse(tokenizer);
+                        break;
+                    case SERVICE:
+                    case RESOURCE:
+                        ENTITY_STATEMENT.parse(tokenizer);
+                        break;
+                    case OPERATION:
+                        OPERATION_STATEMENT.parse(tokenizer);
+                        break;
+                    default:
+                        switch (type.getCategory()) {
+                            case SIMPLE:
+                                SIMPLE_SHAPE_STATEMENT.parse(tokenizer);
+                                break;
+                            case AGGREGATE:
+                                AGGREGATE_SHAPE_STATEMENT.parse(tokenizer);
+                                break;
+                            default:
+                                throw new UnsupportedOperationException("Unexpected type: " + type);
+                        }
+                }
+            });
+        }
+    },
 
-    OPERATION_STATEMENT,
-    OPERATION_INPUT,
-    OPERATION_OUTPUT,
-    OPERATION_ERRORS,
-    INLINE_STRUCTURE,
+    SIMPLE_SHAPE_STATEMENT {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                SIMPLE_TYPE_NAME.parse(tokenizer);
+                optionalSpaces(tokenizer);
+                IDENTIFIER.parse(tokenizer);
+                optionalSpaces(tokenizer);
 
-    SHAPE_MIXINS,
-    SHAPE_MEMBER,
-    SHAPE_MEMBER_NAME,
-    STRUCTURE_RESOURCE,
-    VALUE_ASSIGNMENT,
+                if (tokenizer.isCurrentLexeme("with")) {
+                    SHAPE_MIXINS.parse(tokenizer);
+                }
+            });
+        }
+    },
 
-    TRAIT_STATEMENTS,
-    TRAIT,
-    TRAIT_BODY,
-    TRAIT_BODY_VALUE,
-    TRAIT_STRUCTURE,
-    TRAIT_STRUCTURE_KVP,
+    SIMPLE_TYPE_NAME {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            // Assumes that the current token is a valid simple type name validated by SHAPE_BODY.
+            tokenizer.withState(this, tokenizer::next);
+        }
+    },
 
-    APPLY_STATEMENT,
-    APPLY_STATEMENT_SINGULAR,
-    APPLY_STATEMENT_BLOCK,
+    ENUM_SHAPE_STATEMENT {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                ENUM_STATEMENT_TYPE.parse(tokenizer);
+                optionalSpaces(tokenizer);
+                IDENTIFIER.parse(tokenizer);
+                optionalSpaces(tokenizer);
 
-    NODE_VALUE,
-    NODE_ARRAY,
-    NODE_OBJECT,
-    NODE_OBJECT_KVP,
-    NODE_OBJECT_KEY,
-    NODE_KEYWORD,
-    NODE_STRING_VALUE,
-    QUOTED_TEXT,
-    TEXT_BLOCK,
-    NUMBER,
+                if (tokenizer.isCurrentLexeme("with")) {
+                    SHAPE_MIXINS.parse(tokenizer);
+                }
 
-    SHAPE_ID,
-    SHAPE_ID_MEMBER,
-    NAMESPACE,
-    IDENTIFIER,
+                optionalWs(tokenizer);
+                tokenizer.expect(IdlToken.LBRACE);
+                tokenizer.next();
+                optionalWs(tokenizer);
 
-    SP,
-    WS,
-    BR,
-    COMMA,
+                while (tokenizer.hasNext() && tokenizer.getCurrentToken() != IdlToken.RBRACE) {
+                    ENUM_MEMBER.parse(tokenizer);
+                }
+
+                tokenizer.expect(IdlToken.RBRACE);
+                tokenizer.next();
+            });
+        }
+    },
+
+    ENUM_STATEMENT_TYPE {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            // Assumes that the current token is a valid enum type name validated by SHAPE_BODY.
+            tokenizer.withState(this, tokenizer::next);
+        }
+    },
+
+    ENUM_MEMBER {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                TRAIT_STATEMENTS.parse(tokenizer);
+                IDENTIFIER.parse(tokenizer);
+                if (tokenizer.peekPastSpaces().getIdlToken() == IdlToken.EQUAL) {
+                    VALUE_ASSIGNMENT.parse(tokenizer);
+                } else {
+                    optionalWs(tokenizer);
+                }
+            });
+        }
+    },
+
+    AGGREGATE_SHAPE_STATEMENT {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                AGGREGATE_TYPE_NAME.parse(tokenizer);
+                optionalSpaces(tokenizer);
+                IDENTIFIER.parse(tokenizer);
+                optionalSpaces(tokenizer);
+                parseSharedStructureBodyWithinInline(tokenizer);
+            });
+        }
+    },
+
+    AGGREGATE_TYPE_NAME {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            // Assumes that the current token is a valid simple type name validated by SHAPE_BODY.
+            tokenizer.withState(this, tokenizer::next);
+        }
+    },
+
+    AGGREGATE_SHAPE_RESOURCE {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                IDENTIFIER.parse(tokenizer);
+                SP.parse(tokenizer);
+                SHAPE_ID.parse(tokenizer);
+            });
+        }
+    },
+
+    SHAPE_MEMBERS {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.expect(IdlToken.LBRACE);
+                tokenizer.next();
+                optionalWs(tokenizer);
+
+                while (tokenizer.hasNext() && tokenizer.getCurrentToken() != IdlToken.RBRACE) {
+                    SHAPE_MEMBER.parse(tokenizer);
+                }
+
+                optionalWs(tokenizer);
+                tokenizer.expect(IdlToken.RBRACE);
+                tokenizer.next();
+            });
+        }
+    },
+
+    SHAPE_MEMBER {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                TRAIT_STATEMENTS.parse(tokenizer);
+                if (tokenizer.expect(IdlToken.IDENTIFIER, IdlToken.DOLLAR) == IdlToken.DOLLAR) {
+                    ELIDED_SHAPE_MEMBER.parse(tokenizer);
+                } else {
+                    EXPLICIT_SHAPE_MEMBER.parse(tokenizer);
+                }
+
+                optionalSpaces(tokenizer);
+                if (tokenizer.getCurrentToken() == IdlToken.EQUAL) {
+                    VALUE_ASSIGNMENT.parse(tokenizer);
+                }
+
+                optionalWs(tokenizer);
+            });
+        }
+    },
+
+    EXPLICIT_SHAPE_MEMBER {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                IDENTIFIER.parse(tokenizer);
+                optionalSpaces(tokenizer);
+                tokenizer.expect(IdlToken.COLON);
+                tokenizer.next();
+                optionalSpaces(tokenizer);
+                SHAPE_ID.parse(tokenizer);
+            });
+        }
+    },
+
+    ELIDED_SHAPE_MEMBER {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.expect(IdlToken.DOLLAR);
+                tokenizer.next();
+                IDENTIFIER.parse(tokenizer);
+            });
+        }
+    },
+
+    ENTITY_STATEMENT {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            // Assumes that the shape type is a valid "service" or "resource".
+            tokenizer.withState(this, () -> {
+                parseShapeTypeAndName(tokenizer);
+
+                if (tokenizer.isCurrentLexeme("with")) {
+                    SHAPE_MIXINS.parse(tokenizer);
+                }
+
+                optionalWs(tokenizer);
+                tokenizer.expect(IdlToken.LBRACE);
+                NODE_OBJECT.parse(tokenizer);
+            });
+        }
+    },
+
+    OPERATION_STATEMENT {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                parseShapeTypeAndName(tokenizer);
+
+                tokenizer.expect(IdlToken.LBRACE);
+                tokenizer.next();
+                optionalWs(tokenizer);
+
+                while (tokenizer.hasNext() && tokenizer.getCurrentToken() != IdlToken.RBRACE) {
+                    IDENTIFIER.parse(tokenizer);
+                    if (tokenizer.isCurrentLexeme("input")) {
+                        OPERATION_INPUT.parse(tokenizer);
+                    } else if (tokenizer.isCurrentLexeme("output")) {
+                        OPERATION_OUTPUT.parse(tokenizer);
+                    } else if (tokenizer.isCurrentLexeme("errors")) {
+                        OPERATION_ERRORS.parse(tokenizer);
+                    } else {
+                        throw new ModelSyntaxException("Expected 'input', 'output', or 'errors'. Found '"
+                                                       + tokenizer.getCurrentTokenLexeme() + "'",
+                                                       tokenizer.getCurrentTokenLocation());
+                    }
+                    optionalWs(tokenizer);
+                }
+
+                optionalWs(tokenizer);
+                tokenizer.expect(IdlToken.RBRACE);
+                tokenizer.next();
+            });
+        }
+    },
+
+    OPERATION_INPUT {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.next();
+                optionalWs(tokenizer);
+                OPERATION_INLINE_PROPERTY_RHS.parse(tokenizer);
+            });
+        }
+    },
+
+    OPERATION_OUTPUT {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.next();
+                optionalWs(tokenizer);
+                OPERATION_INLINE_PROPERTY_RHS.parse(tokenizer);
+            });
+        }
+    },
+
+    // TODO: Make this is a grammar production.
+    OPERATION_INLINE_PROPERTY_RHS {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                if (tokenizer.expect(IdlToken.COLON, IdlToken.WALRUS) == IdlToken.WALRUS) {
+                    INLINE_STRUCTURE.parse(tokenizer);
+                } else {
+                    tokenizer.next();
+                    optionalWs(tokenizer);
+                    SHAPE_ID.parse(tokenizer);
+                }
+            });
+        }
+    },
+
+    OPERATION_ERRORS {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.next(); // skip "errors"
+                optionalWs(tokenizer);
+                tokenizer.expect(IdlToken.COLON);
+                tokenizer.next();
+                optionalWs(tokenizer);
+                tokenizer.expect(IdlToken.LBRACKET);
+                tokenizer.next();
+                optionalWs(tokenizer);
+                while (tokenizer.hasNext() && tokenizer.getCurrentToken() != IdlToken.RBRACKET) {
+                    SHAPE_ID.parse(tokenizer);
+                    optionalWs(tokenizer);
+                }
+                tokenizer.expect(IdlToken.RBRACKET);
+                tokenizer.next();
+            });
+        }
+    },
+
+    INLINE_STRUCTURE {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.next(); // skip ":="
+                optionalWs(tokenizer);
+                parseSharedStructureBodyWithinInline(tokenizer);
+            });
+        }
+    },
+
+    // Mixins =
+    //     [SP] %s"with" [WS] "[" [WS] 1*(ShapeId [WS]) "]"
+    SHAPE_MIXINS {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.expect(IdlToken.IDENTIFIER);
+                tokenizer.next(); // skip with
+                optionalWs(tokenizer);
+
+                tokenizer.expect(IdlToken.LBRACKET);
+                tokenizer.next();
+                optionalWs(tokenizer);
+
+                do {
+                    SHAPE_ID.parse(tokenizer);
+                    optionalWs(tokenizer);
+                } while (tokenizer.expect(IdlToken.IDENTIFIER, IdlToken.RBRACKET) == IdlToken.IDENTIFIER);
+
+                optionalWs(tokenizer);
+                tokenizer.expect(IdlToken.RBRACKET);
+                tokenizer.next();
+            });
+        }
+    },
+
+    VALUE_ASSIGNMENT {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                optionalSpaces(tokenizer);
+                tokenizer.expect(IdlToken.EQUAL);
+                tokenizer.next();
+                optionalSpaces(tokenizer);
+                NODE_VALUE.parse(tokenizer);
+
+                optionalSpaces(tokenizer);
+                if (tokenizer.getCurrentToken() == IdlToken.COMMA) {
+                    COMMA.parse(tokenizer);
+                }
+
+                BR.parse(tokenizer);
+            });
+        }
+    },
+
+    TRAIT_STATEMENTS {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                while (tokenizer.getCurrentToken() == IdlToken.AT) {
+                    TRAIT.parse(tokenizer);
+                    optionalWs(tokenizer);
+                }
+            });
+        }
+    },
+
+    TRAIT {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.expect(IdlToken.AT);
+                tokenizer.next();
+                SHAPE_ID.parse(tokenizer);
+                TRAIT_BODY.parse(tokenizer);
+            });
+        }
+    },
+
+    TRAIT_BODY {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                if (tokenizer.getCurrentToken() != IdlToken.LPAREN) {
+                    return;
+                }
+
+                tokenizer.next(); // skip "("
+                optionalWs(tokenizer);
+
+                if (tokenizer.getCurrentToken() != IdlToken.RPAREN) {
+                    TRAIT_BODY_VALUE.parse(tokenizer);
+                    optionalWs(tokenizer);
+                }
+
+                tokenizer.expect(IdlToken.RPAREN); // Expect and skip ")"
+                tokenizer.next();
+            });
+        }
+    },
+
+    TRAIT_BODY_VALUE {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.expect(IdlToken.LBRACE, IdlToken.LBRACKET, IdlToken.TEXT_BLOCK, IdlToken.STRING,
+                                 IdlToken.NUMBER, IdlToken.IDENTIFIER);
+                switch (tokenizer.getCurrentToken()) {
+                    case LBRACE:
+                    case LBRACKET:
+                    case TEXT_BLOCK:
+                    case NUMBER:
+                        // parse these as NODE_VALUE.
+                        NODE_VALUE.parse(tokenizer);
+                        break;
+                    case STRING:
+                    case IDENTIFIER:
+                    default:
+                        if (tokenizer.peekPastWs().getIdlToken() != IdlToken.COLON) {
+                            TRAIT_STRUCTURE.parse(tokenizer);
+                        } else {
+                            NODE_VALUE.parse(tokenizer);
+                        }
+                }
+            });
+        }
+    },
+
+    TRAIT_STRUCTURE {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                do {
+                    TRAIT_STRUCTURE_KVP.parse(tokenizer);
+                    optionalWs(tokenizer);
+                } while (tokenizer.getCurrentToken() != IdlToken.RPAREN && tokenizer.hasNext());
+            });
+        }
+    },
+
+    TRAIT_STRUCTURE_KVP {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(TreeType.TRAIT_STRUCTURE_KVP, () -> {
+                NODE_OBJECT_KEY.parse(tokenizer);
+                optionalWs(tokenizer);
+                tokenizer.expect(IdlToken.COLON);
+                tokenizer.next();
+                optionalWs(tokenizer);
+                NODE_VALUE.parse(tokenizer);
+            });
+        }
+    },
+
+    APPLY_STATEMENT {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                // Try to see if this is a singular or block apply statement.
+                IdlToken peek = tokenizer
+                        .peekWhile(1, t -> t != IdlToken.EOF && t != IdlToken.AT && t != IdlToken.LBRACE)
+                        .getIdlToken();
+                if (peek == IdlToken.LBRACE) {
+                    APPLY_STATEMENT_BLOCK.parse(tokenizer);
+                } else {
+                    APPLY_STATEMENT_SINGULAR.parse(tokenizer);
+                }
+            });
+            BR.parse(tokenizer);
+        }
+    },
+
+    APPLY_STATEMENT_SINGULAR {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.next();
+                SP.parse(tokenizer);
+                SHAPE_ID.parse(tokenizer);
+                WS.parse(tokenizer);
+                tokenizer.expect(IdlToken.LBRACE);
+                tokenizer.next();
+                optionalWs(tokenizer);
+                TRAIT_STATEMENTS.parse(tokenizer);
+                optionalWs(tokenizer);
+                tokenizer.expect(IdlToken.RBRACE);
+                tokenizer.next();
+            });
+        }
+    },
+
+    APPLY_STATEMENT_BLOCK {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.next();
+                SP.parse(tokenizer);
+                SHAPE_ID.parse(tokenizer);
+                WS.parse(tokenizer);
+                TRAIT.parse(tokenizer);
+            });
+        }
+    },
+
+    NODE_VALUE {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                IdlToken token = tokenizer.expect(IdlToken.STRING, IdlToken.TEXT_BLOCK, IdlToken.NUMBER,
+                                                  IdlToken.IDENTIFIER, IdlToken.LBRACE, IdlToken.LBRACKET);
+                switch (token) {
+                    case IDENTIFIER:
+                        if (tokenizer.isCurrentLexeme("true") || tokenizer.isCurrentLexeme("false")
+                                || tokenizer.isCurrentLexeme("null")) {
+                            NODE_KEYWORD.parse(tokenizer);
+                        } else {
+                            NODE_STRING_VALUE.parse(tokenizer);
+                        }
+                        break;
+                    case STRING:
+                    case TEXT_BLOCK:
+                        NODE_STRING_VALUE.parse(tokenizer);
+                        break;
+                    case NUMBER:
+                        NUMBER.parse(tokenizer);
+                        break;
+                    case LBRACE:
+                        NODE_OBJECT.parse(tokenizer);
+                        break;
+                    case LBRACKET:
+                    default:
+                        NODE_ARRAY.parse(tokenizer);
+                        break;
+                }
+            });
+        }
+    },
+
+    NODE_ARRAY {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.expect(IdlToken.LBRACKET);
+                tokenizer.next();
+                optionalWs(tokenizer);
+                do {
+                    if (tokenizer.getCurrentToken() == IdlToken.RBRACKET) {
+                        break;
+                    }
+                    NODE_VALUE.parse(tokenizer);
+                    optionalWs(tokenizer);
+                } while (tokenizer.hasNext());
+                tokenizer.expect(IdlToken.RBRACKET);
+                tokenizer.next();
+            });
+        }
+    },
+
+    NODE_OBJECT {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.expect(IdlToken.LBRACE);
+                tokenizer.next();
+                optionalWs(tokenizer);
+
+                while (tokenizer.hasNext()) {
+                    if (tokenizer.expect(IdlToken.RBRACE, IdlToken.STRING, IdlToken.IDENTIFIER) == IdlToken.RBRACE) {
+                        break;
+                    }
+                    NODE_OBJECT_KVP.parse(tokenizer);
+                    optionalWs(tokenizer);
+                }
+
+                tokenizer.expect(IdlToken.RBRACE);
+                tokenizer.next();
+            });
+        }
+    },
+
+    NODE_OBJECT_KVP {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                NODE_OBJECT_KEY.parse(tokenizer);
+                optionalWs(tokenizer);
+                tokenizer.expect(IdlToken.COLON);
+                tokenizer.next();
+                optionalWs(tokenizer);
+                NODE_VALUE.parse(tokenizer);
+            });
+        }
+    },
+
+    NODE_OBJECT_KEY {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.expect(IdlToken.IDENTIFIER, IdlToken.STRING);
+                tokenizer.next();
+            });
+        }
+    },
+
+    NODE_KEYWORD {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            // Assumes that the tokenizer is on "true"|"false"|"null".
+            tokenizer.withState(this, tokenizer::next);
+        }
+    },
+
+    NODE_STRING_VALUE  {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                switch (tokenizer.expect(IdlToken.STRING, IdlToken.TEXT_BLOCK, IdlToken.IDENTIFIER)) {
+                    case STRING:
+                        QUOTED_TEXT.parse(tokenizer);
+                        break;
+                    case TEXT_BLOCK:
+                        TEXT_BLOCK.parse(tokenizer);
+                        break;
+                    case IDENTIFIER:
+                    default:
+                        IDENTIFIER.parse(tokenizer);
+                }
+            });
+        }
+    },
+
+    QUOTED_TEXT  {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.expect(IdlToken.STRING);
+                tokenizer.next();
+            });
+        }
+    },
+
+    TEXT_BLOCK {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.expect(IdlToken.TEXT_BLOCK);
+                tokenizer.next();
+            });
+        }
+    },
+
+    NUMBER {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.expect(IdlToken.NUMBER);
+                tokenizer.next();
+            });
+        }
+    },
+
+    SHAPE_ID  {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                ROOT_SHAPE_ID.parse(tokenizer);
+                if (tokenizer.getCurrentToken() == IdlToken.DOLLAR) {
+                    SHAPE_ID_MEMBER.parse(tokenizer);
+                }
+            });
+        }
+    },
+
+    ROOT_SHAPE_ID {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                IdlToken after = tokenizer
+                        .peekWhile(0, t -> t == IdlToken.DOT || t == IdlToken.IDENTIFIER).getIdlToken();
+                if (after == IdlToken.POUND) {
+                    ABSOLUTE_ROOT_SHAPE_ID.parse(tokenizer);
+                } else {
+                    IDENTIFIER.parse(tokenizer);
+                }
+            });
+        }
+    },
+
+    ABSOLUTE_ROOT_SHAPE_ID {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                NAMESPACE.parse(tokenizer);
+                tokenizer.expect(IdlToken.POUND);
+                tokenizer.next();
+                IDENTIFIER.parse(tokenizer);
+            });
+        }
+    },
+
+    SHAPE_ID_MEMBER  {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.expect(IdlToken.DOLLAR);
+                tokenizer.next();
+                tokenizer.expect(IdlToken.IDENTIFIER);
+                tokenizer.next();
+            });
+        }
+    },
+
+    NAMESPACE {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                IDENTIFIER.parse(tokenizer);
+                while (tokenizer.getCurrentToken() == IdlToken.DOT) {
+                    tokenizer.next();
+                    IDENTIFIER.parse(tokenizer);
+                }
+            });
+        }
+    },
+
+    IDENTIFIER {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.expect(IdlToken.IDENTIFIER);
+                tokenizer.next();
+            });
+        }
+    },
+
+    SP {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.expect(IdlToken.SPACE);
+                while (tokenizer.getCurrentToken() == IdlToken.SPACE) {
+                    tokenizer.next();
+                }
+            });
+        }
+    },
+
+    WS {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, tokenizer::expectWs);
+        }
+    },
+
+    BR {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                optionalSpaces(tokenizer);
+                IdlToken t = tokenizer.expect(IdlToken.NEWLINE, IdlToken.COMMENT, IdlToken.DOC_COMMENT, IdlToken.EOF);
+                if (t != IdlToken.EOF) {
+                    tokenizer.next();
+                    optionalWs(tokenizer);
+                }
+            });
+        }
+    },
+
+    COMMA {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.expect(IdlToken.COMMA);
+                tokenizer.next();
+            });
+        }
+    },
 
     /**
      * An ERROR tree is created when a parser error is encountered; that is, any parse tree that contains this node
      * is an invalid model.
      */
-    ERROR,
+    ERROR {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            throw new UnsupportedOperationException();
+        }
+    },
 
     /**
      * The innermost node of the token tree that contains an actual token returned from {@link IdlTokenizer}.
      */
-    TOKEN
+    TOKEN {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            throw new UnsupportedOperationException();
+        }
+    };
+
+    abstract void parse(CapturingTokenizer tokenizer);
+
+    protected static void optionalWs(CapturingTokenizer tokenizer) {
+        if (tokenizer.isWs()) {
+            WS.parse(tokenizer);
+        }
+    }
+
+    protected static void optionalSpaces(CapturingTokenizer tokenizer) {
+        if (tokenizer.getCurrentToken() == IdlToken.SPACE) {
+            TreeType.SP.parse(tokenizer);
+        }
+    }
+
+    protected static void parseShapeTypeAndName(CapturingTokenizer tokenizer) {
+        tokenizer.next(); // skip the shape type
+        optionalSpaces(tokenizer);
+        IDENTIFIER.parse(tokenizer);
+        optionalSpaces(tokenizer);
+    }
+
+    protected static void parseSharedStructureBodyWithinInline(CapturingTokenizer tokenizer) {
+        optionalSpaces(tokenizer);
+
+        if (tokenizer.isCurrentLexeme("for")) {
+            AGGREGATE_SHAPE_RESOURCE.parse(tokenizer);
+            optionalSpaces(tokenizer);
+        }
+
+        if (tokenizer.isCurrentLexeme("with")) {
+            SHAPE_MIXINS.parse(tokenizer);
+        }
+
+        optionalWs(tokenizer);
+        SHAPE_MEMBERS.parse(tokenizer);
+    }
 }
