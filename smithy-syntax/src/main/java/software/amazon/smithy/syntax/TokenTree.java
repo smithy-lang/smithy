@@ -33,7 +33,9 @@ public interface TokenTree {
      * @return Returns the created tree.
      */
     static TokenTree parse(IdlTokenizer tokenizer) {
-        return new IdlParser(tokenizer).parse();
+        CapturingTokenizer capturingTokenizer = new CapturingTokenizer(tokenizer);
+        TreeType.IDL.parse(capturingTokenizer);
+        return capturingTokenizer.getRoot();
     }
 
     /**
