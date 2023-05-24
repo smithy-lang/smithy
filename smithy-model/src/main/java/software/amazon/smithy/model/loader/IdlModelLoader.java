@@ -797,6 +797,9 @@ final class IdlModelLoader {
             tokenizer.skipSpaces();
             Node node = IdlNodeParser.expectAndSkipNode(this);
             memberBuilder.addTrait(new DefaultTrait(node));
+            // Explicit handling for an optional comma.
+            tokenizer.skipSpaces();
+            tokenizer.skipOptionalComma();
             tokenizer.expectAndSkipBr();
         }
 

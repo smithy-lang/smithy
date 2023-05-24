@@ -204,10 +204,6 @@ public interface IdlTokenizer extends Iterator<IdlToken> {
     default IdlToken expect(IdlToken... tokens) {
         IdlToken currentTokenType = getCurrentToken();
 
-        if (currentTokenType == IdlToken.ERROR) {
-            throw LoaderUtils.idlSyntaxError(LoaderUtils.idlExpectMessage(this, tokens), getCurrentTokenLocation());
-        }
-
         for (IdlToken token : tokens) {
             if (currentTokenType == token) {
                 return token;
