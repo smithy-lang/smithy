@@ -73,10 +73,6 @@ public final class Identifier implements FromSourceLocation, ToNode {
         return name.getValue();
     }
 
-    public String asString() {
-        return name.getValue();
-    }
-
     @Override
     public Node toNode() {
         return name;

@@ -193,8 +193,7 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
             this.sourceLocation = sourceLocation.getSourceLocation();
         }
 
-        @SafeVarargs
-        public final Builder conditions(Condition... conditions) {
+        public Builder conditions(Condition... conditions) {
             for (Condition condition : conditions) {
                 condition(condition);
             }

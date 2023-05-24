@@ -20,6 +20,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -32,10 +33,12 @@ public final class EndpointRuleSetTrait extends AbstractTrait implements ToSmith
     public static final ShapeId ID = ShapeId.from("smithy.rules#endpointRuleSet");
 
     private final Node ruleSet;
+    private final EndpointRuleSet endpointRuleSet;
 
     private EndpointRuleSetTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
         this.ruleSet = SmithyBuilder.requiredState("ruleSet", builder.ruleSet);
+        this.endpointRuleSet = EndpointRuleSet.fromNode(ruleSet);
     }
 
     public static Builder builder() {
@@ -44,6 +47,10 @@ public final class EndpointRuleSetTrait extends AbstractTrait implements ToSmith
 
     public Node getRuleSet() {
         return ruleSet;
+    }
+
+    public EndpointRuleSet getEndpointRuleSet() {
+        return endpointRuleSet;
     }
 
     @Override

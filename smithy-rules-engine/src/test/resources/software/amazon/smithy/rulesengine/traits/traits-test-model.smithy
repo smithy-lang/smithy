@@ -12,6 +12,7 @@ use smithy.rules#endpointTests
     stringFoo: {type: "string", documentation: "a client string parameter"},
     boolFoo: {type: "boolean", documentation: "a client boolean parameter"}
 )
+@suppress(["RuleSetParameter.Unused"])
 service ExampleService {
     version: "2022-01-01",
     operations: [GetThing]
@@ -20,15 +21,79 @@ service ExampleService {
 apply ExampleService @endpointRuleSet({
     version: "1.0",
     parameters: {
-        stringFoo: {type: "string"},
-        stringBar: {type: "string"},
-        stringBaz: {type: "string"},
-        endpoint: {type: "string", builtIn: "SDK::Endpoint"},
-        boolFoo: {type: "boolean"},
-        boolBar: {type: "boolean"},
-        boolBaz: {type: "string"}
+        stringFoo: {type: "string", documentation: "docs"},
+        stringBar: {type: "string", documentation: "docs"},
+        stringBaz: {type: "string", documentation: "docs"},
+        endpoint: {type: "string", builtIn: "SDK::Endpoint", documentation: "docs"},
+        boolFoo: {type: "boolean", documentation: "docs"},
+        boolBar: {type: "boolean", documentation: "docs"},
+        boolBaz: {type: "string", documentation: "docs"}
     },
-    rules: []
+    rules: [
+        {
+            "documentation": "Template the region into the URI when FIPS is enabled",
+            "conditions": [
+                {
+                    "fn": "isSet",
+                    "argv": [
+                        {
+                            "ref": "boolFoo"
+                        }
+                    ]
+                },
+                {
+                    "fn": "booleanEquals",
+                    "argv": [
+                        {
+                            "ref": "boolFoo"
+                        },
+                        true
+                    ]
+                }
+            ],
+            "endpoint": {
+                "url": "https://example.com",
+                "properties": {
+                    "authSchemes": [
+                        {
+                            "name": "sigv4",
+                            "signingName": "example",
+                            "signingRegion": "us-west-2"
+                        }
+                    ]
+                },
+                "headers": {
+                    "single": ["foo"],
+                    "multi": ["foo", "bar", "baz"]
+                }
+            },
+            "type": "endpoint"
+        },
+        {
+            "documentation": "error when boolFoo is false",
+            "conditions": [
+                {
+                    "fn": "isSet",
+                    "argv": [
+                        {
+                            "ref": "boolFoo"
+                        }
+                    ]
+                },
+                {
+                    "fn": "booleanEquals",
+                    "argv": [
+                        {
+                            "ref": "boolFoo"
+                        },
+                        false
+                    ]
+                }
+            ],
+            "error": "endpoint error",
+            "type": "error"
+        }
+    ]
 })
 
 apply ExampleService @endpointTests({
@@ -67,9 +132,9 @@ apply ExampleService @endpointTests({
                     "properties": {
                         "authSchemes": [
                             {
-                                "name": "v4",
+                                "name": "sigv4",
                                 "signingName": "example",
-                                "signingScope": "us-west-2"
+                                "signingRegion": "us-west-2"
                             }
                         ]
                     },

@@ -193,7 +193,7 @@ public abstract class Expression implements FromSourceLocation, ToNode, TypeChec
     public GetAttr getAttr(Identifier path) {
         return GetAttr.builder()
                 .sourceLocation(this)
-                .target(this).path(path.asString()).build();
+                .target(this).path(path.toString()).build();
     }
 
     @Override

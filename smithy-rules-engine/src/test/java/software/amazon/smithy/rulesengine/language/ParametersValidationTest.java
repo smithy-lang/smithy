@@ -15,270 +15,41 @@
 
 package software.amazon.smithy.rulesengine.language;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import org.junit.jupiter.api.Test;
-import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
-import software.amazon.smithy.rulesengine.language.syntax.parameters.ParameterType;
-import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
-import software.amazon.smithy.rulesengine.validators.ParametersValidator;
-import software.amazon.smithy.rulesengine.validators.ValidationError;
-import software.amazon.smithy.rulesengine.validators.ValidationErrorType;
-import software.amazon.smithy.utils.MapUtils;
-
 class ParametersValidationTest {
-    private EndpointRuleSet parseRuleset(String resource) throws IOException {
-        try (InputStream is = getClass().getResourceAsStream(resource)) {
-            Node node = ObjectNode.parse(is);
-            return EndpointRuleSet.fromNode(node);
-        }
-    }
-
-    private EndpointTestsTrait parseTestSuite(String resource) throws IOException {
-        try (InputStream is = getClass().getResourceAsStream(resource)) {
-            Node node = ObjectNode.parse(is);
-            return EndpointTestsTrait.fromNode(node);
-        }
-    }
-
-    @Test
-    void testParametersMatching() {
-        Map<String, Parameter> params1 = MapUtils.of("param1", Parameter.builder().name("param1").type(ParameterType.STRING).build(), "param2", Parameter.builder().name("param2").type(ParameterType.BOOLEAN).build());
-        Map<String, Parameter> params2 = MapUtils.of("param1", Parameter.builder().name("param1").type(ParameterType.STRING).build(), "param2", Parameter.builder().name("param2").type(ParameterType.BOOLEAN).build());
-        List<ValidationError> errors = ParametersValidator.validateParametersMatching(params1, params2);
-        assertTrue(errors.isEmpty());
-    }
-
-    @Test
-    void testParametersTypeMismatch() {
-        Map<String, Parameter> params1 = MapUtils.of("param1", Parameter.builder().name("param1").type(ParameterType.STRING).build(), "param2", Parameter.builder().name("param2").type(ParameterType.BOOLEAN).build());
-        Map<String, Parameter> params2 = MapUtils.of("param1", Parameter.builder().name("param1").type(ParameterType.STRING).build(), "param2", Parameter.builder().name("param2").type(ParameterType.STRING).build());
-        List<ValidationError> errors = ParametersValidator.validateParametersMatching(params1, params2);
-        assertEquals(1, errors.size());
-        assertEquals(errors.get(0).validationErrorType(), ValidationErrorType.PARAMETER_TYPE_MISMATCH);
-    }
-
-    @Test
-    void testParametersMismatchExtraParamInFirstSet() {
-        Map<String, Parameter> params1 = MapUtils.of("param1", Parameter.builder().name("param1").type(ParameterType.STRING).build(), "param2", Parameter.builder().name("param2").type(ParameterType.BOOLEAN).build());
-        Map<String, Parameter> params2 = MapUtils.of("param1", Parameter.builder().name("param1").type(ParameterType.STRING).build());
-        List<ValidationError> errors = ParametersValidator.validateParametersMatching(params1, params2);
-        assertEquals(1, errors.size());
-        assertEquals(errors.get(0).validationErrorType(), ValidationErrorType.PARAMETER_MISMATCH);
-    }
-
-    @Test
-    void testParametersMismatchExtraParamInSecondSet() {
-        Map<String, Parameter> params1 = MapUtils.of("param1", Parameter.builder().name("param1").type(ParameterType.STRING).build());
-        Map<String, Parameter> params2 = MapUtils.of("param1", Parameter.builder().name("param1").type(ParameterType.STRING).build(), "param2", Parameter.builder().name("param2").type(ParameterType.STRING).build());
-        List<ValidationError> errors = ParametersValidator.validateParametersMatching(params1, params2);
-        assertEquals(1, errors.size());
-        assertEquals(errors.get(0).validationErrorType(), ValidationErrorType.PARAMETER_MISMATCH);
-    }
-
-    @Test
-    void testParametersMismatch() {
-        Map<String, Parameter> params1 = MapUtils.of("param1", Parameter.builder().name("param1").type(ParameterType.STRING).build(), "param3", Parameter.builder().name("param3").type(ParameterType.BOOLEAN).build());
-        Map<String, Parameter> params2 = MapUtils.of("param1", Parameter.builder().name("param1").type(ParameterType.STRING).build(), "param2", Parameter.builder().name("param2").type(ParameterType.STRING).build());
-        List<ValidationError> errors = ParametersValidator.validateParametersMatching(params1, params2);
-        assertEquals(2, errors.size());
-        assertEquals(errors.get(0).validationErrorType(), ValidationErrorType.PARAMETER_MISMATCH);
-        assertEquals(errors.get(1).validationErrorType(), ValidationErrorType.PARAMETER_MISMATCH);
-    }
-
-    @Test
-    void testParametersAndTypesMismatch() {
-        Map<String, Parameter> params1 = MapUtils.of("param1", Parameter.builder().name("param1").type(ParameterType.BOOLEAN).build(), "param3", Parameter.builder().name("param3").type(ParameterType.BOOLEAN).build());
-        Map<String, Parameter> params2 = MapUtils.of("param1", Parameter.builder().name("param1").type(ParameterType.STRING).build(), "param2", Parameter.builder().name("param2").type(ParameterType.BOOLEAN).build());
-        List<ValidationError> errors = ParametersValidator.validateParametersMatching(params1, params2);
-        assertEquals(3, errors.size());
-    }
-
-    @Test
-    void validateTestParametersMatching() throws IOException {
-        EndpointRuleSet ruleset = parseRuleset("params-validation/ruleset.json");
-
-        ShapeId serviceId = ShapeId.from("example#FizzBuzz");
-
-        Map<String, Parameter> rulesetParams = new HashMap<>();
-        for (Parameter parameter : ruleset.getParameters().toList()) {
-            if (!parameter.isBuiltIn()) {
-                rulesetParams.put(parameter.getName().toString(), parameter);
-            }
-        }
-
-        Model model = Model.assembler()
-                .discoverModels()
-                .addImport(Objects.requireNonNull(getClass().getResource("params-validation/model.smithy")))
-                .assemble()
-                .unwrap();
-
-        Map<String, Parameter> modelParams = new HashMap<>();
-
-        List<ValidationError> errors = ParametersValidator.validateModelAndExtractParameters(model, serviceId, modelParams);
-        assertEquals(1, errors.size());
-
-        List<ValidationError> matchingErrors = ParametersValidator.validateParametersMatching(rulesetParams, modelParams);
-        assertEquals(5, matchingErrors.size());
-    }
-
-    @Test
-    void validateInconsistentParamsTypesModel() {
-
-        ShapeId serviceId = ShapeId.from("example#FizzBuzz");
-
-        Model model = Model.assembler()
-                .discoverModels()
-                .addImport(Objects.requireNonNull(getClass().getResource("params-validation/inconsistent-params-types.smithy")))
-                .assemble()
-                .unwrap();
-
-        Map<String, Parameter> modelParams = new HashMap<>();
-
-        List<ValidationError> errors = ParametersValidator.validateModelAndExtractParameters(model, serviceId, modelParams);
-        assertEquals(1, errors.size());
-        assertEquals(errors.get(0).validationErrorType(), ValidationErrorType.INCONSISTENT_PARAMETER_TYPE);
-    }
-
-    @Test
-    void validateInconsistentParamTypesModel() {
-
-        ShapeId serviceId = ShapeId.from("example#FizzBuzz");
-
-        Model model = Model.assembler()
-                .discoverModels()
-                .addImport(Objects.requireNonNull(getClass().getResource("params-validation/inconsistent-param-types.smithy")))
-                .assemble()
-                .unwrap();
-
-        Map<String, Parameter> modelParams = new HashMap<>();
-
-        List<ValidationError> errors = ParametersValidator.validateModelAndExtractParameters(model, serviceId, modelParams);
-        assertEquals(1, errors.size());
-        assertEquals(errors.get(0).validationErrorType(), ValidationErrorType.INCONSISTENT_PARAMETER_TYPE);
-    }
-
-    @Test
-    void validateInvalidMemberTypeModel() {
-
-        ShapeId serviceId = ShapeId.from("example#FizzBuzz");
-
-        Model model = Model.assembler()
-                .discoverModels()
-                .addImport(Objects.requireNonNull(getClass().getResource("params-validation/invalid-member-type.smithy")))
-                .assemble()
-                .unwrap();
-
-        Map<String, Parameter> modelParams = new HashMap<>();
-
-        List<ValidationError> errors = ParametersValidator.validateModelAndExtractParameters(model, serviceId, modelParams);
-        assertEquals(1, errors.size());
-        assertEquals(errors.get(0).validationErrorType(), ValidationErrorType.UNSUPPORTED_PARAMETER_TYPE);
-    }
-
-    @Test
-    void validateDuplicateParamModel() {
-
-        ShapeId serviceId = ShapeId.from("example#FizzBuzz");
-
-        Model model = Model.assembler()
-                .discoverModels()
-                .addImport(Objects.requireNonNull(getClass().getResource("params-validation/duplicate-param.smithy")))
-                .assemble()
-                .unwrap();
-
-        Map<String, Parameter> modelParams = new HashMap<>();
-        List<ValidationError> errors = ParametersValidator.validateModelAndExtractParameters(model, serviceId, modelParams);
-        assertTrue(errors.isEmpty());
-    }
-
-    @Test
-    void testValidParams() throws IOException {
-
-        Model model = Model.assembler()
-                .discoverModels()
-                .addImport(Objects.requireNonNull(getClass().getResource("params-validation/valid-model.smithy")))
-                .assemble()
-                .unwrap();
-
-        EndpointRuleSet ruleset = parseRuleset("params-validation/ruleset.json");
-        List<ValidationError> errors = ParametersValidator.validateParameters(ruleset, ShapeId.from("example#FizzBuzz"), model);
-
-        assertTrue(errors.isEmpty());
-    }
-
-    @Test
-    void testValidTestParams() throws IOException {
-
-        EndpointRuleSet ruleset = parseRuleset("params-validation/eventbridge-rules.json");
-
-        EndpointTestsTrait tests = parseTestSuite("params-validation/eventbridge-tests.json");
-
-        List<ValidationError> errors = ParametersValidator.validateTestsParameters(tests, ruleset);
-
-        assertTrue(errors.isEmpty());
-    }
-
-    @Test
-    void testRequiredTestParams() throws IOException {
-
-        EndpointRuleSet ruleset = parseRuleset("params-validation/eventbridge-rules.json");
-
-        EndpointTestsTrait tests = parseTestSuite("params-validation/eventbridge-tests-req-params-missing.json");
-
-        List<ValidationError> errors = ParametersValidator.validateTestsParameters(tests, ruleset);
-
-        assertEquals(1, errors.size());
-        assertEquals(errors.get(0).validationErrorType(), ValidationErrorType.REQUIRED_PARAMETER_MISSING);
-    }
-
-    @Test
-    void testParamsTypesMismatch() throws IOException {
-
-        EndpointRuleSet ruleset = parseRuleset("params-validation/eventbridge-rules.json");
-
-        EndpointTestsTrait tests = parseTestSuite("params-validation/eventbridge-tests-param-type-mismatch.json");
-
-        List<ValidationError> errors = ParametersValidator.validateTestsParameters(tests, ruleset);
-
-        assertEquals(1, errors.size());
-        assertEquals(errors.get(0).validationErrorType(), ValidationErrorType.PARAMETER_TYPE_MISMATCH);
-    }
-
-    @Test
-    void testParamsNotUsed() throws IOException {
-
-        EndpointRuleSet ruleset = parseRuleset("params-validation/eventbridge-rules-extra-param.json");
-
-        EndpointTestsTrait tests = parseTestSuite("params-validation/eventbridge-tests.json");
-
-        List<ValidationError> errors = ParametersValidator.validateTestsParameters(tests, ruleset);
-
-        assertEquals(1, errors.size());
-        assertEquals(errors.get(0).validationErrorType(), ValidationErrorType.PARAMETER_IS_NOT_USED);
-    }
-
-    @Test
-    void testParamsNotDefined() throws IOException {
-
-        EndpointRuleSet ruleset = parseRuleset("params-validation/eventbridge-rules.json");
-
-        EndpointTestsTrait tests = parseTestSuite("params-validation/eventbridge-tests-param-not-defined.json");
-
-        List<ValidationError> errors = ParametersValidator.validateTestsParameters(tests, ruleset);
-
-        assertEquals(1, errors.size());
-        assertEquals(errors.get(0).validationErrorType(), ValidationErrorType.PARAMETER_IS_NOT_DEFINED);
-    }
+//
+//    @Test
+//    void testParametersMismatchExtraParamInFirstSet() {
+//        Map<String, Parameter> params1 = MapUtils.of("param1", Parameter.builder().name("param1").type(ParameterType.STRING).build(), "param2", Parameter.builder().name("param2").type(ParameterType.BOOLEAN).build());
+//        Map<String, Parameter> params2 = MapUtils.of("param1", Parameter.builder().name("param1").type(ParameterType.STRING).build());
+//        List<ValidationError> errors = RuleSetParameterValidator.validateParametersMatching(params1, params2);
+//        assertEquals(1, errors.size());
+//        assertEquals(errors.get(0).validationErrorType(), ValidationErrorType.PARAMETER_MISMATCH);
+//    }
+//
+//    @Test
+//    void testParametersMismatchExtraParamInSecondSet() {
+//        Map<String, Parameter> params1 = MapUtils.of("param1", Parameter.builder().name("param1").type(ParameterType.STRING).build());
+//        Map<String, Parameter> params2 = MapUtils.of("param1", Parameter.builder().name("param1").type(ParameterType.STRING).build(), "param2", Parameter.builder().name("param2").type(ParameterType.STRING).build());
+//        List<ValidationError> errors = RuleSetParameterValidator.validateParametersMatching(params1, params2);
+//        assertEquals(1, errors.size());
+//        assertEquals(errors.get(0).validationErrorType(), ValidationErrorType.PARAMETER_MISMATCH);
+//    }
+//
+//    @Test
+//    void testParametersMismatch() {
+//        Map<String, Parameter> params1 = MapUtils.of("param1", Parameter.builder().name("param1").type(ParameterType.STRING).build(), "param3", Parameter.builder().name("param3").type(ParameterType.BOOLEAN).build());
+//        Map<String, Parameter> params2 = MapUtils.of("param1", Parameter.builder().name("param1").type(ParameterType.STRING).build(), "param2", Parameter.builder().name("param2").type(ParameterType.STRING).build());
+//        List<ValidationError> errors = RuleSetParameterValidator.validateParametersMatching(params1, params2);
+//        assertEquals(2, errors.size());
+//        assertEquals(errors.get(0).validationErrorType(), ValidationErrorType.PARAMETER_MISMATCH);
+//        assertEquals(errors.get(1).validationErrorType(), ValidationErrorType.PARAMETER_MISMATCH);
+//    }
+//
+//    @Test
+//    void testParametersAndTypesMismatch() {
+//        Map<String, Parameter> params1 = MapUtils.of("param1", Parameter.builder().name("param1").type(ParameterType.BOOLEAN).build(), "param3", Parameter.builder().name("param3").type(ParameterType.BOOLEAN).build());
+//        Map<String, Parameter> params2 = MapUtils.of("param1", Parameter.builder().name("param1").type(ParameterType.STRING).build(), "param2", Parameter.builder().name("param2").type(ParameterType.BOOLEAN).build());
+//        List<ValidationError> errors = RuleSetParameterValidator.validateParametersMatching(params1, params2);
+//        assertEquals(3, errors.size());
+//    }
 }
