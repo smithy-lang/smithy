@@ -179,9 +179,8 @@ string support defined in :rfc:`7405`.
                             :/ `EnumStatement`
                             :/ `AggregateShapeStatement`
                             :/ `StructureStatement`
-                            :/ `ServiceStatement`
+                            :/ `EntityStatement`
                             :/ `OperationStatement`
-                            :/ `ResourceStatement`
     SimpleShapeStatement    :`SimpleTypeName` `SP` `Identifier` [`Mixins`]
     SimpleTypeName          :%s"blob" / %s"boolean" / %s"document" / %s"string"
                             :/ %s"byte" / %s"short" / %s"integer" / %s"long"
@@ -201,8 +200,8 @@ string support defined in :rfc:`7405`.
     ShapeMember             :(`ExplicitShapeMember` / `ElidedShapeMember`) [`ValueAssignment`]
     ExplicitShapeMember     :`Identifier` [`SP`] ":" [`SP`] `ShapeId`
     ElidedShapeMember       :"$" `Identifier`
-    ServiceStatement        :%s"service" `SP` `Identifier` [`Mixins`] [`WS`] `NodeObject`
-    ResourceStatement       :%s"resource" `SP` `Identifier` [`Mixins`] [`WS`] `NodeObject`
+    EntityStatement         :`EntityTypeName` `SP` `Identifier` [`Mixins`] [`WS`] `NodeObject`
+    EntityTypeName          :%s"service" / %s"resource"
     OperationStatement      :%s"operation" `SP` `Identifier` [`Mixins`] [`WS`] `OperationBody`
     OperationBody           :"{" [`WS`]
                             :    *(`OperationInput` / `OperationOutput` / `OperationErrors`)
@@ -1225,7 +1224,7 @@ The following example defines a union shape with several members:
 Service shape
 -------------
 
-A service shape is defined using a :token:`smithy:ServiceStatement` and the provided
+A service shape is defined using a :token:`smithy:EntityStatement` and the provided
 :token:`smithy:NodeObject` supports the same properties defined in the
 :ref:`service specification <service>`.
 
@@ -1431,7 +1430,7 @@ The suffixes for the generated names can be customized using the
 Resource shape
 --------------
 
-A resource shape is defined using a :token:`smithy:ResourceStatement` and the
+A resource shape is defined using a :token:`smithy:EntityStatement` and the
 provided :token:`smithy:NodeObject` supports the same properties defined in the
 :ref:`resource specification <resource>`.
 
