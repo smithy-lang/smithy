@@ -16,16 +16,10 @@
 package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.startsWith;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.function.Function;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +27,7 @@ public class TokenizerTest {
     @Test
     public void tokenizesIdentifierFollowedByQuote() {
         String contents = "metadata\"foo\"=\"bar\"";
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model(contents).build();
+        IdlTokenizer tokenizer = IdlTokenizer.create(contents);
 
         tokenizer.next();
         assertThat(tokenizer.getCurrentToken(), is(IdlToken.IDENTIFIER));
@@ -64,7 +58,7 @@ public class TokenizerTest {
     @Test
     public void tokenizesSingleCharacterLexemes() {
         String contents = "\t\r\n\r,@$.:{}()[]# ";
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model(contents).build();
+        IdlTokenizer tokenizer = IdlTokenizer.create(contents);
 
         tokenizer.next();
         assertThat(tokenizer.getCurrentToken(), is(IdlToken.SPACE));
@@ -171,7 +165,7 @@ public class TokenizerTest {
     @Test
     public void tokenizesMultipleSpacesAndTabsIntoSingleLexeme() {
         String contents = "   \t ";
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model(contents).build();
+        IdlTokenizer tokenizer = IdlTokenizer.create(contents);
 
         tokenizer.next();
         assertThat(tokenizer.getCurrentToken(), is(IdlToken.SPACE));
@@ -188,14 +182,14 @@ public class TokenizerTest {
 
     @Test
     public void throwsWhenAccessingErrorAndNoError() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("a").build();
+        IdlTokenizer tokenizer = IdlTokenizer.create("a");
 
         Assertions.assertThrows(ModelSyntaxException.class, tokenizer::getCurrentTokenError);
     }
 
     @Test
     public void storesErrorForInvalidSyntax() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("!").build();
+        IdlTokenizer tokenizer = IdlTokenizer.create("!");
 
         assertThat(tokenizer.next(), is(IdlToken.ERROR));
         assertThat(tokenizer.getCurrentTokenError(), equalTo("Unexpected character: '!'"));
@@ -203,14 +197,14 @@ public class TokenizerTest {
 
     @Test
     public void throwsWhenAccessingNumberAndNoNumber() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("a").build();
+        IdlTokenizer tokenizer = IdlTokenizer.create("a");
 
         Assertions.assertThrows(ModelSyntaxException.class, tokenizer::getCurrentTokenNumberValue);
     }
 
     @Test
     public void storesCurrentTokenNumber() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("10").build();
+        IdlTokenizer tokenizer = IdlTokenizer.create("10");
 
         assertThat(tokenizer.next(), is(IdlToken.NUMBER));
         assertThat(tokenizer.getCurrentTokenNumberValue(), equalTo(10L));
@@ -218,14 +212,14 @@ public class TokenizerTest {
 
     @Test
     public void throwsWhenAccessingStringValue() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("10").build();
+        IdlTokenizer tokenizer = IdlTokenizer.create("10");
 
         Assertions.assertThrows(ModelSyntaxException.class, tokenizer::getCurrentTokenStringSlice);
     }
 
     @Test
     public void storesCurrentTokenString() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("\"hello\"").build();
+        IdlTokenizer tokenizer = IdlTokenizer.create("\"hello\"");
 
         assertThat(tokenizer.next(), is(IdlToken.STRING));
         assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo("hello"));
@@ -233,233 +227,15 @@ public class TokenizerTest {
 
     @Test
     public void storesCurrentTokenStringForIdentifier() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("hello").build();
+        IdlTokenizer tokenizer = IdlTokenizer.create("hello");
 
         assertThat(tokenizer.next(), is(IdlToken.IDENTIFIER));
         assertThat(tokenizer.getCurrentTokenStringSlice().toString(), equalTo("hello"));
     }
 
     @Test
-    public void throwsWhenTooNested() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("").build();
-
-        for (int i = 0; i < 64; i++) {
-            tokenizer.increaseNestingLevel();
-        }
-
-        ModelSyntaxException e = Assertions.assertThrows(ModelSyntaxException.class, tokenizer::increaseNestingLevel);
-
-        assertThat(e.getMessage(),
-                   startsWith("Syntax error at line 1, column 1: Parser exceeded maximum allowed depth of 64"));
-    }
-
-    @Test
-    public void tokenizerInternsStrings() {
-        List<CharSequence> tracked = new ArrayList<>();
-        Function<CharSequence, String> table = c -> {
-            tracked.add(c);
-            return c.toString();
-        };
-
-        IdlTokenizer tokenizer = IdlTokenizer.builder()
-                .model("foo")
-                .stringTable(table)
-                .build();
-
-        tokenizer.internString("hi");
-
-        assertThat(tracked, contains("hi"));
-    }
-
-    @Test
-    public void skipSpaces() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("    hi").build();
-
-        tokenizer.skipSpaces();
-
-        assertThat(tokenizer.getCurrentToken(), is(IdlToken.IDENTIFIER));
-        assertThat(tokenizer.getCurrentTokenColumn(), is(5));
-    }
-
-    @Test
-    public void skipsExpectedSpaces() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("    hi").build();
-
-        tokenizer.expectAndSkipSpaces();
-
-        assertThat(tokenizer.getCurrentToken(), is(IdlToken.IDENTIFIER));
-        assertThat(tokenizer.getCurrentTokenColumn(), is(5));
-    }
-
-    @Test
-    public void failsWhenExpectedSpacesNotThere() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("abc").build();
-
-        ModelSyntaxException e = Assertions.assertThrows(ModelSyntaxException.class, tokenizer::expectAndSkipSpaces);
-
-        assertThat(e.getMessage(), startsWith("Syntax error at line 1, column 1: Expected one or more spaces, but "
-                                              + "found IDENTIFIER('abc')"));
-    }
-
-    @Test
-    public void skipWhitespace() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model(" \n\n hi").build();
-
-        tokenizer.skipWs();
-
-        assertThat(tokenizer.getCurrentToken(), is(IdlToken.IDENTIFIER));
-        assertThat(tokenizer.getCurrentTokenLine(), is(3));
-        assertThat(tokenizer.getCurrentTokenColumn(), is(2));
-    }
-
-    @Test
-    public void expectAndSkipWhitespace() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model(" \n\n hi").build();
-
-        tokenizer.expectAndSkipWhitespace();
-
-        assertThat(tokenizer.getCurrentToken(), is(IdlToken.IDENTIFIER));
-        assertThat(tokenizer.getCurrentTokenLine(), is(3));
-        assertThat(tokenizer.getCurrentTokenColumn(), is(2));
-    }
-
-    @Test
-    public void throwsWhenExpectedWhitespaceNotFound() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("hi").build();
-
-        ModelSyntaxException e = Assertions.assertThrows(ModelSyntaxException.class,
-                                                         tokenizer::expectAndSkipWhitespace);
-
-        assertThat(e.getMessage(), startsWith("Syntax error at line 1, column 1: Expected one or more whitespace "
-                                              + "characters, but found IDENTIFIER('hi')"));
-    }
-
-    @Test
-    public void skipDocsAndWhitespace() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model(" \n\n /// Docs\n/// Docs\n\n hi").build();
-
-        tokenizer.skipWsAndDocs();
-
-        assertThat(tokenizer.getCurrentToken(), is(IdlToken.IDENTIFIER));
-        assertThat(tokenizer.getCurrentTokenLine(), is(6));
-        assertThat(tokenizer.getCurrentTokenColumn(), is(2));
-    }
-
-    @Test
-    public void expectsAndSkipsBr() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("\n  Hi").build();
-
-        tokenizer.expectAndSkipBr();
-
-        assertThat(tokenizer.getCurrentToken(), is(IdlToken.IDENTIFIER));
-        assertThat(tokenizer.getCurrentTokenLine(), is(2));
-        assertThat(tokenizer.getCurrentTokenColumn(), is(3));
-    }
-
-    @Test
-    public void throwsWhenBrNotFound() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("Hi").build();
-
-        ModelSyntaxException e = Assertions.assertThrows(ModelSyntaxException.class,
-                                                         tokenizer::expectAndSkipBr);
-
-        assertThat(e.getMessage(), startsWith("Syntax error at line 1, column 1: Expected a line break, but "
-                                              + "found IDENTIFIER('Hi')"));
-    }
-
-    @Test
-    public void expectCurrentTokenLexeme() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("Hi").build();
-
-        tokenizer.expectCurrentLexeme("Hi");
-    }
-
-    @Test
-    public void throwsWhenCurrentTokenLexemeUnexpected() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("Hi").build();
-
-        ModelSyntaxException e = Assertions.assertThrows(ModelSyntaxException.class, () -> {
-            tokenizer.expectCurrentLexeme("Bye");
-        });
-
-        assertThat(e.getMessage(), startsWith("Syntax error at line 1, column 1: Expected `Bye`, but found `Hi`"));
-        assertThat(e.getSourceLocation().getLine(), is(1));
-        assertThat(e.getSourceLocation().getColumn(), is(1));
-    }
-
-    @Test
-    public void throwsWhenCurrentTokenLexemeUnexpectedAndSameLength() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("A").build();
-
-        ModelSyntaxException e = Assertions.assertThrows(ModelSyntaxException.class, () -> {
-            tokenizer.expectCurrentLexeme("B");
-        });
-
-        assertThat(e.getMessage(), startsWith("Syntax error at line 1, column 1: Expected `B`, but found `A`"));
-        assertThat(e.getSourceLocation().getLine(), is(1));
-        assertThat(e.getSourceLocation().getColumn(), is(1));
-    }
-
-    @Test
-    public void tokenDoesNotStartWith() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("Hi").build();
-
-        assertThat(tokenizer.doesCurrentIdentifierStartWith('B'), is(false));
-    }
-
-    @Test
-    public void tokenDoesStartWith() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("Hi").build();
-
-        assertThat(tokenizer.doesCurrentIdentifierStartWith('H'), is(true));
-    }
-
-    @Test
-    public void tokenDoesNotStartWithBecauseNotIdentifier() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("\"Hi\"").build();
-
-        assertThat(tokenizer.doesCurrentIdentifierStartWith('H'), is(false));
-    }
-
-    @Test
-    public void expectsSingleTokenType() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("Hi").build();
-
-        tokenizer.expect(IdlToken.IDENTIFIER);
-    }
-
-    @Test
-    public void failsForSingleExpectedToken() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("Hi").build();
-
-        ModelSyntaxException e = Assertions.assertThrows(ModelSyntaxException.class,
-                                                         () -> tokenizer.expect(IdlToken.NUMBER));
-
-        assertThat(e.getMessage(), startsWith("Syntax error at line 1, column 1: Expected NUMBER but "
-                                              + "found IDENTIFIER('Hi')"));
-    }
-
-    @Test
-    public void expectsMultipleTokenTypes() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("Hi").build();
-
-        tokenizer.expect(IdlToken.STRING, IdlToken.IDENTIFIER);
-    }
-
-    @Test
-    public void failsForMultipleExpectedTokens() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("Hi").build();
-
-        ModelSyntaxException e = Assertions.assertThrows(ModelSyntaxException.class,
-                                                         () -> tokenizer.expect(IdlToken.NUMBER, IdlToken.LBRACE));
-
-        assertThat(e.getMessage(), startsWith("Syntax error at line 1, column 1: Expected one of NUMBER, LBRACE('{'); "
-                                              + "but found IDENTIFIER('Hi')"));
-    }
-
-    @Test
     public void failsWhenSingleForwardSlashFound() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("/").build();
+        IdlTokenizer tokenizer = IdlTokenizer.create("/");
 
         tokenizer.next();
 
@@ -469,7 +245,7 @@ public class TokenizerTest {
 
     @Test
     public void throwsWhenTraversingPastEof() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("").build();
+        IdlTokenizer tokenizer = IdlTokenizer.create("");
 
         assertThat(tokenizer.next(), is(IdlToken.EOF));
 
@@ -477,25 +253,8 @@ public class TokenizerTest {
     }
 
     @Test
-    public void returnsCapturedDocsInRange() {
-        IdlTokenizer tokenizer = IdlTokenizer
-                .builder()
-                .model("/// Hi\n"
-                       + "/// There\n"
-                       + "/// 123\n"
-                       + "/// 456\n")
-                .build();
-
-        tokenizer.skipWsAndDocs();
-        String lines = tokenizer.removePendingDocCommentLines();
-
-        assertThat(lines, equalTo("Hi\nThere\n123\n456"));
-        assertThat(tokenizer.removePendingDocCommentLines(), nullValue());
-    }
-
-    @Test
     public void tokenizesStringWithNewlines() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("\"hi\nthere\"").build();
+        IdlTokenizer tokenizer = IdlTokenizer.create("\"hi\nthere\"");
 
         tokenizer.next();
 
@@ -512,7 +271,7 @@ public class TokenizerTest {
 
     @Test
     public void tokenizesEmptyStrings() {
-        IdlTokenizer tokenizer = IdlTokenizer.builder().model("\"\"").build();
+        IdlTokenizer tokenizer = IdlTokenizer.create("\"\"");
 
         tokenizer.next();
 

@@ -25,11 +25,6 @@ public enum IdlToken {
 
     SPACE(" ") {
         @Override
-        public boolean canSkipBeforeBr() {
-            return true;
-        }
-
-        @Override
         public boolean isWhitespace() {
             return true;
         }
@@ -41,11 +36,6 @@ public enum IdlToken {
         }
     },
     COMMA(",") {
-        @Override
-        public boolean canSkipBeforeBr() {
-            return true;
-        }
-
         @Override
         public boolean isWhitespace() {
             return true;
@@ -96,15 +86,6 @@ public enum IdlToken {
     }
 
     public boolean isWhitespace() {
-        return false;
-    }
-
-    /**
-     * Can this token be skipped when looking for a newline as part of a "BR" production?
-     *
-     * @return Returns true if the token can be skipped before a BR production.
-     */
-    boolean canSkipBeforeBr() {
         return false;
     }
 }
