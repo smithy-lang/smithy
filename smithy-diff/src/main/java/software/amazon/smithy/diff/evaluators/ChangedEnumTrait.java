@@ -27,6 +27,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.Pair;
@@ -38,6 +39,10 @@ import software.amazon.smithy.utils.Pair;
  * list of existing values.
  */
 public final class ChangedEnumTrait extends AbstractDiffEvaluator {
+    private static final String ORDER_CHANGED = ".OrderChanged";
+    private static final String NAME_CHANGED = ".NameChanged";
+    private static final String REMOVED = ".Removed";
+
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
         return differences.changedShapes()
@@ -74,17 +79,30 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
                     .findFirst();
 
             if (!maybeNewValue.isPresent()) {
-                events.add(error(change.getNewShape(), String.format(
-                        "Enum value `%s` was removed", definition.getValue())));
+                events.add(
+                        ValidationEvent.builder()
+                                .severity(Severity.ERROR)
+                                .message(String.format("Enum value `%s` was removed", definition.getValue()))
+                                .shape(change.getNewShape())
+                                .id(getEventId() + REMOVED)
+                                .build()
+                );
                 oldEndPosition--;
             } else {
                 EnumDefinition newValue = maybeNewValue.get();
                 if (!newValue.getName().equals(definition.getName())) {
-                    events.add(error(change.getNewShape(), String.format(
-                            "Enum `name` changed from `%s` to `%s` for the `%s` value",
-                            definition.getName().orElse(null),
-                            newValue.getName().orElse(null),
-                            definition.getValue())));
+                    events.add(
+                            ValidationEvent.builder()
+                                    .severity(Severity.ERROR)
+                                    .message(String.format(
+                                            "Enum `name` changed from `%s` to `%s` for the `%s` value",
+                                            definition.getName().orElse(null),
+                                            newValue.getName().orElse(null),
+                                            definition.getValue()))
+                                    .shape(change.getNewShape())
+                                    .id(getEventId() + NAME_CHANGED)
+                                    .build()
+                    );
                 }
             }
         }
@@ -93,10 +111,17 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
         for (EnumDefinition definition : newTrait.getValues()) {
             if (!oldTrait.getEnumDefinitionValues().contains(definition.getValue())) {
                 if (newPosition <= oldEndPosition) {
-                    events.add(error(change.getNewShape(), String.format(
-                            "Enum value `%s` was inserted before the end of the list of existing values. This can "
-                                    + "cause compatibility issues when ordinal values are used for iteration, "
-                                    + "serialization, etc.", definition.getValue())));
+                    events.add(
+                            ValidationEvent.builder()
+                                    .severity(Severity.ERROR)
+                                    .message(String.format(
+                                    "Enum value `%s` was inserted before the end of the list of existing values. This "
+                                            + "can cause compatibility issues when ordinal values are used for "
+                                            + "iteration, serialization, etc.", definition.getValue()))
+                                    .shape(change.getNewShape())
+                                    .id(getEventId() + ORDER_CHANGED)
+                                    .build()
+                    );
                 } else {
                     events.add(note(change.getNewShape(), String.format(
                             "Enum value `%s` was appended", definition.getValue())));
