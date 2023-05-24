@@ -192,15 +192,15 @@ string support defined in :rfc:`7405`.
     EnumTypeName            :%s"enum" / %s"intEnum"
     EnumShapeMembers        :"{" [`WS`] 1*(`TraitStatements` `Identifier` [`ValueAssignment`] [`WS`]) "}"
     ValueAssignment         :[`SP`] "=" [`SP`] `NodeValue` `BR`
-    AggregateShapeStatement :`AggregateShapeTypeName` `SP` `Identifier` [`Mixins`] `StructureMembers`
-    AggregateShapeTypeName  :%s"list" / %s"map" / %s"union"
+    AggregateShapeStatement :`AggregateTypeName` `SP` `Identifier` [`Mixins`] `ShapeMembers`
+    AggregateTypeName       :%s"list" / %s"map" / %s"union"
     StructureStatement      :%s"structure" `SP` `Identifier` [`StructureResource`]
-                            :        [`Mixins`] [`WS`] `StructureMembers`
+                            :        [`Mixins`] [`WS`] `ShapeMembers`
     StructureResource       :`SP` %s"for" `SP` `ShapeId`
-    StructureMembers        :"{" [`WS`] *(`TraitStatements` `StructureMember` [`WS`]) "}"
-    StructureMember         :(`ExplicitStructureMember` / `ElidedStructureMember`) [`ValueAssignment`]
-    ExplicitStructureMember :`Identifier` [`SP`] ":" [`SP`] `ShapeId`
-    ElidedStructureMember   :"$" `Identifier`
+    ShapeMembers            :"{" [`WS`] *(`TraitStatements` `ShapeMember` [`WS`]) "}"
+    ShapeMember             :(`ExplicitShapeMember` / `ElidedShapeMember`) [`ValueAssignment`]
+    ExplicitShapeMember     :`Identifier` [`SP`] ":" [`SP`] `ShapeId`
+    ElidedShapeMember       :"$" `Identifier`
     ServiceStatement        :%s"service" `SP` `Identifier` [`Mixins`] [`WS`] `NodeObject`
     ResourceStatement       :%s"resource" `SP` `Identifier` [`Mixins`] [`WS`] `NodeObject`
     OperationStatement      :%s"operation" `SP` `Identifier` [`Mixins`] [`WS`] `OperationBody`
@@ -212,7 +212,7 @@ string support defined in :rfc:`7405`.
     OperationOutput         :%s"output" [`WS`] (`InlineStructure` / (":" [`WS`] `ShapeId`))
     OperationErrors         :%s"errors" [`WS`] ":" [`WS`] "[" [`WS`] *(`ShapeId` [`WS`]) "]"
     InlineStructure         :":=" [`WS`] `TraitStatements` [`StructureResource`]
-                            :        [`Mixins`] [`WS`] `StructureMembers`
+                            :        [`Mixins`] [`WS`] `ShapeMembers`
 
 .. rubric:: Traits
 
@@ -880,7 +880,7 @@ The above intEnum is exactly equivalent to the following intEnum:
 List shapes
 -----------
 
-A :ref:`list <list>` shape is defined using a :token:`smithy:ListStatement`.
+A :ref:`list <list>` shape is defined using a :token:`smithy:AggregateShapeStatement`.
 
 The following example defines a list with a string member from the
 :ref:`prelude <prelude>`:
@@ -961,7 +961,7 @@ Traits can be applied to the list shape and its member:
 Map shapes
 ----------
 
-A :ref:`map <map>` shape is defined using a :token:`smithy:MapStatement`.
+A :ref:`map <map>` shape is defined using a :token:`smithy:AggregateShapeStatement`.
 
 The following example defines a map of strings to integers:
 
@@ -1171,7 +1171,7 @@ Is exactly equivalent to:
 Union shapes
 ------------
 
-A :ref:`union <union>` shape is defined using a :token:`smithy:UnionStatement`.
+A :ref:`union <union>` shape is defined using a :token:`smithy:AggregateShapeStatement`.
 
 The following example defines a union shape with several members:
 
