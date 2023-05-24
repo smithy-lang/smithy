@@ -66,11 +66,11 @@ final class IdlTraitParser {
      * comments and applied traits into a list of {@link Result} values that can later be turned into instances of
      * {@link Trait}s to apply to shapes.
      *
-     * @param tokenizer Tokenizer to consume and advance.
-     * @param resolver  Forward reference resolver.
+     * @param loader IDL parser.
      * @return Return the parsed traits.
      */
-    static List<Result> parseDocsAndTraitsBeforeShape(IdlTokenizer tokenizer, IdlReferenceResolver resolver) {
+    static List<Result> parseDocsAndTraitsBeforeShape(IdlModelLoader loader) {
+        IdlInternalTokenizer tokenizer = loader.getTokenizer();
         tokenizer.skipWs();
 
         Result docComment = null;
@@ -86,7 +86,7 @@ final class IdlTraitParser {
 
         // Parse traits, if any.
         tokenizer.skipWsAndDocs();
-        List<Result> traits = expectAndSkipTraits(tokenizer, resolver);
+        List<Result> traits = expectAndSkipTraits(loader);
         if (docComment != null) {
             traits.add(docComment);
         }
@@ -95,7 +95,7 @@ final class IdlTraitParser {
         return traits;
     }
 
-    private static Result parseDocComment(IdlTokenizer tokenizer, SourceLocation location) {
+    private static Result parseDocComment(IdlInternalTokenizer tokenizer, SourceLocation location) {
         String result = tokenizer.removePendingDocCommentLines();
         if (result == null) {
             return null;
@@ -108,14 +108,14 @@ final class IdlTraitParser {
     /**
      * Parse all traits before a shape or member, or inside an {@code apply} block.
      *
-     * @param tokenizer Tokenizer to consume and advance.
-     * @param resolver  Forward reference resolver.
+     * @param loader   IDL parser.
      * @return Returns the parsed traits.
      */
-    static List<Result> expectAndSkipTraits(IdlTokenizer tokenizer, IdlReferenceResolver resolver) {
+    static List<Result> expectAndSkipTraits(IdlModelLoader loader) {
         List<Result> results = new ArrayList<>();
+        IdlInternalTokenizer tokenizer = loader.getTokenizer();
         while (tokenizer.getCurrentToken() == IdlToken.AT) {
-            results.add(expectAndSkipTrait(tokenizer, resolver));
+            results.add(expectAndSkipTrait(loader));
             tokenizer.skipWsAndDocs();
         }
         return results;
@@ -124,12 +124,12 @@ final class IdlTraitParser {
     /**
      * Parses a single trait: "@" trait-id [(trait-body)].
      *
-     * @param tokenizer Tokenizer to consume and advance.
-     * @param resolver  Forward reference resolver.
+     * @param loader   IDL parser.
      * @return Returns the parsed trait.
      */
-    static Result expectAndSkipTrait(IdlTokenizer tokenizer, IdlReferenceResolver resolver) {
+    static Result expectAndSkipTrait(IdlModelLoader loader) {
         // "@" shape_id
+        IdlInternalTokenizer tokenizer = loader.getTokenizer();
         SourceLocation location = tokenizer.getCurrentTokenLocation();
         tokenizer.expect(IdlToken.AT);
         tokenizer.next();
@@ -150,7 +150,7 @@ final class IdlTraitParser {
         }
 
         // The trait has a value between the '(' and ')'.
-        Node value = parseTraitValueBody(tokenizer, resolver, location);
+        Node value = parseTraitValueBody(loader, location);
         tokenizer.skipWsAndDocs();
         tokenizer.expect(IdlToken.RPAREN);
         tokenizer.next();
@@ -158,18 +158,15 @@ final class IdlTraitParser {
         return new Result(id, value, TraitType.VALUE);
     }
 
-    private static Node parseTraitValueBody(
-            IdlTokenizer tokenizer,
-            IdlReferenceResolver resolver,
-            SourceLocation location
-    ) {
+    private static Node parseTraitValueBody(IdlModelLoader loader, SourceLocation location) {
+        IdlInternalTokenizer tokenizer = loader.getTokenizer();
         tokenizer.expect(IdlToken.LBRACE, IdlToken.LBRACKET, IdlToken.TEXT_BLOCK, IdlToken.STRING,
                          IdlToken.NUMBER, IdlToken.IDENTIFIER);
 
         switch (tokenizer.getCurrentToken()) {
             case LBRACE:
             case LBRACKET:
-                Node result = IdlNodeParser.expectAndSkipNode(tokenizer, resolver, location);
+                Node result = IdlNodeParser.expectAndSkipNode(loader, location);
                 tokenizer.skipWsAndDocs();
                 return result;
             case TEXT_BLOCK:
@@ -190,33 +187,30 @@ final class IdlTraitParser {
                 if (tokenizer.getCurrentToken() == IdlToken.COLON) {
                     tokenizer.next();
                     tokenizer.skipWsAndDocs();
-                    return parseStructuredTrait(tokenizer, resolver, stringNode);
+                    return parseStructuredTrait(loader, stringNode);
                 } else {
                     return stringNode;
                 }
             case IDENTIFIER:
             default:
-                String identifier = tokenizer.internString(tokenizer.getCurrentTokenLexeme());
+                String identifier = loader.internString(tokenizer.getCurrentTokenLexeme());
                 tokenizer.next();
                 tokenizer.skipWsAndDocs();
                 if (tokenizer.getCurrentToken() == IdlToken.COLON) {
                     tokenizer.next();
                     tokenizer.skipWsAndDocs();
-                    return parseStructuredTrait(tokenizer, resolver, new StringNode(identifier, location));
+                    return parseStructuredTrait(loader, new StringNode(identifier, location));
                 } else {
-                    return IdlNodeParser.parseIdentifier(resolver, identifier, location);
+                    return IdlNodeParser.parseIdentifier(loader, identifier, location);
                 }
         }
     }
 
-    private static ObjectNode parseStructuredTrait(
-            IdlTokenizer tokenizer,
-            IdlReferenceResolver resolver,
-            StringNode firstKey
-    ) {
-        tokenizer.increaseNestingLevel();
+    private static ObjectNode parseStructuredTrait(IdlModelLoader loader, StringNode firstKey) {
+        IdlInternalTokenizer tokenizer = loader.getTokenizer();
+        loader.increaseNestingLevel();
         Map<StringNode, Node> entries = new LinkedHashMap<>();
-        Node firstValue = IdlNodeParser.expectAndSkipNode(tokenizer, resolver);
+        Node firstValue = IdlNodeParser.expectAndSkipNode(loader);
 
         // This put call can be done safely without checking for duplicates,
         // as it's always the first member of the trait.
@@ -225,14 +219,14 @@ final class IdlTraitParser {
 
         while (tokenizer.getCurrentToken() != IdlToken.RPAREN) {
             tokenizer.expect(IdlToken.IDENTIFIER, IdlToken.STRING);
-            String key = tokenizer.internString(tokenizer.getCurrentTokenStringSlice());
+            String key = loader.internString(tokenizer.getCurrentTokenStringSlice());
             StringNode keyNode = new StringNode(key, tokenizer.getCurrentTokenLocation());
             tokenizer.next();
             tokenizer.skipWsAndDocs();
             tokenizer.expect(IdlToken.COLON);
             tokenizer.next();
             tokenizer.skipWsAndDocs();
-            Node nextValue = IdlNodeParser.expectAndSkipNode(tokenizer, resolver);
+            Node nextValue = IdlNodeParser.expectAndSkipNode(loader);
             Node previous = entries.put(keyNode, nextValue);
             if (previous != null) {
                 throw new ModelSyntaxException("Duplicate member of trait: '" + keyNode.getValue() + '\'', keyNode);
@@ -240,7 +234,7 @@ final class IdlTraitParser {
             tokenizer.skipWsAndDocs();
         }
 
-        tokenizer.decreaseNestingLevel();
+        loader.decreaseNestingLevel();
         return new ObjectNode(entries, firstKey.getSourceLocation());
     }
 }
