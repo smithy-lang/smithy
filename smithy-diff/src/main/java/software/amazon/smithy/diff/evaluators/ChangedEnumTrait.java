@@ -39,7 +39,9 @@ import software.amazon.smithy.utils.Pair;
  * list of existing values.
  */
 public final class ChangedEnumTrait extends AbstractDiffEvaluator {
-    private static final String INSERTED = "Inserted";
+    private static final String ORDER_CHANGED = ".OrderChanged";
+    private static final String NAME_CHANGED = ".NameChanged";
+    private static final String REMOVED = ".Removed";
 
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
@@ -77,17 +79,30 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
                     .findFirst();
 
             if (!maybeNewValue.isPresent()) {
-                events.add(error(change.getNewShape(), String.format(
-                        "Enum value `%s` was removed", definition.getValue())));
+                events.add(
+                        ValidationEvent.builder()
+                                .severity(Severity.ERROR)
+                                .message(String.format("Enum value `%s` was removed", definition.getValue()))
+                                .shape(change.getNewShape())
+                                .id(getEventId() + REMOVED)
+                                .build()
+                );
                 oldEndPosition--;
             } else {
                 EnumDefinition newValue = maybeNewValue.get();
                 if (!newValue.getName().equals(definition.getName())) {
-                    events.add(error(change.getNewShape(), String.format(
-                            "Enum `name` changed from `%s` to `%s` for the `%s` value",
-                            definition.getName().orElse(null),
-                            newValue.getName().orElse(null),
-                            definition.getValue())));
+                    events.add(
+                            ValidationEvent.builder()
+                                    .severity(Severity.ERROR)
+                                    .message(String.format(
+                                            "Enum `name` changed from `%s` to `%s` for the `%s` value",
+                                            definition.getName().orElse(null),
+                                            newValue.getName().orElse(null),
+                                            definition.getValue()))
+                                    .shape(change.getNewShape())
+                                    .id(getEventId() + NAME_CHANGED)
+                                    .build()
+                    );
                 }
             }
         }
@@ -104,7 +119,7 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
                                             + "can cause compatibility issues when ordinal values are used for "
                                             + "iteration, serialization, etc.", definition.getValue()))
                                     .shape(change.getNewShape())
-                                    .id(getEventId() + "." + INSERTED)
+                                    .id(getEventId() + ORDER_CHANGED)
                                     .build()
                     );
                 } else {
