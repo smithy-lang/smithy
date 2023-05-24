@@ -190,7 +190,7 @@ string support defined in :rfc:`7405`.
     EnumStatement           :`EnumTypeName` `SP` `Identifier` [`Mixins`] [`WS`] `EnumShapeMembers`
     EnumTypeName            :%s"enum" / %s"intEnum"
     EnumShapeMembers        :"{" [`WS`] 1*(`TraitStatements` `Identifier` [`ValueAssignment`] [`WS`]) "}"
-    ValueAssignment         :[`SP`] "=" [`SP`] `NodeValue` `BR`
+    ValueAssignment         :[`SP`] "=" [`SP`] `NodeValue` [`SP`] [`Comma`] `BR`
     AggregateShapeStatement :`AggregateTypeName` `SP` `Identifier` [`Mixins`] `ShapeMembers`
     AggregateTypeName       :%s"list" / %s"map" / %s"union"
     StructureStatement      :%s"structure" `SP` `Identifier` [`StructureResource`]
