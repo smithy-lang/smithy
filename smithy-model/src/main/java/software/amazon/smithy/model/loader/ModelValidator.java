@@ -169,7 +169,7 @@ final class ModelValidator {
         }
 
         List<Validator> staticValidators = resolveStaticValidators();
-        List<ValidationEventDecorator> staticDecorators = validatorFactory.loadBuiltinDecorators();
+        List<ValidationEventDecorator> staticDecorators = validatorFactory.loadDecorators();
 
         return model -> {
             List<ValidationEvent> coreEvents = new ArrayList<>();

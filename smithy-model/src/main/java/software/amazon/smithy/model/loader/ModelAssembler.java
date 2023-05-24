@@ -580,7 +580,7 @@ public final class ModelAssembler {
         }
 
         if (disableValidation) {
-            List<ValidationEventDecorator> decorators = validatorFactory.loadBuiltinDecorators();
+            List<ValidationEventDecorator> decorators = validatorFactory.loadDecorators();
             return new ValidatedResult<>(transformed, ModelValidator.decorateEvents(decorators, events));
         }
 
@@ -599,7 +599,7 @@ public final class ModelAssembler {
     }
 
     private ValidatedResult<Model> returnOnlyErrors(Model model, List<ValidationEvent> events) {
-        List<ValidationEventDecorator> decorators = validatorFactory.loadBuiltinDecorators();
+        List<ValidationEventDecorator> decorators = validatorFactory.loadDecorators();
         return new ValidatedResult<>(model, events.stream()
                                                   .filter(event -> event.getSeverity() == Severity.ERROR)
                                                   .map(event -> ModelValidator.decorateEvent(decorators, event))

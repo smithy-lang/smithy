@@ -44,7 +44,7 @@ public interface ValidatorFactory {
      *
      * @return Returns the loaded decorators.
      */
-    default List<ValidationEventDecorator> loadBuiltinDecorators() {
+    default List<ValidationEventDecorator> loadDecorators() {
         return Collections.emptyList();
     }
 
@@ -127,7 +127,7 @@ public interface ValidatorFactory {
             }
 
             @Override
-            public List<ValidationEventDecorator> loadBuiltinDecorators() {
+            public List<ValidationEventDecorator> loadDecorators() {
                 return Collections.unmodifiableList(decoratorsList);
             }
 

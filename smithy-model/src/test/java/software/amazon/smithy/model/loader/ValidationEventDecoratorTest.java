@@ -84,7 +84,7 @@ public class ValidationEventDecoratorTest {
             }
 
             @Override
-            public List<ValidationEventDecorator> loadBuiltinDecorators() {
+            public List<ValidationEventDecorator> loadDecorators() {
                 return Arrays.asList(decorator);
             }
 
