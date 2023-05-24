@@ -32,6 +32,7 @@ import software.amazon.smithy.model.traits.SuppressTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.ValidationEventDecorator;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.model.validation.ValidatorFactory;
 import software.amazon.smithy.model.validation.suppressions.Suppression;
@@ -49,7 +50,6 @@ import software.amazon.smithy.utils.SetUtils;
  * loaded from metadata.
  */
 final class ModelValidator {
-
     private static final String SUPPRESSIONS = "suppressions";
 
     // Lazy initialization holder class idiom to hold a default validator factory.
@@ -169,6 +169,7 @@ final class ModelValidator {
         }
 
         List<Validator> staticValidators = resolveStaticValidators();
+        List<ValidationEventDecorator> staticDecorators = validatorFactory.loadDecorators();
 
         return model -> {
             List<ValidationEvent> coreEvents = new ArrayList<>();
@@ -186,6 +187,8 @@ final class ModelValidator {
             // which will only obscure the root cause.
             coreEvents.addAll(suppressEvents(model, new TargetValidator().validate(model), modelSuppressions));
             coreEvents.addAll(suppressEvents(model, new ResourceCycleValidator().validate(model), modelSuppressions));
+            // Decorate all the events
+            coreEvents = decorateEvents(staticDecorators, coreEvents);
             // Emit any events that have already occurred.
             coreEvents.forEach(eventListener);
 
@@ -194,16 +197,18 @@ final class ModelValidator {
             }
 
             List<ValidationEvent> result = modelValidators.parallelStream()
-                    .flatMap(validator -> validator.validate(model).stream())
+                    .map(validator -> validator.validate(model))
+                    .flatMap(Collection::stream)
                     .filter(ModelValidator::filterPrelude)
                     .map(event -> suppressEvent(model, event, modelSuppressions))
+                    .map(event -> decorateEvent(staticDecorators, event))
                     // Emit events as they occur during validation.
                     .peek(eventListener)
                     .collect(Collectors.toList());
 
             for (ValidationEvent event : includeEvents) {
                 if (ModelValidator.filterPrelude(event)) {
-                    result.add(suppressEvent(model, event, modelSuppressions));
+                    result.add(decorateEvent(staticDecorators, suppressEvent(model, event, modelSuppressions)));
                 }
             }
 
@@ -212,6 +217,32 @@ final class ModelValidator {
 
             return result;
         };
+    }
+
+    static List<ValidationEvent> decorateEvents(
+        List<ValidationEventDecorator> decorators,
+        List<ValidationEvent> events
+    ) {
+        if (!decorators.isEmpty()) {
+            for (int idx = 0; idx < events.size(); idx++) {
+                events.set(idx, decorateEvent(decorators, events.get(idx)));
+            }
+        }
+        return events;
+    }
+
+    static ValidationEvent decorateEvent(List<ValidationEventDecorator> decorators, ValidationEvent event) {
+        ValidationEvent decoratedEvent = event;
+        for (ValidationEventDecorator decorator : decorators) {
+            if (decorator.canDecorate(event)) {
+                decoratedEvent = decorator.decorate(decoratedEvent);
+            }
+        }
+        return decoratedEvent;
+    }
+
+    static ValidatorFactory defaultValidationFactory() {
+        return LazyValidatorFactoryHolder.INSTANCE;
     }
 
     private List<Validator> resolveStaticValidators() {

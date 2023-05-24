@@ -38,6 +38,7 @@ import software.amazon.smithy.model.validation.Validator;
 final class LoaderTraitMap {
 
     private static final Logger LOGGER = Logger.getLogger(LoaderTraitMap.class.getName());
+    private static final String UNRESOLVED_TRAIT_SUFFIX = ".UnresolvedTrait";
 
     private final TraitFactory traitFactory;
     private final Map<ShapeId, Map<ShapeId, Node>> traits = new HashMap<>();
@@ -114,7 +115,7 @@ final class LoaderTraitMap {
         if (!shapeMap.isRootShapeDefined(traitId) && (trait == null || !trait.isSynthetic())) {
             Severity severity = allowUnknownTraits ? Severity.WARNING : Severity.ERROR;
             events.add(ValidationEvent.builder()
-                    .id(Validator.MODEL_ERROR)
+                    .id(Validator.MODEL_ERROR + UNRESOLVED_TRAIT_SUFFIX)
                     .severity(severity)
                     .sourceLocation(sourceLocation)
                     .shapeId(target)

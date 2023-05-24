@@ -47,5 +47,7 @@ public final class ColorTheme {
     public static final Style DIFF_TITLE = Style.of(Style.BG_BRIGHT_BLACK, Style.WHITE);
     public static final Style DIFF_EVENT_TITLE = Style.of(Style.BG_BRIGHT_BLUE, Style.BLACK);
 
+    public static final Style HINT_TITLE = Style.of(Style.BRIGHT_GREEN);
+
     private ColorTheme() {}
 }

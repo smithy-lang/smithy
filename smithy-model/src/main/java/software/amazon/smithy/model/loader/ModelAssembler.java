@@ -50,6 +50,7 @@ import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.ValidationEventDecorator;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.model.validation.ValidatorFactory;
 import software.amazon.smithy.utils.Pair;
@@ -509,6 +510,9 @@ public final class ModelAssembler {
         if (traitFactory == null) {
             traitFactory = LazyTraitFactoryHolder.INSTANCE;
         }
+        if (validatorFactory == null) {
+            validatorFactory = ModelValidator.defaultValidationFactory();
+        }
 
         Model prelude = disablePrelude ? null : Prelude.getPreludeModel();
         LoadOperationProcessor processor = new LoadOperationProcessor(
@@ -576,7 +580,8 @@ public final class ModelAssembler {
         }
 
         if (disableValidation) {
-            return new ValidatedResult<>(transformed, events);
+            List<ValidationEventDecorator> decorators = validatorFactory.loadDecorators();
+            return new ValidatedResult<>(transformed, ModelValidator.decorateEvents(decorators, events));
         }
 
         try {
@@ -594,9 +599,11 @@ public final class ModelAssembler {
     }
 
     private ValidatedResult<Model> returnOnlyErrors(Model model, List<ValidationEvent> events) {
+        List<ValidationEventDecorator> decorators = validatorFactory.loadDecorators();
         return new ValidatedResult<>(model, events.stream()
-                .filter(event -> event.getSeverity() == Severity.ERROR)
-                .collect(Collectors.toList()));
+                                                  .filter(event -> event.getSeverity() == Severity.ERROR)
+                                                  .map(event -> ModelValidator.decorateEvent(decorators, event))
+                                                  .collect(Collectors.toList()));
     }
 
     private ValidatedResult<Model> validate(Model model, List<ValidationEvent> events) {
