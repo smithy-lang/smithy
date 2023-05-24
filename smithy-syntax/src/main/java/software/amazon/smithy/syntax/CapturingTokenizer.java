@@ -20,12 +20,10 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import software.amazon.smithy.model.loader.IdlToken;
 import software.amazon.smithy.model.loader.IdlTokenizer;
-import software.amazon.smithy.model.loader.IdlWhitespaceParser;
 import software.amazon.smithy.model.loader.ModelSyntaxException;
 import software.amazon.smithy.model.loader.StringTable;
 
@@ -34,10 +32,13 @@ import software.amazon.smithy.model.loader.StringTable;
  */
 final class CapturingTokenizer implements IdlTokenizer {
 
+    // For now, this also skips doc comments. We may later move doc comments out of WS.
+    private static final IdlToken[] WS_CHARS = {IdlToken.SPACE, IdlToken.NEWLINE, IdlToken.COMMA,
+                                                IdlToken.COMMENT, IdlToken.DOC_COMMENT};
+
     private final IdlTokenizer delegate;
     private final TokenTree root = TokenTree.of(TreeType.IDL);
     private final Deque<TokenTree> trees = new ArrayDeque<>();
-    private final IdlWhitespaceParser whitespaceParser;
     private final Function<CharSequence, String> stringTable = new StringTable(10); // 1024 entries
     private final List<CapturedToken> tokens = new ArrayList<>();
     private int cursor = 0;
@@ -45,7 +46,6 @@ final class CapturingTokenizer implements IdlTokenizer {
     CapturingTokenizer(IdlTokenizer delegate) {
         this.delegate = delegate;
         trees.add(root);
-        this.whitespaceParser = new IdlWhitespaceParser(this);
 
         while (delegate.hasNext()) {
             delegate.next();
@@ -142,18 +142,12 @@ final class CapturingTokenizer implements IdlTokenizer {
         return tokens.get(++cursor).getIdlToken();
     }
 
-    CapturedToken peek(int offsetFromPosition) {
-        return cursor + offsetFromPosition >= tokens.size() - 1
-               ? tokens.get(tokens.size() - 1)
-               : tokens.get(cursor + offsetFromPosition);
+    CapturedToken peekPastSpaces() {
+        return peekWhile(1, token -> token == IdlToken.SPACE);
     }
 
-    CapturedToken peekPastSpaces(int offsetFromPosition) {
-        return peekWhile(offsetFromPosition, token -> token == IdlToken.SPACE);
-    }
-
-    CapturedToken peekPastWs(int offsetFromPosition) {
-        return peekWhile(offsetFromPosition, token -> token.isWhitespace() || token == IdlToken.DOC_COMMENT);
+    CapturedToken peekPastWs() {
+        return peekWhile(1, token -> token.isWhitespace() || token == IdlToken.DOC_COMMENT);
     }
 
     CapturedToken peekWhile(int offsetFromPosition, Predicate<IdlToken> predicate) {
@@ -165,45 +159,6 @@ final class CapturingTokenizer implements IdlTokenizer {
         return token;
     }
 
-    void skipSpaces() {
-        if (getCurrentToken() == IdlToken.SPACE) {
-            withState(TreeType.SP, () -> {
-                do {
-                    next();
-                } while (getCurrentToken() == IdlToken.SPACE);
-            });
-        }
-    }
-
-    void skipWs() {
-        IdlToken current = getCurrentToken();
-        if (current.isWhitespace() || current == IdlToken.DOC_COMMENT) {
-            withState(TreeType.WS, whitespaceParser::skipWsAndDocs);
-        }
-    }
-
-    TokenTree expectAndSkipSpaces() {
-        return withState(TreeType.SP, () -> {
-            expect(IdlToken.SPACE);
-            whitespaceParser.skipSpaces();
-        });
-    }
-
-    TokenTree expectAndSkipWhitespace() {
-        return withState(TreeType.WS, () -> {
-            whitespaceParser.expectAndSkipWhitespace();
-            whitespaceParser.skipWsAndDocs();
-        });
-    }
-
-    TokenTree expectAndSkipBr() {
-        return withState(TreeType.BR, () -> {
-            skipSpaces();
-            whitespaceParser.expectAndSkipBr();
-            skipWs();
-        });
-    }
-
     String internString(CharSequence charSequence) {
         return stringTable.apply(charSequence);
     }
@@ -213,20 +168,12 @@ final class CapturingTokenizer implements IdlTokenizer {
     }
 
     TokenTree withState(TreeType state, Runnable errorRecovery, Runnable parser) {
-        return withState(state, errorRecovery, tree -> parser.run());
-    }
-
-    TokenTree withState(TreeType state, Consumer<TokenTree> parser) {
-        return withState(state, this::defaultErrorRecovery, parser);
-    }
-
-    TokenTree withState(TreeType state, Runnable errorRecovery, Consumer<TokenTree> parser) {
         TokenTree tree = TokenTree.of(state);
         trees.getFirst().appendChild(tree);
         // Temporarily make this tree the current tree to capture tokens.
         trees.addFirst(tree);
         try {
-            parser.accept(tree);
+            parser.run();
         } catch (ModelSyntaxException e) {
             TokenTree errorTree = TokenTree.error(e.getMessageWithoutLocation());
             tree.appendChild(errorTree);
@@ -243,48 +190,27 @@ final class CapturingTokenizer implements IdlTokenizer {
         return tree;
     }
 
-    void skipShapeIdNamespace() {
-        withState(TreeType.NAMESPACE, () -> {
-            expect(IdlToken.IDENTIFIER);
+    void expectWs() {
+        expect(WS_CHARS);
+        do {
             next();
-            while (getCurrentToken() == IdlToken.DOT) {
-                next();
-                expect(IdlToken.IDENTIFIER);
-                next();
+        } while (isWs());
+    }
+
+    boolean isWs() {
+        return isToken(WS_CHARS);
+    }
+
+    private boolean isToken(IdlToken... tokens) {
+        IdlToken currentTokenType = getCurrentToken();
+
+        for (IdlToken token : tokens) {
+            if (currentTokenType == token) {
+                return true;
             }
-        });
-    }
-
-    void expectAndSkipAbsoluteShapeId(boolean allowMember) {
-        withState(TreeType.SHAPE_ID, () -> {
-            skipShapeIdNamespace();
-            expect(IdlToken.POUND);
-            next();
-            skipRelativeRootShapeId(allowMember);
-        });
-    }
-
-    void expectAndSkipShapeId(boolean allowMember) {
-        IdlToken after = peekWhile(0, t -> t == IdlToken.DOT || t == IdlToken.IDENTIFIER).getIdlToken();
-        if (after == IdlToken.POUND) {
-            expectAndSkipAbsoluteShapeId(allowMember);
-        } else {
-            withState(TreeType.SHAPE_ID, () -> skipRelativeRootShapeId(allowMember));
         }
-    }
 
-    void skipRelativeRootShapeId(boolean allowMember) {
-        expect(IdlToken.IDENTIFIER);
-        next();
-
-        // Parse member if allowed and present.
-        if (allowMember && getCurrentToken() == IdlToken.DOLLAR) {
-            withState(TreeType.SHAPE_ID_MEMBER, () -> {
-                next(); // skip '$'
-                expect(IdlToken.IDENTIFIER);
-                next();
-            });
-        }
+        return false;
     }
 
     // Performs basic error recovery by skipping tokens until a $, identifier, or @ is found at column 1.
