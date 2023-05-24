@@ -43,8 +43,9 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
 
     private MapShape(Builder builder) {
         super(builder, false);
-        key = getRequiredMixinMember(builder, builder.key, "key");
-        value = getRequiredMixinMember(builder, builder.value, "value");
+        Map<String, MemberShape> members = getRequiredMembers(builder, "key", "value");
+        key = members.get("key");
+        value = members.get("value");
         validateMemberShapeIds();
     }
 
@@ -174,6 +175,17 @@ public final class MapShape extends Shape implements ToSmithyBuilder<MapShape> {
         @Override
         public ShapeType getShapeType() {
             return ShapeType.MAP;
+        }
+
+        @Override
+        public Optional<MemberShape> getMember(String memberName) {
+            if ("key".equals(memberName)) {
+                return Optional.ofNullable(key);
+            } else if ("value".equals(memberName)) {
+                return Optional.ofNullable(value);
+            } else {
+                return Optional.empty();
+            }
         }
 
         @Override

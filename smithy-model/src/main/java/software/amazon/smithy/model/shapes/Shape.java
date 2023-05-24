@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.model.shapes;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -108,13 +109,37 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
         }
     }
 
-    protected MemberShape getRequiredMixinMember(
+    protected Map<String, MemberShape> getRequiredMembers(
             AbstractShapeBuilder<?, ?> builder,
-            MemberShape onBuilder,
-            String name
+            String... requiredMembersNames
     ) {
-        if (onBuilder != null) {
-            return onBuilder;
+        // Only lists/sets and maps have required members, the maximum number being 2.
+        List<String> missingMembersNames = new ArrayList<>(2);
+        Map<String, MemberShape> members = new HashMap<>(2);
+
+        for (String requiredMemberName : requiredMembersNames) {
+            Optional<MemberShape> member = getRequiredMixinMember(builder, requiredMemberName);
+            if (member.isPresent()) {
+                members.put(requiredMemberName, member.get());
+            } else {
+                missingMembersNames.add(requiredMemberName);
+            }
+        }
+
+        if (missingMembersNames.size() > 0) {
+            throw missingRequiredMembersException(missingMembersNames);
+        }
+
+        return members;
+    }
+
+    protected Optional<MemberShape> getRequiredMixinMember(
+            AbstractShapeBuilder<?, ?> builder,
+            String requiredMemberName
+    ) {
+        Optional<MemberShape> memberOnBuilder = builder.getMember(requiredMemberName);
+        if (memberOnBuilder.isPresent()) {
+            return memberOnBuilder;
         }
 
         // Get the most recently introduced mixin member with the given name.
@@ -122,7 +147,7 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
 
         for (Shape shape : builder.getMixins().values()) {
             for (MemberShape member : shape.members()) {
-                if (member.getMemberName().equals(name)) {
+                if (member.getMemberName().equals(requiredMemberName)) {
                     mostRecentMember = member;
                     break; // break to the next mixin shape.
                 }
@@ -130,17 +155,23 @@ public abstract class Shape implements FromSourceLocation, Tagged, ToShapeId, Co
         }
 
         if (mostRecentMember == null) {
-            throw new SourceException(
-                    String.format("Missing required member of shape `%s`: %s", getId(), name),
-                    builder.getSourceLocation());
+            return Optional.empty();
         }
 
-        return MemberShape.builder()
-                .id(getId().withMember(name))
+        return Optional.of(MemberShape.builder()
+                .id(getId().withMember(requiredMemberName))
                 .target(mostRecentMember.getTarget())
                 .source(getSourceLocation())
                 .addMixin(mostRecentMember)
-                .build();
+                .build());
+    }
+
+    protected SourceException missingRequiredMembersException(List<String> missingMembersNames) {
+        String missingRequired = missingMembersNames.size() > 1 ? "members" : "member";
+        String missingMembers = String.join(", ", missingMembersNames);
+        String message = String.format("Missing required %s of shape `%s`: %s",
+                missingRequired, getId(), missingMembers);
+        return new SourceException(message, getSourceLocation());
     }
 
     /**

@@ -36,7 +36,8 @@ public abstract class CollectionShape extends Shape {
 
     CollectionShape(Builder<?, ?> builder) {
         super(builder, false);
-        member = getRequiredMixinMember(builder, builder.member, "member");
+        Map<String, MemberShape> members = getRequiredMembers(builder, "member");
+        member = members.get("member");
         validateMemberShapeIds();
     }
 
@@ -76,6 +77,15 @@ public abstract class CollectionShape extends Shape {
             extends AbstractShapeBuilder<B, S> {
 
         private MemberShape member;
+
+        @Override
+        public Optional<MemberShape> getMember(String memberName) {
+            if ("member".equals(memberName)) {
+                return Optional.ofNullable(member);
+            } else {
+                return Optional.empty();
+            }
+        }
 
         @Override
         public B id(ShapeId shapeId) {
