@@ -23,7 +23,7 @@ import java.util.function.Function;
  *
  * <p>The implementation uses an FNV-1a hash, and collisions simply overwrite the previously cached value.
  */
-final class StringTable implements Function<CharSequence, String> {
+public final class StringTable implements Function<CharSequence, String> {
 
     private static final int FNV_OFFSET_BIAS = 0x811c9dc5;
     private static final int FNV_PRIME = 0x1000193;
@@ -33,12 +33,20 @@ final class StringTable implements Function<CharSequence, String> {
     private final int size;
     private final int sizeMask;
 
-    StringTable() {
-        // Defaults to 1024 entries.
+    /**
+     * Create a string table with 2048 entries.
+     */
+    public StringTable() {
+        // Defaults to 2048 entries.
         this(11);
     }
 
-    StringTable(int sizeBits) {
+    /**
+     * Create a string table with a specific number of entries.
+     *
+     * @param sizeBits Size of the table based on bit shifting (e.g., 1 -> 2, 2 -> 4, ..., 10 -> 1024, 11 -> 2048).
+     */
+    public StringTable(int sizeBits) {
         if (sizeBits <= 0) {
             throw new IllegalArgumentException("Cache sizeBits must be >= 1");
         } else if (sizeBits >= 17) {

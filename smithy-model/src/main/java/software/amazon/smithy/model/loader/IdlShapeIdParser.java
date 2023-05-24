@@ -16,7 +16,7 @@
 package software.amazon.smithy.model.loader;
 
 /**
- * Parses Shape ID lexemes from a {@link IdlTokenizer}.
+ * Parses Shape ID lexemes from a {@link IdlInternalTokenizer}.
  */
 final class IdlShapeIdParser {
 
@@ -31,7 +31,7 @@ final class IdlShapeIdParser {
      * @return Returns the sequence of characters that make up a namespace.
      * @throws ModelSyntaxException if the tokenizer is unable to parse a valid namespace.
      */
-    static CharSequence expectAndSkipShapeIdNamespace(IdlTokenizer tokenizer) {
+    static CharSequence expectAndSkipShapeIdNamespace(IdlInternalTokenizer tokenizer) {
         int startPosition = tokenizer.getCurrentTokenStart();
         int endOffset = skipShapeIdNamespace(tokenizer);
         return sliceFrom(tokenizer, startPosition, endOffset);
@@ -44,7 +44,7 @@ final class IdlShapeIdParser {
      * @param tokenizer Tokenizer to consume and advance.
      * @return Returns the borrowed shape ID.
      */
-    static CharSequence expectAndSkipAbsoluteShapeId(IdlTokenizer tokenizer) {
+    static CharSequence expectAndSkipAbsoluteShapeId(IdlInternalTokenizer tokenizer) {
         int startPosition = tokenizer.getCurrentTokenStart();
         int endOffset = skipAbsoluteShapeId(tokenizer);
         return sliceFrom(tokenizer, startPosition, endOffset);
@@ -57,7 +57,7 @@ final class IdlShapeIdParser {
      * @param tokenizer Tokenizer to consume and advance.
      * @return Returns the borrowed shape ID.
      */
-    static CharSequence expectAndSkipShapeId(IdlTokenizer tokenizer) {
+    static CharSequence expectAndSkipShapeId(IdlInternalTokenizer tokenizer) {
         int startPosition = tokenizer.getCurrentTokenStart();
         int offset = skipShapeIdNamespace(tokenizer);
         // Keep parsing if we find a $ or a #.
@@ -69,11 +69,11 @@ final class IdlShapeIdParser {
         return sliceFrom(tokenizer, startPosition, offset);
     }
 
-    private static CharSequence sliceFrom(IdlTokenizer tokenizer, int startPosition, int endOffset) {
-        return tokenizer.getInput(startPosition, tokenizer.getPosition() - endOffset);
+    private static CharSequence sliceFrom(IdlInternalTokenizer tokenizer, int startPosition, int endOffset) {
+        return tokenizer.getModel(startPosition, tokenizer.getPosition() - endOffset);
     }
 
-    private static int skipShapeIdNamespace(IdlTokenizer tokenizer) {
+    private static int skipShapeIdNamespace(IdlInternalTokenizer tokenizer) {
         tokenizer.expect(IdlToken.IDENTIFIER);
         tokenizer.next();
         // Keep track of how many characters from the end to omit (don't include "#" or whatever is next in the slice).
@@ -87,14 +87,14 @@ final class IdlShapeIdParser {
         return endOffset;
     }
 
-    private static int skipAbsoluteShapeId(IdlTokenizer tokenizer) {
+    private static int skipAbsoluteShapeId(IdlInternalTokenizer tokenizer) {
         skipShapeIdNamespace(tokenizer);
         tokenizer.expect(IdlToken.POUND);
         tokenizer.next();
         return skipRelativeRootShapeId(tokenizer);
     }
 
-    private static int skipRelativeRootShapeId(IdlTokenizer tokenizer) {
+    private static int skipRelativeRootShapeId(IdlInternalTokenizer tokenizer) {
         tokenizer.expect(IdlToken.IDENTIFIER);
         tokenizer.next();
         // Don't include whatever character comes next in the slice.
