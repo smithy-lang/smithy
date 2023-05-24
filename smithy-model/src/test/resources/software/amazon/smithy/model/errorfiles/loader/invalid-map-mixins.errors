@@ -1,0 +1,9 @@
+[ERROR] com.test#ExtraMemberAndValidMixin: Map shapes may only have `key` and `value` members, but found `foo` | Model
+[ERROR] com.test#MissingMemberMixin: Missing required member of shape `com.test#MissingMemberMixin`: value | Model
+[ERROR] com.test#ValidWithMissingMemberMixin: Cannot apply mixin to com.test#ValidWithMissingMemberMixin: com.test#MissingMemberMixin not found | Model
+[ERROR] com.test#InvalidWithMissingMemberMixin: Cannot apply mixin to com.test#InvalidWithMissingMemberMixin: com.test#MissingMemberMixin not found | Model
+[ERROR] com.test#NoMemberMixin: Missing required members of shape `com.test#NoMemberMixin`: key, value | Model
+[ERROR] com.test#ValidWithNoMemberMixin: Cannot apply mixin to com.test#ValidWithNoMemberMixin: com.test#NoMemberMixin not found | Model
+[ERROR] com.test#InvalidWithNoMemberMixin: Cannot apply mixin to com.test#InvalidWithNoMemberMixin: com.test#NoMemberMixin not found | Model
+[ERROR] com.test#ExtraMemberMixin: Map shapes may only have `key` and `value` members, but found `foo` | Model
+[ERROR] com.test#ElidingMemberFromNoMemberMixin: Cannot apply mixin to com.test#ElidingMemberFromNoMemberMixin$key: com.test#NoMemberMixin not found | Model

@@ -1,0 +1,8 @@
+[ERROR] com.test#NoMemberList: Missing required member of shape `com.test#NoMemberList`: member | Model
+[ERROR] com.test#NoMemberMap: Missing required members of shape `com.test#NoMemberMap`: key, value | Model
+[ERROR] com.test#MissingKeyMap: Missing required member of shape `com.test#MissingKeyMap`: key | Model
+[ERROR] com.test#MissingValueMap: Missing required member of shape `com.test#MissingValueMap`: value | Model
+[ERROR] com.test#WrongMemberList: Missing required member of shape `com.test#WrongMemberList`: member | Model
+[ERROR] com.test#WrongMemberMap: Missing required member of shape `com.test#WrongMemberMap`: key | Model
+[ERROR] com.test#OtherWrongMemberMap: Missing required member of shape `com.test#OtherWrongMemberMap`: value | Model
+[ERROR] com.test#BothWrongMembersMap: Missing required members of shape `com.test#BothWrongMembersMap`: key, value | Model

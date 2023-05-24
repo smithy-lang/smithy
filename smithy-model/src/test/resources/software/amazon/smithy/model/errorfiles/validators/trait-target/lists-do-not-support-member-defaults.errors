@@ -1,0 +1,1 @@
+[ERROR] com.foo#Foo$member: Trait `default` cannot be applied to `com.foo#Foo$member`. This trait may only be applied to shapes that match the following selector: :is(simpleType, list, map, structure > member :test(> :is(simpleType, list, map))) | TraitTarget

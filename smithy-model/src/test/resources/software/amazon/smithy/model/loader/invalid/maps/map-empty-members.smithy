@@ -1,4 +1,4 @@
-// Missing required member of shape `com.foo#MyMap`: key
+// Missing required members of shape `com.foo#MyMap`: key, value
 namespace com.foo
 
 map MyMap {}
