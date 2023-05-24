@@ -17,7 +17,6 @@ package software.amazon.smithy.rulesengine.language;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.IOException;
 import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.SourceLocation;
@@ -36,8 +35,8 @@ import software.amazon.smithy.utils.MapUtils;
 
 class EndpointRuleSetTest {
     @Test
-    void testRuleEval() throws IOException {
-        EndpointRuleSet actual = TestDiscovery.getMinimalEndpointRuleSet();
+    void testRuleEval() {
+        EndpointRuleSet actual = TestRunnerTest.getMinimalEndpointRuleSet();
         Value result = RuleEvaluator.evaluate(actual, MapUtils.of(Identifier.of("Region"),
                 Value.stringValue("us-east-1")));
         EndpointValue expected = new EndpointValue.Builder(SourceLocation.none())
@@ -54,16 +53,16 @@ class EndpointRuleSetTest {
     }
 
     @Test
-    void testDeterministicSerde() throws IOException {
-        EndpointRuleSet actual = TestDiscovery.getMinimalEndpointRuleSet();
+    void testDeterministicSerde() {
+        EndpointRuleSet actual = TestRunnerTest.getMinimalEndpointRuleSet();
         String asString = IoUtils.readUtf8File(
-                EndpointRuleSetTest.class.getResource("valid-rules/minimal-ruleset.json").getPath());
+                EndpointRuleSetTest.class.getResource("minimal-ruleset.json").getPath());
         assertEquals(Node.prettyPrintJson(Node.parseJsonWithComments(asString)), Node.prettyPrintJson(actual.toNode()));
     }
 
     @Test
-    void testMinimalRuleset() throws IOException {
-        EndpointRuleSet actual = TestDiscovery.getMinimalEndpointRuleSet();
+    void testMinimalRuleset() {
+        EndpointRuleSet actual = TestRunnerTest.getMinimalEndpointRuleSet();
         assertEquals(EndpointRuleSet.builder()
                 .version("1.3")
                 .parameters(Parameters

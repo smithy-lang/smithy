@@ -22,7 +22,7 @@ import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
-import software.amazon.smithy.rulesengine.language.TestDiscovery;
+import software.amazon.smithy.rulesengine.language.TestRunnerTest;
 import software.amazon.smithy.rulesengine.language.eval.value.EndpointValue;
 import software.amazon.smithy.rulesengine.language.eval.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
@@ -31,7 +31,7 @@ import software.amazon.smithy.utils.MapUtils;
 class RuleEngineTest {
     @Test
     void testRuleEval() throws IOException {
-        EndpointRuleSet actual = TestDiscovery.getMinimalEndpointRuleSet();
+        EndpointRuleSet actual = TestRunnerTest.getMinimalEndpointRuleSet();
         Value result = RuleEvaluator.evaluate(actual, MapUtils.of(Identifier.of("Region"),
                 Value.stringValue("us-east-1")));
         EndpointValue expected = new EndpointValue.Builder(SourceLocation.none())

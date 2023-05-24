@@ -48,7 +48,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 public final class GetAttr extends Expression {
     public static final String ID = "getAttr";
     private final Expression target;
-    private String unparsedPath;
+    private final String unparsedPath;
     private final List<Part> path;
 
     private GetAttr(Builder builder) {
@@ -146,7 +146,7 @@ public final class GetAttr extends Expression {
 
     @Override
     public String getTemplate() {
-        String target = ((Reference) this.getTarget()).getName().asString();
+        String target = ((Reference) this.getTarget()).getName().toString();
         return "{" + target + "#" + unparsedPath + "}";
     }
 
@@ -247,7 +247,7 @@ public final class GetAttr extends Expression {
 
             @Override
             public String toString() {
-                return key.asString();
+                return key.toString();
             }
 
         }
