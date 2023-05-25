@@ -35,7 +35,6 @@ import software.amazon.smithy.model.shapes.ShapeType;
  * </ul>
  */
 public enum TreeType {
-    // idl = [WS] ControlSection MetadataSection ShapeSection
     IDL {
         @Override
         void parse(CapturingTokenizer tokenizer) {
@@ -192,12 +191,12 @@ public enum TreeType {
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
                 TRAIT_STATEMENTS.parse(tokenizer);
-                SHAPE_BODY.parse(tokenizer);
+                SHAPE.parse(tokenizer);
             });
         }
     },
 
-    SHAPE_BODY {
+    SHAPE {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
@@ -207,22 +206,22 @@ public enum TreeType {
                 switch (type) {
                     case ENUM:
                     case INT_ENUM:
-                        ENUM_SHAPE_STATEMENT.parse(tokenizer);
+                        ENUM_SHAPE.parse(tokenizer);
                         break;
                     case SERVICE:
                     case RESOURCE:
-                        ENTITY_STATEMENT.parse(tokenizer);
+                        ENTITY_SHAPE.parse(tokenizer);
                         break;
                     case OPERATION:
-                        OPERATION_STATEMENT.parse(tokenizer);
+                        OPERATION_SHAPE.parse(tokenizer);
                         break;
                     default:
                         switch (type.getCategory()) {
                             case SIMPLE:
-                                SIMPLE_SHAPE_STATEMENT.parse(tokenizer);
+                                SIMPLE_SHAPE.parse(tokenizer);
                                 break;
                             case AGGREGATE:
-                                AGGREGATE_SHAPE_STATEMENT.parse(tokenizer);
+                                AGGREGATE_SHAPE.parse(tokenizer);
                                 break;
                             default:
                                 throw new UnsupportedOperationException("Unexpected type: " + type);
@@ -232,7 +231,7 @@ public enum TreeType {
         }
     },
 
-    SIMPLE_SHAPE_STATEMENT {
+    SIMPLE_SHAPE {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
@@ -256,7 +255,7 @@ public enum TreeType {
         }
     },
 
-    ENUM_SHAPE_STATEMENT {
+    ENUM_SHAPE {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
@@ -307,7 +306,7 @@ public enum TreeType {
         }
     },
 
-    AGGREGATE_SHAPE_STATEMENT {
+    AGGREGATE_SHAPE {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
@@ -404,7 +403,7 @@ public enum TreeType {
         }
     },
 
-    ENTITY_STATEMENT {
+    ENTITY_SHAPE {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             // Assumes that the shape type is a valid "service" or "resource".
@@ -422,12 +421,20 @@ public enum TreeType {
         }
     },
 
-    OPERATION_STATEMENT {
+    OPERATION_SHAPE {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
                 parseShapeTypeAndName(tokenizer);
+                OPERATION_BODY.parse(tokenizer);
+            });
+        }
+    },
 
+    OPERATION_BODY {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
                 tokenizer.expect(IdlToken.LBRACE);
                 tokenizer.next();
                 optionalWs(tokenizer);
@@ -461,7 +468,7 @@ public enum TreeType {
             tokenizer.withState(this, () -> {
                 tokenizer.next();
                 optionalWs(tokenizer);
-                OPERATION_INLINE_PROPERTY_RHS.parse(tokenizer);
+                operationInputOutputDefinition(tokenizer);
             });
         }
     },
@@ -472,23 +479,19 @@ public enum TreeType {
             tokenizer.withState(this, () -> {
                 tokenizer.next();
                 optionalWs(tokenizer);
-                OPERATION_INLINE_PROPERTY_RHS.parse(tokenizer);
+                operationInputOutputDefinition(tokenizer);
             });
         }
     },
 
-    // TODO: Make this is a grammar production.
-    OPERATION_INLINE_PROPERTY_RHS {
+    INLINE_AGGREGATE_SHAPE {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
-                if (tokenizer.expect(IdlToken.COLON, IdlToken.WALRUS) == IdlToken.WALRUS) {
-                    INLINE_STRUCTURE.parse(tokenizer);
-                } else {
-                    tokenizer.next();
-                    optionalWs(tokenizer);
-                    SHAPE_ID.parse(tokenizer);
-                }
+                tokenizer.expect(IdlToken.WALRUS);
+                tokenizer.next();
+                optionalWs(tokenizer);
+                parseSharedStructureBodyWithinInline(tokenizer);
             });
         }
     },
@@ -511,17 +514,6 @@ public enum TreeType {
                 }
                 tokenizer.expect(IdlToken.RBRACKET);
                 tokenizer.next();
-            });
-        }
-    },
-
-    INLINE_STRUCTURE {
-        @Override
-        void parse(CapturingTokenizer tokenizer) {
-            tokenizer.withState(this, () -> {
-                tokenizer.next(); // skip ":="
-                optionalWs(tokenizer);
-                parseSharedStructureBodyWithinInline(tokenizer);
             });
         }
     },
@@ -1051,5 +1043,15 @@ public enum TreeType {
 
         optionalWs(tokenizer);
         SHAPE_MEMBERS.parse(tokenizer);
+    }
+
+    protected static void operationInputOutputDefinition(CapturingTokenizer tokenizer) {
+        if (tokenizer.expect(IdlToken.COLON, IdlToken.WALRUS) == IdlToken.COLON) {
+            tokenizer.next();
+            optionalWs(tokenizer);
+            SHAPE_ID.parse(tokenizer);
+        } else {
+            INLINE_AGGREGATE_SHAPE.parse(tokenizer);
+        }
     }
 }
