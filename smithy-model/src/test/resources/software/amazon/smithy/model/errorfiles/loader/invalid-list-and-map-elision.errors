@@ -1,0 +1,10 @@
+[ERROR] com.test#WrongMemberList: Missing required member of shape `com.test#WrongMemberList`: member | Model
+[ERROR] com.test#WrongMemberList: List shapes may only have a `member` member, but found `id` | Model
+[ERROR] com.test#ExtraElidedMemberList: List shapes may only have a `member` member, but found `other` | Model
+[ERROR] com.test#ConflictingTypesList$member: Member conflicts with an inherited mixin member: `com.test#MixinList$member` | Model
+[ERROR] com.test#WrongMembersMap: Missing required members of shape `com.test#WrongMembersMap`: key, value | Model
+[ERROR] com.test#WrongMembersMap: Map shapes may only have `key` and `value` members, but found `id` | Model
+[ERROR] com.test#WrongMembersMap: Map shapes may only have `key` and `value` members, but found `other` | Model
+[ERROR] com.test#ExtraMemberMap: Map shapes may only have `key` and `value` members, but found `other` | Model
+[ERROR] com.test#ConflictingTypesMap$key: Member conflicts with an inherited mixin member: `com.test#MixinMap$key` | Model
+[ERROR] com.test#ConflictingTypesMap$value: Member conflicts with an inherited mixin member: `com.test#MixinMap$value` | Model
