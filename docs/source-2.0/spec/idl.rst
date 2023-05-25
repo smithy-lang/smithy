@@ -184,13 +184,14 @@ string support defined in :rfc:`7405`.
     Mixins                  :[`SP`] %s"with" [`WS`] "[" [`WS`] 1*(`ShapeId` [`WS`]) "]"
     EnumShape               :`EnumTypeName` `SP` `Identifier` [`Mixins`] [`WS`] `EnumShapeMembers`
     EnumTypeName            :%s"enum" / %s"intEnum"
-    EnumShapeMembers        :"{" [`WS`] 1*(`TraitStatements` `Identifier` [`ValueAssignment`] [`WS`]) "}"
+    EnumShapeMembers        :"{" [`WS`] 1*(`EnumShapeMember` [`WS`]) "}"
+    EnumShapeMember         :`TraitStatements` `Identifier` [`ValueAssignment`]
     ValueAssignment         :[`SP`] "=" [`SP`] `NodeValue` [`SP`] [`Comma`] `BR`
     AggregateShape          :`AggregateTypeName` `SP` `Identifier` [`ForResource`] [`Mixins`] [`WS`] `ShapeMembers`
     AggregateTypeName       :%s"list" / %s"map" / %s"union" / %s"structure"
     ForResource             :`SP` %s"for" `SP` `ShapeId`
-    ShapeMembers            :"{" [`WS`] *(`TraitStatements` `ShapeMember` [`WS`]) "}"
-    ShapeMember             :(`ExplicitShapeMember` / `ElidedShapeMember`) [`ValueAssignment`]
+    ShapeMembers            :"{" [`WS`] *(`ShapeMember` [`WS`]) "}"
+    ShapeMember             :`TraitStatements` (`ExplicitShapeMember` / `ElidedShapeMember`) [`ValueAssignment`]
     ExplicitShapeMember     :`Identifier` [`SP`] ":" [`SP`] `ShapeId`
     ElidedShapeMember       :"$" `Identifier`
     EntityShape             :`EntityTypeName` `SP` `Identifier` [`Mixins`] [`WS`] `NodeObject`
