@@ -42,7 +42,6 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.EnumValueTrait;
@@ -558,6 +557,8 @@ final class IdlModelLoader {
             case LIST:
             case SET:
             case MAP:
+            case UNION:
+            case STRUCTURE:
                 parseAggregateShape(id, location, type.createBuilderForType());
                 break;
             case ENUM:
@@ -565,12 +566,6 @@ final class IdlModelLoader {
                 break;
             case INT_ENUM:
                 parseEnumShape(id, location, IntEnumShape.builder());
-                break;
-            case STRUCTURE:
-                parseStructuredShape(id, location, StructureShape.builder());
-                break;
-            case UNION:
-                parseStructuredShape(id, location, UnionShape.builder());
                 break;
             case SERVICE:
                 parseServiceStatement(id, location);
@@ -700,25 +695,7 @@ final class IdlModelLoader {
 
     private void parseAggregateShape(ShapeId id, SourceLocation location, AbstractShapeBuilder<?, ?> builder) {
         LoadOperation.DefineShape operation = createShape(builder.id(id).source(location));
-        parseMixins(operation);
-        parseMembers(operation);
-        operations.accept(operation);
-    }
-
-    private void parseStructuredShape(
-            ShapeId id,
-            SourceLocation location,
-            AbstractShapeBuilder<?, ?> builder
-    ) {
-        LoadOperation.DefineShape operation = createShape(builder.id(id).source(location));
-
-        // If it's a structure, parse the optional "from" statement to enable
-        // eliding member targets for resource identifiers.
-        if (builder.getShapeType() == ShapeType.STRUCTURE) {
-            parseForResource(operation);
-        }
-
-        // Parse optional "with" statements to add mixins, but only if it's supported by the version.
+        parseForResource(operation);
         parseMixins(operation);
         parseMembers(operation);
         operations.accept(operation);
@@ -999,12 +976,8 @@ final class IdlModelLoader {
         ShapeId id = ShapeId.fromRelative(expectNamespace(), name);
         SourceLocation location = tokenizer.getCurrentTokenLocation();
         StructureShape.Builder builder = StructureShape.builder().id(id).source(location);
-        LoadOperation.DefineShape operation = createShape(builder);
-        parseMixins(operation);
-        parseForResource(operation);
-        parseMembers(operation);
+        parseAggregateShape(id, location, builder);
         addTraits(id, traits);
-        operations.accept(operation);
         return id;
     }
 
