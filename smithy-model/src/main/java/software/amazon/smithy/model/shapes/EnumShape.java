@@ -54,6 +54,15 @@ public final class EnumShape extends StringShape {
         }
     }
 
+    private EnumShape(Builder builder, Map<String, MemberShape> members) {
+        super(builder);
+        this.members = members;
+        validateMemberShapeIds();
+        if (members.size() < 1) {
+            throw new SourceException("enum shapes must have at least one member", getSourceLocation());
+        }
+    }
+
     /**
      * Gets a map of enum member names to their corresponding values.
      *
@@ -291,8 +300,11 @@ public final class EnumShape extends StringShape {
 
         @Override
         public EnumShape build() {
-            addSyntheticEnumTrait();
-            return new EnumShape(this);
+            // Collect members from enum and mixins
+            Map<String, MemberShape> aggregatedMembers =
+                NamedMemberUtils.computeMixinMembers(getMixins(), members, getId(), getSourceLocation());
+            addSyntheticEnumTrait(aggregatedMembers.values());
+            return new EnumShape(this, aggregatedMembers);
         }
 
         /**
@@ -302,10 +314,10 @@ public final class EnumShape extends StringShape {
          * the enum trait, without having to manually add the trait or risk that it
          * gets serialized.
          */
-        private void addSyntheticEnumTrait() {
+        private void addSyntheticEnumTrait(Collection<MemberShape> memberShapes) {
             SyntheticEnumTrait.Builder builder = SyntheticEnumTrait.builder();
             builder.sourceLocation(getSourceLocation());
-            for (MemberShape member : members.get().values()) {
+            for (MemberShape member : memberShapes) {
                 try {
                     builder.addEnum(EnumShape.enumDefinitionFromMember(member));
                 } catch (IllegalStateException e) {
