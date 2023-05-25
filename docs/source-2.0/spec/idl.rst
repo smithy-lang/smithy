@@ -110,7 +110,7 @@ string support defined in :rfc:`7405`.
 .. productionlist:: smithy
     Comment              : `DocumentationComment` / `LineComment`
     DocumentationComment :"///" *`NotNL` `NL`
-    LineComment          : "//" *`NotNL` `NL`
+    LineComment          : "//" [(%x09 / %x20-2E / %x30-10FFF) *`NotNL`] `NL` ; First character after "//" can't be "/"
 
 .. rubric:: Control
 
