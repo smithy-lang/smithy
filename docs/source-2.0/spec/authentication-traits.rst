@@ -298,6 +298,15 @@ to services and operations:
   * ``OperationD`` is annotated with the ``auth`` trait and defines an explicit
     list of authentication schemes.
 
+  * ``OperationE`` has authentication disabled by setting the ``auth`` trait
+    value on the operation to an empty list, ``[]``.
+
+.. note::
+    Disabling authentication for an operation is distinct from applying the
+    :ref:`@optionalAuth <optionalAuth-trait>` trait to an operation. An
+    operation with the ``@optionalAuth`` trait _must_ be callable both with and
+    without authentication.
+
 .. code-block:: smithy
 
     @httpBasicAuth
@@ -331,6 +340,7 @@ to services and operations:
         operations: [
             OperationC
             OperationD
+            OperationE
         ]
     }
 
@@ -344,6 +354,11 @@ to services and operations:
     // supports are: httpBearerAuth
     @auth([httpBearerAuth])
     operation OperationD {}
+
+    // This operation has the @auth trait and is bound to a service with the
+    // @auth trait. This operation does not support any authentication schemes.
+    @auth([])
+    operation OperationE {}
 
 The following ``auth`` trait is invalid because it references an
 authentication scheme trait that is not applied to the service:
@@ -372,87 +387,3 @@ authentication scheme trait that is not applied to the service:
 
 
 .. _IANA Authentication Scheme Registry: https://www.iana.org/assignments/http-authschemes
-
-
-.. _disabling-auth:
-
-Disabling Authentication
-========================
-
-Services should, in general, have authentication configured. However, there are
-times when authentication may need to be disabled for the service or for a
-number of operations within a service. For example, you may want to expose a
-public route for users to use to login that does not require authentication.
-
-
-Disabling Authentication for a Service
---------------------------------------
-
-In Smithy, a service’s authentication schemes are determined by the presence
-of a trait with the :ref:`@authDefinition <authDefinition-trait>` meta trait.
-If you do not want your service to have authentication, do not apply any
-authentication traits to the service shape.
-
-The following example shows a service with no auth trait configured:
-
-.. code-block:: smithy
-
-    $version: "2.0"
-
-    namespace com.example
-
-    service MyService {
-        version: "2020-08-31",
-        operations: [
-            MyOperation,
-        ]
-    }
-
-    operation MyOperation {}
-
-
-Disabling Authentication for an Operation
------------------------------------------
-
-If you have an individual operation or set of operations that should not be
-called with any authentication scheme, you can disable authentication by
-applying the :ref:`@auth <auth-trait>` trait to the operation with an empty
-list as the trait value.
-
-.. note::
-    Disabling authentication for an operation is distinct from applying the
-    :ref:`@optionalAuth <optionalAuth-trait>` trait to an operation. An
-    operation with the ``@optionalAuth`` trait _must_ be callable both with and
-    without authentication.
-
-The following example shows a service using the ``restJson1`` protocol
-whose default authentication scheme is :ref:`@httpBearerAuth <httpBearerAuth-trait>`.
-Authentication is disabled for a single operation, ``LoginOperation``,
-in that service:
-
-.. code-block:: smithy
-
-    $version: "2.0"
-
-    namespace com.example
-
-    use aws.protocols#restJson1
-
-    @restJson1
-    @httpBearerAuth
-    service AuthenticatedService {
-        version: "2020-08-31",
-        operations: [
-            LoginOperation,
-        ]
-    }
-
-    @auth([])
-    @http(method: "POST", uri: "/login")
-    operation LoginOperation {
-        input: LoginInput,
-        output: LoginOutput,
-    }
-
-Services should interpret client calls to operations with empty ``@auth`` as
-anonymous, skipping credential fetching and authentication for such operations.
