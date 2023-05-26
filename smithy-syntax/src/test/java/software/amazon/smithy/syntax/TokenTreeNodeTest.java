@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.loader.IdlTokenizer;
 
@@ -32,7 +33,7 @@ public class TokenTreeNodeTest {
         CapturedToken capture = CapturedToken.from(tokenizer);
         TokenTree tree = TokenTree.of(capture);
 
-        assertThat(tree.getTokens(), contains(capture));
+        assertThat(tree.tokens().collect(Collectors.toList()), contains(capture));
         assertThat(tree.getStartPosition(), equalTo(0));
         assertThat(tree.getStartLine(), equalTo(1));
         assertThat(tree.getStartColumn(), equalTo(1));

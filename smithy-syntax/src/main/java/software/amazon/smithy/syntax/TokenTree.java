@@ -16,6 +16,7 @@
 package software.amazon.smithy.syntax;
 
 import java.util.List;
+import java.util.stream.Stream;
 import software.amazon.smithy.model.loader.IdlTokenizer;
 
 /**
@@ -113,11 +114,11 @@ public interface TokenTree {
     boolean removeChild(TokenTree tree);
 
     /**
-     * Gets a flat list of all captured tokens contained within the tree.
+     * Get a flattened stream of all captured tokens contained within the tree.
      *
      * @return Returns the contained tokens.
      */
-    List<CapturedToken> getTokens();
+    Stream<CapturedToken> tokens();
 
     /**
      * Gets the error associated with the tree, or null if not present.
@@ -171,4 +172,15 @@ public interface TokenTree {
      * @return Returns the end column.
      */
     int getEndColumn();
+
+    /**
+     * Get the tokens contains in the tree as a single concatenated string.
+     *
+     * @return Returns the concatenated string of tokens.
+     */
+    default String concatTokens() {
+        StringBuilder result = new StringBuilder();
+        tokens().forEach(token -> result.append(token.getLexeme()));
+        return result.toString();
+    }
 }
