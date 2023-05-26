@@ -304,7 +304,7 @@ to services and operations:
 .. note::
     Disabling authentication for an operation is distinct from applying the
     :ref:`@optionalAuth <optionalAuth-trait>` trait to an operation. An
-    operation with the ``@optionalAuth`` trait _must_ be callable both with and
+    operation with the ``@optionalAuth`` trait must be callable both with and
     without authentication.
 
 .. code-block:: smithy
