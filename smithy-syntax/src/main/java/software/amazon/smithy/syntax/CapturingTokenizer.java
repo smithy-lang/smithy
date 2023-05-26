@@ -135,10 +135,8 @@ final class CapturingTokenizer implements IdlTokenizer {
     public IdlToken next() {
         if (getToken().getIdlToken() == IdlToken.EOF) {
             throw new NoSuchElementException();
-        } else if (cursor > 0) {
-            // Append the previous token when next is called.
-            trees.getFirst().appendChild(TokenTree.of(CapturedToken.from(this, this.stringTable)));
         }
+        trees.getFirst().appendChild(TokenTree.of(CapturedToken.from(this, this.stringTable)));
         return tokens.get(++cursor).getIdlToken();
     }
 
