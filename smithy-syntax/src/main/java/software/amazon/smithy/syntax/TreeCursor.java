@@ -214,7 +214,7 @@ public final class TreeCursor {
      */
     public List<TreeCursor> findChildrenByToken(IdlToken token) {
         return findChildren(c -> c.getTree().getType() == TreeType.TOKEN
-                                 && c.getTree().getTokens().get(0).getIdlToken() == token);
+                                 && c.getTree().tokens().iterator().next().getIdlToken() == token);
     }
 
     /**

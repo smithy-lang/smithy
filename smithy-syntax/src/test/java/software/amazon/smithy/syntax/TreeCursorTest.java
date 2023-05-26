@@ -69,7 +69,7 @@ public class TreeCursorTest {
 
         for (TreeCursor match : matches) {
             assertThat(match.getTree().getType(), equalTo(TreeType.TOKEN));
-            assertThat(match.getTree().getTokens().get(0).getIdlToken(), equalTo(IdlToken.IDENTIFIER));
+            assertThat(match.getTree().tokens().iterator().next().getIdlToken(), equalTo(IdlToken.IDENTIFIER));
         }
     }
 
@@ -81,7 +81,7 @@ public class TreeCursorTest {
 
         assertThat(click, notNullValue());
         assertThat(click.getTree().getType(), is(TreeType.TOKEN));
-        assertThat(click.getTree().getTokens().get(0).getLexeme().toString(), equalTo("\"hello\""));
+        assertThat(click.getTree().tokens().iterator().next().getLexeme().toString(), equalTo("\"hello\""));
         assertThat(click.getRoot(), equalTo(cursor));
     }
 
