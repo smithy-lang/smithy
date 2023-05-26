@@ -61,6 +61,7 @@ public enum TreeType {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
+                tokenizer.expect(IdlToken.DOLLAR);
                 tokenizer.next(); // $
                 NODE_OBJECT_KEY.parse(tokenizer);
                 optionalSpaces(tokenizer);
@@ -259,7 +260,7 @@ public enum TreeType {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
-                ENUM_STATEMENT_TYPE.parse(tokenizer);
+                ENUM_TYPE_NAME.parse(tokenizer);
                 optionalSpaces(tokenizer);
                 IDENTIFIER.parse(tokenizer);
                 optionalSpaces(tokenizer);
@@ -269,12 +270,30 @@ public enum TreeType {
                 }
 
                 optionalWs(tokenizer);
+                ENUM_SHAPE_MEMBERS.parse(tokenizer);
+            });
+        }
+    },
+
+    ENUM_TYPE_NAME {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            // Assumes that the current token is a valid enum type name validated by SHAPE_BODY.
+            tokenizer.withState(this, tokenizer::next);
+        }
+    },
+
+    ENUM_SHAPE_MEMBERS {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
                 tokenizer.expect(IdlToken.LBRACE);
                 tokenizer.next();
                 optionalWs(tokenizer);
 
                 while (tokenizer.hasNext() && tokenizer.getCurrentToken() != IdlToken.RBRACE) {
-                    ENUM_MEMBER.parse(tokenizer);
+                    ENUM_SHAPE_MEMBER.parse(tokenizer);
+                    optionalWs(tokenizer);
                 }
 
                 tokenizer.expect(IdlToken.RBRACE);
@@ -283,24 +302,17 @@ public enum TreeType {
         }
     },
 
-    ENUM_STATEMENT_TYPE {
-        @Override
-        void parse(CapturingTokenizer tokenizer) {
-            // Assumes that the current token is a valid enum type name validated by SHAPE_BODY.
-            tokenizer.withState(this, tokenizer::next);
-        }
-    },
-
-    ENUM_MEMBER {
+    ENUM_SHAPE_MEMBER {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
                 TRAIT_STATEMENTS.parse(tokenizer);
                 IDENTIFIER.parse(tokenizer);
-                if (tokenizer.peekPastSpaces().getIdlToken() == IdlToken.EQUAL) {
+                if (tokenizer.hasNext() && (
+                        tokenizer.getCurrentToken() == IdlToken.EQUAL ||
+                        tokenizer.peekPastSpaces().getIdlToken() == IdlToken.EQUAL
+                )) {
                     VALUE_ASSIGNMENT.parse(tokenizer);
-                } else {
-                    optionalWs(tokenizer);
                 }
             });
         }
@@ -348,6 +360,7 @@ public enum TreeType {
 
                 while (tokenizer.hasNext() && tokenizer.getCurrentToken() != IdlToken.RBRACE) {
                     SHAPE_MEMBER.parse(tokenizer);
+                    optionalWs(tokenizer);
                 }
 
                 optionalWs(tokenizer);
@@ -372,8 +385,6 @@ public enum TreeType {
                 if (tokenizer.getCurrentToken() == IdlToken.EQUAL) {
                     VALUE_ASSIGNMENT.parse(tokenizer);
                 }
-
-                optionalWs(tokenizer);
             });
         }
     },
@@ -426,6 +437,12 @@ public enum TreeType {
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
                 parseShapeTypeAndName(tokenizer);
+
+                if (tokenizer.isCurrentLexeme("with")) {
+                    SHAPE_MIXINS.parse(tokenizer);
+                }
+
+                optionalWs(tokenizer);
                 OPERATION_BODY.parse(tokenizer);
             });
         }
@@ -491,6 +508,7 @@ public enum TreeType {
                 tokenizer.expect(IdlToken.WALRUS);
                 tokenizer.next();
                 optionalWs(tokenizer);
+                TRAIT_STATEMENTS.parse(tokenizer);
                 parseSharedStructureBodyWithinInline(tokenizer);
             });
         }
@@ -524,8 +542,7 @@ public enum TreeType {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
-                tokenizer.expect(IdlToken.IDENTIFIER);
-                tokenizer.next(); // skip with
+                IDENTIFIER.parse(tokenizer); // 'with'
                 optionalWs(tokenizer);
 
                 tokenizer.expect(IdlToken.LBRACKET);
@@ -568,6 +585,7 @@ public enum TreeType {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
+                optionalWs(tokenizer);
                 while (tokenizer.getCurrentToken() == IdlToken.AT) {
                     TRAIT.parse(tokenizer);
                     optionalWs(tokenizer);
@@ -627,7 +645,7 @@ public enum TreeType {
                     case STRING:
                     case IDENTIFIER:
                     default:
-                        if (tokenizer.peekPastWs().getIdlToken() != IdlToken.COLON) {
+                        if (tokenizer.peekPastWs().getIdlToken() == IdlToken.COLON) {
                             TRAIT_STRUCTURE.parse(tokenizer);
                         } else {
                             NODE_VALUE.parse(tokenizer);
@@ -677,11 +695,23 @@ public enum TreeType {
                     APPLY_STATEMENT_SINGULAR.parse(tokenizer);
                 }
             });
-            BR.parse(tokenizer);
         }
     },
 
     APPLY_STATEMENT_SINGULAR {
+        @Override
+        void parse(CapturingTokenizer tokenizer) {
+            tokenizer.withState(this, () -> {
+                tokenizer.next();
+                SP.parse(tokenizer);
+                SHAPE_ID.parse(tokenizer);
+                WS.parse(tokenizer);
+                TRAIT.parse(tokenizer);
+            });
+        }
+    },
+
+    APPLY_STATEMENT_BLOCK {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
@@ -696,19 +726,6 @@ public enum TreeType {
                 optionalWs(tokenizer);
                 tokenizer.expect(IdlToken.RBRACE);
                 tokenizer.next();
-            });
-        }
-    },
-
-    APPLY_STATEMENT_BLOCK {
-        @Override
-        void parse(CapturingTokenizer tokenizer) {
-            tokenizer.withState(this, () -> {
-                tokenizer.next();
-                SP.parse(tokenizer);
-                SHAPE_ID.parse(tokenizer);
-                WS.parse(tokenizer);
-                TRAIT.parse(tokenizer);
             });
         }
     },
@@ -915,8 +932,7 @@ public enum TreeType {
             tokenizer.withState(this, () -> {
                 tokenizer.expect(IdlToken.DOLLAR);
                 tokenizer.next();
-                tokenizer.expect(IdlToken.IDENTIFIER);
-                tokenizer.next();
+                IDENTIFIER.parse(tokenizer);
             });
         }
     },
