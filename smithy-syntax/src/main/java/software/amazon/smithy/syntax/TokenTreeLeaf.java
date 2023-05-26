@@ -18,6 +18,7 @@ package software.amazon.smithy.syntax;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 final class TokenTreeLeaf implements TokenTree {
 
@@ -28,8 +29,8 @@ final class TokenTreeLeaf implements TokenTree {
     }
 
     @Override
-    public List<CapturedToken> getTokens() {
-        return Collections.singletonList(token);
+    public Stream<CapturedToken> tokens() {
+        return Stream.of(token);
     }
 
     @Override
