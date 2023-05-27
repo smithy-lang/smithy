@@ -38,12 +38,9 @@ public final class EndpointTestsTest {
                 .addImport(EndpointTestsTest.class.getResource("traits-test-model.smithy"))
                 .assemble()
                 .unwrap();
-
         ServiceShape serviceShape = model.expectShape(ShapeId.from("smithy.example#ExampleService"),
                 ServiceShape.class);
-
         EndpointTestsTrait ruleSetTrait = serviceShape.getTrait(EndpointTestsTrait.class).get();
-
         List<EndpointTestCase> testCases = ruleSetTrait.getTestCases();
 
         assertThat(2, equalTo(testCases.size()));
@@ -70,6 +67,7 @@ public final class EndpointTestsTest {
                                         .build())
                                 .operationParams(ObjectNode.builder()
                                         .withMember("buzz", "a buzz value")
+                                        .withMember("fizz", "a required value")
                                         .build())
                                 .builtInParams(ObjectNode.builder()
                                         .withMember("SDK::Endpoint", "https://custom.example.com")
@@ -109,10 +107,9 @@ public final class EndpointTestsTest {
         TraitFactory traitFactory = TraitFactory.createServiceFactory();
         EndpointTestsTrait expectedTrait = (EndpointTestsTrait) traitFactory.createTrait(EndpointTestsTrait.ID,
                 ShapeId.from("ns.example#Foo"), expectedNode).get();
-
         EndpointTestsTrait actualTrait = expectedTrait.toBuilder().build();
-        assertThat(expectedTrait, equalTo(actualTrait));
 
-        assertThat(expectedNode, equalTo(actualTrait.toNode()));
+        Node.assertEquals(actualTrait.toNode(), expectedNode);
+        assertThat(expectedTrait, equalTo(actualTrait));
     }
 }

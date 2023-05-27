@@ -273,9 +273,11 @@ public final class RuleSetParameterValidator extends AbstractValidator {
                         StructureShape inputShape = model.expectShape(
                                 operationShape.getInputShape(), StructureShape.class);
                         for (String name : inputShape.getMemberNames()) {
-                            if (input.getOperationParams().containsMember(name)) {
-                                String paramName = inputShape.getMember(name).get()
-                                        .expectTrait(ContextParamTrait.class).getName();
+                            MemberShape memberShape = inputShape.getMember(name).get();
+                            if (input.getOperationParams().containsMember(name)
+                                    && memberShape.hasTrait(ContextParamTrait.class)
+                            ) {
+                                String paramName = memberShape.expectTrait(ContextParamTrait.class).getName();
                                 testParams.add(buildParameter(paramName,
                                         input.getOperationParams().expectMember(name)));
                             }
