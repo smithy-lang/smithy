@@ -47,7 +47,6 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * Dynamic            getAttr short form
  */
 @SmithyUnstableApi
-// TODO Is this tested well enough to make the toString change?
 public final class Template implements FromSourceLocation, ToNode {
     private final SourceLocation sourceLocation;
     private final List<Part> parts;
