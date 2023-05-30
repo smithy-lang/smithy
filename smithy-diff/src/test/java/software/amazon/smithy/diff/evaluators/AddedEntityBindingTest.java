@@ -41,7 +41,7 @@ public class AddedEntityBindingTest {
         Model modelB = Model.assembler().addShapes(service1, o).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
-        assertThat(TestHelper.findEvents(events, "AddedOperationBinding").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "AddedOperationBinding.ToServiceAdded.foo.baz#Operation").size(), equalTo(1));
     }
 
     @Test
@@ -53,7 +53,7 @@ public class AddedEntityBindingTest {
         Model modelB = Model.assembler().addShapes(r1, o).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
-        assertThat(TestHelper.findEvents(events, "AddedOperationBinding").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "AddedOperationBinding.ToResourceAdded.foo.baz#Operation").size(), equalTo(1));
     }
 
     @Test
@@ -69,7 +69,7 @@ public class AddedEntityBindingTest {
         Model modelB = Model.assembler().addShapes(service1, r).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
-        assertThat(TestHelper.findEvents(events, "AddedResourceBinding").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "AddedResourceBinding.ToServiceAdded.foo.baz#Resource").size(), equalTo(1));
     }
 
     @Test
@@ -81,6 +81,6 @@ public class AddedEntityBindingTest {
         Model modelB = Model.assembler().addShapes(p1, child).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
-        assertThat(TestHelper.findEvents(events, "AddedResourceBinding").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "AddedResourceBinding.ToResourceAdded.foo.baz#C").size(), equalTo(1));
     }
 }
