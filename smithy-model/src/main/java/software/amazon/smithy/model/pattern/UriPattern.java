@@ -178,4 +178,5 @@ public final class UriPattern extends SmithyPattern {
     public int hashCode() {
         return super.hashCode() + queryLiterals.hashCode();
     }
+
 }

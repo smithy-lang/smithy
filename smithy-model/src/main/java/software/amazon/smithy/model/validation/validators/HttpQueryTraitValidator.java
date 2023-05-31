@@ -23,11 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.knowledge.TopDownIndex;
+import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.pattern.UriPattern;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
@@ -94,9 +93,8 @@ public final class HttpQueryTraitValidator extends AbstractValidator {
                     String literalKey = literalEntry.getKey();
                     if (entry.getValue().containsKey(literalKey)) {
                         events.add(error(entry.getKey(), String.format(
-                            "`httpQuery` parameter name binding conflicts found for the `%s` parameter, the "
-                            + "http trait for the `%s` operation defines a query literal with the same name",
-                            literalKey, operation.getId())));
+                            "`httpQuery` name `%s` conflicts with the `http` trait of the `%s` operation: `%s`",
+                            literalKey, operation.getId(), pattern)));
                     }
                 }
             }
@@ -106,17 +104,13 @@ public final class HttpQueryTraitValidator extends AbstractValidator {
     }
 
     private Map<StructureShape, List<OperationShape>> getStructureToOperations(Model model) {
+        OperationIndex index = OperationIndex.of(model);
         Map<StructureShape, List<OperationShape>> structureToOperations = new HashMap<>();
-        for (ServiceShape service : model.getServiceShapes()) {
-            for (OperationShape operation : TopDownIndex.of(model).getContainedOperations(service)) {
-                if (operation.hasTrait(HttpTrait.class)) {
-                    model.expectShape(operation.getInputShape())
-                         .asStructureShape()
-                         .ifPresent(structure -> structureToOperations
-                             .computeIfAbsent(structure, key -> new ArrayList<>())
-                             .add(operation));
-                }
-            }
+        for (OperationShape operation : model.getOperationShapesWithTrait(HttpTrait.class)) {
+            index.getInput(operation)
+                 .ifPresent(structure -> structureToOperations
+                     .computeIfAbsent(structure, key -> new ArrayList<>())
+                     .add(operation));
         }
         return structureToOperations;
     }
