@@ -97,7 +97,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         method: "POST",
         uri: "/InputAndOutputWithHeaders",
         headers: {
-            "X-TimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
+            "X-TimestampList": "\"Mon, 16 Dec 2019 23:48:18 GMT\", \"Mon, 16 Dec 2019 23:48:18 GMT\""
         },
         body: "",
         params: {
@@ -236,7 +236,7 @@ apply InputAndOutputWithHeaders @httpResponseTests([
         protocol: restXml,
         code: 200,
         headers: {
-            "X-TimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
+            "X-TimestampList": "\"Mon, 16 Dec 2019 23:48:18 GMT\", \"Mon, 16 Dec 2019 23:48:18 GMT\""
         },
         body: "",
         params: {
@@ -435,11 +435,11 @@ apply TimestampFormatHeaders @httpRequestTests([
         uri: "/TimestampFormatHeaders",
         headers: {
             "X-memberEpochSeconds": "1576540098",
-            "X-memberHttpDate": "Mon, 16 Dec 2019 23:48:18 GMT",
+            "X-memberHttpDate": "\"Mon, 16 Dec 2019 23:48:18 GMT\"",
             "X-memberDateTime": "2019-12-16T23:48:18Z",
-            "X-defaultFormat": "Mon, 16 Dec 2019 23:48:18 GMT",
+            "X-defaultFormat": "\"Mon, 16 Dec 2019 23:48:18 GMT\"",
             "X-targetEpochSeconds": "1576540098",
-            "X-targetHttpDate": "Mon, 16 Dec 2019 23:48:18 GMT",
+            "X-targetHttpDate": "\"Mon, 16 Dec 2019 23:48:18 GMT\"",
             "X-targetDateTime": "2019-12-16T23:48:18Z",
         },
         body: "",
@@ -463,11 +463,11 @@ apply TimestampFormatHeaders @httpResponseTests([
         code: 200,
         headers: {
             "X-memberEpochSeconds": "1576540098",
-            "X-memberHttpDate": "Mon, 16 Dec 2019 23:48:18 GMT",
+            "X-memberHttpDate": "\"Mon, 16 Dec 2019 23:48:18 GMT\"",
             "X-memberDateTime": "2019-12-16T23:48:18Z",
-            "X-defaultFormat": "Mon, 16 Dec 2019 23:48:18 GMT",
+            "X-defaultFormat": "\"Mon, 16 Dec 2019 23:48:18 GMT\"",
             "X-targetEpochSeconds": "1576540098",
-            "X-targetHttpDate": "Mon, 16 Dec 2019 23:48:18 GMT",
+            "X-targetHttpDate": "\"Mon, 16 Dec 2019 23:48:18 GMT\"",
             "X-targetDateTime": "2019-12-16T23:48:18Z",
         },
         body: "",
