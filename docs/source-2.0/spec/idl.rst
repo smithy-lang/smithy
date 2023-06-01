@@ -197,10 +197,8 @@ string support defined in :rfc:`7405`.
     EntityShape             :`EntityTypeName` `SP` `Identifier` [`Mixins`] [`WS`] `NodeObject`
     EntityTypeName          :%s"service" / %s"resource"
     OperationShape          :%s"operation" `SP` `Identifier` [`Mixins`] [`WS`] `OperationBody`
-    OperationBody           :"{" [`WS`]
-                            :    *(`OperationInput` / `OperationOutput` / `OperationErrors`)
-                            :    [`WS`] "}"
-                            :    ; only one of each property can be specified.
+    OperationBody           :"{" [`WS`] *(`OperationProperty` [`WS`]) "}"
+    OperationProperty       :`OperationInput` / `OperationOutput` / `OperationErrors`
     OperationInput          :%s"input" [`WS`] (`InlineAggregateShape` / (":" [`WS`] `ShapeId`))
     OperationOutput         :%s"output" [`WS`] (`InlineAggregateShape` / (":" [`WS`] `ShapeId`))
     OperationErrors         :%s"errors" [`WS`] ":" [`WS`] "[" [`WS`] *(`ShapeId` [`WS`]) "]"
@@ -209,15 +207,14 @@ string support defined in :rfc:`7405`.
 .. rubric:: Traits
 
 .. productionlist:: smithy
-    TraitStatements         :*([`WS`] `Trait`) [`WS`]
+    TraitStatements         :*(`Trait` [`WS`])
     Trait                   :"@" `ShapeId` [`TraitBody`]
-    TraitBody               :"(" [`WS`] [`TraitBodyValue`] [`WS`] ")"
-    TraitBodyValue          :`TraitStructure` / `NodeValue`
-    TraitStructure          :`TraitStructureKvp` *([`WS`] `TraitStructureKvp`)
-    TraitStructureKvp       :`NodeObjectKey` [`WS`] ":" [`WS`] `NodeValue`
+    TraitBody               :"(" [`WS`] [`TraitStructure` / `TraitNode`] ")"
+    TraitStructure          :1*(`NodeObjectKvp` [`WS`])
+    TraitNode               :`NodeValue` [`WS`]
     ApplyStatement          :`ApplyStatementSingular` / `ApplyStatementBlock`
     ApplyStatementSingular  :%s"apply" `SP` `ShapeId` `WS` `Trait`
-    ApplyStatementBlock     :%s"apply" `SP` `ShapeId` `WS` "{" `TraitStatements` "}"
+    ApplyStatementBlock     :%s"apply" `SP` `ShapeId` `WS` "{" [`WS`] `TraitStatements` "}"
 
 .. rubric:: Shape ID
 
