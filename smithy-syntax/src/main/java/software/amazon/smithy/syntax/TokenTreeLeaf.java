@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
+import software.amazon.smithy.model.SourceLocation;
 
 final class TokenTreeLeaf implements TokenTree {
 
@@ -26,6 +27,11 @@ final class TokenTreeLeaf implements TokenTree {
 
     TokenTreeLeaf(CapturedToken token) {
         this.token = token;
+    }
+
+    @Override
+    public SourceLocation getSourceLocation() {
+        return token.getSourceLocation();
     }
 
     @Override
@@ -41,6 +47,11 @@ final class TokenTreeLeaf implements TokenTree {
     @Override
     public List<TokenTree> getChildren() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
     }
 
     @Override
