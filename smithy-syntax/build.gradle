@@ -23,4 +23,5 @@ ext {
 dependencies {
     api project(":smithy-utils")
     api project(":smithy-model")
+    implementation "com.opencastsoftware:prettier4j:0.1.1"
 }

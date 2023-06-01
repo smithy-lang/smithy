@@ -68,20 +68,8 @@ public class TreeCursorTest {
     }
 
     private TokenTree createTree() {
-        String model = IoUtils.readUtf8Url(getClass().getResource("simple-model.smithy"));
+        String model = IoUtils.readUtf8Url(getClass().getResource("formatter/simple-model.smithy"));
         IdlTokenizer tokenizer = IdlTokenizer.create(model);
         return TokenTree.parse(tokenizer);
-    }
-
-    @Test
-    public void getPathToCurrentTree() {
-        TokenTree tree = createTree();
-        TreeCursor cursor = tree.zipper();
-        TreeCursor click = cursor.findAt(3, 17);
-        List<TreeCursor> path = click.getPathToCursor();
-
-        for (TreeCursor c : path) {
-            System.out.println(c.getTree().getType());
-        }
     }
 }

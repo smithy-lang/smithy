@@ -6,6 +6,5 @@ namespace smithy.example
 
 /// Documentation
 @sensitive
-@length(min: 10,
-        max: 100)
+@length(min: 10, max: 100)
 string MyString
