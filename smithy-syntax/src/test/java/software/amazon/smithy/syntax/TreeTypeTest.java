@@ -54,7 +54,7 @@ public class TreeTypeTest {
         TreeType.NODE_OBJECT_KEY.parse(tokenizer);
         rootAndChildTypesEqual(tokenizer.getRoot().getChildren().get(0),
                 TreeType.NODE_OBJECT_KEY,
-                TreeType.TOKEN);
+                TreeType.IDENTIFIER);
     }
 
     @Test
@@ -64,7 +64,7 @@ public class TreeTypeTest {
         TreeType.NODE_OBJECT_KEY.parse(tokenizer);
         rootAndChildTypesEqual(tokenizer.getRoot().getChildren().get(0),
                 TreeType.NODE_OBJECT_KEY,
-                TreeType.TOKEN);
+                TreeType.QUOTED_TEXT);
     }
 
     @Test
@@ -495,7 +495,7 @@ public class TreeTypeTest {
 
     @Test
     public void shapeMember() {
-        String shapeMember = "\n\t@foo\n/// Foo\n\tfoo: Bar";
+        String shapeMember = "@foo\n/// Foo\n\tfoo: Bar";
         TokenTree tree = getTree(TreeType.SHAPE_MEMBER, shapeMember);
         rootAndChildTypesEqual(tree,
                 TreeType.SHAPE_MEMBER,
@@ -505,11 +505,10 @@ public class TreeTypeTest {
 
     @Test
     public void traitStatements() {
-        String traitStatements = "\n\n\t\n@foo\t// Foo\n\t/// Foo\n@bar\n";
+        String traitStatements = "@foo\t// Foo\n\t/// Foo\n@bar\n";
         TokenTree tree = getTree(TreeType.TRAIT_STATEMENTS, traitStatements);
         rootAndChildTypesEqual(tree,
                 TreeType.TRAIT_STATEMENTS,
-                TreeType.WS,
                 TreeType.TRAIT,
                 TreeType.WS,
                 TreeType.TRAIT,
@@ -523,8 +522,29 @@ public class TreeTypeTest {
         rootAndChildTypesEqual(tree,
                 TreeType.TRAIT,
                 TreeType.TOKEN,
-                TreeType.SHAPE_ID,
-                TreeType.TRAIT_BODY);
+                TreeType.SHAPE_ID);
+    }
+
+    @Test
+    public void traitWithEmptyBody() {
+        String trait = "@abc()";
+        TokenTree tree = getTree(TreeType.TRAIT, trait);
+        rootAndChildTypesEqual(tree,
+                               TreeType.TRAIT,
+                               TreeType.TOKEN,
+                               TreeType.SHAPE_ID,
+                               TreeType.TRAIT_BODY);
+    }
+
+    @Test
+    public void traitWithNonEmptyBody() {
+        String trait = "@abc(hi)";
+        TokenTree tree = getTree(TreeType.TRAIT, trait);
+        rootAndChildTypesEqual(tree,
+                               TreeType.TRAIT,
+                               TreeType.TOKEN,
+                               TreeType.SHAPE_ID,
+                               TreeType.TRAIT_BODY);
     }
 
     @Test
@@ -535,35 +555,48 @@ public class TreeTypeTest {
                 TreeType.TRAIT_BODY,
                 TreeType.TOKEN,
                 TreeType.WS,
-                TreeType.TRAIT_BODY_VALUE,
+                TreeType.TRAIT_STRUCTURE,
                 TreeType.TOKEN);
     }
 
     @Test
-    public void traitBodyValueTraitStructure() {
-        String traitBodyValue = "foo: bar";
-        TokenTree tree = getTree(TreeType.TRAIT_BODY_VALUE, traitBodyValue);
-        rootAndChildTypesEqual(tree,
-                TreeType.TRAIT_BODY_VALUE,
-                TreeType.TRAIT_STRUCTURE);
+    public void traitBodyTraitStructure() {
+        String traitBody = "foo: bar";
+        TokenTree tree = getTree(TreeType.TRAIT_STRUCTURE, traitBody);
+        rootAndChildTypesEqual(tree, TreeType.TRAIT_STRUCTURE, TreeType.NODE_OBJECT_KVP);
     }
 
     @Test
-    public void traitBodyValueSingleString() {
-        String traitBodyValue = "\"foo\"";
-        TokenTree tree = getTree(TreeType.TRAIT_BODY_VALUE, traitBodyValue);
-        rootAndChildTypesEqual(tree,
-                TreeType.TRAIT_BODY_VALUE,
-                TreeType.NODE_VALUE);
+    public void traitBodyTraitNodeString() {
+        String traitBody = "(\"foo\")";
+        TokenTree tree = getTree(TreeType.TRAIT_BODY, traitBody);
+        rootAndChildTypesEqual(tree, TreeType.TRAIT_BODY, TreeType.TOKEN, TreeType.TRAIT_NODE, TreeType.TOKEN);
     }
 
     @Test
-    public void traitBodyValueNodeValue() {
-        String traitBodyValue = "{ foo: bar }";
-        TokenTree tree = getTree(TreeType.TRAIT_BODY_VALUE, traitBodyValue);
+    public void traitBodyWithWs() {
+        String traitBody = "( \"foo\" )";
+        TokenTree tree = getTree(TreeType.TRAIT_BODY, traitBody);
         rootAndChildTypesEqual(tree,
-                TreeType.TRAIT_BODY_VALUE,
-                TreeType.NODE_VALUE);
+                TreeType.TRAIT_BODY,
+                TreeType.TOKEN,
+                TreeType.WS,
+                TreeType.TRAIT_NODE,
+                TreeType.TOKEN);
+    }
+
+    @Test
+    public void traitBodyTraitNodeStructure() {
+        String traitBody = "({ foo: bar })";
+        TokenTree tree = getTree(TreeType.TRAIT_BODY, traitBody);
+        rootAndChildTypesEqual(tree, TreeType.TRAIT_BODY, TreeType.TOKEN, TreeType.TRAIT_NODE, TreeType.TOKEN);
+    }
+
+    @Test
+    public void traitNodeTest() {
+        String traitBody = "\"foo\"";
+        TokenTree tree = getTree(TreeType.TRAIT_NODE, traitBody);
+        rootAndChildTypesEqual(tree, TreeType.TRAIT_NODE, TreeType.NODE_VALUE);
     }
 
     @Test
@@ -572,25 +605,12 @@ public class TreeTypeTest {
         TokenTree tree = getTree(TreeType.TRAIT_STRUCTURE, traitStructure);
         rootAndChildTypesEqual(tree,
                 TreeType.TRAIT_STRUCTURE,
-                TreeType.TRAIT_STRUCTURE_KVP,
+                TreeType.NODE_OBJECT_KVP,
                 TreeType.WS,
-                TreeType.TRAIT_STRUCTURE_KVP,
+                TreeType.NODE_OBJECT_KVP,
                 TreeType.WS,
-                TreeType.TRAIT_STRUCTURE_KVP,
+                TreeType.NODE_OBJECT_KVP,
                 TreeType.WS);
-    }
-
-    @Test
-    public void traitStructureKvp() {
-        String traitStructureKvp = "foo// abc\n:\n\tbar";
-        TokenTree tree = getTree(TreeType.TRAIT_STRUCTURE_KVP, traitStructureKvp);
-        rootAndChildTypesEqual(tree,
-                TreeType.TRAIT_STRUCTURE_KVP,
-                TreeType.NODE_OBJECT_KEY,
-                TreeType.WS,
-                TreeType.TOKEN,
-                TreeType.WS,
-                TreeType.NODE_VALUE);
     }
 
     @Test
@@ -929,11 +949,11 @@ public class TreeTypeTest {
     public void nodeObjectKey() {
         String quoted = "\"foo bar\"";
         TokenTree quotedTree = getTree(TreeType.NODE_OBJECT_KEY, quoted);
-        rootAndChildTypesEqual(quotedTree, TreeType.NODE_OBJECT_KEY, TreeType.TOKEN);
+        rootAndChildTypesEqual(quotedTree, TreeType.NODE_OBJECT_KEY, TreeType.QUOTED_TEXT);
 
         String identifier = "foo";
         TokenTree idTree = getTree(TreeType.NODE_OBJECT_KEY, identifier);
-        rootAndChildTypesEqual(idTree, TreeType.NODE_OBJECT_KEY, TreeType.TOKEN);
+        rootAndChildTypesEqual(idTree, TreeType.NODE_OBJECT_KEY, TreeType.IDENTIFIER);
     }
 
     @Test

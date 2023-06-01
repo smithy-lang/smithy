@@ -16,6 +16,8 @@
 package software.amazon.smithy.syntax;
 
 import java.util.function.Function;
+import software.amazon.smithy.model.FromSourceLocation;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.loader.IdlToken;
 import software.amazon.smithy.model.loader.IdlTokenizer;
 
@@ -27,9 +29,10 @@ import software.amazon.smithy.model.loader.IdlTokenizer;
  * token. Because smithy-syntax needs to create a token-tree rather than go directly to an AST, it requires arbitrary
  * lookahead of tokens, which means it needs to persist tokens in memory, using this {@code CapturedToken}.
  */
-public final class CapturedToken {
+public final class CapturedToken implements FromSourceLocation {
 
     private final IdlToken token;
+    private final String filename;
     private final int position;
     private final int startLine;
     private final int startColumn;
@@ -42,6 +45,7 @@ public final class CapturedToken {
 
     private CapturedToken(
             IdlToken token,
+            String filename,
             int position,
             int startLine,
             int startColumn,
@@ -53,6 +57,7 @@ public final class CapturedToken {
             String errorMessage
     ) {
         this.token = token;
+        this.filename = filename;
         this.position = position;
         this.startLine = startLine;
         this.startColumn = startColumn;
@@ -90,6 +95,7 @@ public final class CapturedToken {
         String errorMessage = token == IdlToken.ERROR ? tokenizer.getCurrentTokenError() : null;
         Number numberValue = token == IdlToken.NUMBER ? tokenizer.getCurrentTokenNumberValue() : null;
         return new CapturedToken(token,
+                                 tokenizer.getSourceFilename(),
                                  tokenizer.getCurrentTokenStart(),
                                  tokenizer.getCurrentTokenLine(),
                                  tokenizer.getCurrentTokenColumn(),
@@ -108,6 +114,15 @@ public final class CapturedToken {
      */
     public IdlToken getIdlToken() {
         return token;
+    }
+
+    @Override
+    public SourceLocation getSourceLocation() {
+        return new SourceLocation(getFilename(), getStartLine(), getStartColumn());
+    }
+
+    public String getFilename() {
+        return filename;
     }
 
     public int getPosition() {

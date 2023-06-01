@@ -17,6 +17,7 @@ package software.amazon.smithy.syntax;
 
 import java.util.List;
 import java.util.stream.Stream;
+import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.loader.IdlTokenizer;
 
 /**
@@ -25,7 +26,7 @@ import software.amazon.smithy.model.loader.IdlTokenizer;
  * <p>This abstraction is a kind of parse tree based on lexer tokens. Each consumed token is present in the tree,
  * and grouped together into nodes with labels defined by {@link TreeType}.
  */
-public interface TokenTree {
+public interface TokenTree extends FromSourceLocation {
 
     /**
      * Create a TokenTree from a {@link IdlTokenizer}.
@@ -82,6 +83,13 @@ public interface TokenTree {
      * @return Returns direct children.
      */
     List<TokenTree> getChildren();
+
+    /**
+     * Detect if the tree is empty.
+     *
+     * @return Return true if the tree has no children or tokens.
+     */
+    boolean isEmpty();
 
     /**
      * Check if the tree has an immediate child of the given type.

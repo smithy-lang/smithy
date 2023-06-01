@@ -32,10 +32,6 @@ import software.amazon.smithy.model.loader.StringTable;
  */
 final class CapturingTokenizer implements IdlTokenizer {
 
-    // For now, this also skips doc comments. We may later move doc comments out of WS.
-    private static final IdlToken[] WS_CHARS = {IdlToken.SPACE, IdlToken.NEWLINE, IdlToken.COMMA,
-                                                IdlToken.COMMENT, IdlToken.DOC_COMMENT};
-
     private final IdlTokenizer delegate;
     private final TokenTree root = TokenTree.of(TreeType.IDL);
     private final Deque<TokenTree> trees = new ArrayDeque<>();
@@ -186,29 +182,6 @@ final class CapturingTokenizer implements IdlTokenizer {
             trees.removeFirst();
         }
         return tree;
-    }
-
-    void expectWs() {
-        expect(WS_CHARS);
-        do {
-            next();
-        } while (isWs());
-    }
-
-    boolean isWs() {
-        return isToken(WS_CHARS);
-    }
-
-    private boolean isToken(IdlToken... tokens) {
-        IdlToken currentTokenType = getCurrentToken();
-
-        for (IdlToken token : tokens) {
-            if (currentTokenType == token) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     // Performs basic error recovery by skipping tokens until a $, identifier, or @ is found at column 1.
