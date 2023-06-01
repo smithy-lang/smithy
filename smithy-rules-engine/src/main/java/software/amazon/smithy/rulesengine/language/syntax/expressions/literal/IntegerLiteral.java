@@ -1,20 +1,11 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package software.amazon.smithy.rulesengine.language.syntax.expressions.literal;
 
+import java.math.BigInteger;
 import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
@@ -24,12 +15,26 @@ import software.amazon.smithy.model.node.NumberNode;
 public final class IntegerLiteral extends Literal {
     private final NumberNode value;
 
+    IntegerLiteral(NumberNode value) {
+        super(value);
+        validateValue(value);
+        this.value = value;
+    }
+
     IntegerLiteral(NumberNode value, FromSourceLocation sourceLocation) {
         super(sourceLocation);
-        if (!value.isNaturalNumber()) {
-            throw new RuntimeException("only integers >= 0 are supported");
-        }
+        validateValue(value);
         this.value = value;
+    }
+
+    private void validateValue(NumberNode numberNode) {
+        if (!numberNode.isNaturalNumber()) {
+            throw new RuntimeException("Only integer values greater than or equal to 0 are supported.");
+        }
+
+        if (BigInteger.valueOf(numberNode.getValue().longValue()).compareTo(BigInteger.ZERO) < 0) {
+            throw new RuntimeException("Only integer values greater than or equal to 0 are supported.");
+        }
     }
 
     @Override
@@ -38,13 +43,13 @@ public final class IntegerLiteral extends Literal {
     }
 
     @Override
-    public Optional<Integer> asInteger() {
+    public Optional<Integer> asIntegerLiteral() {
         return Optional.of(this.value.getValue().intValue());
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(value);
+    public Node toNode() {
+        return value;
     }
 
     @Override
@@ -60,12 +65,12 @@ public final class IntegerLiteral extends Literal {
     }
 
     @Override
-    public String toString() {
-        return Integer.toString(value.getValue().intValue());
+    public int hashCode() {
+        return Objects.hash(value);
     }
 
     @Override
-    public Node toNode() {
-        return value;
+    public String toString() {
+        return Integer.toString(value.getValue().intValue());
     }
 }

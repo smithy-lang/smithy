@@ -20,9 +20,9 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
-import software.amazon.smithy.rulesengine.language.eval.type.BooleanType;
-import software.amazon.smithy.rulesengine.language.eval.type.StringType;
-import software.amazon.smithy.rulesengine.language.eval.type.Type;
+import software.amazon.smithy.rulesengine.language.evaluation.type.BooleanType;
+import software.amazon.smithy.rulesengine.language.evaluation.type.StringType;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
@@ -33,7 +33,8 @@ public enum ParameterType {
         String value = node.getValue();
         if (value.equalsIgnoreCase("String")) {
             return STRING;
-        } else if (value.equalsIgnoreCase("Boolean")) {
+        }
+        if (value.equalsIgnoreCase("Boolean")) {
             return BOOLEAN;
         }
         throw new RuleError(new SourceException(
@@ -43,7 +44,8 @@ public enum ParameterType {
     public static ParameterType fromNode(Node node) throws RuleError {
         if (node.isStringNode()) {
             return STRING;
-        } else if (node.isBooleanNode()) {
+        }
+        if (node.isBooleanNode()) {
             return BOOLEAN;
         }
         throw new RuleError(new SourceException(
@@ -53,7 +55,8 @@ public enum ParameterType {
     public static ParameterType fromType(Type type) {
         if (type instanceof StringType) {
             return STRING;
-        } else if (type instanceof BooleanType) {
+        }
+        if (type instanceof BooleanType) {
             return BOOLEAN;
         }
         throw new RuntimeException(
@@ -63,7 +66,8 @@ public enum ParameterType {
     public static ParameterType fromShapeType(ShapeType type) {
         if (type == ShapeType.STRING) {
             return STRING;
-        } else if (type == ShapeType.BOOLEAN) {
+        }
+        if (type == ShapeType.BOOLEAN) {
             return BOOLEAN;
         }
         throw new RuntimeException(
@@ -72,13 +76,6 @@ public enum ParameterType {
 
     @Override
     public String toString() {
-        switch (this) {
-            case STRING:
-                return "String";
-            case BOOLEAN:
-                return "Boolean";
-            default:
-                throw new IllegalArgumentException();
-        }
+        return this == STRING ? "String" : "Boolean";
     }
 }

@@ -16,10 +16,13 @@
 package software.amazon.smithy.rulesengine.language.syntax.parameters;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
@@ -28,14 +31,14 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.RulesComponentBuilder;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
-import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.type.Type;
+import software.amazon.smithy.rulesengine.language.evaluation.Scope;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 @SmithyUnstableApi
-public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBuilder<Parameters> {
+public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBuilder<Parameters>, Iterable<Parameter> {
     private final List<Parameter> parameters;
     private final SourceLocation sourceLocation;
 
@@ -65,44 +68,6 @@ public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBui
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(parameters);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Parameters that = (Parameters) o;
-        return parameters.equals(that.parameters);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (Parameter param : parameters) {
-            sb.append(param);
-            sb.append("\n");
-        }
-        return sb.toString();
-    }
-
-    @Override
-    public Builder toBuilder() {
-        Builder b = builder().sourceLocation(sourceLocation);
-        parameters.forEach(b::addParameter);
-        return b;
-    }
-
-    public List<Parameter> toList() {
-        return parameters;
-    }
-
-    @Override
     public SourceLocation getSourceLocation() {
         return sourceLocation;
     }
@@ -123,6 +88,55 @@ public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBui
             params.withMember(parameter.getName().getName(), parameter);
         }
         return params.build();
+    }
+
+    @Override
+    public Builder toBuilder() {
+        Builder b = builder().sourceLocation(sourceLocation);
+        parameters.forEach(b::addParameter);
+        return b;
+    }
+
+    @Override
+    public Iterator<Parameter> iterator() {
+        return parameters.iterator();
+    }
+
+    @Override
+    public void forEach(Consumer<? super Parameter> action) {
+        parameters.forEach(action);
+    }
+
+    @Override
+    public Spliterator<Parameter> spliterator() {
+        return parameters.spliterator();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Parameters that = (Parameters) o;
+        return parameters.equals(that.parameters);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(parameters);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Parameter param : parameters) {
+            sb.append(param);
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 
     public static class Builder extends RulesComponentBuilder<Builder, Parameters> {

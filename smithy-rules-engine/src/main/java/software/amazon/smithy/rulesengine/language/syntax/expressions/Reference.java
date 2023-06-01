@@ -21,10 +21,10 @@ import java.util.Objects;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.type.Type;
+import software.amazon.smithy.rulesengine.language.evaluation.Scope;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.visit.ExpressionVisitor;
+import software.amazon.smithy.rulesengine.language.visitors.ExpressionVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -39,9 +39,37 @@ public final class Reference extends Expression {
         this.name = name;
     }
 
+    public Identifier getName() {
+        return name;
+    }
+
+    @Override
+    public String getTemplate() {
+        return String.format("{%s}", name);
+    }
+
     @Override
     public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visitRef(this);
+    }
+
+    @Override
+    public Type typeCheckLocal(Scope<Type> scope) {
+        return context("while resolving the type of reference " + name, this, () -> {
+            Type baseType = scope.expectValue(name);
+            if (scope.isNonNull(this)) {
+                return baseType.expectOptionalType().inner();
+            } else {
+                return baseType;
+            }
+        });
+    }
+
+    @Override
+    public Node toNode() {
+        return ObjectNode.builder()
+                .withMember("ref", name.toString())
+                .build();
     }
 
     @Override
@@ -62,39 +90,7 @@ public final class Reference extends Expression {
     }
 
     @Override
-    public Type typeCheckLocal(Scope<Type> scope) {
-        return context(
-                "while resolving the type of reference " + name,
-                this,
-                () -> {
-                    Type baseType = scope.expectValue(this.name);
-                    if (scope.isNonNull(this)) {
-                        return baseType.expectOptionalType().inner();
-                    } else {
-                        return baseType;
-                    }
-                }
-        );
-    }
-
-    @Override
-    public String getTemplate() {
-        return String.format("{%s}", name);
-    }
-
-    public Identifier getName() {
-        return name;
-    }
-
-    @Override
     public String toString() {
         return name.toString();
-    }
-
-    @Override
-    public Node toNode() {
-        return ObjectNode.builder()
-                .withMember("ref", name.toString())
-                .build();
     }
 }

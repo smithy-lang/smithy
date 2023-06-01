@@ -1,16 +1,6 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package software.amazon.smithy.rulesengine.validators;
@@ -33,9 +23,10 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
-import software.amazon.smithy.rulesengine.language.eval.value.Value;
+import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.ParameterType;
+import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.traits.ClientContextParamDefinition;
 import software.amazon.smithy.rulesengine.traits.ClientContextParamsTrait;
 import software.amazon.smithy.rulesengine.traits.ContextParamTrait;
@@ -66,7 +57,7 @@ public final class RuleSetParameterValidator extends AbstractValidator {
 
             // Make sure parameters align across Params <-> RuleSet transitions.
             EndpointRuleSet ruleSet = serviceShape.expectTrait(EndpointRuleSetTrait.class).getEndpointRuleSet();
-            errors.addAll(validateParametersMatching(serviceShape, ruleSet.getParameters().toList(),
+            errors.addAll(validateParametersMatching(serviceShape, ruleSet.getParameters(),
                     errorsParamsPair.getRight()));
 
             // Check that tests declare required parameters, only defined parameters, etc.
@@ -150,7 +141,7 @@ public final class RuleSetParameterValidator extends AbstractValidator {
 
     private List<ValidationEvent> validateParametersMatching(
             ServiceShape serviceShape,
-            List<Parameter> ruleSetParams,
+            Parameters ruleSetParams,
             Map<String, Parameter> modelParams
     ) {
         List<ValidationEvent> errors = new ArrayList<>();
@@ -196,7 +187,7 @@ public final class RuleSetParameterValidator extends AbstractValidator {
         Map<String, List<Parameter>> testSuiteParams = extractTestSuiteParameters(model, topDownIndex,
                 serviceShape, ruleSet, trait);
 
-        for (Parameter parameter : ruleSet.getParameters().toList()) {
+        for (Parameter parameter : ruleSet.getParameters()) {
             String name = parameter.getName().toString();
             rulesetParamNames.add(name);
             boolean testSuiteHasParam = testSuiteParams.containsKey(name);
@@ -259,7 +250,7 @@ public final class RuleSetParameterValidator extends AbstractValidator {
 
                 // A little indirection here, since only parameters tracks the name of the built in.
                 for (Map.Entry<String, Node> entry : input.getBuiltInParams().getStringMap().entrySet()) {
-                    for (Parameter parameter : ruleSet.getParameters().toList()) {
+                    for (Parameter parameter : ruleSet.getParameters()) {
                         if (parameter.isBuiltIn() && parameter.getBuiltIn().get().equals(entry.getKey())) {
                             testParams.add(buildParameter(entry, parameter.getName().toString()));
                         }

@@ -15,7 +15,6 @@
 
 package software.amazon.smithy.rulesengine.language.model;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import software.amazon.smithy.model.FromSourceLocation;
@@ -26,6 +25,7 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.RulesComponentBuilder;
 import software.amazon.smithy.utils.BuilderRef;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -36,59 +36,32 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class Partitions implements ToSmithyBuilder<Partitions>, FromSourceLocation, ToNode {
     private static final String VERSION = "version";
     private static final String PARTITIONS = "partitions";
+    private static final List<String> PROPERTIES = ListUtils.of(VERSION, PARTITIONS);
+
     private final String version;
     private final List<Partition> partitions;
     private final SourceLocation sourceLocation;
 
     private Partitions(Builder builder) {
+        this.sourceLocation = builder.getSourceLocation();
         this.version = builder.version;
         this.partitions = builder.partitions.copy();
-        this.sourceLocation = builder.getSourceLocation();
-    }
-
-    public static Partitions fromNode(Node node) {
-        ObjectNode objNode = node.expectObjectNode();
-
-        Builder b = new Builder(node);
-
-        objNode.expectNoAdditionalProperties(Arrays.asList(VERSION, PARTITIONS));
-
-        objNode.getStringMember(VERSION).ifPresent(v -> b.version(v.toString()));
-        objNode.getArrayMember(PARTITIONS).ifPresent(partitionsNode ->
-                partitionsNode.forEach(partNode ->
-                        b.addPartition(Partition.fromNode(partNode))));
-
-        return b.build();
     }
 
     public static Builder builder() {
         return new Builder(SourceLocation.none());
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(version, partitions, sourceLocation);
-    }
+    public static Partitions fromNode(Node node) {
+        Builder builder = new Builder(node);
+        ObjectNode objNode = node.expectObjectNode();
+        objNode.expectNoAdditionalProperties(PROPERTIES);
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Partitions that = (Partitions) o;
-        return version.equals(that.version) && partitions.equals(that.partitions);
-    }
+        objNode.getStringMember(VERSION, builder::version);
+        objNode.getArrayMember(PARTITIONS, partitionsNode ->
+                partitionsNode.forEach(partNode -> builder.addPartition(Partition.fromNode(partNode))));
 
-    @Override
-    public String toString() {
-        return "Partitions{"
-               + "version='" + version + '\''
-               + ", partitions=" + partitions
-               + ", sourceLocation=" + sourceLocation
-               + '}';
+        return builder.build();
     }
 
     public String getVersion() {
@@ -113,16 +86,38 @@ public final class Partitions implements ToSmithyBuilder<Partitions>, FromSource
 
     @Override
     public Node toNode() {
+        ArrayNode.Builder partitionsNodeBuilder = ArrayNode.builder();
+        partitions.forEach(partitionsNodeBuilder::withValue);
+
         return Node.objectNodeBuilder()
                 .withMember(VERSION, Node.from(version))
-                .withMember(PARTITIONS, partitionsNode())
+                .withMember(PARTITIONS, partitionsNodeBuilder.build())
                 .build();
     }
 
-    private Node partitionsNode() {
-        ArrayNode.Builder node = ArrayNode.builder();
-        partitions.forEach(node::withValue);
-        return node.build();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Partitions that = (Partitions) o;
+        return version.equals(that.version) && partitions.equals(that.partitions);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(version, partitions, sourceLocation);
+    }
+
+    @Override
+    public String toString() {
+        return "Partitions{version='" + version
+               + "', partitions=" + partitions
+               + ", sourceLocation=" + sourceLocation
+               + '}';
     }
 
     public static class Builder extends RulesComponentBuilder<Builder, Partitions> {

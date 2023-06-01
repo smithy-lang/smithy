@@ -25,9 +25,9 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.TypeCheck;
-import software.amazon.smithy.rulesengine.language.eval.type.Type;
+import software.amazon.smithy.rulesengine.language.evaluation.Scope;
+import software.amazon.smithy.rulesengine.language.evaluation.TypeCheck;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionNode;
@@ -56,34 +56,33 @@ public final class Condition implements TypeCheck, FromSourceLocation, ToNode {
      * @return the condition instance.
      */
     public static Condition fromNode(Node node) {
-        ObjectNode on = node.expectObjectNode("condition must be an object node");
-        Expression fn = FunctionNode.fromNode(on).validate();
-        Optional<Identifier> result = on.getStringMember(ASSIGN).map(Identifier::of);
         Builder builder = new Builder();
-        result.ifPresent(builder::result);
-        builder.fn(fn);
+        ObjectNode objectNode = node.expectObjectNode("condition must be an object node");
+
+        builder.fn(FunctionNode.fromNode(objectNode).validate());
+        // This needs to go directly through the node to maintain source locations.
+        if (objectNode.containsMember(ASSIGN)) {
+            builder.result(Identifier.of(objectNode.expectStringMember(ASSIGN)));
+        }
+
         return builder.build();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Condition condition = (Condition) o;
-        return Objects.equals(fn, condition.fn) && Objects.equals(result, condition.result);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(fn, result);
     }
 
     public Expression getFn() {
         return fn;
+    }
+
+    /**
+     * Converts this condition to an expression reference if the condition has a result assignment. Otherwise throws
+     * an exception.
+     *
+     * @return the result as a reference expression.
+     */
+    public Expression toExpression() {
+        if (result == null) {
+            throw new RuntimeException("Cannot generate expression from a condition without a result");
+        }
+        return Expression.getReference(result, javaLocation());
     }
 
     @Override
@@ -104,23 +103,14 @@ public final class Condition implements TypeCheck, FromSourceLocation, ToNode {
     public Type typeCheck(Scope<Type> scope) {
         Type conditionType = fn.typeCheck(scope);
         // If the condition is validated, then the expression must be a truthy type
-        getResult().ifPresent(resultName -> {
-            scope.getDeclaration(resultName).ifPresent(entry -> {
+        if (result != null) {
+            scope.getDeclaration(result).ifPresent(entry -> {
                 throw new SourceException(String.format("Invalid shadowing of `%s` (first declared on line %s)",
-                        resultName, entry.getKey().getSourceLocation().getLine()), resultName);
+                        result, entry.getKey().getSourceLocation().getLine()), result);
             });
-            scope.insert(resultName, conditionType.provenTruthy());
-        });
+            scope.insert(result, conditionType.provenTruthy());
+        }
         return conditionType;
-    }
-
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        this.getResult().ifPresent(res -> sb.append(res).append(" = "));
-        sb.append(this.fn);
-        return sb.toString();
     }
 
     @Override
@@ -132,18 +122,30 @@ public final class Condition implements TypeCheck, FromSourceLocation, ToNode {
         return conditionNode.build();
     }
 
-    /**
-     * Converts this condition to an expression reference if the condition has a result assignment. Otherwise throws
-     * an exception.
-     *
-     * @return the result as a reference expression.
-     */
-    public Expression toExpression() {
-        if (this.getResult().isPresent()) {
-            return Expression.getReference(this.getResult().get(), javaLocation());
-        } else {
-            throw new RuntimeException("Cannot generate expression from a condition without a result");
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
         }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Condition condition = (Condition) o;
+        return Objects.equals(fn, condition.fn) && Objects.equals(result, condition.result);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fn, result);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        if (result != null) {
+            sb.append(result).append(" = ");
+        }
+        return sb.append(fn).toString();
     }
 
     public static class Builder implements SmithyBuilder<Condition> {
@@ -168,6 +170,5 @@ public final class Condition implements TypeCheck, FromSourceLocation, ToNode {
         public Condition build() {
             return new Condition(this);
         }
-
     }
 }

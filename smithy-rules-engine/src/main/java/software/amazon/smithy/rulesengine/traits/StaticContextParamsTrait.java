@@ -117,5 +117,4 @@ public final class StaticContextParamsTrait extends AbstractTrait implements ToS
             return new StaticContextParamsTrait(this);
         }
     }
-
 }

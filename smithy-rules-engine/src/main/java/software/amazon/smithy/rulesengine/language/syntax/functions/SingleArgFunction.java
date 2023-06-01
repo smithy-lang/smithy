@@ -18,8 +18,8 @@ package software.amazon.smithy.rulesengine.language.syntax.functions;
 import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
 
 import software.amazon.smithy.model.SourceException;
-import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.type.Type;
+import software.amazon.smithy.rulesengine.language.evaluation.Scope;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -42,13 +42,13 @@ abstract class SingleArgFunction<T extends Type> extends Function {
 
     @Override
     protected Type typeCheckLocal(Scope<Type> scope) {
-        return context("while typechecking " + this.functionNode.getName(), this, () -> {
+        return context("while typechecking " + functionNode.getName(), this, () -> {
             Expression arg = expectOneArgument();
-            Type t = arg.typeCheck(scope);
-            if (!t.isA(this.expectedType)) {
-                throw new SourceException(String.format("Expected %s but found %s", this.expectedType, t), arg);
+            Type type = arg.typeCheck(scope);
+            if (!type.isA(expectedType)) {
+                throw new SourceException(String.format("Expected %s but found %s", expectedType, type), arg);
             }
-            return typeCheckArgument(scope, (T) t);
+            return typeCheckArgument(scope, (T) type);
         });
     }
 

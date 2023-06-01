@@ -15,15 +15,14 @@
 
 package software.amazon.smithy.rulesengine.language.syntax.rule;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
-import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.type.Type;
-import software.amazon.smithy.rulesengine.language.visit.RuleValueVisitor;
+import software.amazon.smithy.rulesengine.language.evaluation.Scope;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -36,23 +35,19 @@ public final class TreeRule extends Rule {
         this.rules = rules;
     }
 
-    boolean isExhaustive() {
-        return this.rules.get(this.rules.size() - 1).getConditions().isEmpty();
-    }
-
     public List<Rule> getRules() {
         return rules;
     }
 
     @Override
     public <T> T accept(RuleValueVisitor<T> visitor) {
-        return visitor.visitTreeRule(this.rules);
+        return visitor.visitTreeRule(rules);
     }
 
     @Override
     protected Type typecheckValue(Scope<Type> scope) {
         if (rules.isEmpty()) {
-            throw new SourceException("Tree rule contains no rules!", this.getSourceLocation());
+            throw new SourceException("Tree rule contains no rules.", getSourceLocation());
         }
         for (Rule rule : rules) {
             RuleError.context("while checking nested rule in tree rule",
@@ -67,13 +62,15 @@ public final class TreeRule extends Rule {
         for (Rule rule : rules) {
             rulesBuilder.withValue(rule.toNode());
         }
-        builder.withMember(TYPE, TREE)
-                .withMember("rules", rulesBuilder.build());
+        builder.withMember("rules", rulesBuilder.build()).withMember(TYPE, TREE);
     }
 
     @Override
     public String toString() {
-        return super.toString()
-               + StringUtils.indent(rules.stream().map(Rule::toString).collect(Collectors.joining("\n")), 2);
+        List<String> ruleStrings = new ArrayList<>();
+        for (Rule rule : rules) {
+            ruleStrings.add(rule.toString());
+        }
+        return super.toString() + StringUtils.indent(String.join("\n", ruleStrings), 2);
     }
 }

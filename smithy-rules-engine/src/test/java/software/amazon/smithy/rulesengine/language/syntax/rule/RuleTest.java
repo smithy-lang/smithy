@@ -19,8 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
-import software.amazon.smithy.rulesengine.language.eval.RuleEvaluator;
-import software.amazon.smithy.rulesengine.language.eval.value.Value;
+import software.amazon.smithy.rulesengine.language.evaluation.RuleEvaluator;
+import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.ParameterType;
@@ -40,7 +40,6 @@ class RuleTest {
                 .errorOrElse("param2 is b", p2.toExpression().equal("b").condition())
                 .validateOrElse("p3 is not an arn", p3.toExpression().parseArn().condition("p3Arn"))
                 .treeRule(Rule.builder().error("rule matched: {p3Arn#region}"));
-        System.out.println(rule);
         Parameters parameters = Parameters.builder().addParameter(p1).addParameter(p2).addParameter(p3).build();
         EndpointRuleSet ruleset = EndpointRuleSet.builder().version("1.1").parameters(parameters).addRule(rule).build();
         ruleset.typeCheck();
@@ -60,5 +59,4 @@ class RuleTest {
                         Identifier.of("param3"), Value.stringValue("d")))
                 , Value.stringValue("param3 value is not c"));
     }
-
 }

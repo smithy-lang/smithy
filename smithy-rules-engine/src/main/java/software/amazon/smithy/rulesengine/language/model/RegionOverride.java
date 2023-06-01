@@ -35,18 +35,16 @@ public final class RegionOverride implements ToSmithyBuilder<RegionOverride>, Fr
         this.sourceLocation = builder.getSourceLocation();
     }
 
+    private RegionOverride(SourceLocation sourceLocation) {
+        this.sourceLocation = sourceLocation;
+    }
+
     public static Builder builder() {
         return new Builder(SourceLocation.none());
     }
 
     public static RegionOverride fromNode(Node node) {
-        Builder b = new Builder(node);
-        return b.build();
-    }
-
-    @Override
-    public SmithyBuilder<RegionOverride> toBuilder() {
-        return new Builder(getSourceLocation());
+        return new RegionOverride(node.getSourceLocation());
     }
 
     @Override
@@ -55,13 +53,18 @@ public final class RegionOverride implements ToSmithyBuilder<RegionOverride>, Fr
     }
 
     @Override
-    public int hashCode() {
-        return 7;
+    public SmithyBuilder<RegionOverride> toBuilder() {
+        return new Builder(getSourceLocation());
     }
 
     @Override
     public boolean equals(Object obj) {
         return obj instanceof RegionOverride;
+    }
+
+    @Override
+    public int hashCode() {
+        return 7;
     }
 
     @Override

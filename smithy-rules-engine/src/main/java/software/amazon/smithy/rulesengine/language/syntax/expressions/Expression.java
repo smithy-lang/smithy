@@ -27,9 +27,9 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
-import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.TypeCheck;
-import software.amazon.smithy.rulesengine.language.eval.type.Type;
+import software.amazon.smithy.rulesengine.language.evaluation.Scope;
+import software.amazon.smithy.rulesengine.language.evaluation.TypeCheck;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.stdlib.AwsIsVirtualHostableS3Bucket;
 import software.amazon.smithy.rulesengine.language.stdlib.BooleanEquals;
 import software.amazon.smithy.rulesengine.language.stdlib.IsValidHostLabel;
@@ -44,7 +44,7 @@ import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionNode
 import software.amazon.smithy.rulesengine.language.syntax.functions.GetAttr;
 import software.amazon.smithy.rulesengine.language.syntax.functions.IsSet;
 import software.amazon.smithy.rulesengine.language.syntax.functions.Not;
-import software.amazon.smithy.rulesengine.language.visit.ExpressionVisitor;
+import software.amazon.smithy.rulesengine.language.visitors.ExpressionVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -119,12 +119,10 @@ public abstract class Expression implements FromSourceLocation, ToNode, TypeChec
         return context("while parsing `" + shortForm + "` within a template", context, () -> {
             if (shortForm.contains("#")) {
                 String[] parts = shortForm.split("#", 2);
-                String base = parts[0];
-                String pattern = parts[1];
                 return GetAttr.builder()
                         .sourceLocation(context)
-                        .target(getReference(Identifier.of(base), context))
-                        .path(pattern).build();
+                        .target(getReference(Identifier.of(parts[0]), context))
+                        .path(parts[1]).build();
             } else {
                 return Expression.getReference(Identifier.of(shortForm), context);
             }
@@ -160,6 +158,8 @@ public abstract class Expression implements FromSourceLocation, ToNode, TypeChec
      * @return the return value of the visitor.
      */
     public abstract <R> R accept(ExpressionVisitor<R> visitor);
+
+    protected abstract Type typeCheckLocal(Scope<Type> scope) throws InnerParseError;
 
     @Override
     public abstract int hashCode();
@@ -199,18 +199,14 @@ public abstract class Expression implements FromSourceLocation, ToNode, TypeChec
     @Override
     public Type typeCheck(Scope<Type> scope) {
         // TODO: Could remove all typecheckLocal functions (maybe?)
-        Type t = context(
-                String.format("while typechecking %s", this),
-                this,
-                () -> typeCheckLocal(scope)
-        );
+        Type type = context(String.format("while typechecking %s", this), this, () -> typeCheckLocal(scope));
 
-        if (cachedType != null && !t.equals(cachedType)) {
+        if (cachedType != null && !type.equals(cachedType)) {
             throw new RuntimeException(String.format("Checking type `%s` that doesn't match cached type `%s`",
-                    t, cachedType));
+                    type, cachedType));
         }
 
-        cachedType = t;
+        cachedType = type;
         return cachedType;
     }
 
@@ -221,12 +217,10 @@ public abstract class Expression implements FromSourceLocation, ToNode, TypeChec
      */
     public Type type() {
         if (cachedType == null) {
-            throw new RuntimeException("typechecking was never invoked on this expression.");
+            throw new RuntimeException("Typechecking was never invoked on this expression.");
         }
         return cachedType;
     }
-
-    protected abstract Type typeCheckLocal(Scope<Type> scope) throws InnerParseError;
 
     /**
      * Returns an IsSet expression for this instance.
@@ -322,6 +316,6 @@ public abstract class Expression implements FromSourceLocation, ToNode, TypeChec
      * @return the string template.
      */
     public String getTemplate() {
-        throw new RuntimeException(String.format("cannot convert %s to a string template", this));
+        throw new RuntimeException(String.format("Cannot convert `%s` to a string template.", this));
     }
 }
