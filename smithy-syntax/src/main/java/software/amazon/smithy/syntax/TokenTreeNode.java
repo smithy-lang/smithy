@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
+import software.amazon.smithy.model.SourceLocation;
 
 class TokenTreeNode implements TokenTree {
 
@@ -27,6 +28,11 @@ class TokenTreeNode implements TokenTree {
 
     TokenTreeNode(TreeType treeType) {
         this.treeType = treeType;
+    }
+
+    @Override
+    public SourceLocation getSourceLocation() {
+        return getChildren().isEmpty() ? SourceLocation.NONE : getChildren().get(0).getSourceLocation();
     }
 
     @Override
@@ -42,6 +48,11 @@ class TokenTreeNode implements TokenTree {
     @Override
     public final List<TokenTree> getChildren() {
         return children;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return getChildren().isEmpty();
     }
 
     @Override
