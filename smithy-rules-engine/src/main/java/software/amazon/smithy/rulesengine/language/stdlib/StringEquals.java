@@ -18,15 +18,15 @@ package software.amazon.smithy.rulesengine.language.stdlib;
 import java.util.Arrays;
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
-import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.type.Type;
-import software.amazon.smithy.rulesengine.language.eval.value.Value;
+import software.amazon.smithy.rulesengine.language.evaluation.Scope;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
+import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.functions.Function;
 import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionDefinition;
 import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionNode;
 import software.amazon.smithy.rulesengine.language.syntax.functions.LibraryFunction;
-import software.amazon.smithy.rulesengine.language.visit.ExpressionVisitor;
+import software.amazon.smithy.rulesengine.language.visitors.ExpressionVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**

@@ -15,14 +15,16 @@
 
 package software.amazon.smithy.rulesengine.language.model;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.RulesComponentBuilder;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
@@ -32,25 +34,28 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  */
 @SmithyUnstableApi
 public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>, FromSourceLocation, ToNode {
+    private static final String NAME = "name";
     private static final String DNS_SUFFIX = "dnsSuffix";
     private static final String DUAL_STACK_DNS_SUFFIX = "dualStackDnsSuffix";
     private static final String SUPPORTS_FIPS = "supportsFIPS";
     private static final String SUPPORTS_DUAL_STACK = "supportsDualStack";
-    private static final String NAME = "name";
+    private static final List<String> PROPERTIES = ListUtils.of(NAME, DNS_SUFFIX, DUAL_STACK_DNS_SUFFIX,
+            SUPPORTS_FIPS, SUPPORTS_DUAL_STACK);
 
+    private final String name;
     private final String dnsSuffix;
     private final String dualStackDnsSuffix;
     private final boolean supportsFips;
     private final boolean supportsDualStack;
-
     private final SourceLocation sourceLocation;
 
     private PartitionOutputs(Builder builder) {
-        this.dnsSuffix = builder.dnsSuffix;
-        this.dualStackDnsSuffix = builder.dualStackDnsSuffix;
-        this.supportsFips = builder.supportsFips;
-        this.supportsDualStack = builder.supportsDualStack;
-        this.sourceLocation = builder.getSourceLocation();
+        sourceLocation = builder.getSourceLocation();
+        name = builder.name;
+        dnsSuffix = builder.dnsSuffix;
+        dualStackDnsSuffix = builder.dualStackDnsSuffix;
+        supportsFips = builder.supportsFips;
+        supportsDualStack = builder.supportsDualStack;
     }
 
     public static Builder builder() {
@@ -58,19 +63,21 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
     }
 
     public static PartitionOutputs fromNode(Node node) {
-        ObjectNode objNode = node.expectObjectNode();
+        Builder builder = new Builder(node);
+        ObjectNode objectNode = node.expectObjectNode();
+        objectNode.expectNoAdditionalProperties(PROPERTIES);
 
-        objNode.expectNoAdditionalProperties(Arrays.asList(
-                NAME, DNS_SUFFIX, DUAL_STACK_DNS_SUFFIX, SUPPORTS_FIPS, SUPPORTS_DUAL_STACK));
+        objectNode.getStringMember(NAME, builder::name);
+        objectNode.getStringMember(DNS_SUFFIX, builder::dnsSuffix);
+        objectNode.getStringMember(DUAL_STACK_DNS_SUFFIX, builder::dualStackDnsSuffix);
+        objectNode.getBooleanMember(SUPPORTS_FIPS, builder::supportsFips);
+        objectNode.getBooleanMember(SUPPORTS_DUAL_STACK, builder::supportsDualStack);
 
-        Builder b = new Builder(node);
+        return builder.build();
+    }
 
-        objNode.getStringMember(DNS_SUFFIX).ifPresent(n -> b.dnsSuffix(n.getValue()));
-        objNode.getStringMember(DUAL_STACK_DNS_SUFFIX).ifPresent(n -> b.dualStackDnsSuffix(n.getValue()));
-        objNode.getBooleanMember(SUPPORTS_FIPS).ifPresent(n -> b.supportsFips(n.getValue()));
-        objNode.getBooleanMember(SUPPORTS_DUAL_STACK).ifPresent(n -> b.supportsDualStack(n.getValue()));
-
-        return b.build();
+    public Optional<String> getName() {
+        return Optional.ofNullable(name);
     }
 
     public String getDnsSuffix() {
@@ -97,6 +104,7 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
     @Override
     public SmithyBuilder<PartitionOutputs> toBuilder() {
         return new Builder(getSourceLocation())
+                .name(name)
                 .dnsSuffix(dnsSuffix)
                 .dualStackDnsSuffix(dualStackDnsSuffix)
                 .supportsFips(supportsFips)
@@ -104,8 +112,17 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(dnsSuffix, dualStackDnsSuffix, supportsFips, supportsDualStack);
+    public Node toNode() {
+        ObjectNode.Builder builder = Node.objectNodeBuilder()
+                .withMember(DNS_SUFFIX, dnsSuffix)
+                .withMember(DUAL_STACK_DNS_SUFFIX, dualStackDnsSuffix)
+                .withMember(SUPPORTS_FIPS, supportsFips)
+                .withMember(SUPPORTS_DUAL_STACK, supportsDualStack);
+
+        if (name != null) {
+            builder.withMember(NAME, name);
+        }
+        return builder.build();
     }
 
     @Override
@@ -118,21 +135,18 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
         }
         PartitionOutputs partitionOutputs = (PartitionOutputs) o;
         return supportsFips == partitionOutputs.supportsFips && supportsDualStack == partitionOutputs.supportsDualStack
-               && Objects.equals(dnsSuffix, partitionOutputs.dnsSuffix)
-               && Objects.equals(dualStackDnsSuffix, partitionOutputs.dualStackDnsSuffix);
+                && Objects.equals(name, partitionOutputs.name)
+                && Objects.equals(dnsSuffix, partitionOutputs.dnsSuffix)
+                && Objects.equals(dualStackDnsSuffix, partitionOutputs.dualStackDnsSuffix);
     }
 
     @Override
-    public Node toNode() {
-        return Node.objectNodeBuilder()
-                .withMember(DNS_SUFFIX, dnsSuffix)
-                .withMember(DUAL_STACK_DNS_SUFFIX, dualStackDnsSuffix)
-                .withMember(SUPPORTS_FIPS, supportsFips)
-                .withMember(SUPPORTS_DUAL_STACK, supportsDualStack)
-                .build();
+    public int hashCode() {
+        return Objects.hash(name, dnsSuffix, dualStackDnsSuffix, supportsFips, supportsDualStack);
     }
 
     public static class Builder extends RulesComponentBuilder<Builder, PartitionOutputs> {
+        private String name;
         private String dnsSuffix;
         private String dualStackDnsSuffix;
         private boolean supportsFips;
@@ -140,6 +154,11 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
 
         public Builder(FromSourceLocation sourceLocation) {
             super(sourceLocation);
+        }
+
+        public Builder name(String name) {
+            this.name = name;
+            return this;
         }
 
         public Builder dnsSuffix(String dnsSuffix) {

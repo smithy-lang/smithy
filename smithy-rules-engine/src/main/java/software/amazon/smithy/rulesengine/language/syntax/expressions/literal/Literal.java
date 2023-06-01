@@ -1,16 +1,6 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package software.amazon.smithy.rulesengine.language.syntax.expressions.literal;
@@ -33,17 +23,17 @@ import software.amazon.smithy.model.node.NullNode;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
-import software.amazon.smithy.rulesengine.language.eval.RuleEvaluator;
-import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.type.RecordType;
-import software.amazon.smithy.rulesengine.language.eval.type.TupleType;
-import software.amazon.smithy.rulesengine.language.eval.type.Type;
-import software.amazon.smithy.rulesengine.language.eval.value.Value;
+import software.amazon.smithy.rulesengine.language.evaluation.RuleEvaluator;
+import software.amazon.smithy.rulesengine.language.evaluation.Scope;
+import software.amazon.smithy.rulesengine.language.evaluation.type.RecordType;
+import software.amazon.smithy.rulesengine.language.evaluation.type.TupleType;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
+import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Template;
-import software.amazon.smithy.rulesengine.language.visit.ExpressionVisitor;
-import software.amazon.smithy.rulesengine.language.visit.TemplateVisitor;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.TemplateVisitor;
+import software.amazon.smithy.rulesengine.language.visitors.ExpressionVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -59,13 +49,23 @@ public abstract class Literal extends Expression {
     }
 
     /**
-     * Constructs a tuple literal of values.
+     * Constructs a bool literal from a boolean value.
      *
-     * @param values the values.
-     * @return the tuple literal.
+     * @param value the boolean value.
+     * @return the bool literal.
      */
-    public static Literal tupleLiteral(List<Literal> values) {
-        return new TupleLiteral(values, javaLocation());
+    public static Literal booleanLiteral(boolean value) {
+        return new BooleanLiteral(Node.from(value), javaLocation());
+    }
+
+    /**
+     * Constructs an integer literal from an integer value.
+     *
+     * @param value the integer value.
+     * @return the integer literal.
+     */
+    public static Literal integerLiteral(int value) {
+        return new IntegerLiteral(Node.from(value), javaLocation());
     }
 
     /**
@@ -89,24 +89,41 @@ public abstract class Literal extends Expression {
     }
 
     /**
-     * Constructs an integer literal from an integer value.
+     * Constructs a tuple literal of values.
      *
-     * @param value the integer value.
-     * @return the integer literal.
+     * @param values the values.
+     * @return the tuple literal.
      */
-    public static Literal integerLiteral(int value) {
-        return new IntegerLiteral(Node.from(value), javaLocation());
+    public static Literal tupleLiteral(List<Literal> values) {
+        return new TupleLiteral(values, javaLocation());
     }
 
-    /**
-     * Constructs a bool literal from a boolean value.
-     *
-     * @param value the boolean value.
-     * @return the bool literal.
-     */
-    public static Literal booleanLiteral(boolean value) {
-        return new BooleanLiteral(Node.from(value), javaLocation());
+    public Optional<Boolean> asBooleanLiteral() {
+        return Optional.empty();
     }
+
+    public Optional<Integer> asIntegerLiteral() {
+        return Optional.empty();
+    }
+
+    public Optional<Map<Identifier, Literal>> asRecordLiteral() {
+        return Optional.empty();
+    }
+
+    public Optional<Template> asStringLiteral() {
+        return Optional.empty();
+    }
+
+    public Optional<List<Literal>> asTupleLiteral() {
+        return Optional.empty();
+    }
+
+    @Override
+    public <R> R accept(ExpressionVisitor<R> visitor) {
+        return visitor.visitLiteral(this);
+    }
+
+    public abstract <T> T accept(LiteralVisitor<T> visitor);
 
     /**
      * Constructs a literal from a {@link Node} based on the Node's type.
@@ -119,12 +136,12 @@ public abstract class Literal extends Expression {
             @Override
             public Literal arrayNode(ArrayNode arrayNode) {
                 List<Literal> elements = arrayNode.getElementsAs(node -> node.accept(this));
-                return new TupleLiteral(elements, arrayNode.getSourceLocation());
+                return new TupleLiteral(elements, arrayNode);
             }
 
             @Override
             public Literal booleanNode(BooleanNode booleanNode) {
-                return new BooleanLiteral(booleanNode, booleanNode.getSourceLocation());
+                return new BooleanLiteral(booleanNode);
             }
 
             @Override
@@ -134,25 +151,28 @@ public abstract class Literal extends Expression {
 
             @Override
             public Literal numberNode(NumberNode numberNode) {
-                return new IntegerLiteral(numberNode, numberNode.getSourceLocation());
+                return new IntegerLiteral(numberNode);
             }
 
             @Override
             public Literal objectNode(ObjectNode objectNode) {
                 Map<Identifier, Literal> members = new LinkedHashMap<>();
-                objectNode.getMembers().forEach((k, v) -> members.put(Identifier.of(k), v.accept(this)));
-                return new RecordLiteral(members, objectNode.getSourceLocation());
+                for (Map.Entry<String, Node> entry : objectNode.getStringMap().entrySet()) {
+                    members.put(Identifier.of(entry.getKey()), entry.getValue().accept(this));
+                }
+                return new RecordLiteral(members, objectNode);
             }
 
             @Override
             public Literal stringNode(StringNode stringNode) {
-                return new StringLiteral(new Template(stringNode), stringNode.getSourceLocation());
+                return new StringLiteral(new Template(stringNode), stringNode);
             }
         });
     }
 
-    private Type nodeToType(Literal value, Scope<Type> scope) {
-        return value.accept(new LiteralVisitor<Type>() {
+    @Override
+    public Type typeCheckLocal(Scope<Type> scope) {
+        return accept(new LiteralVisitor<Type>() {
             @Override
             public Type visitBoolean(boolean b) {
                 return Type.booleanType();
@@ -165,18 +185,18 @@ public abstract class Literal extends Expression {
 
             @Override
             public Type visitRecord(Map<Identifier, Literal> members) {
-                Map<Identifier, Type> tpe = new LinkedHashMap<>();
-                ((RecordLiteral) value).members().forEach((k, v) -> {
-                    tpe.put(k, v.typeCheck(scope));
-                });
-                return new RecordType(tpe);
+                Map<Identifier, Type> types = new LinkedHashMap<>();
+                for (Map.Entry<Identifier, Literal> entry : members.entrySet()) {
+                    types.put(entry.getKey(), entry.getValue().typeCheck(scope));
+                }
+                return new RecordType(types);
             }
 
             @Override
             public Type visitTuple(List<Literal> members) {
                 List<Type> tuples = new ArrayList<>();
-                for (Literal el : ((TupleLiteral) value).members()) {
-                    tuples.add(el.typeCheck(scope));
+                for (Literal element : members) {
+                    tuples.add(element.typeCheck(scope));
                 }
                 return new TupleType(tuples);
             }
@@ -188,22 +208,11 @@ public abstract class Literal extends Expression {
         });
     }
 
-    @Override
-    public <R> R accept(ExpressionVisitor<R> visitor) {
-        return visitor.visitLiteral(this);
-    }
-
-    @Override
-    public Type typeCheckLocal(Scope<Type> scope) {
-        return nodeToType(this, scope);
-    }
-
     /**
      * @param evaluator the rule-set evaluator.
      * @return the resulting value.
      */
     public Value evaluate(RuleEvaluator evaluator) {
-        Literal literal = this;
         return accept(new LiteralVisitor<Value>() {
             @Override
             public Value visitBoolean(boolean b) {
@@ -247,16 +256,18 @@ public abstract class Literal extends Expression {
 
             @Override
             public Value visitRecord(Map<Identifier, Literal> members) {
-                Map<Identifier, Value> tpe = new HashMap<>();
-                members.forEach((k, v) -> tpe.put(k, v.accept(evaluator)));
-                return Value.recordValue(tpe);
+                Map<Identifier, Value> types = new HashMap<>();
+                for (Map.Entry<Identifier, Literal> entry : members.entrySet()) {
+                    types.put(entry.getKey(), entry.getValue().evaluate(evaluator));
+                }
+                return Value.recordValue(types);
             }
 
             @Override
             public Value visitTuple(List<Literal> members) {
                 List<Value> tuples = new ArrayList<>();
-                for (Literal el : ((TupleLiteral) literal).members()) {
-                    tuples.add(el.accept(evaluator));
+                for (Literal element : members) {
+                    tuples.add(element.accept(evaluator));
                 }
                 return Value.arrayValue(tuples);
             }
@@ -266,27 +277,5 @@ public abstract class Literal extends Expression {
                 return Value.integerValue(value);
             }
         });
-    }
-
-    public abstract <T> T accept(LiteralVisitor<T> visitor);
-
-    public Optional<Boolean> asBoolean() {
-        return Optional.empty();
-    }
-
-    public Optional<Template> asString() {
-        return Optional.empty();
-    }
-
-    public Optional<Map<Identifier, Literal>> asRecord() {
-        return Optional.empty();
-    }
-
-    public Optional<List<Literal>> asTuple() {
-        return Optional.empty();
-    }
-
-    public Optional<Integer> asInteger() {
-        return Optional.empty();
     }
 }

@@ -43,18 +43,18 @@ public final class Identifier implements FromSourceLocation, ToNode {
         return new Identifier(name);
     }
 
-    public StringNode getName() {
-        return name;
-    }
-
     @Override
     public SourceLocation getSourceLocation() {
         return sourceLocation;
     }
 
+    public StringNode getName() {
+        return name;
+    }
+
     @Override
-    public int hashCode() {
-        return Objects.hash(name);
+    public Node toNode() {
+        return name;
     }
 
     @Override
@@ -69,12 +69,12 @@ public final class Identifier implements FromSourceLocation, ToNode {
         return Objects.equals(this.name, that.name);
     }
 
-    public String toString() {
-        return name.getValue();
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 
-    @Override
-    public Node toNode() {
-        return name;
+    public String toString() {
+        return name.getValue();
     }
 }

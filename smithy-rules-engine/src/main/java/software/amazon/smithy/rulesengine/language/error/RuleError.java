@@ -100,6 +100,7 @@ public final class RuleError extends RuntimeException {
                     .append(":").append(root.getSourceLocation().getLine())
                     .append("\n");
         }
+
         message.append(root.getMessageWithoutLocation());
         return message.toString();
     }

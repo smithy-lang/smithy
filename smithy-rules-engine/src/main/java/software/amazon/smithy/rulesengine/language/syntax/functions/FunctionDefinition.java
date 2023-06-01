@@ -16,8 +16,8 @@
 package software.amazon.smithy.rulesengine.language.syntax.functions;
 
 import java.util.List;
-import software.amazon.smithy.rulesengine.language.eval.type.Type;
-import software.amazon.smithy.rulesengine.language.eval.value.Value;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
+import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**

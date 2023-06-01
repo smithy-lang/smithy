@@ -54,16 +54,15 @@ public final class AwsArn implements ToSmithyBuilder<AwsArn> {
         if (base.length != 6) {
             return Optional.empty();
         }
-        // service, resource and `arn` may not be null
+        // First section must be "arn".
         if (!base[0].equals("arn")) {
             return Optional.empty();
         }
-        if (base[1].isEmpty() || base[2].isEmpty()) {
+        // Sections for partition, service, and resource type must not be empty.
+        if (base[1].isEmpty() || base[2].isEmpty() || base[5].isEmpty()) {
             return Optional.empty();
         }
-        if (base[5].isEmpty()) {
-            return Optional.empty();
-        }
+
         return Optional.of(builder()
                 .partition(base[1])
                 .service(base[2])
@@ -117,20 +116,14 @@ public final class AwsArn implements ToSmithyBuilder<AwsArn> {
 
     @Override
     public String toString() {
-        StringBuilder resource = new StringBuilder();
-        this.getResource().forEach(resource::append);
+        StringBuilder builder = new StringBuilder();
+        resource.forEach(builder::append);
 
-        return "Arn["
-               + "partition="
-               + partition + ", "
-               + "service="
-               + service + ", "
-               + "region="
-               + region + ", "
-               + "accountId="
-               + accountId + ", "
-               + "resource="
-               + resource + ']';
+        return "Arn[partition=" + partition + ", "
+               + "service=" + service + ", "
+               + "region=" + region + ", "
+               + "accountId=" + accountId + ", "
+               + "resource=" + builder + ']';
     }
 
     @Override
@@ -150,8 +143,7 @@ public final class AwsArn implements ToSmithyBuilder<AwsArn> {
         private String region;
         private String accountId;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         public Builder partition(String partition) {
             this.partition = partition;

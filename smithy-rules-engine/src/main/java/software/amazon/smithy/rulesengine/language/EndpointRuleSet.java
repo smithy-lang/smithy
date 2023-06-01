@@ -27,9 +27,9 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
-import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.TypeCheck;
-import software.amazon.smithy.rulesengine.language.eval.type.Type;
+import software.amazon.smithy.rulesengine.language.evaluation.Scope;
+import software.amazon.smithy.rulesengine.language.evaluation.TypeCheck;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
@@ -66,16 +66,16 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, TypeCh
     }
 
     private static EndpointRuleSet newFromNode(Node node) throws RuleError {
-        ObjectNode on = node.expectObjectNode("The root of a ruleset must be an object");
+        ObjectNode objectNode = node.expectObjectNode("The root of a ruleset must be an object");
 
         EndpointRuleSet.Builder builder = new Builder(node);
-        builder.parameters(Parameters.fromNode(on.expectObjectMember(PARAMETERS)));
-        builder.version(on.expectStringMember(VERSION).getValue());
+        builder.parameters(Parameters.fromNode(objectNode.expectObjectMember(PARAMETERS)));
+        objectNode.expectStringMember(VERSION, builder::version);
 
-        on.expectArrayMember(RULES)
-                .getElements().forEach(n -> {
-                    builder.addRule(context("while parsing rule", n, () -> EndpointRule.fromNode(n)));
-                });
+        for (Node element : objectNode.expectArrayMember(RULES).getElements()) {
+            builder.addRule(context("while parsing rule", element, () -> EndpointRule.fromNode(element)));
+        }
+
         return builder.build();
     }
 
@@ -115,32 +115,24 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, TypeCh
         typeCheck(new Scope<>());
     }
 
-    @Override
-    public Node toNode() {
-        return ObjectNode.builder()
-                .withMember(VERSION, version)
-                .withMember(PARAMETERS, parameters)
-                .withMember(RULES, rulesNode())
-                .build();
-    }
-
     public Builder toBuilder() {
         return builder()
                 .sourceLocation(getSourceLocation())
                 .parameters(parameters)
-                .rules(getRules())
+                .rules(rules)
                 .version(version);
     }
 
-    private Node rulesNode() {
-        ArrayNode.Builder node = ArrayNode.builder();
-        rules.forEach(node::withValue);
-        return node.build();
-    }
-
     @Override
-    public int hashCode() {
-        return Objects.hash(rules, parameters, version);
+    public Node toNode() {
+        ArrayNode.Builder rulesBuilder = ArrayNode.builder();
+        rules.forEach(rulesBuilder::withValue);
+
+        return ObjectNode.builder()
+                .withMember(VERSION, version)
+                .withMember(PARAMETERS, parameters)
+                .withMember(RULES, rulesBuilder.build())
+                .build();
     }
 
     @Override
@@ -153,6 +145,11 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, TypeCh
         }
         EndpointRuleSet that = (EndpointRuleSet) o;
         return rules.equals(that.rules) && parameters.equals(that.parameters) && version.equals(that.version);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(rules, parameters, version);
     }
 
     @Override

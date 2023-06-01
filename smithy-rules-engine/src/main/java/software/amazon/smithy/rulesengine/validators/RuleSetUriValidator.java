@@ -1,16 +1,6 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package software.amazon.smithy.rulesengine.validators;
@@ -30,7 +20,7 @@ import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Template;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.LiteralVisitor;
-import software.amazon.smithy.rulesengine.language.visit.TraversingVisitor;
+import software.amazon.smithy.rulesengine.language.visitors.TraversingVisitor;
 import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
 import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -99,13 +89,13 @@ public final class RuleSetUriValidator extends AbstractValidator {
 
         private Optional<ValidationEvent> validateTemplate(Template template) {
             if (checkingEndpoint) {
-                Template.Part head = template.getParts().get(0);
-                if (head instanceof Template.Literal) {
-                    String templateStart = ((Template.Literal) head).getValue();
-                    if (!(templateStart.startsWith("http://") || templateStart.startsWith("https://"))) {
+                Template.Part part = template.getParts().get(0);
+                if (part instanceof Template.Literal) {
+                    String scheme = ((Template.Literal) part).getValue();
+                    if (!(scheme.startsWith("http://") || scheme.startsWith("https://"))) {
                         return Optional.of(error(serviceShape, template,
                                 "URI should start with `http://` or `https://` but the URI started with "
-                                        + templateStart));
+                                        + scheme));
                     }
                 }
                 // Allow dynamic URIs for now — we should lint that at looks like a scheme at some point

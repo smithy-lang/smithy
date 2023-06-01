@@ -31,7 +31,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
-import software.amazon.smithy.rulesengine.language.visit.TraversingVisitor;
+import software.amazon.smithy.rulesengine.language.visitors.TraversingVisitor;
 import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
 import software.amazon.smithy.utils.ListUtils;
 
@@ -70,13 +70,13 @@ public final class RuleSetAuthSchemesValidator extends AbstractValidator {
 
             Literal authSchemes = endpoint.getProperties().get(Identifier.of("authSchemes"));
             if (authSchemes != null) {
-                Optional<List<Literal>> authSchemeList = authSchemes.asTuple();
+                Optional<List<Literal>> authSchemeList = authSchemes.asTupleLiteral();
                 if (!authSchemeList.isPresent()) {
                     return Stream.of(invalid(authSchemes.getSourceLocation(),
                             String.format("Expected `authSchemes` to be a list, found: `%s`", authSchemes)));
                 } else {
                     for (Literal authScheme : authSchemeList.get()) {
-                        Optional<Map<Identifier, Literal>> authSchemeMap = authScheme.asRecord();
+                        Optional<Map<Identifier, Literal>> authSchemeMap = authScheme.asRecordLiteral();
                         if (authSchemeMap.isPresent()) {
                             events.addAll(validateAuthScheme(authSchemeMap.get(), authScheme.getSourceLocation()));
                         } else {
@@ -100,7 +100,7 @@ public final class RuleSetAuthSchemesValidator extends AbstractValidator {
                         String.format("Expected `authSchemes` to have a `name` key but it did not: `%s`", authScheme)));
             }
             Literal name = authScheme.get(NAME);
-            String schemeName = name.asString().get().expectLiteral();
+            String schemeName = name.asStringLiteral().get().expectLiteral();
             if (schemeName.equals("sigv4")) {
                 return validateSigv4(authScheme, sourceLocation);
             } else if (schemeName.equals("sigv4a")) {
@@ -118,8 +118,8 @@ public final class RuleSetAuthSchemesValidator extends AbstractValidator {
         ) {
             List<ValidationEvent> events = noExtraProperties(authScheme,
                     ListUtils.of(SIGNING_NAME, SIGNING_REGION_SET, NAME, DISABLE_DOUBLE_ENCODING), sourceLocation);
-            validatePropertyType(authScheme, SIGNING_NAME, Literal::asString).ifPresent(events::add);
-            validatePropertyType(authScheme, SIGNING_REGION_SET, Literal::asTuple).ifPresent(events::add);
+            validatePropertyType(authScheme, SIGNING_NAME, Literal::asStringLiteral).ifPresent(events::add);
+            validatePropertyType(authScheme, SIGNING_REGION_SET, Literal::asTupleLiteral).ifPresent(events::add);
             return events;
         }
 
@@ -129,8 +129,8 @@ public final class RuleSetAuthSchemesValidator extends AbstractValidator {
         ) {
             List<ValidationEvent> events = noExtraProperties(authScheme,
                     ListUtils.of(SIGNING_NAME, SIGNING_REGION, NAME, DISABLE_DOUBLE_ENCODING), sourceLocation);
-            validatePropertyType(authScheme, SIGNING_NAME, Literal::asString).ifPresent(events::add);
-            validatePropertyType(authScheme, SIGNING_REGION, Literal::asString).ifPresent(events::add);
+            validatePropertyType(authScheme, SIGNING_NAME, Literal::asStringLiteral).ifPresent(events::add);
+            validatePropertyType(authScheme, SIGNING_REGION, Literal::asStringLiteral).ifPresent(events::add);
             return events;
         }
 
@@ -140,7 +140,7 @@ public final class RuleSetAuthSchemesValidator extends AbstractValidator {
         ) {
             List<ValidationEvent> events = hasAllKeys(authScheme,
                     ListUtils.of(SIGNING_NAME, NAME), sourceLocation);
-            validatePropertyType(authScheme, SIGNING_NAME, Literal::asString).ifPresent(events::add);
+            validatePropertyType(authScheme, SIGNING_NAME, Literal::asStringLiteral).ifPresent(events::add);
             return events;
         }
 

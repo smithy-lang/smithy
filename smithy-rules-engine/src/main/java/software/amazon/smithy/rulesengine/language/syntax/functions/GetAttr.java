@@ -29,16 +29,16 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.rulesengine.language.RulesComponentBuilder;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
 import software.amazon.smithy.rulesengine.language.error.InvalidRulesException;
-import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.type.ArrayType;
-import software.amazon.smithy.rulesengine.language.eval.type.RecordType;
-import software.amazon.smithy.rulesengine.language.eval.type.Type;
-import software.amazon.smithy.rulesengine.language.eval.value.Value;
+import software.amazon.smithy.rulesengine.language.evaluation.Scope;
+import software.amazon.smithy.rulesengine.language.evaluation.type.ArrayType;
+import software.amazon.smithy.rulesengine.language.evaluation.type.RecordType;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
+import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Reference;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
-import software.amazon.smithy.rulesengine.language.visit.ExpressionVisitor;
+import software.amazon.smithy.rulesengine.language.visitors.ExpressionVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -105,7 +105,6 @@ public final class GetAttr extends Expression {
 
     public Value evaluate(Value target) {
         Value root = target;
-        List<Part> path = getPath();
         for (Part part : path) {
             root = part.eval(root);
         }
@@ -121,41 +120,24 @@ public final class GetAttr extends Expression {
     }
 
     @Override
-    public String toString() {
-        return target + "#" + unparsedPath;
-    }
-
-    @Override
     public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visitGetAttr(this);
     }
 
     @Override
     public Type typeCheckLocal(Scope<Type> scope) {
-        Expression target = getTarget();
-        List<Part> path = new ArrayList<>(getPath());
         Type base = target.typeCheck(scope);
-
         for (Part part : path) {
-            Type finalBase = base;
-            base = context(String.format("while resolving %s in %s", part, base), this,
-                    () -> part.typeCheck(finalBase));
+            Type baseType = base;
+            base = context(String.format("while resolving %s in %s", part, base), this, () -> part.typeCheck(baseType));
         }
         return base;
     }
 
     @Override
     public String getTemplate() {
-        String target = ((Reference) this.getTarget()).getName().toString();
-        return "{" + target + "#" + unparsedPath + "}";
-    }
-
-    @Override
-    public Node toNode() {
-        // Synthesize an fn-node:
-        return ObjectNode.builder()
-                .withMember("fn", GetAttr.ID)
-                .withMember("argv", ArrayNode.arrayNode(target.toNode(), StringNode.from(unparsedPath))).build();
+        String targetString = ((Reference) target).getName().toString();
+        return "{" + targetString + "#" + unparsedPath + "}";
     }
 
     /**
@@ -178,6 +160,14 @@ public final class GetAttr extends Expression {
     }
 
     @Override
+    public Node toNode() {
+        // Synthesize an fn-node:
+        return ObjectNode.builder()
+                .withMember("fn", GetAttr.ID)
+                .withMember("argv", ArrayNode.arrayNode(target.toNode(), StringNode.from(unparsedPath))).build();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -192,6 +182,11 @@ public final class GetAttr extends Expression {
     @Override
     public int hashCode() {
         return Objects.hash(target, path);
+    }
+
+    @Override
+    public String toString() {
+        return target + "#" + unparsedPath;
     }
 
     public interface Part {
@@ -213,10 +208,8 @@ public final class GetAttr extends Expression {
             public Type typeCheck(Type container) throws InnerParseError {
                 RecordType record = container.expectRecordType(String.format("cannot index into %s, expected object",
                         container));
-                return record
-                        .get(key)
-                        .orElseThrow(() -> new InnerParseError(String.format("%s does not contain field %s",
-                                container, key)));
+                return record.get(key).orElseThrow(() ->
+                        new InnerParseError(String.format("%s does not contain field %s", container, key)));
             }
 
             @Override

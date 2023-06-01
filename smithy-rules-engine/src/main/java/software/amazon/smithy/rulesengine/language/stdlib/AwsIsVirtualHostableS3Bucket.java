@@ -17,8 +17,8 @@ package software.amazon.smithy.rulesengine.language.stdlib;
 
 import java.util.Arrays;
 import java.util.List;
-import software.amazon.smithy.rulesengine.language.eval.type.Type;
-import software.amazon.smithy.rulesengine.language.eval.value.Value;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
+import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.functions.Function;
 import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionDefinition;
