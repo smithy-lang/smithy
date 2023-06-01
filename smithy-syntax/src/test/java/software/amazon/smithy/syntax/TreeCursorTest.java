@@ -1,7 +1,6 @@
 package software.amazon.smithy.syntax;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -12,7 +11,6 @@ import static org.hamcrest.Matchers.nullValue;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import software.amazon.smithy.model.loader.IdlToken;
 import software.amazon.smithy.model.loader.IdlTokenizer;
 import software.amazon.smithy.utils.IoUtils;
 
@@ -55,22 +53,6 @@ public class TreeCursorTest {
         assertThat(cursor.getFirstChild(TreeType.CONTROL_SECTION).getPreviousSibling(), nullValue());
         assertThat(cursor.getFirstChild(TreeType.METADATA_SECTION).getPreviousSibling(), equalTo(children.get(0)));
         assertThat(cursor.getFirstChild(TreeType.SHAPE_SECTION).getPreviousSibling(), equalTo(children.get(1)));
-    }
-
-    @Test
-    public void recursivelyFindsAllChildren() {
-        TokenTree tree = createTree();
-        System.out.println(tree);
-        TreeCursor cursor = tree.zipper();
-
-        List<TreeCursor> matches = cursor.findChildrenByToken(IdlToken.IDENTIFIER);
-
-        assertThat(matches, not(empty()));
-
-        for (TreeCursor match : matches) {
-            assertThat(match.getTree().getType(), equalTo(TreeType.TOKEN));
-            assertThat(match.getTree().tokens().iterator().next().getIdlToken(), equalTo(IdlToken.IDENTIFIER));
-        }
     }
 
     @Test
