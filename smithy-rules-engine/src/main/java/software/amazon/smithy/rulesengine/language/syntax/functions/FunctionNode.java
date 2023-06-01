@@ -71,6 +71,15 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
     }
 
     /**
+     * Returns a new builder instance.
+     *
+     * @return the new builder instance.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * Constructs a {@link FunctionNode} from the provided {@link ObjectNode}.
      *
      * @param function the node describing the function.
@@ -86,27 +95,6 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
                 .name(function.expectStringMember(FN))
                 .arguments(arguments)
                 .build();
-    }
-
-    /**
-     * Returns a new builder instance.
-     *
-     * @return the new builder instance.
-     */
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    /**
-     * Returns a new builder instance for this {@link FunctionNode}.
-     *
-     * @return the new builder instance.
-     */
-    public Builder toBuilder() {
-        return builder()
-                .sourceLocation(sourceLocation)
-                .name(name)
-                .arguments(arguments);
     }
 
     /**
@@ -150,10 +138,22 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
         return sourceLocation;
     }
 
+    /**
+     * Returns a new builder instance for this {@link FunctionNode}.
+     *
+     * @return the new builder instance.
+     */
+    public Builder toBuilder() {
+        return builder()
+                .sourceLocation(sourceLocation)
+                .name(name)
+                .arguments(arguments);
+    }
+
     @Override
     public Node toNode() {
-        ObjectNode.Builder node = ObjectNode.builder();
-        node.withMember(FN, name);
+        ObjectNode.Builder node = ObjectNode.builder()
+                .withMember(FN, name);
 
         ArrayNode.Builder builder = ArrayNode.builder();
         for (Expression argument : arguments) {
@@ -162,11 +162,6 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
         node.withMember(ARGV, builder.build());
 
         return node.build();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, arguments);
     }
 
     @Override
@@ -179,6 +174,11 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
         }
         FunctionNode functionNode = (FunctionNode) o;
         return name.equals(functionNode.name) && arguments.equals(functionNode.arguments);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, arguments);
     }
 
     public static final class Builder extends RulesComponentBuilder<Builder, FunctionNode> {
@@ -205,5 +205,4 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
             return this;
         }
     }
-
 }

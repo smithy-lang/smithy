@@ -20,9 +20,8 @@ import static software.amazon.smithy.rulesengine.language.error.RuleError.contex
 import java.util.Objects;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.language.Endpoint;
-import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.type.Type;
-import software.amazon.smithy.rulesengine.language.visit.RuleValueVisitor;
+import software.amazon.smithy.rulesengine.language.evaluation.Scope;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -38,9 +37,18 @@ public final class EndpointRule extends Rule {
         this.endpoint = endpoint;
     }
 
+    /**
+     * Retrieves the resolved endpoint description.
+     *
+     * @return the endpoint.
+     */
+    public Endpoint getEndpoint() {
+        return endpoint;
+    }
+
     @Override
     public <T> T accept(RuleValueVisitor<T> visitor) {
-        return visitor.visitEndpointRule(this.getEndpoint());
+        return visitor.visitEndpointRule(endpoint);
     }
 
     @Override
@@ -51,11 +59,6 @@ public final class EndpointRule extends Rule {
     @Override
     void withValueNode(ObjectNode.Builder builder) {
         builder.withMember("endpoint", endpoint).withMember(TYPE, ENDPOINT);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), endpoint);
     }
 
     @Override
@@ -74,16 +77,12 @@ public final class EndpointRule extends Rule {
     }
 
     @Override
-    public String toString() {
-        return super.toString() + StringUtils.indent(endpoint.toString(), 2);
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), endpoint);
     }
 
-    /**
-     * Retrieves the resolved endpoint description.
-     *
-     * @return the endpoint.
-     */
-    public Endpoint getEndpoint() {
-        return endpoint;
+    @Override
+    public String toString() {
+        return super.toString() + StringUtils.indent(endpoint.toString(), 2);
     }
 }

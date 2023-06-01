@@ -19,8 +19,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
-import software.amazon.smithy.rulesengine.language.eval.type.Type;
-import software.amazon.smithy.rulesengine.language.eval.value.Value;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
+import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.functions.Function;
@@ -76,9 +76,7 @@ public class ParseUrl implements FunctionDefinition {
         try {
             URL parsed = new URL(url);
             if (parsed.getQuery() != null) {
-                System.out.println("empty query not supported");
                 return Value.emptyValue();
-
             }
 
             boolean isIpAddr = false;
@@ -125,8 +123,6 @@ public class ParseUrl implements FunctionDefinition {
                     IS_IP, Value.booleanValue(isIpAddr)
             ));
         } catch (MalformedURLException e) {
-            // TODO Search for more of these
-            System.out.printf("invalid URL: %s%n", e);
             return Value.emptyValue();
         }
     }

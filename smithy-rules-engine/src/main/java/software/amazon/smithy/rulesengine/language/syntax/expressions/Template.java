@@ -29,11 +29,9 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
-import software.amazon.smithy.rulesengine.language.error.RuleError;
-import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.TypeCheck;
-import software.amazon.smithy.rulesengine.language.eval.type.Type;
-import software.amazon.smithy.rulesengine.language.visit.TemplateVisitor;
+import software.amazon.smithy.rulesengine.language.evaluation.Scope;
+import software.amazon.smithy.rulesengine.language.evaluation.TypeCheck;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -55,12 +53,57 @@ public final class Template implements FromSourceLocation, ToNode {
     public Template(StringNode template) {
         sourceLocation = SmithyBuilder.requiredState("source", template.getSourceLocation());
         value = template.getValue();
-        parts =
-                context("when parsing template", template, () -> parseTemplate(template.getValue(), template));
+        parts = context("when parsing template", template, () -> parseTemplate(template.getValue(), template));
     }
 
     public static Template fromString(String s) {
         return new Template(StringNode.from(s));
+    }
+
+    private List<Part> parseTemplate(String template, FromSourceLocation context) throws InnerParseError {
+        List<Part> out = new ArrayList<>();
+        Optional<Integer> templateStart = Optional.empty();
+        int depth = 0;
+        int templateEnd = 0;
+        for (int i = 0; i < template.length(); i++) {
+            if (template.substring(i).startsWith("{{")) {
+                i++;
+                continue;
+            }
+            if (template.substring(i).startsWith("}}")) {
+                i++;
+                continue;
+            }
+
+            if (template.charAt(i) == '{') {
+                if (depth == 0) {
+                    if (templateEnd != i) {
+                        out.add(Literal.unescape(template.substring(templateEnd, i)));
+                    }
+                    templateStart = Optional.of(i + 1);
+                }
+                depth++;
+            }
+
+            if (template.charAt(i) == '}') {
+                depth--;
+                if (depth < 0) {
+                    throw new InnerParseError("unmatched `}` in template");
+                }
+                if (depth == 0) {
+                    out.add(Dynamic.parse(template.substring(templateStart.get(), i), context));
+                    templateStart = Optional.empty();
+                }
+                templateEnd = i + 1;
+            }
+        }
+        if (depth != 0) {
+            throw new InnerParseError("unmatched `{` in template");
+        }
+        if (templateEnd < template.length()) {
+            out.add(Literal.unescape(template.substring(templateEnd)));
+        }
+        return out;
     }
 
     @Override
@@ -102,6 +145,28 @@ public final class Template implements FromSourceLocation, ToNode {
         return value;
     }
 
+    public Type typeCheck(Scope<Type> scope) {
+        return context(String.format("while typechecking the template `%s`", this), this, () -> {
+            for (Part part : parts) {
+                context("while checking " + part, () -> part.typeCheck(scope).expectStringType());
+            }
+            return Type.stringType();
+        });
+    }
+
+    @Override
+    public Node toNode() {
+        StringBuilder builder = new StringBuilder();
+        for (Part part : parts) {
+            if (part instanceof Literal) {
+                builder.append(((Literal) part).value);
+            } else if (part instanceof Dynamic) {
+                builder.append('{').append(((Dynamic) part).raw).append('}');
+            }
+        }
+        return Node.from(builder.toString());
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(parts);
@@ -122,75 +187,6 @@ public final class Template implements FromSourceLocation, ToNode {
     @Override
     public String toString() {
         return String.format("\"%s\"", value);
-    }
-
-    public Type typeCheck(Scope<Type> scope) {
-        return context(
-                String.format("while typechecking the template `%s`", this),
-                this,
-                () -> {
-                    parts.forEach(part -> RuleError.context("while checking " + part,
-                            () -> part.typeCheck(scope).expectStringType()));
-                    return Type.stringType();
-                });
-    }
-
-    @Override
-    public Node toNode() {
-        StringBuilder sb = new StringBuilder();
-        parts.forEach(
-                p -> {
-                    if (p instanceof Literal) {
-                        sb.append(((Literal) p).value);
-                    } else if (p instanceof Dynamic) {
-                        sb.append('{').append(((Dynamic) p).raw).append('}');
-                    }
-                });
-        return Node.from(sb.toString());
-    }
-
-    private List<Part> parseTemplate(String template, FromSourceLocation context) throws InnerParseError {
-        List<Part> out = new ArrayList<>();
-        Optional<Integer> templateStart = Optional.empty();
-        int depth = 0;
-        int templateEnd = 0;
-        for (int i = 0; i < template.length(); i++) {
-            if (template.substring(i).startsWith("{{")) {
-                i++;
-                continue;
-            }
-            if (template.substring(i).startsWith("}}")) {
-                i++;
-                continue;
-            }
-            if (template.charAt(i) == '{') {
-                if (depth == 0) {
-                    if (templateEnd != i) {
-                        out.add(Literal.unescape(template.substring(templateEnd, i)));
-                    }
-                    templateStart = Optional.of(i + 1);
-                }
-                depth++;
-            }
-            if (template.charAt(i) == '}') {
-                depth--;
-                if (depth < 0) {
-                    throw new InnerParseError("unmatched `}` in template");
-                }
-                if (depth == 0) {
-                    out.add(Dynamic.parse(template.substring(templateStart.get(), i), context));
-                    templateStart = Optional.empty();
-                }
-                templateEnd = i + 1;
-            }
-        }
-        if (depth != 0) {
-            throw new InnerParseError("unmatched `{` in template");
-        }
-        if (templateEnd < template.length()) {
-            out.add(Literal.unescape(template.substring(templateEnd)));
-        }
-        return out;
     }
 
     public abstract static class Part implements TypeCheck {
@@ -225,6 +221,11 @@ public final class Template implements FromSourceLocation, ToNode {
         }
 
         @Override
+        public Type typeCheck(Scope<Type> scope) {
+            return Type.stringType();
+        }
+
+        @Override
         public boolean equals(Object o) {
             if (this == o) {
                 return true;
@@ -245,11 +246,6 @@ public final class Template implements FromSourceLocation, ToNode {
         public String toString() {
             return value;
         }
-
-        @Override
-        public Type typeCheck(Scope<Type> scope) {
-            return Type.stringType();
-        }
     }
 
     public static final class Dynamic extends Part {
@@ -268,6 +264,11 @@ public final class Template implements FromSourceLocation, ToNode {
         @Override
         <T> T accept(TemplateVisitor<T> visitor) {
             return visitor.visitDynamicElement(this.expression);
+        }
+
+        @Override
+        public Type typeCheck(Scope<Type> scope) {
+            return expression.typeCheck(scope);
         }
 
         @Override
@@ -294,11 +295,6 @@ public final class Template implements FromSourceLocation, ToNode {
         @Override
         public String toString() {
             return String.format("{%s}", raw);
-        }
-
-        @Override
-        public Type typeCheck(Scope<Type> scope) {
-            return expression.typeCheck(scope);
         }
     }
 }

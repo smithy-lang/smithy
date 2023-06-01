@@ -70,30 +70,22 @@ public abstract class Function extends Expression {
         return functionNode.getArguments();
     }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder(functionNode.getName()).append("(");
-        List<String> arguments = new ArrayList<>();
-        for (Expression expression : functionNode.getArguments()) {
-            arguments.add(expression.toString());
-        }
-        builder.append(String.join(", ", arguments));
-        return builder.append(")").toString();
-    }
-
     protected Expression expectOneArgument() {
-        List<Expression> argv = this.functionNode.getArguments();
+        List<Expression> argv = functionNode.getArguments();
         if (argv.size() == 1) {
             return argv.get(0);
-        } else {
-            throw new RuleError(
-                    new SourceException("expected 1 argument but found " + argv.size(), this.functionNode));
         }
+        throw new RuleError(new SourceException("expected 1 argument but found " + argv.size(), functionNode));
     }
 
     @Override
     public SourceLocation getSourceLocation() {
         return functionNode.getSourceLocation();
+    }
+
+    @Override
+    public Node toNode() {
+        return functionNode.toNode();
     }
 
     @Override
@@ -113,7 +105,11 @@ public abstract class Function extends Expression {
     }
 
     @Override
-    public Node toNode() {
-        return functionNode.toNode();
+    public String toString() {
+        List<String> arguments = new ArrayList<>();
+        for (Expression expression : functionNode.getArguments()) {
+            arguments.add(expression.toString());
+        }
+        return functionNode.getName() + "(" + String.join(", ", arguments) + ")";
     }
 }

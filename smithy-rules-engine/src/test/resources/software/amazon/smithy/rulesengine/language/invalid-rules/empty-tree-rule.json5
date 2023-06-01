@@ -1,6 +1,6 @@
 // when parsing endpoint ruleset
 //   at invalid-rules/empty-tree-rule.json5:14
-// Tree rule contains no rules!
+// Tree rule contains no rules.
 {
   "version": "1.2",
   "parameters": {

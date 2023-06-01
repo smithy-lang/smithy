@@ -37,5 +37,4 @@ class GetAttrTest {
         assertEquals(asTemplate, asGetAttr);
         assertEquals(asTemplate.hashCode(), asGetAttr.hashCode());
     }
-
 }

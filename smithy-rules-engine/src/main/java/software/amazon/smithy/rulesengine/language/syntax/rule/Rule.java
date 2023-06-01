@@ -31,12 +31,11 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.Endpoint;
-import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.TypeCheck;
-import software.amazon.smithy.rulesengine.language.eval.type.Type;
+import software.amazon.smithy.rulesengine.language.evaluation.Scope;
+import software.amazon.smithy.rulesengine.language.evaluation.TypeCheck;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
-import software.amazon.smithy.rulesengine.language.visit.RuleValueVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -49,6 +48,7 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
     public static final String RULES = "rules";
     public static final String TYPE = "type";
     private static final String CONDITIONS = "conditions";
+
     private final SourceLocation sourceLocation;
     private final List<Condition> conditions;
     private final String documentation;
@@ -68,33 +68,24 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
     }
 
     public static Rule fromNode(Node node) {
-        ObjectNode on = node.expectObjectNode();
+        ObjectNode objectNode = node.expectObjectNode();
 
         Builder builder = new Builder(node);
-        ArrayNode conditionsNode = on.expectArrayMember(CONDITIONS);
-        for (Node conditionNode : conditionsNode.getElements()) {
-            builder.condition(Condition.fromNode(conditionNode));
-        }
-        on.getStringMember(DOCUMENTATION, builder::description);
+        objectNode.getStringMember(DOCUMENTATION, builder::description);
+        builder.conditions(objectNode.expectArrayMember(CONDITIONS).getElementsAs(Condition::fromNode));
 
-        String type = on.expectStringMember(TYPE).getValue();
+        String type = objectNode.expectStringMember(TYPE).getValue();
         switch (type) {
             case ENDPOINT:
-                return builder.endpoint(Endpoint.fromNode(on.expectMember(ENDPOINT)));
+                return builder.endpoint(Endpoint.fromNode(objectNode.expectMember(ENDPOINT)));
             case ERROR:
-                return builder.error(on.expectMember(ERROR));
+                return builder.error(objectNode.expectMember(ERROR));
             case TREE:
-                List<Rule> rules = new ArrayList<>();
-                for (Node ruleNode : on.expectArrayMember(RULES).getElements()) {
-                    rules.add(Rule.fromNode(ruleNode));
-                }
-                return builder.treeRule(rules);
+                return builder.treeRule(objectNode.expectArrayMember(RULES).getElementsAs(Rule::fromNode));
             default:
                 throw new IllegalStateException("Unexpected rule type: " + type);
         }
     }
-
-    public abstract <T> T accept(RuleValueVisitor<T> visitor);
 
     @Override
     public SourceLocation getSourceLocation() {
@@ -105,51 +96,44 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
         return conditions;
     }
 
-    @Override
-    public Type typeCheck(Scope<Type> scope) {
-        // ensure that we don't leak scope
-        return scope.inScope(() -> {
-            for (Condition condition : this.conditions) {
-                context(String.format("while typechecking %s", condition.getFn()), condition,
-                        () -> condition.typeCheck(scope));
-            }
-            return context(String.format("while typechecking%s", this
-                            .getDocumentation()
-                            .map(doc -> String.format(" `%s`", doc))
-                            .orElse("")),
-                    this, () -> typecheckValue(scope));
-        });
-    }
-
-    protected abstract Type typecheckValue(Scope<Type> scope);
-
     public Optional<String> getDocumentation() {
         return Optional.ofNullable(documentation);
     }
 
-    @Override
-    public Node toNode() {
-        ObjectNode.Builder ruleNode = ObjectNode.builder();
+    public abstract <T> T accept(RuleValueVisitor<T> visitor);
 
-        ArrayNode.Builder builder = ArrayNode.builder();
-        for (Condition condition : conditions) {
-            builder.withValue(condition.toNode());
-        }
-        ruleNode.withMember(CONDITIONS, builder.build());
-
-        if (documentation != null) {
-            ruleNode.withMember(DOCUMENTATION, documentation);
-        }
-
-        withValueNode(ruleNode);
-        return ruleNode.build();
-    }
+    protected abstract Type typecheckValue(Scope<Type> scope);
 
     abstract void withValueNode(ObjectNode.Builder builder);
 
     @Override
-    public int hashCode() {
-        return Objects.hash(conditions, documentation);
+    public Type typeCheck(Scope<Type> scope) {
+        return scope.inScope(() -> { // Ensure that we don't leak scope.
+            for (Condition condition : conditions) {
+                context(String.format("while typechecking %s", condition.getFn()), condition,
+                        () -> condition.typeCheck(scope));
+            }
+            String docs = documentation == null ? "" : String.format(" `%s`", documentation);
+            return context(String.format("while typechecking%s", docs), this, () -> typecheckValue(scope));
+        });
+    }
+
+    @Override
+    public Node toNode() {
+        ObjectNode.Builder builder = ObjectNode.builder();
+
+        ArrayNode.Builder conditionsBuilder = ArrayNode.builder();
+        for (Condition condition : conditions) {
+            conditionsBuilder.withValue(condition.toNode());
+        }
+        builder.withMember(CONDITIONS, conditionsBuilder.build());
+
+        if (documentation != null) {
+            builder.withMember(DOCUMENTATION, documentation);
+        }
+
+        withValueNode(builder);
+        return builder.build();
     }
 
     @Override
@@ -162,6 +146,11 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
         }
         Rule rule = (Rule) o;
         return conditions.equals(rule.conditions) && Objects.equals(documentation, rule.documentation);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(conditions, documentation);
     }
 
     @Override
@@ -183,7 +172,6 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
     }
 
     public static final class Builder {
-
         private final List<Condition> conditions = new ArrayList<>();
         private final SourceLocation sourceLocation;
         private Function<Rule, Rule> onBuild = Function.identity();
@@ -245,10 +233,7 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
          */
         public Builder errorOrElse(String error, Condition... condition) {
             Builder next = new Builder(javaLocation());
-            next.onBuild = (Rule r) -> this.treeRule(
-                    Rule.builder().conditions(condition).error(error),
-                    r
-            );
+            next.onBuild = (Rule rule) -> this.treeRule(Rule.builder().conditions(condition).error(error), rule);
             return next;
 
         }
@@ -265,10 +250,9 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
          */
         public Builder validateOrElse(String error, Condition... condition) {
             Builder next = new Builder(javaLocation());
-            next.onBuild = (Rule r) -> this.treeRule(
-                    Rule.builder().conditions(condition).treeRule(r),
-                    Rule.builder().error(error)
-            );
+            next.onBuild = (Rule rule) -> this.treeRule(
+                    Rule.builder().conditions(condition).treeRule(rule),
+                    Rule.builder().error(error));
             return next;
         }
     }

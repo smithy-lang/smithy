@@ -17,11 +17,11 @@ package software.amazon.smithy.rulesengine.language.syntax.functions;
 
 import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
 
-import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.type.BooleanType;
-import software.amazon.smithy.rulesengine.language.eval.type.Type;
+import software.amazon.smithy.rulesengine.language.evaluation.Scope;
+import software.amazon.smithy.rulesengine.language.evaluation.type.BooleanType;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
-import software.amazon.smithy.rulesengine.language.visit.ExpressionVisitor;
+import software.amazon.smithy.rulesengine.language.visitors.ExpressionVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 @SmithyUnstableApi
@@ -49,7 +49,7 @@ public final class Not extends SingleArgFunction<BooleanType> {
 
     @Override
     public Type typeCheckLocal(Scope<Type> scope) {
-        // Not must be typechecked in a interior scope because information doesn't flow back out of `not`
+        // Not must be typechecked in an interior scope because information doesn't flow back out of `not`
         return scope.inScope(() -> context("while typechecking `not`", this,
                 () -> expectOneArgument().typeCheck(scope).expectBooleanType()));
     }

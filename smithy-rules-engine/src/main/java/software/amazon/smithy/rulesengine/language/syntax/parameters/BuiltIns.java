@@ -17,7 +17,7 @@ package software.amazon.smithy.rulesengine.language.syntax.parameters;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import software.amazon.smithy.rulesengine.language.eval.value.Value;
+import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 

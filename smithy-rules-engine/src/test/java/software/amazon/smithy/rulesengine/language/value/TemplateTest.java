@@ -67,5 +67,4 @@ class TemplateTest {
     void invalidTemplates() {
         Expression.parseShortform("a#", SourceLocation.none());
     }
-
 }
