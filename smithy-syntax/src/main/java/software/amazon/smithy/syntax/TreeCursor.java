@@ -21,14 +21,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
-import software.amazon.smithy.model.loader.IdlToken;
+import software.amazon.smithy.model.FromSourceLocation;
+import software.amazon.smithy.model.SourceLocation;
 
 /**
  * Externally traverses a {@link TokenTree} to provide access to parents and siblings.
  *
  * @see TokenTree#zipper()
  */
-public final class TreeCursor {
+public final class TreeCursor implements FromSourceLocation {
 
     private final TokenTree tree;
     private final TreeCursor parent;
@@ -46,6 +47,11 @@ public final class TreeCursor {
      */
     public static TreeCursor fromRoot(TokenTree tree) {
         return new TreeCursor(tree, null);
+    }
+
+    @Override
+    public SourceLocation getSourceLocation() {
+        return getTree().getSourceLocation();
     }
 
     /**
@@ -157,6 +163,24 @@ public final class TreeCursor {
     }
 
     /**
+     * Get direct children from the current tree of a specific type.
+     *
+     * @param types Types of children to get.
+     * @return Returns the collected children, or an empty list.
+     */
+    public List<TreeCursor> getChildrenByType(TreeType... types) {
+        List<TreeCursor> result = new ArrayList<>();
+        for (TreeCursor child : getChildren()) {
+            for (TreeType type : types) {
+                if (child.getTree().getType() == type) {
+                    result.add(child);
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
      * Get the first child of the wrapped tree.
      *
      * @return Return the first child, or null if the tree has no children.
@@ -199,22 +223,19 @@ public final class TreeCursor {
     /**
      * Recursively find every node in the tree that has the given {@code TreeType}.
      *
-     * @param type Tree type to find and return.
+     * @param types Types of children to return.
      * @return Returns the matching tree cursors.
      */
-    public List<TreeCursor> findChildrenByType(TreeType type) {
-        return findChildren(c -> c.getTree().getType() == type);
-    }
-
-    /**
-     * Recursively find every TOKEN tree in the tree that has the given {@code token}.
-     *
-     * @param token Token to find.
-     * @return Returns the matching tree cursors.
-     */
-    public List<TreeCursor> findChildrenByToken(IdlToken token) {
-        return findChildren(c -> c.getTree().getType() == TreeType.TOKEN
-                                 && c.getTree().tokens().iterator().next().getIdlToken() == token);
+    public List<TreeCursor> findChildrenByType(TreeType... types) {
+        return findChildren(c -> {
+            TreeType treeType = c.getTree().getType();
+            for (TreeType type : types) {
+                if (treeType == type) {
+                    return true;
+                }
+            }
+            return false;
+        });
     }
 
     /**
