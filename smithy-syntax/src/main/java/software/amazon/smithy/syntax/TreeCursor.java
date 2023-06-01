@@ -196,6 +196,7 @@ public final class TreeCursor implements FromSourceLocation {
     /**
      * Get the first child of the wrapped tree with the given type.
      *
+     * @param type Child type to get.
      * @return Return the first child, or null if a matching child is not found.
      */
     public TreeCursor getFirstChild(TreeType type) {
