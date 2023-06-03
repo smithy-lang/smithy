@@ -21,6 +21,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.ClientOptionalTrait;
 import software.amazon.smithy.model.traits.DefaultTrait;
+import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.InputTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
@@ -188,16 +189,18 @@ public class ChangedNullabilityTest {
 
     @Test
     public void detectsAdditionOfInputTrait() {
-        MemberShape member = MemberShape.builder()
+        MemberShape member1 = MemberShape.builder()
                 .id("foo.baz#Baz$bam")
                 .target("foo.baz#String")
                 .addTrait(new RequiredTrait())
                 .build();
-        StructureShape shapeA1 = StructureShape.builder().id("foo.baz#Baz").addMember(member).build();
-        StructureShape shapeA2 = shapeA1.toBuilder().addTrait(new InputTrait()).build();
+        MemberShape member2 = member1.toBuilder().addTrait(new DocumentationTrait("docs")).build();
+        StructureShape shapeA1 = StructureShape.builder().id("foo.baz#Baz").addMember(member1).build();
+        StructureShape shapeA2 = StructureShape.builder().id("foo.baz#Baz").addMember(member2)
+                                                         .addTrait(new InputTrait()).build();
         StringShape target = StringShape.builder().id("foo.baz#String").build();
-        Model modelA = Model.assembler().addShapes(shapeA1, member, target).assemble().unwrap();
-        Model modelB = Model.assembler().addShapes(shapeA2, member, target).assemble().unwrap();
+        Model modelA = Model.assembler().addShapes(shapeA1, member1, target).assemble().unwrap();
+        Model modelB = Model.assembler().addShapes(shapeA2, member2, target).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(events.stream()
@@ -209,19 +212,26 @@ public class ChangedNullabilityTest {
 
     @Test
     public void detectsRemovalOfInputTrait() {
-        MemberShape member = MemberShape.builder()
+        MemberShape member1 = MemberShape.builder()
                 .id("foo.baz#Baz$bam")
                 .target("foo.baz#String")
                 .addTrait(new RequiredTrait())
                 .build();
+        MemberShape member2 = member1.toBuilder()
+                .addTrait(new DocumentationTrait("docs"))
+                .build();
         StructureShape shapeA1 = StructureShape.builder()
-                .id("foo.baz#Baz").addMember(member)
+                .id("foo.baz#Baz")
+                .addMember(member1)
                 .addTrait(new InputTrait())
                 .build();
-        StructureShape shapeA2 = shapeA1.toBuilder().removeTrait(InputTrait.ID).build();
+        StructureShape shapeA2 = StructureShape.builder()
+                .id("foo.baz#Baz")
+                .addMember(member2)
+                .build();
         StringShape target = StringShape.builder().id("foo.baz#String").build();
-        Model modelA = Model.assembler().addShapes(shapeA1, member, target).assemble().unwrap();
-        Model modelB = Model.assembler().addShapes(shapeA2, member, target).assemble().unwrap();
+        Model modelA = Model.assembler().addShapes(shapeA1, member1, target).assemble().unwrap();
+        Model modelB = Model.assembler().addShapes(shapeA2, member2, target).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(events.stream()
