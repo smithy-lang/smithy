@@ -39,9 +39,9 @@ import software.amazon.smithy.utils.Pair;
  * list of existing values.
  */
 public final class ChangedEnumTrait extends AbstractDiffEvaluator {
-    private static final String ORDER_CHANGED = ".OrderChanged";
-    private static final String NAME_CHANGED = ".NameChanged";
-    private static final String REMOVED = ".Removed";
+    private static final String ORDER_CHANGED = ".OrderChanged.";
+    private static final String NAME_CHANGED = ".NameChanged.";
+    private static final String REMOVED = ".Removed.";
 
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
@@ -84,7 +84,7 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
                                 .severity(Severity.ERROR)
                                 .message(String.format("Enum value `%s` was removed", definition.getValue()))
                                 .shape(change.getNewShape())
-                                .id(getEventId() + REMOVED)
+                                .id(getEventId() + REMOVED + definition.getValue())
                                 .build()
                 );
                 oldEndPosition--;
@@ -100,7 +100,7 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
                                             newValue.getName().orElse(null),
                                             definition.getValue()))
                                     .shape(change.getNewShape())
-                                    .id(getEventId() + NAME_CHANGED)
+                                    .id(getEventId() + NAME_CHANGED + definition.getValue())
                                     .build()
                     );
                 }
@@ -119,7 +119,7 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
                                             + "can cause compatibility issues when ordinal values are used for "
                                             + "iteration, serialization, etc.", definition.getValue()))
                                     .shape(change.getNewShape())
-                                    .id(getEventId() + ORDER_CHANGED)
+                                    .id(getEventId() + ORDER_CHANGED + definition.getValue())
                                     .build()
                     );
                 } else {
