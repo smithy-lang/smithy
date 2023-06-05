@@ -152,7 +152,7 @@ public enum TreeType {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
-                tokenizer.next();
+                tokenizer.next(); // Skip "use"
                 SP.parse(tokenizer);
                 ABSOLUTE_ROOT_SHAPE_ID.parse(tokenizer);
                 BR.parse(tokenizer);
@@ -236,14 +236,8 @@ public enum TreeType {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
-                SIMPLE_TYPE_NAME.parse(tokenizer);
-                optionalSpaces(tokenizer);
-                IDENTIFIER.parse(tokenizer);
-                optionalSpaces(tokenizer);
-
-                if (tokenizer.isCurrentLexeme("with")) {
-                    SHAPE_MIXINS.parse(tokenizer);
-                }
+                parseShapeTypeAndName(tokenizer, SIMPLE_TYPE_NAME);
+                parseOptionalMixins(tokenizer);
             });
         }
     },
@@ -251,7 +245,7 @@ public enum TreeType {
     SIMPLE_TYPE_NAME {
         @Override
         void parse(CapturingTokenizer tokenizer) {
-            // Assumes that the current token is a valid simple type name validated by SHAPE_BODY.
+            // Assumes that the current token is a valid simple type name validated by SHAPE.
             tokenizer.withState(this, tokenizer::next);
         }
     },
@@ -260,14 +254,8 @@ public enum TreeType {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
-                ENUM_TYPE_NAME.parse(tokenizer);
-                optionalSpaces(tokenizer);
-                IDENTIFIER.parse(tokenizer);
-                optionalSpaces(tokenizer);
-
-                if (tokenizer.isCurrentLexeme("with")) {
-                    SHAPE_MIXINS.parse(tokenizer);
-                }
+                parseShapeTypeAndName(tokenizer, ENUM_TYPE_NAME);
+                parseOptionalMixins(tokenizer);
 
                 optionalWs(tokenizer);
                 ENUM_SHAPE_MEMBERS.parse(tokenizer);
@@ -278,7 +266,7 @@ public enum TreeType {
     ENUM_TYPE_NAME {
         @Override
         void parse(CapturingTokenizer tokenizer) {
-            // Assumes that the current token is a valid enum type name validated by SHAPE_BODY.
+            // Assumes that the current token is a valid enum type name validated by SHAPE.
             tokenizer.withState(this, tokenizer::next);
         }
     },
@@ -308,10 +296,7 @@ public enum TreeType {
             tokenizer.withState(this, () -> {
                 TRAIT_STATEMENTS.parse(tokenizer);
                 IDENTIFIER.parse(tokenizer);
-                if (tokenizer.hasNext() && (tokenizer.getCurrentToken() == IdlToken.EQUAL
-                                            || tokenizer.peekPastSpaces().getIdlToken() == IdlToken.EQUAL)) {
-                    VALUE_ASSIGNMENT.parse(tokenizer);
-                }
+                parseOptionalValueAssignment(tokenizer);
             });
         }
     },
@@ -320,10 +305,7 @@ public enum TreeType {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
-                AGGREGATE_TYPE_NAME.parse(tokenizer);
-                optionalSpaces(tokenizer);
-                IDENTIFIER.parse(tokenizer);
-                optionalSpaces(tokenizer);
+                parseShapeTypeAndName(tokenizer, AGGREGATE_TYPE_NAME);
                 parseSharedStructureBodyWithinInline(tokenizer);
             });
         }
@@ -332,16 +314,17 @@ public enum TreeType {
     AGGREGATE_TYPE_NAME {
         @Override
         void parse(CapturingTokenizer tokenizer) {
-            // Assumes that the current token is a valid simple type name validated by SHAPE_BODY.
+            // Assumes that the current token is a valid simple type name validated by SHAPE.
             tokenizer.withState(this, tokenizer::next);
         }
     },
 
-    AGGREGATE_SHAPE_RESOURCE {
+    // Don't use this directly. Instead, use parseOptionalForResource
+    FOR_RESOURCE {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
-                IDENTIFIER.parse(tokenizer);
+                tokenizer.next(); // Skip "for"
                 SP.parse(tokenizer);
                 SHAPE_ID.parse(tokenizer);
             });
@@ -377,11 +360,7 @@ public enum TreeType {
                 } else {
                     EXPLICIT_SHAPE_MEMBER.parse(tokenizer);
                 }
-
-                optionalSpaces(tokenizer);
-                if (tokenizer.getCurrentToken() == IdlToken.EQUAL) {
-                    VALUE_ASSIGNMENT.parse(tokenizer);
-                }
+                parseOptionalValueAssignment(tokenizer);
             });
         }
     },
@@ -416,11 +395,9 @@ public enum TreeType {
         void parse(CapturingTokenizer tokenizer) {
             // Assumes that the shape type is a valid "service" or "resource".
             tokenizer.withState(this, () -> {
-                parseShapeTypeAndName(tokenizer);
+                parseShapeTypeAndName(tokenizer, ENTITY_TYPE_NAME);
 
-                if (tokenizer.isCurrentLexeme("with")) {
-                    SHAPE_MIXINS.parse(tokenizer);
-                }
+                parseOptionalMixins(tokenizer);
 
                 optionalWs(tokenizer);
                 tokenizer.expect(IdlToken.LBRACE);
@@ -429,15 +406,21 @@ public enum TreeType {
         }
     },
 
+    ENTITY_TYPE_NAME {
+       @Override
+       void parse(CapturingTokenizer tokenizer)  {
+           // Assumes that the current token is a valid entity type name validated by SHAPE.
+           tokenizer.withState(this, tokenizer::next);
+       }
+    },
+
     OPERATION_SHAPE {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
                 parseShapeTypeAndName(tokenizer);
 
-                if (tokenizer.isCurrentLexeme("with")) {
-                    SHAPE_MIXINS.parse(tokenizer);
-                }
+                parseOptionalMixins(tokenizer);
 
                 optionalWs(tokenizer);
                 OPERATION_BODY.parse(tokenizer);
@@ -544,11 +527,12 @@ public enum TreeType {
 
     // Mixins =
     //     [SP] %s"with" [WS] "[" [WS] 1*(ShapeId [WS]) "]"
-    SHAPE_MIXINS {
+    // Don't use this directly. Instead, use parseOptionalMixins
+    MIXINS {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
-                IDENTIFIER.parse(tokenizer); // 'with'
+                tokenizer.next(); // Skip "with"
                 optionalWs(tokenizer);
 
                 tokenizer.expect(IdlToken.LBRACKET);
@@ -567,6 +551,7 @@ public enum TreeType {
         }
     },
 
+    // Don't use this directly. Instead, use parseOptionalValueAssignment
     VALUE_ASSIGNMENT {
         @Override
         void parse(CapturingTokenizer tokenizer) {
@@ -634,7 +619,9 @@ public enum TreeType {
                         case STRING:
                         case IDENTIFIER:
                         default:
-                            if (tokenizer.peekPastWs().getIdlToken() == IdlToken.COLON) {
+                            CapturedToken nextPastWs = tokenizer.peekWhile(1, token ->
+                                    token.isWhitespace() || token == IdlToken.DOC_COMMENT);
+                            if (nextPastWs.getIdlToken() == IdlToken.COLON) {
                                 TRAIT_STRUCTURE.parse(tokenizer);
                             } else {
                                 TRAIT_NODE.parse(tokenizer);
@@ -677,7 +664,7 @@ public enum TreeType {
             tokenizer.withState(this, () -> {
                 // Try to see if this is a singular or block apply statement.
                 IdlToken peek = tokenizer
-                        .peekWhile(1, t -> t != IdlToken.EOF && t != IdlToken.AT && t != IdlToken.LBRACE)
+                        .peekWhile(1, t -> t != IdlToken.AT && t != IdlToken.LBRACE)
                         .getIdlToken();
                 if (peek == IdlToken.LBRACE) {
                     APPLY_STATEMENT_BLOCK.parse(tokenizer);
@@ -692,7 +679,7 @@ public enum TreeType {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
-                tokenizer.next();
+                tokenizer.next(); // Skip "apply"
                 SP.parse(tokenizer);
                 SHAPE_ID.parse(tokenizer);
                 WS.parse(tokenizer);
@@ -705,7 +692,7 @@ public enum TreeType {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
-                tokenizer.next();
+                tokenizer.next(); // Skip "apply"
                 SP.parse(tokenizer);
                 SHAPE_ID.parse(tokenizer);
                 WS.parse(tokenizer);
@@ -1089,27 +1076,46 @@ public enum TreeType {
     }
 
     protected static void parseShapeTypeAndName(CapturingTokenizer tokenizer) {
-        tokenizer.expect(IdlToken.IDENTIFIER);
-        tokenizer.next(); // skip the shape type
+        parseShapeTypeAndName(tokenizer, null);
+    }
+
+    protected static void parseShapeTypeAndName(CapturingTokenizer tokenizer, TreeType typeName) {
+        if (typeName == null) {
+            tokenizer.next();
+        } else {
+            typeName.parse(tokenizer); // Skip the shape type
+        }
         optionalSpaces(tokenizer);
         IDENTIFIER.parse(tokenizer); // shape name
         optionalSpaces(tokenizer);
     }
 
     protected static void parseSharedStructureBodyWithinInline(CapturingTokenizer tokenizer) {
-        optionalSpaces(tokenizer);
-
-        if (tokenizer.isCurrentLexeme("for")) {
-            AGGREGATE_SHAPE_RESOURCE.parse(tokenizer);
-            optionalSpaces(tokenizer);
-        }
-
-        if (tokenizer.isCurrentLexeme("with")) {
-            SHAPE_MIXINS.parse(tokenizer);
-        }
+        parseOptionalForResource(tokenizer);
+        parseOptionalMixins(tokenizer);
 
         optionalWs(tokenizer);
         SHAPE_MEMBERS.parse(tokenizer);
+    }
+
+    protected static void parseOptionalForResource(CapturingTokenizer tokenizer) {
+        optionalSpaces(tokenizer);
+        if (tokenizer.isCurrentLexeme("for")) {
+            FOR_RESOURCE.parse(tokenizer);
+        }
+    }
+
+    protected static void parseOptionalMixins(CapturingTokenizer tokenizer) {
+        optionalSpaces(tokenizer);
+        if (tokenizer.isCurrentLexeme("with")) {
+            MIXINS.parse(tokenizer);
+        }
+    }
+
+    protected static void parseOptionalValueAssignment(CapturingTokenizer tokenizer) {
+        if (tokenizer.peekPastSpaces().getIdlToken() == IdlToken.EQUAL) {
+            VALUE_ASSIGNMENT.parse(tokenizer);
+        }
     }
 
     protected static void operationInputOutputDefinition(CapturingTokenizer tokenizer) {
