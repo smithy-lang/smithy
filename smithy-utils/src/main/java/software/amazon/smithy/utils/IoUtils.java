@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.utils;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -38,6 +40,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 /**
  * Utilities for IO operations.
@@ -359,5 +362,22 @@ public final class IoUtils {
         }
 
         return true;
+    }
+
+    public static void copyDir(Path src, Path dest) {
+        try (Stream<Path> stream = Files.walk(src)) {
+            stream.forEach(source -> copyFile(source, dest.resolve(src.relativize(source))));
+        } catch (IOException e) {
+            throw new RuntimeException(String.format(
+                "Error copying directory from \"%s\" to \"%s\": %s", src, dest, e.getMessage()), e);
+        }
+    }
+
+    public static void copyFile(Path source, Path dest) {
+        try {
+            Files.copy(source, dest, REPLACE_EXISTING);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 }
