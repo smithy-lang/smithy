@@ -137,15 +137,15 @@ final class CapturingTokenizer implements IdlTokenizer {
     }
 
     CapturedToken peekPastSpaces() {
-        return peekWhile(1, token -> token == IdlToken.SPACE);
-    }
-
-    CapturedToken peekPastWs() {
-        return peekWhile(1, token -> token.isWhitespace() || token == IdlToken.DOC_COMMENT);
+        return peekWhile(0, token -> token == IdlToken.SPACE);
     }
 
     CapturedToken peekWhile(int offsetFromPosition, Predicate<IdlToken> predicate) {
         int position = cursor + offsetFromPosition;
+        // If the start position is out of bounds, return the EOF token.
+        if (position >= tokens.size()) {
+            return tokens.get(tokens.size() - 1);
+        }
         CapturedToken token = tokens.get(position);
         while (token.getIdlToken() != IdlToken.EOF && predicate.test(token.getIdlToken())) {
             token = tokens.get(++position);
