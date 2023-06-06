@@ -1,5 +1,32 @@
 # Smithy Changelog
 
+## 1.32.0 (2023-06-06)
+
+### Features
+* Refactor parsing and validation of `list` and `map` shapes. This improved validation output when unexpected members were present in these shapes ([#1782](https://github.com/awslabs/smithy/pull/1782)) 
+* Updated smithy-build to output projection failures only after all plugins finish running (failed or otherwise) ([#1762](https://github.com/awslabs/smithy/pull/1762))
+* Added new pluggable validation-event decorator capability. This allows for customizing of validation events through a service provider interface ([#1774](https://github.com/awslabs/smithy/pull/1774))
+* Added new diff-evaluator to emit events for when the `@required` trait is added to existing structures without a default ([##1781](https://github.com/awslabs/smithy/pull/1781))
+* Improved validation output for `@default` collisions ([#1780](https://github.com/awslabs/smithy/pull/1780))
+* Updated `@httpQuery` trait validation to prevent query-literal and query-param conflicts ([#1786](https://github.com/awslabs/smithy/pull/1786))
+* Updated default pagination flags to improve missing-pagination validation ([#1764](https://github.com/awslabs/smithy/pull/1764))
+* Updated `SdkServiceIdValidator` to emit `DANGER` events instead of `ERROR` events ([#1772](https://github.com/awslabs/smithy/pull/1772))
+* Updated `ChangedEnumTrait` evaluator to include specific ids, in order to differentiate specific events ([#1787](https://github.com/awslabs/smithy/pull/1787))
+* Added protocol tests to validate http-label escaping in the `restXml` protocol ([#1759](https://github.com/awslabs/smithy/pull/1759))
+* Added support for `@externalDocs` trait when converting operations in the OpenAPI converter ([#1767](https://github.com/awslabs/smithy/pull/1767))
+* Updated a handful of specifications in the smithy-grammar to improve parsability ([#1788](https://github.com/awslabs/smithy/pull/1788), [#1790](https://github.com/awslabs/smithy/pull/1790), [#1792](https://github.com/awslabs/smithy/pull/1792), [#1793](https://github.com/awslabs/smithy/pull/1793), [#1800](https://github.com/awslabs/smithy/pull/1800))
+
+### Bug Fixes
+* Fixed `migrate` CLI command to properly upgrade 1/1.0 models to 2/2.0 ([#1579](https://github.com/awslabs/smithy/pull/1579), [#1769](https://github.com/awslabs/smithy/pull/1769))
+* Fixed application of enum-mixins on empty enums ([#1794](https://github.com/awslabs/smithy/pull/1794))
+* Fixed handling of dangling doc-comments in structures ([#1776](https://github.com/awslabs/smithy/pull/1776))
+* Fixed several smithy-grammar typos and consistency issues ([#1783](https://github.com/awslabs/smithy/pull/1783))
+
+### Documentation
+* Added a warning about the limitations of request-validation in API-Gateway ([#1765](https://github.com/awslabs/smithy/pull/1765))
+* Updated CLI installation guide for Windows to be more idiomatic ([#1757](https://github.com/awslabs/smithy/pull/1757))
+* Updated protocol documentation pages to indicate support for the `@requestCompression` trait ([#1763](https://github.com/awslabs/smithy/pull/1763))
+
 ## 1.31.0 (2023-04-25)
 
 ### Features
