@@ -37,11 +37,13 @@ dependencies {
     implementation project(":smithy-model")
     implementation project(":smithy-build")
     implementation project(":smithy-diff")
+    implementation project(":smithy-syntax")
 
     // This is needed to ensure the above dependencies are added to the runtime image.
     shadow project(":smithy-model")
     shadow project(":smithy-build")
     shadow project(":smithy-diff")
+    shadow project(":smithy-syntax")
 
     // These maven resolver dependencies are shaded into the smithy-cli JAR.
     implementation "org.apache.maven:maven-resolver-provider:3.8.6"
@@ -82,6 +84,7 @@ shadowJar {
         exclude(project(':smithy-model'))
         exclude(project(':smithy-build'))
         exclude(project(':smithy-diff'))
+        exclude(project(':smithy-syntax'))
     }
 }
 
