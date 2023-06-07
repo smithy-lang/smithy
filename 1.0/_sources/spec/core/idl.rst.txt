@@ -122,7 +122,7 @@ string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
     NodeValue           :`NodeArray`
                         :/ `NodeObject`
                         :/ `Number`
-                        :/ `NodeKeywords`
+                        :/ `NodeKeyword`
                         :/ `NodeStringValue`
     NodeArray           :"[" [`WS`]
                         :      [`NodeValue` [`WS`]
@@ -148,7 +148,7 @@ string support defined in `RFC 5234 <https://www.rfc-editor.org/rfc/rfc7405>`_.
     Minus               :%x2D ; -
     Plus                :%x2B ; +
     Zero                :%x30 ; 0
-    NodeKeywords        :%s"true" / %s"false" / %s"null"
+    NodeKeyword        :%s"true" / %s"false" / %s"null"
     NodeStringValue     :`ShapeId` / `TextBlock` / `QuotedText`
     QuotedText          :DQUOTE *`QuotedChar` DQUOTE
     QuotedChar          :%x20-21     ; space - "!"

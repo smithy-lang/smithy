@@ -296,6 +296,11 @@ Then following example enables request validation on a service:
     This trait should be considered internal-only and not exposed to your
     customers.
 
+.. warning::
+
+    API Gateway request validation uses `JSON Schema <https://datatracker.ietf.org/doc/html/draft-zyp-json-schema-04>`_
+    to validate requests against models and may not meet all the
+    validation needs of your application.
 
 .. smithy-trait:: aws.apigateway#integration
 .. _aws.apigateway#integration-trait:
