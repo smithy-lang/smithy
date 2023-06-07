@@ -37,6 +37,17 @@ public final class Formatter {
     /**
      * Formats the given token tree.
      *
+     * @param root Root {@link TreeType#IDL} tree node to format.
+     * @return Returns the formatted model as a string.
+     * @throws ModelSyntaxException if the model contains errors.
+     */
+    public static String format(TokenTree root) {
+        return format(root, 120);
+    }
+
+    /**
+     * Formats the given token tree.
+     *
      * @param root     Root {@link TreeType#IDL} tree node to format.
      * @param maxWidth Maximum line width.
      * @return Returns the formatted model as a string.

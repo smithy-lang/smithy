@@ -37,7 +37,7 @@ public final class FilterCliVersionResolver implements DependencyResolver {
     private static final Logger LOGGER = Logger.getLogger(FilterCliVersionResolver.class.getName());
     private static final String SMITHY_GROUP = "software.amazon.smithy";
     private static final Set<String> CLI_ARTIFACTS = SetUtils.of(
-            "smithy-utils", "smithy-model", "smithy-build", "smithy-cli", "smithy-diff");
+            "smithy-utils", "smithy-model", "smithy-build", "smithy-cli", "smithy-diff", "smithy-syntax");
 
     private final String version;
     private final DependencyResolver delegate;
