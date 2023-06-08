@@ -20,7 +20,8 @@ public final class OptionalType extends AbstractType {
         if (!(type instanceof OptionalType)) {
             return false;
         }
-        return ((OptionalType) type).inner.isA(inner);
+        OptionalType other = ((OptionalType) type);
+        return other.inner.isA(this.inner);
     }
 
     @Override

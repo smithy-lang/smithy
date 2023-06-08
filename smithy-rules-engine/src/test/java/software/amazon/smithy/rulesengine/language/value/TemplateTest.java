@@ -25,7 +25,8 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Template;
-import software.amazon.smithy.rulesengine.language.syntax.functions.GetAttr;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr;
 
 class TemplateTest {
     @Test
@@ -51,16 +52,14 @@ class TemplateTest {
     @Test
     void validateShortformParsing() {
         assertEquals(Expression.parseShortform("a", SourceLocation.none()), Expression.getReference(Identifier.of("a"), SourceLocation.none()));
-        assertEquals(Expression.parseShortform("a#b", SourceLocation.none()), GetAttr
-                .builder()
-                .target(Expression.getReference(Identifier.of("a"), SourceLocation.none()))
-                .path("b")
-                .build());
-        assertEquals(Expression.parseShortform("a#b.c", SourceLocation.none()), GetAttr
-                .builder()
-                .target(Expression.getReference(Identifier.of("a"), SourceLocation.none()))
-                .path("b.c")
-                .build());
+        assertEquals(Expression.parseShortform("a#b", SourceLocation.none()), new GetAttr(FunctionNode.ofExpressions(
+                GetAttr.ID,
+                Expression.getReference(Identifier.of("a"), SourceLocation.none()),
+                Expression.of("b"))));
+        assertEquals(Expression.parseShortform("a#b.c", SourceLocation.none()), new GetAttr(FunctionNode.ofExpressions(
+                GetAttr.ID,
+                Expression.getReference(Identifier.of("a"), SourceLocation.none()),
+                Expression.of("b.c"))));
     }
 
     @Test

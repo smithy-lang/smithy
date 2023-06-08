@@ -2,8 +2,8 @@ $version: "2.0"
 
 namespace example
 
-use smithy.rules#endpointRuleSet
 use smithy.rules#clientContextParams
+use smithy.rules#endpointRuleSet
 use smithy.rules#endpointTests
 
 @endpointRuleSet({

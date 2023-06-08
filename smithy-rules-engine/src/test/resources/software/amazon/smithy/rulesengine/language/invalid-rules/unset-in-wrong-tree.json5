@@ -1,12 +1,13 @@
 // when parsing endpoint ruleset
 // while typechecking
-//   at invalid-rules/unset-in-wrong-tree.json5:36
+//   at invalid-rules/unset-in-wrong-tree.json5:37
 // while typechecking the endpoint
-//   at invalid-rules/unset-in-wrong-tree.json5:38
-// while checking the URL
 //   at invalid-rules/unset-in-wrong-tree.json5:39
+// while checking the URL
+//   at invalid-rules/unset-in-wrong-tree.json5:40
 // while typechecking "{region}.amazonaws.com"
 // while typechecking the template `"{region}.amazonaws.com"`
+// while checking {region}
 // Expected string but found OptionalType<StringType>. hint: use `assign` in a condition or `isSet` to prove that this value is non-null
 {
   "version": "1.2",

@@ -20,14 +20,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.not;
 
 import org.junit.jupiter.api.Test;
-import software.amazon.smithy.model.node.ArrayNode;
-import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.rulesengine.language.evaluation.RuleEvaluator;
 import software.amazon.smithy.rulesengine.language.evaluation.value.RecordValue;
-import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.functions.Function;
 import software.amazon.smithy.rulesengine.language.stdlib.AwsPartition;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
 
 public class AwsPartitionFunctionTest {
     @Test
@@ -56,11 +53,7 @@ public class AwsPartitionFunctionTest {
 
 
     private RecordValue evalWithRegion(String region) {
-        Expression fn = Function.fromNode(
-                ObjectNode.builder().withMember("fn", AwsPartition.ID)
-                        .withMember("argv", ArrayNode.arrayNode(StringNode.from(region)))
-                        .build());
-
+        AwsPartition fn = new AwsPartition(FunctionNode.ofExpressions(AwsPartition.ID, Expression.of(region)));
         return fn.accept(new RuleEvaluator()).expectRecordValue();
     }
 }
