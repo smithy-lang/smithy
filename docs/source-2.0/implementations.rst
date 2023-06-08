@@ -168,6 +168,10 @@ of polish or that they work for all use cases.
       - Kotlin
       - 0.x
       - Swift client code generation for Smithy.
+    * - `Dafny <https://github.com/awslabs/smithy-dafny>`_
+      - Java
+      - 0.x
+      - Dafny client and library code generation for Smithy.
     * - `Scala code generation for Smithy <https://github.com/disneystreaming/smithy4s>`_
       - Scala
       - 0.x
