@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.rulesengine.language.syntax.functions;
+package software.amazon.smithy.rulesengine.language.syntax.expressions.functions;
 
 import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
 
@@ -21,12 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
-import software.amazon.smithy.rulesengine.language.RulesComponentBuilder;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
 import software.amazon.smithy.rulesengine.language.error.InvalidRulesException;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
@@ -36,30 +34,28 @@ import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.ExpressionVisitor;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Reference;
-import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
-import software.amazon.smithy.rulesengine.language.visitors.ExpressionVisitor;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * A rule-set expression for indexing a record/object or array.
  */
 @SmithyUnstableApi
-public final class GetAttr extends Expression {
+public final class GetAttr extends LibraryFunction {
     public static final String ID = "getAttr";
+    private static final Definition DEFINITION = new Definition();
+
     private final Expression target;
     private final String unparsedPath;
     private final List<Part> path;
 
-    private GetAttr(Builder builder) {
-        super(builder.getSourceLocation());
-        this.target = builder.target;
-        this.unparsedPath = builder.path;
-        this.path = parse(builder.path, builder.getSourceLocation());
-    }
-
-    public static Builder builder() {
-        return new Builder();
+    public GetAttr(FunctionNode functionNode) {
+        super(DEFINITION, functionNode);
+        this.target = functionNode.getArguments().get(0);
+        this.unparsedPath = functionNode.getArguments().get(1).toNode().expectStringNode().getValue();
+        this.path = parse(unparsedPath, functionNode.getArguments().get(1));
     }
 
     /**
@@ -125,7 +121,7 @@ public final class GetAttr extends Expression {
     }
 
     @Override
-    public Type typeCheckLocal(Scope<Type> scope) {
+    protected Type typeCheckLocal(Scope<Type> scope) {
         Type base = target.typeCheck(scope);
         for (Part part : path) {
             Type baseType = base;
@@ -138,25 +134,6 @@ public final class GetAttr extends Expression {
     public String getTemplate() {
         String targetString = ((Reference) target).getName().toString();
         return "{" + targetString + "#" + unparsedPath + "}";
-    }
-
-    /**
-     * Convert this function into a condition.
-     *
-     * @return the function as a condition.
-     */
-    public Condition condition() {
-        return new Condition.Builder().fn(this).build();
-    }
-
-    /**
-     * Converts this function into a condition which stores the output in the named result.
-     *
-     * @param result the name of the result parameter.
-     * @return the function as a condition.
-     */
-    public Condition condition(String result) {
-        return new Condition.Builder().fn(this).result(result).build();
     }
 
     @Override
@@ -187,6 +164,35 @@ public final class GetAttr extends Expression {
     @Override
     public String toString() {
         return target + "#" + unparsedPath;
+    }
+
+    public static class Definition implements FunctionDefinition {
+        @Override
+        public String getId() {
+            return ID;
+        }
+
+        @Override
+        public List<Type> getArguments() {
+            // First argument is array or record, so we need to use any here and typecheck it elsewhere.
+            return ListUtils.of(Type.anyType(), Type.stringType());
+        }
+
+        @Override
+        public Type getReturnType() {
+            return Type.anyType();
+        }
+
+        @Override
+        public Value evaluate(List<Value> arguments) {
+            // Specialized in the ExpressionVisitor, so this doesn't need an implementation.
+            return null;
+        }
+
+        @Override
+        public GetAttr createFunction(FunctionNode functionNode) {
+            return new GetAttr(functionNode);
+        }
     }
 
     public interface Part {
@@ -242,7 +248,6 @@ public final class GetAttr extends Expression {
             public String toString() {
                 return key.toString();
             }
-
         }
 
         final class Index implements Part {
@@ -288,31 +293,6 @@ public final class GetAttr extends Expression {
             public String toString() {
                 return String.format("[%s]", index);
             }
-
-        }
-    }
-
-    public static final class Builder extends RulesComponentBuilder<Builder, GetAttr> {
-        Expression target;
-        String path;
-
-        private Builder() {
-            super(SourceLocation.none());
-        }
-
-        public Builder target(Expression target) {
-            this.target = target;
-            return this;
-        }
-
-        public Builder path(String path) {
-            this.path = path;
-            return this;
-        }
-
-        @Override
-        public GetAttr build() {
-            return new GetAttr(this);
         }
     }
 }

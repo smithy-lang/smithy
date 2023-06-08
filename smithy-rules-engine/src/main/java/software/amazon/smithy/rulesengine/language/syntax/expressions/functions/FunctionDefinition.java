@@ -13,9 +13,13 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.rulesengine.language.syntax.functions;
+package software.amazon.smithy.rulesengine.language.syntax.expressions.functions;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.ServiceLoader;
+import java.util.function.Function;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -49,4 +53,32 @@ public interface FunctionDefinition {
      */
     Value evaluate(List<Value> arguments);
 
+    LibraryFunction createFunction(FunctionNode functionNode);
+
+    static Function<FunctionNode, Optional<LibraryFunction>> createFunctionFactory(
+            Iterable<FunctionDefinition> functionDefinitions
+    ) {
+        // Copy from the provided iterator to prevent issues with potentially
+        // caching a ServiceLoader using a Thread's context ClassLoader VM-wide.
+        List<FunctionDefinition> definitionsList = new ArrayList<>();
+        functionDefinitions.forEach(definitionsList::add);
+        return node -> {
+            for (FunctionDefinition definition : definitionsList) {
+                if (definition.getId().equals(node.getName())) {
+                    return Optional.of(definition.createFunction(node));
+                }
+            }
+            return Optional.empty();
+        };
+    }
+
+    static Function<FunctionNode, Optional<LibraryFunction>> createFunctionFactory() {
+        return createFunctionFactory(ServiceLoader.load(FunctionDefinition.class));
+    }
+
+    static Function<FunctionNode, Optional<LibraryFunction>> createFunctionFactory(
+            ClassLoader classLoader
+    ) {
+        return createFunctionFactory(ServiceLoader.load(FunctionDefinition.class, classLoader));
+    }
 }

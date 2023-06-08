@@ -3,10 +3,10 @@ $version: "1.0"
 namespace smithy.example
 
 use smithy.rules#clientContextParams
-use smithy.rules#staticContextParams
 use smithy.rules#contextParam
 use smithy.rules#endpointRuleSet
 use smithy.rules#endpointTests
+use smithy.rules#staticContextParams
 
 @clientContextParams(
     stringFoo: {type: "string", documentation: "a client string parameter"},

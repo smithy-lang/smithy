@@ -28,10 +28,8 @@ import software.amazon.smithy.rulesengine.language.RulesComponentBuilder;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
-import software.amazon.smithy.rulesengine.language.stdlib.BooleanEquals;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.functions.Function;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -173,26 +171,6 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLo
      */
     public Expression toExpression() {
         return Expression.getReference(name, SourceLocation.none());
-    }
-
-    /**
-     * Provides a function comparing this parameter to a boolean value.
-     *
-     * @param b the boolean value to compare the parameter to.
-     * @return the BooleanEquals function comparing the parameter.
-     */
-    public Function equal(boolean b) {
-        return BooleanEquals.ofExpressions(toExpression(), Expression.of(b));
-    }
-
-    /**
-     * Provides a function comparing this parameter to expression.
-     *
-     * @param expression the expression.
-     * @return the BooleanEquals function comparing the parameter.
-     */
-    public Function equal(Expression expression) {
-        return BooleanEquals.ofExpressions(toExpression(), expression);
     }
 
     @Override

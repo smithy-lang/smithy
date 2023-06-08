@@ -13,15 +13,15 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.rulesengine.language.visitors;
+package software.amazon.smithy.rulesengine.language;
 
 import java.util.List;
 import java.util.stream.Stream;
-import software.amazon.smithy.rulesengine.language.Endpoint;
-import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.ExpressionVisitor;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
+import software.amazon.smithy.rulesengine.language.syntax.rule.RuleValueVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -30,7 +30,9 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * @param <R> the return type.
  */
 @SmithyUnstableApi
-public class TraversingVisitor<R> extends DefaultVisitor<Stream<R>> {
+public class TraversingVisitor<R> extends ExpressionVisitor.Default<Stream<R>>
+        implements RuleValueVisitor<Stream<R>> {
+
     /**
      * Given an {@link EndpointRuleSet} will invoke the visitor methods for each rule.
      *

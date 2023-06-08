@@ -110,8 +110,7 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
     public Type typeCheck(Scope<Type> scope) {
         return scope.inScope(() -> { // Ensure that we don't leak scope.
             for (Condition condition : conditions) {
-                context(String.format("while typechecking %s", condition.getFn()), condition,
-                        () -> condition.typeCheck(scope));
+                condition.typeCheck(scope);
             }
             String docs = documentation == null ? "" : String.format(" `%s`", documentation);
             return context(String.format("while typechecking%s", docs), this, () -> typecheckValue(scope));

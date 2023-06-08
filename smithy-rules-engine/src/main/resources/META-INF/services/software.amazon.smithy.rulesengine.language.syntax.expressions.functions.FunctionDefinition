@@ -1,0 +1,12 @@
+software.amazon.smithy.rulesengine.language.stdlib.AwsIsVirtualHostableS3Bucket$Definition
+software.amazon.smithy.rulesengine.language.stdlib.AwsPartition$Definition
+software.amazon.smithy.rulesengine.language.stdlib.ParseArn$Definition
+software.amazon.smithy.rulesengine.language.syntax.expressions.functions.BooleanEquals$Definition
+software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr$Definition
+software.amazon.smithy.rulesengine.language.syntax.expressions.functions.IsSet$Definition
+software.amazon.smithy.rulesengine.language.syntax.expressions.functions.IsValidHostLabel$Definition
+software.amazon.smithy.rulesengine.language.syntax.expressions.functions.Not$Definition
+software.amazon.smithy.rulesengine.language.syntax.expressions.functions.ParseUrl$Definition
+software.amazon.smithy.rulesengine.language.syntax.expressions.functions.StringEquals$Definition
+software.amazon.smithy.rulesengine.language.syntax.expressions.functions.Substring$Definition
+software.amazon.smithy.rulesengine.language.syntax.expressions.functions.UriEncode$Definition

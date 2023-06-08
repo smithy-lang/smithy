@@ -1,5 +1,6 @@
 // when parsing endpoint ruleset
-//   at invalid-rules/only-builtins-have-defaults.json5:7
+// while parsing the parameter `RegionName`
+//   at invalid-rules/only-builtins-have-defaults.json5:8
 // Cannot set a default value for non-builtin parameters
 {
   "version": "1.2",

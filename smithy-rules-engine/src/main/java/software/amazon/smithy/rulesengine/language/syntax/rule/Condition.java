@@ -30,7 +30,7 @@ import software.amazon.smithy.rulesengine.language.evaluation.TypeCheck;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionNode;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -47,6 +47,10 @@ public final class Condition implements TypeCheck, FromSourceLocation, ToNode {
     private Condition(Builder builder) {
         this.result = builder.result;
         this.fn = SmithyBuilder.requiredState("fn", builder.fn);
+    }
+
+    public static Builder builder() {
+        return new Condition.Builder();
     }
 
     /**

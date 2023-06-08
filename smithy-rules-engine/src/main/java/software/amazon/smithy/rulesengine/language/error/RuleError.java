@@ -80,7 +80,7 @@ public final class RuleError extends RuntimeException {
     public String toString() {
         StringBuilder message = new StringBuilder();
         SourceLocation lastLoc = SourceLocation.none();
-        for (int i = contexts.size() - 1; i > 0; i--) {
+        for (int i = contexts.size() - 1; i >= 0; i--) {
             Pair<String, SourceLocation> context = contexts.get(i);
             message.append(context.left);
             message.append("\n");
@@ -94,14 +94,12 @@ public final class RuleError extends RuntimeException {
             }
         }
 
-        if (root.getSourceLocation() != SourceLocation.none() && root.getSourceLocation() != lastLoc) {
-            message.append("  at ")
-                    .append(root.getSourceLocation().getFilename())
-                    .append(":").append(root.getSourceLocation().getLine())
-                    .append("\n");
-        }
-
         message.append(root.getMessageWithoutLocation());
+        if (root.getSourceLocation() != SourceLocation.none() && root.getSourceLocation() != lastLoc) {
+            message.append("\n").append("  at ")
+                    .append(root.getSourceLocation().getFilename())
+                    .append(":").append(root.getSourceLocation().getLine());
+        }
         return message.toString();
     }
 

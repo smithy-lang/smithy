@@ -13,43 +13,25 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.rulesengine.language.stdlib;
+package software.amazon.smithy.rulesengine.language.syntax.expressions.functions;
 
 import java.util.Arrays;
 import java.util.List;
-import software.amazon.smithy.rulesengine.language.error.InnerParseError;
-import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
-import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.functions.Function;
-import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionDefinition;
-import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionNode;
-import software.amazon.smithy.rulesengine.language.syntax.functions.LibraryFunction;
-import software.amazon.smithy.rulesengine.language.visitors.ExpressionVisitor;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.ExpressionVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * A rule-set function for comparing strings for equality.
  */
 @SmithyUnstableApi
-public final class StringEquals extends Function {
+public final class StringEquals extends LibraryFunction {
     public static final String ID = "stringEquals";
     private static final Definition DEFINITION = new Definition();
 
     public StringEquals(FunctionNode functionNode) {
-        super(functionNode);
-    }
-
-    /**
-     * Constructs a function that compare the left and right expressions for string equality.
-     *
-     * @param left  the left expression.
-     * @param right the right expression.
-     * @return a function instance representing the StringEquals comparison.
-     */
-    public static StringEquals ofExpressions(Expression left, Expression right) {
-        return new StringEquals(FunctionNode.ofExpressions(DEFINITION.getId(), left, right));
+        super(DEFINITION, functionNode);
     }
 
     @Override
@@ -57,15 +39,7 @@ public final class StringEquals extends Function {
         return visitor.visitStringEquals(functionNode.getArguments().get(0), functionNode.getArguments().get(1));
     }
 
-    @Override
-    protected Type typeCheckLocal(Scope<Type> scope) throws InnerParseError {
-        LibraryFunction.checkTypeSignature(DEFINITION.getArguments(), functionNode.getArguments(), scope);
-        return DEFINITION.getReturnType();
-    }
-
     public static class Definition implements FunctionDefinition {
-        public static final String ID = StringEquals.ID;
-
         @Override
         public String getId() {
             return ID;
@@ -83,8 +57,13 @@ public final class StringEquals extends Function {
 
         @Override
         public Value evaluate(List<Value> arguments) {
-            return Value.booleanValue(arguments.get(0).expectStringValue().getValue()
-                    .equals(arguments.get(1).expectStringValue().getValue()));
+            // Specialized in the ExpressionVisitor, so this doesn't need an implementation.
+            return null;
+        }
+
+        @Override
+        public StringEquals createFunction(FunctionNode functionNode) {
+            return new StringEquals(functionNode);
         }
     }
 }
