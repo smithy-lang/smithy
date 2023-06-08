@@ -73,7 +73,8 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
         List<ValidationEvent> events = new ArrayList<>();
         int oldEndPosition = oldTrait.getValues().size() - 1;
 
-        for (EnumDefinition definition : oldTrait.getValues()) {
+        for (int enumIndex = 0; enumIndex < oldTrait.getValues().size(); enumIndex++) {
+            EnumDefinition definition = oldTrait.getValues().get(enumIndex);
             Optional<EnumDefinition> maybeNewValue = newTrait.getValues().stream()
                     .filter(d -> d.getValue().equals(definition.getValue()))
                     .findFirst();
@@ -84,7 +85,7 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
                                 .severity(Severity.ERROR)
                                 .message(String.format("Enum value `%s` was removed", definition.getValue()))
                                 .shape(change.getNewShape())
-                                .id(getEventId() + REMOVED + definition.getValue())
+                                .id(getEventId() + REMOVED + enumIndex)
                                 .build()
                 );
                 oldEndPosition--;
@@ -100,7 +101,7 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
                                             newValue.getName().orElse(null),
                                             definition.getValue()))
                                     .shape(change.getNewShape())
-                                    .id(getEventId() + NAME_CHANGED + definition.getValue())
+                                    .id(getEventId() + NAME_CHANGED + enumIndex)
                                     .build()
                     );
                 }
@@ -119,9 +120,10 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
                                             + "can cause compatibility issues when ordinal values are used for "
                                             + "iteration, serialization, etc.", definition.getValue()))
                                     .shape(change.getNewShape())
-                                    .id(getEventId() + ORDER_CHANGED + definition.getValue())
+                                    .id(getEventId() + ORDER_CHANGED + newPosition)
                                     .build()
                     );
+                    oldEndPosition++;
                 } else {
                     events.add(note(change.getNewShape(), String.format(
                             "Enum value `%s` was appended", definition.getValue())));
