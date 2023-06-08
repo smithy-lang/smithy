@@ -38,8 +38,8 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public final class RemovedEntityBinding extends AbstractDiffEvaluator {
     private static final String REMOVED_RESOURCE = "RemovedResourceBinding";
     private static final String REMOVED_OPERATION = "RemovedOperationBinding";
-    private static final String FROM_RESOURCE = ".FromResourceRemoved.";
-    private static final String FROM_SERVICE = ".FromServiceRemoved.";
+    private static final String FROM_RESOURCE = ".FromResource.";
+    private static final String FROM_SERVICE = ".FromService.";
 
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
@@ -69,7 +69,7 @@ public final class RemovedEntityBinding extends AbstractDiffEvaluator {
                 "%s binding of `%s` was removed from %s shape, `%s`",
                 childType, childShape, parentEntity.getType(), parentEntity.getId());
         return ValidationEvent.builder()
-                .id(typeOfRemoval + typeOfParentShape + childShape)
+                .id(typeOfRemoval + typeOfParentShape + childShape.getName())
                 .severity(Severity.ERROR)
                 .shape(parentEntity)
                 .message(message)
