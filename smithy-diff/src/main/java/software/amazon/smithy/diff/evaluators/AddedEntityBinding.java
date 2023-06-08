@@ -38,8 +38,8 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public final class AddedEntityBinding extends AbstractDiffEvaluator {
     private static final String ADDED_RESOURCE = "AddedResourceBinding";
     private static final String ADDED_OPERATION = "AddedOperationBinding";
-    private static final String TO_RESOURCE = ".ToResourceAdded.";
-    private static final String TO_SERVICE = ".ToServiceAdded.";
+    private static final String TO_RESOURCE = ".ToResource.";
+    private static final String TO_SERVICE = ".ToService.";
 
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
@@ -69,7 +69,7 @@ public final class AddedEntityBinding extends AbstractDiffEvaluator {
                 "%s binding of `%s` was added to the %s shape, `%s`",
                 childType, childShape, parentEntity.getType(), parentEntity.getId());
         return ValidationEvent.builder()
-                .id(typeOfAddition + typeOfParentShape + childShape)
+                .id(typeOfAddition + typeOfParentShape + childShape.getName())
                 .severity(Severity.NOTE)
                 .shape(parentEntity)
                 .message(message)
