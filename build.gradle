@@ -118,9 +118,9 @@ subprojects {
     apply plugin: "signing"
     apply plugin: "com.github.johnrengelman.shadow"
 
-    // This is a little hacky, but currently needed to build a shadowed CLI JAR with the same customizations
-    // as other JARs.
-    if (project.name != "smithy-cli") {
+    // This is a little hacky, but currently needed to build a shadowed CLI JAR and smithy-syntax JAR with the same
+    // customizations as other JARs.
+    if (project.name != "smithy-cli" && project.name != "smithy-syntax") {
         tasks.shadowJar.enabled = false
     }
 

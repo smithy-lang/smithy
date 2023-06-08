@@ -37,7 +37,7 @@ dependencies {
     implementation project(":smithy-model")
     implementation project(":smithy-build")
     implementation project(":smithy-diff")
-    implementation project(":smithy-syntax")
+    implementation project(path: ':smithy-syntax', configuration: 'shadow')
 
     // This is needed to ensure the above dependencies are added to the runtime image.
     shadow project(":smithy-model")
