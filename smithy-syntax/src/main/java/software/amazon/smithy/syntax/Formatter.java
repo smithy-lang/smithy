@@ -262,7 +262,8 @@ public final class Formatter {
 
                 case OPERATION_OUTPUT: {
                     TreeCursor simpleTarget = cursor.getFirstChild(TreeType.SHAPE_ID);
-                    return skippedComments(cursor, false).append(Doc.text("output"))
+                    return skippedComments(cursor, false)
+                            .append(Doc.text("output"))
                             .append(simpleTarget == null
                                     ? visit(cursor.getFirstChild(TreeType.INLINE_AGGREGATE_SHAPE))
                                     : Doc.text(": ")).append(visit(simpleTarget));
