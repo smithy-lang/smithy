@@ -47,7 +47,7 @@ public final class AddedOperationError extends AbstractDiffEvaluator {
             if (!change.getOldShape().getErrors().contains(error)) {
                 events.add(
                         ValidationEvent.builder()
-                                .id(getEventId() + "." + error)
+                                .id(getEventId() + "." + error.getName())
                                 .severity(Severity.WARNING)
                                 .message(String.format(
                                         "The `%s` error was added to the `%s` operation. This "
@@ -57,7 +57,6 @@ public final class AddedOperationError extends AbstractDiffEvaluator {
                                                 + "parameter to an operation).",
                                         error, change.getShapeId()))
                                 .shape(change.getNewShape())
-                                .sourceLocation(change.getNewShape().getSourceLocation())
                                 .build()
                 );
             }

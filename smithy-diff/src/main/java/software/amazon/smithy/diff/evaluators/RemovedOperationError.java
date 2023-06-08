@@ -47,13 +47,12 @@ public final class RemovedOperationError extends AbstractDiffEvaluator {
             if (!change.getNewShape().getErrors().contains(error)) {
                 events.add(
                         ValidationEvent.builder()
-                                .id(getEventId() + "." + error)
+                                .id(getEventId() + "." + error.getName())
                                 .severity(Severity.WARNING)
                                 .message(String.format(
                                         "The `%s` error was removed from the `%s` operation.",
                                         error, change.getShapeId()))
                                 .shape(change.getNewShape())
-                                .sourceLocation(change.getNewShape().getSourceLocation())
                                 .build()
                 );
             }
