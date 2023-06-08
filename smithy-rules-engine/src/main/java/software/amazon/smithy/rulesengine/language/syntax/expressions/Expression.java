@@ -30,21 +30,10 @@ import software.amazon.smithy.rulesengine.language.error.InnerParseError;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.TypeCheck;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
-import software.amazon.smithy.rulesengine.language.stdlib.AwsIsVirtualHostableS3Bucket;
-import software.amazon.smithy.rulesengine.language.stdlib.BooleanEquals;
-import software.amazon.smithy.rulesengine.language.stdlib.IsValidHostLabel;
-import software.amazon.smithy.rulesengine.language.stdlib.ParseArn;
-import software.amazon.smithy.rulesengine.language.stdlib.ParseUrl;
-import software.amazon.smithy.rulesengine.language.stdlib.StringEquals;
-import software.amazon.smithy.rulesengine.language.stdlib.Substring;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
-import software.amazon.smithy.rulesengine.language.syntax.functions.Function;
-import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionNode;
-import software.amazon.smithy.rulesengine.language.syntax.functions.GetAttr;
-import software.amazon.smithy.rulesengine.language.syntax.functions.IsSet;
-import software.amazon.smithy.rulesengine.language.syntax.functions.Not;
-import software.amazon.smithy.rulesengine.language.visitors.ExpressionVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -119,10 +108,8 @@ public abstract class Expression implements FromSourceLocation, ToNode, TypeChec
         return context("while parsing `" + shortForm + "` within a template", context, () -> {
             if (shortForm.contains("#")) {
                 String[] parts = shortForm.split("#", 2);
-                return GetAttr.builder()
-                        .sourceLocation(context)
-                        .target(getReference(Identifier.of(parts[0]), context))
-                        .path(parts[1]).build();
+                return new GetAttr(FunctionNode.ofExpressions(GetAttr.ID, context,
+                        getReference(Identifier.of(parts[0]), context), of(parts[1])));
             } else {
                 return Expression.getReference(Identifier.of(shortForm), context);
             }
@@ -172,30 +159,6 @@ public abstract class Expression implements FromSourceLocation, ToNode, TypeChec
         return sourceLocation;
     }
 
-    /**
-     * Constructs a {@link GetAttr} expression containing the given path string.
-     *
-     * @param path the path.
-     * @return the {@link GetAttr} expression.
-     */
-    public GetAttr getAttr(String path) {
-        return GetAttr.builder()
-                .sourceLocation(this)
-                .target(this).path(path).build();
-    }
-
-    /**
-     * Constructs a {@link GetAttr} expression containing the given {@link Identifier}.
-     *
-     * @param path the path {@link Identifier}.
-     * @return the {@link GetAttr} expression.
-     */
-    public GetAttr getAttr(Identifier path) {
-        return GetAttr.builder()
-                .sourceLocation(this)
-                .target(this).path(path.toString()).build();
-    }
-
     @Override
     public Type typeCheck(Scope<Type> scope) {
         // TODO: Could remove all typecheckLocal functions (maybe?)
@@ -220,94 +183,6 @@ public abstract class Expression implements FromSourceLocation, ToNode, TypeChec
             throw new RuntimeException("Typechecking was never invoked on this expression.");
         }
         return cachedType;
-    }
-
-    /**
-     * Returns an IsSet expression for this instance.
-     *
-     * @return the IsSet expression.
-     */
-    public IsSet isSet() {
-        return IsSet.ofExpression(this);
-    }
-
-    /**
-     * Returns a {@link BooleanEquals} expression comparing this expression to the provided boolean value.
-     *
-     * @param value the value to compare against.
-     * @return the BooleanEquals {@link Function}.
-     */
-    public Function equal(boolean value) {
-        return BooleanEquals.ofExpressions(this, Expression.of(value));
-    }
-
-    /**
-     * Returns a Not expression of this instance.
-     *
-     * @return the {@link Not} expression.
-     */
-    public Not not() {
-        return Not.ofExpression(this);
-    }
-
-    /**
-     * Returns a StringEquals function of this expression and the given string value.
-     *
-     * @param value the string value to compare this expression to.
-     * @return the StringEquals {@link Function}.
-     */
-    public Function equal(String value) {
-        return StringEquals.ofExpressions(this, Expression.of(value));
-    }
-
-    /**
-     * Returns a ParseArn function of this expression.
-     *
-     * @return the ParseArn function expression.
-     */
-    public Function parseArn() {
-        return ParseArn.ofExpression(this);
-    }
-
-    /**
-     * Returns a substring expression of this expression.
-     *
-     * @param startIndex the starting index of the string.
-     * @param stopIndex  the ending index of the string.
-     * @param reverse    whether the indexing is should start from end of the string to start.
-     * @return the Substring function expression.
-     */
-    public Function substring(int startIndex, int stopIndex, Boolean reverse) {
-        return Substring.ofExpression(this, startIndex, stopIndex, reverse);
-    }
-
-    /**
-     * Returns a isValidHostLabel expression of this expression.
-     *
-     * @param allowDots whether the UTF-8 {@code .} is considered valid within a host label.
-     * @return the isValidHostLabel function expression.
-     */
-    public Function isValidHostLabel(boolean allowDots) {
-        return IsValidHostLabel.ofExpression(this, allowDots);
-    }
-
-    /**
-     * Returns a isVirtualHostableS3Bucket expression of this expression.
-     *
-     * @param allowDots whether the UTF-8 {@code .} is considered valid within a host label.
-     * @return the isVirtualHostableS3Bucket function expression.
-     */
-    public Function isVirtualHostableS3Bucket(boolean allowDots) {
-        return AwsIsVirtualHostableS3Bucket.ofExpression(this, allowDots);
-    }
-
-    /**
-     * Returns a parseUrl expression of this expression.
-     *
-     * @return the parseUrl function expression.
-     */
-    public Function parseUrl() {
-        return ParseUrl.ofExpression(this);
     }
 
     /**

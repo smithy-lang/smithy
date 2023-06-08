@@ -13,27 +13,24 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.rulesengine.language.stdlib;
+package software.amazon.smithy.rulesengine.language.syntax.expressions.functions;
 
 import java.util.Arrays;
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.ExpressionVisitor;
-import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionDefinition;
-import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
-import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.LibraryFunction;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
- * An AWS rule-set function for determining whether a given string can be promoted to an S3 virtual bucket host label.
+ * A rule-engine function for checking whether a string is a valid DNS host label.
  */
 @SmithyUnstableApi
-public class AwsIsVirtualHostableS3Bucket extends LibraryFunction {
-    public static final String ID = "aws.isVirtualHostableS3Bucket";
+public final class IsValidHostLabel extends LibraryFunction {
+    public static final String ID = "isValidHostLabel";
     private static final Definition DEFINITION = new Definition();
 
-    public AwsIsVirtualHostableS3Bucket(FunctionNode functionNode) {
+    public IsValidHostLabel(FunctionNode functionNode) {
         super(DEFINITION, functionNode);
     }
 
@@ -63,19 +60,15 @@ public class AwsIsVirtualHostableS3Bucket extends LibraryFunction {
             String hostLabel = arguments.get(0).expectStringValue().getValue();
             boolean allowDots = arguments.get(1).expectBooleanValue().getValue();
             if (allowDots) {
-                return Value.booleanValue(
-                        hostLabel.matches("[a-z\\d][a-z\\d\\-.]{1,61}[a-z\\d]")
-                        && !hostLabel.matches("(\\d+\\.){3}\\d+") // don't allow ip address
-                        && !hostLabel.matches(".*[.-]{2}.*") // don't allow names like bucket-.name or bucket.-name
-                );
+                return Value.booleanValue(hostLabel.matches("[a-zA-Z\\d][a-zA-Z\\d\\-.]{0,62}"));
             } else {
-                return Value.booleanValue(hostLabel.matches("[a-z\\d][a-z\\d\\-]{1,61}[a-z\\d]"));
+                return Value.booleanValue(hostLabel.matches("[a-zA-Z\\d][a-zA-Z\\d\\-]{0,62}"));
             }
         }
 
         @Override
-        public AwsIsVirtualHostableS3Bucket createFunction(FunctionNode functionNode) {
-            return new AwsIsVirtualHostableS3Bucket(functionNode);
+        public IsValidHostLabel createFunction(FunctionNode functionNode) {
+            return new IsValidHostLabel(functionNode);
         }
     }
 }

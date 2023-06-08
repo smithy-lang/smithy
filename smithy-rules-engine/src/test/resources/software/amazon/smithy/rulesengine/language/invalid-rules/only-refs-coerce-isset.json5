@@ -1,18 +1,19 @@
 // when parsing endpoint ruleset
 // while typechecking `region is set`
-//   at invalid-rules/only-refs-coerce-isset.json5:29
+//   at invalid-rules/only-refs-coerce-isset.json5:30
 // while checking nested rule in tree rule
 // while typechecking `bucket is set, handle bucket specific endpoints`
-//   at invalid-rules/only-refs-coerce-isset.json5:50
+//   at invalid-rules/only-refs-coerce-isset.json5:51
 // while checking nested rule in tree rule
 // while typechecking `bucket is set and is an arn`
-//   at invalid-rules/only-refs-coerce-isset.json5:64
+//   at invalid-rules/only-refs-coerce-isset.json5:65
 // while typechecking the endpoint
-//   at invalid-rules/only-refs-coerce-isset.json5:87
-// while checking the URL
 //   at invalid-rules/only-refs-coerce-isset.json5:88
+// while checking the URL
+//   at invalid-rules/only-refs-coerce-isset.json5:89
 // while typechecking "https://{bucketArn#resourceId[1]}-{bucketArn#accountId}.{bucketArn#region}.{partitionResult#dnsSuffix}"
 // while typechecking the template `"https://{bucketArn#resourceId[1]}-{bucketArn#accountId}.{bucketArn#region}.{partitionResult#dnsSuffix}"`
+// while checking {bucketArn#resourceId[1]}
 // Expected string but found OptionalType<StringType>. hint: use `assign` in a condition or `isSet` to prove that this value is non-null
 {
   "version": "1.2",

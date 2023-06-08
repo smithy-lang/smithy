@@ -62,7 +62,7 @@ public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBui
 
     public void writeToScope(Scope<Type> scope) {
         for (Parameter parameter : parameters) {
-            RuleError.context(String.format("while typechecking %s", parameter.getName()), parameter,
+            RuleError.context(String.format("while typechecking par %s", parameter.getName()), parameter,
                     () -> scope.insert(parameter.getName(), parameter.toType()));
         }
     }

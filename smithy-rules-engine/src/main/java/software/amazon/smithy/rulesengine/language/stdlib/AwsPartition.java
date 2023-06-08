@@ -32,11 +32,10 @@ import software.amazon.smithy.rulesengine.language.model.PartitionOutputs;
 import software.amazon.smithy.rulesengine.language.model.Partitions;
 import software.amazon.smithy.rulesengine.language.stdlib.partition.PartitionDataProvider;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.functions.Function;
-import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionDefinition;
-import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionNode;
-import software.amazon.smithy.rulesengine.language.syntax.functions.LibraryFunction;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.ExpressionVisitor;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionDefinition;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.LibraryFunction;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -44,9 +43,8 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * An AWS rule-set function for mapping a region string to a partition.
  */
 @SmithyUnstableApi
-public final class AwsPartition implements FunctionDefinition {
+public final class AwsPartition extends LibraryFunction {
     public static final String ID = "aws.partition";
-
     public static final Identifier NAME = Identifier.of("name");
     public static final Identifier DNS_SUFFIX = Identifier.of("dnsSuffix");
     public static final Identifier DUAL_STACK_DNS_SUFFIX = Identifier.of("dualStackDnsSuffix");
@@ -54,81 +52,16 @@ public final class AwsPartition implements FunctionDefinition {
     public static final Identifier SUPPORTS_DUAL_STACK = Identifier.of("supportsDualStack");
     public static final Identifier INFERRED = Identifier.of("inferred");
 
+    private static final Definition DEFINITION = new Definition();
     private static final PartitionData PARTITION_DATA = loadPartitionData();
 
-    @Override
-    public String getId() {
-        return ID;
+    public AwsPartition(FunctionNode functionNode) {
+        super(DEFINITION, functionNode);
     }
 
     @Override
-    public List<Type> getArguments() {
-        return Collections.singletonList(Type.stringType());
-    }
-
-    @Override
-    public Type getReturnType() {
-        Map<Identifier, Type> type = new LinkedHashMap<>();
-        type.put(NAME, Type.stringType());
-        type.put(DNS_SUFFIX, Type.stringType());
-        type.put(DUAL_STACK_DNS_SUFFIX, Type.stringType());
-        type.put(SUPPORTS_DUAL_STACK, Type.booleanType());
-        type.put(SUPPORTS_FIPS, Type.booleanType());
-        return Type.optionalType(new RecordType(type));
-    }
-
-    @Override
-    public Value evaluate(List<Value> arguments) {
-        String regionName = arguments.get(0).expectStringValue().getValue();
-        Partition matchedPartition;
-        boolean inferred = false;
-
-        // Known region
-        matchedPartition = PARTITION_DATA.regionMap.get(regionName);
-        if (matchedPartition == null) {
-            // Try matching on region name pattern
-            for (Partition p : PARTITION_DATA.partitions) {
-                Pattern regex = Pattern.compile(p.getRegionRegex());
-                if (regex.matcher(regionName).matches()) {
-                    matchedPartition = p;
-                    inferred = true;
-                    break;
-                }
-            }
-        }
-
-        if (matchedPartition == null) {
-            for (Partition partition : PARTITION_DATA.partitions) {
-                if (partition.getId().equals("aws")) {
-                    matchedPartition = partition;
-                    break;
-                }
-            }
-        }
-
-        if (matchedPartition == null) {
-            // TODO
-            throw new RuntimeException("Unable to match a partition for region " + regionName);
-        }
-
-        PartitionOutputs matchedPartitionOutputs = matchedPartition.getOutputs();
-        return Value.recordValue(MapUtils.of(
-                NAME, Value.stringValue(matchedPartition.getId()),
-                DNS_SUFFIX, Value.stringValue(matchedPartitionOutputs.getDnsSuffix()),
-                DUAL_STACK_DNS_SUFFIX, Value.stringValue(matchedPartitionOutputs.getDualStackDnsSuffix()),
-                SUPPORTS_FIPS, Value.booleanValue(matchedPartitionOutputs.supportsFips()),
-                SUPPORTS_DUAL_STACK, Value.booleanValue(matchedPartitionOutputs.supportsDualStack()),
-                INFERRED, Value.booleanValue(inferred)));
-    }
-
-    /**
-     * Constructs a function definition for resolving a string expression to a partition.
-     *
-     * @param expression expression to evaluate to a partition.
-     * @return the function representing the partition lookup.
-     */
-    public static Function ofExpression(Expression expression) {
-        return new LibraryFunction(new AwsPartition(), FunctionNode.ofExpressions(ID, expression));
+    public <T> T accept(ExpressionVisitor<T> visitor) {
+        return visitor.visitLibraryFunction(DEFINITION, getArguments());
     }
 
     private static PartitionData loadPartitionData() {
@@ -156,5 +89,76 @@ public final class AwsPartition implements FunctionDefinition {
     private static class PartitionData {
         private final List<Partition> partitions = new ArrayList<>();
         private final Map<String, Partition> regionMap = new HashMap<>();
+    }
+
+    public static final class Definition implements FunctionDefinition {
+        @Override
+        public String getId() {
+            return ID;
+        }
+
+        @Override
+        public List<Type> getArguments() {
+            return Collections.singletonList(Type.stringType());
+        }
+
+        @Override
+        public Type getReturnType() {
+            Map<Identifier, Type> type = new LinkedHashMap<>();
+            type.put(NAME, Type.stringType());
+            type.put(DNS_SUFFIX, Type.stringType());
+            type.put(DUAL_STACK_DNS_SUFFIX, Type.stringType());
+            type.put(SUPPORTS_DUAL_STACK, Type.booleanType());
+            type.put(SUPPORTS_FIPS, Type.booleanType());
+            return Type.optionalType(new RecordType(type));
+        }
+
+        @Override
+        public Value evaluate(List<Value> arguments) {
+            String regionName = arguments.get(0).expectStringValue().getValue();
+            Partition matchedPartition;
+            boolean inferred = false;
+
+            // Known region
+            matchedPartition = PARTITION_DATA.regionMap.get(regionName);
+            if (matchedPartition == null) {
+                // Try matching on region name pattern
+                for (Partition p : PARTITION_DATA.partitions) {
+                    Pattern regex = Pattern.compile(p.getRegionRegex());
+                    if (regex.matcher(regionName).matches()) {
+                        matchedPartition = p;
+                        inferred = true;
+                        break;
+                    }
+                }
+            }
+
+            if (matchedPartition == null) {
+                for (Partition partition : PARTITION_DATA.partitions) {
+                    if (partition.getId().equals("aws")) {
+                        matchedPartition = partition;
+                        break;
+                    }
+                }
+            }
+
+            if (matchedPartition == null) {
+                throw new RuntimeException("Unable to match a partition for region " + regionName);
+            }
+
+            PartitionOutputs matchedPartitionOutputs = matchedPartition.getOutputs();
+            return Value.recordValue(MapUtils.of(
+                    NAME, Value.stringValue(matchedPartition.getId()),
+                    DNS_SUFFIX, Value.stringValue(matchedPartitionOutputs.getDnsSuffix()),
+                    DUAL_STACK_DNS_SUFFIX, Value.stringValue(matchedPartitionOutputs.getDualStackDnsSuffix()),
+                    SUPPORTS_FIPS, Value.booleanValue(matchedPartitionOutputs.supportsFips()),
+                    SUPPORTS_DUAL_STACK, Value.booleanValue(matchedPartitionOutputs.supportsDualStack()),
+                    INFERRED, Value.booleanValue(inferred)));
+        }
+
+        @Override
+        public AwsPartition createFunction(FunctionNode functionNode) {
+            return new AwsPartition(functionNode);
+        }
     }
 }

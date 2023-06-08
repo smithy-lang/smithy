@@ -1,14 +1,15 @@
 // when parsing endpoint ruleset
 // while typechecking
-//   at invalid-rules/unknown-field.json5:23
+//   at invalid-rules/unknown-field.json5:24
 // while typechecking the endpoint
-//   at invalid-rules/unknown-field.json5:35
-// while checking the URL
 //   at invalid-rules/unknown-field.json5:36
+// while checking the URL
+//   at invalid-rules/unknown-field.json5:37
 // while typechecking "{partitionResult#nme}.amazonaws.com"
 // while typechecking the template `"{partitionResult#nme}.amazonaws.com"`
 // while checking {partitionResult#nme}
 // while typechecking partitionResult#nme
+// while resolving nme in {name=StringType, dnsSuffix=StringType, dualStackDnsSuffix=StringType, supportsDualStack=BooleanType, supportsFIPS=BooleanType}
 // {name=StringType, dnsSuffix=StringType, dualStackDnsSuffix=StringType, supportsDualStack=BooleanType, supportsFIPS=BooleanType} does not contain field nme
 {
   "version": "1.2",

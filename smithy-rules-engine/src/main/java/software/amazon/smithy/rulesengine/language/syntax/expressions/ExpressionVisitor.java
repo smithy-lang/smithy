@@ -13,14 +13,12 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.rulesengine.language.visitors;
+package software.amazon.smithy.rulesengine.language.syntax.expressions;
 
 import java.util.List;
-import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.expressions.Reference;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionDefinition;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
-import software.amazon.smithy.rulesengine.language.syntax.functions.FunctionDefinition;
-import software.amazon.smithy.rulesengine.language.syntax.functions.GetAttr;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**

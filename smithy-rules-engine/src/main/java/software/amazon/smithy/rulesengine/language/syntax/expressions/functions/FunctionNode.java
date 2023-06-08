@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.rulesengine.language.syntax.functions;
+package software.amazon.smithy.rulesengine.language.syntax.expressions.functions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,8 +29,6 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.RulesComponentBuilder;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
-import software.amazon.smithy.rulesengine.language.stdlib.BooleanEquals;
-import software.amazon.smithy.rulesengine.language.stdlib.StringEquals;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -60,11 +58,28 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
      * Constructs a {@link FunctionNode} for the given function name and arguments.
      *
      * @param functionName the function name.
-     * @param arguments    zero or more expressions as arguments to the function.
+     * @param arguments zero or more expressions as arguments to the function.
      * @return the {@link FunctionNode}.
      */
     public static FunctionNode ofExpressions(String functionName, Expression... arguments) {
+        return ofExpressions(functionName, SourceLocation.none(), arguments);
+    }
+
+    /**
+     * Constructs a {@link FunctionNode} for the given function name and arguments.
+     *
+     * @param functionName the function name.
+     * @param sourceLocation the source location for the function.
+     * @param arguments zero or more expressions as arguments to the function.
+     * @return the {@link FunctionNode}.
+     */
+    public static FunctionNode ofExpressions(
+            String functionName,
+            FromSourceLocation sourceLocation,
+            Expression... arguments
+    ) {
         return builder()
+                .sourceLocation(sourceLocation)
                 .name(StringNode.from(functionName))
                 .arguments(Arrays.asList(arguments))
                 .build();
@@ -103,26 +118,9 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
      * @return this function as an expression.
      */
     public Expression validate() {
-        switch (name.getValue()) {
-            case IsSet.ID:
-                return new IsSet(this);
-            case GetAttr.ID:
-                return GetAttr.builder()
-                        .sourceLocation(this)
-                        .target(getArguments().get(0))
-                        .path(getArguments().get(1).toNode().expectStringNode().getValue())
-                        .build();
-            case Not.ID:
-                return new Not(this);
-            case BooleanEquals.ID:
-                return new BooleanEquals(this);
-            case StringEquals.ID:
-                return new StringEquals(this);
-            default:
-                return FunctionRegistry.forNode(this).orElseThrow(() ->
-                        new RuleError(new SourceException(
-                                        String.format("`%s` is not a valid function", name), name)));
-        }
+        return FunctionDefinition.createFunctionFactory().apply(this)
+                .orElseThrow(() -> new RuleError(new SourceException(
+                        String.format("`%s` is not a valid function", name), name)));
     }
 
     public String getName() {
@@ -152,16 +150,15 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
 
     @Override
     public Node toNode() {
-        ObjectNode.Builder node = ObjectNode.builder()
-                .withMember(FN, name);
-
         ArrayNode.Builder builder = ArrayNode.builder();
         for (Expression argument : arguments) {
             builder.withValue(argument.toNode());
         }
-        node.withMember(ARGV, builder.build());
 
-        return node.build();
+        return ObjectNode.builder()
+                .withMember(FN, name)
+                .withMember(ARGV, builder.build())
+                .build();
     }
 
     @Override
@@ -195,14 +192,14 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
             return this;
         }
 
-        @Override
-        public FunctionNode build() {
-            return new FunctionNode(this);
-        }
-
         public Builder name(StringNode functionName) {
             this.function = functionName;
             return this;
+        }
+
+        @Override
+        public FunctionNode build() {
+            return new FunctionNode(this);
         }
     }
 }

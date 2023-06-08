@@ -24,7 +24,6 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.visitors.ExpressionVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -54,7 +53,7 @@ public final class Reference extends Expression {
     }
 
     @Override
-    public Type typeCheckLocal(Scope<Type> scope) {
+    protected Type typeCheckLocal(Scope<Type> scope) {
         return context("while resolving the type of reference " + name, this, () -> {
             Type baseType = scope.expectValue(name);
             if (scope.isNonNull(this)) {

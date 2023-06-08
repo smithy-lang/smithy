@@ -13,27 +13,24 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.rulesengine.language.stdlib;
+package software.amazon.smithy.rulesengine.language.syntax.expressions.functions;
 
 import java.util.Arrays;
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.ExpressionVisitor;
-import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionDefinition;
-import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
-import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.LibraryFunction;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
- * An AWS rule-set function for determining whether a given string can be promoted to an S3 virtual bucket host label.
+ * A rule-set function for getting the substring of a string value.
  */
 @SmithyUnstableApi
-public class AwsIsVirtualHostableS3Bucket extends LibraryFunction {
-    public static final String ID = "aws.isVirtualHostableS3Bucket";
+public final class Substring extends LibraryFunction {
+    public static final String ID = "substring";
     private static final Definition DEFINITION = new Definition();
 
-    public AwsIsVirtualHostableS3Bucket(FunctionNode functionNode) {
+    public Substring(FunctionNode functionNode) {
         super(DEFINITION, functionNode);
     }
 
@@ -50,32 +47,44 @@ public class AwsIsVirtualHostableS3Bucket extends LibraryFunction {
 
         @Override
         public List<Type> getArguments() {
-            return Arrays.asList(Type.stringType(), Type.booleanType());
+            return Arrays.asList(Type.stringType(), Type.integerType(), Type.integerType(), Type.booleanType());
         }
 
         @Override
         public Type getReturnType() {
-            return Type.booleanType();
+            return Type.optionalType(Type.stringType());
         }
 
         @Override
         public Value evaluate(List<Value> arguments) {
-            String hostLabel = arguments.get(0).expectStringValue().getValue();
-            boolean allowDots = arguments.get(1).expectBooleanValue().getValue();
-            if (allowDots) {
-                return Value.booleanValue(
-                        hostLabel.matches("[a-z\\d][a-z\\d\\-.]{1,61}[a-z\\d]")
-                        && !hostLabel.matches("(\\d+\\.){3}\\d+") // don't allow ip address
-                        && !hostLabel.matches(".*[.-]{2}.*") // don't allow names like bucket-.name or bucket.-name
-                );
+            String str = arguments.get(0).expectStringValue().getValue();
+            int startIndex = arguments.get(1).expectIntegerValue().getValue();
+            int stopIndex = arguments.get(2).expectIntegerValue().getValue();
+            boolean reverse = arguments.get(3).expectBooleanValue().getValue();
+
+            for (int i = 0; i < str.length(); i++) {
+                char ch = str.charAt(i);
+                if (!(ch <= 127)) {
+                    return Value.emptyValue();
+                }
+            }
+
+            if (startIndex >= stopIndex || str.length() < stopIndex) {
+                return Value.emptyValue();
+            }
+
+            if (!reverse) {
+                return Value.stringValue(str.substring(startIndex, stopIndex));
             } else {
-                return Value.booleanValue(hostLabel.matches("[a-z\\d][a-z\\d\\-]{1,61}[a-z\\d]"));
+                int revStart = str.length() - stopIndex;
+                int revStop = str.length() - startIndex;
+                return Value.stringValue(str.substring(revStart, revStop));
             }
         }
 
         @Override
-        public AwsIsVirtualHostableS3Bucket createFunction(FunctionNode functionNode) {
-            return new AwsIsVirtualHostableS3Bucket(functionNode);
+        public Substring createFunction(FunctionNode functionNode) {
+            return new Substring(functionNode);
         }
     }
 }
