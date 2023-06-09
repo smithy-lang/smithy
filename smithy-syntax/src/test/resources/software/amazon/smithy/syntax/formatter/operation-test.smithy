@@ -71,3 +71,9 @@ operation InlineEmptyInputOutputWithComments {
 structure Struct {}
 
 resource Foo {}
+
+@mixin
+structure X {}
+
+@mixin
+structure Y {}
