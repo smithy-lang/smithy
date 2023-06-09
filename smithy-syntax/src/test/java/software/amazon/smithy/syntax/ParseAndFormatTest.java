@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.IdlTokenizer;
 import software.amazon.smithy.utils.IoUtils;
 
@@ -28,6 +29,12 @@ public class ParseAndFormatTest {
         Path formattedFile = Paths.get(filename.toString().replace(".smithy", ".formatted.smithy"));
         if (!Files.exists(formattedFile)) {
             formattedFile = filename;
+        }
+
+        // Ensure that the tests can be parsed by smithy-model too.
+        Model.assembler().addImport(filename).disableValidation().assemble().unwrap();
+        if (!formattedFile.equals(filename)) {
+            Model.assembler().addImport(formattedFile).disableValidation().assemble().unwrap();
         }
 
         String model = IoUtils.readUtf8File(filename);

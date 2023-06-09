@@ -1,9 +1,9 @@
 $version: "2.0"
 
 // Comment 1
-metadata foo = "bar"
+metadata foo1 = "bar"
 
 // Comment 2
-metadata foo = "bam"
+metadata foo2 = "bam"
 
 // Comment 3

@@ -20,7 +20,7 @@ resource Sprocket1 {
     identifiers: {username: String}
 }
 
-@http(method: "X", uri: "http://foo.com", code: 200)
+@http(method: "X", uri: "/foo", code: 200)
 resource Sprocket2 {
     identifiers: {username: String, id: String, otherId: String}
 }
