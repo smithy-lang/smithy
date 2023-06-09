@@ -41,3 +41,27 @@ structure MyStruct111111113 with [ThisIsReallyLongStructName1, ThisIsReallyLongS
 {
     foo: Bar
 }
+
+@mixin
+string ThisIsReallyLongStringName1
+
+@mixin
+string ThisIsReallyLongStringName2
+
+@mixin
+string ThisIsReallyLongStringName3
+
+@mixin
+string ThisIsReallyLongStringName4
+
+@mixin
+structure ThisIsReallyLongStructName1 {}
+
+@mixin
+structure ThisIsReallyLongStructName2 {}
+
+@mixin
+structure ThisIsReallyLongStructName3 {}
+
+@mixin
+structure ThisIsReallyLongStructName4 {}
