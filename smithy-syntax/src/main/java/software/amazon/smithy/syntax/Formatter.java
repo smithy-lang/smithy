@@ -61,6 +61,8 @@ public final class Formatter {
                                            errors.get(0));
         }
 
+        root = new SortUseStatements().apply(root);
+
         // Strip trailing spaces from each line.
         String result = new TreeVisitor(maxWidth).visit(root.zipper()).render(maxWidth).trim();
         StringBuilder builder = new StringBuilder();
