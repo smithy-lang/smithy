@@ -66,6 +66,17 @@ class TokenTreeNode implements TokenTree {
     }
 
     @Override
+    public boolean replaceChild(TokenTree find, TokenTree replacement) {
+        for (int i = 0; i < children.size(); i++) {
+            if (children.get(i) == find) {
+                children.set(i, replacement);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public final String toString() {
         StringBuilder result = new StringBuilder();
         result.append(getType())

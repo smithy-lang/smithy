@@ -69,4 +69,17 @@ public class TokenTreeTest {
         assertThat(tree.hasChild(TreeType.CONTROL_SECTION), is(true));
         assertThat(tree.hasChild(TreeType.ERROR), is(false));
     }
+
+    @Test
+    public void replacesChild() {
+        TokenTree tree = TokenTree.of(TreeType.WS);
+        TokenTree child1 = TokenTree.of(TreeType.COMMENT);
+        TokenTree child2 = TokenTree.of(TreeType.COMMA);
+
+        tree.appendChild(child1);
+
+        assertThat(tree.replaceChild(child1, child2), is(true));
+        assertThat(tree.replaceChild(child1, child2), is(false));
+        assertThat(tree.zipper().getFirstChild(TreeType.COMMA).getTree(), is(child2));
+    }
 }
