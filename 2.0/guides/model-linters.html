@@ -1046,7 +1046,8 @@ that targets a <a class="reference internal" href="../spec/aggregate-types.html#
 indicate that an operation MUST be paginated. A <code class="docutils literal notranslate"><span class="pre">DANGER</span></code> event
 is emitted if an operation is found to have an input member name
 that case-insensitively matches one of these member names.
-Defaults to <code class="docutils literal notranslate"><span class="pre">[&quot;maxResults&quot;,</span> <span class="pre">&quot;pageSize&quot;,</span> <span class="pre">&quot;limit&quot;,</span> <span class="pre">&quot;nextToken&quot;,</span> <span class="pre">&quot;pageToken&quot;,</span> <span class="pre">&quot;token&quot;]</span></code></td>
+Defaults to <code class="docutils literal notranslate"><span class="pre">[&quot;maxresults&quot;,</span> <span class="pre">&quot;maxitems&quot;,</span> <span class="pre">&quot;pagesize&quot;,</span> <span class="pre">&quot;limit&quot;,</span>
+<span class="pre">&quot;nexttoken&quot;,</span> <span class="pre">&quot;pagetoken&quot;,</span> <span class="pre">&quot;token&quot;,</span> <span class="pre">&quot;marker&quot;]</span></code></td>
 </tr>
 <tr class="row-odd"><td>outputMembersRequirePagination</td>
 <td>[<code class="docutils literal notranslate"><span class="pre">string</span></code>]</td>
@@ -1054,7 +1055,8 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">[&quot;
 indicate that an operation MUST be paginated. A <code class="docutils literal notranslate"><span class="pre">DANGER</span></code> event
 is emitted if an operation is found to have an output member name
 that case-insensitively matches one of these member names.
-Defaults to <code class="docutils literal notranslate"><span class="pre">[&quot;nextToken&quot;,</span> <span class="pre">&quot;pageToken&quot;,</span> <span class="pre">&quot;token&quot;,</span> <span class="pre">&quot;marker&quot;,</span> <span class="pre">&quot;nextPage&quot;]</span></code>.</td>
+Defaults to <code class="docutils literal notranslate"><span class="pre">[&quot;nexttoken&quot;,</span> <span class="pre">&quot;pagetoken&quot;,</span> <span class="pre">&quot;token&quot;,</span> <span class="pre">&quot;marker&quot;,</span> <span class="pre">&quot;nextpage&quot;,</span> <span class="pre">&quot;nextpagetoken&quot;,</span> <span class="pre">&quot;position&quot;,</span> <span class="pre">&quot;nextmarker&quot;,</span>
+<span class="pre">&quot;paginationtoken&quot;,</span> <span class="pre">&quot;nextpagemarker&quot;]</span></code>.</td>
 </tr>
 </tbody>
 </table>
