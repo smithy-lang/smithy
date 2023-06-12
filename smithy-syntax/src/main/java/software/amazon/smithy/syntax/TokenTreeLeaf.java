@@ -65,6 +65,11 @@ final class TokenTreeLeaf implements TokenTree {
     }
 
     @Override
+    public boolean replaceChild(TokenTree find, TokenTree replacement) {
+        return false;
+    }
+
+    @Override
     public String toString() {
         if (token.getErrorMessage() != null) {
             return token.getIdlToken() + "(" + token.getErrorMessage() + ')';
