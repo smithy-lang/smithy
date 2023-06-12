@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Objects;
 import java.util.function.Predicate;
 import software.amazon.smithy.model.FromSourceLocation;
@@ -219,6 +220,24 @@ public final class TreeCursor implements FromSourceLocation {
         } else {
             return new TreeCursor(tree.getChildren().get(tree.getChildren().size() - 1), this);
         }
+    }
+
+    /**
+     * Get the last child of the wrapped tree with the given type.
+     *
+     * @param type Child type to get.
+     * @return Return the last child, or null if a matching child is not found.
+     */
+    public TreeCursor getLastChild(TreeType type) {
+        List<TokenTree> children = tree.getChildren();
+        ListIterator<TokenTree> iterator = children.listIterator(children.size());
+        while (iterator.hasPrevious()) {
+            TokenTree child = iterator.previous();
+            if (child.getType() == type) {
+                return new TreeCursor(child, this);
+            }
+        }
+        return null;
     }
 
     /**
