@@ -26,14 +26,14 @@ metadata f = 100
 
 namespace smithy.example
 
-use smithy.api#String
-
-// This comment separates this use statement from it's leading and trailing lines.
 use smithy.api#Boolean
 
 // This comment separates this use statement from it's leading and trailing lines.
-// It does not add an trailing line though since it's the last statement in the section.
 use smithy.api#Integer
+
+// This comment separates this use statement from it's leading and trailing lines.
+// It does not add an trailing line though since it's the last statement in the section.
+use smithy.api#String
 
 structure Shape {
     a: String

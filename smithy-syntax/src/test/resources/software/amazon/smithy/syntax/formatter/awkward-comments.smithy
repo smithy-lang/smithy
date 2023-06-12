@@ -43,11 +43,11 @@ metadata k = {
 namespace smithy.example // nb
 // nc
 
-use smithy.api#String // s
 use smithy.api#Integer // i
 // l1
 use smithy.api#Long // l2
 // l3
+use smithy.api#String // s
 
 /// Docs 1
 /// Docs 2
