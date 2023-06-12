@@ -108,9 +108,10 @@ string support defined in :rfc:`7405`.
 .. rubric:: Comments
 
 .. productionlist:: smithy
-    Comment              : `DocumentationComment` / `LineComment`
+    Comment              :`DocumentationComment` / `LineComment`
     DocumentationComment :"///" *`NotNL` `NL`
-    LineComment          : "//" [(%x09 / %x20-2E / %x30-10FFF) *`NotNL`] `NL` ; First character after "//" can't be "/"
+    LineComment          :"//" [(%x09 / %x20-2E / %x30-10FFF) *`NotNL`] `NL`
+                         :  ; First character after "//" can't be "/"
 
 .. rubric:: Control
 
@@ -175,7 +176,11 @@ string support defined in :rfc:`7405`.
     ShapeStatements         :`ShapeOrApplyStatement` *(`BR` `ShapeOrApplyStatement`)
     ShapeOrApplyStatement   :`ShapeStatement` / `ApplyStatement`
     ShapeStatement          :`TraitStatements` `Shape`
-    Shape                   :`SimpleShape` / `EnumShape` / `AggregateShape` / `EntityShape` / `OperationShape`
+    Shape                   :`SimpleShape`
+                            :/ `EnumShape`
+                            :/ `AggregateShape`
+                            :/ `EntityShape`
+                            :/ `OperationShape`
     SimpleShape             :`SimpleTypeName` `SP` `Identifier` [`Mixins`]
     SimpleTypeName          :%s"blob" / %s"boolean" / %s"document" / %s"string"
                             :/ %s"byte" / %s"short" / %s"integer" / %s"long"
@@ -187,11 +192,13 @@ string support defined in :rfc:`7405`.
     EnumShapeMembers        :"{" [`WS`] 1*(`EnumShapeMember` [`WS`]) "}"
     EnumShapeMember         :`TraitStatements` `Identifier` [`ValueAssignment`]
     ValueAssignment         :[`SP`] "=" [`SP`] `NodeValue` [`SP`] [`Comma`] `BR`
-    AggregateShape          :`AggregateTypeName` `SP` `Identifier` [`ForResource`] [`Mixins`] [`WS`] `ShapeMembers`
+    AggregateShape          :`AggregateTypeName` `SP` `Identifier` [`ForResource`] [`Mixins`]
+                            :   [`WS`] `ShapeMembers`
     AggregateTypeName       :%s"list" / %s"map" / %s"union" / %s"structure"
     ForResource             :`SP` %s"for" `SP` `ShapeId`
     ShapeMembers            :"{" [`WS`] *(`ShapeMember` [`WS`]) "}"
-    ShapeMember             :`TraitStatements` (`ExplicitShapeMember` / `ElidedShapeMember`) [`ValueAssignment`]
+    ShapeMember             :`TraitStatements` (`ExplicitShapeMember` / `ElidedShapeMember`)
+                            :   [`ValueAssignment`]
     ExplicitShapeMember     :`Identifier` [`SP`] ":" [`SP`] `ShapeId`
     ElidedShapeMember       :"$" `Identifier`
     EntityShape             :`EntityTypeName` `SP` `Identifier` [`Mixins`] [`WS`] `NodeObject`
@@ -202,7 +209,8 @@ string support defined in :rfc:`7405`.
     OperationInput          :%s"input" [`WS`] (`InlineAggregateShape` / (":" [`WS`] `ShapeId`))
     OperationOutput         :%s"output" [`WS`] (`InlineAggregateShape` / (":" [`WS`] `ShapeId`))
     OperationErrors         :%s"errors" [`WS`] ":" [`WS`] "[" [`WS`] *(`ShapeId` [`WS`]) "]"
-    InlineAggregateShape    :":=" [`WS`] `TraitStatements` [`ForResource`] [`Mixins`] [`WS`] `ShapeMembers`
+    InlineAggregateShape    :":=" [`WS`] `TraitStatements` [`ForResource`] [`Mixins`]
+                            :   [`WS`] `ShapeMembers`
 
 .. rubric:: Traits
 
