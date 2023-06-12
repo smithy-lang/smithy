@@ -318,6 +318,7 @@ final class IdlModelLoader {
                 Node value = IdlNodeParser.expectAndSkipNode(this);
                 operations.accept(new LoadOperation.PutMetadata(modelVersion, key, value));
                 tokenizer.expectAndSkipBr();
+                tokenizer.skipWsAndDocs();
             } catch (ModelSyntaxException e) {
                 errorRecovery(e);
             }

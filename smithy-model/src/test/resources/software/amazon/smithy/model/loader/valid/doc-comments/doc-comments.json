@@ -1,5 +1,8 @@
 {
     "smithy": "2.0",
+    "metadata": {
+        "foo": ["bar"]
+    },
     "shapes": {
         "smithy.example#NotDocumented": {
             "type": "string"

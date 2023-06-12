@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,5 +72,22 @@ public class TreeCursorTest {
         String model = IoUtils.readUtf8Url(getClass().getResource("formatter/simple-model.smithy"));
         IdlTokenizer tokenizer = IdlTokenizer.create(model);
         return TokenTree.parse(tokenizer);
+    }
+
+    @Test
+    public void getLastChildOfType() {
+        TokenTree tree = TokenTree.of(TreeType.BR);
+        TokenTree child1 = TokenTree.of(TreeType.WS);
+        TokenTree child2 = TokenTree.of(TreeType.COMMA);
+        TokenTree child3 = TokenTree.of(TreeType.COMMENT);
+        tree.appendChild(child1);
+        tree.appendChild(child2);
+        tree.appendChild(child3);
+        TreeCursor cursor = tree.zipper();
+
+        assertThat(cursor.getLastChild(TreeType.COMMENT).getTree(), sameInstance(child3));
+        assertThat(cursor.getLastChild(TreeType.COMMA).getTree(), sameInstance(child2));
+        assertThat(cursor.getLastChild(TreeType.WS).getTree(), sameInstance(child1));
+        assertThat(cursor.getLastChild(TreeType.APPLY_STATEMENT), nullValue());
     }
 }

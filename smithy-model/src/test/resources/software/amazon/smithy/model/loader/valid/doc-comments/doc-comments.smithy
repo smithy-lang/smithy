@@ -1,4 +1,12 @@
+/// This comment is ignored.
 $version: "2.0"
+
+/// This comment is ignored.
+metadata foo = [
+    /// This comment is ignored.
+    "bar"
+]
+
 /// This comment is ignored.
 namespace smithy.example
 

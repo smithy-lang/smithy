@@ -114,12 +114,21 @@ public interface TokenTree extends FromSourceLocation {
     void appendChild(TokenTree tree);
 
     /**
-     * Remove a token tree.
+     * Remove a child tree by referential equality.
      *
      * @param tree Tree to remove.
-     * @return Return true if this tree was found and removed.
+     * @return Return true if this child was found and removed.
      */
     boolean removeChild(TokenTree tree);
+
+    /**
+     * Replaces a matching child with the given replacement using referential equality.
+     *
+     * @param find        Child to find and replace, using referential equality.
+     * @param replacement Replacement to use instead.
+     * @return Returns true if a child was replaced.
+     */
+    boolean replaceChild(TokenTree find, TokenTree replacement);
 
     /**
      * Get a flattened stream of all captured tokens contained within the tree.
