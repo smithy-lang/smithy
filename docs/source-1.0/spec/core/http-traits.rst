@@ -53,7 +53,7 @@ The ``http`` trait is a structure that supports the following members:
     * - code
       - ``integer``
       - The HTTP status code of a successful response. Defaults to ``200`` if
-        not provided. The provided value SHOULD be between 100 and 599, and
+        not provided. The provided value SHOULD be between 200 and 299, and
         it MUST be between 100 and 999. Status codes that do not allow a body
         like 204 and 205 SHOULD bind all output members to locations other than
         the body of the response.
