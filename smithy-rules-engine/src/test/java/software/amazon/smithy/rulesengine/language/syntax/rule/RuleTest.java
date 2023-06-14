@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.evaluation.RuleEvaluator;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
-import software.amazon.smithy.rulesengine.language.stdlib.ParseArn;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
@@ -44,14 +43,12 @@ class RuleTest {
                 p2.toExpression(), Expression.of("b")));
         StringEquals equalsC = new StringEquals(FunctionNode.ofExpressions(StringEquals.ID,
                 p3.toExpression(), Expression.of("c")));
-        ParseArn parseArn = new ParseArn(FunctionNode.ofExpressions(ParseArn.ID, p3.toExpression()));
         Rule rule = Rule.builder()
                 .validateOrElse("param1 value is not a", condition(equalsA))
                 .errorOrElse("param2 is b", condition(equalsB))
                 .validateOrElse("param3 value is not c", condition(equalsC))
                 .errorOrElse("param2 is b", condition(equalsB))
-                .validateOrElse("p3 is not an arn", condition(parseArn, "p3Arn"))
-                .treeRule(Rule.builder().error("rule matched: {p3Arn#region}"));
+                .treeRule(Rule.builder().error("rule matched: p3"));
         Parameters parameters = Parameters.builder().addParameter(p1).addParameter(p2).addParameter(p3).build();
         EndpointRuleSet ruleset = EndpointRuleSet.builder().version("1.1").parameters(parameters).addRule(rule).build();
         ruleset.typeCheck();
@@ -59,28 +56,25 @@ class RuleTest {
                         Identifier.of("param1"), Value.stringValue("a"),
                         Identifier.of("param2"), Value.stringValue("c"),
                         Identifier.of("param3"), Value.stringValue("c"))),
-                Value.stringValue("p3 is not an arn"));
+                Value.stringValue("rule matched: p3"));
+        assertEquals(RuleEvaluator.evaluate(ruleset, MapUtils.of(
+                        Identifier.of("param1"), Value.stringValue("b"),
+                        Identifier.of("param2"), Value.stringValue("c"),
+                        Identifier.of("param3"), Value.stringValue("c"))),
+                Value.stringValue("param1 value is not a"));
         assertEquals(RuleEvaluator.evaluate(ruleset, MapUtils.of(
                         Identifier.of("param1"), Value.stringValue("a"),
                         Identifier.of("param2"), Value.stringValue("b"),
-                        Identifier.of("param3"), Value.stringValue("c")))
-                , Value.stringValue("param2 is b"));
+                        Identifier.of("param3"), Value.stringValue("c"))),
+                Value.stringValue("param2 is b"));
         assertEquals(RuleEvaluator.evaluate(ruleset, MapUtils.of(
                         Identifier.of("param1"), Value.stringValue("a"),
                         Identifier.of("param2"), Value.stringValue("c"),
-                        Identifier.of("param3"), Value.stringValue("d")))
-                , Value.stringValue("param3 value is not c"));
+                        Identifier.of("param3"), Value.stringValue("d"))),
+                Value.stringValue("param3 value is not c"));
     }
 
     private Condition condition(LibraryFunction libraryFunction) {
-        return condition(libraryFunction, null);
-    }
-
-    private Condition condition(LibraryFunction libraryFunction, String result) {
-        Condition.Builder builder = Condition.builder().fn(libraryFunction);
-        if (result != null) {
-            builder.result(result);
-        }
-        return builder.build();
+        return Condition.builder().fn(libraryFunction).build();
     }
 }

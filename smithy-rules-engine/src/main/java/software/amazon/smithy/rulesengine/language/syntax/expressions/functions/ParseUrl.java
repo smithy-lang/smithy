@@ -18,12 +18,13 @@ package software.amazon.smithy.rulesengine.language.syntax.expressions.functions
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.ExpressionVisitor;
-import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -63,15 +64,13 @@ public class ParseUrl extends LibraryFunction {
 
         @Override
         public Type getReturnType() {
-            return Type.optionalType(Type.recordType(
-                    MapUtils.of(
-                            SCHEME, Type.stringType(),
-                            AUTHORITY, Type.stringType(),
-                            PATH, Type.stringType(),
-                            NORMALIZED_PATH, Type.stringType(),
-                            IS_IP, Type.booleanType()
-                    )
-            ));
+            Map<Identifier, Type> types = new LinkedHashMap<>();
+            types.put(SCHEME, Type.stringType());
+            types.put(AUTHORITY, Type.stringType());
+            types.put(PATH, Type.stringType());
+            types.put(NORMALIZED_PATH, Type.stringType());
+            types.put(IS_IP, Type.booleanType());
+            return Type.optionalType(Type.recordType(types));
         }
 
         @Override
@@ -119,13 +118,13 @@ public class ParseUrl extends LibraryFunction {
                     normalizedPath = builder.toString();
                 }
 
-                return Value.recordValue(MapUtils.of(
-                        SCHEME, Value.stringValue(parsed.getProtocol()),
-                        AUTHORITY, Value.stringValue(parsed.getAuthority()),
-                        PATH, Value.stringValue(path),
-                        NORMALIZED_PATH, Value.stringValue(normalizedPath),
-                        IS_IP, Value.booleanValue(isIpAddr)
-                ));
+                Map<Identifier, Value> values = new LinkedHashMap<>();
+                values.put(SCHEME, Value.stringValue(parsed.getProtocol()));
+                values.put(AUTHORITY, Value.stringValue(parsed.getAuthority()));
+                values.put(PATH, Value.stringValue(path));
+                values.put(NORMALIZED_PATH, Value.stringValue(normalizedPath));
+                values.put(IS_IP, Value.booleanValue(isIpAddr));
+                return Value.recordValue(values);
             } catch (MalformedURLException e) {
                 return Value.emptyValue();
             }

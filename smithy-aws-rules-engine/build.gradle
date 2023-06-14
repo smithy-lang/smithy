@@ -1,0 +1,17 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+description = "AWS specific components for the Smithy rules engine"
+
+ext {
+    displayName = "Smithy :: AWS Rules Components"
+    moduleName = "software.amazon.smithy.aws.rulesengine"
+}
+
+dependencies {
+    api project(":smithy-rules-engine")
+    api project(":smithy-model")
+    api project(":smithy-utils")
+}
