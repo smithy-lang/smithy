@@ -26,27 +26,25 @@ use smithy.rules#endpointRuleSet
           ]
         },
         {
-          "fn": "aws.parseArn",
+          "fn": "parseURL",
           "argv": [
-            {
-              "ref": "Bucket"
-            }
+            "{Bucket}"
           ],
-          "assign": "bucketArn"
+          "assign": "bucketUrl"
         },
         {
           "fn": "getAttr",
           "argv": [
             {
-              "ref": "bucketArn"
+              "ref": "bucketUrl"
             },
-            "resourceId[2]"
+            "path"
           ],
-          "assign": "outpostId"
+          "assign": "path"
         }
       ],
       "endpoint": {
-        "url": "https://{bucketArn#accountId}.{outpostId}.{bucketArn#region}"
+        "url": "https://{bucketUrl#authority}/{path}"
       },
       "type": "endpoint"
     }

@@ -26,8 +26,8 @@ public class TypeIntrospectionTest {
     void introspectCorrectTypesForGetAttr() {
         EndpointRuleSet endpointRuleSet = EndpointRuleSet.fromNode(Node.parse(IoUtils.readUtf8Resource(
                 TypeIntrospectionTest.class, "get-attr-type-inference.json")));
-        // bucketArn.resourceId[2]
+        // bucketUrl.authority
         Type actualType = endpointRuleSet.getRules().get(0).getConditions().get(2).getFn().type();
-        assertEquals(actualType, Type.optionalType(Type.stringType()));
+        assertEquals(Type.stringType(), actualType);
     }
 }
