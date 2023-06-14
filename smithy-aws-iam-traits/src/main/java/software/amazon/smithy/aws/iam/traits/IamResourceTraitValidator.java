@@ -48,7 +48,7 @@ public class IamResourceTraitValidator extends AbstractValidator {
                     results.add(danger(resource, String.format(
                             "The `@aws.iam#iamResource trait applied to the resource "
                             + "defines a resource name, `%s`, that does not match the `@arn` template, "
-                            + "`%s`, for that same resource.",
+                            + "`%s`, of the resource.",
                             resourceName, arnTrait.getTemplate())));
                 }
             }
