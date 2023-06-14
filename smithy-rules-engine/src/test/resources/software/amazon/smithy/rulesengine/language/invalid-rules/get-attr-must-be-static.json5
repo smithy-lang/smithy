@@ -26,7 +26,7 @@
       "documentation": "base rule",
       "conditions": [
         {
-          "fn": "aws.partition",
+          "fn": "parseURL",
           "argv": [
             {
               "ref": "Region"
@@ -48,7 +48,7 @@
                     {
                       "ref": "PartResult"
                     },
-                    "{Region}"
+                    "{authority}"
                   ]
                 }
               ]

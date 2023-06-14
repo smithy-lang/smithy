@@ -9,8 +9,8 @@
 // while typechecking the template `"{partitionResult#nme}.amazonaws.com"`
 // while checking {partitionResult#nme}
 // while typechecking partitionResult#nme
-// while resolving nme in {name=StringType, dnsSuffix=StringType, dualStackDnsSuffix=StringType, supportsDualStack=BooleanType, supportsFIPS=BooleanType}
-// {name=StringType, dnsSuffix=StringType, dualStackDnsSuffix=StringType, supportsDualStack=BooleanType, supportsFIPS=BooleanType} does not contain field nme
+// while resolving nme in {scheme=StringType, authority=StringType, path=StringType, normalizedPath=StringType, isIp=BooleanType}
+// {scheme=StringType, authority=StringType, path=StringType, normalizedPath=StringType, isIp=BooleanType} does not contain field nme
 {
   "version": "1.2",
   "parameters": {
@@ -24,7 +24,7 @@
     {
       "conditions": [
         {
-          "fn": "aws.partition",
+          "fn": "parseURL",
           "argv": [
             {
               "ref": "region"
