@@ -39,9 +39,9 @@ import software.amazon.smithy.utils.Pair;
  * list of existing values.
  */
 public final class ChangedEnumTrait extends AbstractDiffEvaluator {
-    private static final String ORDER_CHANGED = ".OrderChanged";
-    private static final String NAME_CHANGED = ".NameChanged";
-    private static final String REMOVED = ".Removed";
+    private static final String ORDER_CHANGED = ".OrderChanged.";
+    private static final String NAME_CHANGED = ".NameChanged.";
+    private static final String REMOVED = ".Removed.";
 
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
@@ -73,7 +73,8 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
         List<ValidationEvent> events = new ArrayList<>();
         int oldEndPosition = oldTrait.getValues().size() - 1;
 
-        for (EnumDefinition definition : oldTrait.getValues()) {
+        for (int enumIndex = 0; enumIndex < oldTrait.getValues().size(); enumIndex++) {
+            EnumDefinition definition = oldTrait.getValues().get(enumIndex);
             Optional<EnumDefinition> maybeNewValue = newTrait.getValues().stream()
                     .filter(d -> d.getValue().equals(definition.getValue()))
                     .findFirst();
@@ -84,7 +85,7 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
                                 .severity(Severity.ERROR)
                                 .message(String.format("Enum value `%s` was removed", definition.getValue()))
                                 .shape(change.getNewShape())
-                                .id(getEventId() + REMOVED)
+                                .id(getEventId() + REMOVED + enumIndex)
                                 .build()
                 );
                 oldEndPosition--;
@@ -100,7 +101,7 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
                                             newValue.getName().orElse(null),
                                             definition.getValue()))
                                     .shape(change.getNewShape())
-                                    .id(getEventId() + NAME_CHANGED)
+                                    .id(getEventId() + NAME_CHANGED + enumIndex)
                                     .build()
                     );
                 }
@@ -119,9 +120,10 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
                                             + "can cause compatibility issues when ordinal values are used for "
                                             + "iteration, serialization, etc.", definition.getValue()))
                                     .shape(change.getNewShape())
-                                    .id(getEventId() + ORDER_CHANGED)
+                                    .id(getEventId() + ORDER_CHANGED + newPosition)
                                     .build()
                     );
+                    oldEndPosition++;
                 } else {
                     events.add(note(change.getNewShape(), String.format(
                             "Enum value `%s` was appended", definition.getValue())));

@@ -23,6 +23,7 @@ import software.amazon.smithy.diff.ChangedShape;
 import software.amazon.smithy.diff.Differences;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 /**
@@ -42,15 +43,22 @@ public final class AddedOperationError extends AbstractDiffEvaluator {
         }
 
         List<ValidationEvent> events = new ArrayList<>();
-        for (ShapeId id : change.getNewShape().getErrors()) {
-            if (!change.getOldShape().getErrors().contains(id)) {
-                events.add(warning(change.getNewShape(), String.format(
-                        "The `%s` error was added to the `%s` operation. This "
-                        + "is backward-compatible if the error is only "
-                        + "encountered as a result of a change in behavior of "
-                        + "the client (for example, the client sends a new "
-                        + "parameter to an operation).",
-                        id, change.getShapeId())));
+        for (ShapeId error : change.getNewShape().getErrors()) {
+            if (!change.getOldShape().getErrors().contains(error)) {
+                events.add(
+                        ValidationEvent.builder()
+                                .id(getEventId() + "." + error.getName())
+                                .severity(Severity.WARNING)
+                                .message(String.format(
+                                        "The `%s` error was added to the `%s` operation. This "
+                                                + "is backward-compatible if the error is only "
+                                                + "encountered as a result of a change in behavior of "
+                                                + "the client (for example, the client sends a new "
+                                                + "parameter to an operation).",
+                                        error, change.getShapeId()))
+                                .shape(change.getNewShape())
+                                .build()
+                );
             }
         }
 

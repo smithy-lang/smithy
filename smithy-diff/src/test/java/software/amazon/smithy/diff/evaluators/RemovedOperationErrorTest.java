@@ -52,6 +52,8 @@ public class RemovedOperationErrorTest {
 
         // Emits an event for each removal.
         assertThat(TestHelper.findEvents(events, "RemovedOperationError").size(), equalTo(2));
+        assertThat(TestHelper.findEvents(events, "RemovedOperationError.E1").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "RemovedOperationError.E2").size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, "RemovedOperationError").get(0).toString(),
                 startsWith("[WARNING] foo.baz#Operation: The `foo.baz#E1` error was removed " +
                         "from the `foo.baz#Operation` operation. | RemovedOperationError"));

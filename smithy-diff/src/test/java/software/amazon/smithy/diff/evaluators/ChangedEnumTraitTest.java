@@ -77,8 +77,8 @@ public class ChangedEnumTraitTest {
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").size(), equalTo(2));
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.NameChanged").size(), equalTo(1));
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.NameChanged").get(0).getSeverity(),
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.NameChanged.0").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.NameChanged.0").get(0).getSeverity(),
                 equalTo(Severity.ERROR));
         assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").get(1).getSeverity(),
                 equalTo(Severity.NOTE));
@@ -116,6 +116,7 @@ public class ChangedEnumTraitTest {
                 .addTrait(EnumTrait.builder()
                         .addEnum(EnumDefinition.builder().value("foo").build())
                         .addEnum(EnumDefinition.builder().value("baz").build())
+                        .addEnum(EnumDefinition.builder().value("bat").build())
                         .build())
                 .build();
         StringShape s2 = StringShape.builder()
@@ -128,8 +129,9 @@ public class ChangedEnumTraitTest {
         Model modelB = Model.assembler().addShape(s2).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Removed").size(), equalTo(1));
-        assertThat(TestHelper.findEvents(events, Severity.ERROR).size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Removed.1").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Removed.2").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, Severity.ERROR).size(), equalTo(2));
     }
 
     @Test
@@ -153,8 +155,8 @@ public class ChangedEnumTraitTest {
         Model modelB = Model.assembler().addShape(s2).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Removed").size(), equalTo(1));
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.NameChanged").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Removed.1").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.NameChanged.0").size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").stream()
                 .allMatch(e -> e.getSeverity() == Severity.ERROR), equalTo(true));
     }
@@ -182,8 +184,8 @@ public class ChangedEnumTraitTest {
         Model modelB = Model.assembler().addShape(s2).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Removed").size(), equalTo(1));
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Removed").stream()
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Removed.1").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Removed.1").stream()
                 .allMatch(e -> e.getSeverity() == Severity.ERROR), equalTo(true));
     }
 
@@ -192,21 +194,24 @@ public class ChangedEnumTraitTest {
         StringShape s1 = StringShape.builder()
                 .id("foo.baz#Baz")
                 .addTrait(EnumTrait.builder()
-                        .addEnum(EnumDefinition.builder().value("foo").name("OLD").build())
+                        .addEnum(EnumDefinition.builder().value("foo").name("OLD1").build())
+                        .addEnum(EnumDefinition.builder().value("baz").name("OLD2").build())
                         .build())
                 .build();
         StringShape s2 = StringShape.builder()
                 .id("foo.baz#Baz")
                 .addTrait(EnumTrait.builder()
-                        .addEnum(EnumDefinition.builder().value("foo").name("NEW").build())
+                        .addEnum(EnumDefinition.builder().value("foo").name("NEW1").build())
+                        .addEnum(EnumDefinition.builder().value("baz").name("NEW2").build())
                         .build())
                 .build();
         Model modelA = Model.assembler().addShape(s1).assemble().unwrap();
         Model modelB = Model.assembler().addShape(s2).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.NameChanged").size(), equalTo(1));
-        assertThat(TestHelper.findEvents(events, Severity.ERROR).size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.NameChanged.0").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.NameChanged.1").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, Severity.ERROR).size(), equalTo(2));
     }
 
     @Test
@@ -227,8 +232,8 @@ public class ChangedEnumTraitTest {
         Model modelB = Model.assembler().addShape(s2).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.NameChanged").size(), equalTo(1));
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.NameChanged").get(0).getSeverity(),
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.NameChanged.0").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.NameChanged.0").get(0).getSeverity(),
                 equalTo(Severity.ERROR));
     }
 
@@ -251,8 +256,8 @@ public class ChangedEnumTraitTest {
         Model modelB = Model.assembler().addShape(s2).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.NameChanged").size(), equalTo(1));
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.NameChanged").get(0).getSeverity(),
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.NameChanged.0").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.NameChanged.0").get(0).getSeverity(),
                 equalTo(Severity.ERROR));
     }
 
@@ -268,6 +273,7 @@ public class ChangedEnumTraitTest {
                 .id("foo.baz#Baz")
                 .addTrait(EnumTrait.builder()
                         .addEnum(EnumDefinition.builder().value("baz").build())
+                        .addEnum(EnumDefinition.builder().value("bat").build())
                         .addEnum(EnumDefinition.builder().value("foo").build())
                         .build())
                 .build();
@@ -275,8 +281,35 @@ public class ChangedEnumTraitTest {
         Model modelB = Model.assembler().addShape(s2).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.OrderChanged").size(), equalTo(1));
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.OrderChanged").get(0).getSeverity(), equalTo(Severity.ERROR));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.OrderChanged.0").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.OrderChanged.1").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, Severity.ERROR).size(), equalTo(2));
+    }
+
+    @Test
+    public void detectsInsertedEnumsBeforeAppendedEnums() {
+        StringShape s1 = StringShape.builder()
+                .id("foo.baz#Baz")
+                .addTrait(EnumTrait.builder()
+                        .addEnum(EnumDefinition.builder().value("foo").build())
+                        .build())
+                .build();
+        StringShape s2 = StringShape.builder()
+                .id("foo.baz#Baz")
+                .addTrait(EnumTrait.builder()
+                        .addEnum(EnumDefinition.builder().value("baz").build())
+                        .addEnum(EnumDefinition.builder().value("bat").build())
+                        .addEnum(EnumDefinition.builder().value("foo").build())
+                        .addEnum(EnumDefinition.builder().value("bar").build())
+                        .build())
+                .build();
+        Model modelA = Model.assembler().addShape(s1).assemble().unwrap();
+        Model modelB = Model.assembler().addShape(s2).assemble().unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.OrderChanged.0").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.OrderChanged.1").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, Severity.ERROR).size(), equalTo(2));
     }
 
     @Test
@@ -299,7 +332,7 @@ public class ChangedEnumTraitTest {
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").size(), equalTo(2));
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.OrderChanged").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.OrderChanged.0").size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").stream()
                 .allMatch(e -> e.getSeverity() == Severity.ERROR), equalTo(true));
     }
@@ -324,8 +357,8 @@ public class ChangedEnumTraitTest {
         Model modelB = Model.assembler().addShape(s2).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.OrderChanged").size(), equalTo(1));
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.OrderChanged").stream()
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.OrderChanged.0").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.OrderChanged.0").stream()
                 .allMatch(e -> e.getSeverity() == Severity.ERROR), equalTo(true));
     }
 
@@ -353,7 +386,7 @@ public class ChangedEnumTraitTest {
 
         List<ValidationEvent> changeEvents = TestHelper.findEvents(allEvents, "ChangedEnumTrait");
         assertThat(changeEvents.size(), equalTo(2));
-        assertThat(TestHelper.findEvents(changeEvents, "ChangedEnumTrait.Removed").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(changeEvents, "ChangedEnumTrait.Removed.1").size(), equalTo(1));
 
         ValidationEvent removedEvent = changeEvents.get(0);
         assertThat(removedEvent.getSeverity(), equalTo(Severity.ERROR));
@@ -391,8 +424,9 @@ public class ChangedEnumTraitTest {
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").size(), equalTo(4));
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.NameChanged").size(), equalTo(2));
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Removed").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.NameChanged.0").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Removed.1").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.NameChanged.2").size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").subList(0, 3).stream()
                 .allMatch(e -> e.getSeverity() == Severity.ERROR), equalTo(true));
         assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").subList(3, 4).stream()
@@ -429,8 +463,8 @@ public class ChangedEnumTraitTest {
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").size(), equalTo(2));
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Removed").size(), equalTo(1));
-        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Removed").stream()
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Removed.1").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedEnumTrait.Removed.1").stream()
                 .allMatch(e -> e.getSeverity() == Severity.ERROR), equalTo(true));
         assertThat(TestHelper.findEvents(events, "ChangedEnumTrait").subList(1, 2).stream()
                 .allMatch(e -> e.getSeverity() == Severity.NOTE), equalTo(true));

@@ -642,14 +642,16 @@ Configuration
            indicate that an operation MUST be paginated. A ``DANGER`` event
            is emitted if an operation is found to have an input member name
            that case-insensitively matches one of these member names.
-           Defaults to ``["maxResults", "pageSize", "limit", "nextToken", "pageToken", "token"]``
+           Defaults to ``["maxresults", "maxitems", "pagesize", "limit",
+           "nexttoken", "pagetoken", "token", "marker"]``
        * - outputMembersRequirePagination
          - [``string``]
          - Defines the case-insensitive operation output member names that
            indicate that an operation MUST be paginated. A ``DANGER`` event
            is emitted if an operation is found to have an output member name
            that case-insensitively matches one of these member names.
-           Defaults to ``["nextToken", "pageToken", "token", "marker", "nextPage"]``.
+           Defaults to ``["nexttoken", "pagetoken", "token", "marker", "nextpage", "nextpagetoken", "position", "nextmarker",
+           "paginationtoken", "nextpagemarker"]``.
 
 Example:
 

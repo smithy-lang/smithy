@@ -46,5 +46,7 @@ public class AddedOperationErrorTest {
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(TestHelper.findEvents(events, "AddedOperationError").size(), equalTo(2));
+        assertThat(TestHelper.findEvents(events, "AddedOperationError.E1").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "AddedOperationError.E2").size(), equalTo(1));
     }
 }

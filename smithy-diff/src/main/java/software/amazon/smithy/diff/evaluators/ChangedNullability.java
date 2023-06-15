@@ -16,8 +16,11 @@
 package software.amazon.smithy.diff.evaluators;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Stream;
 import software.amazon.smithy.diff.ChangedShape;
 import software.amazon.smithy.diff.Differences;
@@ -45,7 +48,7 @@ public class ChangedNullability extends AbstractDiffEvaluator {
     public List<ValidationEvent> evaluate(Differences differences) {
         NullableIndex oldIndex = NullableIndex.of(differences.getOldModel());
         NullableIndex newIndex = NullableIndex.of(differences.getNewModel());
-        List<ValidationEvent> events = new ArrayList<>();
+        Set<ValidationEvent> events = new HashSet<>();
 
         Stream.concat(
             // Get members that changed.
@@ -63,7 +66,7 @@ public class ChangedNullability extends AbstractDiffEvaluator {
             }
         });
 
-        return events;
+        return new ArrayList<>(events);
     }
 
     private Stream<ChangedShape<MemberShape>> changedInputMembers(Differences differences) {
@@ -82,7 +85,7 @@ public class ChangedNullability extends AbstractDiffEvaluator {
             Differences differences,
             ChangedShape<MemberShape> change,
             boolean wasNullable,
-            List<ValidationEvent> events
+            Collection<ValidationEvent> events
     ) {
         MemberShape oldMember = change.getOldShape();
         MemberShape newMember = change.getNewShape();
