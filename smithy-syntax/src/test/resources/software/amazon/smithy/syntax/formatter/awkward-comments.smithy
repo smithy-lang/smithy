@@ -84,3 +84,10 @@ structure MyStruct // a
     // h
 } // i
 // j
+
+structure MyStructure2 { //k
+    // l
+    i: Integer
+    l: Long // m
+} // n
+// o

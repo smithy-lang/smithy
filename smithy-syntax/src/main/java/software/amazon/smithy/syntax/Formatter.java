@@ -29,6 +29,9 @@ import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Formats valid Smithy IDL models.
+ *
+ * <p>This formatter will by default sort use statements, remove unused use statements, and fix documentation
+ * comments that should be normal comments.
  */
 public final class Formatter {
 
@@ -63,6 +66,7 @@ public final class Formatter {
 
         root = new SortUseStatements().apply(root);
         root = new FixBadDocComments().apply(root);
+        root = new RemoveUnusedUseStatements().apply(root);
 
         // Strip trailing spaces from each line.
         String result = new TreeVisitor(maxWidth).visit(root.zipper()).render(maxWidth).trim();

@@ -1270,7 +1270,7 @@ public class TreeTypeTest {
         String identifier = "foo";
         TokenTree idTree = getTree(TreeType.NODE_STRING_VALUE, identifier);
         assertTreeIsValid(idTree);
-        rootAndChildTypesEqual(idTree, TreeType.NODE_STRING_VALUE, TreeType.IDENTIFIER);
+        rootAndChildTypesEqual(idTree, TreeType.NODE_STRING_VALUE, TreeType.SHAPE_ID);
 
         /*
          TODO: Right now grammar is ambiguous, no way to tell if its an identifier or shape id.
