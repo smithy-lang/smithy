@@ -1304,6 +1304,21 @@ public class TreeTypeTest {
     }
 
     @Test
+    public void invalidControlSection() {
+        String invalidTrailing = "$foo: bar\n$";
+        TokenTree invalidTrailingTree = getTree(TreeType.CONTROL_SECTION, invalidTrailing);
+        assertTreeIsInvalid(invalidTrailingTree);
+
+        String invalidLeading = "$foo: \nbar\n$foo: bar\n";
+        TokenTree invalidLeadingTree = getTree(TreeType.CONTROL_SECTION, invalidLeading);
+        assertTreeIsInvalid(invalidLeadingTree);
+
+        String multipleInvalid = "$foo: bar\n$1\n#foo: bar\n$foo = bar\n$foo: bar\n";
+        TokenTree multipleInvalidTree = getTree(TreeType.CONTROL_SECTION, multipleInvalid);
+        assertTreeIsInvalid(multipleInvalidTree);
+    }
+
+    @Test
     public void invalidControlStatement() {
         String missingDollar = "version: 2\n";
         TokenTree missingDollarTree = getTree(TreeType.CONTROL_STATEMENT, missingDollar);
@@ -1320,6 +1335,21 @@ public class TreeTypeTest {
         String notColon = "$version = 2\n";
         TokenTree notColonTree = getTree(TreeType.CONTROL_STATEMENT, notColon);
         assertTreeIsInvalid(notColonTree);
+    }
+
+    @Test
+    public void invalidMetadataSection() {
+        String invalidTrailing = "metadata foo = bar\nmetadata = bar\n";
+        TokenTree invalidTrailingTree = getTree(TreeType.METADATA_SECTION, invalidTrailing);
+        assertTreeIsInvalid(invalidTrailingTree);
+
+        String invalidLeading = "metadata foo =\nbar\nmetadata = bar\n";
+        TokenTree invalidLeadingTree = getTree(TreeType.METADATA_SECTION, invalidLeading);
+        assertTreeIsInvalid(invalidLeadingTree);
+
+        String multipleInvalid = "metadata foo = bar\nmetadata = \nfoo\nmetadata bar: baz\nmetadata baz = qux\n";
+        TokenTree multipleInvalidTree = getTree(TreeType.METADATA_SECTION, multipleInvalid);
+        assertTreeIsInvalid(multipleInvalidTree);
     }
 
     @Test
@@ -1408,12 +1438,41 @@ public class TreeTypeTest {
     }
 
     @Test
+    public void invalidUseSection() {
+        String invalidTrailing = "use com.foo#Bar\nuse \ncom.foo#Bar\n";
+        TokenTree invalidTrailingTree = getTree(TreeType.USE_SECTION, invalidTrailing);
+        assertTreeIsInvalid(invalidTrailingTree);
+
+        String invalidLeading = "use\n com.foo#Bar\nuse com.foo#Bar\n";
+        TokenTree invalidLeadingTree = getTree(TreeType.USE_SECTION, invalidLeading);
+        assertTreeIsInvalid(invalidLeadingTree);
+
+        String multipleInvalid = "use com.foo#Bar\nuse\ncom.foo#Bar\nuse #Bar\nuse com.foo#Bar\n";
+        TokenTree multipleInvalidTree = getTree(TreeType.USE_SECTION, multipleInvalid);
+        assertTreeIsInvalid(multipleInvalidTree);
+    }
+
+    @Test
     public void invalidUseStatement() {
         String missingKeyword = " foo.bar#Baz\n";
         TokenTree missingKeywordTree = getTree(TreeType.USE_STATEMENT, missingKeyword);
         assertTreeIsInvalid(missingKeywordTree);
     }
 
+    @Test
+    public void invalidShapeStatements() {
+        String incompleteShape = "string Foo\nstructure Bar {\nfoo: Foo\n";
+        TokenTree incompleteShapeTree = getTree(TreeType.SHAPE_STATEMENTS, incompleteShape);
+        assertTreeIsInvalid(incompleteShapeTree);
+
+        String firstInvalid = "string Foo {}\nstructure Bar{}\n";
+        TokenTree firstInvalidTree = getTree(TreeType.SHAPE_STATEMENTS, firstInvalid);
+        assertTreeIsInvalid(firstInvalidTree);
+
+        String trailingTraits = "structure Foo {}\n@bar\n@baz(foo: bar)\n";
+        TokenTree trailingTraitsTree = getTree(TreeType.SHAPE_STATEMENTS, trailingTraits);
+        assertTreeIsInvalid(trailingTraitsTree);
+    }
 
     @Test
     public void invalidShapeOrApplyStatement() {
@@ -1469,6 +1528,22 @@ public class TreeTypeTest {
         String notBraces = "[FOO]";
         TokenTree notBracesTree = getTree(TreeType.ENUM_SHAPE_MEMBERS, notBraces);
         assertTreeIsInvalid(notBracesTree);
+
+        String leadingInvalidMember = "{\n1\nFOO\n}";
+        TokenTree leadingInvalidMemberTree = getTree(TreeType.ENUM_SHAPE_MEMBERS, leadingInvalidMember);
+        assertTreeIsInvalid(leadingInvalidMemberTree);
+
+        String trailingInvalidMember = "{\nFOO\n1\n}";
+        TokenTree trailingInvalidMemberTree = getTree(TreeType.ENUM_SHAPE_MEMBERS, trailingInvalidMember);
+        assertTreeIsInvalid(trailingInvalidMemberTree);
+
+        String multipleInvalidMembers = "{\nFOO\nBAR = \n @foo(\nBAR\n = 2\nFOO\n}";
+        TokenTree multipleInvalidMembersTree = getTree(TreeType.ENUM_SHAPE_MEMBERS, multipleInvalidMembers);
+        assertTreeIsInvalid(multipleInvalidMembersTree);
+
+        String trailingTraits = "{\nFOO\n@bar\n@baz\n}";
+        TokenTree trailingTraitsTree = getTree(TreeType.ENUM_SHAPE_MEMBERS, trailingTraits);
+        assertTreeIsInvalid(trailingTraitsTree);
     }
 
     @Test
@@ -1506,6 +1581,22 @@ public class TreeTypeTest {
         String notBraces = "[foo: bar]";
         TokenTree notBracesTree = getTree(TreeType.SHAPE_MEMBERS, notBraces);
         assertTreeIsInvalid(notBracesTree);
+
+        String leadingInvalidMember = "{\nfoo: 1\nbar: baz\n}";
+        TokenTree leadingInvalidMemberTree = getTree(TreeType.SHAPE_MEMBERS, leadingInvalidMember);
+        assertTreeIsInvalid(leadingInvalidMemberTree);
+
+        String trailingInvalidMember = "{\nfoo: bar\nbaz:\n}";
+        TokenTree trailingInvalidMemberTree = getTree(TreeType.SHAPE_MEMBERS, trailingInvalidMember);
+        assertTreeIsInvalid(trailingInvalidMemberTree);
+
+        String multipleInvalidMembers = "{\nfoo: @foo({})\nfoo = com.foo#Bar\n}";
+        TokenTree multipleInvalidMembersTree = getTree(TreeType.SHAPE_MEMBERS, multipleInvalidMembers);
+        assertTreeIsInvalid(multipleInvalidMembersTree);
+
+        String trailingTraits = "{\nfoo: bar\n@foo\n@bar\n}";
+        TokenTree trailingTraitsTree = getTree(TreeType.SHAPE_MEMBERS, trailingTraits);
+        assertTreeIsInvalid(trailingTraitsTree);
     }
 
     @Test
@@ -1618,6 +1709,25 @@ public class TreeTypeTest {
     }
 
     @Test
+    public void invalidTraitStatements() {
+        String incomplete = "@foo({bar: baz}\n";
+        TokenTree incompleteTree = getTree(TreeType.TRAIT_STATEMENTS, incomplete);
+        assertTreeIsInvalid(incompleteTree);
+
+        String leadingInvalid = "@foo(:)\n@bar\n";
+        TokenTree leadingInvalidTree = getTree(TreeType.TRAIT_STATEMENTS, leadingInvalid);
+        assertTreeIsInvalid(leadingInvalidTree);
+
+        String trailingInvalid = "@foo\n@bar(\n";
+        TokenTree trailingInvalidTree = getTree(TreeType.TRAIT_STATEMENTS, trailingInvalid);
+        assertTreeIsInvalid(trailingInvalidTree);
+
+        String multipleInvalid = "@foo\n@\nbaz\n@foo({\n@bar\n";
+        TokenTree multipleInvalidTree = getTree(TreeType.TRAIT_STATEMENTS, multipleInvalid);
+        assertTreeIsInvalid(multipleInvalidTree);
+    }
+
+    @Test
     public void invalidTrait() {
         String missingAt = "foo(bar: baz)";
         TokenTree missingAtTree = getTree(TreeType.TRAIT, missingAt);
@@ -1660,6 +1770,10 @@ public class TreeTypeTest {
         String notBraces = "apply foo [@bar]";
         TokenTree notBracesTree = getTree(TreeType.APPLY_STATEMENT_BLOCK, notBraces);
         assertTreeIsInvalid(notBracesTree);
+
+        String invalidTraits = "apply foo {\n@bar(\n@ baz\n}";
+        TokenTree invalidTraitsTree = getTree(TreeType.APPLY_STATEMENT_BLOCK, invalidTraits);
+        assertTreeIsInvalid(invalidTraitsTree);
     }
 
     @Test
