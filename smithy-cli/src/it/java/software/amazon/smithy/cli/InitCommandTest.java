@@ -62,8 +62,20 @@ public class InitCommandTest {
             IntegUtils.withTempDir("unexpectedTemplate", dir -> {
                 RunResult result = IntegUtils.run(
                     dir, ListUtils.of("init", "-t", "blabla", "-u", templatesDir.toString()));
-                assertThat(result.getOutput(),
-                    containsString("Missing expected member `blabla` from `templates` object ([3, 18])"));
+
+                String expectedOutput = new StringBuilder()
+                        .append("Invalid template `blabla`. `Smithy-Examples` provides the following templates:")
+                        .append(System.lineSeparator())
+                        .append(System.lineSeparator())
+                        .append("NAME             DOCUMENTATION")
+                        .append(System.lineSeparator())
+                        .append("--------------   ---------------------------------------------------------------")
+                        .append(System.lineSeparator())
+                        .append("quickstart-cli   Smithy Quickstart example weather service using the Smithy CLI.")
+                        .append(System.lineSeparator())
+                        .toString();
+
+                assertThat(result.getOutput(), containsString(expectedOutput));
                 assertThat(result.getExitCode(), is(1));
             });
         });
@@ -82,6 +94,15 @@ public class InitCommandTest {
                 assertThat(result.getExitCode(), is(0));
                 assertThat(Files.exists(Paths.get(dir.toString(), "hello-world")), is(true));
             });
+
+            IntegUtils.withTempDir("withNestedDirectoryArg", dir -> {
+                RunResult result = IntegUtils.run(dir, ListUtils.of(
+                    "init", "-t", "quickstart-cli", "-o", "./hello/world", "-u", templatesDir.toString()));
+                assertThat(result.getOutput(),
+                    containsString("Smithy project created in directory: ./hello/world"));
+                assertThat(result.getExitCode(), is(0));
+                assertThat(Files.exists(Paths.get(dir.toString(), "./hello/world")), is(true));
+            });
         });
     }
 
@@ -98,6 +119,30 @@ public class InitCommandTest {
                         containsString("Smithy project created in directory: hello-world"));
                 assertThat(result.getExitCode(), is(0));
                 assertThat(Files.exists(Paths.get(dir.toString(), "hello-world")), is(true));
+            });
+        });
+    }
+
+    @Test
+    public void withListArg() {
+        IntegUtils.withProject(PROJECT_NAME, templatesDir -> {
+            setupTemplatesDirectory(templatesDir);
+
+            IntegUtils.withTempDir("withListArg", dir -> {
+                RunResult result = IntegUtils.run(dir, ListUtils.of(
+                    "init", "--list", "--url", templatesDir.toString()));
+
+                String expectedOutput = new StringBuilder()
+                    .append("NAME             DOCUMENTATION")
+                    .append(System.lineSeparator())
+                    .append("--------------   ---------------------------------------------------------------")
+                    .append(System.lineSeparator())
+                    .append("quickstart-cli   Smithy Quickstart example weather service using the Smithy CLI.")
+                    .append(System.lineSeparator())
+                    .toString();
+
+                assertThat(result.getOutput(), containsString(expectedOutput));
+                assertThat(result.getExitCode(), is(0));
             });
         });
     }
