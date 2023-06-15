@@ -248,7 +248,7 @@ performed.
 
         .. code-block:: none
 
-            [trait|required $= '_']
+            [id|name $= '_']
     * - ``*=``
       - Matches if the attribute value contains the comparison value.
         This comparator never matches if either value does not exist.
