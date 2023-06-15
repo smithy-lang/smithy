@@ -831,7 +831,7 @@ public enum TreeType {
                         break;
                     case IDENTIFIER:
                     default:
-                        IDENTIFIER.parse(tokenizer);
+                        SHAPE_ID.parse(tokenizer);
                 }
             });
         }
