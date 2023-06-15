@@ -15,8 +15,6 @@
 
 package software.amazon.smithy.utils;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -31,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,7 +39,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 /**
  * Utilities for IO operations.
@@ -365,19 +363,43 @@ public final class IoUtils {
     }
 
     public static void copyDir(Path src, Path dest) {
-        try (Stream<Path> stream = Files.walk(src)) {
-            stream.forEach(source -> copyFile(source, dest.resolve(src.relativize(source))));
+        try {
+            Files.walkFileTree(src, new CopyFileVisitor(src, dest));
         } catch (IOException e) {
             throw new RuntimeException(String.format(
                 "Error copying directory from \"%s\" to \"%s\": %s", src, dest, e.getMessage()), e);
         }
     }
 
-    public static void copyFile(Path source, Path dest) {
-        try {
-            Files.copy(source, dest, REPLACE_EXISTING);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+    private static final class CopyFileVisitor extends SimpleFileVisitor<Path> {
+        private final Path source;
+        private final Path target;
+
+        CopyFileVisitor(Path source, Path target) {
+            this.source = source;
+            this.target = target;
+        }
+
+        @Override
+        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+            Path resolve = target.resolve(source.relativize(dir));
+            if (Files.notExists(resolve)) {
+                Files.createDirectories(resolve);
+            }
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+            Path resolve = target.resolve(source.relativize(file));
+            Files.copy(file, resolve, StandardCopyOption.REPLACE_EXISTING);
+            return FileVisitResult.CONTINUE;
+
+        }
+
+        @Override
+        public FileVisitResult visitFileFailed(Path file, IOException exc) {
+            return FileVisitResult.TERMINATE;
         }
     }
 }
