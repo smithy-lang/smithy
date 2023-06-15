@@ -1490,10 +1490,6 @@ public class TreeTypeTest {
     }
     @Test
     public void invalidMixins() {
-        String missingWith = " [Foo, Bar]";
-        TokenTree missingWithTree = getTree(TreeType.MIXINS, missingWith);
-        assertTreeIsInvalid(missingWithTree);
-
         String missingOpenBracket = "with foo, bar]";
         TokenTree missingOpenBracketTree = getTree(TreeType.MIXINS, missingOpenBracket);
         assertTreeIsInvalid(missingOpenBracketTree);

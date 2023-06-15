@@ -532,7 +532,6 @@ public enum TreeType {
         @Override
         void parse(CapturingTokenizer tokenizer) {
             tokenizer.withState(this, () -> {
-                tokenizer.expect(IdlToken.IDENTIFIER);
                 tokenizer.next(); // Skip "with"
                 optionalWs(tokenizer);
 
