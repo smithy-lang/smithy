@@ -173,7 +173,10 @@ public class IdlModelLoaderTest {
                 .unwrap();
 
         Shape shape = model.expectShape(ShapeId.from("smithy.example#MyStruct$myMember"));
-        String docs = shape.getTrait(DocumentationTrait.class).map(StringTrait::getValue).orElse("");
+        String docs = shape.getTrait(DocumentationTrait.class)
+                .map(StringTrait::getValue)
+                .orElse("")
+                .replace("\r\n", "\n");
 
         assertThat(docs, equalTo("This is the first line.\nThis is the second line."));
     }
