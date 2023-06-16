@@ -39,7 +39,7 @@ public class ParseAndFormatTest {
 
         String model = IoUtils.readUtf8File(filename);
         IdlTokenizer tokenizer = IdlTokenizer.create(filename.toString(), model);
-        TokenTree tree = TokenTree.parse(tokenizer);
+        TokenTree tree = TokenTree.of(tokenizer);
         String formatted = Formatter.format(tree, 120);
         String expected = IoUtils.readUtf8File(formattedFile);
 

@@ -23,7 +23,7 @@ public class TokenTreeTest {
     @Test
     public void createsFromTokenizer() {
         IdlTokenizer tokenizer = IdlTokenizer.create("foo");
-        TokenTree tree = TokenTree.parse(tokenizer);
+        TokenTree tree = TokenTree.of(tokenizer);
 
         assertThat(tree.getType(), is(TreeType.IDL));
         assertThat(tree.getChildren(), hasSize(3));
@@ -45,7 +45,7 @@ public class TokenTreeTest {
 
     @Test
     public void createsFromErrorString() {
-        TokenTree tree = TokenTree.error("Foo");
+        TokenTree tree = TokenTree.fromError("Foo");
 
         assertThat(tree.getType(), is(TreeType.ERROR));
         assertThat(tree.getError(), equalTo("Foo"));
@@ -59,15 +59,6 @@ public class TokenTreeTest {
         TreeCursor cursor = tree.zipper();
 
         assertThat(tree, equalTo(cursor.getTree()));
-    }
-
-    @Test
-    public void detectsIfCertainTypeOfChildExists() {
-        IdlTokenizer tokenizer = IdlTokenizer.create("foo");
-        TokenTree tree = TokenTree.parse(tokenizer);
-
-        assertThat(tree.hasChild(TreeType.CONTROL_SECTION), is(true));
-        assertThat(tree.hasChild(TreeType.ERROR), is(false));
     }
 
     @Test
