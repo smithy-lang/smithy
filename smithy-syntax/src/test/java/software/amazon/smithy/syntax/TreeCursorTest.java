@@ -9,7 +9,6 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.loader.IdlTokenizer;
@@ -20,8 +19,7 @@ public class TreeCursorTest {
     public void hasChildren() {
         TokenTree tree = createTree();
         TreeCursor cursor = tree.zipper();
-        List<TreeCursor> children = new ArrayList<>();
-        cursor.getChildren().forEach(children::add);
+        List<TreeCursor> children = cursor.getChildren();
 
         assertThat(cursor.getFirstChild(TreeType.CONTROL_SECTION), is(not(nullValue())));
         assertThat(cursor.getFirstChild(TreeType.METADATA_SECTION), is(not(nullValue())));
@@ -40,8 +38,7 @@ public class TreeCursorTest {
     public void hasParentAndSiblings() {
         TokenTree tree = createTree();
         TreeCursor cursor = tree.zipper();
-        List<TreeCursor> children = new ArrayList<>();
-        cursor.getChildren().forEach(children::add);
+        List<TreeCursor> children = cursor.getChildren();
 
         assertThat(cursor.getFirstChild(TreeType.CONTROL_SECTION).getParent(), equalTo(cursor));
         assertThat(cursor.getFirstChild(TreeType.METADATA_SECTION).getParent(), equalTo(cursor));
@@ -71,7 +68,7 @@ public class TreeCursorTest {
     private TokenTree createTree() {
         String model = IoUtils.readUtf8Url(getClass().getResource("formatter/simple-model.smithy"));
         IdlTokenizer tokenizer = IdlTokenizer.create(model);
-        return TokenTree.parse(tokenizer);
+        return TokenTree.of(tokenizer);
     }
 
     @Test

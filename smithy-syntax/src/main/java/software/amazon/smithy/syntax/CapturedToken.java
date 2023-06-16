@@ -26,12 +26,12 @@ import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
- * A persisted token captured from a {@link IdlTokenizer}.
+ * A persisted token captured from an {@link IdlTokenizer}.
  *
  * <p>For performance, {@code IdlTokenizer} does not create new tokens types for each encountered token. Instead, it
  * updates the current state of the tokenizer and allows the caller to inspect the tokenizer for information about each
  * token. Because smithy-syntax needs to create a token-tree rather than go directly to an AST, it requires arbitrary
- * lookahead of tokens, which means it needs to persist tokens in memory, using this {@code CapturedToken}.
+ * lookahead of tokens, requiring it to persist tokens in memory.
  */
 public final class CapturedToken implements FromSourceLocation, ToSmithyBuilder<CapturedToken> {
 

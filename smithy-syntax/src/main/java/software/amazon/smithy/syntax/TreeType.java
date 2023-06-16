@@ -23,7 +23,10 @@ import software.amazon.smithy.model.shapes.ShapeType;
 /**
  * Defines the tree type.
  *
- * <p>These types typically map 1:1 to a production in the Smithy IDL grammar, with the following exceptions:
+ * <p>These types typically map 1:1 to a production in the Smithy IDL grammar, except that tree types bottom-out at
+ * {@link IdlToken}.
+ *
+ * <p>For example:
  *
  * <ul>
  *     <li>The {@code Identifier} production is combined into a single {@link #IDENTIFIER} node.
