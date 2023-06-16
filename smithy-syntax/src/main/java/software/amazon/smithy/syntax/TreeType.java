@@ -116,19 +116,21 @@ public enum TreeType {
     NAMESPACE_STATEMENT {
         @Override
         void parse(CapturingTokenizer tokenizer) {
-            tokenizer.withState(this, () -> {
-                if (tokenizer.isCurrentLexeme("namespace")) {
+            if (tokenizer.isCurrentLexeme("namespace")) {
+                tokenizer.withState(this, () -> {
                     tokenizer.next(); // skip "namespace"
                     SP.parse(tokenizer);
                     NAMESPACE.parse(tokenizer);
                     BR.parse(tokenizer);
-                } else if (tokenizer.hasNext()) {
+                });
+            } else if (tokenizer.hasNext()) {
+                tokenizer.withState(this, () -> {
                     throw new ModelSyntaxException(
                             "Expected a namespace definition but found "
-                                    + tokenizer.getCurrentToken().getDebug(tokenizer.getCurrentTokenLexeme()),
+                            + tokenizer.getCurrentToken().getDebug(tokenizer.getCurrentTokenLexeme()),
                             tokenizer.getCurrentTokenLocation());
-                }
-            });
+                });
+            }
         }
     },
 
