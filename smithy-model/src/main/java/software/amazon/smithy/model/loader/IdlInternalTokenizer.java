@@ -59,7 +59,16 @@ final class IdlInternalTokenizer extends DefaultTokenizer {
                 docStart = start + 3;
             }
 
-            docCommentLines.add(getModel(docStart, getCurrentTokenEnd()));
+            // Strip the \n and \r\n from the end.
+            int end = getCurrentTokenEnd();
+            if (model.charAt(end - 1) == '\n') {
+                end--;
+                if (end >= 0 && model.charAt(end - 1) == '\r') {
+                    end--;
+                }
+            }
+
+            docCommentLines.add(getModel(docStart, end));
         }
 
         return token;
@@ -158,14 +167,10 @@ final class IdlInternalTokenizer extends DefaultTokenizer {
         } else {
             StringBuilder result = new StringBuilder();
             while (!docCommentLines.isEmpty()) {
-                result.append(docCommentLines.removeFirst());
+                result.append(docCommentLines.removeFirst()).append("\n");
             }
-            if (result.charAt(result.length()  - 1) == '\n') {
-                result.setLength(result.length() - 1);
-            }
-            if (result.charAt(result.length()  - 1) == '\r') {
-                result.setLength(result.length() - 1);
-            }
+            // Strip ending \n.
+            result.setLength(result.length() - 1);
             return result.toString();
         }
     }
