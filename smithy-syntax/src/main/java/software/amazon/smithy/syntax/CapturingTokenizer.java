@@ -169,7 +169,7 @@ final class CapturingTokenizer implements IdlTokenizer {
         try {
             parser.run();
         } catch (ModelSyntaxException e) {
-            TokenTree errorTree = TokenTree.error(e.getMessageWithoutLocation());
+            TokenTree errorTree = TokenTree.fromError(e.getMessageWithoutLocation());
             tree.appendChild(errorTree);
             if (getCurrentToken() != IdlToken.EOF) {
                 // Temporarily make the error tree the current tree to capture error recovery tokens.

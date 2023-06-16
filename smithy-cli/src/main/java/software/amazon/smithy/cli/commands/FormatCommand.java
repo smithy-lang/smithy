@@ -117,6 +117,6 @@ final class FormatCommand implements Command {
     private TokenTree parse(Path file) {
         String contents = IoUtils.readUtf8File(file);
         IdlTokenizer tokenizer = IdlTokenizer.create(file.toString(), contents);
-        return TokenTree.parse(tokenizer);
+        return TokenTree.of(tokenizer);
     }
 }

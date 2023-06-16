@@ -18,30 +18,34 @@ package software.amazon.smithy.syntax;
 import java.util.List;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.FromSourceLocation;
+import software.amazon.smithy.model.loader.IdlToken;
 import software.amazon.smithy.model.loader.IdlTokenizer;
 
 /**
  * Provides a labeled tree of tokens returned from {@link IdlTokenizer}.
  *
- * <p>This abstraction is a kind of parse tree based on lexer tokens. Each consumed token is present in the tree,
- * and grouped together into nodes with labels defined by {@link TreeType}.
+ * <p>This abstraction is a kind of parse tree based on lexer tokens, with the key difference being it bottoms-out at
+ * {@link IdlToken} values rather than the more granular grammar productions for identifiers, strings, etc.
+ *
+ * <p>Each consumed IDL token is present in the tree, and grouped together into nodes with labels defined by its
+ * {@link TreeType}.
  */
 public interface TokenTree extends FromSourceLocation {
 
     /**
-     * Create a TokenTree from a {@link IdlTokenizer}.
+     * Create the root of a TokenTree from an {@link IdlTokenizer}.
      *
      * @param tokenizer Tokenizer to traverse.
-     * @return Returns the created tree.
+     * @return Returns the root of the created tree.
      */
-    static TokenTree parse(IdlTokenizer tokenizer) {
+    static TokenTree of(IdlTokenizer tokenizer) {
         CapturingTokenizer capturingTokenizer = new CapturingTokenizer(tokenizer);
         TreeType.IDL.parse(capturingTokenizer);
         return capturingTokenizer.getRoot();
     }
 
     /**
-     * Create a tree from a single token.
+     * Create a leaf tree from a single token.
      *
      * @param token Token to wrap into a tree.
      * @return Returns the created tree.
@@ -61,17 +65,17 @@ public interface TokenTree extends FromSourceLocation {
     }
 
     /**
-     * Create an error tree.
+     * Create an error tree with the given {@code error} message.
      *
      * @param error Error message.
      * @return Returns the created tree.
      */
-    static TokenTree error(String error) {
+    static TokenTree fromError(String error) {
         return new TokenTreeError(error);
     }
 
     /**
-     * Gets the token tree type.
+     * Get the token tree type.
      *
      * @return Returns the type.
      */
@@ -85,31 +89,17 @@ public interface TokenTree extends FromSourceLocation {
     List<TokenTree> getChildren();
 
     /**
-     * Detect if the tree is empty.
+     * Detect if the tree is empty (that is, a non-leaf that has no children or tokens).
      *
      * @return Return true if the tree has no children or tokens.
      */
     boolean isEmpty();
 
     /**
-     * Check if the tree has an immediate child of the given type.
-     *
-     * @param type Type to check.
-     * @return Return true if the tree has a child of the given type.
-     */
-    default boolean hasChild(TreeType type) {
-        for (TokenTree tree : getChildren()) {
-            if (tree.getType() == type) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Append a child to the tree.
      *
      * @param tree Tree to append.
+     * @throws UnsupportedOperationException if the tree is a leaf.
      */
     void appendChild(TokenTree tree);
 
@@ -117,16 +107,16 @@ public interface TokenTree extends FromSourceLocation {
      * Remove a child tree by referential equality.
      *
      * @param tree Tree to remove.
-     * @return Return true if this child was found and removed.
+     * @return Return true only if this child was found and removed.
      */
     boolean removeChild(TokenTree tree);
 
     /**
-     * Replaces a matching child with the given replacement using referential equality.
+     * Replace a matching child with the given replacement using referential equality.
      *
      * @param find        Child to find and replace, using referential equality.
      * @param replacement Replacement to use instead.
-     * @return Returns true if a child was replaced.
+     * @return Returns true only if a child was replaced.
      */
     boolean replaceChild(TokenTree find, TokenTree replacement);
 
@@ -138,7 +128,14 @@ public interface TokenTree extends FromSourceLocation {
     Stream<CapturedToken> tokens();
 
     /**
-     * Gets the error associated with the tree, or null if not present.
+     * Get the tokens contained in the tree as a single concatenated string.
+     *
+     * @return Returns a concatenated string of tokens.
+     */
+    String concatTokens();
+
+    /**
+     * Get the error associated with the tree, or {@code null} if not present.
      *
      * @return Returns the nullable error message.
      */
@@ -152,11 +149,11 @@ public interface TokenTree extends FromSourceLocation {
      * @return Returns the zipper cursor for the current node.
      */
     default TreeCursor zipper() {
-        return TreeCursor.fromRoot(this);
+        return TreeCursor.of(this);
     }
 
     /**
-     * Get the absolute start position, starting at 0.
+     * Get the absolute start position of the tree, starting at 0.
      *
      * @return Returns the start position of this tree.
      */
@@ -184,20 +181,9 @@ public interface TokenTree extends FromSourceLocation {
     int getEndLine();
 
     /**
-     * Get the column the tree end, starting at 1.
+     * Get the column the tree ends, starting at 1.
      *
      * @return Returns the end column.
      */
     int getEndColumn();
-
-    /**
-     * Get the tokens contains in the tree as a single concatenated string.
-     *
-     * @return Returns the concatenated string of tokens.
-     */
-    default String concatTokens() {
-        StringBuilder result = new StringBuilder();
-        tokens().forEach(token -> result.append(token.getLexeme()));
-        return result.toString();
-    }
 }

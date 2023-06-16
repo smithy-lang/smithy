@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import software.amazon.smithy.model.loader.ModelSyntaxException;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.utils.StringUtils;
@@ -38,7 +37,7 @@ public final class Formatter {
     private Formatter() {}
 
     /**
-     * Formats the given token tree.
+     * Formats the given token tree, wrapping lines at 120 characters.
      *
      * @param root Root {@link TreeType#IDL} tree node to format.
      * @return Returns the formatted model as a string.
@@ -118,10 +117,7 @@ public final class Formatter {
                 }
 
                 case SHAPE_SECTION: {
-                    return Doc.intersperse(
-                        Doc.line(),
-                        StreamSupport.stream(cursor.getChildren().spliterator(), false).map(this::visit)
-                    );
+                    return Doc.intersperse(Doc.line(), cursor.children().map(this::visit));
                 }
 
                 case SHAPE_STATEMENTS: {
@@ -329,7 +325,7 @@ public final class Formatter {
                 case TRAIT_STATEMENTS: {
                     return Doc.intersperse(
                             Doc.line(),
-                            StreamSupport.stream(cursor.getChildren().spliterator(), false)
+                            cursor.children()
                                     // Skip WS nodes that have no comments.
                                     .filter(c -> c.getTree().getType() == TreeType.TRAIT || hasComment(c))
                                     .map(this::visit))
@@ -546,7 +542,7 @@ public final class Formatter {
 
         private Doc bracketed(String open, String close, TreeCursor cursor, TreeCursor hardLineSubject,
                 Function<TreeCursor, Stream<TreeCursor>> childExtractor) {
-            Stream<Doc> children = StreamSupport.stream(cursor.getChildren().spliterator(), false)
+            Stream<Doc> children = cursor.children()
                     .flatMap(c -> {
                         TreeType type = c.getTree().getType();
                         return type == TreeType.WS || type == TreeType.COMMENT

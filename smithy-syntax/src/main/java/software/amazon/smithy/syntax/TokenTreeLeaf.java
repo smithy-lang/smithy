@@ -40,6 +40,11 @@ final class TokenTreeLeaf implements TokenTree {
     }
 
     @Override
+    public String concatTokens() {
+        return token.getLexeme().toString();
+    }
+
+    @Override
     public TreeType getType() {
         return TreeType.TOKEN;
     }

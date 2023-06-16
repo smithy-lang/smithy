@@ -17,11 +17,11 @@ package software.amazon.smithy.syntax;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 
@@ -46,7 +46,7 @@ public final class TreeCursor implements FromSourceLocation {
      * @param tree Tree to create a cursor from.
      * @return Returns the created cursor.
      */
-    public static TreeCursor fromRoot(TokenTree tree) {
+    public static TreeCursor of(TokenTree tree) {
         return new TreeCursor(tree, null);
     }
 
@@ -74,7 +74,7 @@ public final class TreeCursor implements FromSourceLocation {
     }
 
     /**
-     * Get the root of the tree.
+     * Get the root of the tree, returning itself if the tree has no parent.
      *
      * @return Non-nullable root tree.
      */
@@ -142,25 +142,25 @@ public final class TreeCursor implements FromSourceLocation {
     }
 
     /**
-     * Get all children of the tree as cursors.
+     * Get all children of the tree as a list of cursors.
      *
      * @return Return the cursors to each child.
      */
-    public Iterable<TreeCursor> getChildren() {
-        return () -> {
-            Iterator<TokenTree> children = getTree().getChildren().iterator();
-            return new Iterator<TreeCursor>() {
-                @Override
-                public boolean hasNext() {
-                    return children.hasNext();
-                }
+    public List<TreeCursor> getChildren() {
+        List<TreeCursor> result = new ArrayList<>(getTree().getChildren().size());
+        for (TokenTree child : tree.getChildren()) {
+            result.add(new TreeCursor(child, this));
+        }
+        return result;
+    }
 
-                @Override
-                public TreeCursor next() {
-                    return new TreeCursor(children.next(), TreeCursor.this);
-                }
-            };
-        };
+    /**
+     * Get a stream of child cursors.
+     *
+     * @return Returns children as a stream.
+     */
+    Stream<TreeCursor> children() {
+        return getTree().getChildren().stream().map(child -> new TreeCursor(child, this));
     }
 
     /**
@@ -171,10 +171,12 @@ public final class TreeCursor implements FromSourceLocation {
      */
     public List<TreeCursor> getChildrenByType(TreeType... types) {
         List<TreeCursor> result = new ArrayList<>();
-        for (TreeCursor child : getChildren()) {
+        for (int i = 0; i < tree.getChildren().size(); i++) {
+            TokenTree child = tree.getChildren().get(i);
             for (TreeType type : types) {
-                if (child.getTree().getType() == type) {
-                    result.add(child);
+                if (child.getType() == type) {
+                    result.add(new TreeCursor(child, this));
+                    break;
                 }
             }
         }
@@ -201,9 +203,9 @@ public final class TreeCursor implements FromSourceLocation {
      * @return Return the first child, or null if a matching child is not found.
      */
     public TreeCursor getFirstChild(TreeType type) {
-        for (TreeCursor child : getChildren()) {
-            if (child.getTree().getType() == type) {
-                return child;
+        for (TokenTree child : getTree().getChildren()) {
+            if (child.getType() == type) {
+                return new TreeCursor(child, this);
             }
         }
         return null;

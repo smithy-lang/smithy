@@ -46,6 +46,13 @@ class TokenTreeNode implements TokenTree {
     }
 
     @Override
+    public String concatTokens() {
+        StringBuilder result = new StringBuilder();
+        tokens().forEach(token -> result.append(token.getLexeme()));
+        return result.toString();
+    }
+
+    @Override
     public final List<TokenTree> getChildren() {
         return children;
     }

@@ -49,7 +49,7 @@ public class TokenTreeNodeTest {
 
         assertThat(tree, equalTo(tree));
         assertThat(tree, not(equalTo("hi")));
-        assertThat(tree, not(equalTo(TokenTree.error("Foo"))));
+        assertThat(tree, not(equalTo(TokenTree.fromError("Foo"))));
         assertThat(tree.hashCode(), is(not(0)));
     }
 }
