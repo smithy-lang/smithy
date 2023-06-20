@@ -41,7 +41,7 @@ public class IamResourceTraitValidator extends AbstractValidator {
             // check that the resource name is consistent between the two traits
             if (resource.hasTrait(ArnTrait.class)) {
                 String resourceName = resource.expectTrait(IamResourceTrait.class).getName()
-                    .orElse(StringUtils.lowerCase(resource.getId().getName()));
+                    .orElseGet(() -> StringUtils.lowerCase(resource.getId().getName()));
                 ArnTrait arnTrait = resource.expectTrait(ArnTrait.class);
                 List<String> arnComponents = parseArnComponents(arnTrait.getTemplate());
                 if (!arnComponents.contains(resourceName)) {
