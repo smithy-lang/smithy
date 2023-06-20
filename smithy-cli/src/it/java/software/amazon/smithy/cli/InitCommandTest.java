@@ -113,11 +113,15 @@ public class InitCommandTest {
                         .append("Invalid template `blabla`. `Smithy-Examples` provides the following templates:")
                         .append(System.lineSeparator())
                         .append(System.lineSeparator())
-                        .append("NAME             DOCUMENTATION")
+                        .append("NAME                    DOCUMENTATION")
                         .append(System.lineSeparator())
-                        .append("--------------   ---------------------------------------------------------------")
+                        .append("---------------------   -----------------------------------------------------")
                         .append(System.lineSeparator())
-                        .append("quickstart-cli   Smithy Quickstart example weather service using the Smithy CLI.")
+                        .append("included-file-json      Smithy Quickstart example with json file included.   ")
+                        .append(System.lineSeparator())
+                        .append("included-files-gradle   Smithy Quickstart example with gradle files included.")
+                        .append(System.lineSeparator())
+                        .append("quickstart-cli          Smithy Quickstart example weather service.           ")
                         .append(System.lineSeparator())
                         .toString();
 
@@ -179,11 +183,15 @@ public class InitCommandTest {
                     "init", "--list", "--url", templatesDir.toString()));
 
                 String expectedOutput = new StringBuilder()
-                    .append("NAME             DOCUMENTATION")
+                    .append("NAME                    DOCUMENTATION")
                     .append(System.lineSeparator())
-                    .append("--------------   ---------------------------------------------------------------")
+                    .append("---------------------   -----------------------------------------------------")
                     .append(System.lineSeparator())
-                    .append("quickstart-cli   Smithy Quickstart example weather service using the Smithy CLI.")
+                    .append("included-file-json      Smithy Quickstart example with json file included.   ")
+                    .append(System.lineSeparator())
+                    .append("included-files-gradle   Smithy Quickstart example with gradle files included.")
+                    .append(System.lineSeparator())
+                    .append("quickstart-cli          Smithy Quickstart example weather service.           ")
                     .append(System.lineSeparator())
                     .toString();
 
