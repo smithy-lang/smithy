@@ -46,9 +46,9 @@ public class IamResourceTraitValidator extends AbstractValidator {
                 List<String> arnComponents = parseArnComponents(arnTrait.getTemplate());
                 if (!arnComponents.contains(resourceName)) {
                     results.add(danger(resource, String.format(
-                            "The `@aws.iam#iamResource` trait applied to this resource "
-                            + "defines a resource name, `%s`, that does not match the `@arn` template, "
-                            + "`%s`, of the resource.",
+                            "The `@aws.iam#iamResource` trait applied to the resource "
+                            + "defines an IAM resource name, `%s`, that does not match the `@arn` template, "
+                            + "`%s`, for that same resource.",
                             resourceName, arnTrait.getTemplate())));
                 }
             }
@@ -57,6 +57,6 @@ public class IamResourceTraitValidator extends AbstractValidator {
     }
 
     private List<String> parseArnComponents(String arnTemplate) {
-        return new ArrayList<>(Arrays.asList(arnTemplate.split("/")));
+        return Arrays.asList(arnTemplate.split("/"));
     }
 }
