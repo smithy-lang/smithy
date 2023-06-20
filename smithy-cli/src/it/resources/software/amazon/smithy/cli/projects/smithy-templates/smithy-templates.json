@@ -4,6 +4,11 @@
         "quickstart-cli": {
             "documentation": "Smithy Quickstart example weather service using the Smithy CLI.",
             "path": "getting-started-example/weather-service"
+        },
+        "included-files": {
+            "documentation": "Smithy Quickstart example weather service using the Smithy CLI with files included.",
+            "path": "getting-started-example/included-files",
+            "include": [ "getting-started-example/common/smithy-build.json" ]
         }
     }
 }

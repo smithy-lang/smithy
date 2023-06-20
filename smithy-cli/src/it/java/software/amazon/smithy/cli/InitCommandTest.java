@@ -6,6 +6,8 @@ import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
+
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -50,6 +52,28 @@ public class InitCommandTest {
                 assertThat(result.getOutput(),
                     containsString("Please specify a template using `--template` or `-t`"));
                 assertThat(result.getExitCode(), is(1));
+            });
+        });
+    }
+
+    @Test
+    public void includedFiles() {
+        IntegUtils.withProject(PROJECT_NAME, templatesDir -> {
+            setupTemplatesDirectory(templatesDir);
+
+            IntegUtils.withTempDir("includedFiles", dir -> {
+                RunResult result = IntegUtils.run(
+                    dir, ListUtils.of("init", "-t", "included-files", "-u", templatesDir.toString()));
+                assertThat(result.getOutput(),
+                    containsString("Smithy project created in directory: "));
+                assertThat(result.getExitCode(), is(0));
+                assertThat(Files.exists(Paths.get(dir.toString(), "included-files")), is(true));
+                try {
+                    Files.walk(Paths.get(dir.toString())).forEach(System.out::println);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                assertThat(Files.exists(Paths.get(dir.toString(), "included-files/smithy-build.json")), is(true));
             });
         });
     }
