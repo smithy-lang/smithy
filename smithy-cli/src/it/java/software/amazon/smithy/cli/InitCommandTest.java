@@ -57,23 +57,45 @@ public class InitCommandTest {
     }
 
     @Test
-    public void includedFiles() {
+    public void includedFileJson() {
         IntegUtils.withProject(PROJECT_NAME, templatesDir -> {
             setupTemplatesDirectory(templatesDir);
 
             IntegUtils.withTempDir("includedFiles", dir -> {
                 RunResult result = IntegUtils.run(
-                    dir, ListUtils.of("init", "-t", "included-files", "-u", templatesDir.toString()));
+                    dir, ListUtils.of("init", "-t", "included-file-json", "-u", templatesDir.toString()));
                 assertThat(result.getOutput(),
                     containsString("Smithy project created in directory: "));
                 assertThat(result.getExitCode(), is(0));
-                assertThat(Files.exists(Paths.get(dir.toString(), "included-files")), is(true));
+                assertThat(Files.exists(Paths.get(dir.toString(), "included-file-json")), is(true));
+                assertThat(Files.exists(Paths.get(dir.toString(), "included-file-json/smithy-build.json")), is(true));
+            });
+        });
+    }
+
+    @Test
+    public void includedFileGradle() {
+        IntegUtils.withProject(PROJECT_NAME, templatesDir -> {
+            setupTemplatesDirectory(templatesDir);
+
+            IntegUtils.withTempDir("includedFilesGradle", dir -> {
+                RunResult result = IntegUtils.run(
+                    dir, ListUtils.of("init", "-t", "included-files-gradle", "-u", templatesDir.toString()));
+                assertThat(result.getOutput(),
+                    containsString("Smithy project created in directory: "));
+                assertThat(result.getExitCode(), is(0));
+                assertThat(Files.exists(Paths.get(dir.toString(), "included-files-gradle")), is(true));
                 try {
                     Files.walk(Paths.get(dir.toString())).forEach(System.out::println);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                assertThat(Files.exists(Paths.get(dir.toString(), "included-files/smithy-build.json")), is(true));
+                assertThat(Files.exists(Paths.get(dir.toString(), "included-files-gradle/gradle.properties")), is(true));
+                assertThat(Files.exists(Paths.get(dir.toString(), "included-files-gradle/gradlew")), is(true));
+                assertThat(Files.exists(Paths.get(dir.toString(), "included-files-gradle/gradle")), is(true));
+                assertThat(Files.exists(Paths.get(dir.toString(), "included-files-gradle/gradle/wrapper")), is(true));
+                assertThat(Files.exists(Paths.get(dir.toString(), "included-files-gradle/gradle/wrapper/gradle-wrapper.jar")), is(true));
+                assertThat(Files.exists(Paths.get(dir.toString(), "included-files-gradle/gradle/wrapper/gradle-wrapper.properties")), is(true));
             });
         });
     }

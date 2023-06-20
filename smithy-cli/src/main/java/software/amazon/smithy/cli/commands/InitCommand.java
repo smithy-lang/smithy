@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 import software.amazon.smithy.cli.ArgumentReceiver;
@@ -186,10 +187,7 @@ final class InitCommand implements Command {
 
         final Path dest = Paths.get(directory);
         IoUtils.copyDir(Paths.get(temp.toString(), templatePath), dest);
-        for (String includedFile : includedFiles) {
-            Path includedFilePath = Paths.get(temp.toString(), includedFile);
-            Files.copy(includedFilePath, Paths.get(dest.toString(), includedFilePath.getFileName().toString()));
-        }
+        copyIncludedFiles(temp.toString(), dest.toString(), includedFiles, template, env);
 
         try (ColorBuffer buffer = ColorBuffer.of(env.colors(), env.stderr())) {
             buffer.println(String.format("Smithy project created in directory: %s", directory), ColorTheme.SUCCESS);
@@ -236,6 +234,27 @@ final class InitCommand implements Command {
         templateNode.getArrayMember(INCLUDED, StringNode::getValue, includedPaths::addAll);
 
         return includedPaths;
+    }
+
+    private static void copyIncludedFiles(String temp, String dest, List<String> includedFiles,
+                                          String templateName, Env env) throws IOException {
+        for (String included : includedFiles) {
+            final Path includedPath = Paths.get(temp, included);
+            if (!Files.exists(includedPath)) {
+                try (ColorBuffer buffer = ColorBuffer.of(env.colors(), env.stderr())) {
+                    buffer.println(String.format(
+                        "File or directory %s is marked for inclusion in template %s but was not found",
+                        included, templateName), ColorTheme.WARNING);
+                }
+            }
+
+            Path target = Paths.get(dest, Objects.requireNonNull(includedPath.getFileName()).toString());
+            if (Files.isDirectory(includedPath)) {
+                IoUtils.copyDir(includedPath, target);
+            } else if (Files.isRegularFile(includedPath)) {
+                Files.copy(includedPath, target);
+            }
+        }
     }
 
     private static String exec(List<String> args, Path directory) {
