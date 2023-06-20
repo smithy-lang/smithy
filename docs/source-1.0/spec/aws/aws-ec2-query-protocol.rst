@@ -28,7 +28,9 @@ Value type
 
 .. important::
 
-    This protocol does not support document types.
+    * This protocol does not support document types.
+    * This protocol does not support :ref:`HTTP binding traits <http-traits>`.
+      HTTP binding traits MUST be ignored if they are present.
 
 .. tabs::
 
