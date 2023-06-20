@@ -9,7 +9,7 @@ use smithy.test#httpResponseTests
 apply PutWithContentEncoding @httpRequestTests([
     {
         id: "SDKAppliedContentEncoding_restJson1"
-        documentation: "The user didn't apply an encoding, so the SDK applies gzip"
+        documentation: "Compression algorithm encoding is appended to the Content-Encoding header."
         protocol: restJson1
         params: {
             "data": """
@@ -151,7 +151,11 @@ apply PutWithContentEncoding @httpRequestTests([
     }
     {
         id: "SDKAppendedGzipAfterProvidedEncoding_restJson1"
-        documentation: "The user provided a content-encoding so the SDK appends gzip"
+        documentation: """
+        Compression algorithm encoding is appended to the Content-Encoding header, and the
+        user-provided content-encoding is in the Content-Encoding header before the
+        request compression encoding from the HTTP binding.
+        """
         protocol: restJson1
         params: {
             "encoding": "custom"
@@ -310,6 +314,5 @@ structure PutWithContentEncodingInput {
     @httpHeader("Content-Encoding")
     encoding: String
 
-    @httpPayload
     data: String
 }
