@@ -1,0 +1,1 @@
+[ERROR] smithy.example#Operation: This operation scoped within the `smithy.example#MyService` service refers to an undefined condition key `foo:qux`. Expected one of the following defined condition keys: [`foo:baz`] | ConditionKeys
