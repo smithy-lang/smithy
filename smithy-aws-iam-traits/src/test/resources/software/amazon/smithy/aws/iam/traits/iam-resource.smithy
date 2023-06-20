@@ -2,6 +2,8 @@ $version: "1.0"
 
 namespace smithy.example
 
+use aws.api#arn
+
 @aws.api#service(sdkId: "My")
 service MyService {
     version: "2020-07-02",
@@ -9,6 +11,7 @@ service MyService {
 }
 
 @aws.iam#iamResource(name: "super")
+@arn(template: "super/{id1}")
 resource SuperResource {
     identifiers: {
         id1: String,

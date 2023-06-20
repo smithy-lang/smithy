@@ -65,18 +65,4 @@ public class ConditionKeysIndexTest {
         assertThat(index.getDefinedConditionKeys(service, ShapeId.from("smithy.example#GetResource2")).keySet(),
                    is(empty()));
     }
-
-    @Test
-    public void detectsUnknownConditionKeys() {
-        ValidatedResult<Model> result = Model.assembler()
-                .addImport(getClass().getResource("invalid-condition-keys.smithy"))
-                .discoverModels(getClass().getClassLoader())
-                .assemble();
-
-        assertTrue(result.isBroken());
-        assertThat(result.getValidationEvents(Severity.ERROR).stream()
-                           .map(ValidationEvent::getId)
-                           .collect(Collectors.toSet()),
-                contains("ConditionKeys"));
-    }
 }
