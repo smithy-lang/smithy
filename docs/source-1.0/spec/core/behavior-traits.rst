@@ -557,7 +557,7 @@ members:
       - Type
       - Description
     * - encodings
-      - ``list<string>``
+      - ``[string]``
       - Defines the priority-ordered list of compression algorithms supported by
         the service operation. Supported compression algorithms are: "gzip".
 
