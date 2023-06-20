@@ -41,14 +41,14 @@ public class IamResourceTraitValidator extends AbstractValidator {
             // check that the resource name is consistent between the two traits
             if (resource.hasTrait(ArnTrait.class)) {
                 String resourceName = resource.expectTrait(IamResourceTrait.class).getName()
-                    .orElse(StringUtils.lowerCase(resource.getId().getName()));
+                    .orElseGet(() -> StringUtils.lowerCase(resource.getId().getName()));
                 ArnTrait arnTrait = resource.expectTrait(ArnTrait.class);
                 List<String> arnComponents = parseArnComponents(arnTrait.getTemplate());
                 if (!arnComponents.contains(resourceName)) {
                     results.add(danger(resource, String.format(
-                            "The `@aws.iam#iamResource` trait applied to this resource "
-                            + "defines a resource name, `%s`, that does not match the `@arn` template, "
-                            + "`%s`, of the resource.",
+                            "The `@aws.iam#iamResource trait applied to the resource "
+                            + "defines an IAM resource name, `%s`, that does not match the `@arn` template, "
+                            + "`%s`, for that same resource.",
                             resourceName, arnTrait.getTemplate())));
                 }
             }
@@ -57,6 +57,6 @@ public class IamResourceTraitValidator extends AbstractValidator {
     }
 
     private List<String> parseArnComponents(String arnTemplate) {
-        return new ArrayList<>(Arrays.asList(arnTemplate.split("/")));
+        return Arrays.asList(arnTemplate.split("/"));
     }
 }
