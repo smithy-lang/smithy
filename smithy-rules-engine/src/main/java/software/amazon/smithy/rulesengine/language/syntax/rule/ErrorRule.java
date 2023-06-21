@@ -26,6 +26,11 @@ public final class ErrorRule extends Rule {
         this.error = error;
     }
 
+    /**
+     * Gets the error expression to return when reaching this rule.
+     *
+     * @return the error expression.
+     */
     public Expression getError() {
         return error;
     }

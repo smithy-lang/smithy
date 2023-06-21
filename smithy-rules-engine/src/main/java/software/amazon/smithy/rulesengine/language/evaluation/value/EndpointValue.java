@@ -21,6 +21,9 @@ import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.StringUtils;
 
+/**
+ * An endpoint value, containing a URL as well as headers that MUST be sent.
+ */
 public final class EndpointValue extends Value {
     private static final String PROPERTIES = "properties";
     private static final String URL = "URL";
@@ -38,6 +41,21 @@ public final class EndpointValue extends Value {
         this.headers = builder.headers.copy();
     }
 
+    /**
+     * Builder to create a {@link EndpointValue} instance.
+     *
+     * @return returns a new Builder.
+     */
+    public static Builder builder() {
+        return new Builder(javaLocation());
+    }
+
+    /**
+     * Creates an {@link EndpointValue} instance from the given Node information.
+     *
+     * @param node the node to deserialize.
+     * @return the created EndpointValue.
+     */
     public static EndpointValue fromNode(Node node) {
         Builder builder = new Builder(node);
         ObjectNode objectNode = node.expectObjectNode("endpoints are object nodes");
@@ -59,18 +77,29 @@ public final class EndpointValue extends Value {
         return builder.build();
     }
 
-    public static Builder builder() {
-        return new Builder(javaLocation());
-    }
-
+    /**
+     * Gets the properties of this endpoint.
+     *
+     * @return the properties of this endpoint.
+     */
     public Map<String, Value> getProperties() {
         return properties;
     }
 
+    /**
+     * Gets the URL of this endpoint.
+     *
+     * @return the URL of this endpoint.
+     */
     public String getUrl() {
         return url;
     }
 
+    /**
+     * Gets the headers to set when sending HTTP requests to the URL.
+     *
+     * @return a map of header names to a list of values to set on those headers.
+     */
     public Map<String, List<String>> getHeaders() {
         return headers;
     }
@@ -133,6 +162,9 @@ public final class EndpointValue extends Value {
         return sb.toString();
     }
 
+    /**
+     * A builder used to create an {@link EndpointValue} class.
+     */
     public static final class Builder extends RulesComponentBuilder<Builder, EndpointValue> {
         private final BuilderRef<Map<String, Value>> properties = BuilderRef.forOrderedMap();
         private final BuilderRef<Map<String, List<String>>> headers =

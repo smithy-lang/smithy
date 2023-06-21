@@ -8,10 +8,13 @@ package software.amazon.smithy.rulesengine.language.evaluation.type;
 import java.util.Objects;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
 
+/**
+ * The "optional" type, a container for a type that may or may not be present.
+ */
 public final class OptionalType extends AbstractType {
     private final Type inner;
 
-    public OptionalType(Type inner) {
+    OptionalType(Type inner) {
         this.inner = inner;
     }
 
@@ -29,6 +32,11 @@ public final class OptionalType extends AbstractType {
         return inner;
     }
 
+    /**
+     * Gets the optional's contained value.
+     *
+     * @return the optional's value.
+     */
     public Type inner() {
         return inner;
     }

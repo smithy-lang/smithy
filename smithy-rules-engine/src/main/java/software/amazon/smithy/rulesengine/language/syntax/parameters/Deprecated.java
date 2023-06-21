@@ -6,12 +6,16 @@
 package software.amazon.smithy.rulesengine.language.syntax.parameters;
 
 import java.util.Objects;
+import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 
+/**
+ * Container for information on a deprecated parameter.
+ */
 public final class Deprecated implements ToNode {
     private static final String MESSAGE = "message";
     private static final String SINCE = "since";
@@ -19,11 +23,17 @@ public final class Deprecated implements ToNode {
     private final String message;
     private final String since;
 
-    public Deprecated(String message, String since) {
+    private Deprecated(String message, String since) {
         this.message = message;
         this.since = since;
     }
 
+    /**
+     * Creates a {@link Deprecated} of a specific type from the given Node information.
+     *
+     * @param objectNode the node to deserialize.
+     * @return the created Deprecated.
+     */
     public static Deprecated fromNode(ObjectNode objectNode) {
         String message = objectNode.getStringMember(MESSAGE)
                                  .map(StringNode::getValue)
@@ -34,12 +44,22 @@ public final class Deprecated implements ToNode {
         return new Deprecated(message, since);
     }
 
-    public String getMessage() {
-        return message;
+    /**
+     * Gets the deprecation message value.
+     *
+     * @return returns the optional deprecation message value.
+     */
+    public Optional<String> getMessage() {
+        return Optional.ofNullable(message);
     }
 
-    public String getSince() {
-        return since;
+    /**
+     * Gets the deprecated since value.
+     *
+     * @return returns the optional deprecated since value.
+     */
+    public Optional<String> getSince() {
+        return Optional.ofNullable(since);
     }
 
     @Override

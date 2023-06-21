@@ -7,6 +7,9 @@ package software.amazon.smithy.rulesengine.language.evaluation.type;
 
 import java.util.Objects;
 
+/**
+ * The "array" type, which contains entries of a member type.
+ */
 public final class ArrayType extends AbstractType {
     private final Type member;
 
@@ -14,6 +17,11 @@ public final class ArrayType extends AbstractType {
         this.member = member;
     }
 
+    /**
+     * Gets the type of the member in this array.
+     *
+     * @return the type of the member in this array.
+     */
     public Type getMember() {
         return member;
     }

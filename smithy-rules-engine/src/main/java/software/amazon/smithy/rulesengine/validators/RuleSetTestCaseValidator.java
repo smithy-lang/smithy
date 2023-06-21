@@ -17,6 +17,9 @@ import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointTestCase;
 import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
 
+/**
+ * Validator to ensure that test cases for rule-sets pass type checking evaluation.
+ */
 public class RuleSetTestCaseValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {

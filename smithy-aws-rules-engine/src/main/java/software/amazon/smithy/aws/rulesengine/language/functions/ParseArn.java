@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import software.amazon.smithy.rulesengine.language.evaluation.type.RecordType;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
@@ -35,7 +34,7 @@ public final class ParseArn extends LibraryFunction {
 
     private static final Definition DEFINITION = new Definition();
 
-    public ParseArn(FunctionNode functionNode) {
+    private ParseArn(FunctionNode functionNode) {
         super(DEFINITION, functionNode);
     }
 
@@ -44,6 +43,9 @@ public final class ParseArn extends LibraryFunction {
         return visitor.visitLibraryFunction(DEFINITION, getArguments());
     }
 
+    /**
+     * A {@link FunctionDefinition} for the {@link ParseArn} function.
+     */
     public static final class Definition implements FunctionDefinition {
         @Override
         public String getId() {
@@ -57,7 +59,7 @@ public final class ParseArn extends LibraryFunction {
 
         @Override
         public Type getReturnType() {
-            return Type.optionalType(new RecordType(MapUtils.of(
+            return Type.optionalType(Type.recordType(MapUtils.of(
                     PARTITION, Type.stringType(),
                     SERVICE, Type.stringType(),
                     REGION, Type.stringType(),

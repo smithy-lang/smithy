@@ -27,12 +27,13 @@ import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
+import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
  * A set of EndpointRules. EndpointType Rules describe the endpoint resolution behavior for a service.
  */
 @SmithyUnstableApi
-public final class EndpointRuleSet implements FromSourceLocation, ToNode, TypeCheck {
+public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmithyBuilder<EndpointRuleSet>, TypeCheck {
     private static final String LATEST_VERSION = "1.3";
     private static final String VERSION = "version";
     private static final String PARAMETERS = "parameters";
@@ -51,26 +52,35 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, TypeCh
         version = SmithyBuilder.requiredState("version", builder.version);
     }
 
-    public static EndpointRuleSet fromNode(Node node) throws RuleError {
-        return RuleError.context("when parsing endpoint ruleset", () -> EndpointRuleSet.newFromNode(node));
-    }
-
-    private static EndpointRuleSet newFromNode(Node node) throws RuleError {
-        ObjectNode objectNode = node.expectObjectNode("The root of a ruleset must be an object");
-
-        EndpointRuleSet.Builder builder = new Builder(node);
-        builder.parameters(Parameters.fromNode(objectNode.expectObjectMember(PARAMETERS)));
-        objectNode.expectStringMember(VERSION, builder::version);
-
-        for (Node element : objectNode.expectArrayMember(RULES).getElements()) {
-            builder.addRule(context("while parsing rule", element, () -> EndpointRule.fromNode(element)));
-        }
-
-        return builder.build();
-    }
-
+    /**
+     * Builder to create a {@link EndpointRuleSet} instance.
+     *
+     * @return returns a new Builder.
+     */
     public static Builder builder() {
         return new Builder(SourceLocation.none());
+    }
+
+    /**
+     * Creates an {@link EndpointRuleSet} of a specific type from the given Node information.
+     *
+     * @param node the node to deserialize.
+     * @return the created EndpointRuleSet.
+     */
+    public static EndpointRuleSet fromNode(Node node) throws RuleError {
+        return RuleError.context("when parsing endpoint ruleset", () -> {
+            ObjectNode objectNode = node.expectObjectNode("The root of a ruleset must be an object");
+
+            EndpointRuleSet.Builder builder = new Builder(node);
+            builder.parameters(Parameters.fromNode(objectNode.expectObjectMember(PARAMETERS)));
+            objectNode.expectStringMember(VERSION, builder::version);
+
+            for (Node element : objectNode.expectArrayMember(RULES).getElements()) {
+                builder.addRule(context("while parsing rule", element, () -> EndpointRule.fromNode(element)));
+            }
+
+            return builder.build();
+        });
     }
 
     @Override
@@ -78,14 +88,29 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, TypeCh
         return sourceLocation;
     }
 
+    /**
+     * Gets the {@link Parameters} defined in this rule-set.
+     *
+     * @return the parameters defined in the rule-set.
+     */
     public Parameters getParameters() {
         return parameters;
     }
 
+    /**
+     * Gets the list of {@link Rule}s defined in this rule-set.
+     *
+     * @return the rules defined in this rule-set.
+     */
     public List<Rule> getRules() {
         return rules;
     }
 
+    /**
+     * Gets the version of this rule-set.
+     *
+     * @return the rule-set version.
+     */
     public String getVersion() {
         return version;
     }
@@ -101,10 +126,7 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, TypeCh
         });
     }
 
-    public void typeCheck() {
-        typeCheck(new Scope<>());
-    }
-
+    @Override
     public Builder toBuilder() {
         return builder()
                 .sourceLocation(getSourceLocation())
@@ -152,6 +174,9 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, TypeCh
         return builder.toString();
     }
 
+    /**
+     * A builder used to create a {@link EndpointRuleSet} class.
+     */
     public static class Builder extends RulesComponentBuilder<Builder, EndpointRuleSet> {
         private final BuilderRef<List<Rule>> rules = BuilderRef.forList();
         private Parameters parameters;
@@ -228,7 +253,7 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, TypeCh
         @Override
         public EndpointRuleSet build() {
             EndpointRuleSet ruleSet = new EndpointRuleSet(this);
-            ruleSet.typeCheck();
+            ruleSet.typeCheck(new Scope<>());
             return ruleSet;
         }
     }

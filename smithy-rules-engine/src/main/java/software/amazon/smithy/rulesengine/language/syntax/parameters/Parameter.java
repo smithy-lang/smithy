@@ -25,6 +25,9 @@ import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
+/**
+ * A rule-set parameter, representing a value usable in conditions and rules.
+ */
 @SmithyUnstableApi
 public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLocation, ToNode {
     public static final String TYPE = "type";
@@ -65,6 +68,13 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLo
         this.documentation = builder.documentation;
     }
 
+    /**
+     * Creates a {@link Parameter} instance from the given Node information.
+     *
+     * @param name the name of the parameter being deserialized.
+     * @param objectNode the node to deserialize.
+     * @return the created Parameter.
+     */
     public static Parameter fromNode(StringNode name, ObjectNode objectNode) throws RuleError {
         return RuleError.context("while parsing the parameter `" + name + "`", objectNode, () -> {
             Builder builder = new Builder(objectNode.getSourceLocation()).name(Identifier.of(name));
@@ -82,6 +92,11 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLo
         });
     }
 
+    /**
+     * Builder to create a {@link Parameter} instance.
+     *
+     * @return returns a new Builder.
+     */
     public static Builder builder() {
         return new Builder(SourceLocation.none());
     }
@@ -91,22 +106,47 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLo
         return sourceLocation;
     }
 
+    /**
+     * Gets the parameter name.
+     *
+     * @return returns the parameter name as an {@link Identifier}.
+     */
     public Identifier getName() {
         return name;
     }
 
+    /**
+     * Gets the parameter in template form.
+     *
+     * @return returns the template form of the parameter.
+     */
     public String getTemplate() {
         return "{" + name + "}";
     }
 
+    /**
+     * Gets if the parameter is required or not.
+     *
+     * @return true if the parameter is required, false otherwise.
+     */
     public boolean isRequired() {
         return required;
     }
 
+    /**
+     * Gets the documentation value.
+     *
+     * @return returns the optional documentation value.
+     */
     public ParameterType getType() {
         return type;
     }
 
+    /**
+     * Gets a {@link Type} for the parameter's type.
+     *
+     * @return a Type for the parameter.
+     */
     public Type toType() {
         Type out = Type.fromParameterType(type);
 
@@ -121,34 +161,55 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLo
         return out;
     }
 
+    /**
+     * Gets the built-in parameter name.
+     *
+     * @return returns the optional built-in parameter name.
+     */
     public Optional<String> getBuiltIn() {
         return Optional.ofNullable(builtIn);
     }
 
+    /**
+     * Gets if the parameter uses a built-in parameter.
+     *
+     * @return returns true if the parameter uses a built-in, false otherwise.
+     */
     public boolean isBuiltIn() {
         return builtIn != null;
     }
 
-    public Optional<Value> getDefaultValue() {
-        return Optional.ofNullable(defaultValue);
-    }
-
+    /**
+     * Gets the deprecated status.
+     *
+     * @return returns the optional deprecated state.
+     */
     public Optional<Deprecated> getDeprecated() {
         return Optional.ofNullable(deprecated);
     }
 
+    /**
+     * Gets the parameter's value.
+     *
+     * @return returns the optional value.
+     */
     public Optional<Value> getValue() {
         return Optional.ofNullable(value);
     }
 
+    /**
+     * Gets the documentation value.
+     *
+     * @return returns the optional documentation value.
+     */
     public Optional<String> getDocumentation() {
         return Optional.ofNullable(documentation);
     }
 
     /**
-     * The default value for this Parameter.
+     * Gets the parameter's default value.
      *
-     * @return The value. This value must match the type of this parameter.
+     * @return returns the optional default value.
      */
     public Optional<Value> getDefault() {
         return Optional.ofNullable(defaultValue);
@@ -157,7 +218,7 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLo
     /**
      * Provides a reference to this parameter as an expression.
      *
-     * @return the reference to the parameter.
+     * @return a reference to the parameter.
      */
     public Expression toExpression() {
         return Expression.getReference(name, SourceLocation.none());
@@ -235,6 +296,9 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLo
         return sb.toString();
     }
 
+    /**
+     * A builder used to create a {@link Parameter} class.
+     */
     public static final class Builder extends RulesComponentBuilder<Builder, Parameter> {
         private ParameterType type;
         private Identifier name;

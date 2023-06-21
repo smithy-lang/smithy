@@ -11,13 +11,22 @@ import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 
+/**
+ * The "record" type, a map of identifiers to other types.
+ */
 public final class RecordType extends AbstractType {
     private final Map<Identifier, Type> shape;
 
-    public RecordType(Map<Identifier, Type> shape) {
+    RecordType(Map<Identifier, Type> shape) {
         this.shape = new LinkedHashMap<>(shape);
     }
 
+    /**
+     * Gets the type for the specified identifier.
+     *
+     * @param name the identifier to get the type of.
+     * @return the type of the specified identifier.
+     */
     public Optional<Type> get(Identifier name) {
         if (shape.containsKey(name)) {
             return Optional.of(shape.get(name));
@@ -26,6 +35,11 @@ public final class RecordType extends AbstractType {
         }
     }
 
+    /**
+     * Gets the map of identifiers to their types.
+     *
+     * @return the map of identifiers to their types.
+     */
     public Map<Identifier, Type> getShape() {
         return shape;
     }

@@ -12,15 +12,25 @@ import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.ParameterType;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * Types used to construct conditions out of values in the rules engine.
+ */
 @SmithyUnstableApi
 public interface Type {
+    /**
+     * Returns true if this type matches the target type.
+     *
+     * @param type the target type to match.
+     * @return true if the types match, false otherwise.
+     */
     default boolean isA(Type type) {
         return type.equals(this);
     }
 
     /**
-     * When used in the context of a condition, the condition can only match if the value was truthful. This means
-     * that a certain expression can be a different type, for example, {@code OptionalType<T>} will become {@code T}.
+     * When used in the context of a condition, the condition can only match if the
+     * value was truthful. This means that a certain expression can be a different
+     * type, for example, {@code OptionalType<T>} will become {@code T}.
      *
      * @return The type, given that it has been proven truthy
      */

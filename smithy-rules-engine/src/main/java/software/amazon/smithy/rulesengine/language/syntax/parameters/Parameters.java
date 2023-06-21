@@ -27,20 +27,34 @@ import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
+/**
+ * An iterable container for {@link Parameter}s defined in a rule-set.
+ */
 @SmithyUnstableApi
 public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBuilder<Parameters>, Iterable<Parameter> {
     private final List<Parameter> parameters;
     private final SourceLocation sourceLocation;
 
-    public Parameters(Builder builder) {
+    private Parameters(Builder builder) {
         this.parameters = builder.parameters;
         this.sourceLocation = builder.getSourceLocation();
     }
 
+    /**
+     * Builder to create a {@link Parameters} instance.
+     *
+     * @return returns a new Builder.
+     */
     public static Builder builder() {
         return new Builder(SourceLocation.none());
     }
 
+    /**
+     * Creates a {@link Parameters} instance from the given Node information.
+     *
+     * @param node the node to deserialize.
+     * @return the created Parameters.
+     */
     public static Parameters fromNode(ObjectNode node) throws RuleError {
         Builder builder = new Builder(node);
         for (Map.Entry<StringNode, Node> entry : node.getMembers().entrySet()) {
@@ -50,6 +64,11 @@ public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBui
         return builder.build();
     }
 
+    /**
+     * Writes the parameters in this collection to the given scope.
+     *
+     * @param scope the scope
+     */
     public void writeToScope(Scope<Type> scope) {
         for (Parameter parameter : parameters) {
             RuleError.context(String.format("while typechecking par %s", parameter.getName()), parameter,
@@ -62,6 +81,11 @@ public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBui
         return sourceLocation;
     }
 
+    /**
+     * Gets the parameter for the given name.
+     *
+     * @return returns an optional containing the parameter if present, empty otherwise.
+     */
     public Optional<Parameter> get(Identifier name) {
         for (Parameter parameter : parameters) {
             if (parameter.getName().equals(name)) {
@@ -129,6 +153,9 @@ public final class Parameters implements FromSourceLocation, ToNode, ToSmithyBui
         return sb.toString();
     }
 
+    /**
+     * A builder used to create a {@link Parameters} class.
+     */
     public static class Builder extends RulesComponentBuilder<Builder, Parameters> {
         private final List<Parameter> parameters = new ArrayList<>();
 

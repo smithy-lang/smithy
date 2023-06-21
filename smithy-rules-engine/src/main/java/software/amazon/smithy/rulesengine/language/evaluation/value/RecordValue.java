@@ -11,10 +11,12 @@ import java.util.Objects;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.rulesengine.language.evaluation.type.RecordType;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 
+/**
+ * A record value, containing a map of identifiers to other values.
+ */
 public final class RecordValue extends Value {
     private final Map<Identifier, Value> value;
 
@@ -23,25 +25,42 @@ public final class RecordValue extends Value {
         this.value = value;
     }
 
+    /**
+     * Gets the map of identifiers to other values.
+     *
+     * @return the map of identifiers to other values.
+     */
+    public Map<Identifier, Value> getValue() {
+        return this.value;
+    }
+
+    /**
+     * Gets the value in the record for the provided key.
+     *
+     * @param key the key to retrieve a value for.
+     * @return the value for the provided key, or null if the key is not present.
+     */
+    public Value get(String key) {
+        return get(Identifier.of(key));
+    }
+
+    /**
+     * Gets the value in the record for the provided key.
+     *
+     * @param key the key to retrieve a value for.
+     * @return the value for the provided key, or null if the key is not present.
+     */
+    public Value get(Identifier key) {
+        return this.value.get(key);
+    }
+
     @Override
     public Type getType() {
         Map<Identifier, Type> type = new HashMap<>();
         for (Map.Entry<Identifier, Value> valueEntry : value.entrySet()) {
             type.put(valueEntry.getKey(), valueEntry.getValue().getType());
         }
-        return new RecordType(type);
-    }
-
-    public Map<Identifier, Value> getValue() {
-        return this.value;
-    }
-
-    public Value get(String key) {
-        return get(Identifier.of(key));
-    }
-
-    public Value get(Identifier key) {
-        return this.value.get(key);
+        return Type.recordType(type);
     }
 
     @Override

@@ -24,8 +24,7 @@ import software.amazon.smithy.utils.StringUtils;
  */
 @SmithyUnstableApi
 public final class TestEvaluator {
-    private TestEvaluator() {
-    }
+    private TestEvaluator() {}
 
     /**
      * Evaluate the given rule-set and test case. Throws an exception in the event

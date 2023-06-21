@@ -16,6 +16,12 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 public final class InvalidRulesException extends RuntimeException implements FromSourceLocation {
     private final transient SourceLocation sourceLocation;
 
+    /**
+     * Constructs a new invalid rule exception with the given message and source location.
+     *
+     * @param message the detail message.
+     * @param location the location of the invalid rule.
+     */
     public InvalidRulesException(String message, FromSourceLocation location) {
         super(createMessage(message, location.getSourceLocation()));
         sourceLocation = location.getSourceLocation();

@@ -23,11 +23,22 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 public final class Reference extends Expression {
     private final Identifier name;
 
+    /**
+     * Creates a Reference for the identifier from the given source location.
+     *
+     * @param name the identifier being referenced.
+     * @param sourceLocation the source location for the reference.
+     */
     public Reference(Identifier name, FromSourceLocation sourceLocation) {
         super(sourceLocation.getSourceLocation());
         this.name = name;
     }
 
+    /**
+     * Gets the name of the field being referenced.
+     *
+     * @return the name of the referenced field.
+     */
     public Identifier getName() {
         return name;
     }

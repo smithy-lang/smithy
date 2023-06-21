@@ -5,6 +5,9 @@
 
 package software.amazon.smithy.rulesengine.language.evaluation.type;
 
+/**
+ * The "integer" type.
+ */
 public final class IntegerType extends AbstractType {
     IntegerType() {}
 
