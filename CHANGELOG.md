@@ -3,9 +3,9 @@
 ## 1.33.0 (2023-06-21)
 
 ### Features
-* Extend event ids for `AddedOperationError`, `RemovedOperationError`, `AddedEntityBinding` and `RemovedEntityBinding` diff events ([#1797](https://github.com/awslabs/smithy/pull/1797), [#1803](https://github.com/awslabs/smithy/pull/1803))
+* Extended event ids for `AddedOperationError`, `RemovedOperationError`, `AddedEntityBinding` and `RemovedEntityBinding` diff events ([#1797](https://github.com/awslabs/smithy/pull/1797), [#1803](https://github.com/awslabs/smithy/pull/1803))
 * Added enum values to ids for `ChangedEnumTrait` diff events ([#1807](https://github.com/awslabs/smithy/pull/1807))
-* Added `init` commad to Smithy CLI ([#1802](https://github.com/awslabs/smithy/pull/1802), [#1825](https://github.com/awslabs/smithy/pull/1825), [#1832](https://github.com/awslabs/smithy/pull/1832))
+* Added `init` command to Smithy CLI ([#1802](https://github.com/awslabs/smithy/pull/1802), [#1825](https://github.com/awslabs/smithy/pull/1825), [#1832](https://github.com/awslabs/smithy/pull/1832))
 * Added `smithy-syntax` package and `smithy format` command to Smithy CLI ([#1830](https://github.com/awslabs/smithy/pull/1830))
 * Added validator to check consistency of resource name used for `IamResource` ([#1819](https://github.com/awslabs/smithy/pull/1819))
 
@@ -15,9 +15,9 @@
 
 ### Documentation
 * Added `smithy-dafny` to code generators table ([#1813](https://github.com/awslabs/smithy/pull/1813))
-* Updated stale docs around MissingPaginatedTrait ([#1814](https://github.com/awslabs/smithy/pull/1814))
+* Updated stale docs around `MissingPaginatedTrait` ([#1814](https://github.com/awslabs/smithy/pull/1814))
 * Fixed grammar rendering ([#1815](https://github.com/awslabs/smithy/pull/1815))
-* Update recommendation for HTTP status code ([#1818](https://github.com/awslabs/smithy/pull/1818))
+* Updated recommendation for HTTP status code ([#1818](https://github.com/awslabs/smithy/pull/1818))
 * Fixed selector example ([#1824](https://github.com/awslabs/smithy/pull/1824))
 * Added note about how constraint traits affect backward compatibility ([#1826](https://github.com/awslabs/smithy/pull/1826))
 * Added guide on disabling authentication ([#1791](https://github.com/awslabs/smithy/pull/1791))
