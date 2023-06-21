@@ -119,7 +119,7 @@ final class InitCommand implements Command {
             String documentation = entry.getValue()
                 .expectObjectNode()
                 .expectMember(DOCUMENTATION, String.format(
-                    "Missing expected member `%s` from `%s` object", DOCUMENTATION, template))
+                        "Missing expected member `%s` from `%s` object", DOCUMENTATION, template))
                 .expectStringNode()
                 .getValue();
 
@@ -163,8 +163,8 @@ final class InitCommand implements Command {
         ObjectNode templatesNode = getTemplatesNode(smithyTemplatesNode);
         if (!templatesNode.containsMember(template)) {
             throw new IllegalArgumentException(String.format(
-                "Invalid template `%s`. `%s` provides the following templates:%n%n%s",
-                template, getTemplatesName(smithyTemplatesNode), getTemplateList(smithyTemplatesNode, env)));
+                    "Invalid template `%s`. `%s` provides the following templates:%n%n%s",
+                    template, getTemplatesName(smithyTemplatesNode), getTemplateList(smithyTemplatesNode, env)));
         }
 
         ObjectNode templateNode = templatesNode.expectObjectMember(template).expectObjectNode();
@@ -209,30 +209,29 @@ final class InitCommand implements Command {
 
     private static ObjectNode getTemplatesNode(ObjectNode smithyTemplatesNode) {
         return smithyTemplatesNode
-            .expectMember(TEMPLATES, String.format(
-                "Missing expected member `%s` from %s", TEMPLATES, SMITHY_TEMPLATE_JSON))
-            .expectObjectNode();
+                .expectMember(TEMPLATES, String.format(
+                        "Missing expected member `%s` from %s", TEMPLATES, SMITHY_TEMPLATE_JSON))
+                .expectObjectNode();
     }
 
     private static String getTemplatesName(ObjectNode smithyTemplatesNode) {
         return smithyTemplatesNode
-            .expectMember(NAME, String.format(
-                "Missing expected member `%s` from %s", NAME, SMITHY_TEMPLATE_JSON))
-            .expectStringNode()
-            .getValue();
+                .expectMember(NAME, String.format(
+                        "Missing expected member `%s` from %s", NAME, SMITHY_TEMPLATE_JSON))
+                .expectStringNode()
+                .getValue();
     }
 
     private static String getTemplatePath(ObjectNode templateNode, String templateName) {
         return templateNode
-            .expectMember(PATH, String.format("Missing expected member `%s` from `%s` object", PATH, templateName))
-            .expectStringNode()
-            .getValue();
+                .expectMember(PATH, String.format("Missing expected member `%s` from `%s` object", PATH, templateName))
+                .expectStringNode()
+                .getValue();
     }
 
     private static List<String> getIncludedFiles(ObjectNode templateNode) {
         List<String> includedPaths = new ArrayList<>();
         templateNode.getArrayMember(INCLUDED, StringNode::getValue, includedPaths::addAll);
-
         return includedPaths;
     }
 
@@ -243,8 +242,8 @@ final class InitCommand implements Command {
             if (!Files.exists(includedPath)) {
                 try (ColorBuffer buffer = ColorBuffer.of(env.colors(), env.stderr())) {
                     buffer.println(String.format(
-                        "File or directory %s is marked for inclusion in template %s but was not found",
-                        included, templateName), ColorTheme.WARNING);
+                            "File or directory %s is marked for inclusion in template %s but was not found",
+                            included, templateName), ColorTheme.WARNING);
                 }
             }
 
