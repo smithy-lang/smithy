@@ -93,6 +93,12 @@
         <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
     </Match>
 
+    <!-- This is a false positive. The value is guarded behind an Objects.requireNonNull -->
+    <Match>
+        <Class name="software.amazon.smithy.cli.commands.InitCommand"/>
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+    </Match>
+
     <!-- Using a buffer here would actually allocate more, not less -->
     <Match>
         <Class name="software.amazon.smithy.jsonschema.SchemaDocument"/>

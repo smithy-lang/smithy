@@ -6,6 +6,8 @@ import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
+
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -55,6 +57,50 @@ public class InitCommandTest {
     }
 
     @Test
+    public void includedFileJson() {
+        IntegUtils.withProject(PROJECT_NAME, templatesDir -> {
+            setupTemplatesDirectory(templatesDir);
+
+            IntegUtils.withTempDir("includedFiles", dir -> {
+                RunResult result = IntegUtils.run(
+                    dir, ListUtils.of("init", "-t", "included-file-json", "-u", templatesDir.toString()));
+                assertThat(result.getOutput(),
+                    containsString("Smithy project created in directory: "));
+                assertThat(result.getExitCode(), is(0));
+                assertThat(Files.exists(Paths.get(dir.toString(), "included-file-json")), is(true));
+                assertThat(Files.exists(Paths.get(dir.toString(), "included-file-json/smithy-build.json")), is(true));
+            });
+        });
+    }
+
+    @Test
+    public void includedFileGradle() {
+        IntegUtils.withProject(PROJECT_NAME, templatesDir -> {
+            setupTemplatesDirectory(templatesDir);
+
+            IntegUtils.withTempDir("includedFilesGradle", dir -> {
+                RunResult result = IntegUtils.run(
+                    dir, ListUtils.of("init", "-t", "included-files-gradle", "-u", templatesDir.toString()));
+                assertThat(result.getOutput(),
+                    containsString("Smithy project created in directory: "));
+                assertThat(result.getExitCode(), is(0));
+                assertThat(Files.exists(Paths.get(dir.toString(), "included-files-gradle")), is(true));
+                try {
+                    Files.walk(Paths.get(dir.toString())).forEach(System.out::println);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                assertThat(Files.exists(Paths.get(dir.toString(), "included-files-gradle/gradle.properties")), is(true));
+                assertThat(Files.exists(Paths.get(dir.toString(), "included-files-gradle/gradlew")), is(true));
+                assertThat(Files.exists(Paths.get(dir.toString(), "included-files-gradle/gradle")), is(true));
+                assertThat(Files.exists(Paths.get(dir.toString(), "included-files-gradle/gradle/wrapper")), is(true));
+                assertThat(Files.exists(Paths.get(dir.toString(), "included-files-gradle/gradle/wrapper/gradle-wrapper.jar")), is(true));
+                assertThat(Files.exists(Paths.get(dir.toString(), "included-files-gradle/gradle/wrapper/gradle-wrapper.properties")), is(true));
+            });
+        });
+    }
+
+    @Test
     public void unexpectedTemplate() {
         IntegUtils.withProject(PROJECT_NAME, templatesDir -> {
             setupTemplatesDirectory(templatesDir);
@@ -67,11 +113,15 @@ public class InitCommandTest {
                         .append("Invalid template `blabla`. `Smithy-Examples` provides the following templates:")
                         .append(System.lineSeparator())
                         .append(System.lineSeparator())
-                        .append("NAME             DOCUMENTATION")
+                        .append("NAME                    DOCUMENTATION")
                         .append(System.lineSeparator())
-                        .append("--------------   ---------------------------------------------------------------")
+                        .append("---------------------   -----------------------------------------------------")
                         .append(System.lineSeparator())
-                        .append("quickstart-cli   Smithy Quickstart example weather service using the Smithy CLI.")
+                        .append("included-file-json      Smithy Quickstart example with json file included.   ")
+                        .append(System.lineSeparator())
+                        .append("included-files-gradle   Smithy Quickstart example with gradle files included.")
+                        .append(System.lineSeparator())
+                        .append("quickstart-cli          Smithy Quickstart example weather service.           ")
                         .append(System.lineSeparator())
                         .toString();
 
@@ -133,11 +183,15 @@ public class InitCommandTest {
                     "init", "--list", "--url", templatesDir.toString()));
 
                 String expectedOutput = new StringBuilder()
-                    .append("NAME             DOCUMENTATION")
+                    .append("NAME                    DOCUMENTATION")
                     .append(System.lineSeparator())
-                    .append("--------------   ---------------------------------------------------------------")
+                    .append("---------------------   -----------------------------------------------------")
                     .append(System.lineSeparator())
-                    .append("quickstart-cli   Smithy Quickstart example weather service using the Smithy CLI.")
+                    .append("included-file-json      Smithy Quickstart example with json file included.   ")
+                    .append(System.lineSeparator())
+                    .append("included-files-gradle   Smithy Quickstart example with gradle files included.")
+                    .append(System.lineSeparator())
+                    .append("quickstart-cli          Smithy Quickstart example weather service.           ")
                     .append(System.lineSeparator())
                     .toString();
 

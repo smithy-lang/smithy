@@ -20,10 +20,12 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 import software.amazon.smithy.cli.ArgumentReceiver;
@@ -46,6 +48,9 @@ final class InitCommand implements Command {
     private static final String DOCUMENTATION = "documentation";
 
     private static final String NAME = "name";
+    private static final String TEMPLATES = "templates";
+    private static final String PATH = "path";
+    private static final String INCLUDED = "include";
 
     private final String parentCommandName;
 
@@ -114,7 +119,7 @@ final class InitCommand implements Command {
             String documentation = entry.getValue()
                 .expectObjectNode()
                 .expectMember(DOCUMENTATION, String.format(
-                    "Missing expected member `%s` from `%s` object", DOCUMENTATION, template))
+                        "Missing expected member `%s` from `%s` object", DOCUMENTATION, template))
                 .expectStringNode()
                 .getValue();
 
@@ -156,24 +161,23 @@ final class InitCommand implements Command {
         }
 
         ObjectNode templatesNode = getTemplatesNode(smithyTemplatesNode);
-
         if (!templatesNode.containsMember(template)) {
             throw new IllegalArgumentException(String.format(
-                "Invalid template `%s`. `%s` provides the following templates:%n%n%s",
-                template, getTemplatesName(smithyTemplatesNode), getTemplateList(smithyTemplatesNode, env)));
+                    "Invalid template `%s`. `%s` provides the following templates:%n%n%s",
+                    template, getTemplatesName(smithyTemplatesNode), getTemplateList(smithyTemplatesNode, env)));
         }
 
-        // Retrieve template path from smithy-templates.json
-        final String templatePath = templatesNode
-            .expectObjectMember(template)
-            .expectObjectNode()
-            .expectMember("path", String.format("Missing expected member `path` from `%s` object", template))
-            .expectStringNode()
-            .getValue();
+        ObjectNode templateNode = templatesNode.expectObjectMember(template).expectObjectNode();
+
+        final String templatePath = getTemplatePath(templateNode, template);
+        List<String> includedFiles = getIncludedFiles(templateNode);
 
         // Specify the subdirectory to download
         exec(ListUtils.of("git", "sparse-checkout", "set", "--no-cone", templatePath), temp);
-
+        // add any additional files that should be included
+        for (String includedFile : includedFiles) {
+            exec(ListUtils.of("git", "sparse-checkout", "add", "--no-cone", includedFile), temp);
+        }
         exec(ListUtils.of("git", "checkout"), temp);
 
         // Use templateName if directory is not specified
@@ -181,7 +185,9 @@ final class InitCommand implements Command {
             directory = template;
         }
 
-        IoUtils.copyDir(Paths.get(temp.toString(), templatePath), Paths.get(directory));
+        final Path dest = Paths.get(directory);
+        IoUtils.copyDir(Paths.get(temp.toString(), templatePath), dest);
+        copyIncludedFiles(temp.toString(), dest.toString(), includedFiles, template, env);
 
         try (ColorBuffer buffer = ColorBuffer.of(env.colors(), env.stderr())) {
             buffer.println(String.format("Smithy project created in directory: %s", directory), ColorTheme.SUCCESS);
@@ -197,22 +203,57 @@ final class InitCommand implements Command {
         exec(ListUtils.of("git", "checkout"), temp);
     }
 
+    private static ObjectNode getSmithyTemplatesNode(Path jsonFilePath) {
+        return readJsonFileAsNode(Paths.get(jsonFilePath.toString(), SMITHY_TEMPLATE_JSON)).expectObjectNode();
+    }
+
     private static ObjectNode getTemplatesNode(ObjectNode smithyTemplatesNode) {
         return smithyTemplatesNode
-            .expectMember("templates", String.format(
-                    "Missing expected member `templates` from %s", SMITHY_TEMPLATE_JSON))
-            .expectObjectNode();
+                .expectMember(TEMPLATES, String.format(
+                        "Missing expected member `%s` from %s", TEMPLATES, SMITHY_TEMPLATE_JSON))
+                .expectObjectNode();
     }
 
     private static String getTemplatesName(ObjectNode smithyTemplatesNode) {
         return smithyTemplatesNode
-            .expectMember(NAME, String.format("Missing expected member `%s` from %s", NAME, SMITHY_TEMPLATE_JSON))
-            .expectStringNode()
-            .getValue();
+                .expectMember(NAME, String.format(
+                        "Missing expected member `%s` from %s", NAME, SMITHY_TEMPLATE_JSON))
+                .expectStringNode()
+                .getValue();
     }
 
-    private static ObjectNode getSmithyTemplatesNode(Path jsonFilePath) {
-        return readJsonFileAsNode(Paths.get(jsonFilePath.toString(), SMITHY_TEMPLATE_JSON)).expectObjectNode();
+    private static String getTemplatePath(ObjectNode templateNode, String templateName) {
+        return templateNode
+                .expectMember(PATH, String.format("Missing expected member `%s` from `%s` object", PATH, templateName))
+                .expectStringNode()
+                .getValue();
+    }
+
+    private static List<String> getIncludedFiles(ObjectNode templateNode) {
+        List<String> includedPaths = new ArrayList<>();
+        templateNode.getArrayMember(INCLUDED, StringNode::getValue, includedPaths::addAll);
+        return includedPaths;
+    }
+
+    private static void copyIncludedFiles(String temp, String dest, List<String> includedFiles,
+                                          String templateName, Env env) throws IOException {
+        for (String included : includedFiles) {
+            final Path includedPath = Paths.get(temp, included);
+            if (!Files.exists(includedPath)) {
+                try (ColorBuffer buffer = ColorBuffer.of(env.colors(), env.stderr())) {
+                    buffer.println(String.format(
+                            "File or directory %s is marked for inclusion in template %s but was not found",
+                            included, templateName), ColorTheme.WARNING);
+                }
+            }
+
+            Path target = Paths.get(dest, Objects.requireNonNull(includedPath.getFileName()).toString());
+            if (Files.isDirectory(includedPath)) {
+                IoUtils.copyDir(includedPath, target);
+            } else if (Files.isRegularFile(includedPath)) {
+                Files.copy(includedPath, target);
+            }
+        }
     }
 
     private static String exec(List<String> args, Path directory) {
