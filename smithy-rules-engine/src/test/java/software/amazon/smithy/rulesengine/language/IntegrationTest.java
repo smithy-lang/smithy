@@ -6,11 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,9 +25,9 @@ import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.Pair;
 
 public class IntegrationTest {
-    public static List<EndpointRuleSet> validRules() throws IOException {
+    public static List<EndpointRuleSet> validRules() throws IOException, URISyntaxException {
         try (Stream<Path> paths = Files.list(
-                Paths.get(IntegrationTest.class.getResource("errorfiles/valid").getPath()))
+                Paths.get(Objects.requireNonNull(IntegrationTest.class.getResource("errorfiles/valid")).toURI()))
         ) {
             return paths.filter(path -> path.toString().endsWith(".smithy"))
                     .map(path -> Model.assembler().discoverModels().addImport(path).assemble().unwrap())
@@ -35,9 +37,9 @@ public class IntegrationTest {
         }
     }
 
-    public static List<Pair<Node, String>> invalidRules() throws IOException {
+    public static List<Pair<Node, String>> invalidRules() throws IOException, URISyntaxException {
         try (Stream<Path> paths = Files.list(
-                Paths.get(IntegrationTest.class.getResource("invalid-rules").getPath()))
+                Paths.get(Objects.requireNonNull(IntegrationTest.class.getResource("invalid-rules")).toURI()))
         ) {
             return paths.map(path -> {
                 try {

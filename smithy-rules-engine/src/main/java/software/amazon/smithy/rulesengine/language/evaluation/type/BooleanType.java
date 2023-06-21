@@ -5,9 +5,13 @@
 
 package software.amazon.smithy.rulesengine.language.evaluation.type;
 
+/**
+ * The "boolean" type.
+ */
 public final class BooleanType extends AbstractType {
     BooleanType() {}
 
+    @Override
     public BooleanType expectBooleanType() {
         return this;
     }

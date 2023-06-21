@@ -37,7 +37,8 @@ public class AwsPartitionFunctionTest {
 
 
     private RecordValue evalWithRegion(String region) {
-        AwsPartition fn = new AwsPartition(FunctionNode.ofExpressions(AwsPartition.ID, Expression.of(region)));
+        AwsPartition fn = new AwsPartition.Definition()
+                .createFunction(FunctionNode.ofExpressions(AwsPartition.ID, Expression.of(region)));
         return fn.accept(new RuleEvaluator()).expectRecordValue();
     }
 }

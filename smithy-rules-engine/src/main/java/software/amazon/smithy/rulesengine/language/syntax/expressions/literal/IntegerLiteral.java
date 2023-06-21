@@ -12,6 +12,9 @@ import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NumberNode;
 
+/**
+ * An integer literal value, containing integer values greater than or equal to 0.
+ */
 public final class IntegerLiteral extends Literal {
     private final NumberNode value;
 

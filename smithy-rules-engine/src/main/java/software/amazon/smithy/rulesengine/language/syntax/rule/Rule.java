@@ -29,6 +29,9 @@ import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Li
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
 
+/**
+ * The core functionality of a rule-set rule.
+ */
 @SmithyUnstableApi
 public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
     public static final String DOCUMENTATION = "documentation";
@@ -49,14 +52,31 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
         this.sourceLocation = builder.sourceLocation;
     }
 
+    /**
+     * Builder to create a {@link Rule} instance.
+     *
+     * @return returns a new Builder.
+     */
     public static Builder builder() {
         return new Builder(SourceLocation.none());
     }
 
+    /**
+     * Builder to create a {@link Rule} instance.
+     *
+     * @param sourceLocation the source of the rule.
+     * @return returns a new Builder.
+     */
     public static Builder builder(FromSourceLocation sourceLocation) {
         return new Builder(sourceLocation);
     }
 
+    /**
+     * Creates a {@link Rule} instance from the given Node information.
+     *
+     * @param node the node to deserialize.
+     * @return the created Rule.
+     */
     public static Rule fromNode(Node node) {
         ObjectNode objectNode = node.expectObjectNode();
 
@@ -82,14 +102,31 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
         return sourceLocation;
     }
 
+    /**
+     * Gets the conditions required to satisfy this rule.
+     *
+     * @return the list of conditions.
+     */
     public List<Condition> getConditions() {
         return conditions;
     }
 
+    /**
+     * Gets the documentation value.
+     *
+     * @return returns the optional documentation value.
+     */
     public Optional<String> getDocumentation() {
         return Optional.ofNullable(documentation);
     }
 
+    /**
+     * Invoke the {@link RuleValueVisitor} functions for this Rule.
+     *
+     * @param visitor the visitor to be invoked.
+     * @param <T>     the visitor return type.
+     * @return the return value of the visitor.
+     */
     public abstract <T> T accept(RuleValueVisitor<T> visitor);
 
     protected abstract Type typecheckValue(Scope<Type> scope);
@@ -160,6 +197,9 @@ public abstract class Rule implements TypeCheck, ToNode, FromSourceLocation {
         return sb.toString();
     }
 
+    /**
+     * A builder used to create a {@link Rule} class.
+     */
     public static final class Builder {
         private final List<Condition> conditions = new ArrayList<>();
         private final SourceLocation sourceLocation;

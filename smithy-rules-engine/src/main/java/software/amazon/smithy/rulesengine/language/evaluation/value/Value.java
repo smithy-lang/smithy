@@ -31,10 +31,18 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 public abstract class Value implements FromSourceLocation, ToNode {
     private SourceLocation sourceLocation;
 
-    public Value(SourceLocation sourceLocation) {
+    Value(SourceLocation sourceLocation) {
         this.sourceLocation = sourceLocation;
     }
 
+    public abstract Type getType();
+
+    /**
+     * Creates a {@link Value} of a specific type from the given Node information.
+     *
+     * @param source the node to deserialize.
+     * @return the created Value.
+     */
     public static Value fromNode(Node source) {
         Value value = source.accept(new NodeVisitor<Value>() {
             @Override
@@ -80,8 +88,6 @@ public abstract class Value implements FromSourceLocation, ToNode {
         return value;
     }
 
-    public abstract Type getType();
-
     public boolean isEmpty() {
         return false;
     }
@@ -91,54 +97,131 @@ public abstract class Value implements FromSourceLocation, ToNode {
         return Optional.ofNullable(sourceLocation).orElse(SourceLocation.none());
     }
 
+    /**
+     * Creates an {@link ArrayValue} from a list of values.
+     *
+     * @param value the list of values for the array.
+     * @return returns the created ArrayValue.
+     */
     public static ArrayValue arrayValue(List<Value> value) {
         return new ArrayValue(value);
     }
 
+    /**
+     * Creates an {@link BooleanValue} from a boolean.
+     *
+     * @param value the value for the boolean.
+     * @return returns the created BooleanValue.
+     */
     public static BooleanValue booleanValue(boolean value) {
         return new BooleanValue(value);
     }
 
+    /**
+     * Creates an {@link EmptyValue}.
+     *
+     * @return returns the created EmptyValue.
+     */
     public static EmptyValue emptyValue() {
         return new EmptyValue();
     }
 
+    /**
+     * Creates an {@link EndpointValue} from a node.
+     *
+     * @param source the node to create an endpoint from.
+     * @return returns the created EndpointValue.
+     */
     public static EndpointValue endpointValue(Node source) {
         return EndpointValue.fromNode(source);
     }
 
+    /**
+     * Creates an {@link IntegerValue} from an integer.
+     *
+     * @param value the value for the integer.
+     * @return returns the created IntegerValue.
+     */
     public static IntegerValue integerValue(int value) {
         return new IntegerValue(value);
     }
 
+    /**
+     * Creates an {@link RecordValue} from a map of identifiers to values.
+     *
+     * @param value the map to create a record from.
+     * @return returns the created RecordValue.
+     */
     public static RecordValue recordValue(Map<Identifier, Value> value) {
         return new RecordValue(value);
     }
 
+    /**
+     * Creates an {@link StringValue} from a string.
+     *
+     * @param value the value for the string.
+     * @return returns the created StringValue.
+     */
     public static StringValue stringValue(String value) {
         return new StringValue(value);
     }
 
+    /**
+     * Returns the current value as an {@link ArrayValue}, throwing
+     * {@link RuntimeException} when the value is the wrong type.
+     *
+     * @return returns an array value.
+     */
     public ArrayValue expectArrayValue() {
         throw new RuntimeException("Expected array, found " + this);
     }
 
+    /**
+     * Returns the current value as an {@link ArrayValue}, throwing
+     * {@link RuntimeException} when the value is the wrong type.
+     *
+     * @return returns a boolean value.
+     */
     public BooleanValue expectBooleanValue() {
         throw new RuntimeException("Expected bool but was: " + this);
     }
 
+    /**
+     * Returns the current value as an {@link ArrayValue}, throwing
+     * {@link RuntimeException} when the value is the wrong type.
+     *
+     * @return returns an endpoint value
+     */
     public EndpointValue expectEndpointValue() {
         throw new RuntimeException("Expected endpoint, found " + this);
     }
 
+    /**
+     * Returns the current value as an {@link ArrayValue}, throwing
+     * {@link RuntimeException} when the value is the wrong type.
+     *
+     * @return returns an integer value.
+     */
     public IntegerValue expectIntegerValue() {
         throw new RuntimeException("Expected int, found " + this);
     }
 
+    /**
+     * Returns the current value as an {@link ArrayValue}, throwing
+     * {@link RuntimeException} when the value is the wrong type.
+     *
+     * @return returns a record value.
+     */
     public RecordValue expectRecordValue() {
         throw new RuntimeException("Expected object but was: " + this);
     }
 
+    /**
+     * Returns the current value as an {@link ArrayValue}, throwing
+     * {@link RuntimeException} when the value is the wrong type.
+     *
+     * @return returns a string value.
+     */
     public StringValue expectStringValue() {
         throw new RuntimeException("Expected string but was: " + this);
     }

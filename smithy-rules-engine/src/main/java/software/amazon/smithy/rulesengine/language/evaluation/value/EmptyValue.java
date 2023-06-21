@@ -9,6 +9,9 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 
+/**
+ * An empty value.
+ */
 public final class EmptyValue extends Value {
     public EmptyValue() {
         super(SourceLocation.none());

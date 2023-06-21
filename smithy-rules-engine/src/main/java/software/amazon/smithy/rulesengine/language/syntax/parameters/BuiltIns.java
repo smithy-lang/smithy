@@ -162,7 +162,7 @@ public final class BuiltIns {
                             + "the regional endpoint for us-east-1.")
                     .build();
 
-    public static final Map<String, Parameter> ALL_BUILTINS;
+    private static final Map<String, Parameter> ALL_BUILTINS;
 
     static {
         Map<String, Parameter> tempMap = new LinkedHashMap<>();
@@ -181,4 +181,23 @@ public final class BuiltIns {
     }
 
     private BuiltIns() {}
+
+    /**
+     * Returns true if a built-in of the provided name has been registered.
+     *
+     * @param name the name of the built-in to check for.
+     * @return true if the built-in is present, false otherwise.
+     */
+    public static boolean containsBuiltIn(String name) {
+        return ALL_BUILTINS.containsKey(name);
+    }
+
+    /**
+     * Gets the built-in names as a joined string.
+     *
+     * @return a string of the built-in names.
+     */
+    public static String getKeyString() {
+        return String.join(", ", ALL_BUILTINS.keySet());
+    }
 }

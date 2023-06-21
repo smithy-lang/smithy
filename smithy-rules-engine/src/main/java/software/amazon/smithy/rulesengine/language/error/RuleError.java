@@ -14,40 +14,79 @@ import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
- * An exception that can be thrown when rule-set is invalid. Used for providing meaningful contextual
- * information when an invalid rule-set is encountered.
+ * An exception that can be thrown when a rule-set is invalid.
+ *
+ * <p>Used for providing meaningful contextual information when
+ * an invalid rule-set is encountered.
  */
 @SmithyUnstableApi
 public final class RuleError extends RuntimeException {
     private final List<Pair<String, SourceLocation>> contexts = new ArrayList<>();
     private final SourceException root;
 
+    /**
+     * Constructs a new RuleError from the source exception.
+     * @param root the exception this rule error is based on.
+     */
     public RuleError(SourceException root) {
         super(root);
         this.root = root;
     }
 
-    public static <T> T context(String message, Runnable f) {
-        return RuleError.context(message, SourceLocation.none(), () -> {
-            f.run();
-            return null;
-        });
+    /**
+     * Evaluates the runnable and creates a RuleError with the provided context if there's an error.
+     *
+     * @param message a message representing the context for this runnable statement's evaluation.
+     * @param runnable a runnable to evaluate a statement in the current context.
+     */
+    public static void context(String message, Runnable runnable) {
+        context(message, SourceLocation.none(), runnable);
     }
 
-    public static <T> T context(String message, Evaluator<T> f) throws RuleError {
-        return RuleError.context(message, SourceLocation.none(), f);
+    /**
+     * Evaluates the runnable and creates a RuleError with the provided context if there's an error.
+     *
+     * @param <T> the type of the value returned by the runnable.
+     * @param message a message representing the context for this runnable statement's evaluation.
+     * @param runnable a runnable to evaluate a statement in the current context.
+     * @return the value returned by the runnable.
+     * @throws RuleError when the rule being evaluated in the context fails.
+     */
+    public static <T> T context(String message, Evaluator<T> runnable) throws RuleError {
+        return context(message, SourceLocation.none(), runnable);
     }
 
-    public static void context(String message, FromSourceLocation sourceLocation, Runnable f) {
+    /**
+     * Evaluates the runnable and creates a RuleError with the provided context if there's an error.
+     *
+     * @param message a message representing the context for this runnable statement's evaluation.
+     * @param sourceLocation the source location for this runnable statement's evaluation.
+     * @param runnable a runnable to evaluate a statement in the current context.
+     */
+    public static void context(String message, FromSourceLocation sourceLocation, Runnable runnable) {
         context(message, sourceLocation, () -> {
-            f.run();
+            runnable.run();
             return null;
         });
     }
 
-    public static <T> T context(String message, FromSourceLocation sourceLocation, Evaluator<T> f) throws RuleError {
+    /**
+     * Evaluates the runnable and creates a RuleError with the provided context if there's an error.
+     *
+     * @param <T> the type of the value returned by the runnable.
+     * @param message a message representing the context for this runnable statement's evaluation.
+     * @param sourceLocation the source location for this runnable statement's evaluation.
+     * @param runnable a runnable to evaluate a statement in the current context.
+     * @return the value returned by the runnable.
+     * @throws RuleError when the rule being evaluated in the context fails.
+     */
+    public static <T> T context(
+            String message,
+            FromSourceLocation sourceLocation,
+            Evaluator<T> runnable
+    ) throws RuleError {
         try {
-            return f.call();
+            return runnable.call();
         } catch (SourceException ex) {
             throw new RuleError(ex).withContext(message, sourceLocation.getSourceLocation());
         } catch (RuleError ex) {
@@ -61,8 +100,15 @@ public final class RuleError extends RuntimeException {
         }
     }
 
-    public RuleError withContext(String context, SourceLocation loc) {
-        this.contexts.add(Pair.of(context, loc));
+    /**
+     * Sets a piece of context on this error.
+     *
+     * @param context the context to add to the error.
+     * @param location the source location of the context being added.
+     * @return returns this error with the added context.
+     */
+    public RuleError withContext(String context, SourceLocation location) {
+        this.contexts.add(Pair.of(context, location));
         return this;
     }
 

@@ -7,6 +7,9 @@ package software.amazon.smithy.rulesengine.language.evaluation.type;
 
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
 
+/**
+ * The "any" type, which matches all other types.
+ */
 public final class AnyType extends AbstractType {
     AnyType() {}
 

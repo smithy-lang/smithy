@@ -33,10 +33,12 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
     private final Scope<Value> scope = new Scope<>();
 
     /**
-     * Initializes a new {@link RuleEvaluator} instances, and evaluates the provided ruleset and parameter arguments.
+     * Initializes a new {@link RuleEvaluator} instances, and evaluates
+     * the provided ruleset and parameter arguments.
      *
-     * @param ruleset            The endpoint ruleset.
-     * @param parameterArguments The rule-set parameter identifiers and values to evaluate the rule-set against.
+     * @param ruleset The endpoint ruleset.
+     * @param parameterArguments The rule-set parameter identifiers and
+     *                           values to evaluate the rule-set against.
      * @return The resulting value from the final matched rule.
      */
     public static Value evaluate(EndpointRuleSet ruleset, Map<Identifier, Value> parameterArguments) {
@@ -46,8 +48,9 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
     /**
      * Evaluate the provided ruleset and parameter arguments.
      *
-     * @param ruleset            The endpoint ruleset.
-     * @param parameterArguments The rule-set parameter identifiers and values to evaluate the rule-set against.
+     * @param ruleset The endpoint ruleset.
+     * @param parameterArguments The rule-set parameter identifiers and
+     *                           values to evaluate the rule-set against.
      * @return The resulting value from the final matched rule.
      */
     public Value evaluateRuleSet(EndpointRuleSet ruleset, Map<Identifier, Value> parameterArguments) {
@@ -66,6 +69,20 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
             }
             throw new RuntimeException("No rules in ruleset matched");
         });
+    }
+
+    /**
+     * Evaluates the given condition in the current scope.
+     *
+     * @param condition the condition to evaluate.
+     * @return the value returned by the condition.
+     */
+    public Value evaluateCondition(Condition condition) {
+        Value value = condition.getFn().accept(this);
+        if (!value.isEmpty()) {
+            condition.getResult().ifPresent(res -> scope.insert(res, value));
+        }
+        return value;
     }
 
     @Override
@@ -102,6 +119,7 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
                 .equals(right.accept(this).expectStringValue()));
     }
 
+    @Override
     public Value visitGetAttr(GetAttr getAttr) {
         return getAttr.evaluate(getAttr.getTarget().accept(this));
     }
@@ -167,13 +185,5 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
                 }
             });
         });
-    }
-
-    public Value evaluateCondition(Condition condition) {
-        Value value = condition.getFn().accept(this);
-        if (!value.isEmpty()) {
-            condition.getResult().ifPresent(res -> scope.insert(res, value));
-        }
-        return value;
     }
 }

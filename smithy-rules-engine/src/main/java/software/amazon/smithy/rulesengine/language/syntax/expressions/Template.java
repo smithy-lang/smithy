@@ -119,6 +119,11 @@ public final class Template implements FromSourceLocation, ToNode {
         return parts;
     }
 
+    /**
+     * Gets if the template is static or not.
+     *
+     * @return true if all template parts are literals, false otherwise.
+     */
     public boolean isStatic() {
         for (Part part : parts) {
             if (!(part instanceof Template.Literal)) {
@@ -128,6 +133,12 @@ public final class Template implements FromSourceLocation, ToNode {
         return true;
     }
 
+    /**
+     * Returns the literal value of this template, throwing
+     * {@link RuntimeException} if the template is not static.
+     *
+     * @return returns the string literal value.
+     */
     public String expectLiteral() {
         if (!isStatic()) {
             throw new RuntimeException("Expected a literal when not all parts are literals.");
@@ -135,6 +146,12 @@ public final class Template implements FromSourceLocation, ToNode {
         return value;
     }
 
+    /**
+     * Evaluates this template in the provided scope.
+     *
+     * @param scope the scope to check this template within.
+     * @return the type of the template.
+     */
     public Type typeCheck(Scope<Type> scope) {
         return context(String.format("while typechecking the template `%s`", this), this, () -> {
             for (Part part : parts) {
@@ -179,34 +196,41 @@ public final class Template implements FromSourceLocation, ToNode {
         return String.format("\"%s\"", value);
     }
 
-    public abstract static class Part implements TypeCheck {
-
-        abstract <T> T accept(TemplateVisitor<T> visitor);
-
-        @Override
-        public abstract boolean equals(Object obj);
+    /**
+     * An interface for parts of a template that can be visited.
+     */
+    public interface Part extends TypeCheck {
+        <T> T accept(TemplateVisitor<T> visitor);
     }
 
-    public static class Literal extends Part {
+    /**
+     * A static template value part.
+     */
+    public static final class Literal implements Part {
         private final String value;
 
-        public Literal(String value) {
+        private Literal(String value) {
             if (value.isEmpty()) {
                 throw new RuntimeException("value cannot blank");
             }
             this.value = value;
         }
 
-        public static Literal unescape(String value) {
+        private static Literal unescape(String value) {
             return new Literal(value.replace("{{", "{").replace("}}", "}"));
         }
 
+        /**
+         * Gets the value of this literal.
+         *
+         * @return the literal value.
+         */
         public String getValue() {
             return value;
         }
 
         @Override
-        <T> T accept(TemplateVisitor<T> visitor) {
+        public <T> T accept(TemplateVisitor<T> visitor) {
             return visitor.visitStaticElement(this.value);
         }
 
@@ -238,7 +262,7 @@ public final class Template implements FromSourceLocation, ToNode {
         }
     }
 
-    public static final class Dynamic extends Part {
+    private static final class Dynamic implements Part {
         private final String raw;
         private final Expression expression;
 
@@ -247,12 +271,16 @@ public final class Template implements FromSourceLocation, ToNode {
             this.expression = expression;
         }
 
-        public static Dynamic parse(String value, FromSourceLocation context) {
+        private static Dynamic parse(String value, FromSourceLocation context) {
             return new Dynamic(value, parseShortform(value, context));
         }
 
+        private Expression getExpression() {
+            return expression;
+        }
+
         @Override
-        <T> T accept(TemplateVisitor<T> visitor) {
+        public <T> T accept(TemplateVisitor<T> visitor) {
             return visitor.visitDynamicElement(this.expression);
         }
 
@@ -271,10 +299,6 @@ public final class Template implements FromSourceLocation, ToNode {
             }
             Dynamic dynamic = (Dynamic) o;
             return expression.equals(dynamic.expression);
-        }
-
-        public Expression getExpr() {
-            return expression;
         }
 
         @Override

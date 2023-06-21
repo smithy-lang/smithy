@@ -23,7 +23,7 @@ public final class IsSet extends LibraryFunction {
     public static final String ID = "isSet";
     private static final Definition DEFINITION = new Definition();
 
-    public IsSet(FunctionNode functionNode) {
+    private IsSet(FunctionNode functionNode) {
         super(DEFINITION, functionNode);
     }
 
@@ -48,6 +48,9 @@ public final class IsSet extends LibraryFunction {
         return Type.booleanType();
     }
 
+    /**
+     * A {@link FunctionDefinition} for the {@link IsSet} function.
+     */
     public static final class Definition implements FunctionDefinition {
         @Override
         public String getId() {

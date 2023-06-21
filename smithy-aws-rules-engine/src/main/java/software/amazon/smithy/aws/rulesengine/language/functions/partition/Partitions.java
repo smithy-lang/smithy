@@ -38,10 +38,21 @@ public final class Partitions implements ToSmithyBuilder<Partitions>, FromSource
         this.partitions = builder.partitions.copy();
     }
 
+    /**
+     * Builder to create a {@link Partitions} instance.
+     *
+     * @return returns a new Builder.
+     */
     public static Builder builder() {
         return new Builder(SourceLocation.none());
     }
 
+    /**
+     * Creates a {@link Partitions} instance from the given Node information.
+     *
+     * @param node the node to deserialize.
+     * @return the created Partitions.
+     */
     public static Partitions fromNode(Node node) {
         Builder builder = new Builder(node);
         ObjectNode objNode = node.expectObjectNode();
@@ -54,10 +65,20 @@ public final class Partitions implements ToSmithyBuilder<Partitions>, FromSource
         return builder.build();
     }
 
+    /**
+     * Gets the version of the partitions file.
+     *
+     * @return returns the version of the partitions file.
+     */
     public String getVersion() {
         return version;
     }
 
+    /**
+     * Gets the list of loaded partitions.
+     *
+     * @return returns the list of partitions.
+     */
     public List<Partition> getPartitions() {
         return partitions;
     }
@@ -110,6 +131,9 @@ public final class Partitions implements ToSmithyBuilder<Partitions>, FromSource
                + '}';
     }
 
+    /**
+     * A builder used to create a {@link Partitions} class.
+     */
     public static class Builder extends RulesComponentBuilder<Builder, Partitions> {
         private String version;
         private final BuilderRef<List<Partition>> partitions = BuilderRef.forList();

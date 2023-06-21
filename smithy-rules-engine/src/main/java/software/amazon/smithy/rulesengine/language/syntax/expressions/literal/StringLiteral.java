@@ -11,6 +11,9 @@ import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Template;
 
+/**
+ * A string literal value, containing a template.
+ */
 public final class StringLiteral extends Literal {
     private final Template value;
 
@@ -19,6 +22,11 @@ public final class StringLiteral extends Literal {
         this.value = value;
     }
 
+    /**
+     * Gets the template for this literal value.
+     *
+     * @return the literal's value template.
+     */
     public Template value() {
         return value;
     }
@@ -31,15 +39,6 @@ public final class StringLiteral extends Literal {
     @Override
     public Optional<Template> asStringLiteral() {
         return Optional.of(value);
-    }
-
-    /**
-     * Attempts to convert the literal to a {@link String}. Otherwise throws an exception.
-     *
-     * @return the literal as a string.
-     */
-    public String expectLiteralString() {
-        return value.expectLiteral();
     }
 
     @Override

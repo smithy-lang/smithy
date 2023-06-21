@@ -20,7 +20,7 @@ public final class Substring extends LibraryFunction {
     public static final String ID = "substring";
     private static final Definition DEFINITION = new Definition();
 
-    public Substring(FunctionNode functionNode) {
+    private Substring(FunctionNode functionNode) {
         super(DEFINITION, functionNode);
     }
 
@@ -29,6 +29,9 @@ public final class Substring extends LibraryFunction {
         return visitor.visitLibraryFunction(DEFINITION, getArguments());
     }
 
+    /**
+     * A {@link FunctionDefinition} for the {@link Substring} function.
+     */
     public static final class Definition implements FunctionDefinition {
         @Override
         public String getId() {

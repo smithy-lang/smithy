@@ -23,7 +23,7 @@ public final class AwsIsVirtualHostableS3Bucket extends LibraryFunction {
     public static final String ID = "aws.isVirtualHostableS3Bucket";
     private static final Definition DEFINITION = new Definition();
 
-    public AwsIsVirtualHostableS3Bucket(FunctionNode functionNode) {
+    private AwsIsVirtualHostableS3Bucket(FunctionNode functionNode) {
         super(DEFINITION, functionNode);
     }
 
@@ -32,6 +32,9 @@ public final class AwsIsVirtualHostableS3Bucket extends LibraryFunction {
         return visitor.visitLibraryFunction(DEFINITION, getArguments());
     }
 
+    /**
+     * A {@link FunctionDefinition} for the {@link AwsIsVirtualHostableS3Bucket} function.
+     */
     public static final class Definition implements FunctionDefinition {
         @Override
         public String getId() {

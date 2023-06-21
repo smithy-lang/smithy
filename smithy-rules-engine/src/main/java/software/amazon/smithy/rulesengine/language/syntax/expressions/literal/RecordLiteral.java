@@ -15,6 +15,9 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 
+/**
+ * A record literal value, containing a map of identifiers to other literals.
+ */
 public final class RecordLiteral extends Literal {
     private final Map<Identifier, Literal> members;
 
@@ -23,6 +26,11 @@ public final class RecordLiteral extends Literal {
         this.members = Collections.unmodifiableMap(new LinkedHashMap<>(members));
     }
 
+    /**
+     * Gets the map of identifiers to literals contained within this record.
+     *
+     * @return the map of identifiers to literals.
+     */
     public Map<Identifier, Literal> members() {
         return members;
     }

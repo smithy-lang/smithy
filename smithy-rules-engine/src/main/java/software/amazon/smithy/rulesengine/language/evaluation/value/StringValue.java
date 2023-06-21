@@ -11,6 +11,9 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 
+/**
+ * A string value.
+ */
 public final class StringValue extends Value {
     private final String value;
 
@@ -19,13 +22,18 @@ public final class StringValue extends Value {
         this.value = value;
     }
 
+    /**
+     * Gets the value of the string.
+     *
+     * @return the value of the string.
+     */
+    public String getValue() {
+        return value;
+    }
+
     @Override
     public Type getType() {
         return Type.stringType();
-    }
-
-    public String getValue() {
-        return value;
     }
 
     @Override

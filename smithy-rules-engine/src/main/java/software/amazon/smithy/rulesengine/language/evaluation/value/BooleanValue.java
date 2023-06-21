@@ -11,12 +11,24 @@ import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 
+/**
+ * A boolean value of true or false.
+ */
 public final class BooleanValue extends Value {
     private final boolean value;
 
     BooleanValue(boolean value) {
         super(SourceLocation.none());
         this.value = value;
+    }
+
+    /**
+     * Gets the true or false value of this boolean.
+     *
+     * @return the value true or false.
+     */
+    public boolean getValue() {
+        return value;
     }
 
     @Override
@@ -27,10 +39,6 @@ public final class BooleanValue extends Value {
     @Override
     public BooleanValue expectBooleanValue() {
         return this;
-    }
-
-    public boolean getValue() {
-        return value;
     }
 
     @Override

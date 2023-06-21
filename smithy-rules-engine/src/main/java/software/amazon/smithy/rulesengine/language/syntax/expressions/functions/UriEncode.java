@@ -33,6 +33,9 @@ public final class UriEncode extends LibraryFunction {
         return visitor.visitLibraryFunction(DEFINITION, getArguments());
     }
 
+    /**
+     * A {@link FunctionDefinition} for the {@link UriEncode} function.
+     */
     public static final class Definition implements FunctionDefinition {
         private static final Map<String, String> ENCODING_REPLACEMENTS = MapUtils.of(
                 "+", "%20",

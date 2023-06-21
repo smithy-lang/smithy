@@ -20,7 +20,7 @@ public final class BooleanEquals extends LibraryFunction {
     public static final String ID = "booleanEquals";
     private static final Definition DEFINITION = new Definition();
 
-    public BooleanEquals(FunctionNode functionNode) {
+    private BooleanEquals(FunctionNode functionNode) {
         super(DEFINITION, functionNode);
     }
 
@@ -29,6 +29,9 @@ public final class BooleanEquals extends LibraryFunction {
         return visitor.visitBoolEquals(functionNode.getArguments().get(0), functionNode.getArguments().get(1));
     }
 
+    /**
+     * A {@link FunctionDefinition} for the {@link BooleanEquals} function.
+     */
     public static final class Definition implements FunctionDefinition {
         @Override
         public String getId() {
