@@ -5,6 +5,9 @@
 
 package software.amazon.smithy.rulesengine.language.evaluation.type;
 
+/**
+ * The "string" type.
+ */
 public final class StringType extends AbstractType {
     StringType() {}
 

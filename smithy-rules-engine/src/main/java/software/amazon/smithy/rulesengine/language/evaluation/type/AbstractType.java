@@ -5,6 +5,9 @@
 
 package software.amazon.smithy.rulesengine.language.evaluation.type;
 
+/**
+ * Core functionality for types.
+ */
 abstract class AbstractType implements Type {
 
     @Override

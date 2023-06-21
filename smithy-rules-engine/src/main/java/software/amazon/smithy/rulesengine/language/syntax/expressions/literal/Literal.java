@@ -25,8 +25,6 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.rulesengine.language.evaluation.RuleEvaluator;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
-import software.amazon.smithy.rulesengine.language.evaluation.type.RecordType;
-import software.amazon.smithy.rulesengine.language.evaluation.type.TupleType;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
@@ -189,7 +187,7 @@ public abstract class Literal extends Expression {
                 for (Map.Entry<Identifier, Literal> entry : members.entrySet()) {
                     types.put(entry.getKey(), entry.getValue().typeCheck(scope));
                 }
-                return new RecordType(types);
+                return Type.recordType(types);
             }
 
             @Override
@@ -198,7 +196,7 @@ public abstract class Literal extends Expression {
                 for (Literal element : members) {
                     tuples.add(element.typeCheck(scope));
                 }
-                return new TupleType(tuples);
+                return Type.tupleType(tuples);
             }
 
             @Override

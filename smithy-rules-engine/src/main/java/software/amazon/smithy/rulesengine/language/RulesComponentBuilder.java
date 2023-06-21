@@ -22,11 +22,16 @@ public abstract class RulesComponentBuilder<B extends RulesComponentBuilder<?, ?
 
     private SourceLocation sourceLocation;
 
-    public RulesComponentBuilder(FromSourceLocation sourceLocation) {
-        if (sourceLocation.getSourceLocation() == SourceLocation.NONE) {
-            this.sourceLocation = javaLocation();
+    /**
+     * Creates a builder with the given source location.
+     *
+     * @param fromSourceLocation the source location for the builder.
+     */
+    public RulesComponentBuilder(FromSourceLocation fromSourceLocation) {
+        if (fromSourceLocation.getSourceLocation() == SourceLocation.NONE) {
+            sourceLocation = javaLocation();
         } else {
-            this.sourceLocation = sourceLocation.getSourceLocation();
+            sourceLocation = fromSourceLocation.getSourceLocation();
         }
     }
 
@@ -35,9 +40,15 @@ public abstract class RulesComponentBuilder<B extends RulesComponentBuilder<?, ?
         return sourceLocation;
     }
 
+    /**
+     * Sets the source location for the builder.
+     *
+     * @param fromSourceLocation the source location to set.
+     * @return the updated builder.
+     */
     @SuppressWarnings("unchecked")
     public B sourceLocation(FromSourceLocation fromSourceLocation) {
-        this.sourceLocation = fromSourceLocation.getSourceLocation();
+        sourceLocation = fromSourceLocation.getSourceLocation();
         return (B) this;
     }
 

@@ -29,10 +29,21 @@ public final class RegionOverride implements ToSmithyBuilder<RegionOverride>, Fr
         this.sourceLocation = sourceLocation;
     }
 
+    /**
+     * Builder to create a {@link RegionOverride} instance.
+     *
+     * @return returns a new Builder.
+     */
     public static Builder builder() {
         return new Builder(SourceLocation.none());
     }
 
+    /**
+     * Creates a {@link RegionOverride} instance from the given Node information.
+     *
+     * @param node the node to deserialize.
+     * @return the created RegionOverride.
+     */
     public static RegionOverride fromNode(Node node) {
         return new RegionOverride(node.getSourceLocation());
     }

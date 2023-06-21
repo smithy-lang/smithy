@@ -9,6 +9,9 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 
+/**
+ * An integer value.
+ */
 public final class IntegerValue extends Value {
     private final int value;
 
@@ -17,13 +20,18 @@ public final class IntegerValue extends Value {
         this.value = value;
     }
 
+    /**
+     * Gets the value of the integer.
+     *
+     * @return the value of the integer.
+     */
+    public int getValue() {
+        return value;
+    }
+
     @Override
     public Type getType() {
         return Type.integerType();
-    }
-
-    public int getValue() {
-        return value;
     }
 
     @Override

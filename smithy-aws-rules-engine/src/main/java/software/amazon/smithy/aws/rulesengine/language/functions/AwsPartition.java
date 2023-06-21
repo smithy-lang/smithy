@@ -18,7 +18,6 @@ import software.amazon.smithy.aws.rulesengine.language.functions.partition.Parti
 import software.amazon.smithy.aws.rulesengine.language.functions.partition.PartitionDataProvider;
 import software.amazon.smithy.aws.rulesengine.language.functions.partition.PartitionOutputs;
 import software.amazon.smithy.aws.rulesengine.language.functions.partition.Partitions;
-import software.amazon.smithy.rulesengine.language.evaluation.type.RecordType;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
@@ -45,7 +44,7 @@ public final class AwsPartition extends LibraryFunction {
     private static final Definition DEFINITION = new Definition();
     private static final PartitionData PARTITION_DATA = loadPartitionData();
 
-    public AwsPartition(FunctionNode functionNode) {
+    private AwsPartition(FunctionNode functionNode) {
         super(DEFINITION, functionNode);
     }
 
@@ -81,6 +80,9 @@ public final class AwsPartition extends LibraryFunction {
         private final Map<String, Partition> regionMap = new HashMap<>();
     }
 
+    /**
+     * A {@link FunctionDefinition} for the {@link AwsPartition} function.
+     */
     public static final class Definition implements FunctionDefinition {
         @Override
         public String getId() {
@@ -100,7 +102,7 @@ public final class AwsPartition extends LibraryFunction {
             type.put(DUAL_STACK_DNS_SUFFIX, Type.stringType());
             type.put(SUPPORTS_DUAL_STACK, Type.booleanType());
             type.put(SUPPORTS_FIPS, Type.booleanType());
-            return Type.optionalType(new RecordType(type));
+            return Type.optionalType(Type.recordType(type));
         }
 
         @Override

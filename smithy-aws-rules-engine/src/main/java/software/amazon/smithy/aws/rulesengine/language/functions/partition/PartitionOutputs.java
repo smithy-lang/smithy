@@ -48,10 +48,21 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
         supportsDualStack = builder.supportsDualStack;
     }
 
+    /**
+     * Builder to create a {@link PartitionOutputs} instance.
+     *
+     * @return returns a new Builder.
+     */
     public static Builder builder() {
         return new Builder(SourceLocation.none());
     }
 
+    /**
+     * Creates a {@link PartitionOutputs} instance from the given Node information.
+     *
+     * @param node the node to deserialize.
+     * @return the created PartitionOutputs.
+     */
     public static PartitionOutputs fromNode(Node node) {
         Builder builder = new Builder(node);
         ObjectNode objectNode = node.expectObjectNode();
@@ -66,22 +77,47 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
         return builder.build();
     }
 
+    /**
+     * Gets this partition's name.
+     *
+     * @return returns the partition's name.
+     */
     public Optional<String> getName() {
         return Optional.ofNullable(name);
     }
 
+    /**
+     * Gets this partition's default DNS suffix.
+     *
+     * @return returns the DNS suffix.
+     */
     public String getDnsSuffix() {
         return dnsSuffix;
     }
 
+    /**
+     * Gets this partition's dual stack DNS suffix.
+     *
+     * @return returns the DNS suffix for dual stack endpoints.
+     */
     public String getDualStackDnsSuffix() {
         return dualStackDnsSuffix;
     }
 
+    /**
+     * Returns true if the partition supports FIPS.
+     *
+     * @return returns true of FIPS is supported.
+     */
     public boolean supportsFips() {
         return supportsFips;
     }
 
+    /**
+     * Returns true if the partition supports dual stack.
+     *
+     * @return returns true of dual stack is supported.
+     */
     public boolean supportsDualStack() {
         return supportsDualStack;
     }
@@ -135,6 +171,9 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
         return Objects.hash(name, dnsSuffix, dualStackDnsSuffix, supportsFips, supportsDualStack);
     }
 
+    /**
+     * A builder used to create a {@link Partition} class.
+     */
     public static class Builder extends RulesComponentBuilder<Builder, PartitionOutputs> {
         private String name;
         private String dnsSuffix;

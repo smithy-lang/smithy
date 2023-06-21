@@ -20,7 +20,7 @@ public final class IsValidHostLabel extends LibraryFunction {
     public static final String ID = "isValidHostLabel";
     private static final Definition DEFINITION = new Definition();
 
-    public IsValidHostLabel(FunctionNode functionNode) {
+    IsValidHostLabel(FunctionNode functionNode) {
         super(DEFINITION, functionNode);
     }
 
@@ -29,6 +29,9 @@ public final class IsValidHostLabel extends LibraryFunction {
         return visitor.visitLibraryFunction(DEFINITION, getArguments());
     }
 
+    /**
+     * A {@link FunctionDefinition} for the {@link IsValidHostLabel} function.
+     */
     public static final class Definition implements FunctionDefinition {
         @Override
         public String getId() {

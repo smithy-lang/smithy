@@ -11,6 +11,9 @@ import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
 
+/**
+ * A boolean literal value, containing true or false.
+ */
 public final class BooleanLiteral extends Literal {
     private final BooleanNode value;
 
@@ -24,6 +27,11 @@ public final class BooleanLiteral extends Literal {
         this.value = value;
     }
 
+    /**
+     * Gets the {@link BooleanNode} value of this literal.
+     *
+     * @return the literal's value node.
+     */
     public BooleanNode value() {
         return value;
     }

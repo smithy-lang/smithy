@@ -98,7 +98,7 @@ public abstract class Expression implements FromSourceLocation, ToNode, TypeChec
         return context("while parsing `" + shortForm + "` within a template", context, () -> {
             if (shortForm.contains("#")) {
                 String[] parts = shortForm.split("#", 2);
-                return new GetAttr(FunctionNode.ofExpressions(GetAttr.ID, context,
+                return new GetAttr.Definition().createFunction(FunctionNode.ofExpressions(GetAttr.ID, context,
                         getReference(Identifier.of(parts[0]), context), of(parts[1])));
             } else {
                 return Expression.getReference(Identifier.of(shortForm), context);
@@ -138,31 +138,6 @@ public abstract class Expression implements FromSourceLocation, ToNode, TypeChec
 
     protected abstract Type typeCheckLocal(Scope<Type> scope) throws InnerParseError;
 
-    @Override
-    public abstract int hashCode();
-
-    @Override
-    public abstract boolean equals(Object obj);
-
-    @Override
-    public SourceLocation getSourceLocation() {
-        return sourceLocation;
-    }
-
-    @Override
-    public Type typeCheck(Scope<Type> scope) {
-        // TODO: Could remove all typecheckLocal functions (maybe?)
-        Type type = context(String.format("while typechecking %s", this), this, () -> typeCheckLocal(scope));
-
-        if (cachedType != null && !type.equals(cachedType)) {
-            throw new RuntimeException(String.format("Checking type `%s` that doesn't match cached type `%s`",
-                    type, cachedType));
-        }
-
-        cachedType = type;
-        return cachedType;
-    }
-
     /**
      * Returns the type for this expression, throws a runtime exception if {@code typeCheck} has not been invoked.
      *
@@ -176,11 +151,36 @@ public abstract class Expression implements FromSourceLocation, ToNode, TypeChec
     }
 
     /**
-     * Converts this expression to a string template. By default this implementation returns a {@link RuntimeException}.
+     * Converts this expression to a string template. By default,
+     * this implementation returns a {@link RuntimeException}.
      *
      * @return the string template.
      */
     public String getTemplate() {
         throw new RuntimeException(String.format("Cannot convert `%s` to a string template.", this));
+    }
+
+    @Override
+    public abstract int hashCode();
+
+    @Override
+    public abstract boolean equals(Object obj);
+
+    @Override
+    public SourceLocation getSourceLocation() {
+        return sourceLocation;
+    }
+
+    @Override
+    public Type typeCheck(Scope<Type> scope) {
+        Type type = context(String.format("while typechecking %s", this), this, () -> typeCheckLocal(scope));
+
+        if (cachedType != null && !type.equals(cachedType)) {
+            throw new RuntimeException(String.format("Checking type `%s` that doesn't match cached type `%s`",
+                    type, cachedType));
+        }
+
+        cachedType = type;
+        return cachedType;
     }
 }

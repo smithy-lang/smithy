@@ -14,6 +14,9 @@ import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 
+/**
+ * An array of values of the same type.
+ */
 public final class ArrayValue extends Value {
     private final List<Value> values;
 
@@ -22,10 +25,21 @@ public final class ArrayValue extends Value {
         this.values = values;
     }
 
+    /**
+     * Gets all the values in the array.
+     *
+     * @return the values in the array.
+     */
     public List<Value> getValues() {
         return values;
     }
 
+    /**
+     * Gets the value at the index, or an empty value if none is present.
+     *
+     * @param index the index to get the value of.
+     * @return the value at the index, or an empty value if not present.
+     */
     public Value get(int index) {
         if (values.size() > index) {
             return values.get(index);

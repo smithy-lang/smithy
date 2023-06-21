@@ -60,7 +60,7 @@ public final class CoverageChecker {
     /**
      * Analyze and provides the coverage results for the rule-set.
      *
-     * @return stream of {@link CoverageResult}.
+     * @return returns a stream of {@link CoverageResult}.
      */
     public Stream<CoverageResult> checkCoverage() {
         return new CollectConditions().visitRuleset(ruleSet).distinct().flatMap(this::getConditionCoverage);
@@ -106,23 +106,47 @@ public final class CoverageChecker {
         }
     }
 
+    /**
+     * A container for a specific condition's coverage result.
+     */
     public static class CoverageResult {
         private final Condition condition;
         private final boolean result;
 
+        /**
+         * Constructs a new coverage result container for the given condition and result.
+         *
+         * @param condition the condition being covered.
+         * @param result if the condition is covered by test cases or not.
+         */
         public CoverageResult(Condition condition, boolean result) {
             this.condition = condition;
             this.result = result;
         }
 
+        /**
+         * Gets the condition that is covered.
+         *
+         * @return the condition being covered.
+         */
         public Condition getCondition() {
             return condition;
         }
 
+        /**
+         * Gets if the condition is covered or not.
+         *
+         * @return returns true if the condition is covered, false otherwise.
+         */
         public boolean getResult() {
             return result;
         }
 
+        /**
+         * Pretty prints this CoverageResult.
+         *
+         * @return A pretty representation of the condition and result.
+         */
         public String pretty() {
             return "leaf: " + condition + "(" + condition.getSourceLocation().getFilename() + ":"
                     + condition.getSourceLocation().getLine() + ")";

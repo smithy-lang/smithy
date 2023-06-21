@@ -9,13 +9,21 @@ import java.util.List;
 import java.util.Objects;
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
 
+/**
+ * A "tuple" type, containing members of varying types.
+ */
 public final class TupleType extends AbstractType {
     private final List<Type> memberTypes;
 
-    public TupleType(List<Type> memberTypes) {
+    TupleType(List<Type> memberTypes) {
         this.memberTypes = memberTypes;
     }
 
+    /**
+     * Gets the types of each member in the tuple.
+     *
+     * @return the types of each member in the tuple.
+     */
     public List<Type> getMemberTypes() {
         return memberTypes;
     }

@@ -7,6 +7,9 @@ package software.amazon.smithy.rulesengine.language.evaluation.type;
 
 import software.amazon.smithy.rulesengine.language.error.InnerParseError;
 
+/**
+ * The "empty" type.
+ */
 public final class EmptyType extends AbstractType {
     EmptyType() {}
 

@@ -15,6 +15,9 @@ import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * A name used to identify a component of a rule-set.
+ */
 @SmithyUnstableApi
 public final class Identifier implements FromSourceLocation, ToNode {
     private final StringNode name;
@@ -25,10 +28,22 @@ public final class Identifier implements FromSourceLocation, ToNode {
         sourceLocation = name.getSourceLocation();
     }
 
+    /**
+     * Creates an {@link Identifier} from the given name.
+     *
+     * @param name the name of the identifier to create.
+     * @return the created Identifier.
+     */
     public static Identifier of(String name) {
         return new Identifier(new StringNode(name, javaLocation()));
     }
 
+    /**
+     * Creates an {@link Identifier} from the given name.
+     *
+     * @param name the name of the identifier to create.
+     * @return the created Identifier.
+     */
     public static Identifier of(StringNode name) {
         return new Identifier(name);
     }
@@ -38,6 +53,11 @@ public final class Identifier implements FromSourceLocation, ToNode {
         return sourceLocation;
     }
 
+    /**
+     * Gets the name of this identifier.
+     *
+     * @return a node containing the name of the identifier.
+     */
     public StringNode getName() {
         return name;
     }
@@ -64,6 +84,7 @@ public final class Identifier implements FromSourceLocation, ToNode {
         return Objects.hash(name);
     }
 
+    @Override
     public String toString() {
         return name.getValue();
     }

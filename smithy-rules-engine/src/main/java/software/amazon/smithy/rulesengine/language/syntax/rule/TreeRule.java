@@ -16,6 +16,9 @@ import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
 
+/**
+ * A rule-set rule that is used to contain condition based branching rules.
+ */
 @SmithyUnstableApi
 public final class TreeRule extends Rule {
     private final List<Rule> rules;
@@ -25,6 +28,11 @@ public final class TreeRule extends Rule {
         this.rules = rules;
     }
 
+    /**
+     * Gets the rules contained within this tree.
+     *
+     * @return the rules within this tree.
+     */
     public List<Rule> getRules() {
         return rules;
     }

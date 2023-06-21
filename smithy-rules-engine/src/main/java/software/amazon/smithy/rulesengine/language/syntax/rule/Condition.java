@@ -39,6 +39,11 @@ public final class Condition implements TypeCheck, FromSourceLocation, ToNode {
         this.fn = SmithyBuilder.requiredState("fn", builder.fn);
     }
 
+    /**
+     * Builder to create a {@link Condition} instance.
+     *
+     * @return returns a new Builder.
+     */
     public static Builder builder() {
         return new Condition.Builder();
     }
@@ -62,6 +67,25 @@ public final class Condition implements TypeCheck, FromSourceLocation, ToNode {
         return builder.build();
     }
 
+    @Override
+    public SourceLocation getSourceLocation() {
+        return fn.getSourceLocation();
+    }
+
+    /**
+     * Get the identifier of the parameter that the result is assigned to.
+     *
+     * @return the optional identifier.
+     */
+    public Optional<Identifier> getResult() {
+        return Optional.ofNullable(result);
+    }
+
+    /**
+     * Gets the function used to express this condition.
+     *
+     * @return the function for this condition.
+     */
     public Expression getFn() {
         return fn;
     }
@@ -77,20 +101,6 @@ public final class Condition implements TypeCheck, FromSourceLocation, ToNode {
             throw new RuntimeException("Cannot generate expression from a condition without a result");
         }
         return Expression.getReference(result, javaLocation());
-    }
-
-    @Override
-    public SourceLocation getSourceLocation() {
-        return fn.getSourceLocation();
-    }
-
-    /**
-     * Get the identifier of the parameter that the result is assigned to.
-     *
-     * @return the optional identifier.
-     */
-    public Optional<Identifier> getResult() {
-        return Optional.ofNullable(result);
     }
 
     @Override
@@ -142,6 +152,9 @@ public final class Condition implements TypeCheck, FromSourceLocation, ToNode {
         return sb.append(fn).toString();
     }
 
+    /**
+     * A builder used to create a {@link Condition} class.
+     */
     public static class Builder implements SmithyBuilder<Condition> {
         private Expression fn;
         private Identifier result;

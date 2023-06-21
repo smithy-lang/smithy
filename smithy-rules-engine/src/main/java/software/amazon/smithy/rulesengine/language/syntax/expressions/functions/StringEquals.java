@@ -20,7 +20,7 @@ public final class StringEquals extends LibraryFunction {
     public static final String ID = "stringEquals";
     private static final Definition DEFINITION = new Definition();
 
-    public StringEquals(FunctionNode functionNode) {
+    private StringEquals(FunctionNode functionNode) {
         super(DEFINITION, functionNode);
     }
 
@@ -29,6 +29,9 @@ public final class StringEquals extends LibraryFunction {
         return visitor.visitStringEquals(functionNode.getArguments().get(0), functionNode.getArguments().get(1));
     }
 
+    /**
+     * A {@link FunctionDefinition} for the {@link StringEquals} function.
+     */
     public static class Definition implements FunctionDefinition {
         @Override
         public String getId() {

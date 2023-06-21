@@ -21,11 +21,11 @@ final class ScopeLayer<T> {
 
     ScopeLayer() {}
 
-    public boolean containsType(Identifier identifier) {
+    boolean containsType(Identifier identifier) {
         return types.containsKey(identifier);
     }
 
-    public Map.Entry<Identifier, T> getTypeEntry(Identifier identifier) {
+    Map.Entry<Identifier, T> getTypeEntry(Identifier identifier) {
         // This needs to return the original entry, as the specific instance
         // of Identifier in the key is required for its source location.
         for (Map.Entry<Identifier, T> entry : types.entrySet()) {
@@ -36,19 +36,19 @@ final class ScopeLayer<T> {
         return null;
     }
 
-    public T getType(Identifier identifier) {
+    T getType(Identifier identifier) {
         return types.get(identifier);
     }
 
-    public T putType(Identifier identifier, T type) {
+    T putType(Identifier identifier, T type) {
         return types.put(identifier, type);
     }
 
-    public boolean containsNonNullReference(Reference reference) {
+    boolean containsNonNullReference(Reference reference) {
         return nonNullReferences.contains(reference);
     }
 
-    public boolean addNonNullReference(Reference reference) {
+    boolean addNonNullReference(Reference reference) {
         return nonNullReferences.add(reference);
     }
 

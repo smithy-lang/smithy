@@ -13,6 +13,9 @@ import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 
+/**
+ * A tuple value, containing a list of other literals.
+ */
 public final class TupleLiteral extends Literal {
     private final List<Literal> members;
 
@@ -21,6 +24,11 @@ public final class TupleLiteral extends Literal {
         this.members = members;
     }
 
+    /**
+     * Gets the list of literals contained within this tuple.
+     *
+     * @return the list of literals.
+     */
     public List<Literal> members() {
         return members;
     }

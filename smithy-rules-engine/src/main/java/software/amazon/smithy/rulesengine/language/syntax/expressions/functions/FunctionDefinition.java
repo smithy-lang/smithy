@@ -43,6 +43,12 @@ public interface FunctionDefinition {
      */
     Value evaluate(List<Value> arguments);
 
+    /**
+     * Creates a {@link LibraryFunction} implementation from the given {@link FunctionNode}.
+     *
+     * @param functionNode the function node to deserialize.
+     * @return the created LibraryFunction implementation.
+     */
     LibraryFunction createFunction(FunctionNode functionNode);
 
     static Function<FunctionNode, Optional<LibraryFunction>> createFunctionFactory(

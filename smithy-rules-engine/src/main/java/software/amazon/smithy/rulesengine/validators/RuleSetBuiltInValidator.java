@@ -67,10 +67,9 @@ public final class RuleSetBuiltInValidator extends AbstractValidator {
             String builtInName,
             FromSourceLocation source
     ) {
-        if (!BuiltIns.ALL_BUILTINS.containsKey(builtInName)) {
+        if (!BuiltIns.containsBuiltIn(builtInName)) {
             return Optional.of(error(serviceShape, source,
-                    String.format("`%s` is not a valid builtIn parameter (%s)", builtInName,
-                            String.join(", ", BuiltIns.ALL_BUILTINS.keySet()))));
+                    String.format("`%s` is not a valid builtIn parameter (%s)", builtInName, BuiltIns.getKeyString())));
         }
         return Optional.empty();
     }

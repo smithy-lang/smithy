@@ -62,25 +62,59 @@ public final class AwsArn implements ToSmithyBuilder<AwsArn> {
                 .build());
     }
 
+    /**
+     * Builder to create an {@link AwsArn} instance.
+     *
+     * @return returns a new Builder.
+     */
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * Gets the ARN's partition.
+     *
+     * @return returns the ARN's partition.
+     */
     public String getPartition() {
         return partition;
     }
+
+    /**
+     * Gets the ARN's service.
+     *
+     * @return returns the ARN's service.
+     */
 
     public String getService() {
         return service;
     }
 
+    /**
+     * Gets the ARN's region.
+     *
+     * @return returns the ARN's region.
+     */
+
     public String getRegion() {
         return region;
     }
 
+    /**
+     * Gets the ARN's accountId.
+     *
+     * @return returns the ARN's accountId.
+     */
+
     public String getAccountId() {
         return accountId;
     }
+
+    /**
+     * Gets the ARN's resource components.
+     *
+     * @return returns the ARN's resource components.
+     */
 
     public List<String> getResource() {
         return resource;
@@ -126,6 +160,9 @@ public final class AwsArn implements ToSmithyBuilder<AwsArn> {
                 .resource(resource);
     }
 
+    /**
+     * A builder used to create an {@link AwsArn} class.
+     */
     public static final class Builder implements SmithyBuilder<AwsArn> {
         private final BuilderRef<List<String>> resource = BuilderRef.forList();
         private String partition;

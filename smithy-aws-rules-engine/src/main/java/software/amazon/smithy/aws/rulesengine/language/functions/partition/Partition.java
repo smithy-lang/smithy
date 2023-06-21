@@ -21,7 +21,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
 /**
- * Describes an AWS partition, it's regions, and the outputs to be provided by the rule-set aws.partition function.
+ * Describes an AWS partition, its regions, and the outputs to be provided from the rule-set aws.partition function.
  */
 @SmithyUnstableApi
 public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLocation, ToNode {
@@ -45,10 +45,21 @@ public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLo
         this.outputs = builder.outputs;
     }
 
+    /**
+     * Builder to create a {@link Partition} instance.
+     *
+     * @return returns a new Builder.
+     */
     public static Builder builder() {
         return new Builder(SourceLocation.none());
     }
 
+    /**
+     * Creates a {@link Partition} instance from the given Node information.
+     *
+     * @param node the node to deserialize.
+     * @return the created Partition.
+     */
     public static Partition fromNode(Node node) {
         Builder builder = new Builder(node);
         ObjectNode objectNode = node.expectObjectNode();
@@ -64,18 +75,38 @@ public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLo
         return builder.build();
     }
 
+    /**
+     * Gets the ID of the partition.
+     *
+     * @return returns the partition's ID.
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Gets the regular expression to match regions in this partition.
+     *
+     * @return returns the regular expression to match regions in this partition.
+     */
     public String getRegionRegex() {
         return regionRegex;
     }
 
+    /**
+     * Gets this partition's map of region names to region-specific overriding data.
+     *
+     * @return returns a map of region names to region-specific overriding data.
+     */
     public Map<String, RegionOverride> getRegions() {
         return regions;
     }
 
+    /**
+     * Gets the supported configuration output for this partition.
+     *
+     * @return returns the partition's configuration outputs.
+     */
     public PartitionOutputs getOutputs() {
         return outputs;
     }
@@ -128,6 +159,9 @@ public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLo
         return Objects.hash(id, regionRegex, regions, outputs);
     }
 
+    /**
+     * A builder used to create a {@link Partition} class.
+     */
     public static class Builder extends RulesComponentBuilder<Builder, Partition> {
         private String id;
         private String regionRegex;

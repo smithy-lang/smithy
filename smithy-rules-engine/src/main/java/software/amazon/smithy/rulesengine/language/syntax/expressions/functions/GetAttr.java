@@ -41,7 +41,7 @@ public final class GetAttr extends LibraryFunction {
     private final String unparsedPath;
     private final List<Part> path;
 
-    public GetAttr(FunctionNode functionNode) {
+    private GetAttr(FunctionNode functionNode) {
         super(DEFINITION, functionNode);
         this.target = functionNode.getArguments().get(0);
         this.unparsedPath = functionNode.getArguments().get(1).toNode().expectStringNode().getValue();
@@ -89,6 +89,12 @@ public final class GetAttr extends LibraryFunction {
         return result;
     }
 
+    /**
+     * Gets the value at the defined path out of the target value.
+     *
+     * @param target the target value to retrieve a value out of.
+     * @return the retrieve value.
+     */
     public Value evaluate(Value target) {
         Value root = target;
         for (Part part : path) {
@@ -97,10 +103,20 @@ public final class GetAttr extends LibraryFunction {
         return root;
     }
 
+    /**
+     * Gets the expression to retrieve an attribute of.
+     *
+     * @return the expression targeted by this function.
+     */
     public Expression getTarget() {
         return target;
     }
 
+    /**
+     * Gets the list of {@link Part}s that make up the path to the requested attribute.
+     *
+     * @return the list of path parts to the requested attribute.
+     */
     public List<Part> getPath() {
         return path;
     }
@@ -156,6 +172,9 @@ public final class GetAttr extends LibraryFunction {
         return target + "#" + unparsedPath;
     }
 
+    /**
+     * A {@link FunctionDefinition} for the {@link GetAttr} function.
+     */
     public static class Definition implements FunctionDefinition {
         @Override
         public String getId() {

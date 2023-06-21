@@ -22,17 +22,16 @@ import software.amazon.smithy.utils.StringUtils;
  * A rule-set function to parse a URI from a string.
  */
 @SmithyUnstableApi
-public class ParseUrl extends LibraryFunction {
+public final class ParseUrl extends LibraryFunction {
     public static final String ID = "parseURL";
     public static final Identifier SCHEME = Identifier.of("scheme");
     public static final Identifier AUTHORITY = Identifier.of("authority");
     public static final Identifier PATH = Identifier.of("path");
     public static final Identifier NORMALIZED_PATH = Identifier.of("normalizedPath");
     public static final Identifier IS_IP = Identifier.of("isIp");
-
     private static final Definition DEFINITION = new Definition();
 
-    public ParseUrl(FunctionNode functionNode) {
+    private ParseUrl(FunctionNode functionNode) {
         super(DEFINITION, functionNode);
     }
 
@@ -41,6 +40,9 @@ public class ParseUrl extends LibraryFunction {
         return visitor.visitLibraryFunction(DEFINITION, getArguments());
     }
 
+    /**
+     * A {@link FunctionDefinition} for the {@link ParseUrl} function.
+     */
     public static final class Definition implements FunctionDefinition {
         @Override
         public String getId() {

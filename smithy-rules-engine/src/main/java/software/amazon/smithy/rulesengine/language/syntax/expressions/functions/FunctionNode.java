@@ -32,10 +32,9 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyBuilder<FunctionNode> {
     private static final String ARGV = "argv";
     private static final String FN = "fn";
+
     private final StringNode name;
-
     private final SourceLocation sourceLocation;
-
     private final List<Expression> arguments;
 
     FunctionNode(Builder builder) {
@@ -113,10 +112,20 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
                         String.format("`%s` is not a valid function", name), name)));
     }
 
+    /**
+     * Gets the name for the function described in this node.
+     *
+     * @return the name for the function.
+     */
     public String getName() {
         return name.getValue();
     }
 
+    /**
+     * Gets the list of argument {@link Expression}s to the function described in this node.
+     *
+     * @return the list of arguments.
+     */
     public List<Expression> getArguments() {
         return arguments;
     }
@@ -168,6 +177,9 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
         return Objects.hash(name, arguments);
     }
 
+    /**
+     * A builder used to create a {@link FunctionNode} class.
+     */
     public static final class Builder extends RulesComponentBuilder<Builder, FunctionNode> {
         private StringNode function;
         private final BuilderRef<List<Expression>> argv = BuilderRef.forList();

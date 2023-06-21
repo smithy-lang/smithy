@@ -20,7 +20,7 @@ public final class Not extends LibraryFunction {
     public static final String ID = "not";
     private static final Definition DEFINITION = new Definition();
 
-    public Not(FunctionNode functionNode) {
+    private Not(FunctionNode functionNode) {
         super(DEFINITION, functionNode);
     }
 
@@ -36,6 +36,9 @@ public final class Not extends LibraryFunction {
                 () -> expectOneArgument().typeCheck(scope).expectBooleanType()));
     }
 
+    /**
+     * A {@link FunctionDefinition} for the {@link Not} function.
+     */
     public static final class Definition implements FunctionDefinition {
         @Override
         public String getId() {
