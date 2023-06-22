@@ -11,23 +11,23 @@ import software.amazon.smithy.utils.IoUtils;
 
 public class TypeIntrospectionTest {
     @Test
-    void introspectCorrectTypesForFunctions() {
+    public void introspectCorrectTypesForFunctions() {
         EndpointRuleSet endpointRuleSet = EndpointRuleSet.fromNode(Node.parse(IoUtils.readUtf8Resource(
                 TypeIntrospectionTest.class, "substring.json")));
         List<Condition> conditions = endpointRuleSet.getRules().get(0).getConditions();
         // stringEquals({TestCaseId}, 1)
-        assertEquals(conditions.get(0).getFn().type(), Type.booleanType());
+        assertEquals(conditions.get(0).getFunction().type(), Type.booleanType());
 
         // output = substring({Input}, ...);
-        assertEquals(conditions.get(1).getFn().type(), Type.optionalType(Type.stringType()));
+        assertEquals(conditions.get(1).getFunction().type(), Type.optionalType(Type.stringType()));
     }
 
     @Test
-    void introspectCorrectTypesForGetAttr() {
+    public void introspectCorrectTypesForGetAttr() {
         EndpointRuleSet endpointRuleSet = EndpointRuleSet.fromNode(Node.parse(IoUtils.readUtf8Resource(
                 TypeIntrospectionTest.class, "get-attr-type-inference.json")));
         // bucketUrl.authority
-        Type actualType = endpointRuleSet.getRules().get(0).getConditions().get(2).getFn().type();
+        Type actualType = endpointRuleSet.getRules().get(0).getConditions().get(2).getFunction().type();
         assertEquals(Type.stringType(), actualType);
     }
 }

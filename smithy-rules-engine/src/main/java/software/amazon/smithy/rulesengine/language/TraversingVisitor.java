@@ -77,6 +77,6 @@ public class TraversingVisitor<R> extends ExpressionVisitor.Default<Stream<R>>
      * @return a stream of values.
      */
     public Stream<R> visitConditions(List<Condition> conditions) {
-        return conditions.stream().flatMap(condition -> condition.getFn().accept(this));
+        return conditions.stream().flatMap(condition -> condition.getFunction().accept(this));
     }
 }

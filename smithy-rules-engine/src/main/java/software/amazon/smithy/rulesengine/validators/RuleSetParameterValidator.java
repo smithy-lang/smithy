@@ -96,7 +96,7 @@ public final class RuleSetParameterValidator extends AbstractValidator {
                     ParameterType parameterType = ParameterType.fromNode(entry.getValue().getValue());
 
                     if (endpointParams.containsKey(name) && endpointParams.get(name).getType() != parameterType) {
-                        errors.add(parameterError(operationShape, trait, "InconsistentType",
+                        errors.add(parameterError(operationShape, trait, "StaticContextParams.InconsistentType",
                                 String.format("Inconsistent type for `%s` parameter", name)));
                     } else {
                         endpointParams.put(name, Parameter.builder()
@@ -116,13 +116,13 @@ public final class RuleSetParameterValidator extends AbstractValidator {
                     Shape targetType = model.expectShape(memberShape.getTarget());
 
                     if (!targetType.isStringShape() && !targetType.isBooleanShape()) {
-                        errors.add(parameterError(memberShape, trait, "UnsupportedType",
+                        errors.add(parameterError(memberShape, trait, "ContextParam.UnsupportedType",
                                 String.format("Unsupported type `%s` for `%s` parameter", targetType, name)));
                     } else {
                         ParameterType type = targetType.isStringShape() ? ParameterType.STRING : ParameterType.BOOLEAN;
 
                         if (endpointParams.containsKey(name) && type != endpointParams.get(name).getType()) {
-                            errors.add(parameterError(memberShape, trait, "InconsistentType",
+                            errors.add(parameterError(memberShape, trait, "ContextParam.InconsistentType",
                                     String.format("Inconsistent type for `%s` parameter", name)));
                         } else {
                             endpointParams.put(name, Parameter.builder()
@@ -154,12 +154,12 @@ public final class RuleSetParameterValidator extends AbstractValidator {
 
             String name = parameter.getName().toString();
             if (!modelParams.containsKey(name)) {
-                errors.add(parameterError(serviceShape, parameter, "UnmatchedName",
+                errors.add(parameterError(serviceShape, parameter, "RuleSet.UnmatchedName",
                         String.format("Parameter `%s` exists in ruleset but not in service model", name)));
             } else {
                 matchedParams.add(name);
                 if (parameter.getType() != modelParams.get(name).getType()) {
-                    errors.add(parameterError(serviceShape, parameter, "TypeMismatch",
+                    errors.add(parameterError(serviceShape, parameter, "RuleSet.TypeMismatch",
                             String.format("Type mismatch for parameter `%s`", name)));
                 }
             }
@@ -167,7 +167,7 @@ public final class RuleSetParameterValidator extends AbstractValidator {
 
         for (Map.Entry<String, Parameter> entry : modelParams.entrySet()) {
             if (!matchedParams.contains(entry.getKey())) {
-                errors.add(parameterError(serviceShape, entry.getValue(), "UnmatchedName",
+                errors.add(parameterError(serviceShape, entry.getValue(), "RuleSet.UnmatchedName",
                         String.format("Parameter `%s` exists in service model but not in ruleset", entry.getKey())));
             }
         }
@@ -195,14 +195,14 @@ public final class RuleSetParameterValidator extends AbstractValidator {
             // All test parameter types from corresponding ruleset parameters must match in all test cases.
             if (!testSuiteHasParam) {
                 errors.add(danger(serviceShape, parameter,
-                                String.format("Parameter '%s' is never used in test cases", name))
+                                String.format("Parameter `%s` is never used in an `EndpointTests` test case", name))
                         .toBuilder()
-                        .id(getName() + ".Unused").build());
+                        .id(getName() + ".TestCase.Unused").build());
             } else {
                 for (Parameter testParam : testSuiteParams.get(name)) {
                     if (testParam.getType() != parameter.getType()) {
-                        errors.add(parameterError(serviceShape, testParam, "TypeMismatch",
-                                String.format("Type mismatch for parameter '%s', '%s' expected",
+                        errors.add(parameterError(serviceShape, testParam, "TestCase.TypeMismatch",
+                                String.format("Type mismatch for parameter `%s`, `%s` expected",
                                 testParam.getName().toString(), parameter.getType())));
                     }
                 }
@@ -212,16 +212,16 @@ public final class RuleSetParameterValidator extends AbstractValidator {
             if (parameter.isRequired() && !parameter.getDefault().isPresent()
                     && (!testSuiteHasParam || testSuiteParams.get(name).size() != trait.getTestCases().size())
             ) {
-                errors.add(parameterError(serviceShape, parameter, "RequiredMissing",
-                        String.format("Required parameter '%s' is missing in at least one test case", name)));
+                errors.add(parameterError(serviceShape, parameter, "TestCase.RequiredMissing",
+                        String.format("Required parameter `%s` is missing in at least one test case", name)));
             }
         }
 
         // There might be parameters in test cases not defined in a ruleset.
         for (Map.Entry<String, List<Parameter>> entry : testSuiteParams.entrySet()) {
             if (!rulesetParamNames.contains(entry.getKey())) {
-                errors.add(parameterError(serviceShape, entry.getValue().get(0), "Undefined",
-                        String.format("Test parameter '%s' is not defined in ruleset", entry.getKey())));
+                errors.add(parameterError(serviceShape, entry.getValue().get(0), "TestCase.Undefined",
+                        String.format("Test parameter `%s` is not defined in ruleset", entry.getKey())));
             }
         }
 

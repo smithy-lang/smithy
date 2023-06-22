@@ -69,7 +69,7 @@ public class StringUtilsTest {
         assertEquals(StringUtils.indent(" foo", 2), "   foo");
         assertEquals(StringUtils.indent("foo\nbar", 2), "  foo\n  bar");
         assertEquals(StringUtils.indent("\nbar", 2), "  \n  bar");
-        assertEquals(StringUtils.indent("foo\n", 2), "  foo\n  ");
+        assertEquals(StringUtils.indent("foo\n", 2), "  foo\n");
     }
 
     // These test cases are based on https://github.com/square/javapoet/blob/master/src/test/java/com/squareup/javapoet/UtilTest.java

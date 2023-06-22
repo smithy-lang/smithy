@@ -5,7 +5,6 @@
 
 package software.amazon.smithy.rulesengine.language.syntax.expressions.literal;
 
-import java.math.BigInteger;
 import java.util.Objects;
 import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
@@ -30,12 +29,9 @@ public final class IntegerLiteral extends Literal {
         this.value = value;
     }
 
-    private void validateValue(NumberNode numberNode) {
-        if (!numberNode.isNaturalNumber()) {
-            throw new RuntimeException("Only integer values greater than or equal to 0 are supported.");
-        }
-
-        if (BigInteger.valueOf(numberNode.getValue().longValue()).compareTo(BigInteger.ZERO) < 0) {
+    private void validateValue(NumberNode node) {
+        int nodeValue = node.getValue().intValue();
+        if (!node.isNaturalNumber() || nodeValue < 0) {
             throw new RuntimeException("Only integer values greater than or equal to 0 are supported.");
         }
     }
@@ -47,7 +43,7 @@ public final class IntegerLiteral extends Literal {
 
     @Override
     public Optional<Integer> asIntegerLiteral() {
-        return Optional.of(this.value.getValue().intValue());
+        return Optional.of(value.getValue().intValue());
     }
 
     @Override
