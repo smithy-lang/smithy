@@ -64,16 +64,15 @@ public final class RuleSetAuthSchemesValidator extends AbstractValidator {
                 if (!authSchemeList.isPresent()) {
                     return Stream.of(invalid(authSchemes.getSourceLocation(),
                             String.format("Expected `authSchemes` to be a list, found: `%s`", authSchemes)));
-                } else {
-                    for (Literal authScheme : authSchemeList.get()) {
-                        Optional<Map<Identifier, Literal>> authSchemeMap = authScheme.asRecordLiteral();
-                        if (authSchemeMap.isPresent()) {
-                            events.addAll(validateAuthScheme(authSchemeMap.get(), authScheme.getSourceLocation()));
-                        } else {
-                            events.add(invalid(authSchemes.getSourceLocation(),
-                                    String.format("Expected `authSchemes` to be a list of objects, but found: `%s`",
-                                            authScheme)));
-                        }
+                }
+                for (Literal authScheme : authSchemeList.get()) {
+                    Optional<Map<Identifier, Literal>> authSchemeMap = authScheme.asRecordLiteral();
+                    if (authSchemeMap.isPresent()) {
+                        events.addAll(validateAuthScheme(authSchemeMap.get(), authScheme.getSourceLocation()));
+                    } else {
+                        events.add(invalid(authSchemes.getSourceLocation(),
+                                String.format("Expected `authSchemes` to be a list of objects, but found: `%s`",
+                                        authScheme)));
                     }
                 }
             }

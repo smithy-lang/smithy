@@ -50,7 +50,7 @@ public final class OptionalType extends AbstractType {
     @Override
     public BooleanType expectBooleanType() throws InnerParseError {
         throw new InnerParseError(String.format("Expected boolean but found %s. hint: use `isSet` to convert "
-                + "OptionalType<BooleanType> to bool", this));
+                + "OptionalType[BooleanType] to bool", this));
     }
 
     @Override
@@ -77,6 +77,6 @@ public final class OptionalType extends AbstractType {
 
     @Override
     public String toString() {
-        return String.format("OptionalType<%s>", inner);
+        return String.format("OptionalType[%s]", inner);
     }
 }

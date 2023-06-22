@@ -12,7 +12,7 @@ use smithy.rules#staticContextParams
     stringFoo: {type: "string", documentation: "a client string parameter"},
     boolFoo: {type: "boolean", documentation: "a client boolean parameter"}
 )
-@suppress(["RuleSetParameter.Unused"])
+@suppress(["RuleSetParameter.TestCase.Unused"])
 service ExampleService {
     version: "2022-01-01",
     operations: [GetThing]

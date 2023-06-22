@@ -12,9 +12,9 @@ import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.MapUtils;
 
-class CoverageCheckerTest {
+public class CoverageCheckerTest {
     @Test
-    void checkCoverage() {
+    public void checkCoverage() {
         EndpointRuleSet endpointRuleSet = EndpointRuleSet.fromNode(Node.parse(IoUtils.readUtf8Resource(
                 CoverageCheckerTest.class, "local-region-override.json")));
         CoverageChecker checker = new CoverageChecker(endpointRuleSet);

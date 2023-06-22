@@ -6,6 +6,7 @@
 package software.amazon.smithy.rulesengine.validators;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import software.amazon.smithy.model.FromSourceLocation;
@@ -44,7 +45,8 @@ public final class RuleSetBuiltInValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
         for (Parameter parameter : ruleSet.getParameters()) {
             if (parameter.isBuiltIn()) {
-                validateBuiltIn(serviceShape, parameter.getBuiltIn().get(), parameter).ifPresent(events::add);
+                validateBuiltIn(serviceShape, parameter.getBuiltIn().get(), parameter, "RuleSet")
+                        .ifPresent(events::add);
             }
         }
         return events;
@@ -52,12 +54,18 @@ public final class RuleSetBuiltInValidator extends AbstractValidator {
 
     private List<ValidationEvent> validateTestTraitBuiltIns(ServiceShape serviceShape, EndpointTestsTrait testSuite) {
         List<ValidationEvent> events = new ArrayList<>();
+        int testIndex = 0;
         for (EndpointTestCase testCase : testSuite.getTestCases()) {
+            int inputIndex = 0;
             for (EndpointTestOperationInput operationInput : testCase.getOperationInputs()) {
                 for (StringNode builtInNode : operationInput.getBuiltInParams().getMembers().keySet()) {
-                    validateBuiltIn(serviceShape, builtInNode.getValue(), builtInNode);
+                    validateBuiltIn(serviceShape, builtInNode.getValue(), operationInput, "TestCase",
+                                    String.valueOf(testIndex), "Inputs", String.valueOf(inputIndex))
+                            .ifPresent(events::add);
                 }
+                inputIndex++;
             }
+            testIndex++;
         }
         return events;
     }
@@ -65,11 +73,14 @@ public final class RuleSetBuiltInValidator extends AbstractValidator {
     private Optional<ValidationEvent> validateBuiltIn(
             ServiceShape serviceShape,
             String builtInName,
-            FromSourceLocation source
+            FromSourceLocation source,
+            String... eventIdSuffixes
     ) {
         if (!BuiltIns.containsBuiltIn(builtInName)) {
-            return Optional.of(error(serviceShape, source,
-                    String.format("`%s` is not a valid builtIn parameter (%s)", builtInName, BuiltIns.getKeyString())));
+            return Optional.of(error(serviceShape, source, String.format(
+                            "The `%s` built-in used is not registered, valid built-ins: %s",
+                            builtInName, BuiltIns.getKeyString()),
+                    String.join(".", Arrays.asList(eventIdSuffixes))));
         }
         return Optional.empty();
     }

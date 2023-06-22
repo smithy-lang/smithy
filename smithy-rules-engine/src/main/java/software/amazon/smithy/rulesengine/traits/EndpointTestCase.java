@@ -27,7 +27,7 @@ public final class EndpointTestCase implements FromSourceLocation, ToSmithyBuild
     private final List<EndpointTestOperationInput> operationInputs;
     private final EndpointTestExpectation expect;
 
-    public EndpointTestCase(Builder builder) {
+    private EndpointTestCase(Builder builder) {
         this.sourceLocation = builder.sourceLocation;
         this.documentation = builder.documentation;
         this.params = builder.params;

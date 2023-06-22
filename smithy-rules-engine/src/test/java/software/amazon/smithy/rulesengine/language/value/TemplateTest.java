@@ -13,9 +13,9 @@ import software.amazon.smithy.rulesengine.language.syntax.expressions.Template;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr;
 
-class TemplateTest {
+public class TemplateTest {
     @Test
-    void validateTemplate() {
+    public void validateTemplate() {
         checkTemplateParts("asdf", "asdf");
         checkTemplateParts("a{B}c", "a", "{B}", "c");
         checkTemplateParts("a{{b}}c", "a{b}c");
@@ -35,7 +35,7 @@ class TemplateTest {
     }
 
     @Test
-    void validateShortformParsing() {
+    public void validateShortformParsing() {
         assertEquals(Expression.parseShortform("a", SourceLocation.none()), Expression.getReference(Identifier.of("a"), SourceLocation.none()));
         assertEquals(Expression.parseShortform("a#b", SourceLocation.none()), new GetAttr.Definition()
                 .createFunction(FunctionNode.ofExpressions(GetAttr.ID,
@@ -48,7 +48,7 @@ class TemplateTest {
     }
 
     @Test
-    void invalidTemplates() {
+    public void invalidTemplates() {
         Expression.parseShortform("a#", SourceLocation.none());
     }
 }
