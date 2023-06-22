@@ -17,9 +17,9 @@ import software.amazon.smithy.rulesengine.language.syntax.parameters.ParameterTy
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.utils.MapUtils;
 
-class RuleTest {
+public class RuleTest {
     @Test
-    void validateAndErrorsTest() {
+    public void validateAndErrorsTest() {
         Parameter p1 = Parameter.builder().name("param1").type(ParameterType.STRING).required(true).build();
         Parameter p2 = Parameter.builder().name("param2").type(ParameterType.STRING).required(true).build();
         Parameter p3 = Parameter.builder().name("param3").type(ParameterType.STRING).required(true).build();

@@ -31,12 +31,12 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
 @SmithyUnstableApi
 public final class Condition implements TypeCheck, FromSourceLocation, ToNode {
     public static final String ASSIGN = "assign";
-    private final Expression fn;
+    private final Expression function;
     private final Identifier result;
 
     private Condition(Builder builder) {
         this.result = builder.result;
-        this.fn = SmithyBuilder.requiredState("fn", builder.fn);
+        this.function = SmithyBuilder.requiredState("fn", builder.fn);
     }
 
     /**
@@ -69,7 +69,7 @@ public final class Condition implements TypeCheck, FromSourceLocation, ToNode {
 
     @Override
     public SourceLocation getSourceLocation() {
-        return fn.getSourceLocation();
+        return function.getSourceLocation();
     }
 
     /**
@@ -86,8 +86,8 @@ public final class Condition implements TypeCheck, FromSourceLocation, ToNode {
      *
      * @return the function for this condition.
      */
-    public Expression getFn() {
-        return fn;
+    public Expression getFunction() {
+        return function;
     }
 
     /**
@@ -105,7 +105,7 @@ public final class Condition implements TypeCheck, FromSourceLocation, ToNode {
 
     @Override
     public Type typeCheck(Scope<Type> scope) {
-        Type conditionType = fn.typeCheck(scope);
+        Type conditionType = function.typeCheck(scope);
         // If the condition is validated, then the expression must be a truthy type
         if (result != null) {
             scope.getDeclaration(result).ifPresent(entry -> {
@@ -119,7 +119,7 @@ public final class Condition implements TypeCheck, FromSourceLocation, ToNode {
 
     @Override
     public Node toNode() {
-        ObjectNode.Builder conditionNode = fn.toNode().expectObjectNode().toBuilder();
+        ObjectNode.Builder conditionNode = function.toNode().expectObjectNode().toBuilder();
         if (result != null) {
             conditionNode.withMember(ASSIGN, result.getName());
         }
@@ -135,12 +135,12 @@ public final class Condition implements TypeCheck, FromSourceLocation, ToNode {
             return false;
         }
         Condition condition = (Condition) o;
-        return Objects.equals(fn, condition.fn) && Objects.equals(result, condition.result);
+        return Objects.equals(function, condition.function) && Objects.equals(result, condition.result);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fn, result);
+        return Objects.hash(function, result);
     }
 
     @Override
@@ -149,7 +149,7 @@ public final class Condition implements TypeCheck, FromSourceLocation, ToNode {
         if (result != null) {
             sb.append(result).append(" = ");
         }
-        return sb.append(fn).toString();
+        return sb.append(function).toString();
     }
 
     /**

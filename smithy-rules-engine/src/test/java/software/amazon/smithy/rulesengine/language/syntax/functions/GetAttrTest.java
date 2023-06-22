@@ -9,9 +9,9 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr;
 
-class GetAttrTest {
+public class GetAttrTest {
     @Test
-    void getAttrManualEqualToTemplate() {
+    public void getAttrManualEqualToTemplate() {
         Expression asTemplate = Expression.parseShortform("a#b[5]", SourceLocation.none());
         Expression asGetAttr = GetAttr.fromNode(ObjectNode
                 .builder()

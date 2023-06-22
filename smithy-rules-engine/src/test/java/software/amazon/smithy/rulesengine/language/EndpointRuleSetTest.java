@@ -18,9 +18,9 @@ import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.MapUtils;
 
-class EndpointRuleSetTest {
+public class EndpointRuleSetTest {
     @Test
-    void testRuleEval() {
+    public void testRuleEval() {
         EndpointRuleSet actual = TestRunnerTest.getMinimalEndpointRuleSet();
         Value result = RuleEvaluator.evaluate(actual, MapUtils.of(Identifier.of("Region"),
                 Value.stringValue("us-east-1")));
@@ -38,7 +38,7 @@ class EndpointRuleSetTest {
     }
 
     @Test
-    void testDeterministicSerde() {
+    public void testDeterministicSerde() {
         EndpointRuleSet actual = TestRunnerTest.getMinimalEndpointRuleSet();
         String asString = IoUtils.readUtf8File(
                 EndpointRuleSetTest.class.getResource("minimal-ruleset.json").getPath());
@@ -46,7 +46,7 @@ class EndpointRuleSetTest {
     }
 
     @Test
-    void testMinimalRuleset() {
+    public void testMinimalRuleset() {
         EndpointRuleSet actual = TestRunnerTest.getMinimalEndpointRuleSet();
         assertEquals(EndpointRuleSet.builder()
                 .version("1.3")

@@ -10,7 +10,6 @@ import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
 
 /**
@@ -35,12 +34,8 @@ public final class Deprecated implements ToNode {
      * @return the created Deprecated.
      */
     public static Deprecated fromNode(ObjectNode objectNode) {
-        String message = objectNode.getStringMember(MESSAGE)
-                                 .map(StringNode::getValue)
-                                 .orElse(null);
-        String since = objectNode.getStringMember(SINCE)
-                               .map(StringNode::getValue)
-                               .orElse(null);
+        String message = objectNode.getStringMemberOrDefault(MESSAGE, null);
+        String since = objectNode.getStringMemberOrDefault(SINCE, null);
         return new Deprecated(message, since);
     }
 

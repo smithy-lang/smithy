@@ -78,7 +78,7 @@ public class RuleEvaluator implements ExpressionVisitor<Value> {
      * @return the value returned by the condition.
      */
     public Value evaluateCondition(Condition condition) {
-        Value value = condition.getFn().accept(this);
+        Value value = condition.getFunction().accept(this);
         if (!value.isEmpty()) {
             condition.getResult().ifPresent(res -> scope.insert(res, value));
         }

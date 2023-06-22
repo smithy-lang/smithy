@@ -8,7 +8,7 @@
 // while typechecking "{region}.amazonaws.com"
 // while typechecking the template `"{region}.amazonaws.com"`
 // while checking {region}
-// Expected string but found OptionalType<StringType>. hint: use `assign` in a condition or `isSet` to prove that this value is non-null
+// Expected string but found OptionalType[StringType]. hint: use `assign` in a condition or `isSet` to prove that this value is non-null
 {
   "version": "1.2",
   "parameters": {

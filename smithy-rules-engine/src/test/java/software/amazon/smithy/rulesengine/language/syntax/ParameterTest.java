@@ -12,7 +12,7 @@ import software.amazon.smithy.rulesengine.language.syntax.parameters.ParameterTy
 
 public class ParameterTest {
     @Test
-    void parameterToBuilderRoundTrips() {
+    public void parameterToBuilderRoundTrips() {
         Parameter p = Parameter.builder()
                 .name("test")
                 .builtIn("Test::BuiltIn")

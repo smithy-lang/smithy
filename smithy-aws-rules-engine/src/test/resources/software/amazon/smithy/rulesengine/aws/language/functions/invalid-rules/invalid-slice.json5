@@ -1,0 +1,47 @@
+// when parsing endpoint ruleset
+// while typechecking `bucket is set, handle bucket specific endpoints`
+//   at invalid-rules/invalid-slice.json5:20
+// while typechecking the endpoint
+//   at invalid-rules/invalid-slice.json5:41
+// while checking the URL
+//   at invalid-rules/invalid-slice.json5:42
+// while typechecking "{bucketArn#accountId}.{bucketArn#resourceId[2]}.{bucketArn#region}"
+// while typechecking the template `"{bucketArn#accountId}.{bucketArn#resourceId[2]}.{bucketArn#region}"`
+// while checking {bucketArn#resourceId[2]}
+// Expected string but found OptionalType[StringType]. hint: use `assign` in a condition or `isSet` to prove that this value is non-null
+{
+  "version": "1.2",
+  "parameters": {
+    "Bucket": {
+      "type": "string"
+    }
+  },
+  "rules": [
+    {
+      "documentation": "bucket is set, handle bucket specific endpoints",
+      "conditions": [
+        {
+          "fn": "isSet",
+          "argv": [
+            {
+              "ref": "Bucket"
+            }
+          ]
+        },
+        {
+          "fn": "aws.parseArn",
+          "argv": [
+            {
+              "ref": "Bucket"
+            }
+          ],
+          "assign": "bucketArn"
+        }
+      ],
+      "endpoint": {
+        "url": "{bucketArn#accountId}.{bucketArn#resourceId[2]}.{bucketArn#region}"
+      },
+      "type": "endpoint"
+    }
+  ]
+}

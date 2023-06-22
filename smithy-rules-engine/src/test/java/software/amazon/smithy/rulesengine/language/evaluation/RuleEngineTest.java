@@ -12,9 +12,9 @@ import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.utils.MapUtils;
 
-class RuleEngineTest {
+public class RuleEngineTest {
     @Test
-    void testRuleEval() {
+    public void testRuleEval() {
         EndpointRuleSet actual = TestRunnerTest.getMinimalEndpointRuleSet();
         Value result = RuleEvaluator.evaluate(actual, MapUtils.of(Identifier.of("Region"),
                 Value.stringValue("us-east-1")));
