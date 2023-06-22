@@ -7,7 +7,6 @@
 * Added enum values to ids for `ChangedEnumTrait` diff events ([#1807](https://github.com/awslabs/smithy/pull/1807))
 * Added `init` command to Smithy CLI ([#1802](https://github.com/awslabs/smithy/pull/1802), [#1825](https://github.com/awslabs/smithy/pull/1825), [#1832](https://github.com/awslabs/smithy/pull/1832))
 * Added `smithy-syntax` package and `smithy format` command to Smithy CLI ([#1830](https://github.com/awslabs/smithy/pull/1830))
-* Added validator to check consistency of resource name used for `IamResource` ([#1819](https://github.com/awslabs/smithy/pull/1819))
 
 ### Bug Fixes
 * Fixed duplicated events for `ChangedNullability` alongside the `AddedInputTrait / RemovedInputTrait` ([#1806](https://github.com/awslabs/smithy/pull/1806))
