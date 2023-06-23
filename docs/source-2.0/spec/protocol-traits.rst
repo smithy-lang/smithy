@@ -219,7 +219,7 @@ Smithy defines the following built-in timestamp formats:
     * - date-time
       - Date time as defined by the ``date-time`` production in
         :rfc:`3339#section-5.6`
-        with no UTC offset and optional fractional precision (for example,
+        with optional fractional precision but no UTC offset (for example,
         ``1985-04-12T23:20:50.52Z``).
         *However*, offsets are parsed gracefully, but the datetime is normalized
         to an offset of zero by converting to UTC.
