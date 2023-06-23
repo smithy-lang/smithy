@@ -339,7 +339,11 @@ of the <code class="docutils literal notranslate"><span class="pre">awsQuery</sp
 </dl>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
-<p class="last">This protocol does not support document types.</p>
+<ul class="last simple">
+<li>This protocol does not support document types.</li>
+<li>This protocol does not support <a class="reference internal" href="../../spec/http-bindings.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a>.
+HTTP binding traits MUST be ignored if they are present.</li>
+</ul>
 </div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
 

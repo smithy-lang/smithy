@@ -419,14 +419,16 @@ with the <a class="reference internal" href="../spec/type-refinement-traits.html
 with the <a class="reference internal" href="../spec/type-refinement-traits.html#clientoptional-trait"><span class="std std-ref">clientOptional trait</span></a>.</li>
 <li>Removing the <a class="reference internal" href="../spec/type-refinement-traits.html#clientoptional-trait"><span class="std std-ref">clientOptional trait</span></a> from a member that is marked as
 <code class="docutils literal notranslate"><span class="pre">required</span></code>.</li>
+<li>Adding or updating <a class="reference internal" href="../spec/constraint-traits.html#constraint-traits"><span class="std std-ref">constraint traits</span></a>
+that further restricts the allowed values of a member.</li>
 </ol>
 </div>
 <div class="section" id="booleans-and-api-evolution">
 <h2>Booleans and API evolution<a class="headerlink" href="#booleans-and-api-evolution" title="Permalink to this headline">#</a></h2>
 <p>A boolean shape is often used to model state flags; however, consider whether
 or not the state of a resource is actually binary. If other states can be
-added in the future, it is often better to use a string shape with an
-<a class="reference internal" href="../spec/constraint-traits.html#enum-trait"><span class="std std-ref">enum trait</span></a> or a union shape.</p>
+added in the future, it is often better to use a <a class="reference internal" href="../spec/simple-types.html#enum"><span class="std std-ref">enum shape</span></a>
+or a <a class="reference internal" href="../spec/aggregate-types.html#union"><span class="std std-ref">union shape</span></a>.</p>
 </div>
 <div class="section" id="updating-unions">
 <h2>Updating unions<a class="headerlink" href="#updating-unions" title="Permalink to this headline">#</a></h2>

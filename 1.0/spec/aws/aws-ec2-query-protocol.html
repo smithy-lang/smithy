@@ -316,7 +316,11 @@ of the <code class="docutils literal notranslate"><span class="pre">awsQuery</sp
 </dl>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
-<p class="last">This protocol does not support document types.</p>
+<ul class="last simple">
+<li>This protocol does not support document types.</li>
+<li>This protocol does not support <a class="reference internal" href="../core/http-traits.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a>.
+HTTP binding traits MUST be ignored if they are present.</li>
+</ul>
 </div>
 <div class="sphinx-tabs docutils container">
 <div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>

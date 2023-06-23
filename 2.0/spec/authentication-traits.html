@@ -576,9 +576,18 @@ of the authentication schemes applied via the <code class="docutils literal notr
 service.</li>
 <li><code class="docutils literal notranslate"><span class="pre">OperationD</span></code> is annotated with the <code class="docutils literal notranslate"><span class="pre">auth</span></code> trait and defines an explicit
 list of authentication schemes.</li>
+<li><code class="docutils literal notranslate"><span class="pre">OperationE</span></code> has authentication disabled by setting the <code class="docutils literal notranslate"><span class="pre">auth</span></code> trait
+value on the operation to an empty list, <code class="docutils literal notranslate"><span class="pre">[]</span></code>.</li>
 </ul>
 </li>
 </ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Disabling authentication for an operation is distinct from applying the
+<a class="reference internal" href="#optionalauth-trait"><span class="std std-ref">&#64;optionalAuth</span></a> trait to an operation. An
+operation with the <code class="docutils literal notranslate"><span class="pre">&#64;optionalAuth</span></code> trait must be callable both with and
+without authentication.</p>
+</div>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpBasicAuth</span><span class="w"></span>
 <span class="nt">@httpDigestAuth</span><span class="w"></span>
 <span class="nt">@httpBearerAuth</span><span class="w"></span>
@@ -610,6 +619,7 @@ list of authentication schemes.</li>
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
 <span class="w">        </span><span class="vc">OperationC</span><span class="w"></span>
 <span class="w">        </span><span class="vc">OperationD</span><span class="w"></span>
+<span class="w">        </span><span class="vc">OperationE</span><span class="w"></span>
 <span class="w">    </span>]<span class="w"></span>
 }<span class="w"></span>
 
@@ -623,6 +633,11 @@ list of authentication schemes.</li>
 <span class="c">// supports are: httpBearerAuth</span><span class="w"></span>
 <span class="nt">@auth</span>([<span class="vc">httpBearerAuth</span>])<span class="w"></span>
 <span class="kd">operation </span><span class="nc">OperationD</span><span class="w"> </span>{}<span class="w"></span>
+
+<span class="c">// This operation has the @auth trait and is bound to a service with the</span><span class="w"></span>
+<span class="c">// @auth trait. This operation does not support any authentication schemes.</span><span class="w"></span>
+<span class="nt">@auth</span>([])<span class="w"></span>
+<span class="kd">operation </span><span class="nc">OperationE</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
 <p>The following <code class="docutils literal notranslate"><span class="pre">auth</span></code> trait is invalid because it references an
