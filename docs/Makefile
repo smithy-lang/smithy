@@ -22,6 +22,6 @@ merge-versions:
 	mkdir -p build/html
 	cp -R "build/1.0/html" "build/html/1.0"
 	cp -R "build/2.0/html" "build/html/2.0"
-	cp -R "root-redirects/" "build/html"
+	cp -R "root/" "build/html"
 
 .PHONY: Makefile clean
