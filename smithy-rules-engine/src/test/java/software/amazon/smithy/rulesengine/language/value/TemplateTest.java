@@ -37,11 +37,11 @@ public class TemplateTest {
     @Test
     public void validateShortformParsing() {
         assertEquals(Expression.parseShortform("a", SourceLocation.none()), Expression.getReference(Identifier.of("a"), SourceLocation.none()));
-        assertEquals(Expression.parseShortform("a#b", SourceLocation.none()), new GetAttr.Definition()
+        assertEquals(Expression.parseShortform("a#b", SourceLocation.none()), GetAttr.getDefinition()
                 .createFunction(FunctionNode.ofExpressions(GetAttr.ID,
                         Expression.getReference(Identifier.of("a"), SourceLocation.none()),
                         Expression.of("b"))));
-        assertEquals(Expression.parseShortform("a#b.c", SourceLocation.none()), new GetAttr.Definition()
+        assertEquals(Expression.parseShortform("a#b.c", SourceLocation.none()), GetAttr.getDefinition()
                 .createFunction(FunctionNode.ofExpressions(GetAttr.ID,
                         Expression.getReference(Identifier.of("a"), SourceLocation.none()),
                         Expression.of("b.c"))));

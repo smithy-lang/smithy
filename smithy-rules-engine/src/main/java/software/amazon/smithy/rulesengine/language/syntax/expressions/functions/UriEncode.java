@@ -52,6 +52,8 @@ public final class UriEncode extends LibraryFunction {
                 "%7E", "~"
         );
 
+        private Definition() {}
+
         @Override
         public String getId() {
             return ID;

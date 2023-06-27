@@ -65,7 +65,7 @@ public final class Partition implements ToSmithyBuilder<Partition>, FromSourceLo
         ObjectNode objectNode = node.expectObjectNode();
         objectNode.expectObjectNode().expectNoAdditionalProperties(PROPERTIES);
 
-        objectNode.getStringMember(ID, builder::id);
+        objectNode.expectStringMember(ID, builder::id);
         objectNode.getStringMember(REGION_REGEX, builder::regionRegex);
         objectNode.getObjectMember(REGIONS, regionsNode -> regionsNode.getMembers().forEach((k, v) ->
                 builder.putRegion(k.toString(), RegionOverride.fromNode(v))));

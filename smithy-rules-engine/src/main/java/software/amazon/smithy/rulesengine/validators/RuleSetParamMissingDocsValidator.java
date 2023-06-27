@@ -34,7 +34,7 @@ public final class RuleSetParamMissingDocsValidator extends AbstractValidator {
         for (Parameter parameter : ruleSet.getParameters()) {
             if (!parameter.getDocumentation().isPresent()) {
                 events.add(warning(serviceShape, parameter,
-                        String.format("Parameter `%s` did not have documentation", parameter.getName())));
+                        String.format("Parameter `%s` does not have documentation", parameter.getName())));
             }
         }
         return events;
