@@ -53,15 +53,7 @@ apply ExampleService @endpointRuleSet({
             ],
             "endpoint": {
                 "url": "https://example.com",
-                "properties": {
-                    "authSchemes": [
-                        {
-                            "name": "sigv4",
-                            "signingName": "example",
-                            "signingRegion": "us-west-2"
-                        }
-                    ]
-                },
+                "properties": {},
                 "headers": {
                     "single": ["foo"],
                     "multi": ["foo", "bar", "baz"]
@@ -130,15 +122,7 @@ apply ExampleService @endpointTests({
             "expect": {
                 "endpoint": {
                     "url": "https://example.com",
-                    "properties": {
-                        "authSchemes": [
-                            {
-                                "name": "sigv4",
-                                "signingName": "example",
-                                "signingRegion": "us-west-2"
-                            }
-                        ]
-                    },
+                    "properties": {},
                     "headers": {
                         "single": ["foo"],
                         "multi": ["foo", "bar", "baz"]

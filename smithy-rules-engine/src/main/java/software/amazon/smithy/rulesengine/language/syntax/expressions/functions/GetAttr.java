@@ -49,6 +49,15 @@ public final class GetAttr extends LibraryFunction {
     }
 
     /**
+     * Gets the {@link FunctionDefinition} implementation.
+     *
+     * @return the function definition.
+     */
+    public static Definition getDefinition() {
+        return DEFINITION;
+    }
+
+    /**
      * Parses the path argument to getAttr.
      *
      * @param path           path argument in the form `a.b[5]`

@@ -62,13 +62,7 @@ public final class EndpointTestsTest {
                 .expect(EndpointTestExpectation.builder()
                         .endpoint(ExpectedEndpoint.builder()
                                 .url("https://example.com")
-                                .properties(MapUtils.of(
-                                        "authSchemes", ArrayNode.arrayNode(ObjectNode.builder()
-                                                .withMember("name", "sigv4")
-                                                .withMember("signingName", "example")
-                                                .withMember("signingRegion", "us-west-2")
-                                                .build())
-                                ))
+                                .properties(MapUtils.of())
                                 .headers(MapUtils.of(
                                         "single", ListUtils.of("foo"),
                                         "multi", ListUtils.of("foo", "bar", "baz")

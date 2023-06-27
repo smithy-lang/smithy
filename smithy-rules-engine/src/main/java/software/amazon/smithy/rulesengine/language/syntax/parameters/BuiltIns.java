@@ -5,10 +5,6 @@
 
 package software.amazon.smithy.rulesengine.language.syntax.parameters;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
-import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -16,46 +12,6 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  */
 @SmithyUnstableApi
 public final class BuiltIns {
-    /**
-     * Built-in parameter representing Region eg. `us-east-1`.
-     */
-    public static final Parameter REGION =
-            Parameter.builder()
-                    .name("Region")
-                    .type(ParameterType.STRING)
-                    .builtIn("AWS::Region")
-                    .documentation("The AWS region used to dispatch the request.")
-                    .build();
-    /**
-     * Built-in parameter representing the DualStack parameter for SDKs.
-     */
-    public static final Parameter DUALSTACK =
-            Parameter.builder()
-                    .name("UseDualStack")
-                    .type(ParameterType.BOOLEAN)
-                    .builtIn("AWS::UseDualStack")
-                    .documentation(
-                            "When true, use the dual-stack endpoint. If the configured endpoint does not support "
-                                    + "dual-stack, dispatching the request MAY return an error.")
-                    .required(true)
-                    .defaultValue(Value.booleanValue(false))
-                    .build();
-
-    /**
-     * Built-in parameter representing whether the endpoint must be FIPS-compliant.
-     */
-    public static final Parameter FIPS =
-            Parameter.builder()
-                    .name("UseFIPS")
-                    .type(ParameterType.BOOLEAN)
-                    .builtIn("AWS::UseFIPS")
-                    .documentation("When true, send this request to the FIPS-compliant regional endpoint. If the "
-                            + "configured endpoint does not have a FIPS compliant endpoint, dispatching "
-                            + "the request will return an error.")
-                    .required(true)
-                    .defaultValue(Value.booleanValue(false))
-                    .build();
-
     /**
      * Built-in parameter that enables a customer to wholesale override the URL used by the SDK.
      */
@@ -67,137 +23,5 @@ public final class BuiltIns {
                     .builtIn("SDK::Endpoint")
                     .build();
 
-    /**
-     * This MUST only be used by the S3 rules.
-     */
-    public static final Parameter S3_FORCE_PATH_STYLE =
-            Parameter.builder()
-                    .type(ParameterType.BOOLEAN)
-                    .name("ForcePathStyle")
-                    .builtIn("AWS::S3::ForcePathStyle")
-                    .documentation(
-                            "When true, force a path-style endpoint to be used where the bucket name is part of the "
-                                    + "path.")
-                    .build();
-    /**
-     * This MUST only be used by the S3 rules.
-     */
-    public static final Parameter S3_ACCELERATE =
-            Parameter.builder()
-                    .type(ParameterType.BOOLEAN)
-                    .name("Accelerate")
-                    .builtIn("AWS::S3::Accelerate")
-                    .required(true)
-                    .defaultValue(Value.booleanValue(false))
-                    .documentation(
-                            "When true, use S3 Accelerate. NOTE: Not all regions support S3 accelerate.")
-                    .build();
-
-    /**
-     * This MUST only be used by the S3 rules.
-     */
-    public static final Parameter S3_USE_ARN_REGION =
-            Parameter.builder()
-                    .type(ParameterType.BOOLEAN)
-                    .name("UseArnRegion")
-                    .builtIn("AWS::S3::UseArnRegion")
-                    .documentation(
-                            "When an Access Point ARN is provided and this flag is enabled, the SDK MUST"
-                                    + " use the ARN's region when constructing the endpoint instead"
-                                    + " of the client's configured region.")
-                    .build();
-
-    /**
-     * This MUST only be used by the S3Control rules.
-     */
-    public static final Parameter S3_CONTROL_USE_ARN_REGION =
-            Parameter.builder()
-                    .type(ParameterType.BOOLEAN)
-                    .name("UseArnRegion")
-                    .builtIn("AWS::S3Control::UseArnRegion")
-                    .documentation(
-                            "When an Access Point ARN is provided and this flag is enabled, the SDK MUST"
-                                    + " use the ARN's region when constructing the endpoint instead"
-                                    + " of the client's configured region.")
-                    .build();
-
-    /**
-     * This MUST only be used by the S3 rules.
-     */
-    public static final Parameter S3_USE_GLOBAL_ENDPOINT =
-            Parameter.builder()
-                    .type(ParameterType.BOOLEAN)
-                    .name("UseGlobalEndpoint")
-                    .builtIn("AWS::S3::UseGlobalEndpoint")
-                    .required(true)
-                    .defaultValue(Value.booleanValue(false))
-                    .documentation("Whether the global endpoint should be used, rather then "
-                            + "the regional endpoint for us-east-1.")
-                    .build();
-
-    /**
-     * This MUST only be used by the S3 rules.
-     */
-    public static final Parameter S3_DISABLE_MRAP =
-            Parameter.builder()
-                    .type(ParameterType.BOOLEAN)
-                    .name("DisableMultiRegionAccessPoints")
-                    .builtIn("AWS::S3::DisableMultiRegionAccessPoints")
-                    .required(true)
-                    .defaultValue(Value.booleanValue(false))
-                    .documentation("Whether multi-region access points (MRAP) should be disabled.")
-                    .build();
-
-    /**
-     * This MUST only be used by the STS rules.
-     */
-    public static final Parameter STS_USE_GLOBAL_ENDPOINT =
-            Parameter.builder()
-                    .type(ParameterType.BOOLEAN)
-                    .name("UseGlobalEndpoint")
-                    .builtIn("AWS::STS::UseGlobalEndpoint")
-                    .required(true)
-                    .defaultValue(Value.booleanValue(false))
-                    .documentation("Whether the global endpoint should be used, rather then "
-                            + "the regional endpoint for us-east-1.")
-                    .build();
-
-    private static final Map<String, Parameter> ALL_BUILTINS;
-
-    static {
-        Map<String, Parameter> tempMap = new LinkedHashMap<>();
-        tempMap.put(SDK_ENDPOINT.getBuiltIn().get(), SDK_ENDPOINT);
-        tempMap.put(REGION.getBuiltIn().get(), REGION);
-        tempMap.put(FIPS.getBuiltIn().get(), FIPS);
-        tempMap.put(DUALSTACK.getBuiltIn().get(), DUALSTACK);
-        tempMap.put(S3_ACCELERATE.getBuiltIn().get(), S3_ACCELERATE);
-        tempMap.put(S3_FORCE_PATH_STYLE.getBuiltIn().get(), S3_FORCE_PATH_STYLE);
-        tempMap.put(S3_USE_ARN_REGION.getBuiltIn().get(), S3_USE_ARN_REGION);
-        tempMap.put(S3_USE_GLOBAL_ENDPOINT.getBuiltIn().get(), S3_USE_GLOBAL_ENDPOINT);
-        tempMap.put(S3_CONTROL_USE_ARN_REGION.getBuiltIn().get(), S3_CONTROL_USE_ARN_REGION);
-        tempMap.put(STS_USE_GLOBAL_ENDPOINT.getBuiltIn().get(), STS_USE_GLOBAL_ENDPOINT);
-        tempMap.put(S3_DISABLE_MRAP.getBuiltIn().get(), S3_DISABLE_MRAP);
-        ALL_BUILTINS = MapUtils.copyOf(tempMap);
-    }
-
     private BuiltIns() {}
-
-    /**
-     * Returns true if a built-in of the provided name has been registered.
-     *
-     * @param name the name of the built-in to check for.
-     * @return true if the built-in is present, false otherwise.
-     */
-    public static boolean containsBuiltIn(String name) {
-        return ALL_BUILTINS.containsKey(name);
-    }
-
-    /**
-     * Gets the built-in names as a joined string.
-     *
-     * @return a string of the built-in names.
-     */
-    public static String getKeyString() {
-        return String.join(", ", ALL_BUILTINS.keySet());
-    }
 }

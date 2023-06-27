@@ -2,97 +2,86 @@ $version: "2.0"
 
 namespace example
 
+use smithy.rules#clientContextParams
 use smithy.rules#endpointRuleSet
 use smithy.rules#endpointTests
 
-@endpointRuleSet({
-  "parameters": {
-    "Region": {
-      "type": "string",
-      "builtIn": "AWS::Region",
-      "documentation": "The region to dispatch this request, eg. `us-east-1`.",
-      "default": "us-west-5",
-      "required": true
-    },
-    "UseFips": {
-      "type": "boolean",
-      "builtIn": "AWS::UseFIPS",
-      "default": true,
-      "required": true,
-      "documentation": "docs"
-    }
-  },
-  "rules": [
-    {
-      "documentation": "Template the region into the URI when FIPS is enabled",
-      "conditions": [
-        {
-          "fn": "booleanEquals",
-          "argv": [
-            {
-              "ref": "UseFips"
-            },
-            true
-          ]
-        }
-      ],
-      "endpoint": {
-        "url": "https://fips.{Region}.amazonaws.com"
-      },
-      "type": "endpoint"
-    },
-    {
-      "documentation": "error when fips is disabled",
-      "conditions": [],
-      "error": "UseFips = false",
-      "type": "error"
-    }
-  ],
-  "version": "1.3"
-})
-@endpointTests(
-  "version": "1.0",
-  "testCases": [
-    {
-      "documentation": "default endpoint",
-      "params": {},
-      "expect": {
-        "endpoint": {
-          "url": "https://fips.us-west-5.amazonaws.com"
-        }
-      }
-    },
-    {
-      "documentation": "test case where FIPS is disabled",
-      "params": {
-        "UseFips": false
-      },
-      "expect": {
-        "error": "UseFips = false"
-      }
-    },
-    {
-      "documentation": "test case where FIPS is enabled explicitly",
-      "params": {
-        "UseFips": true
-      },
-      "expect": {
-        "endpoint": {
-          "url": "https://fips.us-west-5.amazonaws.com"
-        }
-      }
-    },
-    {
-      "documentation": "defaults can be overridden",
-      "params": {
-        "Region": "us-east-1"
-      },
-      "expect": {
-        "endpoint": {
-          "url": "https://fips.us-east-1.amazonaws.com"
-        }
-      }
-    }
-  ]
+@clientContextParams(
+    bar: {type: "string", documentation: "a client string parameter"}
 )
-service FizzBuzz {}
+@endpointRuleSet({
+    version: "1.0",
+    parameters: {
+        bar: {
+            type: "string",
+            documentation: "docs"
+        },
+        endpoint: {
+            type: "string",
+            builtIn: "SDK::Endpoint",
+            required: true,
+            default: "asdf"
+            documentation: "docs"
+        },
+    },
+    rules: [
+        {
+            "documentation": "Template the region into the URI when FIPS is enabled",
+            "conditions": [
+                {
+                    "fn": "isSet",
+                    "argv": [
+                        {
+                            "ref": "bar"
+                        }
+                    ]
+                }
+            ],
+            "endpoint": {
+                "url": "https://example.com"
+            },
+            "type": "endpoint"
+        },
+        {
+            "conditions": [],
+            "documentation": "error fallthrough",
+            "error": "endpoint error",
+            "type": "error"
+        }
+    ]
+})
+@endpointTests({
+    "version": "1.0",
+    "testCases": [
+        {
+            "params": {
+                "bar": "a b",
+            }
+            "operationInputs": [{
+                "operationName": "GetThing",
+                "builtInParams": {
+                    "SDK::Endpoint": "https://custom.example.com"
+                }
+            }],
+            "expect": {
+                "endpoint": {
+                    "url": "https://example.com"
+                }
+            }
+        },
+        {
+            "documentation": "a documentation string",
+            "expect": {
+                "error": "endpoint error"
+            }
+        }
+    ]
+})
+service FizzBuzz {
+    version: "2022-01-01",
+    operations: [GetThing]
+}
+
+operation GetThing {
+    input := {}
+}

@@ -2,6 +2,7 @@ $version: "1.0"
 
 namespace example
 
+use smithy.rules#clientContextParams
 use smithy.rules#contextParam
 use smithy.rules#endpointRuleSet
 use smithy.rules#staticContextParams
@@ -11,7 +12,6 @@ use smithy.rules#staticContextParams
     "parameters": {
         "Region": {
             "type": "string",
-            "builtIn": "AWS::Region",
             "documentation": "docs"
         },
         "ParameterFoo": {
@@ -29,6 +29,9 @@ use smithy.rules#staticContextParams
     },
     "rules": []
 })
+@clientContextParams(
+    Region: {type: "string", documentation: "docs"}
+)
 service FizzBuzz {
  operations: [GetResource, GetAnotherResource]
 }

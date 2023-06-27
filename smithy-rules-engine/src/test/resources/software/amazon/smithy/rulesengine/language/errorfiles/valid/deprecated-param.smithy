@@ -2,13 +2,13 @@ $version: "2.0"
 
 namespace example
 
+use smithy.rules#clientContextParams
 use smithy.rules#endpointRuleSet
 
 @endpointRuleSet({
   "parameters": {
     "Region": {
       "type": "string",
-      "builtIn": "AWS::Region",
       "required": false,
       "deprecated": {
         "message": "use blahdeblah region instead"
@@ -31,19 +31,14 @@ use smithy.rules#endpointRuleSet
       ],
       "endpoint": {
         "url": "https://{Region}.amazonaws.com",
-        "properties": {
-          "authSchemes": [
-            {
-              "name": "sigv4",
-              "signingName": "serviceName",
-              "signingRegion": "{Region}"
-            }
-          ]
-        }
+        "properties": {}
       },
       "type": "endpoint"
     }
   ],
   "version": "1.3"
 })
+@clientContextParams(
+  Region: {type: "string", documentation: "docs"}
+)
 service FizzBuzz {}
