@@ -82,7 +82,7 @@ public abstract class Expression implements FromSourceLocation, ToNode, TypeChec
             if (ref.isPresent()) {
                 return getReference(Identifier.of(ref.get().expectStringNode("ref must be a string")), ref.get());
             }
-            return context("while parsing fn", node, () -> FunctionNode.fromNode(on).validate());
+            return context("while parsing fn", node, () -> FunctionNode.fromNode(on).createFunction());
         } else {
             return Literal.fromNode(node);
         }

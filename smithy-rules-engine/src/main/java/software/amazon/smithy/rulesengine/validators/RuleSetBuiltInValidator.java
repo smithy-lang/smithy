@@ -16,7 +16,6 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
-import software.amazon.smithy.rulesengine.language.syntax.parameters.BuiltIns;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
 import software.amazon.smithy.rulesengine.traits.EndpointTestCase;
@@ -76,10 +75,10 @@ public final class RuleSetBuiltInValidator extends AbstractValidator {
             FromSourceLocation source,
             String... eventIdSuffixes
     ) {
-        if (!BuiltIns.containsBuiltIn(builtInName)) {
+        if (!EndpointRuleSet.hasBuiltIn(builtInName)) {
             return Optional.of(error(serviceShape, source, String.format(
                             "The `%s` built-in used is not registered, valid built-ins: %s",
-                            builtInName, BuiltIns.getKeyString()),
+                            builtInName, EndpointRuleSet.getKeyString()),
                     String.join(".", Arrays.asList(eventIdSuffixes))));
         }
         return Optional.empty();

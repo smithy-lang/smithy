@@ -24,6 +24,15 @@ public final class BooleanEquals extends LibraryFunction {
         super(DEFINITION, functionNode);
     }
 
+    /**
+     * Gets the {@link FunctionDefinition} implementation.
+     *
+     * @return the function definition.
+     */
+    public static Definition getDefinition() {
+        return DEFINITION;
+    }
+
     @Override
     public <R> R accept(ExpressionVisitor<R> visitor) {
         return visitor.visitBoolEquals(functionNode.getArguments().get(0), functionNode.getArguments().get(1));

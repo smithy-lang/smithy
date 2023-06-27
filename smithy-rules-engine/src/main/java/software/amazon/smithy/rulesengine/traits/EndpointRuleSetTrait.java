@@ -23,12 +23,11 @@ public final class EndpointRuleSetTrait extends AbstractTrait implements ToSmith
     public static final ShapeId ID = ShapeId.from("smithy.rules#endpointRuleSet");
 
     private final Node ruleSet;
-    private final EndpointRuleSet endpointRuleSet;
+    private EndpointRuleSet endpointRuleSet;
 
     private EndpointRuleSetTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
-        this.ruleSet = SmithyBuilder.requiredState("ruleSet", builder.ruleSet);
-        this.endpointRuleSet = EndpointRuleSet.fromNode(ruleSet);
+        ruleSet = SmithyBuilder.requiredState("ruleSet", builder.ruleSet);
     }
 
     public static Builder builder() {
@@ -40,6 +39,11 @@ public final class EndpointRuleSetTrait extends AbstractTrait implements ToSmith
     }
 
     public EndpointRuleSet getEndpointRuleSet() {
+        // EndpointRuleSet creation loads an SPI of functions, builtins, and more.
+        // That work is deferred until necessary, usually when a ruleset is being validated.
+        if (endpointRuleSet == null) {
+            endpointRuleSet = EndpointRuleSet.fromNode(ruleSet);
+        }
         return endpointRuleSet;
     }
 

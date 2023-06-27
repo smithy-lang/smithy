@@ -58,7 +58,7 @@ public final class Condition implements TypeCheck, FromSourceLocation, ToNode {
         Builder builder = new Builder();
         ObjectNode objectNode = node.expectObjectNode("condition must be an object node");
 
-        builder.fn(FunctionNode.fromNode(objectNode).validate());
+        builder.fn(FunctionNode.fromNode(objectNode).createFunction());
         // This needs to go directly through the node to maintain source locations.
         if (objectNode.containsMember(ASSIGN)) {
             builder.result(Identifier.of(objectNode.expectStringMember(ASSIGN)));

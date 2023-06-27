@@ -7,9 +7,15 @@ package software.amazon.smithy.rulesengine.language;
 
 import static software.amazon.smithy.rulesengine.language.error.RuleError.context;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.ServiceLoader;
+import java.util.function.Function;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.ArrayNode;
@@ -20,9 +26,14 @@ import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.TypeCheck;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionDefinition;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.LibraryFunction;
+import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
+import software.amazon.smithy.rulesengine.validators.AuthSchemeValidator;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -38,6 +49,11 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
     private static final String VERSION = "version";
     private static final String PARAMETERS = "parameters";
     private static final String RULES = "rules";
+
+    private static boolean loaded = false;
+    private static final Map<String, Parameter> BUILT_INS = new HashMap<>();
+    private static final Map<String, FunctionDefinition> FUNCTIONS = new HashMap<>();
+    private static final List<AuthSchemeValidator> AUTH_SCHEME_VALIDATORS = new ArrayList<>();
 
     private final Parameters parameters;
     private final List<Rule> rules;
@@ -68,6 +84,7 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
      * @return the created EndpointRuleSet.
      */
     public static EndpointRuleSet fromNode(Node node) throws RuleError {
+        loadExtensions();
         return RuleError.context("when parsing endpoint ruleset", () -> {
             ObjectNode objectNode = node.expectObjectNode("The root of a ruleset must be an object");
 
@@ -172,6 +189,77 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
         builder.append("rules: \n");
         rules.forEach(rule -> builder.append(StringUtils.indent(rule.toString(), 2)));
         return builder.toString();
+    }
+
+    private static void loadExtensions() {
+        if (loaded) {
+            return;
+        }
+        loaded = true;
+
+        for (EndpointRuleSetExtension extension : ServiceLoader.load(EndpointRuleSetExtension.class)) {
+            String name;
+            for (Parameter builtIn : extension.getBuiltIns()) {
+                name = builtIn.getBuiltIn().get();
+                if (BUILT_INS.containsKey(name)) {
+                    throw new RuntimeException("Attempted to load a duplicate built-in parameter: " + name);
+                }
+                BUILT_INS.put(name, builtIn);
+            }
+
+            for (FunctionDefinition functionDefinition : extension.getLibraryFunctions()) {
+                name = functionDefinition.getId();
+                if (FUNCTIONS.containsKey(name)) {
+                    throw new RuntimeException("Attempted to load a duplicate library function: " + name);
+                }
+                FUNCTIONS.put(name, functionDefinition);
+            }
+
+            AUTH_SCHEME_VALIDATORS.addAll(extension.getAuthSchemeValidators());
+        }
+    }
+
+
+    /**
+     * Returns true if a built-in of the provided name has been registered.
+     *
+     * @param name the name of the built-in to check for.
+     * @return true if the built-in is present, false otherwise.
+     */
+    public static boolean hasBuiltIn(String name) {
+        return BUILT_INS.containsKey(name);
+    }
+
+    /**
+     * Gets the built-in names as a joined string.
+     *
+     * @return a string of the built-in names.
+     */
+    public static String getKeyString() {
+        return String.join(", ", BUILT_INS.keySet());
+    }
+
+    /**
+     * Creates a {@link LibraryFunction} factory function using the loaded function definitions.
+     *
+     * @return the created factory.
+     */
+    public static Function<FunctionNode, Optional<LibraryFunction>> createFunctionFactory() {
+        return node -> {
+            if (FUNCTIONS.containsKey(node.getName())) {
+                return Optional.of(FUNCTIONS.get(node.getName()).createFunction(node));
+            }
+            return Optional.empty();
+        };
+    }
+
+    /**
+     * Gets loaded authentication scheme validators.
+     *
+     * @return a list of {@link AuthSchemeValidator}s.
+     */
+    public static List<AuthSchemeValidator> getAuthSchemeValidators() {
+        return AUTH_SCHEME_VALIDATORS;
     }
 
     /**
