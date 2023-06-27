@@ -58,7 +58,7 @@ public final class CoverageChecker {
     }
 
     /**
-     * Analyze and provides the coverage results for the rule-set.
+     * Analyze coverage for the rule-set, providing results when coverage is found.
      *
      * @return returns a stream of {@link CoverageResult}.
      */
@@ -78,6 +78,8 @@ public final class CoverageChecker {
     }
 
     private static class CoverageCheckerCore extends RuleEvaluator {
+        // Sets are used to contain results, as coverage is only concerned with both
+        // having coverage or no happening at all for the condition in question.
         private final Map<Condition, Set<Boolean>> results = new LinkedHashMap<>();
 
         private Set<Boolean> getResult(Condition condition) {

@@ -53,6 +53,18 @@ public final class ParseUrl extends LibraryFunction {
      * A {@link FunctionDefinition} for the {@link ParseUrl} function.
      */
     public static final class Definition implements FunctionDefinition {
+        private final Type returnType;
+
+        private Definition() {
+            Map<Identifier, Type> types = new LinkedHashMap<>();
+            types.put(SCHEME, Type.stringType());
+            types.put(AUTHORITY, Type.stringType());
+            types.put(PATH, Type.stringType());
+            types.put(NORMALIZED_PATH, Type.stringType());
+            types.put(IS_IP, Type.booleanType());
+            returnType = Type.optionalType(Type.recordType(types));
+        }
+
         @Override
         public String getId() {
             return ID;
@@ -65,13 +77,7 @@ public final class ParseUrl extends LibraryFunction {
 
         @Override
         public Type getReturnType() {
-            Map<Identifier, Type> types = new LinkedHashMap<>();
-            types.put(SCHEME, Type.stringType());
-            types.put(AUTHORITY, Type.stringType());
-            types.put(PATH, Type.stringType());
-            types.put(NORMALIZED_PATH, Type.stringType());
-            types.put(IS_IP, Type.booleanType());
-            return Type.optionalType(Type.recordType(types));
+            return returnType;
         }
 
         @Override

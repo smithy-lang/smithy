@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,9 +21,9 @@ import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.Pair;
 
 public class IntegrationTest {
-    public static List<Pair<Node, String>> invalidRules() throws IOException {
+    public static List<Pair<Node, String>> invalidRules() throws Exception {
         try (Stream<Path> paths = Files.list(
-                Paths.get(IntegrationTest.class.getResource("invalid-rules").getPath()))
+                Paths.get(IntegrationTest.class.getResource("invalid-rules/").toURI()))
         ) {
             return paths.map(path -> {
                 try {
@@ -40,7 +39,7 @@ public class IntegrationTest {
                         }
                     }
 
-                    return Pair.of(content, String.join("\n", commentLines));
+                    return Pair.of(content, String.join(System.lineSeparator(), commentLines));
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }

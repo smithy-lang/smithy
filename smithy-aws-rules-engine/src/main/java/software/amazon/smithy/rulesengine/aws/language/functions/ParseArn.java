@@ -7,7 +7,9 @@ package software.amazon.smithy.rulesengine.aws.language.functions;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
@@ -56,6 +58,18 @@ public final class ParseArn extends LibraryFunction {
      * A {@link FunctionDefinition} for the {@link ParseArn} function.
      */
     public static final class Definition implements FunctionDefinition {
+        private final Type returnType;
+
+        private Definition() {
+            Map<Identifier, Type> types = new LinkedHashMap<>();
+            types.put(PARTITION, Type.stringType());
+            types.put(SERVICE, Type.stringType());
+            types.put(REGION, Type.stringType());
+            types.put(ACCOUNT_ID, Type.stringType());
+            types.put(RESOURCE_ID, Type.arrayType(Type.stringType()));
+            returnType = Type.optionalType(Type.recordType(types));
+        }
+
         @Override
         public String getId() {
             return ID;
@@ -68,13 +82,7 @@ public final class ParseArn extends LibraryFunction {
 
         @Override
         public Type getReturnType() {
-            return Type.optionalType(Type.recordType(MapUtils.of(
-                    PARTITION, Type.stringType(),
-                    SERVICE, Type.stringType(),
-                    REGION, Type.stringType(),
-                    ACCOUNT_ID, Type.stringType(),
-                    RESOURCE_ID, Type.arrayType(Type.stringType())
-            )));
+            return returnType;
         }
 
         @Override

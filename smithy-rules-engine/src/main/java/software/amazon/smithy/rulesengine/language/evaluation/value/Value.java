@@ -5,6 +5,8 @@
 
 package software.amazon.smithy.rulesengine.language.evaluation.value;
 
+import static java.lang.String.format;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -170,7 +172,7 @@ public abstract class Value implements FromSourceLocation, ToNode {
      * @return returns an array value.
      */
     public ArrayValue expectArrayValue() {
-        throw new RuntimeException("Expected array, found " + this);
+        throw throwTypeMismatch("ArrayType");
     }
 
     /**
@@ -180,7 +182,7 @@ public abstract class Value implements FromSourceLocation, ToNode {
      * @return returns a boolean value.
      */
     public BooleanValue expectBooleanValue() {
-        throw new RuntimeException("Expected bool but was: " + this);
+        throw throwTypeMismatch("BooleanType");
     }
 
     /**
@@ -190,7 +192,7 @@ public abstract class Value implements FromSourceLocation, ToNode {
      * @return returns an endpoint value
      */
     public EndpointValue expectEndpointValue() {
-        throw new RuntimeException("Expected endpoint, found " + this);
+        throw throwTypeMismatch("EndpointType[]");
     }
 
     /**
@@ -200,7 +202,7 @@ public abstract class Value implements FromSourceLocation, ToNode {
      * @return returns an integer value.
      */
     public IntegerValue expectIntegerValue() {
-        throw new RuntimeException("Expected int, found " + this);
+        throw throwTypeMismatch("IntegerType");
     }
 
     /**
@@ -210,7 +212,7 @@ public abstract class Value implements FromSourceLocation, ToNode {
      * @return returns a record value.
      */
     public RecordValue expectRecordValue() {
-        throw new RuntimeException("Expected object but was: " + this);
+        throw throwTypeMismatch("RecordType");
     }
 
     /**
@@ -220,6 +222,11 @@ public abstract class Value implements FromSourceLocation, ToNode {
      * @return returns a string value.
      */
     public StringValue expectStringValue() {
-        throw new RuntimeException("Expected string but was: " + this);
+        throw throwTypeMismatch("StringType");
+    }
+
+    private RuntimeException throwTypeMismatch(String expectedType) {
+        return new RuntimeException(format("Expected `%s` but was `%s` with value: `%s`",
+                expectedType, getType(), this));
     }
 }

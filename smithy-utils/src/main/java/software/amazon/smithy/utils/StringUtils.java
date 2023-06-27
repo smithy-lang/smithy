@@ -1620,6 +1620,6 @@ public final class StringUtils {
         }
         String indent = indentBuilder.toString();
 
-        return stripEnd(indent + string.replace("\n", "\n" + indent), " ");
+        return stripEnd(indent + string.replace(System.lineSeparator(), System.lineSeparator() + indent), " ");
     }
 }

@@ -184,7 +184,9 @@ public final class GetAttr extends LibraryFunction {
     /**
      * A {@link FunctionDefinition} for the {@link GetAttr} function.
      */
-    public static class Definition implements FunctionDefinition {
+    public static final class Definition implements FunctionDefinition {
+        private Definition() {}
+
         @Override
         public String getId() {
             return ID;

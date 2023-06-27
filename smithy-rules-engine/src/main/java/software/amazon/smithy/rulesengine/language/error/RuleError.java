@@ -119,20 +119,20 @@ public final class RuleError extends RuntimeException {
         for (int i = contexts.size() - 1; i >= 0; i--) {
             Pair<String, SourceLocation> context = contexts.get(i);
             message.append(context.left);
-            message.append("\n");
+            message.append(System.lineSeparator());
             if (context.right != SourceLocation.NONE && context.right != lastLoc) {
                 message.append("  at ")
                         .append(context.right.getSourceLocation().getFilename())
                         .append(":")
                         .append(context.right.getSourceLocation().getLine())
-                        .append("\n");
+                        .append(System.lineSeparator());
                 lastLoc = context.right;
             }
         }
 
         message.append(root.getMessageWithoutLocation());
         if (root.getSourceLocation() != SourceLocation.none() && root.getSourceLocation() != lastLoc) {
-            message.append("\n").append("  at ")
+            message.append(System.lineSeparator()).append("  at ")
                     .append(root.getSourceLocation().getFilename())
                     .append(":").append(root.getSourceLocation().getLine());
         }

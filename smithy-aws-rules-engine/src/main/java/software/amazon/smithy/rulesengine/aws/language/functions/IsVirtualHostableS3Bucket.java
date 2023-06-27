@@ -7,6 +7,7 @@ package software.amazon.smithy.rulesengine.aws.language.functions;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.ExpressionVisitor;
@@ -45,6 +46,13 @@ public final class IsVirtualHostableS3Bucket extends LibraryFunction {
      * A {@link FunctionDefinition} for the {@link IsVirtualHostableS3Bucket} function.
      */
     public static final class Definition implements FunctionDefinition {
+        private static final Pattern DOTS_ALLOWED = Pattern.compile("[a-z\\d][a-z\\d\\-.]{1,61}[a-z\\d]");
+        private static final Pattern DOTS_DISALLOWED = Pattern.compile("[a-z\\d][a-z\\d\\-]{1,61}[a-z\\d]");
+        private static final Pattern IP_ADDRESS = Pattern.compile("(\\d+\\.){3}\\d+");
+        private static final Pattern DASH_DOT_SEPARATOR = Pattern.compile(".*[.-]{2}.*");
+
+        private Definition() {}
+
         @Override
         public String getId() {
             return ID;
@@ -66,12 +74,14 @@ public final class IsVirtualHostableS3Bucket extends LibraryFunction {
             boolean allowDots = arguments.get(1).expectBooleanValue().getValue();
             if (allowDots) {
                 return Value.booleanValue(
-                        hostLabel.matches("[a-z\\d][a-z\\d\\-.]{1,61}[a-z\\d]")
-                        && !hostLabel.matches("(\\d+\\.){3}\\d+") // don't allow ip address
-                        && !hostLabel.matches(".*[.-]{2}.*") // don't allow names like bucket-.name or bucket.-name
+                        DOTS_ALLOWED.matcher(hostLabel).matches()
+                        // Don't allow ip address
+                        && !IP_ADDRESS.matcher(hostLabel).matches()
+                        // Don't allow names like bucket-.name or bucket.-name
+                        && !DASH_DOT_SEPARATOR.matcher(hostLabel).matches()
                 );
             } else {
-                return Value.booleanValue(hostLabel.matches("[a-z\\d][a-z\\d\\-]{1,61}[a-z\\d]"));
+                return Value.booleanValue(DOTS_DISALLOWED.matcher(hostLabel).matches());
             }
         }
 

@@ -40,8 +40,7 @@ public class EndpointRuleSetTest {
     @Test
     public void testDeterministicSerde() {
         EndpointRuleSet actual = TestRunnerTest.getMinimalEndpointRuleSet();
-        String asString = IoUtils.readUtf8File(
-                EndpointRuleSetTest.class.getResource("minimal-ruleset.json").getPath());
+        String asString = IoUtils.readUtf8Resource(EndpointRuleSetTest.class, "minimal-ruleset.json");
         assertEquals(Node.prettyPrintJson(Node.parseJsonWithComments(asString)), Node.prettyPrintJson(actual.toNode()));
     }
 

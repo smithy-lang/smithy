@@ -5,17 +5,14 @@
 
 package software.amazon.smithy.rulesengine.aws.language.functions;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ServiceLoader;
 import java.util.regex.Pattern;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.rulesengine.aws.language.functions.partition.Partition;
-import software.amazon.smithy.rulesengine.aws.language.functions.partition.PartitionDataProvider;
 import software.amazon.smithy.rulesengine.aws.language.functions.partition.PartitionOutputs;
 import software.amazon.smithy.rulesengine.aws.language.functions.partition.Partitions;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
@@ -42,7 +39,19 @@ public final class AwsPartition extends LibraryFunction {
     public static final Identifier INFERRED = Identifier.of("inferred");
 
     private static final Definition DEFINITION = new Definition();
-    private static final PartitionData PARTITION_DATA = loadPartitionData();
+    private static final List<Partition> PARTITIONS;
+    private static final Map<String, Partition> REGION_MAP = new HashMap<>();
+
+    static {
+        PARTITIONS = Partitions.fromNode(Node.parse(Partitions.class.getResourceAsStream("partitions.json")))
+                .getPartitions();
+
+        for (Partition partition : PARTITIONS) {
+            for (String region : partition.getRegions().keySet()) {
+                REGION_MAP.put(region, partition);
+            }
+        }
+    }
 
     private AwsPartition(FunctionNode functionNode) {
         super(DEFINITION, functionNode);
@@ -62,37 +71,22 @@ public final class AwsPartition extends LibraryFunction {
         return visitor.visitLibraryFunction(DEFINITION, getArguments());
     }
 
-    private static PartitionData loadPartitionData() {
-        Iterator<PartitionDataProvider> iter = ServiceLoader.load(PartitionDataProvider.class).iterator();
-        if (!iter.hasNext()) {
-            throw new RuntimeException("Unable to locate partition data");
-        }
-
-        PartitionDataProvider provider = iter.next();
-
-        Partitions partitions = provider.loadPartitions();
-
-        PartitionData partitionData = new PartitionData();
-
-        partitions.getPartitions().forEach(part -> {
-            partitionData.partitions.add(part);
-            part.getRegions().forEach((name, override) -> {
-                partitionData.regionMap.put(name, part);
-            });
-        });
-
-        return partitionData;
-    }
-
-    private static class PartitionData {
-        private final List<Partition> partitions = new ArrayList<>();
-        private final Map<String, Partition> regionMap = new HashMap<>();
-    }
-
     /**
      * A {@link FunctionDefinition} for the {@link AwsPartition} function.
      */
     public static final class Definition implements FunctionDefinition {
+        private final Type returnType;
+
+        private Definition() {
+            Map<Identifier, Type> type = new LinkedHashMap<>();
+            type.put(NAME, Type.stringType());
+            type.put(DNS_SUFFIX, Type.stringType());
+            type.put(DUAL_STACK_DNS_SUFFIX, Type.stringType());
+            type.put(SUPPORTS_DUAL_STACK, Type.booleanType());
+            type.put(SUPPORTS_FIPS, Type.booleanType());
+            returnType = Type.optionalType(Type.recordType(type));
+        }
+
         @Override
         public String getId() {
             return ID;
@@ -105,13 +99,7 @@ public final class AwsPartition extends LibraryFunction {
 
         @Override
         public Type getReturnType() {
-            Map<Identifier, Type> type = new LinkedHashMap<>();
-            type.put(NAME, Type.stringType());
-            type.put(DNS_SUFFIX, Type.stringType());
-            type.put(DUAL_STACK_DNS_SUFFIX, Type.stringType());
-            type.put(SUPPORTS_DUAL_STACK, Type.booleanType());
-            type.put(SUPPORTS_FIPS, Type.booleanType());
-            return Type.optionalType(Type.recordType(type));
+            return returnType;
         }
 
         @Override
@@ -121,21 +109,22 @@ public final class AwsPartition extends LibraryFunction {
             boolean inferred = false;
 
             // Known region
-            matchedPartition = PARTITION_DATA.regionMap.get(regionName);
+            matchedPartition = REGION_MAP.get(regionName);
             if (matchedPartition == null) {
                 // Try matching on region name pattern
-                for (Partition p : PARTITION_DATA.partitions) {
-                    Pattern regex = Pattern.compile(p.getRegionRegex());
+                for (Partition partition : PARTITIONS) {
+                    Pattern regex = Pattern.compile(partition.getRegionRegex());
                     if (regex.matcher(regionName).matches()) {
-                        matchedPartition = p;
+                        matchedPartition = partition;
                         inferred = true;
                         break;
                     }
                 }
             }
 
+            // Default to the `aws` partition.
             if (matchedPartition == null) {
-                for (Partition partition : PARTITION_DATA.partitions) {
+                for (Partition partition : PARTITIONS) {
                     if (partition.getId().equals("aws")) {
                         matchedPartition = partition;
                         break;
