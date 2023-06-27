@@ -23,11 +23,11 @@ public class RuleTest {
         Parameter p1 = Parameter.builder().name("param1").type(ParameterType.STRING).required(true).build();
         Parameter p2 = Parameter.builder().name("param2").type(ParameterType.STRING).required(true).build();
         Parameter p3 = Parameter.builder().name("param3").type(ParameterType.STRING).required(true).build();
-        StringEquals equalsA = new StringEquals.Definition().createFunction(FunctionNode.ofExpressions(StringEquals.ID,
+        StringEquals equalsA = StringEquals.getDefinition().createFunction(FunctionNode.ofExpressions(StringEquals.ID,
                 p1.toExpression(), Expression.of("a")));
-        StringEquals equalsB = new StringEquals.Definition().createFunction(FunctionNode.ofExpressions(StringEquals.ID,
+        StringEquals equalsB = StringEquals.getDefinition().createFunction(FunctionNode.ofExpressions(StringEquals.ID,
                 p2.toExpression(), Expression.of("b")));
-        StringEquals equalsC = new StringEquals.Definition().createFunction(FunctionNode.ofExpressions(StringEquals.ID,
+        StringEquals equalsC = StringEquals.getDefinition().createFunction(FunctionNode.ofExpressions(StringEquals.ID,
                 p3.toExpression(), Expression.of("c")));
         Rule rule = Rule.builder()
                 .validateOrElse("param1 value is not a", condition(equalsA))

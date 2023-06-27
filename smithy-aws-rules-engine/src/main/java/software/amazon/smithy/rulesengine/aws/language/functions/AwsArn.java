@@ -147,7 +147,7 @@ public final class AwsArn implements ToSmithyBuilder<AwsArn> {
                + "service=" + service + ", "
                + "region=" + region + ", "
                + "accountId=" + accountId + ", "
-               + "resource=" + builder + ']';
+               + "resource=" + builder + "]";
     }
 
     @Override

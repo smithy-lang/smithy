@@ -98,7 +98,7 @@ public abstract class Expression implements FromSourceLocation, ToNode, TypeChec
         return context("while parsing `" + shortForm + "` within a template", context, () -> {
             if (shortForm.contains("#")) {
                 String[] parts = shortForm.split("#", 2);
-                return new GetAttr.Definition().createFunction(FunctionNode.ofExpressions(GetAttr.ID, context,
+                return GetAttr.getDefinition().createFunction(FunctionNode.ofExpressions(GetAttr.ID, context,
                         getReference(Identifier.of(parts[0]), context), of(parts[1])));
             } else {
                 return Expression.getReference(Identifier.of(shortForm), context);

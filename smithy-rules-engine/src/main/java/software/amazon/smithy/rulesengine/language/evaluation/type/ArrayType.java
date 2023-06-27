@@ -50,6 +50,6 @@ public final class ArrayType extends AbstractType {
 
     @Override
     public String toString() {
-        return String.format("[%s]", member);
+        return String.format("ArrayType[%s]", member);
     }
 }

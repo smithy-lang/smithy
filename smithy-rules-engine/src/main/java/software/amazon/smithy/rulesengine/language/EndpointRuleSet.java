@@ -132,6 +132,10 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
         return version;
     }
 
+    public Type typeCheck() {
+        return typeCheck(new Scope<>());
+    }
+
     @Override
     public Type typeCheck(Scope<Type> scope) {
         return scope.inScope(() -> {
@@ -341,7 +345,7 @@ public final class EndpointRuleSet implements FromSourceLocation, ToNode, ToSmit
         @Override
         public EndpointRuleSet build() {
             EndpointRuleSet ruleSet = new EndpointRuleSet(this);
-            ruleSet.typeCheck(new Scope<>());
+            ruleSet.typeCheck();
             return ruleSet;
         }
     }

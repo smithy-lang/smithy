@@ -49,6 +49,8 @@ public final class Not extends LibraryFunction {
      * A {@link FunctionDefinition} for the {@link Not} function.
      */
     public static final class Definition implements FunctionDefinition {
+        private Definition() {}
+
         @Override
         public String getId() {
             return ID;
