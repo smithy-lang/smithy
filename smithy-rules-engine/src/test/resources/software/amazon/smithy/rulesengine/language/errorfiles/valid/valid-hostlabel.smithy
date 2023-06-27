@@ -2,6 +2,7 @@ $version: "2.0"
 
 namespace example
 
+use smithy.rules#clientContextParams
 use smithy.rules#endpointRuleSet
 use smithy.rules#endpointTests
 
@@ -9,7 +10,6 @@ use smithy.rules#endpointTests
   "parameters": {
     "Region": {
       "type": "string",
-      "builtIn": "AWS::Region",
       "required": true,
       "documentation": "The region to dispatch this request, eg. `us-east-1`."
     }
@@ -115,5 +115,8 @@ use smithy.rules#endpointTests
       }
     }
   ]
+)
+@clientContextParams(
+  Region: {type: "string", documentation: "docs"}
 )
 service FizzBuzz {}

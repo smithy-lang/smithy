@@ -17,6 +17,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.node.ToNode;
+import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.RulesComponentBuilder;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
@@ -106,8 +107,8 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
      *
      * @return this function as an expression.
      */
-    public Expression validate() {
-        return FunctionDefinition.createFunctionFactory().apply(this)
+    public Expression createFunction() {
+        return EndpointRuleSet.createFunctionFactory().apply(this)
                 .orElseThrow(() -> new RuleError(new SourceException(
                         String.format("`%s` is not a valid function", name), name)));
     }

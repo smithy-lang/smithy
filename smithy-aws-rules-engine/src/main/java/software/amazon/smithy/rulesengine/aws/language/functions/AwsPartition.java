@@ -48,6 +48,15 @@ public final class AwsPartition extends LibraryFunction {
         super(DEFINITION, functionNode);
     }
 
+    /**
+     * Gets the {@link FunctionDefinition} implementation.
+     *
+     * @return the function definition.
+     */
+    public static Definition getDefinition() {
+        return DEFINITION;
+    }
+
     @Override
     public <T> T accept(ExpressionVisitor<T> visitor) {
         return visitor.visitLibraryFunction(DEFINITION, getArguments());
