@@ -229,7 +229,7 @@ public class MavenResolverTest {
                                      ListUtils.of("validate", "--debug", "model"),
                                      MapUtils.of(EnvironmentVariable.SMITHY_MAVEN_REPOS.toString(), repo),
                                      result -> {
-            assertThat(result.getOutput(), containsString("with xxx=****"));
+            assertThat(result.getOutput(), containsString("username=xxx, password=***"));
             assertThat(result.getExitCode(), equalTo(1));
         });
     }
