@@ -208,6 +208,9 @@ public class ChangedNullabilityTest {
                            .filter(event -> event.getId().equals("ChangedNullability.AddedInputTrait"))
                            .filter(event -> event.getMessage().contains("The @input trait was added to"))
                            .count(), equalTo(1L));
+        assertThat(events.stream()
+                            .filter(event -> event.getId().contains("ChangedNullability"))
+                            .count(), equalTo(1L));
     }
 
     @Test
