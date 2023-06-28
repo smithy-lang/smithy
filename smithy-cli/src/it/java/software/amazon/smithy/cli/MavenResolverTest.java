@@ -75,7 +75,7 @@ public class MavenResolverTest {
                             .request()
                             .withMethod("GET")
                             .withHeader("Authorization", "Basic eHh4Onl5eQ==")
-                            .withPath("/maven/not/there/software/amazon/smithy/smithy-aws-iam-traits/.*\\." + "jar")
+                            .withPath("/maven/not/there/software/amazon/smithy/smithy-aws-iam-traits/.*\\.jar")
             ).respond(
                     HttpResponse
                             .response()
@@ -99,8 +99,6 @@ public class MavenResolverTest {
                         assertThat(result.getExitCode(), equalTo(1));
                         assertThat(result.getOutput(), containsString("HttpAuthenticator - Selected authentication options: [BASIC [complete=true]]"));
                         assertThat(result.getOutput(), containsString("HttpAuthenticator - Authentication succeeded"));
-
-                        System.err.println(result.getOutput());
                     });
         } finally {
             if(mockServer!=null) {
