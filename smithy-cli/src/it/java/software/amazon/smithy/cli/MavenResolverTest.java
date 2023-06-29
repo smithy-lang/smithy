@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.mockserver.integration.ClientAndServer.startClientAndServer;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +13,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Collections;
 import org.junit.jupiter.api.Test;
+import org.mockserver.integration.ClientAndServer;
+import org.mockserver.model.HttpRequest;
+import org.mockserver.model.HttpResponse;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.ListUtils;
@@ -61,14 +65,46 @@ public class MavenResolverTest {
         });
     }
 
-    // TODO: This test could be better and actually test that auth works somehow.
     @Test
     public void usesCustomRepoWithAuth() {
-        IntegUtils.runWithEmptyCache("maven-auth", ListUtils.of("validate", "--debug"),
-                                     Collections.emptyMap(), result -> {
-            assertThat(result.getExitCode(), equalTo(1));
-            assertThat(result.getOutput(), containsString("with xxx=****"));
-        });
+        ClientAndServer mockServer = null;
+        try {
+            mockServer = startClientAndServer(1234);
+            mockServer.when(
+                    HttpRequest
+                            .request()
+                            .withMethod("GET")
+                            .withHeader("Authorization", "Basic eHh4Onl5eQ==")
+                            .withPath("/maven/not/there/software/amazon/smithy/smithy-aws-iam-traits/.*\\.jar")
+            ).respond(
+                    HttpResponse
+                            .response()
+                            .withStatusCode(200)
+                            .withBody("FAKE JAR CONTENT")
+            );
+            mockServer.when(
+                    HttpRequest
+                            .request()
+                            .withMethod("GET")
+                            .withPath("/maven/not/there/software/amazon/smithy/smithy-aws-iam-traits/.*")
+            ).respond(
+                    HttpResponse
+                            .response()
+                            .withStatusCode(401)
+                            .withHeader("WWW-Authenticate", "Basic realm=\"Artifactory Realm\"")
+            );
+
+            IntegUtils.runWithEmptyCache("maven-auth", ListUtils.of("validate", "--debug"),
+                    Collections.emptyMap(), result -> {
+                        assertThat(result.getExitCode(), equalTo(1));
+                        assertThat(result.getOutput(), containsString("HttpAuthenticator - Selected authentication options: [BASIC [complete=true]]"));
+                        assertThat(result.getOutput(), containsString("HttpAuthenticator - Authentication succeeded"));
+                    });
+        } finally {
+            if(mockServer!=null) {
+                mockServer.stop();
+            }
+        }
     }
 
     @Test
@@ -193,7 +229,7 @@ public class MavenResolverTest {
                                      ListUtils.of("validate", "--debug", "model"),
                                      MapUtils.of(EnvironmentVariable.SMITHY_MAVEN_REPOS.toString(), repo),
                                      result -> {
-            assertThat(result.getOutput(), containsString("with xxx=****"));
+            assertThat(result.getOutput(), containsString("username=xxx, password=***"));
             assertThat(result.getExitCode(), equalTo(1));
         });
     }

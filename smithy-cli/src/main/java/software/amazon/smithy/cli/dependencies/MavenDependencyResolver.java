@@ -23,8 +23,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.logging.Logger;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
@@ -36,9 +34,6 @@ import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyFilter;
 import org.eclipse.aether.impl.DefaultServiceLocator;
-import org.eclipse.aether.repository.Authentication;
-import org.eclipse.aether.repository.AuthenticationContext;
-import org.eclipse.aether.repository.AuthenticationDigest;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactResult;
@@ -49,8 +44,8 @@ import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.transport.file.FileTransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
+import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import software.amazon.smithy.build.model.MavenRepository;
-import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Resolves Maven dependencies for the Smithy CLI using Maven resolvers.
@@ -121,7 +116,12 @@ public final class MavenDependencyResolver implements DependencyResolver {
         if (parts.length != 2) {
             throw new DependencyResolverException("Invalid credentials provided for " + uri);
         }
-        builder.setAuthentication(new MavenAuth(parts[0], parts[1]));
+        builder.setAuthentication(
+            new AuthenticationBuilder()
+                .addUsername(parts[0])
+                .addPassword(parts[1])
+                .build()
+        );
     }
 
     @Override
@@ -188,53 +188,6 @@ public final class MavenDependencyResolver implements DependencyResolver {
             return results;
         } catch (DependencyResolutionException e) {
             throw new DependencyResolverException(e);
-        }
-    }
-
-    /**
-     * Based on Maven's StringAuthentication. There doesn't appear to be another way to do this.
-     */
-    private static final class MavenAuth implements Authentication {
-        private final String key;
-        private final String value;
-
-        private MavenAuth(String key, String value) {
-            if (StringUtils.isEmpty(key)) {
-                throw new IllegalArgumentException("Authentication key must be provided");
-            }
-            this.key = key;
-            this.value = value;
-        }
-
-        @Override
-        public void fill(AuthenticationContext context, String key, Map<String, String> data) {
-            context.put(this.key, value);
-        }
-
-        @Override
-        public void digest(AuthenticationDigest digest) {
-            digest.update(key, value);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            } else if (obj == null || !getClass().equals(obj.getClass())) {
-                return false;
-            }
-            MavenAuth that = (MavenAuth) obj;
-            return Objects.equals(key, that.key) && Objects.equals(value, that.value);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(key, value);
-        }
-
-        @Override
-        public String toString() {
-            return key + "=****";
         }
     }
 }
