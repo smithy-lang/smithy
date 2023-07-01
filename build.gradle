@@ -23,7 +23,7 @@ plugins {
     id "jacoco"
     id "com.github.spotbugs" version "4.7.1"
     id "io.codearte.nexus-staging" version "0.30.0"
-    id "me.champeau.jmh" version "0.6.5"
+    id "me.champeau.jmh" version "0.7.1"
     id 'com.github.johnrengelman.shadow' version "7.1.2"
 }
 
@@ -219,8 +219,8 @@ subprojects {
     }
     jacocoTestReport {
         reports {
-            xml.enabled false
-            csv.enabled false
+            xml.required.set(false)
+            csv.required.set(false)
             html.destination file("$buildDir/reports/jacoco")
         }
     }
