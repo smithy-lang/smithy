@@ -44,7 +44,7 @@ import software.amazon.smithy.utils.ListUtils;
 final class InitCommand implements Command {
     private static final String SMITHY_TEMPLATE_JSON = "smithy-templates.json";
     private static final String DEFAULT_REPOSITORY_URL = "https://github.com/smithy-lang/smithy-examples.git";
-
+    private static final String DEFAULT_TEMPLATE_NAME = "quickstart-cli";
     private static final String DOCUMENTATION = "documentation";
 
     private static final String NAME = "name";
@@ -155,10 +155,6 @@ final class InitCommand implements Command {
 
     private void cloneTemplate(Path temp, ObjectNode smithyTemplatesNode, String template, String directory, Env env)
             throws IOException, InterruptedException, URISyntaxException {
-
-        if (template == null || template.isEmpty()) {
-            throw new IllegalArgumentException("Please specify a template using `--template` or `-t`");
-        }
 
         ObjectNode templatesNode = getTemplatesNode(smithyTemplatesNode);
         if (!templatesNode.containsMember(template)) {
@@ -275,7 +271,7 @@ final class InitCommand implements Command {
     }
 
     private static final class Options implements ArgumentReceiver {
-        private String template;
+        private String template = DEFAULT_TEMPLATE_NAME;
         private String directory;
         private Boolean listTemplates = false;
         private String repositoryUrl = DEFAULT_REPOSITORY_URL;
