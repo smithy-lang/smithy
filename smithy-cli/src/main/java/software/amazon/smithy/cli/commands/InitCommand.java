@@ -156,6 +156,10 @@ final class InitCommand implements Command {
     private void cloneTemplate(Path temp, ObjectNode smithyTemplatesNode, String template, String directory, Env env)
             throws IOException, InterruptedException, URISyntaxException {
 
+        if (template == null || template.isEmpty()) {
+            throw new IllegalArgumentException("Please specify a template name using `--template` or `-t`");
+        }
+
         ObjectNode templatesNode = getTemplatesNode(smithyTemplatesNode);
         if (!templatesNode.containsMember(template)) {
             throw new IllegalArgumentException(String.format(
