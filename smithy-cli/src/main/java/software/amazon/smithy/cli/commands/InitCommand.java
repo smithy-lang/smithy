@@ -36,6 +36,8 @@ import software.amazon.smithy.cli.ColorTheme;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.HelpPrinter;
 import software.amazon.smithy.cli.StandardOptions;
+import software.amazon.smithy.cli.ProgressStyle;
+import software.amazon.smithy.cli.ProgressTracker;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
@@ -188,13 +190,17 @@ final class InitCommand implements Command {
         final String templatePath = getTemplatePath(templateNode, template);
         List<String> includedFiles = getIncludedFiles(templateNode);
 
-        // Specify the subdirectory to download
-        exec(ListUtils.of("git", "sparse-checkout", "set", "--no-cone", templatePath), temp);
-        // add any additional files that should be included
-        for (String includedFile : includedFiles) {
-            exec(ListUtils.of("git", "sparse-checkout", "add", "--no-cone", includedFile), temp);
+        try (ProgressTracker t = new ProgressTracker(env,
+                ProgressStyle.dots("cloning template", "template cloned"))
+        ) {
+            // Specify the subdirectory to download
+            exec(ListUtils.of("git", "sparse-checkout", "set", "--no-cone", templatePath), temp);
+            // add any additional files that should be included
+            for (String includedFile : includedFiles) {
+                exec(ListUtils.of("git", "sparse-checkout", "add", "--no-cone", includedFile), temp);
+            }
+            exec(ListUtils.of("git", "checkout"), temp);
         }
-        exec(ListUtils.of("git", "checkout"), temp);
 
 
 
