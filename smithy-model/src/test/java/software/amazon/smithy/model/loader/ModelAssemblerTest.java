@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.FileSystemException;
@@ -48,12 +49,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.JarUtils;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
@@ -1210,5 +1211,40 @@ public class ModelAssemblerTest {
         // These members are considered boxed in 1.0.
         assertThat(fooBam.getAllTraits(), hasKey(BoxTrait.ID));
         assertThat(fooBam.expectTrait(DefaultTrait.class).toNode(), equalTo(Node.nullNode()));
+    }
+
+    @Test
+    public void ignoresUnrecognizedFileExtensions() throws URISyntaxException {
+        ValidatedResult<Model> result = Model.assembler()
+                .addImport(Paths.get(getClass().getResource("assembler-ignore-unrecognized-files").toURI()))
+                .assemble();
+
+        assertThat(result.getValidationEvents(Severity.DANGER), empty());
+        assertThat(result.getValidationEvents(Severity.ERROR), empty());
+
+        result.unwrap().expectShape(ShapeId.from("smithy.example#MyString"));
+    }
+
+    @Test
+    public void ignoresUnrecognizedJsonFiles() throws URISyntaxException {
+        ValidatedResult<Model> result = Model.assembler()
+                .addImport(Paths.get(getClass().getResource("assembler-ignore-unrecognized-json").toURI()))
+                .assemble();
+
+        assertThat(result.getValidationEvents(Severity.DANGER), empty());
+        assertThat(result.getValidationEvents(Severity.ERROR), empty());
+
+        result.unwrap().expectShape(ShapeId.from("smithy.example#MyString"));
+    }
+
+    @Test
+    public void failsOnInvalidJarJsonFile() throws URISyntaxException, IOException {
+        Path jar = JarUtils.createJarFromDir(Paths.get(getClass().getResource("assembler-fail-invalid-jar").toURI()));
+
+        ModelImportException e = Assertions.assertThrows(ModelImportException.class, () -> {
+            Model.assembler().addImport(jar).assemble();
+        });
+
+        assertThat(e.getMessage(), containsString("Invalid file referenced by Smithy JAR manifest"));
     }
 }

@@ -1,0 +1,4 @@
+# This is loaded first and succeeds.
+valid.smithy
+# This fails because JARs cannot explicitly refer to unrecognized models files or JSON files.
+invalid-array.json
