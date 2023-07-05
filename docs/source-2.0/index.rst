@@ -127,7 +127,7 @@ metadata, and capabilities. Smithy can be used alongside OpenAPI by
 
 .. rubric:: What can Smithy do today?
 
-See :doc:`Smithy projects and implementations <implementations>`.
+See https://github.com/smithy-lang/awesome-smithy.
 
 
 Read more
@@ -142,11 +142,12 @@ Read more
     guides/index
     Additional specs <additional-specs/index>
     aws/index
+    ts-ssdk/index
 
 .. toctree::
     :caption: Project
     :maxdepth: 1
 
-    implementations
     Source code <https://github.com/awslabs/smithy>
+    Awesome Smithy <https://github.com/smithy-lang/awesome-smithy>
     1.0 Documentation <https://smithy.io/1.0/>
