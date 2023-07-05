@@ -55,9 +55,10 @@ final class ModelLoader {
      * @param contentSupplier The supplier that provides an InputStream. The
      *   supplied {@code InputStream} is automatically closed when the loader
      *   has finished reading from it.
+     * @return Returns true if the file was loaded. Some JSON files might be ignored and return false.
      * @throws SourceException if there is an error reading from the contents.
      */
-    static void load(
+    static boolean load(
             TraitFactory traitFactory,
             Map<String, Object> properties,
             String filename,
@@ -65,42 +66,56 @@ final class ModelLoader {
             Supplier<InputStream> contentSupplier,
             Function<CharSequence, String> stringTable
     ) {
-        try (InputStream inputStream = contentSupplier.get()) {
+        try {
             if (filename.endsWith(".smithy")) {
-                String contents = IoUtils.toUtf8String(inputStream);
-                new IdlModelLoader(filename, contents, stringTable).parse(operationConsumer);
+                try (InputStream inputStream = contentSupplier.get()) {
+                    String contents = IoUtils.toUtf8String(inputStream);
+                    new IdlModelLoader(filename, contents, stringTable).parse(operationConsumer);
+                }
+                return true;
             } else if (filename.endsWith(".jar")) {
                 loadJar(traitFactory, properties, filename, operationConsumer, stringTable);
+                return true;
             } else if (filename.endsWith(".json") || filename.equals(SourceLocation.NONE.getFilename())) {
-                // Assume it's JSON if there's a N/A filename.
-                loadParsedNode(Node.parse(inputStream, filename), operationConsumer);
+                try (InputStream inputStream = contentSupplier.get()) {
+                    // Assume it's JSON if there's an N/A filename.
+                    return loadParsedNode(Node.parse(inputStream, filename), operationConsumer);
+                }
             } else {
-                LOGGER.warning(() -> "No ModelLoader was able to load " + filename);
+                LOGGER.warning(() -> "Ignoring unrecognized file: " + filename);
+                return false;
             }
         } catch (IOException e) {
             throw new ModelImportException("Error loading " + filename + ": " + e.getMessage(), e);
         }
     }
 
-    // Loads all supported JSON formats. Each JSON format is expected to have
-    // a top-level version property that contains a string. This version
-    // is then used to delegate loading to different versions of the
-    // Smithy JSON AST format.
+    // Attempts to load a Smithy AST JSON model. JSON files that do not contain a top-level "smithy" key are skipped
+    // and false is returned. The "smithy" version is used to delegate loading to different versions of the Smithy
+    // JSON AST format.
     //
     // This loader supports version 1.0 and 2.0. Support for 0.5 and 0.4 was removed in 0.10.
-    static void loadParsedNode(Node node, Consumer<LoadOperation> operationConsumer) {
-        ObjectNode model = node.expectObjectNode("Smithy documents must be an object. Found {type}.");
-        StringNode versionNode = model.expectStringMember("smithy");
-        Version version = Version.fromString(versionNode.getValue());
-
-        if (version != null) {
-            new AstModelLoader(version, model).parse(operationConsumer);
-        } else {
-            throw new ModelSyntaxException("Unsupported Smithy version number: " + versionNode.getValue(), versionNode);
+    static boolean loadParsedNode(Node node, Consumer<LoadOperation> operationConsumer) {
+        if (node.isObjectNode()) {
+            ObjectNode model = node.expectObjectNode();
+            if (model.containsMember("smithy")) {
+                StringNode versionNode = model.expectStringMember("smithy");
+                Version version = Version.fromString(versionNode.getValue());
+                if (version == null) {
+                    throw new ModelSyntaxException("Unsupported Smithy version number: " + versionNode.getValue(),
+                                                   versionNode);
+                } else {
+                    new AstModelLoader(version, model).parse(operationConsumer);
+                    return true;
+                }
+            }
         }
+
+        LOGGER.info("Ignoring unrecognized JSON file: " + node.getSourceLocation());
+        return false;
     }
 
-    // Allows importing JAR files by discovering models inside of a JAR file.
+    // Allows importing JAR files by discovering models inside a JAR file.
     // This is similar to model discovery, but done using an explicit import.
     private static void loadJar(
             TraitFactory traitFactory,
@@ -120,13 +135,19 @@ final class ModelLoader {
                     connection.setUseCaches(false);
                 }
 
-                load(traitFactory, properties, model.toExternalForm(), operationConsumer, () -> {
+                boolean result = load(traitFactory, properties, model.toExternalForm(), operationConsumer, () -> {
                     try {
                         return connection.getInputStream();
                     } catch (IOException e) {
                         throw throwIoJarException(model, e);
                     }
                 }, stringTable);
+
+                // Smithy will skip unrecognized model files, including JSON files that don't contain a "smithy"
+                // version key/value pair. However, JAR manifests are not allowed to refer to unrecognized files.
+                if (!result) {
+                    throw new ModelImportException("Invalid file referenced by Smithy JAR manifest: " + model);
+                }
             } catch (IOException e) {
                 throw throwIoJarException(model, e);
             }
