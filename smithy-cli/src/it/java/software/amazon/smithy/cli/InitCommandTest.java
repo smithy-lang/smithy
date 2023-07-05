@@ -34,23 +34,30 @@ public class InitCommandTest {
     }
 
     @Test
-    public void missingTemplate() {
+    public void usesDefaultTemplate() {
         IntegUtils.withProject(PROJECT_NAME, templatesDir -> {
             setupTemplatesDirectory(templatesDir);
 
-            IntegUtils.withTempDir("missingTemplate", dir -> {
+            IntegUtils.withTempDir("defaultTemplate", dir -> {
                 RunResult result = IntegUtils.run(
-                    dir, ListUtils.of("init", "-u", templatesDir.toString()));
+                        dir, ListUtils.of("init", "-u", templatesDir.toString()));
                 assertThat(result.getOutput(),
-                    containsString("Please specify a template using `--template` or `-t`"));
-                assertThat(result.getExitCode(), is(1));
+                        containsString("Smithy project created in directory: quickstart-cli"));
+                assertThat(result.getExitCode(), is(0));
             });
+        });
+    }
+
+    @Test
+    public void missingTemplate() {
+        IntegUtils.withProject(PROJECT_NAME, templatesDir -> {
+            setupTemplatesDirectory(templatesDir);
 
             IntegUtils.withTempDir("emptyTemplateName", dir -> {
                 RunResult result = IntegUtils.run(
                     dir, ListUtils.of("init", "-t", "", "-u", templatesDir.toString()));
                 assertThat(result.getOutput(),
-                    containsString("Please specify a template using `--template` or `-t`"));
+                    containsString("Please specify a template name using `--template` or `-t`"));
                 assertThat(result.getExitCode(), is(1));
             });
         });
