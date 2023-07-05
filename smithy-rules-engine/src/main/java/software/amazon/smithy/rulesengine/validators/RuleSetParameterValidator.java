@@ -147,7 +147,7 @@ public final class RuleSetParameterValidator extends AbstractValidator {
         List<ValidationEvent> errors = new ArrayList<>();
         Set<String> matchedParams = new HashSet<>();
         for (Parameter parameter : ruleSetParams) {
-            // Don't worry about checking built in parameters.
+            // Don't worry about checking built-in parameters.
             if (parameter.isBuiltIn()) {
                 continue;
             }
@@ -248,7 +248,7 @@ public final class RuleSetParameterValidator extends AbstractValidator {
                     testParams.add(buildParameter(entry));
                 }
 
-                // A little indirection here, since only parameters tracks the name of the built in.
+                // A little indirection here, since only parameters tracks the name of the built-in.
                 for (Map.Entry<String, Node> entry : input.getBuiltInParams().getStringMap().entrySet()) {
                     for (Parameter parameter : ruleSet.getParameters()) {
                         if (parameter.isBuiltIn() && parameter.getBuiltIn().get().equals(entry.getKey())) {
