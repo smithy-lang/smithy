@@ -12,7 +12,7 @@ and more.
 In this guide, we will use the Smithy model we created in the
 :doc:`Quick start guide </quickstart>` to generate
 a TypeScript client that knows how to communicate with the weather service. For a
-list of code generators, see :ref:`Client code generators <client-code-generators>`.
+list of code generators, see `Awesome Smithy <https://github.com/smithy-lang/awesome-smithy#client-code-generators>`_.
 
 .. toctree::
     :maxdepth: 1
