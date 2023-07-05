@@ -26,3 +26,11 @@ AWS Service Customizations
     :maxdepth: 2
 
     customizations/index
+
+AWS Rules Engine Extensions
+===========================
+
+.. toctree::
+    :maxdepth: 2
+
+    rules-engine/index
