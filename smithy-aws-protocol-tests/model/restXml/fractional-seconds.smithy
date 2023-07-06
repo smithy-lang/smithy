@@ -4,11 +4,9 @@ namespace aws.protocoltests.restxml
 
 use aws.protocols#restXml
 use aws.protocoltests.shared#DateTime
-use aws.protocoltests.shared#HttpDate
 use smithy.test#httpResponseTests
 
-// These tests are for verifying the client can correctly parse
-// the `DateTime` and `HttpDate` timestamps with fractional seconds
+// These tests verify that clients can parse `DateTime` timestamps with fractional seconds.
 @tags(["client-only"])
 @http(uri: "/FractionalSeconds", method: "POST")
 operation FractionalSeconds {
@@ -32,27 +30,9 @@ apply FractionalSeconds @httpResponseTests([
             "Content-Type": "application/xml"
         },
         params: { datetime: 946845296.123 }
-    },
-    {
-        id: "RestXmlHttpDateWithFractionalSeconds",
-        documentation: """
-        Ensures that clients can correctly parse http-date timestamps with fractional seconds""",
-        protocol: restXml,
-        code: 200,
-        body: """
-            <FractionalSecondsOutput>
-                <httpdate>Sun, 02 Jan 2000 20:34:56.456 GMT</httpdate>
-            </FractionalSecondsOutput>
-            """,
-        bodyMediaType: "application/xml",
-        headers: {
-            "Content-Type": "application/xml"
-        },
-        params: { httpdate: 946845296.456 }
     }
 ])
 
 structure FractionalSecondsOutput {
     datetime: DateTime
-    httpdate: HttpDate
 }
