@@ -333,7 +333,7 @@ apply MalformedUniqueItems @httpMalformedRequestTests([
             }
         },
         testParameters: {
-            value: ["[\"Tue, 29 Apr 2014 18:30:38 GMT\", \"Tue, 29 Apr 2014 18:30:38 GMT\"]", "[\"Sun, 02 Jan 2000 20:34:56.000 GMT\", \"Sun, 02 Jan 2000 20:34:56.000 GMT\"]"]
+            value: ["[\"Tue, 29 Apr 2014 18:30:38 GMT\", \"Tue, 29 Apr 2014 18:30:38 GMT\"]"]
         }
     },
     {
