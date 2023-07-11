@@ -567,7 +567,7 @@ override the default format using the <code class="docutils literal notranslate"
 <tr class="row-even"><td>date-time</td>
 <td>Date time as defined by the <code class="docutils literal notranslate"><span class="pre">date-time</span></code> production in
 <a class="reference external" href="https://www.rfc-editor.org/rfc/rfc3339#section-5.6">RFC3339 section 5.6</a>
-with no UTC offset and optional fractional precision (for example,
+with optional fractional precision but no UTC offset (for example,
 <code class="docutils literal notranslate"><span class="pre">1985-04-12T23:20:50.52Z</span></code>).
 <em>However</em>, offsets are parsed gracefully, but the datetime is normalized
 to an offset of zero by converting to UTC.</td>
@@ -575,10 +575,7 @@ to an offset of zero by converting to UTC.</td>
 <tr class="row-odd"><td>http-date</td>
 <td>An HTTP date as defined by the <code class="docutils literal notranslate"><span class="pre">IMF-fixdate</span></code> production in
 <span class="target" id="index-1"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc7231.html#section-7.1.1.1"><strong>RFC 7231#section-7.1.1.1</strong></a> (for example,
-<code class="docutils literal notranslate"><span class="pre">Tue,</span> <span class="pre">29</span> <span class="pre">Apr</span> <span class="pre">2014</span> <span class="pre">18:30:38</span> <span class="pre">GMT</span></code>). Note that in addition to the
-<code class="docutils literal notranslate"><span class="pre">IMF-fixdate</span></code> format specified in the RFC, implementations MUST
-also support optional fractional seconds (for example,
-<code class="docutils literal notranslate"><span class="pre">Sun,</span> <span class="pre">02</span> <span class="pre">Jan</span> <span class="pre">2000</span> <span class="pre">20:34:56.000</span> <span class="pre">GMT</span></code>).</td>
+<code class="docutils literal notranslate"><span class="pre">Tue,</span> <span class="pre">29</span> <span class="pre">Apr</span> <span class="pre">2014</span> <span class="pre">18:30:38</span> <span class="pre">GMT</span></code>).</td>
 </tr>
 <tr class="row-even"><td>epoch-seconds</td>
 <td>Also known as Unix time, the number of seconds that have elapsed since

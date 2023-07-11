@@ -1,0 +1,3 @@
+Contact: http://aws.amazon.com/security/vulnerability-reporting/
+Contact: mailto:aws-security@amazon.com
+Canonical: https://smithy.io/security.txt
