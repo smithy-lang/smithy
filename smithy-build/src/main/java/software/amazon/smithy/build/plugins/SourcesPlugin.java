@@ -145,8 +145,16 @@ public final class SourcesPlugin implements SmithyBuildPlugin {
                     + ValidationUtils.tickedList(manifest.getFiles()));
         }
 
-        manifest.writeFile(target, contents);
-        names.add(target.toString());
+        String filename = target.toString();
+
+        // Even though sources are filtered in SmithyBuild, it's theoretically possible that someone could call this
+        // plugin manually. In that case, refuse to write unsupported files to the manifest.
+        if (filename.endsWith(".smithy") || filename.endsWith(".json")) {
+            manifest.writeFile(target, contents);
+            names.add(target.toString());
+        } else {
+            LOGGER.warning("Omitting unrecognized file from Smithy model manifest: " + filename);
+        }
     }
 
     private static void projectSources(PluginContext context) {
