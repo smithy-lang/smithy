@@ -117,7 +117,7 @@ public class MavenResolverTest {
                 RunResult result = IntegUtils.run(path, ListUtils.of("validate", "--debug", "model"));
 
                 assertThat(result.getExitCode(), is(0));
-                assertThat(result.getOutput(), containsString("Invalidating dependency cache"));
+                assertThat(result.getOutput(), containsString("Resolving Maven dependencies for Smithy CLI"));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

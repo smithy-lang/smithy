@@ -21,6 +21,7 @@ public class MavenDependencyResolverTest {
         resolver.addDependency("com.foo:baz1:1.0.0");
         resolver.addDependency("com.foo:baz2:[1.0.0]");
         resolver.addDependency("com.foo:baz3:[1.0.0,]");
+        resolver.addDependency("smithy.foo:bar:1.25.0-SNAPSHOT");
     }
 
     @ParameterizedTest
@@ -36,7 +37,6 @@ public class MavenDependencyResolverTest {
     public static Stream<Arguments> invalidDependencies() {
         return Stream.of(
             Arguments.of("X"),
-            Arguments.of("smithy.foo:bar:1.25.0-SNAPSHOT"),
             Arguments.of("smithy.foo:bar:RELEASE"),
             Arguments.of("smithy.foo:bar:latest-status"),
             Arguments.of("smithy.foo:bar:LATEST"),
