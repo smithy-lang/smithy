@@ -152,9 +152,6 @@ public final class MavenDependencyResolver implements DependencyResolver {
         } catch (IllegalArgumentException e) {
             throw new DependencyResolverException("Invalid dependency: " + e.getMessage());
         }
-        if (artifact.isSnapshot()) {
-            throw new DependencyResolverException("Snapshot dependencies are not supported: " + artifact);
-        }
         validateDependencyVersion(artifact);
         return new Dependency(artifact, scope);
     }

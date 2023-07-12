@@ -22,8 +22,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -38,6 +40,9 @@ import software.amazon.smithy.model.node.ObjectNode;
  * given reference point in time.
  */
 public final class FileCacheResolver implements DependencyResolver {
+
+    // This is hard-coded for now to 1 day, and it can become an environment variable in the future if needed.
+    private static final Duration SMITHY_MAVEN_TTL = Duration.parse("P1D");
 
     private static final Logger LOGGER = Logger.getLogger(FileCacheResolver.class.getName());
     private final DependencyResolver delegate;
@@ -80,31 +85,45 @@ public final class FileCacheResolver implements DependencyResolver {
     }
 
     private List<ResolvedArtifact> load() {
-        // Invalidate the cache if smithy-build.json was updated after the cache was written.
-        Path filePath = location.toPath();
-        if (!Files.exists(filePath)) {
+        // Invalidate the cache if:
+        // 1. smithy-build.json was updated after the cache was written.
+        // 2. the cache file is older than the allowed TTL.
+        // 3. a cached artifact was deleted.
+        // 4. a cached artifact is newer than the cache file.
+        long cacheLastModifiedMillis = location.lastModified();
+        long currentTimeMillis = new Date().getTime();
+        long ttlMillis = SMITHY_MAVEN_TTL.toMillis();
+
+        if (location.length() == 0) {
             return Collections.emptyList();
-        } else if (!isCacheValid(location)) {
-            invalidate(filePath);
+        } else if (!isCacheValid(cacheLastModifiedMillis)) {
+            LOGGER.fine("Invalidating dependency cache: config is newer than the cache");
+            invalidate();
+            return Collections.emptyList();
+        } else if (currentTimeMillis - cacheLastModifiedMillis > ttlMillis) {
+            LOGGER.fine(() -> "Invalidating dependency cache: Cache exceeded TTL (TTL: " + ttlMillis + ")");
+            invalidate();
             return Collections.emptyList();
         }
 
         ObjectNode node;
-        try (InputStream stream = Files.newInputStream(filePath)) {
+        try (InputStream stream = Files.newInputStream(location.toPath())) {
             node = Node.parse(stream, location.toString()).expectObjectNode();
         } catch (ModelSyntaxException | IOException e) {
-            throw new DependencyResolverException("Error loading dependency cache file from " + filePath, e);
+            throw new DependencyResolverException("Error loading dependency cache file from " + location, e);
         }
 
         List<ResolvedArtifact> result = new ArrayList<>(node.getStringMap().size());
         for (Map.Entry<String, Node> entry : node.getStringMap().entrySet()) {
-            Path location = Paths.get(entry.getValue().expectStringNode().getValue());
-            // Invalidate the cache if the JAR file was updated after the cache was written.
-            if (isArtifactUpdatedSinceReferenceTime(location)) {
-                invalidate(filePath);
+            Path artifactLocation = Paths.get(entry.getValue().expectStringNode().getValue());
+            long lastModifiedOfArtifact = artifactLocation.toFile().lastModified();
+            // Invalidate the cache if the JAR file was updated since the cache was created.
+            if (lastModifiedOfArtifact == 0 || lastModifiedOfArtifact > cacheLastModifiedMillis) {
+                LOGGER.fine(() -> "Invalidating dependency cache: artifact is newer than cache: " + artifactLocation);
+                invalidate();
                 return Collections.emptyList();
             }
-            result.add(ResolvedArtifact.fromCoordinates(location, entry.getKey()));
+            result.add(ResolvedArtifact.fromCoordinates(artifactLocation, entry.getKey()));
         }
 
         return result;
@@ -130,23 +149,13 @@ public final class FileCacheResolver implements DependencyResolver {
         }
     }
 
-    private boolean isCacheValid(File file) {
-        return referenceTimeInMillis <= file.lastModified() && file.length() > 0;
+    private boolean isCacheValid(long cacheLastModifiedMillis) {
+        return referenceTimeInMillis <= cacheLastModifiedMillis;
     }
 
-    private boolean isArtifactUpdatedSinceReferenceTime(Path path) {
-        File file = path.toFile();
-        return !file.exists() || (referenceTimeInMillis > 0 && file.lastModified() > referenceTimeInMillis);
-    }
-
-    private void invalidate(Path filePath) {
-        try {
-            if (Files.exists(filePath)) {
-                LOGGER.fine("Invalidating dependency cache file: " + location);
-                Files.delete(filePath);
-            }
-        } catch (IOException e) {
-            throw new DependencyResolverException("Unable to delete cache file: " + e.getMessage(), e);
+    private void invalidate() {
+        if (location.exists() && !location.delete()) {
+            LOGGER.warning("Unable to invalidate dependency cache file: " + location);
         }
     }
 }
