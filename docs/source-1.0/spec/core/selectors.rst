@@ -1713,7 +1713,7 @@ Below is an example selector compliance test:
     string AtLeastTen
 
 The compliance tests can also be accessed in this
-`directory <https://github.com/awslabs/smithy/tree/main/smithy-model/src/test/resources/software/amazon/smithy/model/selector/cases>`__
+`directory <https://github.com/smithy-lang/smithy/tree/main/smithy-model/src/test/resources/software/amazon/smithy/model/selector/cases>`__
 of the Smithy Github repository.
 
 .. _ABNF: https://tools.ietf.org/html/rfc5234

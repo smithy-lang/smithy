@@ -20,7 +20,7 @@ This specification makes use of the Augmented Backus-Naur Form (ABNF)
 of that document.
 
 Readers are invited to report technical errors and ambiguities in this
-specification to the Smithy GitHub repository at https://github.com/awslabs/smithy.
+specification to the Smithy GitHub repository at https://github.com/smithy-lang/smithy.
 This specification is open source, so contributions are welcome.
 
 .. rubric:: Examples

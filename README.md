@@ -1,5 +1,5 @@
 # <img alt="Smithy" src="docs/_static/favicon.png" width="28"> Smithy
-[![Build Status](https://github.com/awslabs/smithy/workflows/ci/badge.svg)](https://github.com/awslabs/smithy/actions/workflows/ci.yml)
+[![Build Status](https://github.com/smithy-lang/smithy/workflows/ci/badge.svg)](https://github.com/smithy-lang/smithy/actions/workflows/ci.yml)
 
 Smithy defines and generates clients, services, and documentation for
 any protocol.

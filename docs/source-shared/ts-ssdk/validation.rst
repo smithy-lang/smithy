@@ -132,4 +132,4 @@ the developer can still use Smithy's built in validation, but return ``BadInput`
         };
     });
 
-.. _smithy.framework#ValidationException: https://github.com/awslabs/smithy/blob/main/smithy-validation-model/model/smithy.framework.validation.smithy#L9
+.. _smithy.framework#ValidationException: https://github.com/smithy-lang/smithy/blob/main/smithy-validation-model/model/smithy.framework.validation.smithy#L9

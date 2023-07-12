@@ -9,7 +9,7 @@ Glossary
     AbstractCodeWriter
         A Java class in the :term:`Smithy reference implementation` used to
         generate code for a :term:`target environment`. Find the
-        `source code on GitHub <https://github.com/awslabs/smithy/blob/main/smithy-utils/src/main/java/software/amazon/smithy/utils/AbstractCodeWriter.java>`__.
+        `source code on GitHub <https://github.com/smithy-lang/smithy/blob/main/smithy-utils/src/main/java/software/amazon/smithy/utils/AbstractCodeWriter.java>`__.
 
     codegen
     Code generation
@@ -20,7 +20,7 @@ Glossary
         :term:`target environment`.
 
     codegen-core
-        A `set of Java libraries <https://github.com/awslabs/smithy/tree/main/smithy-codegen-core>`__
+        A `set of Java libraries <https://github.com/smithy-lang/smithy/tree/main/smithy-codegen-core>`__
         built on top of the :term:`Smithy reference implementation` that are
         used to implement Smithy code generators. codegen-core contains
         libraries for writing code, managing dependencies, managing imports,
@@ -149,6 +149,6 @@ Glossary
         and style. Code generators use traits to influence generated code.
 
 
-.. _HttpBindingIndex: https://github.com/awslabs/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/knowledge/HttpBindingIndex.java
-.. _NullableIndex: https://github.com/awslabs/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/knowledge/NullableIndex.java
-.. _Model class: https://github.com/awslabs/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/Model.java
+.. _HttpBindingIndex: https://github.com/smithy-lang/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/knowledge/HttpBindingIndex.java
+.. _NullableIndex: https://github.com/smithy-lang/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/knowledge/NullableIndex.java
+.. _Model class: https://github.com/smithy-lang/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/Model.java

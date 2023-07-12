@@ -18,7 +18,7 @@ This specification makes use of the Augmented Backus-Naur Form (ABNF)
 of that document.
 
 Please report technical errors and ambiguities in this specification to the
-Smithy GitHub repository at https://github.com/awslabs/smithy.
+Smithy GitHub repository at https://github.com/smithy-lang/smithy.
 This specification is open source; contributions are welcome.
 
 .. rubric:: Examples
