@@ -92,7 +92,7 @@ final class DiffCommand implements Command {
                 + "When run within a project directory that contains a `smithy-build.json` config, any dependencies "
                 + "defined in the config file are used when loading both the old and new models; however, `imports` "
                 + "and `sources` defined in the config file are not used. This is the default mode when no `--mode` "
-                + "is specified."
+                + "is specified and `--old` or `--new` are provided."
                 + ls
                 + ls
                 + "    smithy diff --old /path/old --new /path/new"
@@ -121,8 +121,11 @@ final class DiffCommand implements Command {
                 + "command must be run from within a git repo. The `--old` argument can be provided to specify a "
                 + "specific revision to compare against. If `--old` is not provided, the commit defaults to `HEAD` "
                 + "(the last commit on the current branch). This mode is a wrapper around `--mode project`, so its "
-                + "restrictions apply."
+                + "restrictions apply. This is the default mode when no arguments are provided."
                 + ls
+                + ls
+                + "    # Equivalent to `smithy diff --mode git`"
+                + "    smithy diff"
                 + ls
                 + "    smithy diff --mode git"
                 + ls
@@ -133,7 +136,7 @@ final class DiffCommand implements Command {
     }
 
     private static final class Options implements ArgumentReceiver {
-        private DiffMode diffMode = DiffMode.ARBITRARY;
+        private DiffMode diffMode = DiffMode.DETECTED;
         private String oldModel;
         private String newModel;
 
@@ -186,6 +189,17 @@ final class DiffCommand implements Command {
     }
 
     private enum DiffMode {
+        DETECTED {
+            @Override
+            int diff(SmithyBuildConfig config, Arguments arguments, Options options, Env env) {
+                if (options.oldModel != null || options.newModel != null) {
+                    return ARBITRARY.diff(config, arguments, options, env);
+                } else {
+                    return GIT.diff(config, arguments, options, env);
+                }
+            }
+        },
+
         ARBITRARY {
             @Override
             int diff(SmithyBuildConfig config, Arguments arguments, Options options, Env env) {
