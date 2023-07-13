@@ -672,7 +672,7 @@ Leading whitespace cannot be removed when using
                  // ^ ^ invalid combination
 
 
-.. _AbstractCodeWriter: https://github.com/awslabs/smithy/blob/main/smithy-utils/src/main/java/software/amazon/smithy/utils/AbstractCodeWriter.java
-.. _SimpleCodeWriter: https://github.com/awslabs/smithy/blob/main/smithy-utils/src/main/java/software/amazon/smithy/utils/SimpleCodeWriter.java
-.. _SymbolWriter: https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolWriter.java
+.. _AbstractCodeWriter: https://github.com/smithy-lang/smithy/blob/main/smithy-utils/src/main/java/software/amazon/smithy/utils/AbstractCodeWriter.java
+.. _SimpleCodeWriter: https://github.com/smithy-lang/smithy/blob/main/smithy-utils/src/main/java/software/amazon/smithy/utils/SimpleCodeWriter.java
+.. _SymbolWriter: https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolWriter.java
 .. _Java text blocks: https://docs.oracle.com/en/java/javase/13/text_blocks/index.html

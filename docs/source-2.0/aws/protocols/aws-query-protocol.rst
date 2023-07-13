@@ -459,7 +459,7 @@ Trait selector
 Value type
     Annotation trait.
 See
-    `Protocol tests <https://github.com/awslabs/smithy/tree/__smithy_version__/smithy-aws-protocol-tests/model/awsQuery>`_
+    `Protocol tests <https://github.com/smithy-lang/smithy/tree/__smithy_version__/smithy-aws-protocol-tests/model/awsQuery>`_
 
 .. code-block:: smithy
 
@@ -595,7 +595,7 @@ Protocol compliance tests
 -------------------------
 
 A full compliance test suite is provided and SHALL be considered a normative
-reference: https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/awsQuery
+reference: https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/awsQuery
 
 These compliance tests define a model that is used to define test cases and
 the expected serialized HTTP requests and responses for each case.

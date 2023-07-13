@@ -16,7 +16,7 @@ Quick Symbol example
 ====================
 
 The following example uses the built-in "``T``" formatter of
-`SymbolWriter <https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolWriter.java>`_
+`SymbolWriter <https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolWriter.java>`_
 to write symbols to the generated code and automatically add imports to
 the file:
 
@@ -173,7 +173,7 @@ can be written to whatever dependency manifest format is needed for the
 target environment.
 
 Dependencies are registered with a Symbol by creating a
-`SymbolDependency <https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolDependency.java>`_
+`SymbolDependency <https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolDependency.java>`_
 and adding them to the Symbol via ``Symbol#addDependency``.
 
 The following example creates a TypeScript Symbol for big decimal that
@@ -750,11 +750,11 @@ used to convert each nested namespace's imports to a string. It's an
 abstract exercise left up to the implementation.
 
 
-.. _SymbolReference: https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolReference.java
-.. _SymbolDependencyContainer: https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolDependencyContainer.java
-.. _DependencyTracker: https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/DependencyTracker.java
-.. _ReservedWords: https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/ReservedWords.java
-.. _ReservedWordsBuilder: https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/ReservedWordsBuilder.java
-.. _ImportContainer: https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/ImportContainer.java
-.. _SymbolWriter: https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolWriter.java
-.. _WriterDelegator: https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/WriterDelegator.java
+.. _SymbolReference: https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolReference.java
+.. _SymbolDependencyContainer: https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolDependencyContainer.java
+.. _DependencyTracker: https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/DependencyTracker.java
+.. _ReservedWords: https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/ReservedWords.java
+.. _ReservedWordsBuilder: https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/ReservedWordsBuilder.java
+.. _ImportContainer: https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/ImportContainer.java
+.. _SymbolWriter: https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolWriter.java
+.. _WriterDelegator: https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/WriterDelegator.java

@@ -17,7 +17,7 @@ utilizing the CLI to its full potential.
 
 If you have suggestions on how to improve the CLI or run into issues,
 please create an issue in the `Smithy GitHub repository
-<https://github.com/awslabs/smithy/issues>`_.
+<https://github.com/smithy-lang/smithy/issues>`_.
 
 .. toctree::
     :maxdepth: 1
