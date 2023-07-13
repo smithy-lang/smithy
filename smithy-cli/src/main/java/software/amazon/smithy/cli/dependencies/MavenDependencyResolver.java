@@ -96,11 +96,11 @@ public final class MavenDependencyResolver implements DependencyResolver {
     public void addRepository(MavenRepository repository) {
         try {
             URI uri = new URI(repository.getUrl());
-            String name = uri.getHost();
+            String id = repository.getId().orElseGet(() -> uri.getHost());
             String userInfo = uri.getUserInfo();
-            RemoteRepository.Builder builder = new RemoteRepository.Builder(name, "default", repository.getUrl());
+            RemoteRepository.Builder builder = new RemoteRepository.Builder(id, "default", repository.getUrl());
             if (userInfo != null) {
-                LOGGER.finest(() -> "Setting username and password for " + name + " using URI authority");
+                LOGGER.finest(() -> "Setting username and password for " + id + " using URI authority");
                 addUserInfoAuth(uri, userInfo, builder);
             }
             repository.getHttpCredentials().ifPresent(credentials -> addUserInfoAuth(uri, credentials, builder));

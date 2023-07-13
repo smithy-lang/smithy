@@ -26,10 +26,12 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
 
     private final String url;
     private final String httpCredentials;
+    private final Optional<String> id;
 
     public MavenRepository(Builder builder) {
         this.url = SmithyBuilder.requiredState("url", builder.url);
         this.httpCredentials = builder.httpCredentials;
+        this.id = builder.id;
     }
 
     public static Builder builder() {
@@ -41,12 +43,17 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
         node.expectObjectNode()
                 .warnIfAdditionalProperties(Arrays.asList("url", "httpCredentials"))
                 .expectStringMember("url", builder::url)
-                .getStringMember("httpCredentials", builder::httpCredentials);
+                .getStringMember("httpCredentials", builder::httpCredentials)
+                .getStringMember("id", builder::id);
         return builder.build();
     }
 
     public String getUrl() {
         return url;
+    }
+
+    public Optional<String> getId() {
+        return id;
     }
 
     public Optional<String> getHttpCredentials() {
@@ -55,7 +62,9 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
 
     @Override
     public Builder toBuilder() {
-        return builder().url(url).httpCredentials(httpCredentials);
+        Builder b = builder().url(url).httpCredentials(httpCredentials);
+        id.ifPresent(b::id);
+        return b;
     }
 
     @Override
@@ -77,6 +86,7 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
     public static final class Builder implements SmithyBuilder<MavenRepository> {
         private String url;
         private String httpCredentials;
+        private Optional<String> id = Optional.empty();
 
         private Builder() {}
 
@@ -87,6 +97,11 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
 
         public Builder url(String url) {
             this.url = url;
+            return this;
+        }
+
+        public Builder id(String id) {
+            this.id = Optional.of(id);
             return this;
         }
 
