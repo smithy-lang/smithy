@@ -334,11 +334,12 @@ Simple shapes
     * - bigDecimal
       - Arbitrary precision signed decimal number
     * - timestamp
-      - Represents an instant in time with no UTC offset or timezone. The
-        serialization of a timestamp is an implementation detail that is
-        determined by a :ref:`protocol <protocolDefinition-trait>` and
-        MUST NOT have any effect on the types exposed by tooling to
-        represent a timestamp value.
+      - A timestamp represents an instant in time in the proleptic Gregorian
+        calendar, independent of local times or timezones. Timestamps support
+        an allowable date range between midnight January 1, 0001 CE to
+        23:59:59.999 on December 31, 9999 CE, with a temporal resolution of 1
+        millisecond. This resolution and range ensures broad support across
+        programming languages and guarantees compatibility with :rfc:`3339`.
     * - document
       - Represents protocol-agnostic open content that functions as a kind of
         "any" type. Document types are represented by a JSON-like data model
