@@ -30,6 +30,7 @@ import software.amazon.smithy.model.traits.ReadonlyTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.MapUtils;
 
 /**
@@ -94,10 +95,19 @@ public final class HttpMethodSemanticsValidator extends AbstractValidator {
             HttpTrait trait
     ) {
         String method = trait.getMethod().toUpperCase(Locale.US);
+
+        // We don't have a standard method, so we can't validate it.
+        if (!EXPECTED.containsKey(method)) {
+            return ListUtils.of();
+        }
+
         List<ValidationEvent> events = new ArrayList<>();
 
-        if (!EXPECTED.containsKey(method)) {
-            return events;
+        // Emit a warning if the method is standard, but doesn't match standard casing.
+        if (!EXPECTED.containsKey(trait.getMethod())) {
+            events.add(warning(shape, trait, String.format(
+                    "This operation uses the `%s` method in the `http` trait, but expected `%s`.",
+                    trait.getMethod(), method)));
         }
 
         HttpMethodSemantics semantics = EXPECTED.get(method);
