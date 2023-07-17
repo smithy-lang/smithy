@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.ExpressionVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -31,6 +32,17 @@ public final class IsValidHostLabel extends LibraryFunction {
      */
     public static Definition getDefinition() {
         return DEFINITION;
+    }
+
+    /**
+     * Creates a {@link IsValidHostLabel} function from the given expressions.
+     *
+     * @param arg1 the value to check.
+     * @param arg2 whether to allow subdomains.
+     * @return The resulting {@link IsValidHostLabel} function.
+     */
+    public static IsValidHostLabel ofExpressions(Expression arg1, Expression arg2) {
+        return DEFINITION.createFunction(FunctionNode.ofExpressions(ID, arg1, arg2));
     }
 
     @Override
