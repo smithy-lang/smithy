@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.ExpressionVisitor;
 import software.amazon.smithy.utils.MapUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -35,6 +36,16 @@ public final class UriEncode extends LibraryFunction {
      */
     public static Definition getDefinition() {
         return DEFINITION;
+    }
+
+    /**
+     * Creates a {@link UriEncode} function from the given expressions.
+     *
+     * @param arg1 the value to URI encode.
+     * @return The resulting {@link UriEncode} function.
+     */
+    public static UriEncode ofExpressions(Expression arg1) {
+        return DEFINITION.createFunction(FunctionNode.ofExpressions(ID, arg1));
     }
 
     @Override

@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.rulesengine.language.evaluation.RuleEvaluator;
 import software.amazon.smithy.rulesengine.language.evaluation.value.RecordValue;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
 
 public class AwsPartitionFunctionTest {
     @Test
@@ -37,8 +36,7 @@ public class AwsPartitionFunctionTest {
 
 
     private RecordValue evalWithRegion(String region) {
-        AwsPartition fn = AwsPartition.getDefinition()
-                .createFunction(FunctionNode.ofExpressions(AwsPartition.ID, Expression.of(region)));
+        AwsPartition fn = AwsPartition.ofExpressions(Expression.of(region));
         return fn.accept(new RuleEvaluator()).expectRecordValue();
     }
 }

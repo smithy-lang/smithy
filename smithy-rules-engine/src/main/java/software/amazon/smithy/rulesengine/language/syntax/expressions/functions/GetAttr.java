@@ -58,6 +58,17 @@ public final class GetAttr extends LibraryFunction {
     }
 
     /**
+     * Creates a {@link GetAttr} function from the given expressions.
+     *
+     * @param arg1 the argument to extract from.
+     * @param arg2 the path to extract.
+     * @return The resulting {@link GetAttr} function.
+     */
+    public static GetAttr ofExpressions(Expression arg1, Expression arg2) {
+        return DEFINITION.createFunction(FunctionNode.ofExpressions(ID, arg1, arg2));
+    }
+
+    /**
      * Parses the path argument to getAttr.
      *
      * @param path           path argument in the form `a.b[5]`
