@@ -18,6 +18,7 @@ import software.amazon.smithy.rulesengine.aws.language.functions.partition.Parti
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.ExpressionVisitor;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionDefinition;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
@@ -64,6 +65,16 @@ public final class AwsPartition extends LibraryFunction {
      */
     public static Definition getDefinition() {
         return DEFINITION;
+    }
+
+    /**
+     * Creates a {@link AwsPartition} function from the given expressions.
+     *
+     * @param arg1 the region to retrieve partition information from.
+     * @return The resulting {@link AwsPartition} function.
+     */
+    public static AwsPartition ofExpressions(Expression arg1) {
+        return DEFINITION.createFunction(FunctionNode.ofExpressions(ID, arg1));
     }
 
     @Override

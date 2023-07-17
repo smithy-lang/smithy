@@ -23,6 +23,7 @@ import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.Not;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -40,7 +41,7 @@ public abstract class Expression implements FromSourceLocation, ToNode, TypeChec
         this.sourceLocation = Objects.requireNonNull(sourceLocation);
     }
 
-    public static Expression of(boolean value) {
+    public static Literal of(boolean value) {
         return Literal.booleanLiteral(value);
     }
 
@@ -50,7 +51,7 @@ public abstract class Expression implements FromSourceLocation, ToNode, TypeChec
      * @param value the integer value.
      * @return the integer value as a literal expression.
      */
-    public static Expression of(int value) {
+    public static Literal of(int value) {
         return Literal.integerLiteral(value);
     }
 
@@ -62,6 +63,15 @@ public abstract class Expression implements FromSourceLocation, ToNode, TypeChec
      */
     public static Literal of(String value) {
         return getLiteral(StringNode.from(value));
+    }
+
+    /**
+     * Negates the current expression.
+     *
+     * @return the negated expression.
+     */
+    public Expression not() {
+        return Not.ofExpressions(this);
     }
 
     /**
