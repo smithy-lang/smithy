@@ -153,7 +153,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
         return getDocumentationIdentifier().orElse(buildDefaultDocumentationIdentifier(model));
     }
 
-    protected Optional<String> getDocumentationIdentifier() {
+    private Optional<String> getDocumentationIdentifier() {
         return Optional.ofNullable(documentationIdentifier);
     }
 
