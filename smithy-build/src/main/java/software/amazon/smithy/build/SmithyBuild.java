@@ -15,8 +15,6 @@
 
 package software.amazon.smithy.build;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -199,23 +197,10 @@ public final class SmithyBuild {
     //
     // Ignores and logs when an unsupported model file is encountered.
     private void addSource(Path path) {
-        try {
-            if (Files.isDirectory(path)) {
-                // Pre-emptively crawl the given models to filter them up front into a flat, file-only, list.
-                Files.list(path).filter(Files::isRegularFile).forEach(this::addSourceFile);
-            } else {
-                addSourceFile(path);
-            }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    private void addSourceFile(Path file) {
-        if (!VALID_MODELS.matches(file.getFileName())) {
-            LOGGER.warning("Omitting unsupported Smithy model file from model sources: " + file);
+        if (Files.isRegularFile(path) && !VALID_MODELS.matches(path.getFileName())) {
+            LOGGER.warning("Omitting unsupported Smithy model file from model sources: " + path);
         } else {
-            sources.add(file.toAbsolutePath());
+            sources.add(path.toAbsolutePath());
         }
     }
 
