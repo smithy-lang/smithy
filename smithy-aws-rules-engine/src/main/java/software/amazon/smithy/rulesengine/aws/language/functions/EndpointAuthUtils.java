@@ -33,6 +33,7 @@ public final class EndpointAuthUtils {
     private static final String SIGNING_REGION_SET = "signingRegionSet";
 
     private static final Identifier DISABLE_DOUBLE_ENCODING = Identifier.of("disableDoubleEncoding");
+    private static final Identifier DISABLE_NORMALIZE_PATH = Identifier.of("disableNormalizePath");
 
     private EndpointAuthUtils() {}
 
@@ -86,7 +87,7 @@ public final class EndpointAuthUtils {
             Identifier signingName = Identifier.of(SIGNING_NAME);
             List<ValidationEvent> events = noExtraProperties(emitter, sourceLocation, authScheme,
                     ListUtils.of(RuleSetAuthSchemesValidator.NAME,
-                            signingName, signingRegion, DISABLE_DOUBLE_ENCODING));
+                            signingName, signingRegion, DISABLE_DOUBLE_ENCODING, DISABLE_NORMALIZE_PATH));
             validatePropertyType(emitter, authScheme,
                     signingName, Literal::asStringLiteral).ifPresent(events::add);
             validatePropertyType(emitter, authScheme,
@@ -113,7 +114,7 @@ public final class EndpointAuthUtils {
             Identifier signingName = Identifier.of(SIGNING_NAME);
             List<ValidationEvent> events = noExtraProperties(emitter, sourceLocation, authScheme,
                     ListUtils.of(RuleSetAuthSchemesValidator.NAME,
-                            signingName, signingRegionSet, DISABLE_DOUBLE_ENCODING));
+                            signingName, signingRegionSet, DISABLE_DOUBLE_ENCODING, DISABLE_NORMALIZE_PATH));
             validatePropertyType(emitter, authScheme,
                     signingName, Literal::asStringLiteral).ifPresent(events::add);
             validatePropertyType(emitter, authScheme,
