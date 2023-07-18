@@ -186,6 +186,8 @@ structure service {
     /// to the `arnNamespace` plus `.amazonaws.com`.
     cloudTrailEventSource: String
 
+    documentationIdentifier: String
+
     /// The `endpointPrefix` property is a string value that identifies which
     /// endpoint in a given region should be used to connect to the service.
     /// For example, most services in the AWS standard partition have endpoints

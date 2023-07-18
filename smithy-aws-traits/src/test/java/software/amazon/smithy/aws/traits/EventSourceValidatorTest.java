@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -21,7 +22,7 @@ public class EventSourceValidatorTest {
                 .arnNamespace("foo")
                 .cloudTrailEventSource("REPLACE_ME_LATER")
                 .cloudFormationName("AWS::Foo")
-                .build();
+                .build(ShapeId.from("smithy.example#Foo"));
         ServiceShape service = ServiceShape.builder()
                 .id("smithy.example#Foo")
                 .version("123")
@@ -44,7 +45,7 @@ public class EventSourceValidatorTest {
                 .arnNamespace("foo")
                 .cloudTrailEventSource("notfoo.amazonaws.com")
                 .cloudFormationName("AWS::Foo")
-                .build();
+                .build(ShapeId.from("smithy.example#Foo"));
         ServiceShape service = ServiceShape.builder()
                 .id("smithy.example#Foo")
                 .version("123")
@@ -68,7 +69,7 @@ public class EventSourceValidatorTest {
                 .arnNamespace("cloudwatch")
                 .cloudTrailEventSource("monitoring.amazonaws.com")
                 .cloudFormationName("AWS::Foo")
-                .build();
+                .build(ShapeId.from("smithy.example#Foo"));
         ServiceShape service = ServiceShape.builder()
                 .id("smithy.example#Foo")
                 .version("123")
