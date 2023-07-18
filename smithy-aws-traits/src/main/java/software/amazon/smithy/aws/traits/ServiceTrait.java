@@ -45,7 +45,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
     private final String arnNamespace;
     private final String sdkId;
     private final String cloudTrailEventSource;
-    private final String documentationIdentifier;
+    private final String docId;
     private final String endpointPrefix;
 
     private ServiceTrait(Builder builder) {
@@ -56,7 +56,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
         this.cloudFormationName = SmithyBuilder.requiredState("cloudFormationName", builder.cloudFormationName);
         this.cloudTrailEventSource = SmithyBuilder.requiredState(
                 "cloudTrailEventSource", builder.cloudTrailEventSource);
-        this.documentationIdentifier = builder.documentationIdentifier;
+        this.docId = builder.docId;
         this.endpointPrefix = SmithyBuilder.requiredState("endpointPrefix", builder.endpointPrefix);
     }
 
@@ -84,8 +84,8 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
                     .ifPresent(builder::cloudFormationName);
             objectNode.getStringMember("cloudTrailEventSource").map(StringNode::getValue)
                     .ifPresent(builder::cloudTrailEventSource);
-            objectNode.getStringMember("documentationIdentifier").map(StringNode::getValue)
-                    .ifPresent(builder::documentationIdentifier);
+            objectNode.getStringMember("docId").map(StringNode::getValue)
+                    .ifPresent(builder::docId);
             objectNode.getStringMember("endpointPrefix")
                     .map(StringNode::getValue)
                     .ifPresent(builder::endpointPrefix);
@@ -166,15 +166,15 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
      *
      * @return Returns the documentation identifier value for the service name.
      */
-    public String getDocumentationIdentifier(Model model) {
-        return getDocumentationIdentifier().orElse(buildDefaultDocumentationIdentifier(model));
+    public String getDocId(Model model) {
+        return getDocId().orElse(buildDefaultDocId(model));
     }
 
-    private Optional<String> getDocumentationIdentifier() {
-        return Optional.ofNullable(documentationIdentifier);
+    private Optional<String> getDocId() {
+        return Optional.ofNullable(docId);
     }
 
-    private String buildDefaultDocumentationIdentifier(Model model) {
+    private String buildDefaultDocId(Model model) {
         String version = model.expectShape(target, ServiceShape.class).getVersion();
         return sdkId.replace(" ", "-").toLowerCase(Locale.US) + "-" + version;
     }
@@ -207,7 +207,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
                 .cloudFormationName(cloudFormationName)
                 .arnNamespace(arnNamespace)
                 .cloudTrailEventSource(cloudTrailEventSource)
-                .documentationIdentifier(documentationIdentifier)
+                .docId(docId)
                 .endpointPrefix(endpointPrefix);
     }
 
@@ -220,7 +220,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
                 .withMember("arnNamespace", Node.from(getArnNamespace()))
                 .withMember("cloudFormationName", Node.from(getCloudFormationName()))
                 .withMember("cloudTrailEventSource", Node.from(getCloudTrailEventSource()))
-                .withOptionalMember("documentationIdentifier", getDocumentationIdentifier().map(Node::from))
+                .withOptionalMember("docId", getDocId().map(Node::from))
                 .withMember("endpointPrefix", Node.from(getEndpointPrefix()))
                 .build();
     }
@@ -240,9 +240,9 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
                     && arnNamespace.equals(os.arnNamespace)
                     && cloudFormationName.equals(os.cloudFormationName)
                     && cloudTrailEventSource.equals(os.cloudTrailEventSource)
-                    && documentationIdentifier == null
-                        ? os.documentationIdentifier == null
-                        : documentationIdentifier.equals(os.documentationIdentifier)
+                    && docId == null
+                        ? os.docId == null
+                        : docId.equals(os.docId)
                     && endpointPrefix.equals(os.endpointPrefix);
         }
     }
@@ -250,7 +250,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
     @Override
     public int hashCode() {
         return Objects.hash(toShapeId(), target, sdkId, arnNamespace, cloudFormationName,
-                            cloudTrailEventSource, documentationIdentifier, endpointPrefix);
+                            cloudTrailEventSource, docId, endpointPrefix);
     }
 
     /** Builder for {@link ServiceTrait}. */
@@ -260,7 +260,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
         private String cloudFormationName;
         private String arnNamespace;
         private String cloudTrailEventSource;
-        private String documentationIdentifier;
+        private String docId;
         private String endpointPrefix;
 
         private Builder() {}
@@ -361,11 +361,11 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
         /**
          * Set the documentation identifier for the service.
          *
-         * @param documentationIdentifier documentation identifier for the service.
+         * @param docId documentation identifier for the service.
          * @return Returns the builder.
          */
-        public Builder documentationIdentifier(String documentationIdentifier) {
-            this.documentationIdentifier = documentationIdentifier;
+        public Builder docId(String docId) {
+            this.docId = docId;
             return this;
         }
 
