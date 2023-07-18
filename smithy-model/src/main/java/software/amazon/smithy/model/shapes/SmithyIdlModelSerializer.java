@@ -477,12 +477,17 @@ public final class SmithyIdlModelSerializer {
 
         private void applyIntroducedTraits(Collection<MemberShape> members) {
             for (MemberShape member : members) {
+                Map<ShapeId, Trait> introducedTraits = new LinkedHashMap<>(member.getIntroducedTraits());
+
+                // The @enumValue trait is serialized using the `=` IDL syntax, so remove it here.
+                introducedTraits.remove(EnumValueTrait.ID);
+
                 // Use short form for a single trait, and block form for multiple traits.
-                if (member.getIntroducedTraits().size() == 1) {
+                if (introducedTraits.size() == 1) {
                     codeWriter.writeInline("apply $I ", member.getId());
                     serializeTraits(member.getIntroducedTraits(), TraitFeature.NO_SPECIAL_DOCS_SYNTAX);
                     codeWriter.write("");
-                } else if (!member.getIntroducedTraits().isEmpty()) {
+                } else if (!introducedTraits.isEmpty()) {
                     codeWriter.openBlock("apply $I {", "}", member.getId(), () -> {
                         // Only serialize local traits, and don't use special documentation syntax here.
                         serializeTraits(member.getIntroducedTraits(), TraitFeature.NO_SPECIAL_DOCS_SYNTAX);
