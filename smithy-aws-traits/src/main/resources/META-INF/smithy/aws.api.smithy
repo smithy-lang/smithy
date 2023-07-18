@@ -186,6 +186,11 @@ structure service {
     /// to the `arnNamespace` plus `.amazonaws.com`.
     cloudTrailEventSource: String
 
+    /// The `documentatioIdentifier` property is a string value that defines the
+    /// identifiers used to implemention linking between service and SDK
+    /// documentation for AWS services. If not specified, this value defaults
+    /// to the `sdkId` in lower case plus the service `version` property, separated
+    /// by dashes.
     documentationIdentifier: String
 
     /// The `endpointPrefix` property is a string value that identifies which

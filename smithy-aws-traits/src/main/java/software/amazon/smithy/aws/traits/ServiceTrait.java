@@ -103,6 +103,15 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
     }
 
     /**
+     * Get the ShapeId of the target of this trait.
+     *
+     * @return Returns the ShapeId which this trait targets.
+     */
+    public ShapeId getTarget() {
+        return target;
+    }
+
+    /**
      * Get the AWS ARN service namespace of the service.
      *
      * <p>If not set, this value defaults to the name of the service shape
@@ -149,6 +158,14 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
         return cloudTrailEventSource;
     }
 
+    /**
+     * Returns the documentation identifier value for the service.
+     *
+     * <p> When not set, this value defaults to the lower cased value of
+     * the sdkId followed by the service version, separated by dashes.
+     *
+     * @return Returns the documentation identifier value for the service name.
+     */
     public String getDocumentationIdentifier(Model model) {
         return getDocumentationIdentifier().orElse(buildDefaultDocumentationIdentifier(model));
     }
@@ -280,6 +297,12 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
             return new ServiceTrait(this);
         }
 
+        /**
+         * Sets the target shape to which the trait is applied.
+         *
+         * @param target the ShapeId targeted by the trait.
+         * @return Returns the builder.
+         */
         public Builder target(ShapeId target) {
             this.target = target;
             return this;
@@ -335,6 +358,12 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
             return this;
         }
 
+        /**
+         * Set the documentation identifier for the service.
+         *
+         * @param documentationIdentifier documentation identifier for the service.
+         * @return Returns the builder.
+         */
         public Builder documentationIdentifier(String documentationIdentifier) {
             this.documentationIdentifier = documentationIdentifier;
             return this;
