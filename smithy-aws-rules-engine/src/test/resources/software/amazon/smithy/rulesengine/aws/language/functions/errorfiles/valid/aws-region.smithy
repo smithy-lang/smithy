@@ -33,7 +33,9 @@ use smithy.rules#endpointTests
                         {
                             "name": "sigv4",
                             "signingName": "serviceName",
-                            "signingRegion": "{Region}"
+                            "signingRegion": "{Region}",
+                            "disableDoubleEncoding": false,
+                            "disableNormalizePath": false,
                         }
                     ]
                 }
@@ -66,6 +68,8 @@ use smithy.rules#endpointTests
                                 "name": "sigv4",
                                 "signingRegion": "us-east-1",
                                 "signingName": "serviceName"
+                                "disableDoubleEncoding": false,
+                                "disableNormalizePath": false,
                             }
                         ]
                     }
