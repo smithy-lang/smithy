@@ -233,7 +233,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
     @Override
     public int hashCode() {
         return Objects.hash(toShapeId(), target, sdkId, arnNamespace, cloudFormationName,
-                            cloudTrailEventSource, endpointPrefix);
+                            cloudTrailEventSource, documentationIdentifier, endpointPrefix);
     }
 
     /** Builder for {@link ServiceTrait}. */
