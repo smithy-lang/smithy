@@ -214,7 +214,8 @@ The ``paginated`` trait is a structure that contains the following members:
       - ``string``
       - The name of an operation input member that limits the maximum number
         of results to include in the operation output. This input member
-        SHOULD NOT be required and MUST target an integer shape.
+        SHOULD NOT be required and SHOULD target an integer shape. It can, but
+        SHOULD NOT target a byte, short, or long shape.
 
         .. warning::
 
