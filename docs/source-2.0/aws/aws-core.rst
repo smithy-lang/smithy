@@ -205,10 +205,9 @@ need to explicitly configure the ``cloudTrailEventSource`` setting.
 The ``docId`` property is a ``string`` value that is used to implement linking
 between service and SDK documentation for AWS services.
 
-This value MAY be provided, but if it's missing it will default to the ``sdkId``
-value in lower case followed by the service ``version`` property, separated by
-dashes. For the example below the value for this property would default to
-``some-value-2018-03-17``.
+This will default to the ``sdkId`` value in lower case followed by the service
+``version`` property, separated by dashes. For the example below, the value
+for this property would default to ``some-value-2018-03-17``.
 
 .. code-block:: smithy
 
