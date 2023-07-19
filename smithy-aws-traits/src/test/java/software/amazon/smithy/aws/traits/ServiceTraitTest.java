@@ -18,6 +18,7 @@ package software.amazon.smithy.aws.traits;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -47,12 +48,13 @@ public class ServiceTraitTest {
         assertThat(serviceTrait.getCloudTrailEventSource(), equalTo("foo.amazonaws.com"));
         assertThat(serviceTrait.getEndpointPrefix(), equalTo("foo"));
         assertThat(serviceTrait.toBuilder().build(), equalTo(serviceTrait));
+        assertFalse(serviceTrait.getDocId().isPresent());
     }
 
     @Test
     public void loadsTraitWithOptionalValues() {
         Node node = Node.parse("{\"sdkId\": \"Foo\", \"arnNamespace\": \"service\", \"cloudFormationName\": \"Baz\", "
-                        + "\"endpointPrefix\": \"endpoint-prefix\"}");
+                        + "\"endpointPrefix\": \"endpoint-prefix\", \"docId\": \"doc-id\"}");
         TraitFactory provider = TraitFactory.createServiceFactory();
         Optional<Trait> trait = provider.createTrait(ServiceTrait.ID, ShapeId.from("ns.foo#foo"), node);
 
@@ -63,6 +65,8 @@ public class ServiceTraitTest {
         assertThat(serviceTrait.getArnNamespace(), equalTo("service"));
         assertThat(serviceTrait.getCloudFormationName(), equalTo("Baz"));
         assertThat(serviceTrait.getEndpointPrefix(), equalTo("endpoint-prefix"));
+        assertTrue(serviceTrait.getDocId().isPresent());
+        assertThat(serviceTrait.getDocId().get(), equalTo("doc-id"));
     }
 
     @Test
@@ -90,13 +94,14 @@ public class ServiceTraitTest {
                 .assemble()
                 .unwrap();
         ServiceShape service = result
-                .expectShape(ShapeId.from("ns.foo#SomeService"))
-                .asServiceShape().get();
-        ServiceTrait trait = service.getTrait(ServiceTrait.class).get();
+                .expectShape(ShapeId.from("ns.foo#SomeService"), ServiceShape.class);
+        ServiceTrait trait = service.expectTrait(ServiceTrait.class);
 
         assertThat(trait.getSdkId(), equalTo("Some Value"));
         assertThat(trait.getCloudFormationName(), equalTo("SomeService"));
         assertThat(trait.getArnNamespace(), equalTo("service"));
         assertThat(trait.getEndpointPrefix(), equalTo("some-service"));
+        assertFalse(trait.getDocId().isPresent());
+        assertThat(trait.getDocId(result), equalTo("some-value-2018-03-17"));
     }
 }

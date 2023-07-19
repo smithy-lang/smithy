@@ -161,8 +161,9 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
     /**
      * Returns the documentation identifier value for the service.
      *
-     * <p> When not set, this value defaults to the lower cased value of
-     * the sdkId followed by the service version, separated by dashes.
+     * <p> When value on trait is not set, this method defaults to the lower
+     * cased value of the sdkId followed by the service version, separated by
+     * dashes.
      *
      * @return Returns the documentation identifier value for the service name.
      */
@@ -170,7 +171,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
         return getDocId().orElse(buildDefaultDocId(model));
     }
 
-    private Optional<String> getDocId() {
+    protected Optional<String> getDocId() {
         return Optional.ofNullable(docId);
     }
 

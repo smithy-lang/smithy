@@ -17,14 +17,15 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public class EventSourceValidatorTest {
     @Test
     public void detectsWhenEventSourceIsUnexpected() {
+        ShapeId id = ShapeId.from("smithy.example#Foo");
         ServiceTrait trait = ServiceTrait.builder()
                 .sdkId("Foo")
                 .arnNamespace("foo")
                 .cloudTrailEventSource("REPLACE_ME_LATER")
                 .cloudFormationName("AWS::Foo")
-                .build(ShapeId.from("smithy.example#Foo"));
+                .build(id);
         ServiceShape service = ServiceShape.builder()
-                .id("smithy.example#Foo")
+                .id(id)
                 .version("123")
                 .addTrait(trait)
                 .build();
@@ -40,14 +41,15 @@ public class EventSourceValidatorTest {
 
     @Test
     public void detectsWhenEventSourceIsPlaceholder() {
+        ShapeId id = ShapeId.from("smithy.example#Foo");
         ServiceTrait trait = ServiceTrait.builder()
                 .sdkId("Foo")
                 .arnNamespace("foo")
                 .cloudTrailEventSource("notfoo.amazonaws.com")
                 .cloudFormationName("AWS::Foo")
-                .build(ShapeId.from("smithy.example#Foo"));
+                .build(id);
         ServiceShape service = ServiceShape.builder()
-                .id("smithy.example#Foo")
+                .id(id)
                 .version("123")
                 .addTrait(trait)
                 .build();
@@ -64,14 +66,15 @@ public class EventSourceValidatorTest {
 
     @Test
     public void ignoresKnownExceptions() {
+        ShapeId id = ShapeId.from("smithy.example#Foo");
         ServiceTrait trait = ServiceTrait.builder()
                 .sdkId("Foo")
                 .arnNamespace("cloudwatch")
                 .cloudTrailEventSource("monitoring.amazonaws.com")
                 .cloudFormationName("AWS::Foo")
-                .build(ShapeId.from("smithy.example#Foo"));
+                .build(id);
         ServiceShape service = ServiceShape.builder()
-                .id("smithy.example#Foo")
+                .id(id)
                 .version("123")
                 .addTrait(trait)
                 .build();
