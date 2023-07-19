@@ -69,7 +69,6 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
         public Trait createTrait(ShapeId target, Node value) {
             ObjectNode objectNode = value.expectObjectNode();
             Builder builder = builder().sourceLocation(value);
-            builder.target(target);
             String sdkId = objectNode.getStringMember("sdkId")
                     .map(StringNode::getValue)
                     .orElseThrow(() -> new SourceException(String.format(
@@ -100,15 +99,6 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
      */
     public static Builder builder() {
         return new Builder();
-    }
-
-    /**
-     * Get the ShapeId of the target of this trait.
-     *
-     * @return Returns the ShapeId which this trait targets.
-     */
-    public ShapeId getTarget() {
-        return target;
     }
 
     /**
@@ -304,7 +294,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
          * @param target the ShapeId targeted by the trait.
          * @return Returns the builder.
          */
-        public Builder target(ShapeId target) {
+        private Builder target(ShapeId target) {
             this.target = target;
             return this;
         }
