@@ -158,7 +158,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
      * @return Returns the documentation identifier value for the service name.
      */
     public String getDocId(Model model) {
-        return getDocId().orElse(buildDefaultDocId(model));
+        return getDocId().orElseGet(() -> buildDefaultDocId(model));
     }
 
     protected Optional<String> getDocId() {
