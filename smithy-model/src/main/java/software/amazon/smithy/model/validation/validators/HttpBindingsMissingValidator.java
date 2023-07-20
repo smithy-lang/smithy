@@ -24,12 +24,14 @@ import software.amazon.smithy.model.knowledge.ServiceIndex;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.model.traits.ProtocolDefinitionTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.Pair;
 
 /**
  * Validates that if any operation in a service uses the http trait,
@@ -50,37 +52,46 @@ public final class HttpBindingsMissingValidator extends AbstractValidator {
 
     private List<ValidationEvent> validateService(TopDownIndex topDownIndex, Model model, ServiceShape service) {
         Set<OperationShape> operations = topDownIndex.getContainedOperations(service);
+
+        ShapeId protocolTraitId = protocolWithBindings(service, model);
+        if (protocolTraitId != null) {
+            // Emit ERROR events if any of the protocols for the service support HTTP traits.
+            String reason = "The `" + protocolTraitId + "` protocol requires all";
+            return validateOperations(service, operations, Severity.ERROR, reason);
+        }
+
         // Stop early if there are no bindings at all in the model for any operation.
         if (operations.stream().noneMatch(this::hasBindings)) {
             return ListUtils.of();
         }
 
-        Severity severity = determineSeverity(service, model);
-
-        return operations.stream()
-                .filter(shape -> !shape.getTrait(HttpTrait.class).isPresent())
-                .map(shape -> createEvent(severity, service, shape))
-                .collect(Collectors.toList());
+        return validateOperations(service, operations, Severity.WARNING, "One or more");
     }
 
-    // Only emit ERROR events if any of the protocols for the service support HTTP traits
-    private Severity determineSeverity(ServiceShape service, Model model) {
-        if (ServiceIndex.of(model).getProtocols(service).values().stream()
+    private ShapeId protocolWithBindings(ServiceShape service, Model model) {
+        return ServiceIndex.of(model).getProtocols(service).values().stream()
                 .map(t -> model.expectShape(t.toShapeId()))
-                .map(s -> s.expectTrait(ProtocolDefinitionTrait.class))
-                .anyMatch(pdt -> pdt.getTraits().contains(HttpTrait.ID))) {
-            return Severity.ERROR;
-        }
-        return Severity.WARNING;
+                .map(s -> Pair.of(s.getId(), s.expectTrait(ProtocolDefinitionTrait.class)))
+                .filter(pair -> pair.getRight().getTraits().contains(HttpTrait.ID))
+                .map(Pair::getLeft)
+                .findFirst().orElse(null);
     }
 
     private boolean hasBindings(OperationShape op) {
         return op.getTrait(HttpTrait.class).isPresent();
     }
 
-    private ValidationEvent createEvent(Severity severity, ServiceShape service, OperationShape operation) {
-        return createEvent(severity, operation, operation.getSourceLocation(), String.format(
-                "One or more operations in the `%s` service define the `http` trait, but this "
-                + "operation is missing the `http` trait.", service.getId()));
+    private List<ValidationEvent> validateOperations(
+            ServiceShape service,
+            Set<OperationShape> operations,
+            Severity severity,
+            String reason
+    ) {
+        return operations.stream()
+                .filter(operation -> !operation.getTrait(HttpTrait.class).isPresent())
+                .map(operation -> createEvent(severity, operation, operation.getSourceLocation(),
+                        String.format("%s operations in the `%s` service define the `http` trait, but this "
+                                + "operation is missing the `http` trait.", reason, service.getId())))
+                .collect(Collectors.toList());
     }
 }

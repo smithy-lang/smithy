@@ -1,2 +1,2 @@
-[ERROR] ns.foo#MissingBindings1: One or more operations in the `ns.foo#MyService` service define the `http` trait, but this operation is missing the `http` trait. | HttpBindingsMissing
-[ERROR] ns.foo#MissingBindings2: One or more operations in the `ns.foo#MyService` service define the `http` trait, but this operation is missing the `http` trait. | HttpBindingsMissing
+[ERROR] ns.foo#MissingBindings1: The `ns.foo#restProtocol` protocol requires all operations in the `ns.foo#MyService` service define the `http` trait, but this operation is missing the `http` trait. | HttpBindingsMissing
+[ERROR] ns.foo#MissingBindings2: The `ns.foo#restProtocol` protocol requires all operations in the `ns.foo#MyService` service define the `http` trait, but this operation is missing the `http` trait. | HttpBindingsMissing
