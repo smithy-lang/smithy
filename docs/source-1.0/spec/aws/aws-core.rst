@@ -26,10 +26,12 @@ Value type
     * :ref:`service-cloudformation-name`
     * :ref:`service-arn-namespace`
     * :ref:`service-cloudtrail-event-source`
+    * :ref:`service-doc-id`
     * :ref:`service-endpoint-prefix`
 
 The following example defines an AWS service that uses the default values of
-``cloudFormationService``, ``arnNamespace``, and ``cloudTrailEventSource``:
+``cloudFormationService``, ``arnNamespace``, ``cloudTrailEventSource`` and
+``docId``:
 
 .. tabs::
 
@@ -78,6 +80,7 @@ The following example provides explicit values for all properties:
             cloudFormationName: "FooBaz",
             arnNamespace: "myservice",
             cloudTrailEventSource: "myservice.amazon.aws",
+            docId: "some-value-2018-03-17",
             endpointPrefix: "my-endpoint"
         )
         service FooBaz {
@@ -97,6 +100,7 @@ The following example provides explicit values for all properties:
                             "sdkId": "Some Value",
                             "cloudFormationName": "FooBaz",
                             "arnNamespace": "myservice",
+                            "docId": "some-value-2018-03-17",
                             "cloudTrailEventSource": "myservice.amazon.aws"
                         }
                     }
@@ -231,6 +235,31 @@ This value SHOULD follow the convention of ``{arnNamespace}.amazonaws.com``,
 but there are some exceptions. For example, the event source for
 Amazon CloudWatch is ``monitoring.amazonaws.com``. Such services will
 need to explicitly configure the ``cloudTrailEventSource`` setting.
+
+
+.. _service-doc-id:
+
+``docId``
+===========================
+
+The ``docId`` property is a ``string`` value that is used to implement linking
+between service and SDK documentation for AWS services.
+
+This will default to the ``sdkId`` value in lower case followed by the service
+``version`` property, separated by dashes. For the example below, the value
+for this property would default to ``some-value-2018-03-17``.
+
+.. code-block:: smithy
+
+    $version: "1.0"
+    namespace aws.fooBaz
+
+    use aws.api#service
+
+    @service(sdkId: "Some Value")
+    service FooBaz {
+        version: "2018-03-17",
+    }
 
 
 .. _service-endpoint-prefix:
