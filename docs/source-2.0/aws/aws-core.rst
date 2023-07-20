@@ -200,7 +200,7 @@ need to explicitly configure the ``cloudTrailEventSource`` setting.
 .. _service-doc-id:
 
 ``docId``
-===========================
+=========
 
 The ``docId`` property is a ``string`` value that is used to implement linking
 between service and SDK documentation for AWS services.
