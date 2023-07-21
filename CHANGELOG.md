@@ -1,5 +1,44 @@
 # Smithy Changelog
 
+## 1.34.0 (2023-07-10)
+
+### Features
+
+* Added a default template for the `smithy init` command, making specifying templates optional ([#1843](https://github.com/awslabs/smithy/pull/1843))
+* Updated the model loader to skip unrecognized non-Smithy JSON files ([#1846](https://github.com/awslabs/smithy/pull/1846))
+
+### Bug Fixes
+
+* Fixed basic HTTP authentication when resolving dependencies in the Smithy CLI ([#1838](https://github.com/awslabs/smithy/pull/1838))
+* Fixed a bug when deduping `ChangedNullability` events ([#1839](https://github.com/awslabs/smithy/pull/1839))
+
+### Documentation
+
+* Replaced implementation docs with the awesome-smithy repository ([#1845](https://github.com/awslabs/smithy/pull/1845))
+* Removed support for fractional seconds from the `http-date` timestamp format ([#1847](https://github.com/awslabs/smithy/pull/1847))
+* Rephrased optional fractional precision and no UTC offset support for the `date-time` timestamp format ([#1835](https://github.com/awslabs/smithy/pull/1835))
+
+## 1.33.0 (2023-06-21)
+
+### Features
+* Extended event ids for `AddedOperationError`, `RemovedOperationError`, `AddedEntityBinding` and `RemovedEntityBinding` diff events ([#1797](https://github.com/awslabs/smithy/pull/1797), [#1803](https://github.com/awslabs/smithy/pull/1803))
+* Added enum values to ids for `ChangedEnumTrait` diff events ([#1807](https://github.com/awslabs/smithy/pull/1807))
+* Added `init` command to Smithy CLI ([#1802](https://github.com/awslabs/smithy/pull/1802), [#1825](https://github.com/awslabs/smithy/pull/1825), [#1832](https://github.com/awslabs/smithy/pull/1832))
+* Added `smithy-syntax` package and `smithy format` command to Smithy CLI ([#1830](https://github.com/awslabs/smithy/pull/1830))
+
+### Bug Fixes
+* Fixed duplicated events for `ChangedNullability` alongside the `AddedInputTrait / RemovedInputTrait` ([#1806](https://github.com/awslabs/smithy/pull/1806))
+* Updated request compression trait protocol tests with regard to HTTP bindings and respective specification ([#1831](https://github.com/awslabs/smithy/pull/1831))
+
+### Documentation
+* Added `smithy-dafny` to code generators table ([#1813](https://github.com/awslabs/smithy/pull/1813))
+* Updated stale docs around `MissingPaginatedTrait` ([#1814](https://github.com/awslabs/smithy/pull/1814))
+* Fixed grammar rendering ([#1815](https://github.com/awslabs/smithy/pull/1815))
+* Updated recommendation for HTTP status code ([#1818](https://github.com/awslabs/smithy/pull/1818))
+* Fixed selector example ([#1824](https://github.com/awslabs/smithy/pull/1824))
+* Added note about how constraint traits affect backward compatibility ([#1826](https://github.com/awslabs/smithy/pull/1826))
+* Added guide on disabling authentication ([#1791](https://github.com/awslabs/smithy/pull/1791))
+
 ## 1.32.0 (2023-06-06)
 
 ### Features

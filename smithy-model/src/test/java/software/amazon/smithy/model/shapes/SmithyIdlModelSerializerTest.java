@@ -243,4 +243,20 @@ public class SmithyIdlModelSerializerTest {
 
         assertThat(modelResult, equalTo(IoUtils.readUtf8Url(resource).replace("\r\n", "\n")));
     }
+
+    @Test
+    public void handlesEnumMixins() {
+        URL resource = getClass().getResource("idl-serialization/enum-mixin-input.smithy");
+        Model model = Model.assembler().addImport(resource).assemble().unwrap();
+        Map<Path, String> serialized = SmithyIdlModelSerializer.builder().build().serialize(model);
+
+        if (serialized.size() != 1) {
+            throw new RuntimeException("Exactly one smithy file should be output for generated tests.");
+        }
+
+        String expectedOutput = IoUtils.readUtf8Resource(getClass(), "idl-serialization/enum-mixin-output.smithy")
+                .replaceAll("\\R", "\n");
+        String serializedString = serialized.entrySet().iterator().next().getValue();
+        Assertions.assertEquals(expectedOutput, serializedString);
+    }
 }

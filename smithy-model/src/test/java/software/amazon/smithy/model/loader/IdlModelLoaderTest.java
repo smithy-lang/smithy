@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
@@ -172,7 +173,10 @@ public class IdlModelLoaderTest {
                 .unwrap();
 
         Shape shape = model.expectShape(ShapeId.from("smithy.example#MyStruct$myMember"));
-        String docs = shape.getTrait(DocumentationTrait.class).map(StringTrait::getValue).orElse("");
+        String docs = shape.getTrait(DocumentationTrait.class)
+                .map(StringTrait::getValue)
+                .orElse("")
+                .replace("\r\n", "\n");
 
         assertThat(docs, equalTo("This is the first line.\nThis is the second line."));
     }
@@ -472,5 +476,19 @@ public class IdlModelLoaderTest {
                 .count();
 
         assertThat(foundSyntax, equalTo(4L));
+    }
+
+    @Test
+    public void throwsWhenTooNested() {
+        IdlModelLoader loader = new IdlModelLoader("foo.smithy", "", new StringTable());
+
+        for (int i = 0; i < 64; i++) {
+            loader.increaseNestingLevel();
+        }
+
+        ModelSyntaxException e = Assertions.assertThrows(ModelSyntaxException.class, loader::increaseNestingLevel);
+
+        assertThat(e.getMessage(),
+                   startsWith("Syntax error at line 1, column 1: Parser exceeded maximum allowed depth of 64"));
     }
 }

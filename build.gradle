@@ -23,7 +23,7 @@ plugins {
     id "jacoco"
     id "com.github.spotbugs" version "4.7.1"
     id "io.codearte.nexus-staging" version "0.30.0"
-    id "me.champeau.jmh" version "0.6.5"
+    id "me.champeau.jmh" version "0.7.1"
     id 'com.github.johnrengelman.shadow' version "7.1.2"
 }
 
@@ -118,9 +118,9 @@ subprojects {
     apply plugin: "signing"
     apply plugin: "com.github.johnrengelman.shadow"
 
-    // This is a little hacky, but currently needed to build a shadowed CLI JAR with the same customizations
-    // as other JARs.
-    if (project.name != "smithy-cli") {
+    // This is a little hacky, but currently needed to build a shadowed CLI JAR and smithy-syntax JAR with the same
+    // customizations as other JARs.
+    if (project.name != "smithy-cli" && project.name != "smithy-syntax") {
         tasks.shadowJar.enabled = false
     }
 
@@ -154,7 +154,7 @@ subprojects {
                     pom {
                         name.set(project.ext["displayName"].toString())
                         description.set(project.description)
-                        url.set("https://github.com/awslabs/smithy")
+                        url.set("https://github.com/smithy-lang/smithy")
                         licenses {
                             license {
                                 name.set("Apache License 2.0")
@@ -172,7 +172,7 @@ subprojects {
                             }
                         }
                         scm {
-                            url.set("https://github.com/awslabs/smithy.git")
+                            url.set("https://github.com/smithy-lang/smithy.git")
                         }
                     }
                 }
@@ -219,8 +219,8 @@ subprojects {
     }
     jacocoTestReport {
         reports {
-            xml.enabled false
-            csv.enabled false
+            xml.required.set(false)
+            csv.required.set(false)
             html.destination file("$buildDir/reports/jacoco")
         }
     }

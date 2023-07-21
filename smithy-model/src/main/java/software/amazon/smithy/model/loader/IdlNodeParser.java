@@ -29,7 +29,7 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.Pair;
 
 /**
- * Parses Node values from a {@link IdlTokenizer}.
+ * Parses Node values from a {@link IdlInternalTokenizer}.
  */
 final class IdlNodeParser {
 
@@ -42,13 +42,12 @@ final class IdlNodeParser {
      *
      * <p>The tokenizer is advanced to the next token after parsing the Node value.</p>
      *
-     * @param tokenizer Tokenizer to consume and advance.
-     * @param resolver  Forward reference resolver.
+     * @param loader IDL parser.
      * @return Returns the parsed node value.
      * @throws ModelSyntaxException if the Node is not well-formed.
      */
-    static Node expectAndSkipNode(IdlTokenizer tokenizer, IdlReferenceResolver resolver) {
-        return expectAndSkipNode(tokenizer, resolver, tokenizer.getCurrentTokenLocation());
+    static Node expectAndSkipNode(IdlModelLoader loader) {
+        return expectAndSkipNode(loader, loader.getTokenizer().getCurrentTokenLocation());
     }
 
     /**
@@ -57,13 +56,13 @@ final class IdlNodeParser {
      *
      * <p>The tokenizer is advanced to the next token after parsing the Node value.</p>
      *
-     * @param tokenizer Tokenizer to consume and advance.
-     * @param resolver  Forward reference resolver.
+     * @param loader IDL loader.
      * @param location Source location to assign to the node.
      * @return Returns the parsed node value.
      * @throws ModelSyntaxException if the Node is not well-formed.
      */
-    static Node expectAndSkipNode(IdlTokenizer tokenizer, IdlReferenceResolver resolver, SourceLocation location) {
+    static Node expectAndSkipNode(IdlModelLoader loader, SourceLocation location) {
+        IdlInternalTokenizer tokenizer = loader.getTokenizer();
         IdlToken token = tokenizer.expect(IdlToken.STRING, IdlToken.TEXT_BLOCK, IdlToken.NUMBER, IdlToken.IDENTIFIER,
                                           IdlToken.LBRACE, IdlToken.LBRACKET);
 
@@ -74,36 +73,32 @@ final class IdlNodeParser {
                 tokenizer.next();
                 return result;
             case IDENTIFIER:
-                String shapeId = tokenizer.internString(IdlShapeIdParser.expectAndSkipShapeId(tokenizer));
-                return parseIdentifier(resolver, shapeId, location);
+                String shapeId = loader.internString(IdlShapeIdParser.expectAndSkipShapeId(tokenizer));
+                return parseIdentifier(loader, shapeId, location);
             case NUMBER:
                 Number number = tokenizer.getCurrentTokenNumberValue();
                 tokenizer.next();
                 return new NumberNode(number, location);
             case LBRACE:
-                return parseObjectNode(tokenizer, resolver, location);
+                return parseObjectNode(loader, location);
             case LBRACKET:
             default:
-                return parseArrayNode(tokenizer, resolver, location);
+                return parseArrayNode(loader, location);
         }
     }
 
     /**
      * Parse a Node identifier String, taking into account keywords and forward references.
      *
-     * @param resolver   Forward reference resolver.
+     * @param loader     IDL parser.
      * @param identifier Identifier to parse.
      * @param location   Source location to assign to the identifier.
      * @return Returns the parsed identifier.
      */
-    static Node parseIdentifier(
-            IdlReferenceResolver resolver,
-            String identifier,
-            SourceLocation location
-    ) {
+    static Node parseIdentifier(IdlModelLoader loader, String identifier, SourceLocation location) {
         Keyword keyword = Keyword.from(identifier);
         return keyword == null
-               ? parseSyntacticShapeId(resolver, identifier, location)
+               ? parseSyntacticShapeId(loader, identifier, location)
                : keyword.createNode(location);
     }
 
@@ -144,7 +139,7 @@ final class IdlNodeParser {
     }
 
     private static Node parseSyntacticShapeId(
-            IdlReferenceResolver resolver,
+            IdlModelLoader loader,
             String identifier,
             SourceLocation location
     ) {
@@ -152,7 +147,7 @@ final class IdlNodeParser {
         // used because the shape ID may not be able to be resolved until after the entire model is loaded.
         Pair<StringNode, Consumer<String>> pair = StringNode.createLazyString(identifier, location);
         Consumer<String> consumer = pair.right;
-        resolver.resolve(identifier, (id, type) -> {
+        loader.addForwardReference(identifier, (id, type) -> {
             consumer.accept(id.toString());
             if (type != null) {
                 return null;
@@ -170,14 +165,11 @@ final class IdlNodeParser {
         return pair.left;
     }
 
-    private static ArrayNode parseArrayNode(
-            IdlTokenizer tokenizer,
-            IdlReferenceResolver resolver,
-            SourceLocation location
-    ) {
-        tokenizer.increaseNestingLevel();
+    private static ArrayNode parseArrayNode(IdlModelLoader loader, SourceLocation location) {
+        loader.increaseNestingLevel();
         ArrayNode.Builder builder = ArrayNode.builder().sourceLocation(location);
 
+        IdlInternalTokenizer tokenizer = loader.getTokenizer();
         tokenizer.expect(IdlToken.LBRACKET);
         tokenizer.next();
         tokenizer.skipWsAndDocs();
@@ -186,26 +178,23 @@ final class IdlNodeParser {
             if (tokenizer.getCurrentToken() == IdlToken.RBRACKET) {
                 break;
             } else {
-                builder.withValue(expectAndSkipNode(tokenizer, resolver));
+                builder.withValue(expectAndSkipNode(loader));
                 tokenizer.skipWsAndDocs();
             }
         } while (true);
 
         tokenizer.expect(IdlToken.RBRACKET);
         tokenizer.next();
-        tokenizer.decreaseNestingLevel();
+        loader.decreaseNestingLevel();
         return builder.build();
     }
 
-    private static ObjectNode parseObjectNode(
-            IdlTokenizer tokenizer,
-            IdlReferenceResolver resolver,
-            SourceLocation location
-    ) {
+    private static ObjectNode parseObjectNode(IdlModelLoader loader, SourceLocation location) {
+        IdlInternalTokenizer tokenizer = loader.getTokenizer();
         tokenizer.expect(IdlToken.LBRACE);
         tokenizer.next();
         tokenizer.skipWsAndDocs();
-        tokenizer.increaseNestingLevel();
+        loader.increaseNestingLevel();
         ObjectNode.Builder builder = ObjectNode.builder().sourceLocation(location);
 
         while (tokenizer.hasNext()) {
@@ -213,7 +202,7 @@ final class IdlNodeParser {
                 break;
             }
 
-            String key = tokenizer.internString(tokenizer.getCurrentTokenStringSlice());
+            String key = loader.internString(tokenizer.getCurrentTokenStringSlice());
             SourceLocation keyLocation = tokenizer.getCurrentTokenLocation();
             tokenizer.next();
             tokenizer.skipWsAndDocs();
@@ -221,7 +210,7 @@ final class IdlNodeParser {
             tokenizer.next();
             tokenizer.skipWsAndDocs();
 
-            Node value = expectAndSkipNode(tokenizer, resolver);
+            Node value = expectAndSkipNode(loader);
             if (builder.hasMember(key)) {
                 throw new ModelSyntaxException("Duplicate member: '" + key + '\'', keyLocation);
             }
@@ -231,7 +220,7 @@ final class IdlNodeParser {
 
         tokenizer.expect(IdlToken.RBRACE);
         tokenizer.next();
-        tokenizer.decreaseNestingLevel();
+        loader.decreaseNestingLevel();
         return builder.build();
     }
 }

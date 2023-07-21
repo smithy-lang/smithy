@@ -37,11 +37,13 @@ dependencies {
     implementation project(":smithy-model")
     implementation project(":smithy-build")
     implementation project(":smithy-diff")
+    implementation project(path: ':smithy-syntax', configuration: 'shadow')
 
     // This is needed to ensure the above dependencies are added to the runtime image.
     shadow project(":smithy-model")
     shadow project(":smithy-build")
     shadow project(":smithy-diff")
+    shadow project(":smithy-syntax")
 
     // These maven resolver dependencies are shaded into the smithy-cli JAR.
     implementation "org.apache.maven:maven-resolver-provider:3.8.6"
@@ -53,6 +55,8 @@ dependencies {
     implementation "org.apache.maven.resolver:maven-resolver-transport-file:1.9.2"
     implementation "org.apache.maven.resolver:maven-resolver-transport-http:1.9.2"
     implementation "org.slf4j:slf4j-jdk14:1.7.36" // Route slf4j used by Maven through JUL like the rest of Smithy.
+
+    testImplementation "org.mock-server:mockserver-netty:3.10.8"
 }
 
 // ------ Shade Maven dependency resolvers into the JAR. -------
@@ -82,6 +86,7 @@ shadowJar {
         exclude(project(':smithy-model'))
         exclude(project(':smithy-build'))
         exclude(project(':smithy-diff'))
+        exclude(project(':smithy-syntax'))
     }
 }
 

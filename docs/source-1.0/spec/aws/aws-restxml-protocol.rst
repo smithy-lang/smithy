@@ -311,7 +311,7 @@ Protocol compliance tests
 -------------------------
 
 A full compliance test suite is provided and SHALL be considered a normative
-reference: https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/restXml
+reference: https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/restXml
 
 These compliance tests define a model that is used to define test cases and
 the expected serialized HTTP requests and responses for each case.

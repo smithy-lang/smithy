@@ -1,6 +1,6 @@
 .. _cli_installation:
 
-.. |release-uri| replace:: https://github.com/awslabs/smithy/releases/download/__smithy_version__
+.. |release-uri| replace:: https://github.com/smithy-lang/smithy/releases/download/__smithy_version__
 .. |mac-tar| replace:: smithy-cli-darwin-x86_64.tar.gz
 .. |mac-arm-tar| replace:: smithy-cli-darwin-aarch64.tar.gz
 .. |linux-tar| replace:: smithy-cli-linux-x86_64.tar.gz
@@ -502,7 +502,7 @@ We'll be using these to perform the verification.
     `key validation`_ section from the GNU Privacy Handbook.
 
 
-.. _Smithy GitHub releases: https://github.com/awslabs/smithy/releases
+.. _Smithy GitHub releases: https://github.com/smithy-lang/smithy/releases
 .. _AWS Homebrew Tap: https://github.com/aws/homebrew-tap
-.. _release: https://github.com/awslabs/smithy/releases/download/__smithy_version__
+.. _release: https://github.com/smithy-lang/smithy/releases/download/__smithy_version__
 .. _key validation: https://www.gnupg.org/gph/en/manual/x334.html

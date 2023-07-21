@@ -1,13 +1,7 @@
 {
     "smithy": "2.0",
     "shapes": {
-        "com.example#Bam": {
-            "type": "string"
-        },
         "com.example#Bar": {
-            "type": "string"
-        },
-        "com.example#Baz": {
             "type": "string"
         },
         "com.example#Foo": {

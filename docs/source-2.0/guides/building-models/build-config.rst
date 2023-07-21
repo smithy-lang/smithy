@@ -244,8 +244,7 @@ the `official Maven documentation`_:
 Unsupported version requirements
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* LATEST, SNAPSHOT, RELEASE, latest-status, and latest.* versions are not
-  supported.
+* LATEST, RELEASE, latest-status, and latest.* versions are not supported.
 * Gradle style ``+`` versions are not supported.
 
 

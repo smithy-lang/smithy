@@ -210,7 +210,7 @@ remote repository. You can add packages to Maven local using Gradle:
     ./gradlew :smithy-mylang-codegen:pTML
 
 If you need to use unreleased changes to
-`awslabs/smithy <https://github.com/awslabs/smithy>`__, then clone the
+`awslabs/smithy <https://github.com/smithy-lang/smithy>`__, then clone the
 repository and run:
 
 .. code-block:: none

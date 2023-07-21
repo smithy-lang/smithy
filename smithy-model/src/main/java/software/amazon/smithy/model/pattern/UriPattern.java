@@ -78,7 +78,8 @@ public final class UriPattern extends SmithyPattern {
         for (int i = 1; i < unparsedSegments.length; i++) {
             String segment = unparsedSegments[i];
             segments.add(Segment.parse(segment, offset));
-            offset += segment.length();
+            // Add one to account for `/`
+            offset += segment.length() + 1;
         }
 
         Map<String, String> queryLiterals = new LinkedHashMap<>();

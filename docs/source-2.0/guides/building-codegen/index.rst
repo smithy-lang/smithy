@@ -128,5 +128,5 @@ Navigation
 .. observability, Smithy reference architecture, paginators,
 .. waiters, endpoint resolution
 
-.. _Smithy's Java reference implementation: https://github.com/awslabs/smithy
+.. _Smithy's Java reference implementation: https://github.com/smithy-lang/smithy
 .. _Gradle: https://gradle.org

@@ -68,7 +68,7 @@ Creating a ``SmithyIntegrations``
 =================================
 
 Smithy codegen provides a pre-built integration interface,
-`SmithyIntegration <https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SmithyIntegration.java>`__,
+`SmithyIntegration <https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SmithyIntegration.java>`__,
 that *should* be used by every Smithy code generator. Using this
 standardized interface ensures all code generators follow the same basic
 framework and makes it easier to contribute features that span multiple

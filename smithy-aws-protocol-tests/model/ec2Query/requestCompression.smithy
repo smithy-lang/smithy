@@ -9,7 +9,7 @@ use smithy.test#httpResponseTests
 apply PutWithContentEncoding @httpRequestTests([
     {
         id: "SDKAppliedContentEncoding_ec2Query"
-        documentation: "The user didn't apply an encoding, so the SDK applies gzip"
+        documentation: "Compression algorithm encoding is appended to the Content-Encoding header."
         protocol: ec2Query
         params: {
             "data": """
@@ -150,8 +150,12 @@ apply PutWithContentEncoding @httpRequestTests([
         }
     }
     {
-        id: "SDKAppendedGzipAfterProvidedEncoding_ec2Query"
-        documentation: "The user provided a content-encoding so the SDK appends gzip"
+        id: "SDKAppendsGzipAndIgnoresHttpProvidedEncoding_ec2Query"
+        documentation: """
+        Compression algorithm encoding is appended to the Content-Encoding header, and the
+        user-provided content-encoding is NOT in the Content-Encoding header since HTTP binding
+        traits are ignored in the ec2Query protocol.
+        """
         protocol: ec2Query
         params: {
             "encoding": "custom"
@@ -289,7 +293,7 @@ apply PutWithContentEncoding @httpRequestTests([
         method: "POST"
         uri: "/"
         headers: {
-            "Content-Encoding": "custom, gzip"
+            "Content-Encoding": "gzip"
         }
     }
 ])
@@ -306,6 +310,5 @@ structure PutWithContentEncodingInput {
     @httpHeader("Content-Encoding")
     encoding: String
 
-    @httpPayload
     data: String
 }

@@ -118,7 +118,7 @@ public class DiffCommandTest {
 
     @Test
     public void requiresOldAndNewForArbitraryMode() {
-        RunResult result = IntegUtils.run(Paths.get("."), ListUtils.of("diff"));
+        RunResult result = IntegUtils.run(Paths.get("."), ListUtils.of("diff", "--mode", "arbitrary"));
 
         assertThat("Not 1: output [" + result.getOutput() + ']', result.getExitCode(), is(1));
         assertThat(result.getOutput(), containsString("Missing required --old argument"));
@@ -181,14 +181,18 @@ public class DiffCommandTest {
     }
 
     private RunResult runDiff(Path dir) {
-        return runDiff(dir, null);
+        return runDiff(dir, null, true);
     }
 
-    private RunResult runDiff(Path dir, String oldCommit) {
+    private RunResult runDiff(Path dir, String oldCommit, boolean explicitMode) {
         List<String> args = new ArrayList<>();
         args.add("diff");
-        args.add("--mode");
-        args.add("git");
+
+        if (explicitMode) {
+            args.add("--mode");
+            args.add("git");
+        }
+
         if (oldCommit != null) {
             args.add("--old");
             args.add(oldCommit);
@@ -273,13 +277,23 @@ public class DiffCommandTest {
     }
 
     @Test
+    public void gitDiffModeUsedByDefault() {
+        IntegUtils.withProject("simple-config-sources", dir -> {
+            initRepo(dir);
+            commitChanges(dir);
+            RunResult result = runDiff(dir, null, false);
+            assertThat("Not zero: output [" + result.getOutput() + ']', result.getExitCode(), is(0));
+        });
+    }
+
+    @Test
     public void gitDiffAgainstSpecificCommit() {
         IntegUtils.withProject("simple-config-sources", dir -> {
             initRepo(dir);
             commitChanges(dir);
 
             // Run with explicit HEAD
-            RunResult result = runDiff(dir, "HEAD");
+            RunResult result = runDiff(dir, "HEAD", true);
             assertThat("Not zero: output [" + result.getOutput() + ']', result.getExitCode(), is(0));
 
             // Now make another commit, which updates HEAD and ensures the worktree updates too.
@@ -289,7 +303,7 @@ public class DiffCommandTest {
 
             // Run diff again, which won't fail because the last commit is the change that broke the model, meaning
             // the current state of the model is valid.
-            result = runDiff(dir, "HEAD~1");
+            result = runDiff(dir, "HEAD~1", true);
 
             assertThat("Not 1: output [" + result.getOutput() + ']', result.getExitCode(), is(1));
             assertThat(result.getOutput(), containsString("ChangedShapeType"));

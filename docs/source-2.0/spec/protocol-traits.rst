@@ -219,17 +219,14 @@ Smithy defines the following built-in timestamp formats:
     * - date-time
       - Date time as defined by the ``date-time`` production in
         :rfc:`3339#section-5.6`
-        with no UTC offset and optional fractional precision (for example,
+        with optional fractional precision but no UTC offset (for example,
         ``1985-04-12T23:20:50.52Z``).
         *However*, offsets are parsed gracefully, but the datetime is normalized
         to an offset of zero by converting to UTC.
     * - http-date
       - An HTTP date as defined by the ``IMF-fixdate`` production in
         :rfc:`7231#section-7.1.1.1` (for example,
-        ``Tue, 29 Apr 2014 18:30:38 GMT``). Note that in addition to the
-        ``IMF-fixdate`` format specified in the RFC, implementations MUST
-        also support optional fractional seconds (for example,
-        ``Sun, 02 Jan 2000 20:34:56.000 GMT``).
+        ``Tue, 29 Apr 2014 18:30:38 GMT``).
     * - epoch-seconds
       - Also known as Unix time, the number of seconds that have elapsed since
         00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970,

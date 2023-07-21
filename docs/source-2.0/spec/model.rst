@@ -789,8 +789,8 @@ target from traits and how their values are defined in
       - number | string
       - If a number is provided, it represents Unix epoch seconds with optional
         millisecond precision. If a string is provided, it MUST be a valid
-        :rfc:`3339` string with no UTC offset and optional fractional
-        precision (for example, ``1985-04-12T23:20:50.52Z``).
+        :rfc:`3339` string with optional fractional precision but no UTC offset 
+        (for example, ``1985-04-12T23:20:50.52Z``).
     * - list
       - array
       - Each value in the array MUST be compatible with the targeted member.

@@ -298,6 +298,15 @@ to services and operations:
   * ``OperationD`` is annotated with the ``auth`` trait and defines an explicit
     list of authentication schemes.
 
+  * ``OperationE`` has authentication disabled by setting the ``auth`` trait
+    value on the operation to an empty list, ``[]``.
+
+.. note::
+    Disabling authentication for an operation is distinct from applying the
+    :ref:`@optionalAuth <optionalAuth-trait>` trait to an operation. An
+    operation with the ``@optionalAuth`` trait must be callable both with and
+    without authentication.
+
 .. code-block:: smithy
 
     @httpBasicAuth
@@ -331,6 +340,7 @@ to services and operations:
         operations: [
             OperationC
             OperationD
+            OperationE
         ]
     }
 
@@ -344,6 +354,11 @@ to services and operations:
     // supports are: httpBearerAuth
     @auth([httpBearerAuth])
     operation OperationD {}
+
+    // This operation has the @auth trait and is bound to a service with the
+    // @auth trait. This operation does not support any authentication schemes.
+    @auth([])
+    operation OperationE {}
 
 The following ``auth`` trait is invalid because it references an
 authentication scheme trait that is not applied to the service:

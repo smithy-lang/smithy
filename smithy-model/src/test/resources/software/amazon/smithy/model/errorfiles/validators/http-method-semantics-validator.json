@@ -6,7 +6,7 @@
             "traits": {
                 "smithy.api#readonly": {},
                 "smithy.api#http": {
-                    "method": "GET",
+                    "method": "Get",
                     "uri": "/A"
                 }
             }

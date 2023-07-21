@@ -14,7 +14,7 @@ and error structures are considered when serializing HTTP messages.
 
 .. important::
 
-    Violating :rfc`HTTP specifications <7230>` or relying on poorly-supported
+    Violating :rfc:`HTTP specifications <7230>` or relying on poorly-supported
     HTTP functionality when defining HTTP bindings will limit interoperability
     and likely lead to undefined behavior across Smithy implementations. For
     example, avoid defining GET/DELETE requests with payloads, defining

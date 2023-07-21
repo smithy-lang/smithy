@@ -18,6 +18,7 @@ package software.amazon.smithy.model.validation.testrunner;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import org.junit.jupiter.api.Assertions;
@@ -32,14 +33,17 @@ import software.amazon.smithy.utils.ListUtils;
 public class SmithyTestCaseTest {
     @Test
     public void validatesThatEventsAreValid() {
-        Assertions.assertThrows(
+        IllegalArgumentException e = Assertions.assertThrows(
                 IllegalArgumentException.class,
-                () -> SmithyTestCase.parseValidationEvent("[ERROR] - m"));
+                () -> SmithyTestCase.parseValidationEvent("[ERROR] - m", "filename"));
+
+        assertTrue(e.getMessage().contains("`filename`"));
+        assertTrue(e.getMessage().contains("SUPPRESSED|NOTE|WARNING|DANGER|ERROR"));
     }
 
     @Test
     public void parsesValidEvents() {
-        SmithyTestCase.parseValidationEvent("[ERROR] -: message | EventId /filename:0:0");
+        SmithyTestCase.parseValidationEvent("[ERROR] -: message | EventId /filename:0:0", "filename");
     }
 
     @Test

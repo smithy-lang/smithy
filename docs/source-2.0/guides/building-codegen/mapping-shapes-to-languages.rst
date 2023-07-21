@@ -391,7 +391,7 @@ Computing a service closure
 
 The closure of shapes connected to a service are the shapes that will be
 code generated. You can compute this closure using a
-`Walker <https://github.com/awslabs/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/neighbor/Walker.java>`__:
+`Walker <https://github.com/smithy-lang/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/neighbor/Walker.java>`__:
 
 .. code-block:: java
 
@@ -451,7 +451,7 @@ A more recent feature of Smithy allows marking structures as specific to
 the input or output of an operation using ``@input`` and ``@output``
 traits. You can transform the model being code generated and create
 synthetic input and output shapes when necessary using the
-`createDedicatedInputAndOutput <https://github.com/awslabs/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/transform/ModelTransformer.java#L546>`_
+`createDedicatedInputAndOutput <https://github.com/smithy-lang/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/transform/ModelTransformer.java#L546>`_
 model transformer. The following example creates a new Model that has
 dedicated input and output shapes for every operation, each marked with
 the ``@input`` or ``@output`` trait, and each uses a consistent name
@@ -477,7 +477,7 @@ A *resource* is an entity with an identity that has a set of operations.
 Resources add hierarchy to a model. You will need to traverse from a
 service to every operation and resource in order to crawl the entire
 service. This process can be simplified using the
-`TopDownIndex <https://github.com/awslabs/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/knowledge/TopDownIndex.java>`__.
+`TopDownIndex <https://github.com/smithy-lang/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/knowledge/TopDownIndex.java>`__.
 Iterating only over the operations attached to a service will not
 provide every operation in the closure of the service.
 
@@ -502,7 +502,7 @@ identify which member in a recursive loop needs to be heap allocated,
 implementations will need to utilize a topological sort. Smithy's
 :ref:`directedcodegen` abstraction will automatically generate code based
 on a topological sort, though generators that need more control over how to handle recursion will need to manually
-use a `TopologicalIndex <https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/TopologicalIndex.java>`__.
+use a `TopologicalIndex <https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/TopologicalIndex.java>`__.
 
 .. seealso::
 
@@ -531,7 +531,7 @@ Smithy has different rules around when a member is always present or
 optional. The rules around nullability are defined in the Smithy
 specification. However, all of this complexity is accounted for
 automatically using the
-`NullableIndex <https://github.com/awslabs/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/knowledge/NullableIndex.java>`_.
+`NullableIndex <https://github.com/smithy-lang/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/knowledge/NullableIndex.java>`_.
 
 .. code-block:: java
 

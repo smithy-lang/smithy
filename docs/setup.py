@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 requires = [
     "sphinx==4.2.0",
-    "pygments==2.12.0",
+    "pygments==2.15.0",
     "sphinx_copybutton==0.5.0",
     # Used by new docs.
     "sphinx-inline-tabs==2022.1.2b11",

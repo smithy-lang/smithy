@@ -1,5 +1,5 @@
 # <img alt="Smithy" src="docs/_static/favicon.png" width="28"> Smithy
-[![Build Status](https://github.com/awslabs/smithy/workflows/ci/badge.svg)](https://github.com/awslabs/smithy/actions/workflows/ci.yml)
+[![Build Status](https://github.com/smithy-lang/smithy/workflows/ci/badge.svg)](https://github.com/smithy-lang/smithy/actions/workflows/ci.yml)
 
 Smithy defines and generates clients, services, and documentation for
 any protocol.
@@ -8,6 +8,7 @@ any protocol.
 * [Specifications][specs]
 * [Java API documentation][javadocs]
 * [Smithy Gradle Plugin][Smithy Gradle Plugin]
+* [Awesome Smithy][awesome-smithy]
 
 
 # Smithy IDL
@@ -88,3 +89,4 @@ This library is licensed under the Apache 2.0 License.
 [Smithy Gradle Plugin]: https://github.com/awslabs/smithy-gradle-plugin/
 [`smithy-build.json`]: https://smithy.io/2.0/guides/building-models/build-config.html#using-smithy-build-json
 [building]: https://smithy.io/2.0/guides/building-models/index.html
+[awesome-smithy]: https://github.com/smithy-lang/awesome-smithy

@@ -46,10 +46,12 @@ public final class SmithyCommand implements Command {
             new DiffCommand(getName(), dependencyResolverFactory),
             new AstCommand(getName(), dependencyResolverFactory),
             new SelectCommand(getName(), dependencyResolverFactory),
+            new FormatCommand(getName()),
             new CleanCommand(getName()),
             migrateCommand,
             deprecated1To2Command,
-            new WarmupCommand(getName())
+            new WarmupCommand(getName()),
+            new InitCommand(getName())
         );
     }
 
