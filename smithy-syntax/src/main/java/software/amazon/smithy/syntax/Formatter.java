@@ -17,10 +17,12 @@ package software.amazon.smithy.syntax;
 
 import com.opencastsoftware.prettier4j.Doc;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.loader.ModelSyntaxException;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -178,6 +180,7 @@ public final class Formatter {
                 case APPLY_STATEMENT:
                 case NODE_VALUE:
                 case NODE_KEYWORD:
+                case NODE_STRING_VALUE:
                 case SIMPLE_TYPE_NAME:
                 case ENUM_TYPE_NAME:
                 case AGGREGATE_TYPE_NAME:
@@ -408,12 +411,25 @@ public final class Formatter {
                 }
 
                 case NODE_OBJECT_KVP: {
+                    // Since text blocks span multiple lines, when they are the NODE_VALUE for NODE_OBJECT_KVP,
+                    // they have to be indented. Since we only format valid models, NODE_OBJECT_KVP is guaranteed to
+                    // have a NODE_VALUE child.
+                    TreeCursor nodeValue = cursor.getFirstChild(TreeType.NODE_VALUE);
+                    boolean isTextBlock = Optional.ofNullable(nodeValue.getFirstChild(TreeType.NODE_STRING_VALUE))
+                            .map(nodeString -> nodeString.getFirstChild(TreeType.TEXT_BLOCK))
+                            .isPresent();
+                    Doc nodeValueDoc = visit(nodeValue);
+                    if (isTextBlock) {
+                        nodeValueDoc = nodeValueDoc.indent(4);
+                    }
+
+
                     // Hoist awkward comments in the KVP *before* the KVP rather than between the values and colon.
                     // If there is an awkward comment before the TRAIT value, hoist it above the statement.
                     return skippedComments(cursor, false)
                             .append(visit(cursor.getFirstChild(TreeType.NODE_OBJECT_KEY)))
                             .append(Doc.text(": "))
-                            .append(visit(cursor.getFirstChild(TreeType.NODE_VALUE)));
+                            .append(nodeValueDoc);
                 }
 
                 case NODE_OBJECT_KEY: {
@@ -427,9 +443,17 @@ public final class Formatter {
                            : Doc.text(tree.concatTokens());
                 }
 
+                case TEXT_BLOCK: {
+                    // Dispersing the lines of the text block preserves any indentation applied from formatting parent
+                    // nodes.
+                    List<Doc> lines = Arrays.stream(tree.concatTokens().split(System.lineSeparator()))
+                            .map(String::trim)
+                            .map(Doc::text)
+                            .collect(Collectors.toList());
+                    return Doc.intersperse(Doc.line(), lines);
+                }
+
                 case TOKEN:
-                case TEXT_BLOCK:
-                case NODE_STRING_VALUE:
                 case QUOTED_TEXT:
                 case NUMBER:
                 case SHAPE_ID:
