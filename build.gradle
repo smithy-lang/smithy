@@ -69,7 +69,7 @@ subprojects {
     task sourcesJar(type: Jar) {
         metaInf.with(licenseSpec)
         from {
-            sourceSets.main.allJava
+            sourceSets.main.allSource
         }
         archiveClassifier = "sources"
     }
