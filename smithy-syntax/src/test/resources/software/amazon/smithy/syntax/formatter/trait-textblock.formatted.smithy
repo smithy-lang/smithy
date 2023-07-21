@@ -18,9 +18,9 @@ string Foo
 string Bar
 
 @documentation(
-"""
-This is the documentation for Baz.
-Lorem ipsum dolor.
-"""
+    """
+    This is the documentation for Baz.
+    Lorem ipsum dolor.
+    """
 )
 string Baz
