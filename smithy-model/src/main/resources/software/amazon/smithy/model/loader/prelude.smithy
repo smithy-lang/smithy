@@ -832,7 +832,7 @@ string httpPrefixHeaders
 
 /// Binds a single structure member to the body of an HTTP request.
 @trait(
-    selector: "structure > :test(member > :test(string, blob, structure, union, document, list, map))",
+    selector: "structure > member",
     conflicts: [httpLabel, httpQuery, httpHeader, httpPrefixHeaders, httpResponseCode, httpQueryParams],
     structurallyExclusive: "member",
     breakingChanges: [{change: "presence"}]

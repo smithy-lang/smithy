@@ -1,3 +1,6 @@
 [ERROR] smithy.example#InvalidBindingOperationInput$listBinding: AWS Protocols only support binding the following shape types to the payload: string, blob, structure, union, and document | ProtocolHttpPayload
 [ERROR] smithy.example#InvalidBindingOperationOutput$mapBinding: AWS Protocols only support binding the following shape types to the payload: string, blob, structure, union, and document | ProtocolHttpPayload
 [ERROR] smithy.example#InvalidBindingError$setBinding: AWS Protocols only support binding the following shape types to the payload: string, blob, structure, union, and document | ProtocolHttpPayload
+[ERROR] smithy.example#InvalidSimpleBindingOperationInput$booleanBinding: AWS Protocols only support binding the following shape types to the payload: string, blob, structure, union, and document | ProtocolHttpPayload
+[ERROR] smithy.example#InvalidSimpleBindingOperationOutput$integerBinding: AWS Protocols only support binding the following shape types to the payload: string, blob, structure, union, and document | ProtocolHttpPayload
+[ERROR] smithy.example#InvalidSimpleBindingError$doubleBinding: AWS Protocols only support binding the following shape types to the payload: string, blob, structure, union, and document | ProtocolHttpPayload
