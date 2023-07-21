@@ -22,7 +22,7 @@ jobs:
 
           # Labels
           stale-issue-label: closing-soon
-          exempt-issue-label: documentation,feature-request
+          exempt-issue-label: bug,documentation,feature-request,guidance,protocol-test
           response-requested-label: response-requested
 
           # Messages
