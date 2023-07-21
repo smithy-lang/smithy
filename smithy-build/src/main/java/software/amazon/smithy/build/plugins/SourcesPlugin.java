@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
@@ -108,10 +109,11 @@ public final class SourcesPlugin implements SmithyBuildPlugin {
     private static void copyDirectory(List<String> names, FileManifest manifest, Path root, Path current) {
         try {
             if (Files.isDirectory(current)) {
-                Files.list(current)
-                        .filter(p -> !p.equals(current))
-                        .filter(p -> Files.isDirectory(p) || Files.isRegularFile(p))
-                        .forEach(p -> copyDirectory(names, manifest, root, p));
+                try (Stream<Path> fileList = Files.list(current)) {
+                    fileList.filter(p -> !p.equals(current))
+                            .filter(p -> Files.isDirectory(p) || Files.isRegularFile(p))
+                            .forEach(p -> copyDirectory(names, manifest, root, p));
+                }
             } else if (Files.isRegularFile(current)) {
                 if (current.toString().endsWith(".jar")) {
                     // Account for just a simple file vs recursing into directories.
