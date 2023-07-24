@@ -30,3 +30,5 @@ dependencies {
     implementation project(":smithy-aws-traits")
     api project(":smithy-validation-model")
 }
+
+tasks["sourcesJar"].dependsOn("smithyBuildJar")
