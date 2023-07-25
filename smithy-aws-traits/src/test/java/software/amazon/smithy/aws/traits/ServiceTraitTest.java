@@ -16,6 +16,7 @@
 package software.amazon.smithy.aws.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -49,6 +50,8 @@ public class ServiceTraitTest {
         assertThat(serviceTrait.getEndpointPrefix(), equalTo("foo"));
         assertThat(serviceTrait.toBuilder().build(), equalTo(serviceTrait));
         assertFalse(serviceTrait.getDocId().isPresent());
+        assertThat(Node.prettyPrintJson(serviceTrait.createNode()),
+                containsString("\"target\": \"ns.foo#Foo\","));
     }
 
     @Test
