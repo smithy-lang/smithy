@@ -10,22 +10,20 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
-import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 public class EventSourceValidatorTest {
     @Test
     public void detectsWhenEventSourceIsUnexpected() {
-        ShapeId id = ShapeId.from("smithy.example#Foo");
         ServiceTrait trait = ServiceTrait.builder()
                 .sdkId("Foo")
                 .arnNamespace("foo")
                 .cloudTrailEventSource("REPLACE_ME_LATER")
                 .cloudFormationName("AWS::Foo")
-                .build(id);
+                .build();
         ServiceShape service = ServiceShape.builder()
-                .id(id)
+                .id("smithy.example#Foo")
                 .version("123")
                 .addTrait(trait)
                 .build();
@@ -41,15 +39,14 @@ public class EventSourceValidatorTest {
 
     @Test
     public void detectsWhenEventSourceIsPlaceholder() {
-        ShapeId id = ShapeId.from("smithy.example#Foo");
         ServiceTrait trait = ServiceTrait.builder()
                 .sdkId("Foo")
                 .arnNamespace("foo")
                 .cloudTrailEventSource("notfoo.amazonaws.com")
                 .cloudFormationName("AWS::Foo")
-                .build(id);
+                .build();
         ServiceShape service = ServiceShape.builder()
-                .id(id)
+                .id("smithy.example#Foo")
                 .version("123")
                 .addTrait(trait)
                 .build();
@@ -66,15 +63,14 @@ public class EventSourceValidatorTest {
 
     @Test
     public void ignoresKnownExceptions() {
-        ShapeId id = ShapeId.from("smithy.example#Foo");
         ServiceTrait trait = ServiceTrait.builder()
                 .sdkId("Foo")
                 .arnNamespace("cloudwatch")
                 .cloudTrailEventSource("monitoring.amazonaws.com")
                 .cloudFormationName("AWS::Foo")
-                .build(id);
+                .build();
         ServiceShape service = ServiceShape.builder()
-                .id(id)
+                .id("smithy.example#Foo")
                 .version("123")
                 .addTrait(trait)
                 .build();
