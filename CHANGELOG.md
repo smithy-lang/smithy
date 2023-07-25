@@ -1,5 +1,33 @@
 # Smithy Changelog
 
+## 1.35.0 (2023-07-24)
+
+### Features
+* Enabled support for SNAPSHOT dependencies ([#1853](https://github.com/smithy-lang/smithy/pull/1853), [#1857](https://github.com/smithy-lang/smithy/pull/1857))
+* Enabled default mode for `smithy diff` rather than failing when not set ([#1856](https://github.com/smithy-lang/smithy/pull/1856))
+* Added warning to mis-cased standard HTTP verbs ([#1862](https://github.com/smithy-lang/smithy/pull/1862))
+* Relaxed type constraints for `pageSize` property of the `@paginated` trait ([#1866](https://github.com/smithy-lang/smithy/pull/1866))
+* Improved message for invalid `.errors` entries ([#1867](https://github.com/smithy-lang/smithy/pull/1867))
+* Added `docId` property to `aws.api#service` trait ([#1863](https://github.com/smithy-lang/smithy/pull/1863), [#1872](https://github.com/smithy-lang/smithy/pull/1872), [#1881](https://github.com/smithy-lang/smithy/pull/1881), [#1882](https://github.com/smithy-lang/smithy/pull/1882))
+* Improved validation for http binding protocols ([#1873](https://github.com/smithy-lang/smithy/pull/1873))
+* Expanded valid targets of `@httpPayload` ([#1876](https://github.com/smithy-lang/smithy/pull/1876))
+
+### Documentation
+* Updated documentation around `timestamp` and added more specificity to the definition ([#1858](https://github.com/smithy-lang/smithy/pull/1858)) 
+
+### Bug Fixes
+* Removed unrecognized models from sources ([#1851](https://github.com/smithy-lang/smithy/pull/1851), [#1860](https://github.com/smithy-lang/smithy/pull/1860))
+* Updated the content type of list & map shapes with the `@httpPayload` trait to document content type ([#1840](https://github.com/smithy-lang/smithy/pull/1840))
+* Fixed IDL serializer which would write emtpy `apply` statements to mixed in members of `enums` ([#1865](https://github.com/smithy-lang/smithy/pull/1865))
+* Fixed indentation when formatting text blocks ([#1875](https://github.com/smithy-lang/smithy/pull/1875))
+* Added resource files to source jars ([#1877](https://github.com/smithy-lang/smithy/pull/1877), [#1880](https://github.com/smithy-lang/smithy/pull/1880))
+* Fixed a potential resource leak by using a try with resources ([#1878](https://github.com/smithy-lang/smithy/pull/1878))
+
+### Other
+
+* Migrated to using Gradle 8.2.1 to build Smithy. This should have no impactful downstream effects ([#1849](https://github.com/smithy-lang/smithy/pull/1849))
+* Moved repository into `smithy-lang` organization and updated resources accordingly ([#1852](https://github.com/smithy-lang/smithy/pull/1852), [#1854](https://github.com/smithy-lang/smithy/pull/1854))
+
 ## 1.34.0 (2023-07-10)
 
 ### Features
