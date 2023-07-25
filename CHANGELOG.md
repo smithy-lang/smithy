@@ -12,6 +12,9 @@
 * Improved validation for http binding protocols ([#1873](https://github.com/smithy-lang/smithy/pull/1873))
 * Expanded valid targets of `@httpPayload` ([#1876](https://github.com/smithy-lang/smithy/pull/1876))
 
+### Documentation
+* Updated documentation around `timestamp` and added more specificity to the definition ([#1858](https://github.com/smithy-lang/smithy/pull/1858)) 
+
 ### Bug Fixes
 * Removed unrecognized models from sources ([#1851](https://github.com/smithy-lang/smithy/pull/1851), [#1860](https://github.com/smithy-lang/smithy/pull/1860))
 * Updated the content type of list & map shapes with the `@httpPayload` trait to document content type ([#1840](https://github.com/smithy-lang/smithy/pull/1840))
