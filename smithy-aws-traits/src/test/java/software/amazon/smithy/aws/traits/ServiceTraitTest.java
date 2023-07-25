@@ -16,7 +16,6 @@
 package software.amazon.smithy.aws.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -26,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -50,8 +50,6 @@ public class ServiceTraitTest {
         assertThat(serviceTrait.getEndpointPrefix(), equalTo("foo"));
         assertThat(serviceTrait.toBuilder().build(), equalTo(serviceTrait));
         assertFalse(serviceTrait.getDocId().isPresent());
-        assertThat(Node.prettyPrintJson(serviceTrait.createNode()),
-                containsString("\"target\": \"ns.foo#Foo\","));
     }
 
     @Test
@@ -90,6 +88,27 @@ public class ServiceTraitTest {
     }
 
     @Test
+    public void requiresProperServiceShapeToResolveDocId() {
+        ServiceTrait trait = ServiceTrait.builder()
+                .sdkId("Foo SDK")
+                .arnNamespace("foo")
+                .cloudTrailEventSource("cloudTrailEventSource")
+                .cloudFormationName("AWS::Foo")
+                .build();
+        ServiceShape service = ServiceShape.builder()
+                .id("smithy.example#Foo")
+                .version("123")
+                .addTrait(trait)
+                .build();
+        ServiceShape anotherService = ServiceShape.builder()
+                .id("smithy.example#Bar")
+                .build();
+
+        assertThat(trait.resolveDocId(service), equalTo("foo-sdk-123"));
+        assertThrows(ExpectationNotMetException.class, () -> trait.resolveDocId(anotherService));
+    }
+
+    @Test
     public void loadsFromModel() {
         Model result = Model.assembler()
                 .discoverModels(getClass().getClassLoader())
@@ -105,6 +124,6 @@ public class ServiceTraitTest {
         assertThat(trait.getArnNamespace(), equalTo("service"));
         assertThat(trait.getEndpointPrefix(), equalTo("some-service"));
         assertFalse(trait.getDocId().isPresent());
-        assertThat(trait.getDocId(result), equalTo("some-value-2018-03-17"));
+        assertThat(trait.resolveDocId(service), equalTo("some-value-2018-03-17"));
     }
 }

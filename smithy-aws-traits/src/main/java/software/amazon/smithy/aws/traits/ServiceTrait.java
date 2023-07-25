@@ -19,8 +19,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
-import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
@@ -40,7 +40,6 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
     public static final ShapeId ID = ShapeId.from("aws.api#service");
     private static final Logger LOGGER = Logger.getLogger(ServiceTrait.class.getName());
 
-    private final ShapeId target;
     private final String cloudFormationName;
     private final String arnNamespace;
     private final String sdkId;
@@ -50,7 +49,6 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
 
     private ServiceTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
-        this.target = SmithyBuilder.requiredState("target", builder.target);
         this.sdkId = SmithyBuilder.requiredState("sdkId", builder.sdkId);
         this.arnNamespace = SmithyBuilder.requiredState("arnNamespace", builder.arnNamespace);
         this.cloudFormationName = SmithyBuilder.requiredState("cloudFormationName", builder.cloudFormationName);
@@ -149,25 +147,31 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
     }
 
     /**
-     * Returns the documentation identifier value for the service.
+     * Resolves the doc id value for the service.
      *
      * <p> When value on trait is not set, this method defaults to the lower
      * cased value of the sdkId followed by the service version, separated by
      * dashes.
      *
+     * @param serviceShape the shape which this trait targets
      * @return Returns the documentation identifier value for the service name.
+     * @throws ExpectationNotMetException if the shape is not the target of this trait.
      */
-    public String getDocId(Model model) {
-        return getDocId().orElseGet(() -> buildDefaultDocId(model));
+    public String resolveDocId(ServiceShape serviceShape) {
+        return getDocId().orElseGet(() -> buildDefaultDocId(serviceShape));
     }
 
     protected Optional<String> getDocId() {
         return Optional.ofNullable(docId);
     }
 
-    private String buildDefaultDocId(Model model) {
-        String version = model.expectShape(target, ServiceShape.class).getVersion();
-        return sdkId.replace(" ", "-").toLowerCase(Locale.US) + "-" + version;
+    private String buildDefaultDocId(ServiceShape serviceShape) {
+        if (!serviceShape.expectTrait(ServiceTrait.class).equals(this)) {
+            throw new ExpectationNotMetException(String.format(
+                    "Provided service shape `%s` is not the target of this trait.", serviceShape.getId()), this);
+        }
+
+        return sdkId.replace(" ", "-").toLowerCase(Locale.US) + "-" + serviceShape.getVersion();
     }
 
     /**
@@ -192,7 +196,6 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
     @Override
     public Builder toBuilder() {
         return new Builder()
-                .target(target)
                 .sdkId(sdkId)
                 .sourceLocation(getSourceLocation())
                 .cloudFormationName(cloudFormationName)
@@ -206,7 +209,6 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
     protected Node createNode() {
         return Node.objectNodeBuilder()
                 .sourceLocation(getSourceLocation())
-                .withMember("target", Node.from(target.toString()))
                 .withMember("sdkId", Node.from(sdkId))
                 .withMember("arnNamespace", Node.from(getArnNamespace()))
                 .withMember("cloudFormationName", Node.from(getCloudFormationName()))
@@ -227,7 +229,6 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
         } else {
             ServiceTrait os = (ServiceTrait) other;
             return sdkId.equals(os.sdkId)
-                    && target.equals(os.target)
                     && arnNamespace.equals(os.arnNamespace)
                     && cloudFormationName.equals(os.cloudFormationName)
                     && cloudTrailEventSource.equals(os.cloudTrailEventSource)
@@ -240,13 +241,12 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
 
     @Override
     public int hashCode() {
-        return Objects.hash(toShapeId(), target, sdkId, arnNamespace, cloudFormationName,
+        return Objects.hash(toShapeId(), sdkId, arnNamespace, cloudFormationName,
                             cloudTrailEventSource, docId, endpointPrefix);
     }
 
     /** Builder for {@link ServiceTrait}. */
     public static final class Builder extends AbstractTraitBuilder<ServiceTrait, Builder> {
-        private ShapeId target;
         private String sdkId;
         private String cloudFormationName;
         private String arnNamespace;
@@ -266,8 +266,6 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
         }
 
         public ServiceTrait build(ShapeId target) {
-            this.target = target;
-
             // Fill in default values if they weren't set.
             if (arnNamespace == null) {
                 arnNamespace(target.getName().toLowerCase(Locale.US));
@@ -286,17 +284,6 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
             }
 
             return new ServiceTrait(this);
-        }
-
-        /**
-         * Sets the target shape to which the trait is applied.
-         *
-         * @param target the ShapeId targeted by the trait.
-         * @return Returns the builder.
-         */
-        private Builder target(ShapeId target) {
-            this.target = target;
-            return this;
         }
 
         /**
