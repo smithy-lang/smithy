@@ -155,6 +155,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
      *
      * @param serviceShape the shape which this trait targets
      * @return Returns the documentation identifier value for the service name.
+     * @throws ExpectationNotMetException if the shape is not the target of this trait.
      */
     public String resolveDocId(ServiceShape serviceShape) {
         return getDocId().orElseGet(() -> buildDefaultDocId(serviceShape));
