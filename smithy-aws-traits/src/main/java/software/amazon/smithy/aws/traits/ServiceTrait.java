@@ -206,7 +206,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
     protected Node createNode() {
         return Node.objectNodeBuilder()
                 .sourceLocation(getSourceLocation())
-                .withMember("target", Node.from(target.getName()))
+                .withMember("target", Node.from(target.toString()))
                 .withMember("sdkId", Node.from(sdkId))
                 .withMember("arnNamespace", Node.from(getArnNamespace()))
                 .withMember("cloudFormationName", Node.from(getCloudFormationName()))
