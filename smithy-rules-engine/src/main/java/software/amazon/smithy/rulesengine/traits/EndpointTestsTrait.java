@@ -61,7 +61,7 @@ public final class EndpointTestsTrait extends AbstractTrait implements ToSmithyB
     }
 
     @Override
-    public SmithyBuilder<EndpointTestsTrait> toBuilder() {
+    public Builder toBuilder() {
         return builder()
                 .sourceLocation(getSourceLocation())
                 .version(version)
