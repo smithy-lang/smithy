@@ -14,7 +14,6 @@
             }
         ],
         "dependencies": [
-            // Normally, this could refer to SMITHY_VERSION, but that doesn't work for pre-release builds.
             "com.example:artifact:1.0.0-SNAPSHOT"
         ]
     }
