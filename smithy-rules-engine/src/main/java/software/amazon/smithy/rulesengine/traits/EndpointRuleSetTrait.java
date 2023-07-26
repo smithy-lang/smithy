@@ -53,7 +53,7 @@ public final class EndpointRuleSetTrait extends AbstractTrait implements ToSmith
     }
 
     @Override
-    public SmithyBuilder<EndpointRuleSetTrait> toBuilder() {
+    public Builder toBuilder() {
         return builder()
                 .sourceLocation(getSourceLocation())
                 .ruleSet(ruleSet);

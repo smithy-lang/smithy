@@ -46,7 +46,7 @@ public final class ContextParamTrait extends AbstractTrait implements ToSmithyBu
     }
 
     @Override
-    public SmithyBuilder<ContextParamTrait> toBuilder() {
+    public Builder toBuilder() {
         return new Builder()
                 .sourceLocation(getSourceLocation())
                 .name(name);

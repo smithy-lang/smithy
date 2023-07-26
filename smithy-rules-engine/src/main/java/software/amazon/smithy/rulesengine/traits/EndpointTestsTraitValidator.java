@@ -47,9 +47,12 @@ public final class EndpointTestsTraitValidator extends AbstractValidator {
                                         operationName, serviceShape.getId())));
                     }
 
-                    StructureShape inputShape = model.expectShape(
-                            operationNameMap.get(operationName).getInputShape(), StructureShape.class);
-                    events.addAll(validateOperationInput(model, serviceShape, inputShape, testOperationInput));
+                    // Still emit events if the operation exists, but was just not bound.
+                    if (operationNameMap.containsKey(operationName)) {
+                        StructureShape inputShape = model.expectShape(
+                                operationNameMap.get(operationName).getInputShape(), StructureShape.class);
+                        events.addAll(validateOperationInput(model, serviceShape, inputShape, testOperationInput));
+                    }
                 }
             }
         }
