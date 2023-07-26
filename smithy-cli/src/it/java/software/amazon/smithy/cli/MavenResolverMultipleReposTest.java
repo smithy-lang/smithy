@@ -52,7 +52,6 @@ public class MavenResolverMultipleReposTest {
 
             IntegUtils.runWithEmptyCache("maven-multiple-repos", ListUtils.of("validate", "--debug"),
                     Collections.emptyMap(), result -> {
-                        System.err.println(result.getOutput());
                         assertThat(result.getExitCode(), equalTo(0));
                         assertThat(result.getOutput(), containsString("software.amazon.smithy.cli.dependencies.DependencyResolver - Resolved Maven dependencies: [com.example:artifact:jar:1.0.0-20230724.184336-2"));
                     });
