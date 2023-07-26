@@ -15,7 +15,7 @@ use smithy.rules#staticContextParams
 @suppress(["RuleSetParameter.TestCase.Unused"])
 service ExampleService {
     version: "2022-01-01",
-    operations: [GetThing]
+    operations: [GetThing, Ping]
 }
 
 apply ExampleService @endpointRuleSet({
@@ -152,3 +152,5 @@ structure GetThingInput {
     @contextParam(name: "boolBaz")
     fuzz: String,
 }
+
+operation Ping {}
