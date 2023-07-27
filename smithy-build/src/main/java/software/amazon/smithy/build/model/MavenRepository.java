@@ -79,9 +79,9 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
         }
         MavenRepository mavenRepo = (MavenRepository) o;
         return
-            Objects.equals(id, mavenRepo.id) &&
-            Objects.equals(url, mavenRepo.url) &&
-            Objects.equals(httpCredentials, mavenRepo.httpCredentials);
+            Objects.equals(id, mavenRepo.id)
+                && Objects.equals(url, mavenRepo.url)
+                && Objects.equals(httpCredentials, mavenRepo.httpCredentials);
     }
 
     public static final class Builder implements SmithyBuilder<MavenRepository> {
