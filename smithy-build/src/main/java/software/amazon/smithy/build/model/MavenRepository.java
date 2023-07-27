@@ -67,7 +67,7 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(url, httpCredentials);
+        return Objects.hash(id, url, httpCredentials);
     }
 
     @Override
@@ -78,7 +78,10 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
             return false;
         }
         MavenRepository mavenRepo = (MavenRepository) o;
-        return Objects.equals(url, mavenRepo.url) && Objects.equals(httpCredentials, mavenRepo.httpCredentials);
+        return
+            Objects.equals(id, mavenRepo.id) &&
+            Objects.equals(url, mavenRepo.url) &&
+            Objects.equals(httpCredentials, mavenRepo.httpCredentials);
     }
 
     public static final class Builder implements SmithyBuilder<MavenRepository> {
