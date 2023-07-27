@@ -62,9 +62,7 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
 
     @Override
     public Builder toBuilder() {
-        Builder b = builder().url(url).httpCredentials(httpCredentials);
-        b.id(id);
-        return b;
+        return builder().id(id).url(url).httpCredentials(httpCredentials);
     }
 
     @Override
