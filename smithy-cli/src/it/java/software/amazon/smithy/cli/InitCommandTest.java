@@ -208,6 +208,30 @@ public class InitCommandTest {
         });
     }
 
+    @Test
+    public void outputDirectoryAlreadyExists() {
+        IntegUtils.withProject(PROJECT_NAME, templatesDir -> {
+            setupTemplatesDirectory(templatesDir);
+
+            IntegUtils.withTempDir("existingOutputDir", dir -> {
+                Path existingPath = null;
+                RunResult result;
+                try {
+                    existingPath = Files.createDirectory(dir.resolve("quickstart-cli"));
+                    result = IntegUtils.run(
+                            dir, ListUtils.of("init", "-t", "quickstart-cli", "-u", templatesDir.toString()));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    IoUtils.rmdir(existingPath);
+                }
+
+                assertThat(result.getOutput(), containsString("Output directory `quickstart-cli` already exists."));
+                assertThat(result.getExitCode(), is(1));
+            });
+        });
+    }
+
     private static void run(List<String> args, Path root) {
         StringBuilder output = new StringBuilder();
         int result = IoUtils.runCommand(args, root, output, Collections.emptyMap());

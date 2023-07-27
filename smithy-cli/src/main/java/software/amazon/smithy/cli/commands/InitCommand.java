@@ -160,6 +160,15 @@ final class InitCommand implements Command {
             throw new IllegalArgumentException("Please specify a template name using `--template` or `-t`");
         }
 
+        // Use templateName if directory is not specified
+        if (directory == null) {
+            directory = template;
+        }
+        final Path dest = Paths.get(directory);
+        if (Files.exists(dest)) {
+            throw new CliError("Output directory `" + directory + "` already exists.");
+        }
+
         ObjectNode templatesNode = getTemplatesNode(smithyTemplatesNode);
         if (!templatesNode.containsMember(template)) {
             throw new IllegalArgumentException(String.format(
@@ -180,12 +189,8 @@ final class InitCommand implements Command {
         }
         exec(ListUtils.of("git", "checkout"), temp);
 
-        // Use templateName if directory is not specified
-        if (directory == null) {
-            directory = template;
-        }
 
-        final Path dest = Paths.get(directory);
+
         IoUtils.copyDir(Paths.get(temp.toString(), templatePath), dest);
         copyIncludedFiles(temp.toString(), dest.toString(), includedFiles, template, env);
 
