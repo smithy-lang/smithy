@@ -13,7 +13,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
 
 public class InitCommandTest {
     private static final String PROJECT_NAME = "smithy-templates";
