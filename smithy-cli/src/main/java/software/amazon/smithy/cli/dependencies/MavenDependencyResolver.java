@@ -96,7 +96,8 @@ public final class MavenDependencyResolver implements DependencyResolver {
     public void addRepository(MavenRepository repository) {
         try {
             URI uri = new URI(repository.getUrl());
-            String id = repository.getId().orElseGet(() -> uri.getHost());
+            int repoIndex = remoteRepositories.size() + 1;
+            String id = repository.getId().orElseGet(() -> repoIndex + "|" + uri.getHost());
             String userInfo = uri.getUserInfo();
             RemoteRepository.Builder builder = new RemoteRepository.Builder(id, "default", repository.getUrl());
             if (userInfo != null) {

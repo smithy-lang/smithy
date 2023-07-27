@@ -4,12 +4,10 @@
         "repositories": [
             {
                 // Use HTTP instead of HTTPS because we're running a mock server during tests
-                "id": "Artifactory 1",
                 "url": "http://localhost:1234/artifactory-1"
             },
             {
                 // Use HTTP instead of HTTPS because we're running a mock server during tests
-                "id": "Artifactory 2",
                 "url": "http://localhost:1234/artifactory-2"
             }
         ],
