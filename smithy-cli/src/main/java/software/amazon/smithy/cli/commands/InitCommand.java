@@ -166,7 +166,7 @@ final class InitCommand implements Command {
         }
         final Path dest = Paths.get(directory);
         if (Files.exists(dest)) {
-            throw new RuntimeException("Output directory `" + directory + "` already exists.");
+            throw new CliException("Output directory `" + directory + "` already exists.");
         }
 
         ObjectNode templatesNode = getTemplatesNode(smithyTemplatesNode);
