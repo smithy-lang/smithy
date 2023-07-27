@@ -7,26 +7,16 @@
                     "type": "array",
                     "items": {
                         "type": "string"
-                    },
-                    "default": []
+                    }
                 },
                 "bar": {
-                    "type": "number",
-                    "default": 0
+                    "type": "number"
                 },
                 "bat": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/TestEnum"
-                        },
-                        {
-                            "default": "FOO"
-                        }
-                    ]
+                    "$ref": "#/definitions/TestEnum"
                 },
                 "baz": {
-                    "type": "string",
-                    "default": ""
+                    "type": "string"
                 }
             }
         },

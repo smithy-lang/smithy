@@ -689,7 +689,7 @@ public class JsonSchemaConverterTest {
     }
 
     @Test
-    public void appliesDefaults() {
+    public void appliesDefaultsByDefault() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("default-values.smithy"))
                 .assemble()
@@ -701,6 +701,25 @@ public class JsonSchemaConverterTest {
 
         Node expected = Node.parse(
                 IoUtils.toUtf8String(getClass().getResourceAsStream("default-values.jsonschema.v07.json")));
+        Node.assertEquals(document.toNode(), expected);
+    }
+
+    @Test
+    public void defaultsCanBeDisabled() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("default-values.smithy"))
+                .assemble()
+                .unwrap();
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setDisableDefaultValues(true);
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .config(config)
+                .model(model)
+                .build()
+                .convert();
+
+        Node expected = Node.parse(
+                IoUtils.toUtf8String(getClass().getResourceAsStream("default-values-disabled.jsonschema.v07.json")));
         Node.assertEquals(document.toNode(), expected);
     }
 }

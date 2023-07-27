@@ -112,6 +112,7 @@ public class JsonSchemaConfig {
     private boolean supportNonNumericFloats = false;
     private boolean enableOutOfServiceReferences = false;
     private boolean useIntegerType;
+    private boolean disableDefaultValues = false;
 
     public JsonSchemaConfig() {
         nodeMapper.setWhenMissingSetter(NodeMapper.WhenMissing.IGNORE);
@@ -403,6 +404,20 @@ public class JsonSchemaConfig {
      */
     public void setUseIntegerType(boolean useIntegerType) {
         this.useIntegerType = useIntegerType;
+    }
+
+
+    public boolean getDisableDefaultValues() {
+        return disableDefaultValues;
+    }
+
+    /**
+     * Set to true to disable default values on schemas, including wrapping $ref pointers in an `allOf`.
+     *
+     * @param disableDefaultValues True to disable setting default values.
+     */
+    public void setDisableDefaultValues(boolean disableDefaultValues) {
+        this.disableDefaultValues = disableDefaultValues;
     }
 
 

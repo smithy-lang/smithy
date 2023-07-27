@@ -35,5 +35,6 @@ final class AddDefaultConfigSettings implements ApiGatewayMapper {
     public void updateDefaultSettings(Model model, OpenApiConfig config) {
         config.setAlphanumericOnlyRefs(true);
         config.getDisableFeatures().add("default");
+        config.setDisableDefaultValues(true);
     }
 }
