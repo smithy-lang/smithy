@@ -26,7 +26,7 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
 
     private final String url;
     private final String httpCredentials;
-    private final Optional<String> id;
+    private final String id;
 
     public MavenRepository(Builder builder) {
         this.url = SmithyBuilder.requiredState("url", builder.url);
@@ -53,7 +53,7 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
     }
 
     public Optional<String> getId() {
-        return id;
+        return Optional.ofNullable(id);
     }
 
     public Optional<String> getHttpCredentials() {
@@ -63,7 +63,7 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
     @Override
     public Builder toBuilder() {
         Builder b = builder().url(url).httpCredentials(httpCredentials);
-        id.ifPresent(b::id);
+        b.id(id);
         return b;
     }
 
@@ -86,7 +86,7 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
     public static final class Builder implements SmithyBuilder<MavenRepository> {
         private String url;
         private String httpCredentials;
-        private Optional<String> id = Optional.empty();
+        private String id;
 
         private Builder() {}
 
@@ -101,7 +101,7 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
         }
 
         public Builder id(String id) {
-            this.id = Optional.of(id);
+            this.id = id;
             return this;
         }
 
