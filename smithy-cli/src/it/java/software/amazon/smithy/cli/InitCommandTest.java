@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 
 public class InitCommandTest {
     private static final String PROJECT_NAME = "smithy-templates";
@@ -204,6 +205,30 @@ public class InitCommandTest {
 
                 assertThat(result.getOutput(), containsString(expectedOutput));
                 assertThat(result.getExitCode(), is(0));
+            });
+        });
+    }
+
+    @Test
+    public void outputDirectoryAlreadyExists() {
+        IntegUtils.withProject(PROJECT_NAME, templatesDir -> {
+            setupTemplatesDirectory(templatesDir);
+
+            IntegUtils.withTempDir("existingOutputDir", dir -> {
+                Path existingPath = null;
+                RunResult result;
+                try {
+                    existingPath = Files.createDirectory(dir.resolve("quickstart-cli"));
+                    result = IntegUtils.run(
+                            dir, ListUtils.of("init", "-t", "quickstart-cli", "-u", templatesDir.toString()));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    IoUtils.rmdir(existingPath);
+                }
+
+                assertThat(result.getOutput(), containsString("Output directory `quickstart-cli` already exists."));
+                assertThat(result.getExitCode(), is(1));
             });
         });
     }
