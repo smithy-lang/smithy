@@ -1,9 +1,9 @@
 # Smithy Changelog
 
-## 1.35.0 (2023-07-24)
+## 1.35.0 (2023-07-27)
 
 ### Features
-* Enabled support for SNAPSHOT dependencies ([#1853](https://github.com/smithy-lang/smithy/pull/1853), [#1857](https://github.com/smithy-lang/smithy/pull/1857))
+* Enabled support for SNAPSHOT dependencies ([#1853](https://github.com/smithy-lang/smithy/pull/1853), [#1857](https://github.com/smithy-lang/smithy/pull/1857), [#1884](https://github.com/smithy-lang/smithy/pull/1884))
 * Enabled default mode for `smithy diff` rather than failing when not set ([#1856](https://github.com/smithy-lang/smithy/pull/1856))
 * Added warning to mis-cased standard HTTP verbs ([#1862](https://github.com/smithy-lang/smithy/pull/1862))
 * Relaxed type constraints for `pageSize` property of the `@paginated` trait ([#1866](https://github.com/smithy-lang/smithy/pull/1866))
