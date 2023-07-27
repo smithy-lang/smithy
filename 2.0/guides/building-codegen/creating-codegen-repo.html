@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -442,27 +442,27 @@ implementation of <code class="docutils literal notranslate"><span class="pre">s
 This plugin is discovered on the classpath and tells Smithy-Build what
 plugin name it implements. For example, the simplest plugin looks
 something like this:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span><span class="w"> </span><span class="nn">software.amazon.smithy.mylang.codegen</span><span class="p">;</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span><span class="w"> </span><span class="nn">software.amazon.smithy.mylang.codegen</span><span class="p">;</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.build.PluginContext</span><span class="p">;</span><span class="w"></span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.build.SmithyBuildPlugin</span><span class="p">;</span><span class="w"></span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.build.PluginContext</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.build.SmithyBuildPlugin</span><span class="p">;</span>
 
 <span class="cm">/**</span>
 <span class="cm"> * Plugin to perform Mylang client code generation.</span>
-<span class="cm"> */</span><span class="w"></span>
-<span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MylangClientCodegenPlugin</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">SmithyBuildPlugin</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getName</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="c1">// Tell Smithy-Build which plugin this is.</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;mylang-client-codegen&quot;</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="cm"> */</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MylangClientCodegenPlugin</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">SmithyBuildPlugin</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getName</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Tell Smithy-Build which plugin this is.</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;mylang-client-codegen&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="n">PluginContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="c1">// Create and run the generator using the provided context.</span><span class="w"></span>
-<span class="w">        </span><span class="k">new</span><span class="w"> </span><span class="n">MylangCodeGenerator</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="na">run</span><span class="p">();</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="n">PluginContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Create and run the generator using the provided context.</span>
+<span class="w">        </span><span class="k">new</span><span class="w"> </span><span class="n">MylangCodeGenerator</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="na">run</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>Java is made aware of the plugin by adding the name of the plugin class
@@ -505,7 +505,7 @@ remote repository. You can add packages to Maven local using Gradle:</p>
 </pre></div>
 </div>
 <p>If you need to use unreleased changes to
-<a class="reference external" href="https://github.com/awslabs/smithy">awslabs/smithy</a>, then clone the
+<a class="reference external" href="https://github.com/smithy-lang/smithy">awslabs/smithy</a>, then clone the
 repository and run:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>./gradlew pTML
 </pre></div>

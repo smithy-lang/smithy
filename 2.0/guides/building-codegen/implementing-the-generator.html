@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -323,7 +323,7 @@
           <div class="section" id="implementing-the-generator">
 <h1>Implementing the Generator<a class="headerlink" href="#implementing-the-generator" title="Permalink to this headline">#</a></h1>
 <p>This document describes how to implement a code generator using the
-high-level <a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/directed/DirectedCodegen.java">DirectedCodegen</a>
+high-level <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/directed/DirectedCodegen.java">DirectedCodegen</a>
 interface.</p>
 <div class="section" id="directedcodegen">
 <span id="id1"></span><h2>DirectedCodegen<a class="headerlink" href="#directedcodegen" title="Permalink to this headline">#</a></h2>
@@ -351,35 +351,35 @@ combinations that need to be code generated.</li>
 <h2>Implementing <code class="docutils literal notranslate"><span class="pre">DirectedCodegen</span></code><a class="headerlink" href="#implementing-directedcodegen" title="Permalink to this headline">#</a></h2>
 <p>The methods of <code class="docutils literal notranslate"><span class="pre">DirectedCodegen</span></code> break down the process of building up
 and running a generator into specific methods.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">DirectedCodegen</span><span class="o">&lt;</span><span class="n">C</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CodegenContext</span><span class="o">&lt;</span><span class="n">S</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="n">I</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="p">,</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">SmithyIntegration</span><span class="o">&lt;</span><span class="n">S</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="n">C</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">interface</span> <span class="nc">DirectedCodegen</span><span class="o">&lt;</span><span class="n">C</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CodegenContext</span><span class="o">&lt;</span><span class="n">S</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="n">I</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="p">,</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">SmithyIntegration</span><span class="o">&lt;</span><span class="n">S</span><span class="p">,</span><span class="w"> </span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="n">C</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="p">{</span>
 
-<span class="w">    </span><span class="n">SymbolProvider</span><span class="w"> </span><span class="nf">createSymbolProvider</span><span class="p">(</span><span class="n">CreateSymbolProviderDirective</span><span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">SymbolProvider</span><span class="w"> </span><span class="nf">createSymbolProvider</span><span class="p">(</span><span class="n">CreateSymbolProviderDirective</span><span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">C</span><span class="w"> </span><span class="nf">createContext</span><span class="p">(</span><span class="n">CreateContextDirective</span><span class="o">&lt;</span><span class="n">S</span><span class="p">,</span><span class="w"> </span><span class="n">I</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">C</span><span class="w"> </span><span class="nf">createContext</span><span class="p">(</span><span class="n">CreateContextDirective</span><span class="o">&lt;</span><span class="n">S</span><span class="p">,</span><span class="w"> </span><span class="n">I</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateService</span><span class="p">(</span><span class="n">GenerateServiceDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateService</span><span class="p">(</span><span class="n">GenerateServiceDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">);</span>
 
-<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateResource</span><span class="p">(</span><span class="n">GenerateResourceDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateResource</span><span class="p">(</span><span class="n">GenerateResourceDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateStructure</span><span class="p">(</span><span class="n">GenerateStructureDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateStructure</span><span class="p">(</span><span class="n">GenerateStructureDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateError</span><span class="p">(</span><span class="n">GenerateErrorDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateError</span><span class="p">(</span><span class="n">GenerateErrorDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateUnion</span><span class="p">(</span><span class="n">GenerateUnionDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateUnion</span><span class="p">(</span><span class="n">GenerateUnionDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateEnumShape</span><span class="p">(</span><span class="n">GenerateEnumDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateEnumShape</span><span class="p">(</span><span class="n">GenerateEnumDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateIntEnumShape</span><span class="p">(</span><span class="n">GenerateIntEnumDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">generateIntEnumShape</span><span class="p">(</span><span class="n">GenerateIntEnumDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">);</span>
 
-<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">customizeBeforeShapeGeneration</span><span class="p">(</span><span class="n">CustomizeDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">customizeBeforeShapeGeneration</span><span class="p">(</span><span class="n">CustomizeDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
 
-<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">customizeBeforeIntegrations</span><span class="p">(</span><span class="n">CustomizeDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">customizeBeforeIntegrations</span><span class="p">(</span><span class="n">CustomizeDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
 
-<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">customizeAfterIntegrations</span><span class="p">(</span><span class="n">CustomizeDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">customizeAfterIntegrations</span><span class="p">(</span><span class="n">CustomizeDirective</span><span class="o">&lt;</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="n">S</span><span class="o">&gt;</span><span class="w"> </span><span class="n">directive</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
-<p>The <a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/directed/DirectedCodegen.java">source code for DirectedCodegen</a> can be found on GitHub.</p>
+<p>The <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/directed/DirectedCodegen.java">source code for DirectedCodegen</a> can be found on GitHub.</p>
 <div class="section" id="directedcodegen-prerequisites">
 <h3>DirectedCodegen prerequisites<a class="headerlink" href="#directedcodegen-prerequisites" title="Permalink to this headline">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">DirectedCodegen</span></code> has a few prerequisites before it can be implemented.</p>
@@ -412,36 +412,36 @@ implementation to build up the context needed to run the generator and
 call methods in the right order. <code class="docutils literal notranslate"><span class="pre">CodegenDirector</span></code> is typically called
 in a Smithy-Build plugin using the data provided by
 <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.build.PluginContext</span></code>.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span><span class="w"></span>
-<span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="n">PluginContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">CodegenDirector</span><span class="o">&lt;</span><span class="n">MylangWriter</span><span class="p">,</span><span class="w"></span>
-<span class="w">                    </span><span class="n">MylangIntegration</span><span class="p">,</span><span class="w"></span>
-<span class="w">                    </span><span class="n">MylangContext</span><span class="p">,</span><span class="w"></span>
-<span class="w">                    </span><span class="n">MylangSettings</span><span class="o">&gt;</span><span class="w"> </span><span class="n">runner</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CodegenDirector</span><span class="o">&lt;&gt;</span><span class="p">();</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="n">PluginContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">CodegenDirector</span><span class="o">&lt;</span><span class="n">MylangWriter</span><span class="p">,</span>
+<span class="w">                    </span><span class="n">MylangIntegration</span><span class="p">,</span>
+<span class="w">                    </span><span class="n">MylangContext</span><span class="p">,</span>
+<span class="w">                    </span><span class="n">MylangSettings</span><span class="o">&gt;</span><span class="w"> </span><span class="n">runner</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CodegenDirector</span><span class="o">&lt;&gt;</span><span class="p">();</span>
 
-<span class="w">    </span><span class="c1">// Assuming MylangGenerator is an implementation of DirectedCodegen.</span><span class="w"></span>
-<span class="w">    </span><span class="n">runner</span><span class="p">.</span><span class="na">directedCodegen</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">MylangGenerator</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// Assuming MylangGenerator is an implementation of DirectedCodegen.</span>
+<span class="w">    </span><span class="n">runner</span><span class="p">.</span><span class="na">directedCodegen</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">MylangGenerator</span><span class="p">());</span>
 
-<span class="w">    </span><span class="c1">// Set the SmithyIntegration class to look for and apply using SPI.</span><span class="w"></span>
-<span class="w">    </span><span class="n">runner</span><span class="p">.</span><span class="na">integrationClass</span><span class="p">(</span><span class="n">TestIntegration</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// Set the SmithyIntegration class to look for and apply using SPI.</span>
+<span class="w">    </span><span class="n">runner</span><span class="p">.</span><span class="na">integrationClass</span><span class="p">(</span><span class="n">TestIntegration</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
 
-<span class="w">    </span><span class="c1">// Set the FileManifest and Model from the plugin.</span><span class="w"></span>
-<span class="w">    </span><span class="n">runner</span><span class="p">.</span><span class="na">fileManifest</span><span class="p">(</span><span class="n">context</span><span class="p">.</span><span class="na">getFileManifest</span><span class="p">());</span><span class="w"></span>
-<span class="w">    </span><span class="n">runner</span><span class="p">.</span><span class="na">model</span><span class="p">(</span><span class="n">context</span><span class="p">.</span><span class="na">getModel</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// Set the FileManifest and Model from the plugin.</span>
+<span class="w">    </span><span class="n">runner</span><span class="p">.</span><span class="na">fileManifest</span><span class="p">(</span><span class="n">context</span><span class="p">.</span><span class="na">getFileManifest</span><span class="p">());</span>
+<span class="w">    </span><span class="n">runner</span><span class="p">.</span><span class="na">model</span><span class="p">(</span><span class="n">context</span><span class="p">.</span><span class="na">getModel</span><span class="p">());</span>
 
-<span class="w">    </span><span class="c1">// Create a MylangSettings object from the plugin settings.</span><span class="w"></span>
-<span class="w">    </span><span class="n">MylangSettings</span><span class="w"> </span><span class="n">settings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">runner</span><span class="p">.</span><span class="na">settings</span><span class="p">(</span><span class="n">MylangSettings</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                              </span><span class="n">context</span><span class="p">.</span><span class="na">getSettings</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// Create a MylangSettings object from the plugin settings.</span>
+<span class="w">    </span><span class="n">MylangSettings</span><span class="w"> </span><span class="n">settings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">runner</span><span class="p">.</span><span class="na">settings</span><span class="p">(</span><span class="n">MylangSettings</span><span class="p">.</span><span class="na">class</span><span class="p">,</span>
+<span class="w">                                              </span><span class="n">context</span><span class="p">.</span><span class="na">getSettings</span><span class="p">());</span>
 
-<span class="w">    </span><span class="c1">// Assuming service() returns the configured service shape ID.</span><span class="w"></span>
-<span class="w">    </span><span class="n">runner</span><span class="p">.</span><span class="na">service</span><span class="p">(</span><span class="n">settings</span><span class="p">.</span><span class="na">service</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// Assuming service() returns the configured service shape ID.</span>
+<span class="w">    </span><span class="n">runner</span><span class="p">.</span><span class="na">service</span><span class="p">(</span><span class="n">settings</span><span class="p">.</span><span class="na">service</span><span class="p">());</span>
 
-<span class="w">    </span><span class="c1">// Configure the director to perform some common model transforms.</span><span class="w"></span>
-<span class="w">    </span><span class="n">runner</span><span class="p">.</span><span class="na">performDefaultCodegenTransforms</span><span class="p">();</span><span class="w"></span>
-<span class="w">    </span><span class="n">runner</span><span class="p">.</span><span class="na">createDedicatedInputsAndOutputs</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// Configure the director to perform some common model transforms.</span>
+<span class="w">    </span><span class="n">runner</span><span class="p">.</span><span class="na">performDefaultCodegenTransforms</span><span class="p">();</span>
+<span class="w">    </span><span class="n">runner</span><span class="p">.</span><span class="na">createDedicatedInputsAndOutputs</span><span class="p">();</span>
 
-<span class="w">    </span><span class="n">runner</span><span class="p">.</span><span class="na">run</span><span class="p">();</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="n">runner</span><span class="p">.</span><span class="na">run</span><span class="p">();</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>After performing the above steps, <code class="docutils literal notranslate"><span class="pre">CodegenDirector</span></code> will:</p>
@@ -466,17 +466,17 @@ shapes that reference them)</li>
 <p>A code generator uses a settings object to configure the generator in
 Smithy-Build and during directed code generation. At a minimum, this
 class should have a <code class="docutils literal notranslate"><span class="pre">ShapeId</span></code> for the service to generate.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MylangSettings</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">ShapeId</span><span class="w"> </span><span class="n">service</span><span class="p">;</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">MylangSettings</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">ShapeId</span><span class="w"> </span><span class="n">service</span><span class="p">;</span>
 
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">service</span><span class="p">(</span><span class="n">ShapeId</span><span class="w"> </span><span class="n">service</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">service</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">service</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">service</span><span class="p">(</span><span class="n">ShapeId</span><span class="w"> </span><span class="n">service</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">service</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">service</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">ShapeId</span><span class="w"> </span><span class="nf">service</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">service</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">ShapeId</span><span class="w"> </span><span class="nf">service</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">service</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <div class="admonition seealso">
@@ -490,15 +490,15 @@ class should have a <code class="docutils literal notranslate"><span class="pre"
 writing files, and abstractions for creating code writers. You should
 create a specific implementation of <code class="docutils literal notranslate"><span class="pre">CodegenContext</span></code> for each
 generator. This can be done using a Java record, POJO, builder, etc.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">record</span> <span class="nc">MylangContext</span><span class="w"> </span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">MylangSettings</span><span class="w"> </span><span class="n">settings</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">SymbolProvider</span><span class="w"> </span><span class="n">symbolProvider</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">FileManifest</span><span class="w"> </span><span class="n">fileManifest</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">WriterDelegator</span><span class="o">&lt;</span><span class="n">MylangWriter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">writerDelegator</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">MylangIntegration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">integrations</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">ServiceShape</span><span class="w"> </span><span class="n">service</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">CodegenContext</span><span class="o">&lt;</span><span class="n">MylangSettings</span><span class="p">,</span><span class="w"> </span><span class="n">MylangWriter</span><span class="p">,</span><span class="w"> </span><span class="n">MylangIntegration</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">record</span> <span class="nc">MylangContext</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">,</span>
+<span class="w">    </span><span class="n">MylangSettings</span><span class="w"> </span><span class="n">settings</span><span class="p">,</span>
+<span class="w">    </span><span class="n">SymbolProvider</span><span class="w"> </span><span class="n">symbolProvider</span><span class="p">,</span>
+<span class="w">    </span><span class="n">FileManifest</span><span class="w"> </span><span class="n">fileManifest</span><span class="p">,</span>
+<span class="w">    </span><span class="n">WriterDelegator</span><span class="o">&lt;</span><span class="n">MylangWriter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">writerDelegator</span><span class="p">,</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">MylangIntegration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">integrations</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ServiceShape</span><span class="w"> </span><span class="n">service</span>
+<span class="p">)</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">CodegenContext</span><span class="o">&lt;</span><span class="n">MylangSettings</span><span class="p">,</span><span class="w"> </span><span class="n">MylangWriter</span><span class="p">,</span><span class="w"> </span><span class="n">MylangIntegration</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{}</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">DirectedCodegen#createContext</span></code> is responsible for creating a

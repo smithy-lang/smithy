@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -355,15 +355,15 @@ due to networking issues or internal server errors. The service uses the
 provided request token to identify and discard duplicate requests.</p>
 <p>Client implementations MAY automatically provide a value for a request token
 member if and only if the member is not explicitly provided.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">AllocateWidget</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">AllocateWidgetInput</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">AllocateWidget</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">AllocateWidgetInput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">AllocateWidgetInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@idempotencyToken</span><span class="w"></span>
-<span class="w">    </span><span class="py">clientToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">AllocateWidgetInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@idempotencyToken</span>
+<span class="w">    </span><span class="py">clientToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 </div>
@@ -377,11 +377,11 @@ request.</dd>
 <dt>Value type</dt><dd>Annotation trait</dd>
 <dt>Conflicts with</dt><dd><a class="reference internal" href="#readonly-trait"><span class="std std-ref">readonly trait</span></a></dd>
 </dl>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@idempotent</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">DeleteSomething</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">DeleteSomethingInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">DeleteSomethingOutput</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@idempotent</span>
+<span class="kd">operation </span><span class="nc">DeleteSomething</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">DeleteSomethingInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">DeleteSomethingOutput</span>
+}
 </pre></div>
 </div>
 <div class="admonition note">
@@ -398,11 +398,11 @@ idempotent.</p>
 <dt>Value type</dt><dd>Annotation trait</dd>
 <dt>Conflicts with</dt><dd><a class="reference internal" href="#idempotent-trait"><span class="std std-ref">idempotent trait</span></a></dd>
 </dl>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetSomething</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetSomethingInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetSomethingOutput</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
+<span class="kd">operation </span><span class="nc">GetSomething</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetSomethingInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetSomethingOutput</span>
+}
 </pre></div>
 </div>
 </div>
@@ -437,15 +437,15 @@ idempotent.</p>
 </tbody>
 </table>
 </div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@error</span>(<span class="s2">&quot;server&quot;</span>)<span class="w"></span>
-<span class="nt">@retryable</span><span class="w"></span>
-<span class="nt">@httpError</span>(<span class="m">503</span>)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">ServiceUnavailableError</span><span class="w"> </span>{}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@error</span>(<span class="s2">&quot;server&quot;</span>)
+<span class="nt">@retryable</span>
+<span class="nt">@httpError</span>(<span class="m">503</span>)
+<span class="kd">structure </span><span class="nc">ServiceUnavailableError</span><span class="w"> </span>{}
 
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
-<span class="nt">@retryable</span>(<span class="py">throttling</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>)<span class="w"></span>
-<span class="nt">@httpError</span>(<span class="m">429</span>)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">ThrottlingError</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nt">@retryable</span>(<span class="py">throttling</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>)
+<span class="nt">@httpError</span>(<span class="m">429</span>)
+<span class="kd">structure </span><span class="nc">ThrottlingError</span><span class="w"> </span>{}
 </pre></div>
 </div>
 </div>
@@ -517,7 +517,8 @@ output member, if specified, MUST target a list or map.</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td><p class="first">The name of an operation input member that limits the maximum number
 of results to include in the operation output. This input member
-SHOULD NOT be required and MUST target an integer shape.</p>
+SHOULD NOT be required and SHOULD target an integer shape. It can, but
+SHOULD NOT target a byte, short, or long shape.</p>
 <div class="last admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">Do not attempt to fill response pages to meet the value provided
@@ -532,34 +533,34 @@ an unpredictable latency.</p>
 </div>
 <p>The following example defines a paginated operation that sets each value
 explicitly on the operation.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@readonly</span><span class="w"></span>
-<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">           </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;maxResults&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foos&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetFoos</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@readonly</span>
+<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
+<span class="w">           </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;maxResults&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foos&quot;</span>)
+<span class="kd">operation </span><span class="nc">GetFoos</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosOutput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetFoosInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">maxResults</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"></span>
-<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetFoosInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">maxResults</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
+<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="nt">@output</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetFoosOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">GetFoosOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">foos</span><span class="p">:</span><span class="w"> </span><span class="vc">StringList</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">foos</span><span class="p">:</span><span class="w"> </span><span class="vc">StringList</span>
+}
 
-<span class="kd">list </span><span class="nc">StringList</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">list </span><span class="nc">StringList</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p>Attaching the <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait to a service provides default pagination
@@ -568,21 +569,21 @@ of the service. Pagination settings configured on an operation override any
 inherited service setting.</p>
 <p>The following example defines a paginated operation that inherits some
 settings from a service.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;maxResults&quot;</span>)<span class="w"></span>
-<span class="kd">service </span><span class="nc">Example</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2019-06-27&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetFoos</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;maxResults&quot;</span>)
+<span class="kd">service </span><span class="nc">Example</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2019-06-27&quot;</span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetFoos</span>]
+}
 
-<span class="nt">@readonly</span><span class="w"> </span><span class="nt">@paginated</span>(<span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foos&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetFoos</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@readonly</span><span class="w"> </span><span class="nt">@paginated</span>(<span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foos&quot;</span>)
+<span class="kd">operation </span><span class="nc">GetFoos</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosOutput</span>
+}
 </pre></div>
 </div>
 <p>The values for <code class="docutils literal notranslate"><span class="pre">outputToken</span></code> and <code class="docutils literal notranslate"><span class="pre">items</span></code> are paths. <em class="dfn">Paths</em> are a series of
@@ -597,39 +598,39 @@ following ABNF.</p>
 </pre>
 <p>The following example defines a paginated operation which uses a result
 wrapper where the output token and items are referenced by paths.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@readonly</span><span class="w"></span>
-<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;result.nextToken&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">           </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;maxResults&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;result.foos&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetFoos</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosInput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@readonly</span>
+<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;result.nextToken&quot;</span><span class="p">,</span>
+<span class="w">           </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;maxResults&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;result.foos&quot;</span>)
+<span class="kd">operation </span><span class="nc">GetFoos</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosOutput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetFoosInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">maxResults</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetFoosInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">maxResults</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="p">,</span>
+<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="nt">@output</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetFoosOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">result</span><span class="p">:</span><span class="w"> </span><span class="vc">ResultWrapper</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">GetFoosOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">result</span><span class="p">:</span><span class="w"> </span><span class="vc">ResultWrapper</span>
+}
 
-<span class="kd">structure </span><span class="nc">ResultWrapper</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">ResultWrapper</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">foos</span><span class="p">:</span><span class="w"> </span><span class="vc">StringList</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">foos</span><span class="p">:</span><span class="w"> </span><span class="vc">StringList</span><span class="p">,</span>
+}
 
-<span class="kd">list </span><span class="nc">StringList</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">list </span><span class="nc">StringList</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 </div>
@@ -794,21 +795,21 @@ the service operation. Supported compression algorithms are: &quot;gzip&quot;.</
 <p>The following example defines an operation that supports <code class="docutils literal notranslate"><span class="pre">gzip</span></code> compression
 for requests from clients to services with both a streaming and non-streaming
 member.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@requestCompression</span>(<span class="w"></span>
-<span class="w">    </span><span class="py">encodings</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;gzip&quot;</span>]<span class="w"></span>
-)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetFoos</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">streamingMember</span><span class="p">:</span><span class="w"> </span><span class="vc">StreamingFoo</span><span class="w"></span>
-<span class="w">        </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@requestCompression</span>(
+<span class="w">    </span><span class="py">encodings</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;gzip&quot;</span>]
+)
+<span class="kd">operation </span><span class="nc">GetFoos</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">streamingMember</span><span class="p">:</span><span class="w"> </span><span class="vc">StreamingFoo</span>
+<span class="w">        </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span>}
+}
 
-<span class="nt">@streaming</span><span class="w"></span>
-<span class="kd">blob </span><span class="nc">StreamingFoo</span><span class="w"></span>
+<span class="nt">@streaming</span>
+<span class="kd">blob </span><span class="nc">StreamingFoo</span>
 </pre></div>
 </div>
 </div>
@@ -841,24 +842,24 @@ any user-provided encoding(s).</p>
 <p>As an example, using the <code class="docutils literal notranslate"><span class="pre">PutWithContentEncoding</span></code> operation below with the
 <code class="docutils literal notranslate"><span class="pre">customEncoding</span></code> member set to <code class="docutils literal notranslate"><span class="pre">brotli</span></code>, the header would be
 <code class="docutils literal notranslate"><span class="pre">&quot;Content-Encoding&quot;:</span> <span class="pre">&quot;brotli,</span> <span class="pre">gzip&quot;</span></code>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@requestCompression</span>(<span class="w"></span>
-<span class="w">    </span><span class="py">encodings</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;gzip&quot;</span>]<span class="w"></span>
-)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">PutWithContentEncoding</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutWithContentEncodingInput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@requestCompression</span>(
+<span class="w">    </span><span class="py">encodings</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;gzip&quot;</span>]
+)
+<span class="kd">operation </span><span class="nc">PutWithContentEncoding</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutWithContentEncodingInput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">PutWithContentEncodingInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;Content-Encoding&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">customEncoding</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"> </span><span class="c">// brotli</span><span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">PutWithContentEncodingInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;Content-Encoding&quot;</span>)
+<span class="w">    </span><span class="py">customEncoding</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"> </span><span class="c">// brotli</span>
 
-<span class="w">    </span><span class="nt">@httpPayload</span><span class="w"></span>
-<span class="w">    </span><span class="py">data</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@httpPayload</span>
+<span class="w">    </span><span class="py">data</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p>Clients MUST encode the request content prior to request signing, otherwise the

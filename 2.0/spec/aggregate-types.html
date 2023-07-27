@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -330,12 +330,12 @@ A list shape requires a single member named <code class="docutils literal notran
 in the IDL using a <a class="reference internal" href="idl.html#idl-list"><span class="std std-ref">list_statement</span></a>.
 The following example defines a list with a string member from the
 <a class="reference internal" href="model.html#prelude"><span class="std std-ref">prelude</span></a>:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">list </span><span class="nc">MyList</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">list </span><span class="nc">MyList</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <div class="section" id="list-member-optionality">
@@ -343,10 +343,10 @@ The following example defines a list with a string member from the
 <p>Lists are considered <em>dense</em> by default, meaning they cannot contain <code class="docutils literal notranslate"><span class="pre">null</span></code>
 values. A list MAY be made <em>sparse</em> by applying the <a class="reference internal" href="type-refinement-traits.html#sparse-trait"><span class="std std-ref">sparse trait</span></a>. The
 following example defines a sparse list:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@sparse</span><span class="w"></span>
-<span class="kd">list </span><span class="nc">SparseList</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@sparse</span>
+<span class="kd">list </span><span class="nc">SparseList</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 </div>
@@ -364,13 +364,13 @@ keys to homogeneous values. A map requires a member named <code class="docutils 
 that MUST target a <code class="docutils literal notranslate"><span class="pre">string</span></code> shape and a member named <code class="docutils literal notranslate"><span class="pre">value</span></code>.
 Maps are defined in the IDL using a <a class="reference internal" href="idl.html#idl-map"><span class="std std-ref">map_statement</span></a>.
 The following example defines a map of strings to integers:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">map </span><span class="nc">IntegerMap</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">map </span><span class="nc">IntegerMap</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
+}
 </pre></div>
 </div>
 <div class="section" id="map-member-optionality">
@@ -383,11 +383,11 @@ across programming languages often do not allow <code class="docutils literal no
 <p>Maps values are considered <em>dense</em> by default, meaning they cannot contain
 <code class="docutils literal notranslate"><span class="pre">null</span></code> values. A map MAY be made <em>sparse</em> by applying the
 <a class="reference internal" href="type-refinement-traits.html#sparse-trait"><span class="std std-ref">sparse trait</span></a>. The following example defines a sparse map:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@sparse</span><span class="w"></span>
-<span class="kd">map </span><span class="nc">SparseMap</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@sparse</span>
+<span class="kd">map </span><span class="nc">SparseMap</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 </div>
@@ -410,17 +410,17 @@ Structures are defined in the IDL using a
 <p>The following example defines a structure with three members, one of which
 is marked with the <a class="reference internal" href="type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a>, and one that is marked with the
 <a class="reference internal" href="type-refinement-traits.html#default-trait"><span class="std std-ref">default trait</span></a> using IDL syntactic sugar.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
 
-<span class="w">    </span><span class="py">greeting</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;Hello&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="py">greeting</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;Hello&quot;</span>
+}
 </pre></div>
 </div>
 <div class="admonition seealso">
@@ -495,11 +495,11 @@ restrictive rules by ignoring the <code class="docutils literal notranslate"><sp
 <p>The <a class="reference internal" href="type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a> indicates that a value MUST always be present for a
 member in order to create a valid structure. Code generators SHOULD generate
 accessors for these members that always return a value.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">TimeSpan</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="c">// years must always be present to make a TimeSpan</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">years</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">TimeSpan</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">// years must always be present to make a TimeSpan</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">years</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
+}
 </pre></div>
 </div>
 <div class="section" id="client-error-correction">
@@ -529,12 +529,12 @@ unknown variant to account for newly added members.</li>
 <p>The <a class="reference internal" href="type-refinement-traits.html#default-trait"><span class="std std-ref">default trait</span></a> gives a structure member a default value. The
 following example uses syntactic sugar in the Smithy IDL allows to assign
 a default value to the <code class="docutils literal notranslate"><span class="pre">days</span></code> member.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">TimeSpan</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">years</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">TimeSpan</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">years</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
 
-<span class="w">    </span><span class="py">days</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">0</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="py">days</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">0</span>
+}
 </pre></div>
 </div>
 </div>
@@ -552,12 +552,12 @@ Either way, the member is still considered always present to tools like code
 generators, but instead of requiring the value to be provided by an end-user,
 a default value is automatically provided if missing. For example, the previous
 <code class="docutils literal notranslate"><span class="pre">TimeSpan</span></code> model can be backward compatibly changed to:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">TimeSpan</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="c">// @required is replaced with @default and @addedDefault</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@addedDefault</span><span class="w"></span>
-<span class="w">    </span><span class="py">years</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">0</span><span class="w"></span>
-<span class="w">    </span><span class="py">days</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">0</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">TimeSpan</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">// @required is replaced with @default and @addedDefault</span>
+<span class="w">    </span><span class="nt">@addedDefault</span>
+<span class="w">    </span><span class="py">years</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">0</span>
+<span class="w">    </span><span class="py">days</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">0</span>
+}
 </pre></div>
 </div>
 <p>The <a class="reference internal" href="type-refinement-traits.html#addeddefault-trait"><span class="std std-ref">addedDefault trait</span></a> trait SHOULD be used any time a <code class="docutils literal notranslate"><span class="pre">default</span></code> trait is
@@ -572,17 +572,17 @@ client code generators MUST treat the member as if it is not required and
 has no default value. Authoritative model consumers MAY choose to ignore
 the <code class="docutils literal notranslate"><span class="pre">clientOptional</span></code> trait.</p>
 <p>For example, the following structure:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">UserData</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@clientOptional</span><span class="w"></span>
-<span class="w">    </span><span class="py">summary</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">UserData</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nt">@clientOptional</span>
+<span class="w">    </span><span class="py">summary</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p>Can be backward-compatibly updated to remove the <code class="docutils literal notranslate"><span class="pre">required</span></code> trait:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">UserData</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">summary</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">UserData</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">summary</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p>Replacing both the <code class="docutils literal notranslate"><span class="pre">required</span></code> and <code class="docutils literal notranslate"><span class="pre">clientOptional</span></code> trait with the <code class="docutils literal notranslate"><span class="pre">default</span></code>
@@ -600,21 +600,21 @@ member of a structure marked with the <code class="docutils literal notranslate"
 trait does not need to be added in its place.</p>
 <p>The special &quot;:=&quot; syntax for the operation input property automatically applies
 the <code class="docutils literal notranslate"><span class="pre">input</span></code> trait:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">PutTimeSpan</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">        </span><span class="py">years</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">PutTimeSpan</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
+<span class="w">        </span><span class="nt">@required</span>
+<span class="w">        </span><span class="py">years</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 <p>Because of the <code class="docutils literal notranslate"><span class="pre">input</span></code> trait, the operation can be updated to remove the
 <code class="docutils literal notranslate"><span class="pre">required</span></code> trait without breaking things like previously generated clients:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">PutTimeSpan</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">years</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">PutTimeSpan</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">years</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 </div>
@@ -631,17 +631,17 @@ values of each variant.</p>
 <p>Unions are defined in the IDL using a <a class="reference internal" href="idl.html#idl-union"><span class="std std-ref">union_statement</span></a>.
 A union shape MUST contain one or more named <a class="reference internal" href="model.html#member"><span class="std std-ref">members</span></a>.
 The following example defines a union shape with several members:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">union </span><span class="nc">MyUnion</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">i32</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"></span>
+<span class="kd">union </span><span class="nc">MyUnion</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">i32</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
 
-<span class="w">    </span><span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">100</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">100</span>)
+<span class="w">    </span><span class="py">string</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="py">time</span><span class="p">:</span><span class="w"> </span><span class="vc">Timestamp</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="py">time</span><span class="p">:</span><span class="w"> </span><span class="vc">Timestamp</span><span class="p">,</span>
+}
 </pre></div>
 </div>
 <div class="section" id="unit-types-in-unions">
@@ -651,21 +651,21 @@ tag itself. For these cases, union members MAY target Smithy's built-in
 <a class="reference internal" href="model.html#unit-type"><span class="std std-ref">unit type</span></a>, <code class="docutils literal notranslate"><span class="pre">smithy.api#Unit</span></code>.</p>
 <p>The following example defines a union for actions a player can take in a
 game.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">union </span><span class="nc">PlayerAction</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="c">/// Quit the game.</span><span class="w"></span>
-<span class="w">    </span><span class="py">quit</span><span class="p">:</span><span class="w"> </span><span class="vc">Unit</span><span class="p">,</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">union </span><span class="nc">PlayerAction</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">/// Quit the game.</span>
+<span class="w">    </span><span class="py">quit</span><span class="p">:</span><span class="w"> </span><span class="vc">Unit</span><span class="p">,</span>
 
-<span class="w">    </span><span class="c">/// Move in a specific direction.</span><span class="w"></span>
-<span class="w">    </span><span class="py">move</span><span class="p">:</span><span class="w"> </span><span class="vc">DirectedAction</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="c">/// Move in a specific direction.</span>
+<span class="w">    </span><span class="py">move</span><span class="p">:</span><span class="w"> </span><span class="vc">DirectedAction</span><span class="p">,</span>
 
-<span class="w">    </span><span class="c">/// Jump in a specific direction.</span><span class="w"></span>
-<span class="w">    </span><span class="py">jump</span><span class="p">:</span><span class="w"> </span><span class="vc">DirectedAction</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="c">/// Jump in a specific direction.</span>
+<span class="w">    </span><span class="py">jump</span><span class="p">:</span><span class="w"> </span><span class="vc">DirectedAction</span>
+}
 
-<span class="kd">structure </span><span class="nc">DirectedAction</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">direction</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">DirectedAction</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">direction</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
+}
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">quit</span></code> action has no meaningful data associated with it, while <code class="docutils literal notranslate"><span class="pre">move</span></code>
@@ -678,24 +678,24 @@ defined by a <a class="reference internal" href="protocol-traits.html#protocolde
 purposes, if unions were to be represented in a hypothetical JSON
 serialization, the following value would be valid for the <code class="docutils literal notranslate"><span class="pre">PlayerAction</span></code>
 union because a single member is present:</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;move&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;direction&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;move&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;direction&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>The following value is <strong>invalid</strong> because multiple members are present:</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;quit&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;move&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;direction&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;quit&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">    </span><span class="nt">&quot;move&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;direction&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>The following value is <strong>invalid</strong> because no members are present:</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{}</span><span class="w"></span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{}</span>
 </pre></div>
 </div>
 </div>
@@ -731,41 +731,41 @@ contain at least one path through its members that is not recursive
 or steps through a list, map, or optional structure member.</li>
 </ol>
 <p>The following recursive shape definition is <strong>valid</strong>:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">list </span><span class="nc">ValidList</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">IntermediateStructure</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">list </span><span class="nc">ValidList</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">IntermediateStructure</span>
+}
 
-<span class="kd">structure </span><span class="nc">IntermediateStructure</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">ValidList</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">IntermediateStructure</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">ValidList</span>
+}
 </pre></div>
 </div>
 <p>The following recursive shape definition is <strong>invalid</strong>:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">list </span><span class="nc">RecursiveList</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">RecursiveList</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">list </span><span class="nc">RecursiveList</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">RecursiveList</span>
+}
 </pre></div>
 </div>
 <p>The following recursive shape definition is <strong>invalid</strong> due to mutual
 recursion and the <a class="reference internal" href="type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">structure </span><span class="nc">RecursiveShape1</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">recursiveMember</span><span class="p">:</span><span class="w"> </span><span class="vc">RecursiveShape2</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">RecursiveShape1</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">recursiveMember</span><span class="p">:</span><span class="w"> </span><span class="vc">RecursiveShape2</span>
+}
 
-<span class="kd">structure </span><span class="nc">RecursiveShape2</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">recursiveMember</span><span class="p">:</span><span class="w"> </span><span class="vc">RecursiveShape1</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">RecursiveShape2</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">recursiveMember</span><span class="p">:</span><span class="w"> </span><span class="vc">RecursiveShape1</span>
+}
 </pre></div>
 </div>
 </div>

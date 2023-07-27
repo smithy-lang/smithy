@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -330,27 +330,27 @@ or streams of events (<a class="reference internal" href="#event-streams"><span 
 bytes or UTF-8 characters. A data stream is created by applying the
 <a class="reference internal" href="#streaming-trait"><span class="std std-ref">streaming trait</span></a> to a blob. This stream can then be referenced
 by a single top-level operation input or output structure member. For example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/streaming-operation&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">StreamingOperation</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{}<span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="nt">@httpPayload</span><span class="w"></span>
-<span class="w">        </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">StreamingBlob</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/streaming-operation&quot;</span>)
+<span class="kd">operation </span><span class="nc">StreamingOperation</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{}
+<span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
+<span class="w">        </span><span class="nt">@httpPayload</span>
+<span class="w">        </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">StreamingBlob</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span>}
+}
 
-<span class="nt">@streaming</span><span class="w"></span>
-<span class="kd">blob </span><span class="nc">StreamingBlob</span><span class="w"></span>
+<span class="nt">@streaming</span>
+<span class="kd">blob </span><span class="nc">StreamingBlob</span>
 </pre></div>
 </div>
 <p>Data streams are unbounded by default. In rare cases, it may be necessary to send
 bounded data of a known size but indicate to applications that the data SHOULD NOT
 be stored in memory. Data streams can be configured to require a known size by
 applying the <a class="reference internal" href="#requireslength-trait"><span class="std std-ref">requiresLength trait</span></a>. For example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">// This stream must has a known size.</span><span class="w"></span>
-<span class="nt">@streaming</span><span class="w"></span>
-<span class="nt">@requiresLength</span><span class="w"></span>
-<span class="kd">blob </span><span class="nc">FiniteStreamingBlob</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">// This stream must has a known size.</span>
+<span class="nt">@streaming</span>
+<span class="nt">@requiresLength</span>
+<span class="kd">blob </span><span class="nc">FiniteStreamingBlob</span>
 </pre></div>
 </div>
 </div>
@@ -369,68 +369,68 @@ member names of the union define the name that is used to identify each event
 that is sent over the event stream.</p>
 <p id="input-eventstream">The following example defines an operation that uses an event
 stream in its input by referencing a member that targets a union:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">operation </span><span class="nc">PublishMessages</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PublishMessagesInput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">operation </span><span class="nc">PublishMessages</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PublishMessagesInput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">PublishMessagesInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">room</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">    </span><span class="py">messages</span><span class="p">:</span><span class="w"> </span><span class="vc">PublishEvents</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">PublishMessagesInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">room</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span><span class="py">messages</span><span class="p">:</span><span class="w"> </span><span class="vc">PublishEvents</span>
+}
 
-<span class="nt">@streaming</span><span class="w"></span>
-<span class="kd">union </span><span class="nc">PublishEvents</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">Message</span><span class="w"></span>
-<span class="w">    </span><span class="py">leave</span><span class="p">:</span><span class="w"> </span><span class="vc">LeaveEvent</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@streaming</span>
+<span class="kd">union </span><span class="nc">PublishEvents</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">Message</span>
+<span class="w">    </span><span class="py">leave</span><span class="p">:</span><span class="w"> </span><span class="vc">LeaveEvent</span>
+}
 
-<span class="kd">structure </span><span class="nc">Message</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">Message</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="kd">structure </span><span class="nc">LeaveEvent</span><span class="w"> </span>{}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">LeaveEvent</span><span class="w"> </span>{}
 </pre></div>
 </div>
 <p id="output-eventstream">The following example defines an operation that uses an event
 stream in its output:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">operation </span><span class="nc">SubscribeToMovements</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">SubscribeToMovementsInput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">SubscribeToMovementsOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">operation </span><span class="nc">SubscribeToMovements</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">SubscribeToMovementsInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">SubscribeToMovementsOutput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">SubscribeToMovementsInput</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">SubscribeToMovementsInput</span><span class="w"> </span>{}
 
-<span class="nt">@output</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">SubscribeToMovementsOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">movements</span><span class="p">:</span><span class="w"> </span><span class="vc">MovementEvents</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">SubscribeToMovementsOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">movements</span><span class="p">:</span><span class="w"> </span><span class="vc">MovementEvents</span>
+}
 
-<span class="nt">@streaming</span><span class="w"></span>
-<span class="kd">union </span><span class="nc">MovementEvents</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">up</span><span class="p">:</span><span class="w"> </span><span class="vc">Movement</span><span class="w"></span>
-<span class="w">    </span><span class="py">down</span><span class="p">:</span><span class="w"> </span><span class="vc">Movement</span><span class="w"></span>
-<span class="w">    </span><span class="py">left</span><span class="p">:</span><span class="w"> </span><span class="vc">Movement</span><span class="w"></span>
-<span class="w">    </span><span class="py">right</span><span class="p">:</span><span class="w"> </span><span class="vc">Movement</span><span class="w"></span>
-<span class="w">    </span><span class="py">throttlingError</span><span class="p">:</span><span class="w"> </span><span class="vc">ThrottlingError</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@streaming</span>
+<span class="kd">union </span><span class="nc">MovementEvents</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">up</span><span class="p">:</span><span class="w"> </span><span class="vc">Movement</span>
+<span class="w">    </span><span class="py">down</span><span class="p">:</span><span class="w"> </span><span class="vc">Movement</span>
+<span class="w">    </span><span class="py">left</span><span class="p">:</span><span class="w"> </span><span class="vc">Movement</span>
+<span class="w">    </span><span class="py">right</span><span class="p">:</span><span class="w"> </span><span class="vc">Movement</span>
+<span class="w">    </span><span class="py">throttlingError</span><span class="p">:</span><span class="w"> </span><span class="vc">ThrottlingError</span>
+}
 
-<span class="kd">structure </span><span class="nc">Movement</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">velocity</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">Movement</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">velocity</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span>
+}
 
-<span class="c">/// An example error emitted when the client is throttled</span><span class="w"></span>
-<span class="c">/// and should terminate the event stream.</span><span class="w"></span>
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
-<span class="nt">@retryable</span>(<span class="py">throttling</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">ThrottlingError</span><span class="w"> </span>{}<span class="w"></span>
+<span class="c">/// An example error emitted when the client is throttled</span>
+<span class="c">/// and should terminate the event stream.</span>
+<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nt">@retryable</span>(<span class="py">throttling</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>)
+<span class="kd">structure </span><span class="nc">ThrottlingError</span><span class="w"> </span>{}
 </pre></div>
 </div>
 <div class="section" id="modeled-errors-in-event-streams">
@@ -459,32 +459,32 @@ sent however is necessary for the protocol.</p>
 <p>The following example defines an operation with an input event stream with
 an initial-request. The client will first send the initial-request to the
 service, followed by the events sent in the payload of the HTTP message.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/messages/{room}&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">PublishMessages</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PublishMessagesInput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/messages/{room}&quot;</span>)
+<span class="kd">operation </span><span class="nc">PublishMessages</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PublishMessagesInput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">PublishMessagesInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@httpLabel</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">room</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">PublishMessagesInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@httpLabel</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">room</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@httpPayload</span><span class="w"></span>
-<span class="w">    </span><span class="py">messages</span><span class="p">:</span><span class="w"> </span><span class="vc">MessageStream</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@httpPayload</span>
+<span class="w">    </span><span class="py">messages</span><span class="p">:</span><span class="w"> </span><span class="vc">MessageStream</span>
+}
 
-<span class="nt">@streaming</span><span class="w"></span>
-<span class="kd">union </span><span class="nc">MessageStream</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">Message</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@streaming</span>
+<span class="kd">union </span><span class="nc">MessageStream</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">Message</span>
+}
 
-<span class="kd">structure </span><span class="nc">Message</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">Message</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 </div>
@@ -502,30 +502,30 @@ however is necessary for the protocol.</p>
 an initial-response. The client will first receive and process the
 initial-response, followed by the events sent in the payload of the HTTP
 message.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/messages/{room}&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">SubscribeToMessages</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">SubscribeToMessagesInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">SubscribeToMessagesOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/messages/{room}&quot;</span>)
+<span class="kd">operation </span><span class="nc">SubscribeToMessages</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">SubscribeToMessagesInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">SubscribeToMessagesOutput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">SubscribeToMessagesInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@httpLabel</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">room</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">SubscribeToMessagesInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@httpLabel</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">room</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="nt">@output</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">SubscribeToMessagesOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;X-Connection-Lifetime&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">connectionLifetime</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">SubscribeToMessagesOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;X-Connection-Lifetime&quot;</span>)
+<span class="w">    </span><span class="py">connectionLifetime</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
 
-<span class="w">    </span><span class="nt">@httpPayload</span><span class="w"></span>
-<span class="w">    </span><span class="py">messages</span><span class="p">:</span><span class="w"> </span><span class="vc">MessageStream</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@httpPayload</span>
+<span class="w">    </span><span class="py">messages</span><span class="p">:</span><span class="w"> </span><span class="vc">MessageStream</span>
+}
 </pre></div>
 </div>
 </div>
@@ -551,32 +551,32 @@ MUST provide access to the <a class="reference internal" href="#initial-messages
 event stream when necessary.</p>
 <p>Clients SHOULD expose type-safe functionality that is used to dispatch based
 on the name of an event. For example, given the following event stream:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">operation </span><span class="nc">SubscribeToEvents</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">SubscribeToEventsInput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">SubscribeToEventsOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">operation </span><span class="nc">SubscribeToEvents</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">SubscribeToEventsInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">SubscribeToEventsOutput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">SubscribeToEventsInput</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">SubscribeToEventsInput</span><span class="w"> </span>{}
 
-<span class="nt">@output</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">SubscribeToEventsOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">events</span><span class="p">:</span><span class="w"> </span><span class="vc">Events</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">SubscribeToEventsOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">events</span><span class="p">:</span><span class="w"> </span><span class="vc">Events</span>
+}
 
-<span class="nt">@streaming</span><span class="w"></span>
-<span class="kd">union </span><span class="nc">Events</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">Event1</span><span class="w"></span>
-<span class="w">    </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">Event2</span><span class="w"></span>
-<span class="w">    </span><span class="py">c</span><span class="p">:</span><span class="w"> </span><span class="vc">Event3</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@streaming</span>
+<span class="kd">union </span><span class="nc">Events</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">Event1</span>
+<span class="w">    </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">Event2</span>
+<span class="w">    </span><span class="py">c</span><span class="p">:</span><span class="w"> </span><span class="vc">Event3</span>
+}
 
-<span class="kd">structure </span><span class="nc">Event1</span><span class="w"> </span>{}<span class="w"></span>
-<span class="kd">structure </span><span class="nc">Event2</span><span class="w"> </span>{}<span class="w"></span>
-<span class="kd">structure </span><span class="nc">Event3</span><span class="w"> </span>{}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">Event1</span><span class="w"> </span>{}
+<span class="kd">structure </span><span class="nc">Event2</span><span class="w"> </span>{}
+<span class="kd">structure </span><span class="nc">Event3</span><span class="w"> </span>{}
 </pre></div>
 </div>
 <p>An abstraction SHOULD be provided that is used to dispatch based on the
@@ -597,26 +597,26 @@ are not marked with the <code class="docutils literal notranslate"><span class="
 protocol-specific document.</p>
 <p>The following example serializes the &quot;a&quot; and &quot;b&quot; members as event
 headers and the &quot;c&quot; member as the payload.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">ExampleEvent</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@eventHeader</span><span class="w"></span>
-<span class="w">    </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">ExampleEvent</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@eventHeader</span>
+<span class="w">    </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@eventHeader</span><span class="w"></span>
-<span class="w">    </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@eventHeader</span>
+<span class="w">    </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@eventPayload</span><span class="w"></span>
-<span class="w">    </span><span class="py">c</span><span class="p">:</span><span class="w"> </span><span class="vc">Blob</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@eventPayload</span>
+<span class="w">    </span><span class="py">c</span><span class="p">:</span><span class="w"> </span><span class="vc">Blob</span>
+}
 </pre></div>
 </div>
 <p>The following example serializes the &quot;a&quot;, &quot;b&quot;, and &quot;c&quot; members as the payload
 of the event using a protocol-specific document. For example, when using a JSON
 based protocol, the event payload is serialized as a JSON object:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">ExampleEvent</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">    </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">    </span><span class="py">c</span><span class="p">:</span><span class="w"> </span><span class="vc">Blob</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">ExampleEvent</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span><span class="py">c</span><span class="p">:</span><span class="w"> </span><span class="vc">Blob</span>
+}
 </pre></div>
 </div>
 </div>
@@ -643,13 +643,13 @@ does not support custom message headers. It is a protocol-level concern
 as to if and how event stream headers are serialized.</p>
 </div>
 <p>The following example defines multiple event headers:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">ExampleEvent</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@eventHeader</span><span class="w"></span>
-<span class="w">    </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">ExampleEvent</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@eventHeader</span>
+<span class="w">    </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@eventHeader</span><span class="w"></span>
-<span class="w">    </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@eventHeader</span>
+<span class="w">    </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 </div>
@@ -681,24 +681,24 @@ then all other members of the structure MUST be marked with the
 </ul>
 <p>The following example defines an event header and sends a blob as the payload
 of an event:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">ExampleEvent</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@eventPayload</span><span class="w"></span>
-<span class="w">    </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">ExampleEvent</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@eventPayload</span>
+<span class="w">    </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@eventHeader</span><span class="w"></span>
-<span class="w">    </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@eventHeader</span>
+<span class="w">    </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p>The following structure is <strong>invalid</strong> because the &quot;a&quot; member is bound to the
 <code class="docutils literal notranslate"><span class="pre">eventPayload</span></code>, and the &quot;b&quot; member is not bound to an <code class="docutils literal notranslate"><span class="pre">eventHeader</span></code>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">ExampleEvent</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@eventPayload</span><span class="w"></span>
-<span class="w">    </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">ExampleEvent</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@eventPayload</span>
+<span class="w">    </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">    </span><span class="c">// ^ Error: not bound to an eventHeader.</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span><span class="c">// ^ Error: not bound to an eventHeader.</span>
+}
 </pre></div>
 </div>
 </div>
@@ -760,9 +760,9 @@ of operation input structures.</li>
 </ul>
 </dd>
 </dl>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@streaming</span><span class="w"></span>
-<span class="nt">@requiresLength</span><span class="w"></span>
-<span class="kd">blob </span><span class="nc">FiniteStreamingBlob</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@streaming</span>
+<span class="nt">@requiresLength</span>
+<span class="kd">blob </span><span class="nc">FiniteStreamingBlob</span>
 </pre></div>
 </div>
 </div>

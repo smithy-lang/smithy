@@ -30,5 +30,5 @@ Read more
 .. toctree::
     :caption: Project links
 
-    Source code <https://github.com/awslabs/smithy>
+    Source code <https://github.com/smithy-lang/smithy>
     2.0 Documentation <https://smithy.io/2.0/>

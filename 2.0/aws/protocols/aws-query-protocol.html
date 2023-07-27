@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -335,17 +335,17 @@ string.</p>
 <p>A service is configured to use this protocol by applying the <a class="reference internal" href="#aws-protocols-awsquery-trait"><span class="std std-ref">aws.protocols#awsQuery trait</span></a>.
 The service MUST also define the <a class="reference internal" href="../../spec/protocol-traits.html#xmlnamespace-trait"><span class="std std-ref">xmlNamespace trait</span></a> which is used
 to determine the XML namespace used in XML responses.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">aws.protocols#awsQuery</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.protocols#awsQuery</span>
 
-<span class="nt">@awsQuery</span><span class="w"></span>
-<span class="nt">@xmlNamespace</span>(<span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://foo.com&quot;</span>)<span class="w"></span>
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@awsQuery</span>
+<span class="nt">@xmlNamespace</span>(<span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://foo.com&quot;</span>)
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span>
+}
 </pre></div>
 </div>
 <div class="admonition important">
@@ -634,19 +634,19 @@ member, if present.</p>
 with a &quot;.&quot; separator and the member name appended to the container's key.
 The <a class="reference internal" href="../../spec/protocol-traits.html#xmlname-trait"><span class="std std-ref">xmlName trait</span></a> can be used to serialize a property using a custom name. Members with null values are not serialized.</p>
 <p>For example, given the following:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">QueryStructuresInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">QueryStructuresInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Custom&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Custom&quot;</span>)
+<span class="w">    </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="vc">MyStructure</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="vc">MyStructure</span>
+}
 
-<span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">temp</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">temp</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">application/x-www-form-urlencoded</span></code> serialization is:</p>
@@ -673,38 +673,38 @@ can be used to unwrap the values into a containing structure or union,
 with the key not containing the initial &quot;.&quot; separator and <code class="docutils literal notranslate"><span class="pre">member</span></code>
 segment.</p>
 <p>For example, given the following:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">QueryListsInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">ListArg</span><span class="p">:</span><span class="w"> </span><span class="vc">StringList</span><span class="w"></span>
-<span class="w">    </span><span class="py">ComplexListArg</span><span class="p">:</span><span class="w"> </span><span class="vc">GreetingList</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">QueryListsInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">ListArg</span><span class="p">:</span><span class="w"> </span><span class="vc">StringList</span>
+<span class="w">    </span><span class="py">ComplexListArg</span><span class="p">:</span><span class="w"> </span><span class="vc">GreetingList</span>
 
-<span class="w">    </span><span class="nt">@xmlFlattened</span><span class="w"></span>
-<span class="w">    </span><span class="py">FlattenedListArg</span><span class="p">:</span><span class="w"> </span><span class="vc">StringList</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@xmlFlattened</span>
+<span class="w">    </span><span class="py">FlattenedListArg</span><span class="p">:</span><span class="w"> </span><span class="vc">StringList</span>
 
-<span class="w">    </span><span class="py">ListArgWithXmlNameMember</span><span class="p">:</span><span class="w"> </span><span class="vc">ListWithXmlName</span><span class="w"></span>
+<span class="w">    </span><span class="py">ListArgWithXmlNameMember</span><span class="p">:</span><span class="w"> </span><span class="vc">ListWithXmlName</span>
 
-<span class="w">    </span><span class="c">// Notice that the xmlName on the targeted list member is ignored.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@xmlFlattened</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Hi&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">FlattenedListArgWithXmlName</span><span class="p">:</span><span class="w"> </span><span class="vc">ListWithXmlName</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="c">// Notice that the xmlName on the targeted list member is ignored.</span>
+<span class="w">    </span><span class="nt">@xmlFlattened</span>
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Hi&quot;</span>)
+<span class="w">    </span><span class="py">FlattenedListArgWithXmlName</span><span class="p">:</span><span class="w"> </span><span class="vc">ListWithXmlName</span>
+}
 
-<span class="kd">list </span><span class="nc">ListWithXmlName</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;item&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">list </span><span class="nc">ListWithXmlName</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;item&quot;</span>)
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="kd">list </span><span class="nc">StringList</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">list </span><span class="nc">StringList</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="kd">list </span><span class="nc">GreetingList</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">GreetingStruct</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">list </span><span class="nc">GreetingList</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">GreetingStruct</span>
+}
 
-<span class="kd">structure </span><span class="nc">GreetingStruct</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">hi</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">GreetingStruct</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">hi</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">application/x-www-form-urlencoded</span></code> serialization is:</p>
@@ -740,39 +740,39 @@ or &quot;value&quot;. The <a class="reference internal" href="../../spec/protoco
 values into a containing structure or union, with the key not
 containing the initial &quot;.&quot; separator and &quot;entry&quot; segment.</p>
 <p>For example, given the following:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">QueryMapsInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">MapArg</span><span class="p">:</span><span class="w"> </span><span class="vc">StringMap</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">QueryMapsInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">MapArg</span><span class="p">:</span><span class="w"> </span><span class="vc">StringMap</span>
 
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;reNamed&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">RenamedMapArg</span><span class="p">:</span><span class="w"> </span><span class="vc">StringMap</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;reNamed&quot;</span>)
+<span class="w">    </span><span class="py">RenamedMapArg</span><span class="p">:</span><span class="w"> </span><span class="vc">StringMap</span>
 
-<span class="w">    </span><span class="py">ComplexMapArg</span><span class="p">:</span><span class="w"> </span><span class="vc">ComplexMap</span><span class="w"></span>
+<span class="w">    </span><span class="py">ComplexMapArg</span><span class="p">:</span><span class="w"> </span><span class="vc">ComplexMap</span>
 
-<span class="w">    </span><span class="py">MapWithXmlMemberName</span><span class="p">:</span><span class="w"> </span><span class="vc">MapWithXmlName</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="py">MapWithXmlMemberName</span><span class="p">:</span><span class="w"> </span><span class="vc">MapWithXmlName</span>
+}
 
-<span class="kd">map </span><span class="nc">StringMap</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">map </span><span class="nc">StringMap</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="kd">map </span><span class="nc">ComplexMap</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">GreetingStruct</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">map </span><span class="nc">ComplexMap</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">GreetingStruct</span>
+}
 
-<span class="kd">map </span><span class="nc">MapWithXmlName</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;K&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="kd">map </span><span class="nc">MapWithXmlName</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;K&quot;</span>)
+<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;V&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;V&quot;</span>)
+<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="kd">structure </span><span class="nc">GreetingStruct</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">hi</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">GreetingStruct</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">hi</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">application/x-www-form-urlencoded</span></code> serialization is:</p>
@@ -813,18 +813,18 @@ for the associated request.</p>
 <p>The value of the <code class="docutils literal notranslate"><span class="pre">uri</span></code> member of the <a class="reference internal" href="../../spec/protocol-traits.html#xmlnamespace-trait"><span class="std std-ref">xmlNamespace trait</span></a>
 is serialized in an <code class="docutils literal notranslate"><span class="pre">xmlns</span></code> attribute on the response's XML root node. The
 following is a sample response to an operation named <code class="docutils literal notranslate"><span class="pre">XmlTest</span></code>.</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>HTTP/1.1 200 OK
-Date: Mon, 27 Jul 2009 12:28:53 GMT
-Content-Type: text/xml
-Content-Length: ...
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>HTTP/1.1<span class="w"> </span>200<span class="w"> </span>OK
+Date:<span class="w"> </span>Mon,<span class="w"> </span>27<span class="w"> </span>Jul<span class="w"> </span>2009<span class="w"> </span>12:28:53<span class="w"> </span>GMT
+Content-Type:<span class="w"> </span>text/xml
+Content-Length:<span class="w"> </span>...
 
-<span class="nt">&lt;XmlTestResponse</span> <span class="na">xmlns=</span><span class="s">&quot;https://example.com/&quot;</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;XmlTestResult&gt;</span>
-        <span class="nt">&lt;testValue&gt;</span>Hello!<span class="nt">&lt;/testValue&gt;</span>
-    <span class="nt">&lt;/XmlTestResult&gt;</span>
-    <span class="nt">&lt;ResponseMetadata&gt;</span>
-        <span class="nt">&lt;RequestId&gt;</span>c6104cbe-af31-11e0-8154-cbc7ccf896c7<span class="nt">&lt;/RequestId&gt;</span>
-    <span class="nt">&lt;/ResponseMetadata&gt;</span>
+<span class="nt">&lt;XmlTestResponse</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;https://example.com/&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;XmlTestResult&gt;</span>
+<span class="w">        </span><span class="nt">&lt;testValue&gt;</span>Hello!<span class="nt">&lt;/testValue&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/XmlTestResult&gt;</span>
+<span class="w">    </span><span class="nt">&lt;ResponseMetadata&gt;</span>
+<span class="w">        </span><span class="nt">&lt;RequestId&gt;</span>c6104cbe-af31-11e0-8154-cbc7ccf896c7<span class="nt">&lt;/RequestId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/ResponseMetadata&gt;</span>
 <span class="nt">&lt;/XmlTestResponse&gt;</span>
 </pre></div>
 </div>
@@ -940,19 +940,19 @@ the serialized error structure members. <a class="reference internal" href="#aws
 resolved value.</span></a></p>
 <div class="literal-block-wrapper docutils container" id="id5">
 <div class="code-block-caption"><span class="caption-text">AWS Query error example</span><a class="headerlink" href="#id5" title="Permalink to this code">#</a></div>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>HTTP/1.1 400 Bad Request
-Date: Mon, 27 Jul 2009 12:28:53 GMT
-Content-Type: text/xml
-Content-Length: ...
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>HTTP/1.1<span class="w"> </span>400<span class="w"> </span>Bad<span class="w"> </span>Request
+Date:<span class="w"> </span>Mon,<span class="w"> </span>27<span class="w"> </span>Jul<span class="w"> </span>2009<span class="w"> </span>12:28:53<span class="w"> </span>GMT
+Content-Type:<span class="w"> </span>text/xml
+Content-Length:<span class="w"> </span>...
 
 <span class="nt">&lt;ErrorResponse&gt;</span>
-    <span class="nt">&lt;Error&gt;</span>
-        <span class="nt">&lt;Type&gt;</span>Sender<span class="nt">&lt;/Type&gt;</span>
-        <span class="nt">&lt;Code&gt;</span>InvalidGreeting<span class="nt">&lt;/Code&gt;</span>
-        <span class="nt">&lt;Message&gt;</span>Hi<span class="nt">&lt;/Message&gt;</span>
-        <span class="nt">&lt;AnotherSetting&gt;</span>setting<span class="nt">&lt;/AnotherSetting&gt;</span>
-    <span class="nt">&lt;/Error&gt;</span>
-    <span class="nt">&lt;RequestId&gt;</span>c6104cbe-af31-11e0-8154-cbc7ccf896c7<span class="nt">&lt;/RequestId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;Error&gt;</span>
+<span class="w">        </span><span class="nt">&lt;Type&gt;</span>Sender<span class="nt">&lt;/Type&gt;</span>
+<span class="w">        </span><span class="nt">&lt;Code&gt;</span>InvalidGreeting<span class="nt">&lt;/Code&gt;</span>
+<span class="w">        </span><span class="nt">&lt;Message&gt;</span>Hi<span class="nt">&lt;/Message&gt;</span>
+<span class="w">        </span><span class="nt">&lt;AnotherSetting&gt;</span>setting<span class="nt">&lt;/AnotherSetting&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/Error&gt;</span>
+<span class="w">    </span><span class="nt">&lt;RequestId&gt;</span>c6104cbe-af31-11e0-8154-cbc7ccf896c7<span class="nt">&lt;/RequestId&gt;</span>
 <span class="nt">&lt;/ErrorResponse&gt;</span>
 </pre></div>
 </div>
@@ -1032,19 +1032,19 @@ an <a class="reference internal" href="../../spec/protocol-traits.html#xmlnamesp
 <p><em>Service shapes with the xmlNamespace trait</em></p>
 </dd>
 <dt>Value type</dt><dd>Annotation trait.</dd>
-<dt>See</dt><dd><a class="reference external" href="https://github.com/awslabs/smithy/tree/1.34.0/smithy-aws-protocol-tests/model/awsQuery">Protocol tests</a></dd>
+<dt>See</dt><dd><a class="reference external" href="https://github.com/smithy-lang/smithy/tree/1.35.0/smithy-aws-protocol-tests/model/awsQuery">Protocol tests</a></dd>
 </dl>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">aws.protocols#awsQuery</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.protocols#awsQuery</span>
 
-<span class="nt">@awsQuery</span><span class="w"></span>
-<span class="nt">@xmlNamespace</span>(<span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://foo.com&quot;</span>)<span class="w"></span>
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@awsQuery</span>
+<span class="nt">@xmlNamespace</span>(<span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://foo.com&quot;</span>)
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span>
+}
 </pre></div>
 </div>
 </div>
@@ -1098,20 +1098,20 @@ no impact on other Smithy protocols.</p>
 </div>
 <p>The following example defines an error that uses a custom &quot;Code&quot; of
 &quot;InvalidThing&quot; and an HTTP status code of 400.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">aws.protocols#awsQueryError</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.protocols#awsQueryError</span>
 
-<span class="nt">@awsQueryError</span>(<span class="w"></span>
-<span class="w">    </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;InvalidThing&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">httpResponseCode</span><span class="p">:</span><span class="w"> </span><span class="m">400</span><span class="p">,</span><span class="w"></span>
-)<span class="w"></span>
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">InvalidThingException</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@awsQueryError</span>(
+<span class="w">    </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;InvalidThing&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">httpResponseCode</span><span class="p">:</span><span class="w"> </span><span class="m">400</span><span class="p">,</span>
+)
+<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="kd">structure </span><span class="nc">InvalidThingException</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 </div>
@@ -1130,32 +1130,32 @@ and <code class="docutils literal notranslate"><span class="pre">Fault</span></c
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span> <span class="pre">[trait|awsJson1_0]</span></code></dd>
 <dt>Value type</dt><dd>Annotation trait</dd>
 </dl>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">aws.protocols#awsQueryCompatible</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">aws.protocols#awsQueryError</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">aws.protocols#awsJson1_0</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">use </span><span class="nc">aws.protocols#awsQueryCompatible</span>
+<span class="kd">use </span><span class="nc">aws.protocols#awsQueryError</span>
+<span class="kd">use </span><span class="nc">aws.protocols#awsJson1_0</span>
 
-<span class="nt">@awsQueryCompatible</span><span class="w"></span>
-<span class="nt">@awsJson1</span><span class="vc">_0</span><span class="w"></span>
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@awsQueryCompatible</span>
+<span class="nt">@awsJson1</span><span class="vc">_0</span>
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span>
+}
 
-<span class="nt">@awsQueryError</span>(<span class="w"></span>
-<span class="w">    </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;InvalidThing&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">httpResponseCode</span><span class="p">:</span><span class="w"> </span><span class="m">400</span><span class="p">,</span><span class="w"></span>
-)<span class="w"></span>
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">InvalidThingException</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@awsQueryError</span>(
+<span class="w">    </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;InvalidThing&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">httpResponseCode</span><span class="p">:</span><span class="w"> </span><span class="m">400</span><span class="p">,</span>
+)
+<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="kd">structure </span><span class="nc">InvalidThingException</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 </div>
 <div class="section" id="protocol-compliance-tests">
 <span id="awsquery-compliance-tests"></span><h2>Protocol compliance tests<a class="headerlink" href="#protocol-compliance-tests" title="Permalink to this headline">#</a></h2>
 <p>A full compliance test suite is provided and SHALL be considered a normative
-reference: <a class="reference external" href="https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/awsQuery">https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/awsQuery</a></p>
+reference: <a class="reference external" href="https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/awsQuery">https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/awsQuery</a></p>
 <p>These compliance tests define a model that is used to define test cases and
 the expected serialized HTTP requests and responses for each case.</p>
 </div>

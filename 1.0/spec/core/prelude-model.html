@@ -255,7 +255,7 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project links</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/">2.0 Documentation</a></li>
 </ul>
 
@@ -314,61 +314,61 @@ in models.</p>
 <h2><span class="section-number">2.1. </span>Prelude shapes<a class="headerlink" href="#prelude-shapes" title="Permalink to this headline">#</a></h2>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">Smithy prelude</span><a class="headerlink" href="#id1" title="Permalink to this code">#</a></div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">smithy.api</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.api</span>
 
-<span class="kd">string </span><span class="nc">String</span><span class="w"></span>
+<span class="kd">string </span><span class="nc">String</span>
 
-<span class="kd">blob </span><span class="nc">Blob</span><span class="w"></span>
+<span class="kd">blob </span><span class="nc">Blob</span>
 
-<span class="kd">bigInteger </span><span class="nc">BigInteger</span><span class="w"></span>
+<span class="kd">bigInteger </span><span class="nc">BigInteger</span>
 
-<span class="kd">bigDecimal </span><span class="nc">BigDecimal</span><span class="w"></span>
+<span class="kd">bigDecimal </span><span class="nc">BigDecimal</span>
 
-<span class="kd">timestamp </span><span class="nc">Timestamp</span><span class="w"></span>
+<span class="kd">timestamp </span><span class="nc">Timestamp</span>
 
-<span class="kd">document </span><span class="nc">Document</span><span class="w"></span>
+<span class="kd">document </span><span class="nc">Document</span>
 
-<span class="nt">@box</span><span class="w"></span>
-<span class="kd">boolean </span><span class="nc">Boolean</span><span class="w"></span>
+<span class="nt">@box</span>
+<span class="kd">boolean </span><span class="nc">Boolean</span>
 
-<span class="kd">boolean </span><span class="nc">PrimitiveBoolean</span><span class="w"></span>
+<span class="kd">boolean </span><span class="nc">PrimitiveBoolean</span>
 
-<span class="nt">@box</span><span class="w"></span>
-<span class="kd">byte </span><span class="nc">Byte</span><span class="w"></span>
+<span class="nt">@box</span>
+<span class="kd">byte </span><span class="nc">Byte</span>
 
-<span class="kd">byte </span><span class="nc">PrimitiveByte</span><span class="w"></span>
+<span class="kd">byte </span><span class="nc">PrimitiveByte</span>
 
-<span class="nt">@box</span><span class="w"></span>
-<span class="kd">short </span><span class="nc">Short</span><span class="w"></span>
+<span class="nt">@box</span>
+<span class="kd">short </span><span class="nc">Short</span>
 
-<span class="kd">short </span><span class="nc">PrimitiveShort</span><span class="w"></span>
+<span class="kd">short </span><span class="nc">PrimitiveShort</span>
 
-<span class="nt">@box</span><span class="w"></span>
-<span class="kd">integer </span><span class="nc">Integer</span><span class="w"></span>
+<span class="nt">@box</span>
+<span class="kd">integer </span><span class="nc">Integer</span>
 
-<span class="kd">integer </span><span class="nc">PrimitiveInteger</span><span class="w"></span>
+<span class="kd">integer </span><span class="nc">PrimitiveInteger</span>
 
-<span class="nt">@box</span><span class="w"></span>
-<span class="kd">long </span><span class="nc">Long</span><span class="w"></span>
+<span class="nt">@box</span>
+<span class="kd">long </span><span class="nc">Long</span>
 
-<span class="kd">long </span><span class="nc">PrimitiveLong</span><span class="w"></span>
+<span class="kd">long </span><span class="nc">PrimitiveLong</span>
 
-<span class="nt">@box</span><span class="w"></span>
-<span class="kd">float </span><span class="nc">Float</span><span class="w"></span>
+<span class="nt">@box</span>
+<span class="kd">float </span><span class="nc">Float</span>
 
-<span class="kd">float </span><span class="nc">PrimitiveFloat</span><span class="w"></span>
+<span class="kd">float </span><span class="nc">PrimitiveFloat</span>
 
-<span class="nt">@box</span><span class="w"></span>
-<span class="kd">double </span><span class="nc">Double</span><span class="w"></span>
+<span class="nt">@box</span>
+<span class="kd">double </span><span class="nc">Double</span>
 
-<span class="kd">double </span><span class="nc">PrimitiveDouble</span><span class="w"></span>
+<span class="kd">double </span><span class="nc">PrimitiveDouble</span>
 
-<span class="c">/// The single unit type shape, similar to Void and None in other</span><span class="w"></span>
-<span class="c">/// languages, used to represent no meaningful value.</span><span class="w"></span>
-<span class="nt">@unitType</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">Unit</span><span class="w"> </span>{}<span class="w"></span>
+<span class="c">/// The single unit type shape, similar to Void and None in other</span>
+<span class="c">/// languages, used to represent no meaningful value.</span>
+<span class="nt">@unitType</span>
+<span class="kd">structure </span><span class="nc">Unit</span><span class="w"> </span>{}
 </pre></div>
 </div>
 </div>

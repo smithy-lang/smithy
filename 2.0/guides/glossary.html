@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -325,12 +325,12 @@
 <dl class="glossary docutils">
 <dt id="term-AbstractCodeWriter">AbstractCodeWriter<a class="headerlink" href="#term-AbstractCodeWriter" title="Permalink to this term">#</a></dt><dd>A Java class in the <a class="reference internal" href="#term-Smithy-reference-implementation"><span class="xref std std-term">Smithy reference implementation</span></a> used to
 generate code for a <a class="reference internal" href="#term-Target-environment"><span class="xref std std-term">target environment</span></a>. Find the
-<a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-utils/src/main/java/software/amazon/smithy/utils/AbstractCodeWriter.java">source code on GitHub</a>.</dd>
+<a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-utils/src/main/java/software/amazon/smithy/utils/AbstractCodeWriter.java">source code on GitHub</a>.</dd>
 <dt id="term-codegen">codegen<a class="headerlink" href="#term-codegen" title="Permalink to this term">#</a></dt><dt id="term-Code-generation">Code generation<a class="headerlink" href="#term-Code-generation" title="Permalink to this term">#</a></dt><dt id="term-Code-generator">Code generator<a class="headerlink" href="#term-Code-generator" title="Permalink to this term">#</a></dt><dd>Code generators output source code that represents the shapes defined
 in a <a class="reference internal" href="#term-Smithy-model"><span class="xref std std-term">Smithy model</span></a>, and the code they generate use both the
 standard library and the <a class="reference internal" href="#term-Runtime-libraries"><span class="xref std std-term">runtime libraries</span></a> for the
 <a class="reference internal" href="#term-Target-environment"><span class="xref std std-term">target environment</span></a>.</dd>
-<dt id="term-codegen-core">codegen-core<a class="headerlink" href="#term-codegen-core" title="Permalink to this term">#</a></dt><dd>A <a class="reference external" href="https://github.com/awslabs/smithy/tree/main/smithy-codegen-core">set of Java libraries</a>
+<dt id="term-codegen-core">codegen-core<a class="headerlink" href="#term-codegen-core" title="Permalink to this term">#</a></dt><dd>A <a class="reference external" href="https://github.com/smithy-lang/smithy/tree/main/smithy-codegen-core">set of Java libraries</a>
 built on top of the <a class="reference internal" href="#term-Smithy-reference-implementation"><span class="xref std std-term">Smithy reference implementation</span></a> that are
 used to implement Smithy code generators. codegen-core contains
 libraries for writing code, managing dependencies, managing imports,
@@ -358,8 +358,8 @@ a plugin system. See the <a class="reference external" href="https://docs.oracle
 for more information.</dd>
 <dt id="term-Knowledge-index">Knowledge index<a class="headerlink" href="#term-Knowledge-index" title="Permalink to this term">#</a></dt><dd>Abstractions provided in the <a class="reference internal" href="#term-Smithy-reference-implementation"><span class="xref std std-term">Smithy reference implementation</span></a>
 that extract information from the metamodel in a more accessible way.
-For example, the <a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/knowledge/HttpBindingIndex.java">HttpBindingIndex</a> makes it easier to codegen HTTP
-bindings, and the <a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/knowledge/NullableIndex.java">NullableIndex</a> hides the details of determining
+For example, the <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/knowledge/HttpBindingIndex.java">HttpBindingIndex</a> makes it easier to codegen HTTP
+bindings, and the <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/knowledge/NullableIndex.java">NullableIndex</a> hides the details of determining
 if a member is optional or always present.</dd>
 <dt id="term-Projection">Projection<a class="headerlink" href="#term-Projection" title="Permalink to this term">#</a></dt><dd><p>A specific view of a Smithy model that has added, removed, or
 transformed model components.</p>
@@ -381,7 +381,7 @@ big decimal, etc.</dd>
 <dt id="term-Semantic-model">Semantic model<a class="headerlink" href="#term-Semantic-model" title="Permalink to this term">#</a></dt><dd>The Smithy semantic model is an in-memory representation of the
 <a class="reference internal" href="#term-Shapes"><span class="xref std std-term">shapes</span></a>, <a class="reference internal" href="#term-Traits"><span class="xref std std-term">traits</span></a>, and metadata defined in the Smithy
 model. In the <a class="reference internal" href="#term-Smithy-reference-implementation"><span class="xref std std-term">Smithy reference implementation</span></a>, the
-semantic model is contained in the <a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/Model.java">Model class</a>.</dd>
+semantic model is contained in the <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/Model.java">Model class</a>.</dd>
 <dt id="term-Serde">Serde<a class="headerlink" href="#term-Serde" title="Permalink to this term">#</a></dt><dd>Shortened version of serialization and deserialization.</dd>
 <dt id="term-Service-closure">Service closure<a class="headerlink" href="#term-Service-closure" title="Permalink to this term">#</a></dt><dd>The shapes connected to a service. These shapes are code generated.</dd>
 <dt id="term-Shapes">Shapes<a class="headerlink" href="#term-Shapes" title="Permalink to this term">#</a></dt><dd>Shapes are named declarations of Smithy types that make up the

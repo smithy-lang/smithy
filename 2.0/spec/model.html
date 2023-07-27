@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -436,17 +436,17 @@ metadata to an entire model. For example, metadata is used to define
 <a class="reference internal" href="model-validation.html#suppression-definition"><span class="std std-ref">suppressions</span></a>. Metadata is defined
 using a <a class="reference internal" href="#node-value"><span class="std std-ref">node value</span></a>. The following example configures
 a model validator:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationInputName&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This shape is referenced as input but the name does not end with &#39;Input&#39;&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation -[input]-&gt; :not([id|name$=Input i])&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-]<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span>
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationInputName&quot;</span>
+<span class="w">        </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This shape is referenced as input but the name does not end with &#39;Input&#39;&quot;</span>
+<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation -[input]-&gt; :not([id|name$=Input i])&quot;</span>
+<span class="w">        </span>}
+<span class="w">    </span>}
+]
 </pre></div>
 </div>
 <p class="rubric" id="merging-metadata">Metadata conflicts</p>
@@ -461,29 +461,29 @@ into a single array.</li>
 <p>Given the following two Smithy models:</p>
 <div class="literal-block-wrapper docutils container" id="id13">
 <div class="code-block-caption"><span class="caption-text">model-a.smithy</span><a class="headerlink" href="#id13" title="Permalink to this code">#</a></div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">metadata </span><span class="nc">&quot;foo&quot; </span><span class="nd">=</span><span class="w"> </span>[<span class="s2">&quot;baz&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;bar&quot;</span>]<span class="w"></span>
-<span class="kd">metadata </span><span class="nc">&quot;qux&quot; </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;test&quot;</span><span class="w"></span>
-<span class="kd">metadata </span><span class="nc">&quot;validConflict&quot; </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;hi!&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">metadata </span><span class="nc">&quot;foo&quot; </span><span class="nd">=</span><span class="w"> </span>[<span class="s2">&quot;baz&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;bar&quot;</span>]
+<span class="kd">metadata </span><span class="nc">&quot;qux&quot; </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;test&quot;</span>
+<span class="kd">metadata </span><span class="nc">&quot;validConflict&quot; </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;hi!&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="literal-block-wrapper docutils container" id="id14">
 <div class="code-block-caption"><span class="caption-text">model-b.smithy</span><a class="headerlink" href="#id14" title="Permalink to this code">#</a></div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">metadata </span><span class="nc">&quot;foo&quot; </span><span class="nd">=</span><span class="w"> </span>[<span class="s2">&quot;lorem&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;ipsum&quot;</span>]<span class="w"></span>
-<span class="kd">metadata </span><span class="nc">&quot;lorem&quot; </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;ipsum&quot;</span><span class="w"></span>
-<span class="kd">metadata </span><span class="nc">&quot;validConflict&quot; </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;hi!&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">metadata </span><span class="nc">&quot;foo&quot; </span><span class="nd">=</span><span class="w"> </span>[<span class="s2">&quot;lorem&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;ipsum&quot;</span>]
+<span class="kd">metadata </span><span class="nc">&quot;lorem&quot; </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;ipsum&quot;</span>
+<span class="kd">metadata </span><span class="nc">&quot;validConflict&quot; </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;hi!&quot;</span>
 </pre></div>
 </div>
 </div>
 <p>Merging <code class="docutils literal notranslate"><span class="pre">model-a.smithy</span></code> and <code class="docutils literal notranslate"><span class="pre">model-b.smithy</span></code> produces the following
 model:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">metadata </span><span class="nc">&quot;foo&quot; </span><span class="nd">=</span><span class="w"> </span>[<span class="s2">&quot;baz&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;bar&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;lorem&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;ipsum&quot;</span>]<span class="w"></span>
-<span class="kd">metadata </span><span class="nc">&quot;qux&quot; </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;test&quot;</span><span class="w"></span>
-<span class="kd">metadata </span><span class="nc">&quot;lorem&quot; </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;ipsum&quot;</span><span class="w"></span>
-<span class="kd">metadata </span><span class="nc">&quot;validConflict&quot; </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;hi!&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">metadata </span><span class="nc">&quot;foo&quot; </span><span class="nd">=</span><span class="w"> </span>[<span class="s2">&quot;baz&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;bar&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;lorem&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;ipsum&quot;</span>]
+<span class="kd">metadata </span><span class="nc">&quot;qux&quot; </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;test&quot;</span>
+<span class="kd">metadata </span><span class="nc">&quot;lorem&quot; </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;ipsum&quot;</span>
+<span class="kd">metadata </span><span class="nc">&quot;validConflict&quot; </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;hi!&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -516,15 +516,15 @@ an applied trait.</p>
 </div>
 </div>
 <p>The following example defines <a class="reference internal" href="#metadata"><span class="std std-ref">metadata</span></a> using a node value:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata </span><span class="nc">foo </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;hello&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata </span><span class="nc">foo </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;hello&quot;</span>
 </pre></div>
 </div>
 <p>The following example defines a <a class="reference internal" href="#traits"><span class="std std-ref">trait</span></a> using a node value:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">10</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">MyString</span><span class="w"></span>
+<span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">10</span>)
+<span class="kd">string </span><span class="nc">MyString</span>
 </pre></div>
 </div>
 <p class="rubric">Node value types</p>
@@ -779,12 +779,12 @@ referenced by a member is called its &quot;target&quot;. A member MUST NOT targe
 <p>The following example defines a <a class="reference internal" href="aggregate-types.html#list"><span class="std std-ref">list</span></a>
 that contains a member shape. Further examples can be found in the
 documentation for <a class="reference internal" href="#shapes"><span class="std std-ref">shape types</span></a>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">list </span><span class="nc">UserNameList</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">UserName</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">list </span><span class="nc">UserNameList</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">UserName</span>
+}
 </pre></div>
 </div>
 </div>
@@ -794,10 +794,10 @@ documentation for <a class="reference internal" href="#shapes"><span class="std 
 assigned shape ID.</p>
 <p>The following example defines a shape in the <code class="docutils literal notranslate"><span class="pre">smithy.example</span></code> namespace named
 <code class="docutils literal notranslate"><span class="pre">MyString</span></code>, giving the shape a shape ID of <code class="docutils literal notranslate"><span class="pre">smithy.example#MyString</span></code>:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">string </span><span class="nc">MyString</span><span class="w"></span>
+<span class="kd">string </span><span class="nc">MyString</span>
 </pre></div>
 </div>
 <p>Shape IDs have the following syntax:</p>
@@ -903,12 +903,12 @@ trait is applied to a shape depends on the model file representation.</p>
 <p>Traits are applied to shapes in the IDL using <a class="reference internal" href="idl.html#grammar-token-smithy-TraitStatements"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:TraitStatements</span></code></a> that
 immediately precede a shape. The following example applies the
 <a class="reference internal" href="constraint-traits.html#length-trait"><span class="std std-ref">length trait</span></a> and <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a> to <code class="docutils literal notranslate"><span class="pre">MyString</span></code>:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">100</span>)<span class="w"></span>
-<span class="nt">@documentation</span>(<span class="s2">&quot;Contains a string&quot;</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">MyString</span><span class="w"></span>
+<span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">100</span>)
+<span class="nt">@documentation</span>(<span class="s2">&quot;Contains a string&quot;</span>)
+<span class="kd">string </span><span class="nc">MyString</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -924,14 +924,14 @@ applied to a member supersede traits applied to the shape targeted by the
 member and do not inherently conflict.</p>
 <p>In the following example, the <a class="reference internal" href="constraint-traits.html#range-trait"><span class="std std-ref">range trait</span></a> applied to <code class="docutils literal notranslate"><span class="pre">numberOfItems</span></code>
 takes precedence over the trait applied to <code class="docutils literal notranslate"><span class="pre">PositiveInteger</span></code>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">ShoppingCart</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="c">// This trait supersedes the PositiveInteger trait.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@range</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">7</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="m">12</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">numberOfItems</span><span class="p">:</span><span class="w"> </span><span class="vc">PositiveInteger</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">ShoppingCart</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">// This trait supersedes the PositiveInteger trait.</span>
+<span class="w">    </span><span class="nt">@range</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">7</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="m">12</span>)
+<span class="w">    </span><span class="py">numberOfItems</span><span class="p">:</span><span class="w"> </span><span class="vc">PositiveInteger</span>
+}
 
-<span class="nt">@range</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span>)<span class="w"></span>
-<span class="kd">integer </span><span class="nc">PositiveInteger</span><span class="w"></span>
+<span class="nt">@range</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span>)
+<span class="kd">integer </span><span class="nc">PositiveInteger</span>
 </pre></div>
 </div>
 <div class="section" id="applying-traits-externally">
@@ -946,11 +946,11 @@ defines the shapes and traits of the API, and a documentation team could
 own a model that applies documentation traits to the shapes.</p>
 <p>The following example applies the <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a> and
 <a class="reference internal" href="constraint-traits.html#length-trait"><span class="std std-ref">length trait</span></a> to the <code class="docutils literal notranslate"><span class="pre">smithy.example#MyString</span></code> shape:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">apply </span><span class="nc">MyString</span><span class="w"> </span><span class="nt">@documentation</span>(<span class="s2">&quot;This is my string!&quot;</span>)<span class="w"></span>
-<span class="kd">apply </span><span class="nc">MyString</span><span class="w"> </span><span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">10</span>)<span class="w"></span>
+<span class="kd">apply </span><span class="nc">MyString</span><span class="w"> </span><span class="nt">@documentation</span>(<span class="s2">&quot;This is my string!&quot;</span>)
+<span class="kd">apply </span><span class="nc">MyString</span><span class="w"> </span><span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">10</span>)
 </pre></div>
 </div>
 <div class="admonition note">
@@ -973,40 +973,40 @@ values are concatenated into a single trait value.</li>
 <p>All other instances of trait collisions are prohibited.</p>
 <p>The following model definition is <strong>valid</strong> because the <code class="docutils literal notranslate"><span class="pre">length</span></code> trait is
 duplicated on the <code class="docutils literal notranslate"><span class="pre">MyList</span></code> shape with the same values:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">10</span>)<span class="w"></span>
-<span class="kd">list </span><span class="nc">MyList</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">10</span>)
+<span class="kd">list </span><span class="nc">MyList</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="kd">apply </span><span class="nc">MyList</span><span class="w"> </span><span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">10</span>)<span class="w"></span>
+<span class="kd">apply </span><span class="nc">MyList</span><span class="w"> </span><span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">10</span>)
 </pre></div>
 </div>
 <p>The following model definition is <strong>valid</strong> because the <code class="docutils literal notranslate"><span class="pre">tags</span></code> trait
 is a list. The resulting value assigned to the <code class="docutils literal notranslate"><span class="pre">tags</span></code> trait on the
 <code class="docutils literal notranslate"><span class="pre">Hello</span></code> shape is a list that contains &quot;a&quot;, &quot;b&quot;, and &quot;c&quot;.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@tags</span>([<span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;b&quot;</span>])<span class="w"></span>
-<span class="kd">string </span><span class="nc">Hello</span><span class="w"></span>
+<span class="nt">@tags</span>([<span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;b&quot;</span>])
+<span class="kd">string </span><span class="nc">Hello</span>
 
-<span class="kd">apply </span><span class="nc">Hello</span><span class="w"> </span><span class="nt">@tags</span>([<span class="s2">&quot;c&quot;</span>])<span class="w"></span>
+<span class="kd">apply </span><span class="nc">Hello</span><span class="w"> </span><span class="nt">@tags</span>([<span class="s2">&quot;c&quot;</span>])
 </pre></div>
 </div>
 <p>The following model definition is <strong>invalid</strong> because the <code class="docutils literal notranslate"><span class="pre">length</span></code> trait is
 duplicated on the <code class="docutils literal notranslate"><span class="pre">MyList</span></code> shape with different values:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">10</span>)<span class="w"></span>
-<span class="kd">list </span><span class="nc">MyList</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">10</span>)
+<span class="kd">list </span><span class="nc">MyList</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="kd">apply </span><span class="nc">MyList</span><span class="w"> </span><span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">20</span>)<span class="w"></span>
+<span class="kd">apply </span><span class="nc">MyList</span><span class="w"> </span><span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">20</span>)
 </pre></div>
 </div>
 </div>
@@ -1124,49 +1124,49 @@ By convention, trait shape names SHOULD use a lowercase name so that they
 visually stand out from normal shapes.</p>
 <p>The following example defines a trait with a <a class="reference internal" href="#shape-id"><span class="std std-ref">shape ID</span></a> of
 <code class="docutils literal notranslate"><span class="pre">smithy.example#myTraitName</span></code> and applies it to <code class="docutils literal notranslate"><span class="pre">smithy.example#MyString</span></code>:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;*&quot;</span>)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">myTraitName</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;*&quot;</span>)
+<span class="kd">structure </span><span class="nc">myTraitName</span><span class="w"> </span>{}
 
-<span class="nt">@myTraitName</span><span class="w"></span>
-<span class="kd">string </span><span class="nc">MyString</span><span class="w"></span>
+<span class="nt">@myTraitName</span>
+<span class="kd">string </span><span class="nc">MyString</span>
 </pre></div>
 </div>
 <p>The following example defines two custom traits: <code class="docutils literal notranslate"><span class="pre">beta</span></code> and
 <code class="docutils literal notranslate"><span class="pre">structuredTrait</span></code>:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="c">/// A trait that can be applied to a member.</span><span class="w"></span>
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure &gt; member&quot;</span>)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">beta</span><span class="w"> </span>{}<span class="w"></span>
+<span class="c">/// A trait that can be applied to a member.</span>
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure &gt; member&quot;</span>)
+<span class="kd">structure </span><span class="nc">beta</span><span class="w"> </span>{}
 
-<span class="c">/// A trait that has members.</span><span class="w"></span>
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="vc">beta</span>])<span class="w"></span>
-<span class="kd">structure </span><span class="nc">structuredTrait</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">lorem</span><span class="p">:</span><span class="w"> </span><span class="vc">StringShape</span><span class="w"></span>
+<span class="c">/// A trait that has members.</span>
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="vc">beta</span>])
+<span class="kd">structure </span><span class="nc">structuredTrait</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">lorem</span><span class="p">:</span><span class="w"> </span><span class="vc">StringShape</span>
 
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">ipsum</span><span class="p">:</span><span class="w"> </span><span class="vc">StringShape</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">ipsum</span><span class="p">:</span><span class="w"> </span><span class="vc">StringShape</span>
 
-<span class="w">    </span><span class="py">dolor</span><span class="p">:</span><span class="w"> </span><span class="vc">StringShape</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="py">dolor</span><span class="p">:</span><span class="w"> </span><span class="vc">StringShape</span>
+}
 
-<span class="c">// Apply the &quot;beta&quot; trait to the &quot;foo&quot; member.</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">MyShape</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@beta</span><span class="w"></span>
-<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">StringShape</span><span class="w"></span>
-}<span class="w"></span>
+<span class="c">// Apply the &quot;beta&quot; trait to the &quot;foo&quot; member.</span>
+<span class="kd">structure </span><span class="nc">MyShape</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nt">@beta</span>
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">StringShape</span>
+}
 
-<span class="c">// Apply the structuredTrait to the string.</span><span class="w"></span>
-<span class="nt">@structuredTrait</span>(<span class="w"></span>
-<span class="w">    </span><span class="py">lorem</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This is a custom trait!&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">ipsum</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;lorem and ipsum are both required values.&quot;</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">StringShape</span><span class="w"></span>
+<span class="c">// Apply the structuredTrait to the string.</span>
+<span class="nt">@structuredTrait</span>(
+<span class="w">    </span><span class="py">lorem</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This is a custom trait!&quot;</span>
+<span class="w">    </span><span class="py">ipsum</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;lorem and ipsum are both required values.&quot;</span>)
+<span class="kd">string </span><span class="nc">StringShape</span>
 </pre></div>
 </div>
 <p class="rubric">Prelude traits</p>
@@ -1240,27 +1240,27 @@ a trait might start out as a simple annotation, but later might benefit
 from additional information. By defining an annotation trait rather than a
 boolean trait, the trait can safely add optional members over time as needed.</p>
 <p>The following example defines an annotation trait named <code class="docutils literal notranslate"><span class="pre">foo</span></code>:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@trait</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">foo</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@trait</span>
+<span class="kd">structure </span><span class="nc">foo</span><span class="w"> </span>{}
 </pre></div>
 </div>
 <p>A member can be safely added to an annotation trait if the member is not
 marked as <a class="reference internal" href="type-refinement-traits.html#required-trait"><span class="std std-ref">required</span></a>. The applications of the <code class="docutils literal notranslate"><span class="pre">foo</span></code>
 trait in the previous example and the following example are all valid even
 after adding a member to the <code class="docutils literal notranslate"><span class="pre">foo</span></code> trait:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@trait</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">foo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@trait</span>
+<span class="kd">structure </span><span class="nc">foo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="nt">@foo</span>(<span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;bar&quot;</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">MyString4</span><span class="w"></span>
+<span class="nt">@foo</span>(<span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;bar&quot;</span>)
+<span class="kd">string </span><span class="nc">MyString4</span>
 </pre></div>
 </div>
 </div>
@@ -1337,62 +1337,62 @@ why the detected change could be problematic.</td>
 </div>
 <p>It is a backward incompatible change to add the following trait to an
 existing shape:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@trait</span>(<span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;add&quot;</span>}])<span class="w"></span>
-<span class="kd">structure </span><span class="nc">cannotAdd</span><span class="w"> </span>{}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@trait</span>(<span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;add&quot;</span>}])
+<span class="kd">structure </span><span class="nc">cannotAdd</span><span class="w"> </span>{}
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>The above trait definition is equivalent to the following:</p>
-<div class="last highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@trait</span>(<span class="w"></span>
-<span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">        </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;add&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ERROR&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>]<span class="w"></span>
-)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">cannotAdd</span><span class="w"> </span>{}<span class="w"></span>
+<div class="last highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@trait</span>(
+<span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;add&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ERROR&quot;</span>
+<span class="w">        </span>}
+<span class="w">    </span>]
+)
+<span class="kd">structure </span><span class="nc">cannotAdd</span><span class="w"> </span>{}
 </pre></div>
 </div>
 </div>
 <p>It is a backward incompatible change to add or remove the following trait from
 an existing shape:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@trait</span>(<span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>}])<span class="w"></span>
-<span class="kd">structure </span><span class="nc">cannotToAddOrRemove</span><span class="w"> </span>{}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@trait</span>(<span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[{<span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span>}])
+<span class="kd">structure </span><span class="nc">cannotToAddOrRemove</span><span class="w"> </span>{}
 </pre></div>
 </div>
 <p>It is very likely backward incompatible to change the &quot;foo&quot; member of the
 following trait or to remove the &quot;baz&quot; member:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@trait</span>(<span class="w"></span>
-<span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">        </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/foo&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DANGER&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="p">,</span><span class="w"></span>
-<span class="w">        </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/baz&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DANGER&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>]<span class="w"></span>
-)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">fooBaz</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@trait</span>(
+<span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/foo&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DANGER&quot;</span>
+<span class="w">        </span>}<span class="p">,</span>
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/baz&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DANGER&quot;</span>
+<span class="w">        </span>}
+<span class="w">    </span>]
+)
+<span class="kd">structure </span><span class="nc">fooBaz</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p>So for example, if the following shape:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@fooBaz</span>(<span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;b&quot;</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">Example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@fooBaz</span>(<span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;b&quot;</span>)
+<span class="kd">string </span><span class="nc">Example</span>
 </pre></div>
 </div>
 <p>Is changed to:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@fooBaz</span>(<span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;b&quot;</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">Example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@fooBaz</span>(<span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;b&quot;</span>)
+<span class="kd">string </span><span class="nc">Example</span>
 </pre></div>
 </div>
 <p>Then the change to the <code class="docutils literal notranslate"><span class="pre">foo</span></code> member from &quot;a&quot; to &quot;b&quot; is backward
@@ -1402,32 +1402,32 @@ incompatible, as is the removal of the <code class="docutils literal notranslate
 segment.</p>
 <p>In the following example, it is a breaking change to change values of lists
 or sets in instances of the <code class="docutils literal notranslate"><span class="pre">names</span></code> trait:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@trait</span>(<span class="w"></span>
-<span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">        </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/names/member&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>]<span class="w"></span>
-)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">names</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">names</span><span class="p">:</span><span class="w"> </span><span class="vc">NameList</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@trait</span>(
+<span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/names/member&quot;</span>
+<span class="w">        </span>}
+<span class="w">    </span>]
+)
+<span class="kd">structure </span><span class="nc">names</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">names</span><span class="p">:</span><span class="w"> </span><span class="vc">NameList</span>
+}
 
-<span class="nt">@private</span><span class="w"></span>
-<span class="kd">list </span><span class="nc">NameList</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@private</span>
+<span class="kd">list </span><span class="nc">NameList</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p>So for example, if the following shape:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@names</span>(<span class="py">names</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Han&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Luke&quot;</span>])<span class="w"></span>
-<span class="kd">string </span><span class="nc">Example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@names</span>(<span class="py">names</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Han&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Luke&quot;</span>])
+<span class="kd">string </span><span class="nc">Example</span>
 </pre></div>
 </div>
 <p>Is changed to:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@names</span>(<span class="py">names</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Han&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Chewy&quot;</span>])<span class="w"></span>
-<span class="kd">string </span><span class="nc">Example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@names</span>(<span class="py">names</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Han&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Chewy&quot;</span>])
+<span class="kd">string </span><span class="nc">Example</span>
 </pre></div>
 </div>
 <p>Then the change to the second value of the <code class="docutils literal notranslate"><span class="pre">names</span></code> member is
@@ -1437,55 +1437,55 @@ backward incompatible because it changed from <code class="docutils literal notr
 <code class="docutils literal notranslate"><span class="pre">key</span></code> and <code class="docutils literal notranslate"><span class="pre">value</span></code>.</p>
 <p>The following example defines a trait where it is backward incompatible
 to remove a key value pair from a map:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@trait</span>(<span class="w"></span>
-<span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">        </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/key&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>]<span class="w"></span>
-)<span class="w"></span>
-<span class="kd">map </span><span class="nc">jobs</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@trait</span>(
+<span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;remove&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/key&quot;</span>
+<span class="w">        </span>}
+<span class="w">    </span>]
+)
+<span class="kd">map </span><span class="nc">jobs</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p>So for example, if the following shape:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@jobs</span>(<span class="py">Han</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smuggler&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">Luke</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Jedi&quot;</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">Example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@jobs</span>(<span class="py">Han</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smuggler&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">Luke</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Jedi&quot;</span>)
+<span class="kd">string </span><span class="nc">Example</span>
 </pre></div>
 </div>
 <p>Is changed to:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@jobs</span>(<span class="py">Luke</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Jedi&quot;</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">Example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@jobs</span>(<span class="py">Luke</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Jedi&quot;</span>)
+<span class="kd">string </span><span class="nc">Example</span>
 </pre></div>
 </div>
 <p>Then the removal of the &quot;Han&quot; entry of the map is flagged as backward
 incompatible.</p>
 <p>The following example detects when values of a map change.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@trait</span>(<span class="w"></span>
-<span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">        </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/value&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>]<span class="w"></span>
-)<span class="w"></span>
-<span class="kd">map </span><span class="nc">jobs</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@trait</span>(
+<span class="w">    </span><span class="py">breakingChanges</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">change</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;update&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/value&quot;</span>
+<span class="w">        </span>}
+<span class="w">    </span>]
+)
+<span class="kd">map </span><span class="nc">jobs</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p>So for example, if the following shape:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@jobs</span>(<span class="py">Han</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smuggler&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">Luke</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Jedi&quot;</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">Example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@jobs</span>(<span class="py">Han</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smuggler&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">Luke</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Jedi&quot;</span>)
+<span class="kd">string </span><span class="nc">Example</span>
 </pre></div>
 </div>
 <p>Is changed to:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@jobs</span>(<span class="py">Han</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smuggler&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">Luke</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ghost&quot;</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">Example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@jobs</span>(<span class="py">Han</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smuggler&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">Luke</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ghost&quot;</span>)
+<span class="kd">string </span><span class="nc">Example</span>
 </pre></div>
 </div>
 <p>Then the change to Luke's mapping from &quot;Jedi&quot; to &quot;Ghost&quot; is
@@ -1509,60 +1509,60 @@ When using the <a class="reference internal" href="idl.html#idl"><span class="st
 referenced from within any namespace using a relative shape ID.</p>
 <div class="literal-block-wrapper docutils container" id="prelude-shapes">
 <div class="code-block-caption"><span class="caption-text">Public prelude shapes</span><a class="headerlink" href="#prelude-shapes" title="Permalink to this code">#</a></div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.api</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.api</span>
 
-<span class="kd">string </span><span class="nc">String</span><span class="w"></span>
+<span class="kd">string </span><span class="nc">String</span>
 
-<span class="kd">blob </span><span class="nc">Blob</span><span class="w"></span>
+<span class="kd">blob </span><span class="nc">Blob</span>
 
-<span class="kd">bigInteger </span><span class="nc">BigInteger</span><span class="w"></span>
+<span class="kd">bigInteger </span><span class="nc">BigInteger</span>
 
-<span class="kd">bigDecimal </span><span class="nc">BigDecimal</span><span class="w"></span>
+<span class="kd">bigDecimal </span><span class="nc">BigDecimal</span>
 
-<span class="kd">timestamp </span><span class="nc">Timestamp</span><span class="w"></span>
+<span class="kd">timestamp </span><span class="nc">Timestamp</span>
 
-<span class="kd">document </span><span class="nc">Document</span><span class="w"></span>
+<span class="kd">document </span><span class="nc">Document</span>
 
-<span class="kd">boolean </span><span class="nc">Boolean</span><span class="w"></span>
+<span class="kd">boolean </span><span class="nc">Boolean</span>
 
-<span class="kd">byte </span><span class="nc">Byte</span><span class="w"></span>
+<span class="kd">byte </span><span class="nc">Byte</span>
 
-<span class="kd">short </span><span class="nc">Short</span><span class="w"></span>
+<span class="kd">short </span><span class="nc">Short</span>
 
-<span class="kd">integer </span><span class="nc">Integer</span><span class="w"></span>
+<span class="kd">integer </span><span class="nc">Integer</span>
 
-<span class="kd">long </span><span class="nc">Long</span><span class="w"></span>
+<span class="kd">long </span><span class="nc">Long</span>
 
-<span class="kd">float </span><span class="nc">Float</span><span class="w"></span>
+<span class="kd">float </span><span class="nc">Float</span>
 
-<span class="kd">double </span><span class="nc">Double</span><span class="w"></span>
+<span class="kd">double </span><span class="nc">Double</span>
 
-<span class="c">/// The single unit type shape, similar to Void and None in other</span><span class="w"></span>
-<span class="c">/// languages, used to represent no meaningful value.</span><span class="w"></span>
-<span class="nt">@unitType</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">Unit</span><span class="w"> </span>{}<span class="w"></span>
+<span class="c">/// The single unit type shape, similar to Void and None in other</span>
+<span class="c">/// languages, used to represent no meaningful value.</span>
+<span class="nt">@unitType</span>
+<span class="kd">structure </span><span class="nc">Unit</span><span class="w"> </span>{}
 
-<span class="nt">@default</span>(<span class="kc">false</span>)<span class="w"></span>
-<span class="kd">boolean </span><span class="nc">PrimitiveBoolean</span><span class="w"></span>
+<span class="nt">@default</span>(<span class="kc">false</span>)
+<span class="kd">boolean </span><span class="nc">PrimitiveBoolean</span>
 
-<span class="nt">@default</span>(<span class="m">0</span>)<span class="w"></span>
-<span class="kd">byte </span><span class="nc">PrimitiveByte</span><span class="w"></span>
+<span class="nt">@default</span>(<span class="m">0</span>)
+<span class="kd">byte </span><span class="nc">PrimitiveByte</span>
 
-<span class="nt">@default</span>(<span class="m">0</span>)<span class="w"></span>
-<span class="kd">short </span><span class="nc">PrimitiveShort</span><span class="w"></span>
+<span class="nt">@default</span>(<span class="m">0</span>)
+<span class="kd">short </span><span class="nc">PrimitiveShort</span>
 
-<span class="nt">@default</span>(<span class="m">0</span>)<span class="w"></span>
-<span class="kd">integer </span><span class="nc">PrimitiveInteger</span><span class="w"></span>
+<span class="nt">@default</span>(<span class="m">0</span>)
+<span class="kd">integer </span><span class="nc">PrimitiveInteger</span>
 
-<span class="nt">@default</span>(<span class="m">0</span>)<span class="w"></span>
-<span class="kd">long </span><span class="nc">PrimitiveLong</span><span class="w"></span>
+<span class="nt">@default</span>(<span class="m">0</span>)
+<span class="kd">long </span><span class="nc">PrimitiveLong</span>
 
-<span class="nt">@default</span>(<span class="m">0</span>)<span class="w"></span>
-<span class="kd">float </span><span class="nc">PrimitiveFloat</span><span class="w"></span>
+<span class="nt">@default</span>(<span class="m">0</span>)
+<span class="kd">float </span><span class="nc">PrimitiveFloat</span>
 
-<span class="nt">@default</span>(<span class="m">0</span>)<span class="w"></span>
-<span class="kd">double </span><span class="nc">PrimitiveDouble</span><span class="w"></span>
+<span class="nt">@default</span>(<span class="m">0</span>)
+<span class="kd">double </span><span class="nc">PrimitiveDouble</span>
 </pre></div>
 </div>
 </div>

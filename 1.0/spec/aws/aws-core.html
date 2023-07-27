@@ -255,7 +255,7 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project links</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/">2.0 Documentation</a></li>
 </ul>
 
@@ -316,77 +316,81 @@ generate AWS SDK client classes and the namespace used in ARNs.</dd>
 <li><a class="reference internal" href="#service-cloudformation-name"><span class="std std-ref">cloudFormationName</span></a></li>
 <li><a class="reference internal" href="#service-arn-namespace"><span class="std std-ref">arnNamespace</span></a></li>
 <li><a class="reference internal" href="#service-cloudtrail-event-source"><span class="std std-ref">cloudTrailEventSource</span></a></li>
+<li><a class="reference internal" href="#service-doc-id"><span class="std std-ref">docId</span></a></li>
 <li><a class="reference internal" href="#service-endpoint-prefix"><span class="std std-ref">endpointPrefix</span></a></li>
 </ul>
 </dd>
 </dl>
 <p>The following example defines an AWS service that uses the default values of
-<code class="docutils literal notranslate"><span class="pre">cloudFormationService</span></code>, <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code>, and <code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code>:</p>
+<code class="docutils literal notranslate"><span class="pre">cloudFormationService</span></code>, <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code>, <code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code> and
+<code class="docutils literal notranslate"><span class="pre">docId</span></code>:</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">aws.fooBaz</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<span class="kd">namespace </span><span class="nc">aws.fooBaz</span>
 
-<span class="kd">use </span><span class="nc">aws.api#service</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.api#service</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>)<span class="w"></span>
-<span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>)
+<span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
+}
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-0-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-0-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;aws.fooBaz#FooBaz&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;aws.api#service&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;sdkId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span><span class="w"></span>
-<span class="w">                </span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+</div><div aria-labelledby="tab-0-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-0-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;aws.fooBaz#FooBaz&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;aws.api#service&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;sdkId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div></div>
 <p>The following example provides explicit values for all properties:</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-1-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">aws.fooBaz</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-1-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<span class="kd">namespace </span><span class="nc">aws.fooBaz</span>
 
-<span class="kd">use </span><span class="nc">aws.api#service</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.api#service</span>
 
-<span class="nt">@service</span>(<span class="w"></span>
-<span class="w">    </span><span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">cloudFormationName</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FooBaz&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">cloudTrailEventSource</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice.amazon.aws&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">endpointPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;my-endpoint&quot;</span><span class="w"></span>
-)<span class="w"></span>
-<span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@service</span>(
+<span class="w">    </span><span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">cloudFormationName</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FooBaz&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">cloudTrailEventSource</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice.amazon.aws&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">docId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;some-value-2018-03-17&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">endpointPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;my-endpoint&quot;</span>
+)
+<span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
+}
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-1-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-1-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;aws.fooBaz#FooBaz&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;aws.api#service&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;sdkId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;cloudFormationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FooBaz&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;arnNamespace&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;cloudTrailEventSource&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice.amazon.aws&quot;</span><span class="w"></span>
-<span class="w">                </span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+</div><div aria-labelledby="tab-1-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-1-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;aws.fooBaz#FooBaz&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;aws.api#service&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;sdkId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;cloudFormationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FooBaz&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;arnNamespace&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;docId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;some-value-2018-03-17&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;cloudTrailEventSource&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice.amazon.aws&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div></div>
@@ -493,6 +497,25 @@ an event source of <code class="docutils literal notranslate"><span class="pre">
 but there are some exceptions. For example, the event source for
 Amazon CloudWatch is <code class="docutils literal notranslate"><span class="pre">monitoring.amazonaws.com</span></code>. Such services will
 need to explicitly configure the <code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code> setting.</p>
+</div>
+<div class="section" id="docid">
+<span id="service-doc-id"></span><h3><code class="docutils literal notranslate"><span class="pre">docId</span></code><a class="headerlink" href="#docid" title="Permalink to this headline">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">docId</span></code> property is a <code class="docutils literal notranslate"><span class="pre">string</span></code> value that is used to implement linking
+between service and SDK documentation for AWS services.</p>
+<p>This will default to the <code class="docutils literal notranslate"><span class="pre">sdkId</span></code> value in lower case followed by the service
+<code class="docutils literal notranslate"><span class="pre">version</span></code> property, separated by dashes. For the example below, the value
+for this property would default to <code class="docutils literal notranslate"><span class="pre">some-value-2018-03-17</span></code>.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<span class="kd">namespace </span><span class="nc">aws.fooBaz</span>
+
+<span class="kd">use </span><span class="nc">aws.api#service</span>
+
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>)
+<span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
+}
+</pre></div>
+</div>
 </div>
 <div class="section" id="endpointprefix">
 <span id="service-endpoint-prefix"></span><h3><code class="docutils literal notranslate"><span class="pre">endpointPrefix</span></code><a class="headerlink" href="#endpointprefix" title="Permalink to this headline">#</a></h3>
@@ -622,55 +645,55 @@ actual values for the partition, region name, account ID, and identifier
 label placeholders.</p>
 <p>For example, given the following service:</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-2-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-2-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-2-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-2-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">aws.fooBaz</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-2-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-2-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-2-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-2-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">aws.fooBaz</span>
 
-<span class="kd">use </span><span class="nc">aws.api#service</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">aws.api#arn</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.api#service</span>
+<span class="kd">use </span><span class="nc">aws.api#arn</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>)<span class="w"></span>
-<span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]<span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>)
+<span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]<span class="p">,</span>
+}
 
-<span class="nt">@arn</span>(<span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myresource/{myId}&quot;</span>)<span class="w"></span>
-<span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">myId</span><span class="p">:</span><span class="w"> </span><span class="vc">MyResourceId</span>}<span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@arn</span>(<span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myresource/{myId}&quot;</span>)
+<span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">myId</span><span class="p">:</span><span class="w"> </span><span class="vc">MyResourceId</span>}<span class="p">,</span>
+}
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-2-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-2-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#FooBaz&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
-<span class="w">                </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#MyResource&quot;</span><span class="w"></span>
-<span class="w">                </span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="p">],</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;aws.api#service&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;sdkId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span><span class="w"></span>
-<span class="w">                </span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="p">},</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyResource&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;resource&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;identifiers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;myId&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#MyResourceId&quot;</span><span class="w"></span>
-<span class="w">                </span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="p">},</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;aws.api#arn&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;template&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myresource/{myId}&quot;</span><span class="w"></span>
-<span class="w">                </span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+</div><div aria-labelledby="tab-2-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-2-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;smithy.example#FooBaz&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#MyResource&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;aws.api#service&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;sdkId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;smithy.example#MyResource&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;resource&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;identifiers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;myId&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#MyResourceId&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;aws.api#arn&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;template&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myresource/{myId}&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div></div>
@@ -688,46 +711,46 @@ its identifier, an absolute ARN template MUST be defined on the resource
 that uses a placeholder containing the name of the identifier of the
 resource.</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-3-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-3-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-3-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-3-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use </span><span class="nc">aws.api#arn</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">aws.api#arnReference</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-3-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-3-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-3-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-3-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-3-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use </span><span class="nc">aws.api#arn</span>
+<span class="kd">use </span><span class="nc">aws.api#arnReference</span>
 
-<span class="nt">@arn</span>(<span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{arn}&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">absolute</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>)<span class="w"></span>
-<span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">arn</span><span class="p">:</span><span class="w"> </span><span class="vc">Arn</span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@arn</span>(<span class="py">template</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{arn}&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">absolute</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>)
+<span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">arn</span><span class="p">:</span><span class="w"> </span><span class="vc">Arn</span>}
+}
 
-<span class="nt">@arnReference</span>(<span class="py">service</span><span class="p">:</span><span class="w"> </span><span class="vc">FooBaz</span><span class="p">,</span><span class="w"> </span><span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">MyResource</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">Arn</span><span class="w"></span>
+<span class="nt">@arnReference</span>(<span class="py">service</span><span class="p">:</span><span class="w"> </span><span class="vc">FooBaz</span><span class="p">,</span><span class="w"> </span><span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">MyResource</span>)
+<span class="kd">string </span><span class="nc">Arn</span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-3-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-3-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyResource&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;resource&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;identifiers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;arn&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Arn&quot;</span><span class="w"></span>
-<span class="w">                </span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="p">},</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;aws.api#arn&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;template&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{arn}&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;absolute&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
-<span class="w">                </span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="p">},</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#Arn&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;aws.api#arnReference&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FooBaz&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;resource&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MyResource&quot;</span><span class="w"></span>
-<span class="w">                </span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+</div><div aria-labelledby="tab-3-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-3-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;smithy.example#MyResource&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;resource&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;identifiers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;arn&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Arn&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;aws.api#arn&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;template&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{arn}&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;absolute&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;smithy.example#Arn&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;aws.api#arnReference&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FooBaz&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;resource&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MyResource&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div></div>
@@ -790,32 +813,32 @@ The CloudFormation name of the resource and the Smithy service and resource
 shape IDs are provided to give tooling additional information about the
 referenced resource.</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-4-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-4-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-4-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-4-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-4-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-4-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-4-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-4-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-4-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">aws.api#arnReference</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.api#arnReference</span>
 
-<span class="nt">@arnReference</span>(<span class="w"></span>
-<span class="w">    </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AWS::SomeService::SomeResource&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">service</span><span class="p">:</span><span class="w"> </span><span class="vc">com.foo#SomeService</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">com.foo#SomeResource</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">SomeResourceId</span><span class="w"></span>
+<span class="nt">@arnReference</span>(
+<span class="w">    </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AWS::SomeService::SomeResource&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">service</span><span class="p">:</span><span class="w"> </span><span class="vc">com.foo#SomeService</span><span class="p">,</span>
+<span class="w">    </span><span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">com.foo#SomeResource</span>)
+<span class="kd">string </span><span class="nc">SomeResourceId</span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-4-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-4-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#SomeResourceId&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;aws.api#arnReference&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AWS::SomeService::SomeResource&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.foo#SomeService&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;resource&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.foo#SomeResource&quot;</span><span class="w"></span>
-<span class="w">                </span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+</div><div aria-labelledby="tab-4-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-4-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;smithy.example#SomeResourceId&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;aws.api#arnReference&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AWS::SomeService::SomeResource&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.foo#SomeService&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;resource&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.foo#SomeResource&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div></div>
@@ -823,26 +846,26 @@ referenced resource.</p>
 about the referenced shape. While this is valid, it is not as useful as the
 previous example:</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-5-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-5-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-5-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-5-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-5-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-5-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-5-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-5-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-5-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-5-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-5-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-5-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">aws.api#arnReference</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.api#arnReference</span>
 
-<span class="nt">@arnReference</span><span class="w"></span>
-<span class="kd">string </span><span class="nc">SomeResourceId</span><span class="w"></span>
+<span class="nt">@arnReference</span>
+<span class="kd">string </span><span class="nc">SomeResourceId</span>
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-5-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-5-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#SomeResourceId&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;aws.api#arnReference&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+</div><div aria-labelledby="tab-5-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-5-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;smithy.example#SomeResourceId&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;aws.api#arnReference&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div></div>
@@ -860,51 +883,51 @@ information.</dd>
 of a member inherits the effective data classification applied to a parent
 structure, union, or list unless overridden.</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-6-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-6-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-6-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-6-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-6-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-6-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use </span><span class="nc">aws.api#data</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-6-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-6-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-6-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-6-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-6-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-6-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use </span><span class="nc">aws.api#data</span>
 
-<span class="nt">@data</span>(<span class="s2">&quot;permissions&quot;</span>)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="nt">@data</span>(<span class="s2">&quot;permissions&quot;</span>)
+<span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@data</span>(<span class="s2">&quot;content&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">content</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@data</span>(<span class="s2">&quot;content&quot;</span>)
+<span class="w">    </span><span class="py">content</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span><span class="vc">TagList</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span><span class="vc">TagList</span><span class="p">,</span>
+}
 
-<span class="nt">@data</span>(<span class="s2">&quot;tagging&quot;</span>)<span class="w"></span>
-<span class="kd">list </span><span class="nc">TagList</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@data</span>(<span class="s2">&quot;tagging&quot;</span>)
+<span class="kd">list </span><span class="nc">TagList</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-6-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-6-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyStructure&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;members&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;aws.api#data&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;content&quot;</span><span class="w"></span>
-<span class="w">                </span><span class="p">},</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#TagList&quot;</span><span class="w"></span>
-<span class="w">                </span><span class="p">},</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                </span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="p">},</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#TagList&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;list&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;member&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="p">},</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;aws.api#data&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tagging&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+</div><div aria-labelledby="tab-6-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-6-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;smithy.example#MyStructure&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;members&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;aws.api#data&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;content&quot;</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#TagList&quot;</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;smithy.example#TagList&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;list&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;member&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;aws.api#data&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tagging&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div></div>
@@ -1006,32 +1029,32 @@ operations bound within the shape are also considered part of the control
 plane unless an operation or resource is marked with the
 <a class="reference internal" href="#aws-api-dataplane-trait"><span class="std std-ref">aws.api#dataPlane trait</span></a>.</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-7-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-7-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-7-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-7-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-7-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-7-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use </span><span class="nc">aws.api#controlPlane</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-7-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-7-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-7-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-7-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-7-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-7-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use </span><span class="nc">aws.api#controlPlane</span>
 
-<span class="nt">@controlPlane</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">PutThings</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutThingsInput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">PutThingsOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@controlPlane</span>
+<span class="kd">operation </span><span class="nc">PutThings</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutThingsInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">PutThingsOutput</span>
+}
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-7-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-7-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#PutThings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;input&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#PutThingsInput&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="p">},</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;output&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#PutThingsOutput&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="p">},</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;aws.api#controlPlane&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+</div><div aria-labelledby="tab-7-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-7-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;smithy.example#PutThings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;input&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#PutThingsInput&quot;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;output&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#PutThingsOutput&quot;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;aws.api#controlPlane&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div></div>
@@ -1051,32 +1074,32 @@ operations bound within the shape are also considered part of the data
 plane unless an operation or resource is marked with the
 <a class="reference internal" href="#aws-api-controlplane-trait"><span class="std std-ref">aws.api#controlPlane trait</span></a>.</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-8-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-8-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-8-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-8-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-8-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-8-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use </span><span class="nc">aws.api#controlPlane</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-8-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-8-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-8-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-8-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-8-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-8-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use </span><span class="nc">aws.api#controlPlane</span>
 
-<span class="nt">@dataPlane</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">PutThings</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutThingsInput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">PutThingsOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@dataPlane</span>
+<span class="kd">operation </span><span class="nc">PutThings</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutThingsInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">PutThingsOutput</span>
+}
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-8-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-8-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#PutThings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;input&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#PutThingsInput&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="p">},</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;output&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#PutThingsOutput&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="p">},</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;aws.api#dataPlane&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+</div><div aria-labelledby="tab-8-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-8-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;smithy.example#PutThings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;input&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#PutThingsInput&quot;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;output&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#PutThingsOutput&quot;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;aws.api#dataPlane&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div></div>
@@ -1190,67 +1213,67 @@ operation input should be used to discover an endpoint for the service.</dd>
 <p>The following model illustrates an API that uses a <code class="docutils literal notranslate"><span class="pre">DescribeEndpoints</span></code>
 operation to perform endpoint discovery for a <code class="docutils literal notranslate"><span class="pre">GetObject</span></code> operation
 using an <code class="docutils literal notranslate"><span class="pre">clientEndpointDiscoveryId</span></code>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@aws.api#clientEndpointDiscovery</span>(<span class="w"></span>
-<span class="w">    </span><span class="py">operation</span><span class="p">:</span><span class="w"> </span><span class="vc">DescribeEndpoints</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">error</span><span class="p">:</span><span class="w"> </span><span class="vc">InvalidEndpointError</span><span class="p">,</span><span class="w"></span>
-)<span class="w"></span>
-<span class="kd">service </span><span class="nc">FooService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">  </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2019-09-10&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">DescribeEndpoints</span><span class="p">,</span><span class="w"> </span><span class="vc">GetObject</span>]<span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@aws.api#clientEndpointDiscovery</span>(
+<span class="w">    </span><span class="py">operation</span><span class="p">:</span><span class="w"> </span><span class="vc">DescribeEndpoints</span><span class="p">,</span>
+<span class="w">    </span><span class="py">error</span><span class="p">:</span><span class="w"> </span><span class="vc">InvalidEndpointError</span><span class="p">,</span>
+)
+<span class="kd">service </span><span class="nc">FooService</span><span class="w"> </span>{
+<span class="w">  </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2019-09-10&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">DescribeEndpoints</span><span class="p">,</span><span class="w"> </span><span class="vc">GetObject</span>]
+}
 
-<span class="kd">operation </span><span class="nc">DescribeEndpoints</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">DescribeEndpointsInput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">DescribeEndpointsOutput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">InvalidEndpointError</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="kd">operation </span><span class="nc">DescribeEndpoints</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">DescribeEndpointsInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">DescribeEndpointsOutput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">InvalidEndpointError</span>]
+}
 
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
-<span class="nt">@httpError</span>(<span class="m">421</span>)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">InvalidEndpointError</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nt">@httpError</span>(<span class="m">421</span>)
+<span class="kd">structure </span><span class="nc">InvalidEndpointError</span><span class="w"> </span>{}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">DescribeEndpointsInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">  </span><span class="py">Operation</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="py">Identifiers</span><span class="p">:</span><span class="w"> </span><span class="vc">Identifiers</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">DescribeEndpointsInput</span><span class="w"> </span>{
+<span class="w">  </span><span class="py">Operation</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">  </span><span class="py">Identifiers</span><span class="p">:</span><span class="w"> </span><span class="vc">Identifiers</span><span class="p">,</span>
+}
 
-<span class="kd">map </span><span class="nc">Identifiers</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">  </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">map </span><span class="nc">Identifiers</span><span class="w"> </span>{
+<span class="w">  </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">  </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="nt">@output</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">DescribeEndpointsOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">  </span><span class="py">Endpoints</span><span class="p">:</span><span class="w"> </span><span class="vc">Endpoints</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">DescribeEndpointsOutput</span><span class="w"> </span>{
+<span class="w">  </span><span class="py">Endpoints</span><span class="p">:</span><span class="w"> </span><span class="vc">Endpoints</span><span class="p">,</span>
+}
 
-<span class="kd">list </span><span class="nc">Endpoints</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">  </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">Endpoint</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">list </span><span class="nc">Endpoints</span><span class="w"> </span>{
+<span class="w">  </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">Endpoint</span>
+}
 
-<span class="kd">structure </span><span class="nc">Endpoint</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">  </span><span class="py">Address</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="py">CachePeriodInMinutes</span><span class="p">:</span><span class="w"> </span><span class="vc">Long</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">Endpoint</span><span class="w"> </span>{
+<span class="w">  </span><span class="py">Address</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">  </span><span class="py">CachePeriodInMinutes</span><span class="p">:</span><span class="w"> </span><span class="vc">Long</span><span class="p">,</span>
+}
 
-<span class="nt">@aws.api#clientDiscoveredEndpoint</span>(<span class="py">required</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetObject</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetObjectInput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetObjectOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@aws.api#clientDiscoveredEndpoint</span>(<span class="py">required</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>)
+<span class="kd">operation </span><span class="nc">GetObject</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetObjectInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetObjectOutput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetObjectInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">  </span><span class="nt">@clientEndpointDiscoveryId</span><span class="w"></span>
-<span class="w">  </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">  </span><span class="py">Id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetObjectInput</span><span class="w"> </span>{
+<span class="w">  </span><span class="nt">@clientEndpointDiscoveryId</span>
+<span class="w">  </span><span class="nt">@required</span>
+<span class="w">  </span><span class="py">Id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 
-<span class="nt">@output</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetObjectOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">  </span><span class="py">Object</span><span class="p">:</span><span class="w"> </span><span class="vc">Blob</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">GetObjectOutput</span><span class="w"> </span>{
+<span class="w">  </span><span class="py">Object</span><span class="p">:</span><span class="w"> </span><span class="vc">Blob</span><span class="p">,</span>
+}
 </pre></div>
 </div>
 </div>
@@ -1369,64 +1392,64 @@ request checksum behavior with support for the &quot;CRC32C&quot;, &quot;CRC32&q
 selecting an algorithm in the <code class="docutils literal notranslate"><span class="pre">checksumAlgorithm</span></code> input property.</p>
 <p>Users of the <code class="docutils literal notranslate"><span class="pre">PutSomething</span></code> operation will opt in to response checksums by
 setting the <code class="docutils literal notranslate"><span class="pre">validationMode</span></code> input property to &quot;ENABLED&quot;.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpChecksum</span>(<span class="w"></span>
-<span class="w">    </span><span class="py">requestChecksumRequired</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">requestAlgorithmMember</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;checksumAlgorithm&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">requestValidationModeMember</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;validationMode&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">responseAlgorithms</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;CRC32C&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;CRC32&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;SHA1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;SHA256&quot;</span>]<span class="w"></span>
-)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">PutSomething</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutSomethingInput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">PutSomethingOutput</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpChecksum</span>(
+<span class="w">    </span><span class="py">requestChecksumRequired</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="py">requestAlgorithmMember</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;checksumAlgorithm&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">requestValidationModeMember</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;validationMode&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">responseAlgorithms</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;CRC32C&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;CRC32&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;SHA1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;SHA256&quot;</span>]
+)
+<span class="kd">operation </span><span class="nc">PutSomething</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutSomethingInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">PutSomethingOutput</span>
+}
 
-<span class="kd">structure </span><span class="nc">PutSomethingInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;x-amz-request-algorithm&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">checksumAlgorithm</span><span class="p">:</span><span class="w"> </span><span class="vc">ChecksumAlgorithm</span><span class="p">,</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">PutSomethingInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;x-amz-request-algorithm&quot;</span>)
+<span class="w">    </span><span class="py">checksumAlgorithm</span><span class="p">:</span><span class="w"> </span><span class="vc">ChecksumAlgorithm</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;x-amz-response-validation-mode&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">validationMode</span><span class="p">:</span><span class="w"> </span><span class="vc">ValidationMode</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;x-amz-response-validation-mode&quot;</span>)
+<span class="w">    </span><span class="py">validationMode</span><span class="p">:</span><span class="w"> </span><span class="vc">ValidationMode</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@httpPayload</span><span class="w"></span>
-<span class="w">    </span><span class="py">content</span><span class="p">:</span><span class="w"> </span><span class="vc">Blob</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@httpPayload</span>
+<span class="w">    </span><span class="py">content</span><span class="p">:</span><span class="w"> </span><span class="vc">Blob</span><span class="p">,</span>
+}
 
-<span class="nt">@enum</span>([<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CRC32C&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CRC32C&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CRC32&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CRC32&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SHA1&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SHA1&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SHA256&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SHA256&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-])<span class="w"></span>
-<span class="kd">string </span><span class="nc">ChecksumAlgorithm</span><span class="w"></span>
+<span class="nt">@enum</span>([
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CRC32C&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CRC32C&quot;</span>
+<span class="w">    </span>}<span class="p">,</span>
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CRC32&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CRC32&quot;</span>
+<span class="w">    </span>}<span class="p">,</span>
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SHA1&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SHA1&quot;</span>
+<span class="w">    </span>}<span class="p">,</span>
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SHA256&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SHA256&quot;</span>
+<span class="w">    </span>}
+])
+<span class="kd">string </span><span class="nc">ChecksumAlgorithm</span>
 
-<span class="nt">@enum</span>([<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ENABLED&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ENABLED&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-])<span class="w"></span>
-<span class="kd">string </span><span class="nc">ValidationMode</span><span class="w"></span>
+<span class="nt">@enum</span>([
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ENABLED&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ENABLED&quot;</span>
+<span class="w">    </span>}
+])
+<span class="kd">string </span><span class="nc">ValidationMode</span>
 </pre></div>
 </div>
 <p>The following trait, which does not define request or response checksum
 behavior, will fail validation.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpChecksum</span>()<span class="w"></span>
-<span class="kd">operation </span><span class="nc">PutSomething</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutSomethingInput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">PutSomethingOutput</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpChecksum</span>()
+<span class="kd">operation </span><span class="nc">PutSomething</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutSomethingInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">PutSomethingOutput</span>
+}
 </pre></div>
 </div>
 <div class="section" id="aws-protocols-httpchecksum-trait-behavior">
@@ -2004,6 +2027,7 @@ existing AWS services.</p>
 <li><a class="reference internal" href="#cloudformationname"><code class="docutils literal notranslate"><span class="pre">cloudFormationName</span></code></a></li>
 <li><a class="reference internal" href="#arnnamespace"><code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code></a></li>
 <li><a class="reference internal" href="#cloudtraileventsource"><code class="docutils literal notranslate"><span class="pre">cloudTrailEventSource</span></code></a></li>
+<li><a class="reference internal" href="#docid"><code class="docutils literal notranslate"><span class="pre">docId</span></code></a></li>
 <li><a class="reference internal" href="#endpointprefix"><code class="docutils literal notranslate"><span class="pre">endpointPrefix</span></code></a></li>
 </ul>
 </li>

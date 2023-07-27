@@ -255,7 +255,7 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project links</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/">2.0 Documentation</a></li>
 </ul>
 
@@ -417,13 +417,13 @@ resource contains a single <code class="docutils literal notranslate"><span clas
 </ol>
 <p><code class="docutils literal notranslate"><span class="pre">Weather</span></code> is a <a class="reference internal" href="spec/core/model.html#service"><span class="std std-ref">Service</span></a> shape that is defined inside of a
 <a class="reference internal" href="spec/core/idl.html#namespaces"><span class="std std-ref">namespace</span></a>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">example.weather</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">example.weather</span>
 
-<span class="c">/// Provides weather forecasts.</span><span class="w"></span>
-<span class="c">/// Triple slash comments attach documentation to shapes.</span><span class="w"></span>
-<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<span class="c">/// Provides weather forecasts.</span>
+<span class="c">/// Triple slash comments attach documentation to shapes.</span>
+<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span>
+}
 </pre></div>
 </div>
 <div class="note admonition">
@@ -445,23 +445,23 @@ shape.</li>
 <h2>Defining resources<a class="headerlink" href="#defining-resources" title="Permalink to this headline">#</a></h2>
 <p>A resource is contained within a service or another resource. Resources have
 identifiers, operations, and any number of child resources.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">example.weather</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">example.weather</span>
 
-<span class="c">/// Provides weather forecasts.</span><span class="w"></span>
-<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">City</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="c">/// Provides weather forecasts.</span>
+<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">City</span>]
+}
 
-<span class="kd">resource </span><span class="nc">City</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="w"> </span>}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCity</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">list</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCities</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">resource </span><span class="nc">City</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="w"> </span>}<span class="p">,</span>
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCity</span><span class="p">,</span>
+<span class="w">    </span><span class="py">list</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCities</span><span class="p">,</span>
+}
 
-<span class="c">// &quot;pattern&quot; is a trait.</span><span class="w"></span>
-<span class="nt">@pattern</span>(<span class="s2">&quot;^[A-Za-z0-9 ]+$&quot;</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">CityId</span><span class="w"></span>
+<span class="c">// &quot;pattern&quot; is a trait.</span>
+<span class="nt">@pattern</span>(<span class="s2">&quot;^[A-Za-z0-9 ]+$&quot;</span>)
+<span class="kd">string </span><span class="nc">CityId</span>
 </pre></div>
 </div>
 <p>Because the <code class="docutils literal notranslate"><span class="pre">Weather</span></code> service contains many cities, the <code class="docutils literal notranslate"><span class="pre">City</span></code> resource
@@ -475,17 +475,17 @@ the resource so that input members of the operation are used to provide the
 identity of the resource.</p>
 <p>Each <code class="docutils literal notranslate"><span class="pre">City</span></code> has a single <code class="docutils literal notranslate"><span class="pre">Forecast</span></code>. This can be defined by adding the
 <code class="docutils literal notranslate"><span class="pre">Forecast</span></code> to the <code class="docutils literal notranslate"><span class="pre">resources</span></code> property of the <code class="docutils literal notranslate"><span class="pre">City</span></code>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">City</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="w"> </span>}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCity</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">list</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCities</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">Forecast</span>]<span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">City</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="w"> </span>}<span class="p">,</span>
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCity</span><span class="p">,</span>
+<span class="w">    </span><span class="py">list</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCities</span><span class="p">,</span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">Forecast</span>]<span class="p">,</span>
+}
 
-<span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="w"> </span>}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecast</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="w"> </span>}<span class="p">,</span>
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecast</span><span class="p">,</span>
+}
 </pre></div>
 </div>
 <p>Child resources must define the exact same identifiers property of their
@@ -512,68 +512,68 @@ methods used to read and transition the state of a resource using well-defined
 semantics. Defining lifecycle operations helps automated tooling reason about
 your API.</p>
 <p>Let's define the operation used to &quot;read&quot; a <code class="docutils literal notranslate"><span class="pre">City</span></code>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetCity</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCityInput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCityOutput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">NoSuchResource</span>]<span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
+<span class="kd">operation </span><span class="nc">GetCity</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCityInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCityOutput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">NoSuchResource</span>]
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetCityInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="c">// &quot;cityId&quot; provides the identifier for the resource and</span><span class="w"></span>
-<span class="w">    </span><span class="c">// has to be marked as required.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetCityInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">// &quot;cityId&quot; provides the identifier for the resource and</span>
+<span class="w">    </span><span class="c">// has to be marked as required.</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span>
+}
 
-<span class="nt">@output</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetCityOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="c">// &quot;required&quot; is used on output to indicate if the service</span><span class="w"></span>
-<span class="w">    </span><span class="c">// will always provide a value for the member.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">GetCityOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">// &quot;required&quot; is used on output to indicate if the service</span>
+<span class="w">    </span><span class="c">// will always provide a value for the member.</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">coordinates</span><span class="p">:</span><span class="w"> </span><span class="vc">CityCoordinates</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">coordinates</span><span class="p">:</span><span class="w"> </span><span class="vc">CityCoordinates</span><span class="p">,</span>
+}
 
-<span class="kd">structure </span><span class="nc">CityCoordinates</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">latitude</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="p">,</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">CityCoordinates</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">latitude</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">longitude</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">longitude</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="p">,</span>
+}
 
-<span class="c">// &quot;error&quot; is a trait that is used to specialize</span><span class="w"></span>
-<span class="c">// a structure as an error.</span><span class="w"></span>
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">NoSuchResource</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">resourceType</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="c">// &quot;error&quot; is a trait that is used to specialize</span>
+<span class="c">// a structure as an error.</span>
+<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="kd">structure </span><span class="nc">NoSuchResource</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">resourceType</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p>And define the operation used to &quot;read&quot; a <code class="docutils literal notranslate"><span class="pre">Forecast</span></code>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastInput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
+<span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span>
+}
 
-<span class="c">// &quot;cityId&quot; provides the only identifier for the resource since</span><span class="w"></span>
-<span class="c">// a Forecast doesn&#39;t have its own.</span><span class="w"></span>
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetForecastInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="c">// &quot;cityId&quot; provides the only identifier for the resource since</span>
+<span class="c">// a Forecast doesn&#39;t have its own.</span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetForecastInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="p">,</span>
+}
 
-<span class="nt">@output</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetForecastOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">GetForecastOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span>
+}
 </pre></div>
 </div>
 <div class="tip admonition">
@@ -595,52 +595,52 @@ The <a class="reference internal" href="spec/core/model.html#list-lifecycle"><sp
 is a <a class="reference internal" href="spec/core/model.html#collection-operations"><span class="std std-ref">collection operation</span></a>, and as such, MUST NOT
 bind the identifier of a <code class="docutils literal notranslate"><span class="pre">City</span></code> to its input structure; we are listing
 cities, so there's no way we could provide a <code class="docutils literal notranslate"><span class="pre">City</span></code> identifier.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// Provides weather forecasts.</span><span class="w"></span>
-<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">           </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pageSize&quot;</span>)<span class="w"></span>
-<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">City</span>]<span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// Provides weather forecasts.</span>
+<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
+<span class="w">           </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pageSize&quot;</span>)
+<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">City</span>]
+}
 
-<span class="c">// The paginated trait indicates that the operation may</span><span class="w"></span>
-<span class="c">// return truncated results. Applying this trait to the service</span><span class="w"></span>
-<span class="c">// sets default pagination configuration settings on each operation.</span><span class="w"></span>
-<span class="nt">@paginated</span>(<span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;items&quot;</span>)<span class="w"></span>
-<span class="nt">@readonly</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">ListCities</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCitiesInput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCitiesOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="c">// The paginated trait indicates that the operation may</span>
+<span class="c">// return truncated results. Applying this trait to the service</span>
+<span class="c">// sets default pagination configuration settings on each operation.</span>
+<span class="nt">@paginated</span>(<span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;items&quot;</span>)
+<span class="nt">@readonly</span>
+<span class="kd">operation </span><span class="nc">ListCities</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCitiesInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCitiesOutput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">ListCitiesInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">ListCitiesInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
+}
 
-<span class="nt">@output</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">ListCitiesOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">ListCitiesOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="vc">CitySummaries</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="vc">CitySummaries</span><span class="p">,</span>
+}
 
-<span class="c">// CitySummaries is a list of CitySummary structures.</span><span class="w"></span>
-<span class="kd">list </span><span class="nc">CitySummaries</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">CitySummary</span><span class="w"></span>
-}<span class="w"></span>
+<span class="c">// CitySummaries is a list of CitySummary structures.</span>
+<span class="kd">list </span><span class="nc">CitySummaries</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">CitySummary</span>
+}
 
-<span class="c">// CitySummary contains a reference to a City.</span><span class="w"></span>
-<span class="nt">@references</span>([{<span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">City</span>}])<span class="w"></span>
-<span class="kd">structure </span><span class="nc">CitySummary</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="p">,</span><span class="w"></span>
+<span class="c">// CitySummary contains a reference to a City.</span>
+<span class="nt">@references</span>([{<span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">City</span>}])
+<span class="kd">structure </span><span class="nc">CitySummary</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">ListCities</span></code> operation is <a class="reference internal" href="spec/core/behavior-traits.html#paginated-trait"><span class="std std-ref">paginated</span></a>, meaning
@@ -670,29 +670,29 @@ update, delete, and list lifecycles. Operations can be added to any resource or
 service shape with no special lifecycle designation using the <code class="docutils literal notranslate"><span class="pre">operations</span></code>
 property. The following operation gets the current time from the <code class="docutils literal notranslate"><span class="pre">Weather</span></code>
 service.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// Provides weather forecasts.</span><span class="w"></span>
-<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">           </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pageSize&quot;</span>)<span class="w"></span>
-<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">City</span>]<span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetCurrentTime</span>]<span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">/// Provides weather forecasts.</span>
+<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
+<span class="w">           </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pageSize&quot;</span>)
+<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">City</span>]<span class="p">,</span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetCurrentTime</span>]
+}
 
-<span class="nt">@readonly</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetCurrentTime</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentTimeInput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentTimeOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@readonly</span>
+<span class="kd">operation </span><span class="nc">GetCurrentTime</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentTimeInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentTimeOutput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetCurrentTimeInput</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetCurrentTimeInput</span><span class="w"> </span>{}
 
-<span class="nt">@output</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetCurrentTimeOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">time</span><span class="p">:</span><span class="w"> </span><span class="vc">Timestamp</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">GetCurrentTimeOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">time</span><span class="p">:</span><span class="w"> </span><span class="vc">Timestamp</span>
+}
 </pre></div>
 </div>
 </div>
@@ -703,32 +703,32 @@ Building the model creates projections of the model, applies plugins to
 generate artifacts, runs validation, and creates a JAR that contains the
 filtered projection. The <a class="reference external" href="https://github.com/awslabs/smithy-gradle-plugin/">Smithy Gradle Plugin</a> is the best way to get started
 building a Smithy model. First, create a <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> file:</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>Then create a new <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code> file:</p>
-<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;0.6.0&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;0.6.0&quot;</span><span class="p">)</span>
+<span class="p">}</span>
 
-<span class="n">repositories</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">mavenLocal</span><span class="p">()</span><span class="w"></span>
-<span class="w">    </span><span class="n">mavenCentral</span><span class="p">()</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="n">repositories</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">mavenLocal</span><span class="p">()</span>
+<span class="w">    </span><span class="n">mavenCentral</span><span class="p">()</span>
+<span class="p">}</span>
 
-<span class="n">dependencies</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.34.0&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.35.0&quot;</span><span class="p">)</span>
+<span class="p">}</span>
 
-<span class="n">configure</span><span class="o">&lt;</span><span class="n">software</span><span class="p">.</span><span class="na">amazon</span><span class="p">.</span><span class="na">smithy</span><span class="p">.</span><span class="na">gradle</span><span class="p">.</span><span class="na">SmithyExtension</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// Uncomment this to use a custom projection when building the JAR.</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// projection = &quot;foo&quot;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="n">configure</span><span class="o">&lt;</span><span class="n">software</span><span class="p">.</span><span class="na">amazon</span><span class="p">.</span><span class="na">smithy</span><span class="p">.</span><span class="na">gradle</span><span class="p">.</span><span class="na">SmithyExtension</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Uncomment this to use a custom projection when building the JAR.</span>
+<span class="w">    </span><span class="c1">// projection = &quot;foo&quot;</span>
+<span class="p">}</span>
 
-<span class="c1">// Uncomment to disable creating a JAR.</span><span class="w"></span>
-<span class="c1">//tasks[&quot;jar&quot;].enabled = false</span><span class="w"></span>
+<span class="c1">// Uncomment to disable creating a JAR.</span>
+<span class="c1">//tasks[&quot;jar&quot;].enabled = false</span>
 </pre></div>
 </div>
 <p>Finally, copy the weather model to <code class="docutils literal notranslate"><span class="pre">model/weather.smithy</span></code> and
@@ -764,176 +764,176 @@ out like so:</p>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> should have the following contents:</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code> should have the following contents:</p>
-<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;0.6.0&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;0.6.0&quot;</span><span class="p">)</span>
+<span class="p">}</span>
 
-<span class="n">repositories</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">mavenLocal</span><span class="p">()</span><span class="w"></span>
-<span class="w">    </span><span class="n">mavenCentral</span><span class="p">()</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="n">repositories</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">mavenLocal</span><span class="p">()</span>
+<span class="w">    </span><span class="n">mavenCentral</span><span class="p">()</span>
+<span class="p">}</span>
 
-<span class="n">dependencies</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.34.0&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.35.0&quot;</span><span class="p">)</span>
+<span class="p">}</span>
 
-<span class="n">configure</span><span class="o">&lt;</span><span class="n">software</span><span class="p">.</span><span class="na">amazon</span><span class="p">.</span><span class="na">smithy</span><span class="p">.</span><span class="na">gradle</span><span class="p">.</span><span class="na">SmithyExtension</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// Uncomment this to use a custom projection when building the JAR.</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// projection = &quot;foo&quot;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="n">configure</span><span class="o">&lt;</span><span class="n">software</span><span class="p">.</span><span class="na">amazon</span><span class="p">.</span><span class="na">smithy</span><span class="p">.</span><span class="na">gradle</span><span class="p">.</span><span class="na">SmithyExtension</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Uncomment this to use a custom projection when building the JAR.</span>
+<span class="w">    </span><span class="c1">// projection = &quot;foo&quot;</span>
+<span class="p">}</span>
 
-<span class="c1">// Uncomment to disable creating a JAR.</span><span class="w"></span>
-<span class="c1">//tasks[&quot;jar&quot;].enabled = false</span><span class="w"></span>
+<span class="c1">// Uncomment to disable creating a JAR.</span>
+<span class="c1">//tasks[&quot;jar&quot;].enabled = false</span>
 </pre></div>
 </div>
 <p>Finally, the complete <code class="docutils literal notranslate"><span class="pre">weather.smithy</span></code> model should look like:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">example.weather</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">example.weather</span>
 
-<span class="c">/// Provides weather forecasts.</span><span class="w"></span>
-<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pageSize&quot;</span>)<span class="w"></span>
-<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">City</span>]<span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetCurrentTime</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="c">/// Provides weather forecasts.</span>
+<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pageSize&quot;</span>)
+<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">City</span>]<span class="p">,</span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetCurrentTime</span>]
+}
 
-<span class="kd">resource </span><span class="nc">City</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="w"> </span>}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCity</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">list</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCities</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">Forecast</span>]<span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">resource </span><span class="nc">City</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="w"> </span>}<span class="p">,</span>
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCity</span><span class="p">,</span>
+<span class="w">    </span><span class="py">list</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCities</span><span class="p">,</span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">Forecast</span>]<span class="p">,</span>
+}
 
-<span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="w"> </span>}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecast</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="w"> </span>}<span class="p">,</span>
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecast</span><span class="p">,</span>
+}
 
-<span class="c">// &quot;pattern&quot; is a trait.</span><span class="w"></span>
-<span class="nt">@pattern</span>(<span class="s2">&quot;^[A-Za-z0-9 ]+$&quot;</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">CityId</span><span class="w"></span>
+<span class="c">// &quot;pattern&quot; is a trait.</span>
+<span class="nt">@pattern</span>(<span class="s2">&quot;^[A-Za-z0-9 ]+$&quot;</span>)
+<span class="kd">string </span><span class="nc">CityId</span>
 
-<span class="nt">@readonly</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetCity</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCityInput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCityOutput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">NoSuchResource</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@readonly</span>
+<span class="kd">operation </span><span class="nc">GetCity</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCityInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCityOutput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">NoSuchResource</span>]
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetCityInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="c">// &quot;cityId&quot; provides the identifier for the resource and</span><span class="w"></span>
-<span class="w">    </span><span class="c">// has to be marked as required.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetCityInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">// &quot;cityId&quot; provides the identifier for the resource and</span>
+<span class="w">    </span><span class="c">// has to be marked as required.</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span>
+}
 
-<span class="nt">@output</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetCityOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="c">// &quot;required&quot; is used on output to indicate if the service</span><span class="w"></span>
-<span class="w">    </span><span class="c">// will always provide a value for the member.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">GetCityOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">// &quot;required&quot; is used on output to indicate if the service</span>
+<span class="w">    </span><span class="c">// will always provide a value for the member.</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">coordinates</span><span class="p">:</span><span class="w"> </span><span class="vc">CityCoordinates</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">coordinates</span><span class="p">:</span><span class="w"> </span><span class="vc">CityCoordinates</span><span class="p">,</span>
+}
 
-<span class="c">// This structure is nested within GetCityOutput.</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">CityCoordinates</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">latitude</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="p">,</span><span class="w"></span>
+<span class="c">// This structure is nested within GetCityOutput.</span>
+<span class="kd">structure </span><span class="nc">CityCoordinates</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">latitude</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">longitude</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">longitude</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="p">,</span>
+}
 
-<span class="c">// &quot;error&quot; is a trait that is used to specialize</span><span class="w"></span>
-<span class="c">// a structure as an error.</span><span class="w"></span>
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">NoSuchResource</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">resourceType</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="c">// &quot;error&quot; is a trait that is used to specialize</span>
+<span class="c">// a structure as an error.</span>
+<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="kd">structure </span><span class="nc">NoSuchResource</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">resourceType</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="c">// The paginated trait indicates that the operation may</span><span class="w"></span>
-<span class="c">// return truncated results.</span><span class="w"></span>
-<span class="nt">@readonly</span><span class="w"></span>
-<span class="nt">@paginated</span>(<span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;items&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">ListCities</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCitiesInput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCitiesOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="c">// The paginated trait indicates that the operation may</span>
+<span class="c">// return truncated results.</span>
+<span class="nt">@readonly</span>
+<span class="nt">@paginated</span>(<span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;items&quot;</span>)
+<span class="kd">operation </span><span class="nc">ListCities</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCitiesInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCitiesOutput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">ListCitiesInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">ListCitiesInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
+}
 
-<span class="nt">@output</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">ListCitiesOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">ListCitiesOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="vc">CitySummaries</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="vc">CitySummaries</span><span class="p">,</span>
+}
 
-<span class="c">// CitySummaries is a list of CitySummary structures.</span><span class="w"></span>
-<span class="kd">list </span><span class="nc">CitySummaries</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">CitySummary</span><span class="w"></span>
-}<span class="w"></span>
+<span class="c">// CitySummaries is a list of CitySummary structures.</span>
+<span class="kd">list </span><span class="nc">CitySummaries</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">CitySummary</span>
+}
 
-<span class="c">// CitySummary contains a reference to a City.</span><span class="w"></span>
-<span class="nt">@references</span>([{<span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">City</span>}])<span class="w"></span>
-<span class="kd">structure </span><span class="nc">CitySummary</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="p">,</span><span class="w"></span>
+<span class="c">// CitySummary contains a reference to a City.</span>
+<span class="nt">@references</span>([{<span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">City</span>}])
+<span class="kd">structure </span><span class="nc">CitySummary</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 
-<span class="nt">@readonly</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetCurrentTime</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentTimeInput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentTimeOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@readonly</span>
+<span class="kd">operation </span><span class="nc">GetCurrentTime</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentTimeInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentTimeOutput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetCurrentTimeInput</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetCurrentTimeInput</span><span class="w"> </span>{}
 
-<span class="nt">@output</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetCurrentTimeOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">time</span><span class="p">:</span><span class="w"> </span><span class="vc">Timestamp</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">GetCurrentTimeOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">time</span><span class="p">:</span><span class="w"> </span><span class="vc">Timestamp</span>
+}
 
-<span class="nt">@readonly</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastInput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@readonly</span>
+<span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span>
+}
 
-<span class="c">// &quot;cityId&quot; provides the only identifier for the resource since</span><span class="w"></span>
-<span class="c">// a Forecast doesn&#39;t have its own.</span><span class="w"></span>
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetForecastInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="c">// &quot;cityId&quot; provides the only identifier for the resource since</span>
+<span class="c">// a Forecast doesn&#39;t have its own.</span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetForecastInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="p">,</span>
+}
 
-<span class="nt">@output</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetForecastOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">GetForecastOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span>
+}
 </pre></div>
 </div>
 </div>

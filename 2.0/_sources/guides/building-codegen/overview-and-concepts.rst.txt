@@ -44,7 +44,7 @@ client using the ``foo-client-codegen`` plugin found on the classpath.
 .. seealso::
 
    - `Smithy Gradle plugin <https://github.com/awslabs/smithy-gradle-plugin>`__
-   - `DirectedCodegen <https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/directed/DirectedCodegen.java>`__
+   - `DirectedCodegen <https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/directed/DirectedCodegen.java>`__
      to more easily implement codegen
    - :doc:`configuring-the-generator`
 
@@ -218,7 +218,7 @@ Type generation
 Smithy code generators can generate standalone types. For example, this
 would happen when a service has no operations or resources but only shapes
 bound to the service via the (upcoming)
-`shapes property <https://github.com/awslabs/smithy/pull/1061>`__.
+`shapes property <https://github.com/smithy-lang/smithy/pull/1061>`__.
 
 - Generation of types should still require a service shape that is
   used to create a closure of shapes.

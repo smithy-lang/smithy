@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -333,11 +333,11 @@ customer code and onto service teams who know their service best.</p>
 <p>For example, waiters can be used in code to turn the workflow of waiting
 for an Amazon EC2 instance to be terminated into something like the
 following client pseudocode:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">InstanceTerminatedWaiter</span><span class="w"> </span><span class="n">waiter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">InstanceTerminatedWaiter</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span><span class="w"></span>
-<span class="w">        </span><span class="p">.</span><span class="na">client</span><span class="p">(</span><span class="n">myClient</span><span class="p">)</span><span class="w"></span>
-<span class="w">        </span><span class="p">.</span><span class="na">instanceIds</span><span class="p">(</span><span class="n">Collections</span><span class="p">.</span><span class="na">singletonList</span><span class="p">(</span><span class="s">&quot;i-foo&quot;</span><span class="p">))</span><span class="w"></span>
-<span class="w">        </span><span class="p">.</span><span class="na">totalAllowedWaitTime</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">MINUTES</span><span class="p">)</span><span class="w"></span>
-<span class="w">        </span><span class="p">.</span><span class="na">wait</span><span class="p">();</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">InstanceTerminatedWaiter</span><span class="w"> </span><span class="n">waiter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">InstanceTerminatedWaiter</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+<span class="w">        </span><span class="p">.</span><span class="na">client</span><span class="p">(</span><span class="n">myClient</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">instanceIds</span><span class="p">(</span><span class="n">Collections</span><span class="p">.</span><span class="na">singletonList</span><span class="p">(</span><span class="s">&quot;i-foo&quot;</span><span class="p">))</span>
+<span class="w">        </span><span class="p">.</span><span class="na">totalAllowedWaitTime</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">MINUTES</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">wait</span><span class="p">();</span>
 </pre></div>
 </div>
 <div class="section" id="smithy-waiters-waitable-trait">
@@ -353,35 +353,35 @@ to poll a resource until it enters a desired state.</dd>
 </dl>
 <p>The following example defines a waiter that waits until an Amazon S3 bucket
 exists:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">com.amazonaws.s3</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">com.amazonaws.s3</span>
 
-<span class="hll"><span class="kd">use </span><span class="nc">smithy.waiters#waitable</span><span class="w"></span>
+<span class="hll"><span class="kd">use </span><span class="nc">smithy.waiters#waitable</span>
 </span>
-<span class="nt">@waitable</span>(<span class="w"></span>
-<span class="w">    </span><span class="py">BucketExists</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Wait until a bucket exists&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">acceptors</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">            </span>{<span class="w"></span>
-<span class="w">                </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="w"></span>
-<span class="w">                </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">                    </span><span class="py">success</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
-<span class="w">                </span>}<span class="w"></span>
-<span class="w">            </span>}<span class="w"></span>
-<span class="w">            </span>{<span class="w"></span>
-<span class="w">                </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;retry&quot;</span><span class="w"></span>
-<span class="w">                </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">                    </span><span class="py">errorType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NotFound&quot;</span><span class="w"></span>
-<span class="w">                </span>}<span class="w"></span>
-<span class="w">            </span>}<span class="w"></span>
-<span class="w">        </span>]<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">HeadBucket</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">HeadBucketInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">HeadBucketOutput</span><span class="w"></span>
-<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">NotFound</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@waitable</span>(
+<span class="w">    </span><span class="py">BucketExists</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Wait until a bucket exists&quot;</span>
+<span class="w">        </span><span class="py">acceptors</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">            </span>{
+<span class="w">                </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span>
+<span class="w">                </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                    </span><span class="py">success</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">                </span>}
+<span class="w">            </span>}
+<span class="w">            </span>{
+<span class="w">                </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;retry&quot;</span>
+<span class="w">                </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                    </span><span class="py">errorType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NotFound&quot;</span>
+<span class="w">                </span>}
+<span class="w">            </span>}
+<span class="w">        </span>]
+<span class="w">    </span>}
+)
+<span class="kd">operation </span><span class="nc">HeadBucket</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">HeadBucketInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">HeadBucketOutput</span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">NotFound</span>]
+}
 </pre></div>
 </div>
 <p>Applying the steps defined in <a class="reference internal" href="#waiter-workflow">Waiter workflow</a> to the above example,
@@ -405,8 +405,8 @@ is exceeded.</li>
 <p>Waiter names MUST be defined using UpperCamelCase and only contain
 alphanumeric characters. That is, waiters MUST adhere to the following
 ABNF:</p>
-<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">waiter-name</span>:<span class="w"> </span><span class="nc">upper-alpha</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="k">ALPHA</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">DIGIT</span><span class="p">)</span><span class="w"></span>
-<span class="nc">upper-alpha</span>:<span class="w"> </span><span class="l">%x41-5A</span><span class="w"> </span><span class="c1">; A-Z</span><span class="w"></span>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">waiter-name</span>:<span class="w"> </span><span class="nc">upper-alpha</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="k">ALPHA</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">DIGIT</span><span class="p">)</span>
+<span class="nc">upper-alpha</span>:<span class="w"> </span><span class="l">%x41-5A</span><span class="w"> </span><span class="c1">; A-Z</span>
 </pre></div>
 </div>
 <div class="admonition seealso">
@@ -997,82 +997,82 @@ a &quot;Thing&quot; has a <code class="docutils literal notranslate"><span class
 <code class="docutils literal notranslate"><span class="pre">success</span></code> state. To address this and prevent needlessly waiting on a
 success state that can never happen, a <code class="docutils literal notranslate"><span class="pre">failure</span></code> state transition is
 triggered if the <code class="docutils literal notranslate"><span class="pre">status</span></code> property equals <code class="docutils literal notranslate"><span class="pre">failed</span></code>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">smithy.waiters#waitable</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">smithy.waiters#waitable</span>
 
-<span class="nt">@waitable</span>(<span class="w"></span>
-<span class="w">    </span><span class="py">ThingExists</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Waits until a thing has been created&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">acceptors</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">            </span><span class="c">// Fail-fast if the thing transitions to a &quot;failed&quot; state.</span><span class="w"></span>
-<span class="w">            </span>{<span class="w"></span>
-<span class="w">                </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;failure&quot;</span><span class="w"></span>
-<span class="w">                </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">                    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">                        </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;status&quot;</span><span class="w"></span>
-<span class="w">                        </span><span class="py">comparator</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stringEquals&quot;</span><span class="w"></span>
-<span class="w">                        </span><span class="py">expected</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;failed&quot;</span><span class="w"></span>
-<span class="w">                    </span>}<span class="w"></span>
-<span class="w">                </span>}<span class="w"></span>
-<span class="w">            </span>}<span class="w"></span>
-<span class="w">            </span><span class="c">// Succeed when the thing enters into a &quot;success&quot; state.</span><span class="w"></span>
-<span class="w">            </span>{<span class="w"></span>
-<span class="w">                </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="w"></span>
-<span class="w">                </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">                    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">                        </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;status&quot;</span><span class="w"></span>
-<span class="w">                        </span><span class="py">comparator</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stringEquals&quot;</span><span class="w"></span>
-<span class="w">                        </span><span class="py">expected</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="w"></span>
-<span class="w">                    </span>}<span class="w"></span>
-<span class="w">                </span>}<span class="w"></span>
-<span class="w">            </span>}<span class="w"></span>
-<span class="w">        </span>]<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetThing</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetThingInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetThingOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@waitable</span>(
+<span class="w">    </span><span class="py">ThingExists</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Waits until a thing has been created&quot;</span>
+<span class="w">        </span><span class="py">acceptors</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">            </span><span class="c">// Fail-fast if the thing transitions to a &quot;failed&quot; state.</span>
+<span class="w">            </span>{
+<span class="w">                </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;failure&quot;</span>
+<span class="w">                </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                        </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;status&quot;</span>
+<span class="w">                        </span><span class="py">comparator</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stringEquals&quot;</span>
+<span class="w">                        </span><span class="py">expected</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;failed&quot;</span>
+<span class="w">                    </span>}
+<span class="w">                </span>}
+<span class="w">            </span>}
+<span class="w">            </span><span class="c">// Succeed when the thing enters into a &quot;success&quot; state.</span>
+<span class="w">            </span>{
+<span class="w">                </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span>
+<span class="w">                </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                        </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;status&quot;</span>
+<span class="w">                        </span><span class="py">comparator</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stringEquals&quot;</span>
+<span class="w">                        </span><span class="py">expected</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span>
+<span class="w">                    </span>}
+<span class="w">                </span>}
+<span class="w">            </span>}
+<span class="w">        </span>]
+<span class="w">    </span>}
+)
+<span class="kd">operation </span><span class="nc">GetThing</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetThingInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetThingOutput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetThingInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetThingInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="nt">@output</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetThingOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">status</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">GetThingOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">status</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p>Both input and output data can be queried using the <code class="docutils literal notranslate"><span class="pre">inputOutput</span></code> matcher.
 The following example waiter completes successfully when the number of
 provided groups on input matches the number of provided groups on output:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">smithy.waiters#waitable</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">smithy.waiters#waitable</span>
 
-<span class="nt">@waitable</span>(<span class="w"></span>
-<span class="w">    </span><span class="py">GroupExists</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">acceptors</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">            </span>{<span class="w"></span>
-<span class="w">                </span><span class="py">inputOutput</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">                    </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;length(input.groups) == length(output.groups)&quot;</span><span class="w"></span>
-<span class="w">                    </span><span class="py">expected</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="w"></span>
-<span class="w">                    </span><span class="py">comparator</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;booleanEquals&quot;</span><span class="w"></span>
-<span class="w">                </span>}<span class="w"></span>
-<span class="w">            </span>}<span class="w"></span>
-<span class="w">        </span>]<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">ListGroups</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ListGroupsInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">ListGroupsOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@waitable</span>(
+<span class="w">    </span><span class="py">GroupExists</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">acceptors</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">            </span>{
+<span class="w">                </span><span class="py">inputOutput</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                    </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;length(input.groups) == length(output.groups)&quot;</span>
+<span class="w">                    </span><span class="py">expected</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span>
+<span class="w">                    </span><span class="py">comparator</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;booleanEquals&quot;</span>
+<span class="w">                </span>}
+<span class="w">            </span>}
+<span class="w">        </span>]
+<span class="w">    </span>}
+)
+<span class="kd">operation </span><span class="nc">ListGroups</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ListGroupsInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">ListGroupsOutput</span>
+}
 </pre></div>
 </div>
 </div>
@@ -1137,34 +1137,34 @@ process described in <a class="reference internal" href="#waiter-retries"><span 
 <a class="reference internal" href="#waiter-matcher"><span class="std std-ref">matcher</span></a> that transitions to a state of &quot;failure&quot;.
 This is already the default behavior. For example, the following acceptor
 is unnecessary:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">acceptors</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">        </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;failure&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">                </span><span class="py">errorType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ValidationError&quot;</span><span class="w"></span>
-<span class="w">            </span>}<span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">        </span><span class="c">// other acceptors...</span><span class="w"></span>
-<span class="w">    </span>]<span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">acceptors</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;failure&quot;</span>
+<span class="w">            </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                </span><span class="py">errorType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ValidationError&quot;</span>
+<span class="w">            </span>}
+<span class="w">        </span>}
+<span class="w">        </span><span class="c">// other acceptors...</span>
+<span class="w">    </span>]
+}
 </pre></div>
 </div>
 <p>Because a successful request that does not match any acceptor by default
 transitions to the <a class="reference internal" href="#waiter-acceptor-state"><span class="std std-ref">retry state</span></a>, there is no
 need to model matchers with a state of retry unless the matcher is for
 specific errors. For example, the following matcher is unnecessary:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">acceptors</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">        </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;retry&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">                </span><span class="py">success</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
-<span class="w">            </span>}<span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">        </span><span class="c">// other acceptors...</span><span class="w"></span>
-<span class="w">    </span>]<span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">acceptors</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;retry&quot;</span>
+<span class="w">            </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                </span><span class="py">success</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">            </span>}
+<span class="w">        </span>}
+<span class="w">        </span><span class="c">// other acceptors...</span>
+<span class="w">    </span>]
+}
 </pre></div>
 </div>
 </div>
@@ -1210,38 +1210,38 @@ the intermediate state transition &quot;Stopping&quot; to fail-fast. Instead, a 
 transition should be defined that matches on the terminal &quot;Stopped&quot; state
 because the only way to transition from &quot;Stopped&quot; to running is by invoking
 the <code class="docutils literal notranslate"><span class="pre">StartResource</span></code> API operation.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@waitable</span>(<span class="w"></span>
-<span class="w">    </span><span class="py">ResourceRunning</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Waits for the resource to be running&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">acceptors</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">            </span>{<span class="w"></span>
-<span class="w">                </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;failure&quot;</span><span class="w"></span>
-<span class="w">                </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">                    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">                        </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;State&quot;</span><span class="w"></span>
-<span class="w">                        </span><span class="py">expected</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Stopped&quot;</span><span class="w"></span>
-<span class="w">                        </span><span class="py">comparator</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stringEquals&quot;</span><span class="w"></span>
-<span class="w">                    </span>}<span class="w"></span>
-<span class="w">                </span>}<span class="w"></span>
-<span class="w">            </span>}<span class="w"></span>
-<span class="w">            </span>{<span class="w"></span>
-<span class="w">                </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="w"></span>
-<span class="w">                </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">                    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">                        </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;State&quot;</span><span class="w"></span>
-<span class="w">                        </span><span class="py">expected</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Running&quot;</span><span class="w"></span>
-<span class="w">                        </span><span class="py">comparator</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stringEquals&quot;</span><span class="w"></span>
-<span class="w">                    </span>}<span class="w"></span>
-<span class="w">                </span>}<span class="w"></span>
-<span class="w">            </span>}<span class="w"></span>
-<span class="w">            </span><span class="c">// other acceptors...</span><span class="w"></span>
-<span class="w">        </span>]<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetResource</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetResourceInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetResourceOutput</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@waitable</span>(
+<span class="w">    </span><span class="py">ResourceRunning</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Waits for the resource to be running&quot;</span>
+<span class="w">        </span><span class="py">acceptors</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">            </span>{
+<span class="w">                </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;failure&quot;</span>
+<span class="w">                </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                        </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;State&quot;</span>
+<span class="w">                        </span><span class="py">expected</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Stopped&quot;</span>
+<span class="w">                        </span><span class="py">comparator</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stringEquals&quot;</span>
+<span class="w">                    </span>}
+<span class="w">                </span>}
+<span class="w">            </span>}
+<span class="w">            </span>{
+<span class="w">                </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span>
+<span class="w">                </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                        </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;State&quot;</span>
+<span class="w">                        </span><span class="py">expected</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Running&quot;</span>
+<span class="w">                        </span><span class="py">comparator</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stringEquals&quot;</span>
+<span class="w">                    </span>}
+<span class="w">                </span>}
+<span class="w">            </span>}
+<span class="w">            </span><span class="c">// other acceptors...</span>
+<span class="w">        </span>]
+<span class="w">    </span>}
+)
+<span class="kd">operation </span><span class="nc">GetResource</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetResourceInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetResourceOutput</span>
+}
 </pre></div>
 </div>
 </div>

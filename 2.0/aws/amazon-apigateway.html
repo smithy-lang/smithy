@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -363,16 +363,16 @@ API keys</li>
 </dd>
 </dl>
 <p>The following example sets the <code class="docutils literal notranslate"><span class="pre">X-API-Key</span></code> header as the API key source.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">aws.apigateway#apiKeySource</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.apigateway#apiKeySource</span>
 
-<span class="nt">@apiKeySource</span>(<span class="s2">&quot;HEADER&quot;</span>)<span class="w"></span>
-<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@apiKeySource</span>(<span class="s2">&quot;HEADER&quot;</span>)
+<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
+}
 </pre></div>
 </div>
 <div class="admonition note">
@@ -509,34 +509,34 @@ Lambda authorizer function returns a Boolean value.</td>
 </tbody>
 </table>
 </div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">ns.foo</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">ns.foo</span>
 
-<span class="kd">use </span><span class="nc">aws.apigateway#authorizer</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">aws.apigateway#authorizers</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">aws.auth#sigv4</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">aws.protocols#restJson1</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.apigateway#authorizer</span>
+<span class="kd">use </span><span class="nc">aws.apigateway#authorizers</span>
+<span class="kd">use </span><span class="nc">aws.auth#sigv4</span>
+<span class="kd">use </span><span class="nc">aws.protocols#restJson1</span>
 
-<span class="nt">@restJson1</span><span class="w"></span>
-<span class="nt">@sigv4</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;weather&quot;</span>)<span class="w"></span>
-<span class="nt">@authorizer</span>(<span class="s2">&quot;arbitrary-name&quot;</span>)<span class="w"></span>
-<span class="nt">@authorizers</span>(<span class="w"></span>
-<span class="w">    </span><span class="s2">&quot;arbitrary-name&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">scheme</span><span class="p">:</span><span class="w"> </span><span class="vc">sigv4</span><span class="w"></span>
-<span class="w">        </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;request&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arn:foo:baz&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">credentials</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arn:foo:bar&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">identitySource</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mapping.expression&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">identityValidationExpression</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[A-Z]+&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">resultTtlInSeconds</span><span class="p">:</span><span class="w"> </span><span class="m">100</span><span class="w"></span>
-<span class="w">        </span><span class="py">authorizerPayloadFormatVersion</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">enableSimpleResponses</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-)<span class="w"></span>
-<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@restJson1</span>
+<span class="nt">@sigv4</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;weather&quot;</span>)
+<span class="nt">@authorizer</span>(<span class="s2">&quot;arbitrary-name&quot;</span>)
+<span class="nt">@authorizers</span>(
+<span class="w">    </span><span class="s2">&quot;arbitrary-name&quot;</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">scheme</span><span class="p">:</span><span class="w"> </span><span class="vc">sigv4</span>
+<span class="w">        </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;request&quot;</span>
+<span class="w">        </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arn:foo:baz&quot;</span>
+<span class="w">        </span><span class="py">credentials</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arn:foo:bar&quot;</span>
+<span class="w">        </span><span class="py">identitySource</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mapping.expression&quot;</span>
+<span class="w">        </span><span class="py">identityValidationExpression</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[A-Z]+&quot;</span>
+<span class="w">        </span><span class="py">resultTtlInSeconds</span><span class="p">:</span><span class="w"> </span><span class="m">100</span>
+<span class="w">        </span><span class="py">authorizerPayloadFormatVersion</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span>
+<span class="w">        </span><span class="py">enableSimpleResponses</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">    </span>}
+)
+<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
+}
 </pre></div>
 </div>
 <div class="admonition note">
@@ -608,16 +608,16 @@ to OpenAPI</li>
 </dd>
 </dl>
 <p>Then following example enables request validation on a service:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">aws.apigateway#requestValidator</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.apigateway#requestValidator</span>
 
-<span class="nt">@requestValidator</span>(<span class="s2">&quot;full&quot;</span>)<span class="w"></span>
-<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@requestValidator</span>(<span class="s2">&quot;full&quot;</span>)
+<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
+}
 </pre></div>
 </div>
 <div class="admonition note">
@@ -761,61 +761,61 @@ responses.</td>
 </div>
 <p>The following example defines an integration that is applied to every
 operation within the service.</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#Weather&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;aws.protocols#restJson1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;aws.auth#sigv4&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;weather&quot;</span><span class="w"></span>
-<span class="w">                </span><span class="p">},</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;aws.apigateway#integration&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aws&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:012345678901:function:HelloWorld/invocations&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;httpMethod&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;credentials&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arn:aws:iam::012345678901:role/apigateway-invoke-lambda-exec-role&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;requestTemplates&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                        </span><span class="nt">&quot;application/json&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                        </span><span class="nt">&quot;application/xml&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span><span class="w"></span>
-<span class="w">                    </span><span class="p">},</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;requestParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                        </span><span class="nt">&quot;integration.request.path.stage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;method.request.querystring.version&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                        </span><span class="nt">&quot;integration.request.querystring.provider&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;method.request.querystring.vendor&quot;</span><span class="w"></span>
-<span class="w">                    </span><span class="p">},</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;cacheNamespace&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cache namespace&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;cacheKeyParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;responses&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                        </span><span class="nt">&quot;2\\d{2}&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                            </span><span class="nt">&quot;statusCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;200&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                            </span><span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                                </span><span class="nt">&quot;method.response.header.requestId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.header.cid&quot;</span><span class="w"></span>
-<span class="w">                            </span><span class="p">},</span><span class="w"></span>
-<span class="w">                            </span><span class="nt">&quot;responseTemplates&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                                </span><span class="nt">&quot;application/json&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                </span><span class="nt">&quot;application/xml&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span><span class="w"></span>
-<span class="w">                            </span><span class="p">}</span><span class="w"></span>
-<span class="w">                        </span><span class="p">},</span><span class="w"></span>
-<span class="w">                        </span><span class="nt">&quot;302&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                            </span><span class="nt">&quot;statusCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;302&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                            </span><span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                                </span><span class="nt">&quot;method.response.header.Location&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.body.redirect.url&quot;</span><span class="w"></span>
-<span class="w">                            </span><span class="p">}</span><span class="w"></span>
-<span class="w">                        </span><span class="p">},</span><span class="w"></span>
-<span class="w">                        </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                            </span><span class="nt">&quot;statusCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;400&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                            </span><span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                                </span><span class="nt">&quot;method.response.header.test-method-response-header&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&#39;static value&#39;&quot;</span><span class="w"></span>
-<span class="w">                            </span><span class="p">}</span><span class="w"></span>
-<span class="w">                        </span><span class="p">}</span><span class="w"></span>
-<span class="w">                    </span><span class="p">}</span><span class="w"></span>
-<span class="w">                </span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;smithy.example#Weather&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;aws.protocols#restJson1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">                </span><span class="nt">&quot;aws.auth#sigv4&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;weather&quot;</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;aws.apigateway#integration&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aws&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:012345678901:function:HelloWorld/invocations&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;httpMethod&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;credentials&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arn:aws:iam::012345678901:role/apigateway-invoke-lambda-exec-role&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;requestTemplates&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;application/json&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">&quot;application/xml&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="nt">&quot;requestParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;integration.request.path.stage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;method.request.querystring.version&quot;</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">&quot;integration.request.querystring.provider&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;method.request.querystring.vendor&quot;</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="nt">&quot;cacheNamespace&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cache namespace&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;cacheKeyParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">                    </span><span class="nt">&quot;responses&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;2\\d{2}&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="nt">&quot;statusCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;200&quot;</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                                </span><span class="nt">&quot;method.response.header.requestId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.header.cid&quot;</span>
+<span class="w">                            </span><span class="p">},</span>
+<span class="w">                            </span><span class="nt">&quot;responseTemplates&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                                </span><span class="nt">&quot;application/json&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
+<span class="w">                                </span><span class="nt">&quot;application/xml&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
+<span class="w">                            </span><span class="p">}</span>
+<span class="w">                        </span><span class="p">},</span>
+<span class="w">                        </span><span class="nt">&quot;302&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="nt">&quot;statusCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;302&quot;</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                                </span><span class="nt">&quot;method.response.header.Location&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.body.redirect.url&quot;</span>
+<span class="w">                            </span><span class="p">}</span>
+<span class="w">                        </span><span class="p">},</span>
+<span class="w">                        </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="nt">&quot;statusCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;400&quot;</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                                </span><span class="nt">&quot;method.response.header.test-method-response-header&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&#39;static value&#39;&quot;</span>
+<span class="w">                            </span><span class="p">}</span>
+<span class="w">                        </span><span class="p">}</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -874,54 +874,54 @@ responses.</td>
 </table>
 </div>
 <p>The following example defines an operation that uses a mock integration.</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyOperation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;smithy.api#http&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/2&quot;</span><span class="w"></span>
-<span class="w">                </span><span class="p">},</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;aws.apigateway#mockIntegration&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;requestTemplates&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                        </span><span class="nt">&quot;application/json&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                        </span><span class="nt">&quot;application/xml&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span><span class="w"></span>
-<span class="w">                    </span><span class="p">},</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;requestParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                        </span><span class="nt">&quot;integration.request.path.stage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;method.request.querystring.version&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                        </span><span class="nt">&quot;integration.request.querystring.provider&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;method.request.querystring.vendor&quot;</span><span class="w"></span>
-<span class="w">                    </span><span class="p">},</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">&quot;responses&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                        </span><span class="nt">&quot;2\\d{2}&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                            </span><span class="nt">&quot;statusCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;200&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                            </span><span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                                </span><span class="nt">&quot;method.response.header.requestId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.header.cid&quot;</span><span class="w"></span>
-<span class="w">                            </span><span class="p">},</span><span class="w"></span>
-<span class="w">                            </span><span class="nt">&quot;responseTemplates&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                                </span><span class="nt">&quot;application/json&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                </span><span class="nt">&quot;application/xml&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span><span class="w"></span>
-<span class="w">                            </span><span class="p">}</span><span class="w"></span>
-<span class="w">                        </span><span class="p">},</span><span class="w"></span>
-<span class="w">                        </span><span class="nt">&quot;302&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                            </span><span class="nt">&quot;statusCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;302&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                            </span><span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                                </span><span class="nt">&quot;method.response.header.Location&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.body.redirect.url&quot;</span><span class="w"></span>
-<span class="w">                            </span><span class="p">}</span><span class="w"></span>
-<span class="w">                        </span><span class="p">},</span><span class="w"></span>
-<span class="w">                        </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                            </span><span class="nt">&quot;statusCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;400&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                            </span><span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                                </span><span class="nt">&quot;method.response.header.test-method-response-header&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&#39;static value&#39;&quot;</span><span class="w"></span>
-<span class="w">                            </span><span class="p">}</span><span class="w"></span>
-<span class="w">                        </span><span class="p">}</span><span class="w"></span>
-<span class="w">                    </span><span class="p">}</span><span class="w"></span>
-<span class="w">                </span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;smithy.example#MyOperation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;smithy.api#http&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/2&quot;</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;aws.apigateway#mockIntegration&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;requestTemplates&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;application/json&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">&quot;application/xml&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="nt">&quot;requestParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;integration.request.path.stage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;method.request.querystring.version&quot;</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">&quot;integration.request.querystring.provider&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;method.request.querystring.vendor&quot;</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="nt">&quot;responses&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;2\\d{2}&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="nt">&quot;statusCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;200&quot;</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                                </span><span class="nt">&quot;method.response.header.requestId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.header.cid&quot;</span>
+<span class="w">                            </span><span class="p">},</span>
+<span class="w">                            </span><span class="nt">&quot;responseTemplates&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                                </span><span class="nt">&quot;application/json&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
+<span class="w">                                </span><span class="nt">&quot;application/xml&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
+<span class="w">                            </span><span class="p">}</span>
+<span class="w">                        </span><span class="p">},</span>
+<span class="w">                        </span><span class="nt">&quot;302&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="nt">&quot;statusCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;302&quot;</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                                </span><span class="nt">&quot;method.response.header.Location&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.body.redirect.url&quot;</span>
+<span class="w">                            </span><span class="p">}</span>
+<span class="w">                        </span><span class="p">},</span>
+<span class="w">                        </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="nt">&quot;statusCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;400&quot;</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                                </span><span class="nt">&quot;method.response.header.test-method-response-header&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&#39;static value&#39;&quot;</span>
+<span class="w">                            </span><span class="p">}</span>
+<span class="w">                        </span><span class="p">}</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -983,13 +983,13 @@ without the <code class="docutils literal notranslate"><span class="pre">$.</spa
 request's query (version), header (x-user-id) and path (service)
 parameters to the integration request's query (stage),
 header (x-userid), and path parameters (op), respectively.</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;requestParameters&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;integration.request.querystring.stage&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;method.request.querystring.version&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;integration.request.header.x-userid&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;method.request.header.x-user-id&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;integration.request.path.op&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;method.request.path.service&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;requestParameters&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;integration.request.querystring.stage&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;method.request.querystring.version&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;integration.request.header.x-userid&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;method.request.header.x-user-id&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;integration.request.path.op&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;method.request.path.service&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -1020,12 +1020,12 @@ header (x-userid), and path parameters (op), respectively.</p>
 </div>
 <p>The following example sets mapping templates for a request payload of the
 <code class="docutils literal notranslate"><span class="pre">application/json</span></code> and <code class="docutils literal notranslate"><span class="pre">application/xml</span></code> media types.</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;requestTemplates&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;application/json&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;application/xml&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;requestTemplates&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;application/json&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;application/xml&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -1075,23 +1075,23 @@ the integration response's payload of the <code class="docutils literal notransl
 templates. For the <code class="docutils literal notranslate"><span class="pre">302</span></code> response, the method response returns a
 <code class="docutils literal notranslate"><span class="pre">Location</span></code> header whose value is derived from the <code class="docutils literal notranslate"><span class="pre">redirect.url</span></code>
 property on the integration response's payload.</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;responses&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;2\\d{2}&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;statusCode&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;200&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;responseTemplates&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;application/json&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;application/xml&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="p">},</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;302&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;statusCode&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;302&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;responseParameters&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;method.response.header.Location&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.body.redirect.url&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;responses&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;2\\d{2}&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;statusCode&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;200&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;responseTemplates&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;application/json&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;application/xml&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;302&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;statusCode&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;302&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;responseParameters&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;method.response.header.Location&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.body.redirect.url&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -1142,16 +1142,16 @@ parameters of the method.</td>
 payload of the <code class="docutils literal notranslate"><span class="pre">application/json</span></code> or <code class="docutils literal notranslate"><span class="pre">application/xml</span></code> media type from the
 backend. The response uses the supplied mapping templates and returns the
 redirect URL from the integration response in the method's Location header.</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;statusCode&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;302&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;responseTemplates&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">         </span><span class="nt">&quot;application/json&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">         </span><span class="nt">&quot;application/xml&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span><span class="w"></span>
-<span class="w">    </span><span class="p">},</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;responseParameters&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;method.response.header.Location&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.body.redirect.url&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;statusCode&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;302&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;responseTemplates&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;application/json&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;application/xml&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;responseParameters&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;method.response.header.Location&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.body.redirect.url&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -1187,12 +1187,12 @@ information about creating a mapping template, see
 </div>
 <p>The following example sets mapping templates for a request payload of the
 <code class="docutils literal notranslate"><span class="pre">application/json</span></code> and <code class="docutils literal notranslate"><span class="pre">application/xml</span></code> media types.</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;responseTemplates&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;application/json&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;application/xml&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;responseTemplates&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;application/json&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;application/xml&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -1227,12 +1227,12 @@ types of the integration response parameters only.</td>
 </div>
 <p>The following example maps <code class="docutils literal notranslate"><span class="pre">body</span></code> and <code class="docutils literal notranslate"><span class="pre">header</span></code> parameters of the
 integration response to two <code class="docutils literal notranslate"><span class="pre">header</span></code> parameters of the method response.</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;responseParameters&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;method.response.header.Location&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.body.redirect.url&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;method.response.header.x-user-id&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.header.x-userid&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;responseParameters&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;method.response.header.Location&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.body.redirect.url&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;method.response.header.x-user-id&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.header.x-userid&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>

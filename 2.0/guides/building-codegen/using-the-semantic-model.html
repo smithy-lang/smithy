@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -334,9 +334,9 @@ defined that is a <code class="docutils literal notranslate"><span class="pre">s
 <h3>Iterate over all shapes<a class="headerlink" href="#iterate-over-all-shapes" title="Permalink to this headline">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">Model#toSet</span></code> is a cheap operation that just provides a <code class="docutils literal notranslate"><span class="pre">Set</span></code>
 view over a model.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Shape</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">toSet</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// ...</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Shape</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">toSet</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// ...</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -345,19 +345,19 @@ view over a model.</p>
 <p>Each type of shape in Smithy has a dedicated <code class="docutils literal notranslate"><span class="pre">Model#getXShapes</span></code>
 method. These methods are cheap to invoke. They just provide a
 filtered <code class="docutils literal notranslate"><span class="pre">Set</span></code> view over a model.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">ServiceShape</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getServiceShapes</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// ...</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">ServiceShape</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getServiceShapes</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// ...</span>
+<span class="p">}</span>
 
-<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">StructureShape</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getStructureShapes</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// ...</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">StructureShape</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getStructureShapes</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// ...</span>
+<span class="p">}</span>
 
-<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">MemberShape</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getMemberShapes</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// ...</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">MemberShape</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getMemberShapes</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// ...</span>
+<span class="p">}</span>
 
-<span class="c1">// etc...</span><span class="w"></span>
+<span class="c1">// etc...</span>
 </pre></div>
 </div>
 </div>
@@ -367,9 +367,9 @@ filtered <code class="docutils literal notranslate"><span class="pre">Set</span>
 This is a cheap method to call and uses caches internally. The provided
 trait class can be retrieved from each returned shape. The following
 example uses <code class="docutils literal notranslate"><span class="pre">DeprecatedTrait</span></code> but any trait class can be used.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Shape</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getShapesWithTrait</span><span class="p">(</span><span class="n">DeprecatedTrait</span><span class="p">.</span><span class="na">class</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">DeprecatedTrait</span><span class="w"> </span><span class="n">trait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">expectTrait</span><span class="p">(</span><span class="n">DeprecatedTrait</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Shape</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getShapesWithTrait</span><span class="p">(</span><span class="n">DeprecatedTrait</span><span class="p">.</span><span class="na">class</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">DeprecatedTrait</span><span class="w"> </span><span class="n">trait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">expectTrait</span><span class="p">(</span><span class="n">DeprecatedTrait</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -380,22 +380,22 @@ specific trait. Each type of shape has a dedicated <code class="docutils literal
 method. This is a cheap method to call and uses caches internally.
 The provided trait class can be retrieved from each returned shape. The
 following example uses <code class="docutils literal notranslate"><span class="pre">SensitiveTrait</span></code> but any trait class can be used.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">StructureShape</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getStructureShapesWithTrait</span><span class="p">(</span><span class="n">SensitiveTrait</span><span class="p">.</span><span class="na">class</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">SensitiveTrait</span><span class="w"> </span><span class="n">trait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">expectTrait</span><span class="p">(</span><span class="n">SensitiveTrait</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">StructureShape</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getStructureShapesWithTrait</span><span class="p">(</span><span class="n">SensitiveTrait</span><span class="p">.</span><span class="na">class</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">SensitiveTrait</span><span class="w"> </span><span class="n">trait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">expectTrait</span><span class="p">(</span><span class="n">SensitiveTrait</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<span class="p">}</span>
 
-<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">StringShape</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getStringShapesWithTrait</span><span class="p">(</span><span class="n">SensitiveTrait</span><span class="p">.</span><span class="na">class</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">SensitiveTrait</span><span class="w"> </span><span class="n">trait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">expectTrait</span><span class="p">(</span><span class="n">SensitiveTrait</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">StringShape</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getStringShapesWithTrait</span><span class="p">(</span><span class="n">SensitiveTrait</span><span class="p">.</span><span class="na">class</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">SensitiveTrait</span><span class="w"> </span><span class="n">trait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">expectTrait</span><span class="p">(</span><span class="n">SensitiveTrait</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<span class="p">}</span>
 
-<span class="c1">// etc..</span><span class="w"></span>
+<span class="c1">// etc..</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="stream-over-all-shapes">
 <h3>Stream over all shapes<a class="headerlink" href="#stream-over-all-shapes" title="Permalink to this headline">#</a></h3>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">StringShape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">strings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">shapes</span><span class="p">(</span><span class="n">StringShape</span><span class="p">.</span><span class="na">class</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">getId</span><span class="p">().</span><span class="na">getNamespace</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;foo.bar&quot;</span><span class="p">));</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">StringShape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">strings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">shapes</span><span class="p">(</span><span class="n">StringShape</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">getId</span><span class="p">().</span><span class="na">getNamespace</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;foo.bar&quot;</span><span class="p">));</span>
 </pre></div>
 </div>
 <div class="admonition tip">
@@ -407,16 +407,16 @@ style transformations into streams.</p>
 </div>
 <div class="section" id="traversing-the-members-of-a-shape">
 <h3>Traversing the members of a shape<a class="headerlink" href="#traversing-the-members-of-a-shape" title="Permalink to this headline">#</a></h3>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">StructureShape</span><span class="w"> </span><span class="n">struct</span><span class="p">;</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">StructureShape</span><span class="w"> </span><span class="n">struct</span><span class="p">;</span>
 
-<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">MemberShape</span><span class="w"> </span><span class="n">member</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">struct</span><span class="p">.</span><span class="na">members</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// Get the shape targeted by the member.</span><span class="w"></span>
-<span class="w">    </span><span class="n">Shape</span><span class="w"> </span><span class="n">target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">expectShape</span><span class="p">(</span><span class="n">member</span><span class="p">.</span><span class="na">getTarget</span><span class="p">());</span><span class="w"></span>
-<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">member</span><span class="p">.</span><span class="na">getMemberName</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; targets &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">target</span><span class="p">);</span><span class="w"></span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">MemberShape</span><span class="w"> </span><span class="n">member</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">struct</span><span class="p">.</span><span class="na">members</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Get the shape targeted by the member.</span>
+<span class="w">    </span><span class="n">Shape</span><span class="w"> </span><span class="n">target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">expectShape</span><span class="p">(</span><span class="n">member</span><span class="p">.</span><span class="na">getTarget</span><span class="p">());</span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">member</span><span class="p">.</span><span class="na">getMemberName</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; targets &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">target</span><span class="p">);</span>
 
-<span class="w">    </span><span class="c1">// Get that container of the member.</span><span class="w"></span>
-<span class="w">    </span><span class="n">Shape</span><span class="w"> </span><span class="n">container</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">expectShape</span><span class="p">(</span><span class="n">member</span><span class="p">.</span><span class="na">getContainer</span><span class="p">());</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// Get that container of the member.</span>
+<span class="w">    </span><span class="n">Shape</span><span class="w"> </span><span class="n">container</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">expectShape</span><span class="p">(</span><span class="n">member</span><span class="p">.</span><span class="na">getContainer</span><span class="p">());</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -437,37 +437,37 @@ with <code class="docutils literal notranslate"><span class="pre">expect</span><
 <h3>Visiting shapes<a class="headerlink" href="#visiting-shapes" title="Permalink to this headline">#</a></h3>
 <p>Smithy often relies on <em>visitors</em> to dispatch to different typed methods
 for handling different kinds of shapes.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Silly example that returns the numbers of members a shape has.</span><span class="w"></span>
-<span class="n">ShapeVisitor</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">visitor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ShapeVisitor</span><span class="p">.</span><span class="na">Default</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
-<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="nf">getDefault</span><span class="p">(</span><span class="n">Shape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Silly example that returns the numbers of members a shape has.</span>
+<span class="n">ShapeVisitor</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">visitor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ShapeVisitor</span><span class="p">.</span><span class="na">Default</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">protected</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="nf">getDefault</span><span class="p">(</span><span class="n">Shape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="nf">listShape</span><span class="p">(</span><span class="n">ListShape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="nf">listShape</span><span class="p">(</span><span class="n">ListShape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="nf">mapShape</span><span class="p">(</span><span class="n">MapShape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="nf">mapShape</span><span class="p">(</span><span class="n">MapShape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="nf">structureShape</span><span class="p">(</span><span class="n">StructureShape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">members</span><span class="p">().</span><span class="na">size</span><span class="p">();</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="nf">structureShape</span><span class="p">(</span><span class="n">StructureShape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">members</span><span class="p">().</span><span class="na">size</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="nf">unionShape</span><span class="p">(</span><span class="n">UnionShape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">members</span><span class="p">().</span><span class="na">size</span><span class="p">();</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Integer</span><span class="w"> </span><span class="nf">unionShape</span><span class="p">(</span><span class="n">UnionShape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">members</span><span class="p">().</span><span class="na">size</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
 
-<span class="n">StringShape</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">exampleThatGetsString</span><span class="p">();</span><span class="w"></span>
-<span class="kt">int</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">string</span><span class="p">.</span><span class="na">accept</span><span class="p">(</span><span class="n">visitor</span><span class="p">);</span><span class="w"></span>
-<span class="k">assert</span><span class="p">(</span><span class="n">count</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"></span>
+<span class="n">StringShape</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">exampleThatGetsString</span><span class="p">();</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">string</span><span class="p">.</span><span class="na">accept</span><span class="p">(</span><span class="n">visitor</span><span class="p">);</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">count</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -495,8 +495,8 @@ across things like validators.</p>
 <p>Service shapes can contain resources which can contain operations.
 <code class="docutils literal notranslate"><span class="pre">TopDownIndex</span></code> will walk the service/resource to find all contained
 operations.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">TopDownIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TopDownIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
-<span class="n">index</span><span class="p">.</span><span class="na">getContainedOperations</span><span class="p">(</span><span class="n">serviceShape</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">TopDownIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TopDownIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
+<span class="n">index</span><span class="p">.</span><span class="na">getContainedOperations</span><span class="p">(</span><span class="n">serviceShape</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -505,8 +505,8 @@ operations.</p>
 <p>Service shapes can contain resources which can themselves contain
 resources. <code class="docutils literal notranslate"><span class="pre">TopDownIndex</span></code> will walk the service/resource to find
 all contained operations.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">TopDownIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TopDownIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
-<span class="n">index</span><span class="p">.</span><span class="na">getContainedResources</span><span class="p">(</span><span class="n">serviceShape</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">TopDownIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TopDownIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
+<span class="n">index</span><span class="p">.</span><span class="na">getContainedResources</span><span class="p">(</span><span class="n">serviceShape</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -516,11 +516,11 @@ all contained operations.</p>
 the nullability of a member can be complex. <code class="docutils literal notranslate"><span class="pre">NullableIndex</span></code>
 hides all of this complexity by providing a simple boolean result
 for a given member shape.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">NullableIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NullableIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">NullableIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NullableIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
 
-<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="p">.</span><span class="na">isMemberNullable</span><span class="p">(</span><span class="n">someMemberShape</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// nullable</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="p">.</span><span class="na">isMemberNullable</span><span class="p">(</span><span class="n">someMemberShape</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// nullable</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -529,19 +529,19 @@ for a given member shape.</p>
 <p>Resolving information about paginated operations in Smithy requires
 some bookkeeping. <code class="docutils literal notranslate"><span class="pre">PaginatedIndex</span></code> tries to consolidate all the
 information you might need when interacting with paginated traits.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">PaginatedIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaginatedIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">PaginatedIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PaginatedIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
 
-<span class="n">index</span><span class="p">.</span><span class="na">getPaginationInfo</span><span class="p">(</span><span class="n">service</span><span class="p">,</span><span class="w"> </span><span class="n">operation</span><span class="p">).</span><span class="na">ifPresenet</span><span class="p">(</span><span class="n">info</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// method invoked if the operation is paginated.</span><span class="w"></span>
-<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Service shape: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="na">getService</span><span class="p">());</span><span class="w"></span>
-<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Operation shape: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="na">getOperation</span><span class="p">());</span><span class="w"></span>
-<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Input shape: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="na">getInput</span><span class="p">());</span><span class="w"></span>
-<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Output shape: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="na">getOutput</span><span class="p">());</span><span class="w"></span>
-<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Paginated trait: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="na">getPaginatedTrait</span><span class="p">());</span><span class="w"></span>
-<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Input token member: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="na">getInputTokenMember</span><span class="p">());</span><span class="w"></span>
-<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Output token membber: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="na">getOutputTokenMemberPath</span><span class="p">());</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// etc...</span><span class="w"></span>
-<span class="p">});</span><span class="w"></span>
+<span class="n">index</span><span class="p">.</span><span class="na">getPaginationInfo</span><span class="p">(</span><span class="n">service</span><span class="p">,</span><span class="w"> </span><span class="n">operation</span><span class="p">).</span><span class="na">ifPresenet</span><span class="p">(</span><span class="n">info</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// method invoked if the operation is paginated.</span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Service shape: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="na">getService</span><span class="p">());</span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Operation shape: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="na">getOperation</span><span class="p">());</span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Input shape: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="na">getInput</span><span class="p">());</span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Output shape: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="na">getOutput</span><span class="p">());</span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Paginated trait: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="na">getPaginatedTrait</span><span class="p">());</span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Input token member: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="na">getInputTokenMember</span><span class="p">());</span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Output token membber: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">info</span><span class="p">.</span><span class="na">getOutputTokenMemberPath</span><span class="p">());</span>
+<span class="w">    </span><span class="c1">// etc...</span>
+<span class="p">});</span>
 </pre></div>
 </div>
 </div>
@@ -550,8 +550,8 @@ information you might need when interacting with paginated traits.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">HttpBindingIndex</span></code> can provide all kinds of information about
 the HTTP bindings of an operation, including the response status
 code.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">HttpBindingIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HttpBindingIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
-<span class="kt">int</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="p">.</span><span class="na">getResponseCode</span><span class="p">(</span><span class="n">operationShape</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">HttpBindingIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HttpBindingIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="p">.</span><span class="na">getResponseCode</span><span class="p">(</span><span class="n">operationShape</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -560,13 +560,13 @@ code.</p>
 <p><code class="docutils literal notranslate"><span class="pre">HttpBindingIndex</span></code> can attempt to resolve the Content-Type header
 of a request. The content-type might not be statically known by
 the model and might rely on protocol-specific information.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">HttpBindingIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HttpBindingIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">HttpBindingIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HttpBindingIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
 
-<span class="n">String</span><span class="w"> </span><span class="n">defaultPayloadType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;application/json&quot;</span><span class="p">;</span><span class="w"></span>
-<span class="n">String</span><span class="w"> </span><span class="n">eventStreamType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;application/vnd.amazon.event-stream&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="n">String</span><span class="w"> </span><span class="n">contentType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="na">determineRequestContentType</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span><span class="w"> </span><span class="n">defaultPayloadType</span><span class="p">,</span><span class="w"> </span><span class="n">eventStreamType</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="na">orElseNull</span><span class="p">();</span><span class="w"></span>
+<span class="n">String</span><span class="w"> </span><span class="n">defaultPayloadType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;application/json&quot;</span><span class="p">;</span>
+<span class="n">String</span><span class="w"> </span><span class="n">eventStreamType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;application/vnd.amazon.event-stream&quot;</span><span class="p">);</span>
+<span class="n">String</span><span class="w"> </span><span class="n">contentType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span>
+<span class="w">    </span><span class="p">.</span><span class="na">determineRequestContentType</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span><span class="w"> </span><span class="n">defaultPayloadType</span><span class="p">,</span><span class="w"> </span><span class="n">eventStreamType</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">orElseNull</span><span class="p">();</span>
 </pre></div>
 </div>
 </div>
@@ -575,53 +575,53 @@ the model and might rely on protocol-specific information.</p>
 <p><code class="docutils literal notranslate"><span class="pre">HttpBindingIndex</span></code> can attempt to resolve the Content-Type header
 of a response. The content-type might not be statically known by
 the model and might rely on protocol-specific information.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">HttpBindingIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HttpBindingIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">HttpBindingIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HttpBindingIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
 
-<span class="n">String</span><span class="w"> </span><span class="n">defaultPayloadType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;application/json&quot;</span><span class="p">;</span><span class="w"></span>
-<span class="n">String</span><span class="w"> </span><span class="n">eventStreamType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;application/vnd.amazon.event-stream&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="n">String</span><span class="w"> </span><span class="n">contentType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="na">determineResponseContentType</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span><span class="w"> </span><span class="n">defaultPayloadType</span><span class="p">,</span><span class="w"> </span><span class="n">eventStreamType</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="na">orElseNull</span><span class="p">();</span><span class="w"></span>
+<span class="n">String</span><span class="w"> </span><span class="n">defaultPayloadType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;application/json&quot;</span><span class="p">;</span>
+<span class="n">String</span><span class="w"> </span><span class="n">eventStreamType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;application/vnd.amazon.event-stream&quot;</span><span class="p">);</span>
+<span class="n">String</span><span class="w"> </span><span class="n">contentType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span>
+<span class="w">    </span><span class="p">.</span><span class="na">determineResponseContentType</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span><span class="w"> </span><span class="n">defaultPayloadType</span><span class="p">,</span><span class="w"> </span><span class="n">eventStreamType</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">orElseNull</span><span class="p">();</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="get-http-binding-information-of-an-operation">
 <h3>Get HTTP binding information of an operation<a class="headerlink" href="#get-http-binding-information-of-an-operation" title="Permalink to this headline">#</a></h3>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">HttpBindingIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HttpBindingIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
-<span class="kd">var</span><span class="w"> </span><span class="n">requestBindings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="p">.</span><span class="na">getRequestBindings</span><span class="p">(</span><span class="n">operationShape</span><span class="p">);</span><span class="w"></span>
-<span class="kd">var</span><span class="w"> </span><span class="n">responseBindings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="p">.</span><span class="na">getResponseBindings</span><span class="p">(</span><span class="n">operationShape</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">HttpBindingIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HttpBindingIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
+<span class="kd">var</span><span class="w"> </span><span class="n">requestBindings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="p">.</span><span class="na">getRequestBindings</span><span class="p">(</span><span class="n">operationShape</span><span class="p">);</span>
+<span class="kd">var</span><span class="w"> </span><span class="n">responseBindings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="p">.</span><span class="na">getResponseBindings</span><span class="p">(</span><span class="n">operationShape</span><span class="p">);</span>
 
-<span class="c1">// This loop works the same way for request or response bindings.</span><span class="w"></span>
-<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">var</span><span class="w"> </span><span class="n">entry</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">requestBindings</span><span class="p">.</span><span class="na">entrySet</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">memberName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="na">getKey</span><span class="p">();</span><span class="w"></span>
-<span class="w">    </span><span class="n">HttpBinding</span><span class="w"> </span><span class="n">binding</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="na">getValue</span><span class="p">();</span><span class="w"></span>
-<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Member: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">memberName</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Member shape: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">binding</span><span class="p">.</span><span class="na">getMember</span><span class="p">());</span><span class="w"></span>
-<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Location: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">binding</span><span class="p">.</span><span class="na">getLocation</span><span class="p">());</span><span class="w"></span>
-<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Location name: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">binding</span><span class="p">.</span><span class="na">getLocationName</span><span class="p">());</span><span class="w"></span>
-<span class="w">    </span><span class="n">binding</span><span class="p">.</span><span class="na">getBindingTrait</span><span class="p">().</span><span class="na">ifPresent</span><span class="p">(</span><span class="n">trait</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Binding trait: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">trait</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">});</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="c1">// This loop works the same way for request or response bindings.</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">var</span><span class="w"> </span><span class="n">entry</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">requestBindings</span><span class="p">.</span><span class="na">entrySet</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">memberName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="na">getKey</span><span class="p">();</span>
+<span class="w">    </span><span class="n">HttpBinding</span><span class="w"> </span><span class="n">binding</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="na">getValue</span><span class="p">();</span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Member: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">memberName</span><span class="p">);</span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Member shape: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">binding</span><span class="p">.</span><span class="na">getMember</span><span class="p">());</span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Location: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">binding</span><span class="p">.</span><span class="na">getLocation</span><span class="p">());</span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Location name: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">binding</span><span class="p">.</span><span class="na">getLocationName</span><span class="p">());</span>
+<span class="w">    </span><span class="n">binding</span><span class="p">.</span><span class="na">getBindingTrait</span><span class="p">().</span><span class="na">ifPresent</span><span class="p">(</span><span class="n">trait</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Binding trait: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">trait</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="get-the-timestamp-format-used-for-a-specific-http-binding">
 <h3>Get the timestamp format used for a specific HTTP binding<a class="headerlink" href="#get-the-timestamp-format-used-for-a-specific-http-binding" title="Permalink to this headline">#</a></h3>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Determine the format used for members bound to HTTP labels.</span><span class="w"></span>
-<span class="n">HttpBindingIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HttpBindingIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
-<span class="kd">var</span><span class="w"> </span><span class="n">formatUsedInPayloads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TimestampFormatTrait</span><span class="p">.</span><span class="na">Format</span><span class="p">.</span><span class="na">EPOCH_SECONDS</span><span class="p">;</span><span class="w"></span>
-<span class="kd">var</span><span class="w"> </span><span class="n">format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="p">.</span><span class="na">determineTimestampFormat</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">member</span><span class="p">,</span><span class="w"> </span><span class="n">HttpBinding</span><span class="p">.</span><span class="na">Location</span><span class="p">.</span><span class="na">LABEL</span><span class="p">,</span><span class="w"> </span><span class="n">formatUsedInPayloads</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Determine the format used for members bound to HTTP labels.</span>
+<span class="n">HttpBindingIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HttpBindingIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
+<span class="kd">var</span><span class="w"> </span><span class="n">formatUsedInPayloads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TimestampFormatTrait</span><span class="p">.</span><span class="na">Format</span><span class="p">.</span><span class="na">EPOCH_SECONDS</span><span class="p">;</span>
+<span class="kd">var</span><span class="w"> </span><span class="n">format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="p">.</span><span class="na">determineTimestampFormat</span><span class="p">(</span>
+<span class="w">    </span><span class="n">member</span><span class="p">,</span><span class="w"> </span><span class="n">HttpBinding</span><span class="p">.</span><span class="na">Location</span><span class="p">.</span><span class="na">LABEL</span><span class="p">,</span><span class="w"> </span><span class="n">formatUsedInPayloads</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="get-members-that-have-specific-http-bindings">
 <h3>Get members that have specific HTTP bindings<a class="headerlink" href="#get-members-that-have-specific-http-bindings" title="Permalink to this headline">#</a></h3>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Find every member in the input of the operation bound to an HTTP label.</span><span class="w"></span>
-<span class="n">HttpBindingIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HttpBindingIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
-<span class="kd">var</span><span class="w"> </span><span class="n">locationTypeToFind</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HttpBinding</span><span class="p">.</span><span class="na">Location</span><span class="p">.</span><span class="na">LABEL</span><span class="p">;</span><span class="w"></span>
-<span class="kd">var</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="p">.</span><span class="na">getRequestBindings</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span><span class="w"> </span><span class="n">locationTypeToFind</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Find every member in the input of the operation bound to an HTTP label.</span>
+<span class="n">HttpBindingIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HttpBindingIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
+<span class="kd">var</span><span class="w"> </span><span class="n">locationTypeToFind</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HttpBinding</span><span class="p">.</span><span class="na">Location</span><span class="p">.</span><span class="na">LABEL</span><span class="p">;</span>
+<span class="kd">var</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="p">.</span><span class="na">getRequestBindings</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span><span class="w"> </span><span class="n">locationTypeToFind</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -640,17 +640,17 @@ transforming a model, some of which are documented below.</p>
 <p><code class="docutils literal notranslate"><span class="pre">ModelTransformer</span></code> will remove any broken relationships when a
 shape is removed. If you remove an operation from the model, it's
 removed from any service or resource.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModelTransformer</span><span class="p">.</span><span class="na">create</span><span class="p">().</span><span class="na">removeShapesIf</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">isOperationShape</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">hasTrait</span><span class="p">(</span><span class="n">DeprecatedTrait</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w"></span>
-<span class="p">)};</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModelTransformer</span><span class="p">.</span><span class="na">create</span><span class="p">().</span><span class="na">removeShapesIf</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">isOperationShape</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">hasTrait</span><span class="p">(</span><span class="n">DeprecatedTrait</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<span class="p">)};</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="add-a-trait-to-every-shape">
 <h3>Add a trait to every shape<a class="headerlink" href="#add-a-trait-to-every-shape" title="Permalink to this headline">#</a></h3>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModelTransformer</span><span class="p">.</span><span class="na">create</span><span class="p">().</span><span class="na">mapShapes</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Shape</span><span class="p">.</span><span class="na">shapeToBuilder</span><span class="p">(</span><span class="n">shape</span><span class="p">).</span><span class="na">addTrait</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">MyCustomTrait</span><span class="p">()).</span><span class="na">build</span><span class="p">();</span><span class="w"></span>
-<span class="p">});</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModelTransformer</span><span class="p">.</span><span class="na">create</span><span class="p">().</span><span class="na">mapShapes</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Shape</span><span class="p">.</span><span class="na">shapeToBuilder</span><span class="p">(</span><span class="n">shape</span><span class="p">).</span><span class="na">addTrait</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">MyCustomTrait</span><span class="p">()).</span><span class="na">build</span><span class="p">();</span>
+<span class="p">});</span>
 </pre></div>
 </div>
 <div class="admonition tip">
@@ -664,32 +664,32 @@ removed from any service or resource.</p>
 <p>Mixins are used to share shape definitions across a model. They're
 essentially build-time copy and paste, and they have no meaningful
 impact on generated code. For example, the following model uses mixins:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@mixin</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">HasUsername</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">username</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@mixin</span>
+<span class="kd">structure </span><span class="nc">HasUsername</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">username</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="kd">structure </span><span class="nc">UserData</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">HasUserName</span>]<span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">isAdmin</span><span class="p">:</span><span class="w"> </span><span class="vc">Boolean</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">UserData</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">HasUserName</span>]<span class="w"> </span>{
+<span class="w">    </span><span class="py">isAdmin</span><span class="p">:</span><span class="w"> </span><span class="vc">Boolean</span>
+}
 </pre></div>
 </div>
 <p>Code generators should flatten mixins out of a model before generating
 code, allowing them to more easily generate code without needing to
 implement special handling for mixins. This can be done using a Smithy
 model transformation:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">ModelTransformer</span><span class="w"> </span><span class="n">transformer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModelTransformer</span><span class="p">.</span><span class="na">create</span><span class="p">();</span><span class="w"></span>
-<span class="n">Model</span><span class="w"> </span><span class="n">transformedModel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">transformer</span><span class="p">.</span><span class="na">flattenAndRemoveMixins</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">ModelTransformer</span><span class="w"> </span><span class="n">transformer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModelTransformer</span><span class="p">.</span><span class="na">create</span><span class="p">();</span>
+<span class="n">Model</span><span class="w"> </span><span class="n">transformedModel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">transformer</span><span class="p">.</span><span class="na">flattenAndRemoveMixins</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>After flattening mixins, the above model is equivalent to:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">UserData</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">HasUserName</span>]<span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">username</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">UserData</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">HasUserName</span>]<span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">username</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="py">isAdmin</span><span class="p">:</span><span class="w"> </span><span class="vc">Boolean</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="py">isAdmin</span><span class="p">:</span><span class="w"> </span><span class="vc">Boolean</span>
+}
 </pre></div>
 </div>
 </div>
@@ -699,32 +699,32 @@ model transformation:</p>
 operation. While this is great for modeling a service, it makes code
 generation harder.</p>
 <p>For example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span><span class="vc">GetSomething</span><span class="w"></span>
-<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ValidationError</span>]<span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span><span class="vc">GetSomething</span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ValidationError</span>]
+}
 
-<span class="kd">operation </span><span class="nc">GetSomething</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{}<span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{}<span class="w"></span>
-}<span class="w"></span>
+<span class="kd">operation </span><span class="nc">GetSomething</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{}
+<span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{}
+}
 </pre></div>
 </div>
 <p>Code generators can flatten these errors using a model transformer:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">ModelTransformer</span><span class="w"> </span><span class="n">transformer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModelTransformer</span><span class="p">.</span><span class="na">create</span><span class="p">();</span><span class="w"></span>
-<span class="n">Model</span><span class="w"> </span><span class="n">transformed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">transformer</span><span class="p">.</span><span class="na">copyServiceErrorsToOperations</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">service</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">ModelTransformer</span><span class="w"> </span><span class="n">transformer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModelTransformer</span><span class="p">.</span><span class="na">create</span><span class="p">();</span>
+<span class="n">Model</span><span class="w"> </span><span class="n">transformed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">transformer</span><span class="p">.</span><span class="na">copyServiceErrorsToOperations</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">service</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>After flattening the error hierarchy, the above model is equivalent to:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span><span class="vc">GetSomething</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span><span class="vc">GetSomething</span>
+}
 
-<span class="kd">operation </span><span class="nc">GetSomething</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{}<span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{}<span class="w"></span>
-<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ValidationError</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="kd">operation </span><span class="nc">GetSomething</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{}
+<span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{}
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ValidationError</span>]
+}
 </pre></div>
 </div>
 </div>
@@ -733,9 +733,9 @@ generation harder.</p>
 <p>Smithy models can contain multiple services and shapes that aren't connected
 to any service. Code generation is often easier if you remove shapes from the
 model that are not connected to the service being generated.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Walker</span><span class="w"> </span><span class="n">walker</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Walker</span><span class="p">(</span><span class="n">someModel</span><span class="p">);</span><span class="w"></span>
-<span class="n">Set</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">closure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">walker</span><span class="p">.</span><span class="na">walkShapes</span><span class="p">(</span><span class="n">someService</span><span class="p">);</span><span class="w"></span>
-<span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModelTransformer</span><span class="p">.</span><span class="na">create</span><span class="p">().</span><span class="na">removeShapesIf</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">!</span><span class="n">closure</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">shape</span><span class="p">));</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Walker</span><span class="w"> </span><span class="n">walker</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Walker</span><span class="p">(</span><span class="n">someModel</span><span class="p">);</span>
+<span class="n">Set</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">closure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">walker</span><span class="p">.</span><span class="na">walkShapes</span><span class="p">(</span><span class="n">someService</span><span class="p">);</span>
+<span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModelTransformer</span><span class="p">.</span><span class="na">create</span><span class="p">().</span><span class="na">removeShapesIf</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">!</span><span class="n">closure</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">shape</span><span class="p">));</span>
 </pre></div>
 </div>
 </div>
@@ -756,14 +756,14 @@ for what you're trying to do.</p>
 <p>Let's say you want to find something complex, like every operation that
 has a <a class="reference internal" href="../../spec/streaming.html#streaming-trait"><span class="std std-ref">streaming trait</span></a> member in its input. This can be achieved through
 the following selector:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Selector</span><span class="w"> </span><span class="n">selector</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Selector</span><span class="p">.</span><span class="na">parse</span><span class="p">(</span><span class="s">&quot;operation :test(-[input]-&gt; structure &gt; member &gt; [trait|streaming])&quot;</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Selector</span><span class="w"> </span><span class="n">selector</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Selector</span><span class="p">.</span><span class="na">parse</span><span class="p">(</span><span class="s">&quot;operation :test(-[input]-&gt; structure &gt; member &gt; [trait|streaming])&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="finding-shapes-that-match-a-selector">
 <h3>Finding shapes that match a selector<a class="headerlink" href="#finding-shapes-that-match-a-selector" title="Permalink to this headline">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">Selector#select</span></code> finds every matching shape and put them in a <code class="docutils literal notranslate"><span class="pre">Set</span></code>.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Set</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">matches</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">selector</span><span class="p">.</span><span class="na">select</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Set</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">matches</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">selector</span><span class="p">.</span><span class="na">select</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -771,9 +771,9 @@ the following selector:</p>
 <h3>Iterate over shapes that match a selector<a class="headerlink" href="#iterate-over-shapes-that-match-a-selector" title="Permalink to this headline">#</a></h3>
 <p>If the result set does not need to be loaded into memory, then using
 <code class="docutils literal notranslate"><span class="pre">shapes()</span></code> is cheaper than using <code class="docutils literal notranslate"><span class="pre">select()</span></code>.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">selector</span><span class="p">.</span><span class="na">shapes</span><span class="p">().</span><span class="na">forEach</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// do something with each shape</span><span class="w"></span>
-<span class="p">});</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">selector</span><span class="p">.</span><span class="na">shapes</span><span class="p">().</span><span class="na">forEach</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// do something with each shape</span>
+<span class="p">});</span>
 </pre></div>
 </div>
 </div>
@@ -781,33 +781,33 @@ the following selector:</p>
 <h3>Reuse parsed <code class="docutils literal notranslate"><span class="pre">Selector</span></code>s<a class="headerlink" href="#reuse-parsed-selectors" title="Permalink to this headline">#</a></h3>
 <p>Be sure to use a previously parsed selector if a selector will be used
 repeatedly. For example don't do this:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// ❌ DON&#39;T DO THIS ❌</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// ❌ DON&#39;T DO THIS ❌</span>
 
-<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">var</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getServiceShapes</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// This is bad! Reuse Selector instances!</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// This has to parse the selector in each iteration of the loop.</span><span class="w"></span>
-<span class="w">    </span><span class="n">Selector</span><span class="w"> </span><span class="n">selector</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Selector</span><span class="p">.</span><span class="na">parse</span><span class="p">(</span><span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="w"></span>
-<span class="w">        </span><span class="s">&quot;[id=%s] -&gt; structure &gt; member[trait|required]&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="n">shape</span><span class="p">.</span><span class="na">getId</span><span class="p">()));</span><span class="w"></span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">var</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getServiceShapes</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// This is bad! Reuse Selector instances!</span>
+<span class="w">    </span><span class="c1">// This has to parse the selector in each iteration of the loop.</span>
+<span class="w">    </span><span class="n">Selector</span><span class="w"> </span><span class="n">selector</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Selector</span><span class="p">.</span><span class="na">parse</span><span class="p">(</span><span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span>
+<span class="w">        </span><span class="s">&quot;[id=%s] -&gt; structure &gt; member[trait|required]&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="n">shape</span><span class="p">.</span><span class="na">getId</span><span class="p">()));</span>
 
-<span class="w">    </span><span class="n">selector</span><span class="p">.</span><span class="na">shapes</span><span class="p">(</span><span class="n">model</span><span class="p">).</span><span class="na">forEach</span><span class="p">(</span><span class="n">match</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="c1">// do something with each found shape</span><span class="w"></span>
-<span class="w">    </span><span class="p">});</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="n">selector</span><span class="p">.</span><span class="na">shapes</span><span class="p">(</span><span class="n">model</span><span class="p">).</span><span class="na">forEach</span><span class="p">(</span><span class="n">match</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// do something with each found shape</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>Instead, do this:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// ✅ DO THIS</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// ✅ DO THIS</span>
 
-<span class="n">Selector</span><span class="w"> </span><span class="n">selector</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Selector</span><span class="p">.</span><span class="na">parse</span><span class="p">(</span><span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="s">&quot;[id=%s] -&gt; structure &gt; member[trait|required]&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">shape</span><span class="p">.</span><span class="na">getId</span><span class="p">()));</span><span class="w"></span>
+<span class="n">Selector</span><span class="w"> </span><span class="n">selector</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Selector</span><span class="p">.</span><span class="na">parse</span><span class="p">(</span><span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span>
+<span class="w">    </span><span class="s">&quot;[id=%s] -&gt; structure &gt; member[trait|required]&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">shape</span><span class="p">.</span><span class="na">getId</span><span class="p">()));</span>
 
-<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">var</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getServiceShapes</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">selector</span><span class="p">.</span><span class="na">shapes</span><span class="p">(</span><span class="n">model</span><span class="p">).</span><span class="na">forEach</span><span class="p">(</span><span class="n">match</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="c1">// do something with each found shape</span><span class="w"></span>
-<span class="w">    </span><span class="p">});</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">var</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">getServiceShapes</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">selector</span><span class="p">.</span><span class="na">shapes</span><span class="p">(</span><span class="n">model</span><span class="p">).</span><span class="na">forEach</span><span class="p">(</span><span class="n">match</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// do something with each found shape</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>

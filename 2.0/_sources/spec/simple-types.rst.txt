@@ -144,15 +144,35 @@ A bigDecimal is an arbitrary precision signed decimal number.
 timestamp
 =========
 
-A timestamp represents an instant in time with no UTC offset or timezone.
-The serialization of a timestamp is an implementation detail that is
-determined by a :ref:`protocol <protocolDefinition-trait>` and MUST NOT
-have any effect on the types exposed by tooling to represent a timestamp
-value.
+A timestamp represents an instant in time in the proleptic Gregorian calendar,
+independent of local times or timezones. Timestamps support an allowable date
+range between midnight January 1, 0001 CE to 23:59:59.999 on
+December 31, 9999 CE, with a temporal resolution of 1 millisecond. This
+resolution and range ensures broad support across programming languages and
+guarantees compatibility with :rfc:`3339`.
 
 .. code-block:: smithy
 
     timestamp MyTimestamp
+
+
+Timestamp serialization and deserialization
+-------------------------------------------
+
+The serialization format of a timestamp is an implementation detail that is
+determined by a :ref:`protocol <protocolDefinition-trait>` and or
+:ref:`timestampFormat-trait`. The format of a timestamp MUST NOT have any
+effect on the types exposed by tooling to represent a timestamp value.
+
+Protocols and ``timestampFormat`` traits MAY support temporal resolutions
+other than 1 millisecond. For example, the ``http-date`` timestamp format
+supports only seconds and forbids fractional precision. Modelers need to be
+aware of these limitations when defining timestamps to avoid an unintended
+loss of precision.
+
+The use of timestamps outside the allowable range risk not interoperating
+correctly across Smithy implementations; deserializers that encounter
+timestamps outside the allowable range SHOULD fail to deserialize the value.
 
 
 .. _document:

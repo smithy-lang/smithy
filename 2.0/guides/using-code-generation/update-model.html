@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -342,31 +342,31 @@ that sends JSON in structured payloads over HTTP.</p>
 <p>The protocol trait, <a class="reference internal" href="../../aws/protocols/aws-restjson1-protocol.html#aws-protocols-restjson1-trait"><span class="std std-ref">&#64;aws.protocols#restJson1</span></a>,
 is provided by the <cite>smithy-aws-traits</cite> package, so first add a dependency to
 <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code>:</p>
-<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="p">...</span><span class="w"></span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.34.0&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-traits:1.35.0&quot;</span><span class="p">)</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>Now, import the <a class="reference internal" href="../../aws/protocols/aws-restjson1-protocol.html#aws-protocols-restjson1-trait"><span class="std std-ref">&#64;aws.protocols#restJson1</span></a> trait
 and apply it to the <code class="docutils literal notranslate"><span class="pre">Weather</span></code> service shape:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">example.weather</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">example.weather</span>
 
-<span class="kd">use </span><span class="nc">aws.protocols#restJson1</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.protocols#restJson1</span>
 
-<span class="c">/// Provides weather forecasts.</span><span class="w"></span>
-<span class="nt">@paginated</span>(<span class="w"></span>
-<span class="w">    </span><span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pageSize&quot;</span><span class="w"></span>
-)<span class="w"></span>
-<span class="nt">@restJson1</span><span class="w"></span>
-<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">City</span>]<span class="w"></span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetCurrentTime</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="c">/// Provides weather forecasts.</span>
+<span class="nt">@paginated</span>(
+<span class="w">    </span><span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span>
+<span class="w">    </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span>
+<span class="w">    </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pageSize&quot;</span>
+)
+<span class="nt">@restJson1</span>
+<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">City</span>]
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetCurrentTime</span>]
+}
 </pre></div>
 </div>
 </div>
@@ -377,66 +377,66 @@ to operation shapes. HTTP protocols can use these traits to generate code that f
 HTTP messages properly.</p>
 <p>First, configure the HTTP method, request URI, and the status code of a successful
 response with the <a class="reference internal" href="../../spec/http-bindings.html#http-trait"><span class="std std-ref">&#64;http trait</span></a>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span><span class="w"></span>
-<span class="nt">@http</span>(<span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/cities/{cityId}&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetCity</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCityInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCityOutput</span><span class="w"></span>
-<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">NoSuchResource</span>]<span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
+<span class="nt">@http</span>(<span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/cities/{cityId}&quot;</span>)
+<span class="kd">operation </span><span class="nc">GetCity</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCityInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCityOutput</span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">NoSuchResource</span>]
+}
 
-<span class="nt">@paginated</span>(<span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;items&quot;</span>)<span class="w"></span>
-<span class="nt">@readonly</span><span class="w"></span>
-<span class="nt">@http</span>(<span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/cities&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">ListCities</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCitiesInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCitiesOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@paginated</span>(<span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;items&quot;</span>)
+<span class="nt">@readonly</span>
+<span class="nt">@http</span>(<span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/cities&quot;</span>)
+<span class="kd">operation </span><span class="nc">ListCities</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCitiesInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCitiesOutput</span>
+}
 
-<span class="nt">@readonly</span><span class="w"></span>
-<span class="nt">@http</span>(<span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/currentTime&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetCurrentTime</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentTimeInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentTimeOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@readonly</span>
+<span class="nt">@http</span>(<span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/currentTime&quot;</span>)
+<span class="kd">operation </span><span class="nc">GetCurrentTime</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentTimeInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCurrentTimeOutput</span>
+}
 
-<span class="nt">@readonly</span><span class="w"></span>
-<span class="nt">@http</span>(<span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/forecast/{cityId}&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@readonly</span>
+<span class="nt">@http</span>(<span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/forecast/{cityId}&quot;</span>)
+<span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span>
+}
 </pre></div>
 </div>
 <p>The URI patterns for the <code class="docutils literal notranslate"><span class="pre">GetCity</span></code> and <code class="docutils literal notranslate"><span class="pre">GetForecast</span></code> operations each use an HTTP label to
 bind the <code class="docutils literal notranslate"><span class="pre">cityId</span></code> member of the operation input structure to the request URI. Let's specify
 the members that should be bound to the URIs using the <a class="reference internal" href="../../spec/http-bindings.html#httplabel-trait"><span class="std std-ref">&#64;httpLabel trait</span></a>:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetCityInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="c">// &quot;cityId&quot; provides the identifier for the resource and</span><span class="w"></span>
-<span class="w">    </span><span class="c">// has to be marked as required.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@httpLabel</span><span class="w"></span>
-<span class="w">    </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetCityInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">// &quot;cityId&quot; provides the identifier for the resource and</span>
+<span class="w">    </span><span class="c">// has to be marked as required.</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nt">@httpLabel</span>
+<span class="w">    </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetForecastInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@httpLabel</span><span class="w"></span>
-<span class="w">    </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetForecastInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nt">@httpLabel</span>
+<span class="w">    </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span>
+}
 </pre></div>
 </div>
 <p>For the <code class="docutils literal notranslate"><span class="pre">ListCities</span></code> operation, include the <code class="docutils literal notranslate"><span class="pre">nextToken</span></code> and <code class="docutils literal notranslate"><span class="pre">pageSize</span></code> input members
 in the request URI as query parameters using the <a class="reference internal" href="../../spec/http-bindings.html#httpquery-trait"><span class="std std-ref">&#64;httpQuery trait</span></a>:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">ListCitiesInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">&quot;nextToken&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">&quot;pageSize&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">ListCitiesInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">&quot;nextToken&quot;</span>)
+<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">&quot;pageSize&quot;</span>)
+<span class="w">    </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
+}
 </pre></div>
 </div>
 </div>

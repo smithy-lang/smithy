@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -333,7 +333,7 @@ implementation would neither be returned to the user nor rolled back.</p>
 <div class="section" id="default-validation">
 <h2>Default validation<a class="headerlink" href="#default-validation" title="Permalink to this headline">#</a></h2>
 <p>The server SDK validates inputs by default if every operation in the service has the
-<a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-validation-model/model/smithy.framework.validation.smithy#L9">smithy.framework#ValidationException</a> error associated. This can be accomplished by associating the error directly
+<a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-validation-model/model/smithy.framework.validation.smithy#L9">smithy.framework#ValidationException</a> error associated. This can be accomplished by associating the error directly
 with the <a class="reference internal" href="../spec/service-types.html#service"><span class="std std-ref">service</span></a>, as well. In this mode, the constraint traits built into Smithy are applied to each
 input and an error is generated and automatically returned if any are violated. <code class="docutils literal notranslate"><span class="pre">ValidationException</span></code> contains an
 entry for each constraint violation encountered in the input, along with a pointer to the modeled member that failed
@@ -348,43 +348,43 @@ code unless default validation is disabled.</p>
 <h2>Custom validation<a class="headerlink" href="#custom-validation" title="Permalink to this headline">#</a></h2>
 <p>For advanced use-cases, developers can choose to customize the validation behavior of the server SDK. This requires
 setting <code class="docutils literal notranslate"><span class="pre">disableDefaultValidation</span></code> to <code class="docutils literal notranslate"><span class="pre">true</span></code> in <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code> for the <code class="docutils literal notranslate"><span class="pre">typescript-ssdk-codegen</span></code> plugin:</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;typescript-ssdk-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;package&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@aws-smithy/example&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;packageVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0.0-alpha.1&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;disableDefaultValidation&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;typescript-ssdk-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;package&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@aws-smithy/example&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;packageVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0.0-alpha.1&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;disableDefaultValidation&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>When default validation is disabled, every input is still validated against the model's constraints. Instead of
 short-circuiting and returning an error, however, the server SDK instead requires the developer to decide what to do
 with the validation failures encountered. In order to support this, the server SDK adds a required function parameter
 of type <code class="docutils literal notranslate"><span class="pre">ValidationCustomizer</span></code> to every handler factory:</p>
-<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">getExampleOperationHandler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="nx">Context</span><span class="o">&gt;</span><span class="p">(</span><span class="w"></span>
-<span class="w">  </span><span class="nx">operation</span><span class="o">:</span><span class="w"> </span><span class="kt">Operation</span><span class="o">&lt;</span><span class="nx">ExampleOperationServerInput</span><span class="p">,</span><span class="w"> </span><span class="nx">ExampleOperationServerOutput</span><span class="p">,</span><span class="w"> </span><span class="nx">Context</span><span class="o">&gt;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nx">customizer</span><span class="o">:</span><span class="w"> </span><span class="kt">ValidationCustomizer</span><span class="o">&lt;</span><span class="s2">&quot;ExampleOperation&quot;</span><span class="o">&gt;</span><span class="w"></span>
-<span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">ServiceHandler</span><span class="o">&lt;</span><span class="nx">Context</span><span class="p">,</span><span class="w"> </span><span class="nx">HttpRequest</span><span class="p">,</span><span class="w"> </span><span class="nx">HttpResponse</span><span class="o">&gt;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">getExampleOperationHandler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="nx">Context</span><span class="o">&gt;</span><span class="p">(</span>
+<span class="w">  </span><span class="nx">operation</span><span class="o">:</span><span class="w"> </span><span class="kt">Operation</span><span class="o">&lt;</span><span class="nx">ExampleOperationServerInput</span><span class="p">,</span><span class="w"> </span><span class="nx">ExampleOperationServerOutput</span><span class="p">,</span><span class="w"> </span><span class="nx">Context</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">customizer</span><span class="o">:</span><span class="w"> </span><span class="kt">ValidationCustomizer</span><span class="o">&lt;</span><span class="s2">&quot;ExampleOperation&quot;</span><span class="o">&gt;</span>
+<span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">ServiceHandler</span><span class="o">&lt;</span><span class="nx">Context</span><span class="p">,</span><span class="w"> </span><span class="nx">HttpRequest</span><span class="p">,</span><span class="w"> </span><span class="nx">HttpResponse</span><span class="o">&gt;</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
 </pre></div>
 </div>
 <p>Where <code class="docutils literal notranslate"><span class="pre">ValidationCustomizer</span></code> is an interface built in to <code class="docutils literal notranslate"><span class="pre">&#64;aws-smithy/server-common</span></code> for the purpose of customizing
 validation failures:</p>
-<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="k">export</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">ValidationFailure</span><span class="w"> </span><span class="o">=</span><span class="w"></span>
-<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="nx">EnumValidationFailure</span><span class="w"></span>
-<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="nx">LengthValidationFailure</span><span class="w"></span>
-<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="nx">PatternValidationFailure</span><span class="w"></span>
-<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="nx">RangeValidationFailure</span><span class="w"></span>
-<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="nx">RequiredValidationFailure</span><span class="w"></span>
-<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="nx">UniqueItemsValidationFailure</span><span class="p">;</span><span class="w"></span>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="k">export</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">ValidationFailure</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="nx">EnumValidationFailure</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="nx">LengthValidationFailure</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="nx">PatternValidationFailure</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="nx">RangeValidationFailure</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="nx">RequiredValidationFailure</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="nx">UniqueItemsValidationFailure</span><span class="p">;</span>
 
-<span class="k">export</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="nx">ValidationContext</span><span class="o">&lt;</span><span class="nx">O</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="kt">string</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="nx">operation</span><span class="o">:</span><span class="w"> </span><span class="kt">O</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="k">export</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="nx">ValidationContext</span><span class="o">&lt;</span><span class="nx">O</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="kt">string</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">operation</span><span class="o">:</span><span class="w"> </span><span class="kt">O</span><span class="p">;</span>
+<span class="p">}</span>
 
-<span class="k">export</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">ValidationCustomizer</span><span class="o">&lt;</span><span class="nx">O</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="kt">string</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="w"></span>
-<span class="w">  </span><span class="nx">context</span><span class="o">:</span><span class="w"> </span><span class="kt">ValidationContext</span><span class="o">&lt;</span><span class="nx">O</span><span class="o">&gt;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nx">failures</span><span class="o">:</span><span class="w"> </span><span class="kt">ValidationFailure</span><span class="p">[]</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">ServiceException</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">;</span><span class="w"></span>
+<span class="k">export</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">ValidationCustomizer</span><span class="o">&lt;</span><span class="nx">O</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="kt">string</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="nx">context</span><span class="o">:</span><span class="w"> </span><span class="kt">ValidationContext</span><span class="o">&lt;</span><span class="nx">O</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">failures</span><span class="o">:</span><span class="w"> </span><span class="kt">ValidationFailure</span><span class="p">[]</span>
+<span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">ServiceException</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>If the developer-supplied <code class="docutils literal notranslate"><span class="pre">ValidationCustomizer</span></code> returns <code class="docutils literal notranslate"><span class="pre">undefined</span></code>, then the handler will continue executing the
@@ -400,36 +400,36 @@ operation. If you return a code-generated error that is not associated with the 
 will render an <a class="reference internal" href="error-handling.html#ts-ssdk-internal-failure-exception"><span class="std std-ref">InternalFailureException</span></a> instead.</p>
 </div>
 <p>For example, consider a service that, for backwards compatibility purposes, needs to return a <code class="docutils literal notranslate"><span class="pre">BadInput</span></code> error:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@restJson1</span><span class="w"></span>
-<span class="kd">service </span><span class="nc">WeatherService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-05-10&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetForecast</span>]<span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">BadInput</span>]<span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@restJson1</span>
+<span class="kd">service </span><span class="nc">WeatherService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-05-10&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetForecast</span>]<span class="p">,</span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">BadInput</span>]
+}
 
-<span class="nt">@httpError</span>(<span class="m">400</span>)<span class="w"></span>
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">BadInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@httpError</span>(<span class="m">400</span>)
+<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="kd">structure </span><span class="nc">BadInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 </pre></div>
 </div>
 <p>After disabling default validation in <code class="docutils literal notranslate"><span class="pre">smithy-build.json</span></code>:</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;typescript-ssdk-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;package&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@example/weather-service&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;packageVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0.0-alpha.1&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;disableDefaultValidation&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;typescript-ssdk-codegen&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;package&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;@example/weather-service&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;packageVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0.0-alpha.1&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;disableDefaultValidation&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>the developer can still use Smithy's built in validation, but return <code class="docutils literal notranslate"><span class="pre">BadInput</span></code> instead of <code class="docutils literal notranslate"><span class="pre">ValidationException</span></code>:</p>
-<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">handler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">getGetForecastHandler</span><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">input</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">getForecast</span><span class="p">(</span><span class="nx">input</span><span class="p">),</span><span class="w"></span>
-<span class="w">    </span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">failures</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">BadInputError</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">failures</span><span class="p">.</span><span class="nx">length</span><span class="si">}</span><span class="sb"> bad inputs detected.`</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">};</span><span class="w"></span>
-<span class="p">});</span><span class="w"></span>
+<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="nx">handler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">getGetForecastHandler</span><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">input</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">getForecast</span><span class="p">(</span><span class="nx">input</span><span class="p">),</span>
+<span class="w">    </span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">failures</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">BadInputError</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">failures</span><span class="p">.</span><span class="nx">length</span><span class="si">}</span><span class="sb"> bad inputs detected.`</span><span class="p">);</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="p">});</span>
 </pre></div>
 </div>
 </div>

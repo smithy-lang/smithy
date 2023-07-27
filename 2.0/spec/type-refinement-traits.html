@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -343,27 +343,27 @@ type of a shape.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait assigns a default value to a structure member. The
 following example defines a structure with a &quot;language&quot; member that has a
 default value:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Message</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">title</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Message</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">title</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="py">language</span><span class="p">:</span><span class="w"> </span><span class="vc">Language</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;en&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="py">language</span><span class="p">:</span><span class="w"> </span><span class="vc">Language</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;en&quot;</span>
+}
 
-<span class="kd">enum </span><span class="nc">Language</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="vc">EN</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;en&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">enum </span><span class="nc">Language</span><span class="w"> </span>{
+<span class="w">    </span><span class="vc">EN</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;en&quot;</span>
+}
 </pre></div>
 </div>
 <p>The above example uses syntactic sugar to apply the <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait. The
 <code class="docutils literal notranslate"><span class="pre">Message</span></code> definition is exactly equivalent to:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Message</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">title</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Message</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">title</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@default</span>(<span class="s2">&quot;en&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">language</span><span class="p">:</span><span class="w"> </span><span class="vc">Language</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@default</span>(<span class="s2">&quot;en&quot;</span>)
+<span class="w">    </span><span class="py">language</span><span class="p">:</span><span class="w"> </span><span class="vc">Language</span>
+}
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait can be added to root-level simple types, lists, or
@@ -371,23 +371,23 @@ maps. This can serve as a kind of template to enforce default values across
 structure members in a model. Any structure member that targets a shape
 marked with <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> MUST also add a matching <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait to the
 member.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@default</span>(<span class="m">0</span>)<span class="w"></span>
-<span class="kd">integer </span><span class="nc">ZeroValueInteger</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@default</span>(<span class="m">0</span>)
+<span class="kd">integer </span><span class="nc">ZeroValueInteger</span>
 
-<span class="kd">structure </span><span class="nc">Message</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">zeroValueInteger</span><span class="p">:</span><span class="w"> </span><span class="vc">ZeroValueInteger</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="c">// must be repeated and match the target.</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">Message</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">zeroValueInteger</span><span class="p">:</span><span class="w"> </span><span class="vc">ZeroValueInteger</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="c">// must be repeated and match the target.</span>
+}
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait on a structure member can be set to <code class="docutils literal notranslate"><span class="pre">null</span></code> to
 explicitly indicate that the member has no default value or to override the default
 value requirement of a targeted shape.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@default</span>(<span class="m">0</span>)<span class="w"></span>
-<span class="kd">integer </span><span class="nc">ZeroValueInteger</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@default</span>(<span class="m">0</span>)
+<span class="kd">integer </span><span class="nc">ZeroValueInteger</span>
 
-<span class="kd">structure </span><span class="nc">Message</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">zeroValueInteger</span><span class="p">:</span><span class="w"> </span><span class="vc">ZeroValueInteger</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="c">// forces the member to be optional</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">Message</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">zeroValueInteger</span><span class="p">:</span><span class="w"> </span><span class="vc">ZeroValueInteger</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="c">// forces the member to be optional</span>
+}
 </pre></div>
 </div>
 <div class="admonition note">
@@ -491,10 +491,10 @@ be present.</dd>
 </dd>
 </dl>
 <p>The following example defines a structure with a required member.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">FooString</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">FooString</span>
+}
 </pre></div>
 </div>
 <div class="admonition important">
@@ -530,27 +530,27 @@ the <code class="docutils literal notranslate"><span class="pre">&#64;default</s
 to function only as a server-side concern.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">&#64;required</span></code> trait on <code class="docutils literal notranslate"><span class="pre">foo</span></code> in the following structure is considered a
 validation constraint rather than a type refinement trait:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Foo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@clientOptional</span><span class="w"></span>
-<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Foo</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nt">@clientOptional</span>
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>Structure members in Smithy are automatically considered optional. For example,
 the following structure:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Foo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Foo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p>Is equivalent to the following structure:</p>
-<div class="last highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Foo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@clientOptional</span><span class="w"></span>
-<span class="w">    </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<div class="last highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Foo</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@clientOptional</span>
+<span class="w">    </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 </div>
@@ -564,31 +564,31 @@ shapes, an integer value must be used.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:is(enum,</span> <span class="pre">intEnum)</span> <span class="pre">&gt;</span> <span class="pre">member</span></code></dd>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code> or <code class="docutils literal notranslate"><span class="pre">integer</span></code></dd>
 </dl>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">enum </span><span class="nc">Enum</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@enumValue</span>(<span class="s2">&quot;foo&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="vc">FOO</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">enum </span><span class="nc">Enum</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@enumValue</span>(<span class="s2">&quot;foo&quot;</span>)
+<span class="w">    </span><span class="vc">FOO</span>
+}
 
-<span class="kd">intEnum </span><span class="nc">IntEnum</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@enumValue</span>(<span class="m">1</span>)<span class="w"></span>
-<span class="w">    </span><span class="vc">FOO</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">intEnum </span><span class="nc">IntEnum</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@enumValue</span>(<span class="m">1</span>)
+<span class="w">    </span><span class="vc">FOO</span>
+}
 </pre></div>
 </div>
 <p>The following enum definition uses syntactic sugar that is exactly equivalent:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">enum </span><span class="nc">Enum</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="vc">FOO</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">enum </span><span class="nc">Enum</span><span class="w"> </span>{
+<span class="w">    </span><span class="vc">FOO</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span>
+}
 
-<span class="kd">intEnum </span><span class="nc">IntEnum</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="vc">FOO</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">1</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">intEnum </span><span class="nc">IntEnum</span><span class="w"> </span>{
+<span class="w">    </span><span class="vc">FOO</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">1</span>
+}
 </pre></div>
 </div>
 </div>
@@ -604,24 +604,24 @@ client or server is at fault for the error.</dd>
 <dt>Conflicts with</dt><dd><a class="reference internal" href="model.html#trait-shapes"><span class="std std-ref">trait</span></a></dd>
 </dl>
 <p>The following structure defines a throttling error.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">ThrottlingError</span><span class="w"> </span>{}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="kd">structure </span><span class="nc">ThrottlingError</span><span class="w"> </span>{}
 </pre></div>
 </div>
 <p>Note that this structure is lacking the <code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait that generically
 lets clients know that the error is retryable.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
-<span class="nt">@retryable</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">ThrottlingError</span><span class="w"> </span>{}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nt">@retryable</span>
+<span class="kd">structure </span><span class="nc">ThrottlingError</span><span class="w"> </span>{}
 </pre></div>
 </div>
 <p>When using an HTTP-based protocol, it is recommended to add an
 <a class="reference internal" href="http-bindings.html#httperror-trait"><span class="std std-ref">httpError trait</span></a> to use an appropriate HTTP status code with
 the error.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
-<span class="nt">@retryable</span><span class="w"></span>
-<span class="nt">@httpError</span>(<span class="m">429</span>)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">ThrottlingError</span><span class="w"> </span>{}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nt">@retryable</span>
+<span class="nt">@httpError</span>(<span class="m">429</span>)
+<span class="kd">structure </span><span class="nc">ThrottlingError</span><span class="w"> </span>{}
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">message</span></code> member of an error structure is special-cased. It contains
@@ -629,13 +629,13 @@ the human-readable message that describes the error. If the <code class="docutil
 is not defined in the structure, code generated for the error may not provide
 an idiomatic way to access the error message (e.g., an exception message
 in Java).</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
-<span class="nt">@retryable</span><span class="w"></span>
-<span class="nt">@httpError</span>(<span class="m">429</span>)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">ThrottlingError</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nt">@retryable</span>
+<span class="nt">@httpError</span>(<span class="m">429</span>)
+<span class="kd">structure </span><span class="nc">ThrottlingError</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 </div>
@@ -658,11 +658,11 @@ members.</dd>
 </dd>
 </dl>
 <p>The following example defines an <code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> structure:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">SomeOperationInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">SomeOperationInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p class="rubric"><code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> structure constraints</p>
@@ -718,19 +718,19 @@ trait has no effect on map keys; map keys are never allowed to be <code class="d
 </dl>
 <p>The following example defines a <a class="reference internal" href="aggregate-types.html#list"><span class="std std-ref">list</span></a> shape that MAY contain
 <code class="docutils literal notranslate"><span class="pre">null</span></code> values:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@sparse</span><span class="w"></span>
-<span class="kd">list </span><span class="nc">SparseList</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@sparse</span>
+<span class="kd">list </span><span class="nc">SparseList</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p>The following example defines a <a class="reference internal" href="aggregate-types.html#map"><span class="std std-ref">map</span></a> shape that MAY contain
 <code class="docutils literal notranslate"><span class="pre">null</span></code> values:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@sparse</span><span class="w"></span>
-<span class="kd">map </span><span class="nc">SparseMap</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@sparse</span>
+<span class="kd">map </span><span class="nc">SparseMap</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 </div>
@@ -773,15 +773,15 @@ property and does not need to be explicitly added.</p>
 </tbody>
 </table>
 </div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@mixin</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">BaseUser</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@mixin</span>
+<span class="kd">structure </span><span class="nc">BaseUser</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="kd">structure </span><span class="nc">UserDetails</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">BaseUser</span>]<span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">alias</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">    </span><span class="py">email</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">UserDetails</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">BaseUser</span>]<span class="w"> </span>{
+<span class="w">    </span><span class="py">alias</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span><span class="py">email</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <div class="admonition seealso">

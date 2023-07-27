@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -332,12 +332,12 @@ suppressing, and modifying Smithy Validators.</p>
 <p>Use the <a class="reference internal" href="../spec/model-validation.html#suppress-trait"><span class="std std-ref">&#64;suppress</span></a> trait to suppress a validator on
 a single shape or member. The example below shows the use of the suppress
 trait to suppress the <code class="docutils literal notranslate"><span class="pre">Foo</span></code> and <code class="docutils literal notranslate"><span class="pre">Bar</span></code> validators.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">// This trait cannot pass Foo or Bar validators</span><span class="w"></span>
-<span class="nt">@suppress</span>([<span class="s2">&quot;Foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Bar&quot;</span>])<span class="w"></span>
-<span class="kd">structure </span><span class="nc">exampleStructure</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">fieldA</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">fieldB</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="c">// This trait cannot pass Foo or Bar validators</span>
+<span class="nt">@suppress</span>([<span class="s2">&quot;Foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Bar&quot;</span>])
+<span class="kd">structure </span><span class="nc">exampleStructure</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">fieldA</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span><span class="py">fieldB</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
+}
 </pre></div>
 </div>
 <div class="admonition tip">
@@ -352,13 +352,13 @@ trait to explain the reason for the suppression.</p>
 single shape. The following example demonstrates how to suppress the
 <code class="docutils literal notranslate"><span class="pre">ShouldHaveUsedTimestamp</span></code> validator for all shapes within the <code class="docutils literal notranslate"><span class="pre">com.example</span>
 <span class="pre">.weather</span></code> namespace.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata </span><span class="nc">suppressions </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ShouldHaveUsedTimestamp&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">namespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.example.weather&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">reason</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ignore `ShouldHaveUsedTimestamp` validator for `com.example.weather` namespace.&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
-]<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata </span><span class="nc">suppressions </span><span class="nd">=</span><span class="w"> </span>[
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ShouldHaveUsedTimestamp&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">namespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.example.weather&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">reason</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ignore `ShouldHaveUsedTimestamp` validator for `com.example.weather` namespace.&quot;</span>
+<span class="w">    </span>}<span class="p">,</span>
+]
 </pre></div>
 </div>
 </div>
@@ -369,10 +369,10 @@ selector. The following example demonstrates how to have the
 <code class="docutils literal notranslate"><span class="pre">MissingPaginatedTrait</span></code> built-in validator ignore any operations with the
 <code class="docutils literal notranslate"><span class="pre">&#64;internal</span></code> trait. The <code class="docutils literal notranslate"><span class="pre">MissingPaginatedTrait</span></code> will run for only shapes
 that are not operations with the <code class="docutils literal notranslate"><span class="pre">&#64;internal</span></code> trait.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingPaginatedTrait&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:not(operation[trait|internal])&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingPaginatedTrait&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:not(operation[trait|internal])&quot;</span>
+}
 </pre></div>
 </div>
 </div>
@@ -383,10 +383,10 @@ the root smithy namespace. This can be useful when you want a validator to
 ignore imported shapes from another smithy package. The following example
 shows how to have the <code class="docutils literal notranslate"><span class="pre">MissingPaginatedTrait</span></code> built-in validator ignore any
 shapes in the <code class="docutils literal notranslate"><span class="pre">smithy.*</span></code> or <code class="docutils literal notranslate"><span class="pre">com.example.*</span></code> namespaces.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingPaginatedTrait&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:not([id|namespace ^= &#39;com.example&#39;, &#39;smithy.&#39;])&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingPaginatedTrait&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:not([id|namespace ^= &#39;com.example&#39;, &#39;smithy.&#39;])&quot;</span>
+}
 </pre></div>
 </div>
 </div>
@@ -396,10 +396,10 @@ shapes in the <code class="docutils literal notranslate"><span class="pre">smith
 id. This example uses selectors to ignore a validator for a shape with a
 specific name. In this case the <code class="docutils literal notranslate"><span class="pre">MissingPaginatedTrait</span></code> built-in validator
 is set to ignore the shape with the name &quot;IgnorableShape&quot;.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingPaginatedTrait&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:not([id|name = &#39;IgnorableShape&#39; i])&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingPaginatedTrait&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:not([id|name = &#39;IgnorableShape&#39; i])&quot;</span>
+}
 </pre></div>
 </div>
 </div>
@@ -409,8 +409,8 @@ is set to ignore the shape with the name &quot;IgnorableShape&quot;.</p>
 following example will cause validation events emitted by the
 <code class="docutils literal notranslate"><span class="pre">MissingPaginatedTrait</span></code> validator to be emitted at a <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> level
 instead of at the default <code class="docutils literal notranslate"><span class="pre">ERROR</span></code> severity.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingPaginatedTrait&quot;</span><span class="p">,</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingPaginatedTrait&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;WARNING&quot;&quot;</span>
 <span class="s2">}</span>
 </pre></div>
@@ -421,17 +421,17 @@ instead of at the default <code class="docutils literal notranslate"><span class
 <p>You may want to enforce a convention of all operation inputs ending with a
 specific string such as &quot;Request&quot;. The following example creates a custom
 linter that checks that all operation input names end with &quot;Request&quot;.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationInputName&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationInputName&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">            `@{id}` is bound as an input of `@{var|operation|id}` </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">            `@{id}` is bound as an input of `@{var|operation|id}` </span><span class="se">\</span>
 <span class="s2">            but does not have a name ending with &#39;Request&#39;.</span>
-<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;$operation(*) -[input]-&gt; :not([id|name$=Request])&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;$operation(*) -[input]-&gt; :not([id|name$=Request])&quot;</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 </div>
@@ -440,17 +440,17 @@ linter that checks that all operation input names end with &quot;Request&quot;.<
 <p>You may want to enforce a convention of all operation outputs ending with a
 specific string such as &quot;Response&quot;. The following example linter checks that
 all operation output names end with &quot;Response&quot;.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationOutputName&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationOutputName&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">            `@{id}` is bound as an output of `@{var|operation|id}` </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">            `@{id}` is bound as an output of `@{var|operation|id}` </span><span class="se">\</span>
 <span class="s2">            but does not have a name ending with &#39;Response&#39;</span>
-<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;$operation(*) -[output]-&gt; :not([id|name$=Response])&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;$operation(*) -[output]-&gt; :not([id|name$=Response])&quot;</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 </div>
@@ -458,17 +458,17 @@ all operation output names end with &quot;Response&quot;.</p>
 <h2>Common suffix on all error shapes<a class="headerlink" href="#common-suffix-on-all-error-shapes" title="Permalink to this headline">#</a></h2>
 <p>The following example creates a linter that checks that all error shapes end
 with &quot;Exception&quot;.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationErrorName&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationErrorName&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">            `@{id}` is bound as an error but does not have a name ending with &#39;Exception&#39;. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">            `@{id}` is bound as an error but does not have a name ending with &#39;Exception&#39;. </span><span class="se">\</span>
 <span class="s2">            Perhaps you should rename this shape to `@{id|name}Exception`.</span>
-<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation -[error]-&gt; :not([id|name$=Exception])&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation -[error]-&gt; :not([id|name$=Exception])&quot;</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 </div>
@@ -477,14 +477,14 @@ with &quot;Exception&quot;.</p>
 <p>This example checks that no member names begin with &quot;is&quot; or &quot;Is&quot;. This
 particular case is useful to prevent problems when using libraries such as
 Jackson which changes behavior when object fields have &quot;is&quot; prefixes.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ForbiddenIsPrefix&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This member starts with forbidden prefix &#39;is&#39;&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[id|member ^=&#39;is&#39;,&#39;Is&#39;]&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ForbiddenIsPrefix&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This member starts with forbidden prefix &#39;is&#39;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[id|member ^=&#39;is&#39;,&#39;Is&#39;]&quot;</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 </div>
@@ -496,54 +496,54 @@ validator checks that the range trait exists on the shape, while the other
 two validators check that both the maximum and minimum values of the range
 are both filled out. This validation is split across three separate linters
 to have clear, actionable error messages.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;RawIntegerWithoutRange&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;RawIntegerWithoutRange&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        This number shape in member `@{id}` of the operation input `@{var|structure}` </span><span class="se">\</span><span class="s2"></span>
-<span class="s2">        does not have a range constraint on both its minimum or maximum value. </span><span class="se">\</span><span class="s2"></span>
-<span class="s2">        Add the `@@range` trait to this integer shape and provide both minimum and maximum values. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        This number shape in member `@{id}` of the operation input `@{var|structure}` </span><span class="se">\</span>
+<span class="s2">        does not have a range constraint on both its minimum or maximum value. </span><span class="se">\</span>
+<span class="s2">        Add the `@@range` trait to this integer shape and provide both minimum and maximum values. </span><span class="se">\</span>
 <span class="s2">        For example, `@@range(min: 1, max: 500)`.</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
 <span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">            operation -[input]-&gt; $structure(*) &gt; member</span>
 <span class="s2">            :test(&gt; number:not([trait|range|min]):not([trait|range|max]))</span>
-<span class="s2">            &quot;&quot;&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="p">,</span><span class="w"></span>
-{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;RawIntegerWithoutRangeMin&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="s2">            &quot;&quot;&quot;</span>
+<span class="w">    </span>}
+}<span class="p">,</span>
+{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;RawIntegerWithoutRangeMin&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        This number shape in member `@{id}` of the operation input `@{var|structure}` </span><span class="se">\</span><span class="s2"></span>
-<span class="s2">        does not have a maximum range constraint. </span><span class="se">\</span><span class="s2"></span>
-<span class="s2">        Add a minimum value to the `@@range` trait on this shape. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        This number shape in member `@{id}` of the operation input `@{var|structure}` </span><span class="se">\</span>
+<span class="s2">        does not have a maximum range constraint. </span><span class="se">\</span>
+<span class="s2">        Add a minimum value to the `@@range` trait on this shape. </span><span class="se">\</span>
 <span class="s2">        For example, `@@range(&gt;&gt;&gt; min: 1 &lt;&lt;&lt;, max: 500)`.</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
 <span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">            operation -[input]-&gt; $structure(*) &gt; member</span>
 <span class="s2">            :test(&gt; number[trait|range]:not([trait|range|min]))</span>
-<span class="s2">            &quot;&quot;&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="p">,</span><span class="w"></span>
-{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;RawIntegerWithoutRangeMax&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="s2">            &quot;&quot;&quot;</span>
+<span class="w">    </span>}
+}<span class="p">,</span>
+{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;RawIntegerWithoutRangeMax&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        This number shape in member `@{id}` of the operation input `@{var|structure}` </span><span class="se">\</span><span class="s2"></span>
-<span class="s2">        does not have a maximum range constraint. </span><span class="se">\</span><span class="s2"></span>
-<span class="s2">        Add a maximum value to the `@@range` trait on this shape. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        This number shape in member `@{id}` of the operation input `@{var|structure}` </span><span class="se">\</span>
+<span class="s2">        does not have a maximum range constraint. </span><span class="se">\</span>
+<span class="s2">        Add a maximum value to the `@@range` trait on this shape. </span><span class="se">\</span>
 <span class="s2">        For example, `@@range(min: 1, &gt;&gt;&gt; max: 500 &lt;&lt;&lt;)`.</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
 <span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">            operation -[input]-&gt; $structure(*) &gt; member</span>
 <span class="s2">            :test(&gt; number[trait|range]:not([trait|range|max]))</span>
-<span class="s2">            &quot;&quot;&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="s2">            &quot;&quot;&quot;</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 </div>
@@ -553,41 +553,41 @@ to have clear, actionable error messages.</p>
 namespace to apply the <code class="docutils literal notranslate"><span class="pre">&#64;length</span></code> constraint trait with both a
 minimum and maximum value. This validation is split across three separate
 linters to have clear, actionable error messages.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ListWithoutLengthConstraint&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ListWithoutLengthConstraint&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        List shape `@{id}` does not have a length constraint specified. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        List shape `@{id}` does not have a length constraint specified. </span><span class="se">\</span>
 <span class="s2">        Add the `@@length` trait to the list shape. For example, `@@length(min: 1, max: 2)`.</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;list:not([trait|length])&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="p">,</span><span class="w"></span>
-{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ListWithoutLengthConstraintMinimum&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;list:not([trait|length])&quot;</span>
+<span class="w">    </span>}
+}<span class="p">,</span>
+{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ListWithoutLengthConstraintMinimum&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        List shape `@{id}` does not have a minimum length specified. </span><span class="se">\</span><span class="s2"></span>
-<span class="s2">        Add a `min` value to the `@@length` trait on the list shape. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        List shape `@{id}` does not have a minimum length specified. </span><span class="se">\</span>
+<span class="s2">        Add a `min` value to the `@@length` trait on the list shape. </span><span class="se">\</span>
 <span class="s2">        For example, `@@length(&gt;&gt;&gt; min: 1 &lt;&lt;&lt;, max: 2)`.</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;list[trait|length]:not([trait|length|min])&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="p">,</span><span class="w"></span>
-{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ListWithoutLengthConstraintMaximum&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;list[trait|length]:not([trait|length|min])&quot;</span>
+<span class="w">    </span>}
+}<span class="p">,</span>
+{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ListWithoutLengthConstraintMaximum&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        List shape `@{id}` does not have a maximum length specified. </span><span class="se">\</span><span class="s2"></span>
-<span class="s2">        Add a `max` value to the `@@length` trait on the list shape. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        List shape `@{id}` does not have a maximum length specified. </span><span class="se">\</span>
+<span class="s2">        Add a `max` value to the `@@length` trait on the list shape. </span><span class="se">\</span>
 <span class="s2">        For example, `@@length(min: 1, &gt;&gt;&gt; max: 2 &lt;&lt;&lt;)`.</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;list[trait|length]:not([trait|length|max])&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;list[trait|length]:not([trait|length|max])&quot;</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 </div>
@@ -595,23 +595,23 @@ linters to have clear, actionable error messages.</p>
 <h2>Require strings to have a <code class="docutils literal notranslate"><span class="pre">&#64;pattern</span></code> constraint<a class="headerlink" href="#require-strings-to-have-a-pattern-constraint" title="Permalink to this headline">#</a></h2>
 <p>This example shows how to require all integers used in an operation input to
 have a <code class="docutils literal notranslate"><span class="pre">&#64;pattern</span></code> constraint trait.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;RawStringWithoutPattern&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">namespace</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;com.example.weather&quot;</span>]<span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;RawStringWithoutPattern&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">namespace</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;com.example.weather&quot;</span>]<span class="p">,</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        This String shape in member `@{id}` of the operation input `@{var|structure}` </span><span class="se">\</span><span class="s2"></span>
-<span class="s2">        does not have a pattern constraint. </span><span class="se">\</span><span class="s2"></span>
-<span class="s2">        Add the `@@pattern` trait to this string shape and provide a regex pattern. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        This String shape in member `@{id}` of the operation input `@{var|structure}` </span><span class="se">\</span>
+<span class="s2">        does not have a pattern constraint. </span><span class="se">\</span>
+<span class="s2">        Add the `@@pattern` trait to this string shape and provide a regex pattern. </span><span class="se">\</span>
 <span class="s2">        For example, `@@pattern(&quot;^[</span><span class="se">\\</span><span class="s2">S</span><span class="se">\\</span><span class="s2">s]+$&quot;)`.</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
 <span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">            operation -[input]-&gt; $structure(*) &gt; member</span>
 <span class="s2">            :test(&gt; string:not([trait|enum]):not([trait|pattern]))</span>
-<span class="s2">            &quot;&quot;&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="s2">            &quot;&quot;&quot;</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 </div>
@@ -620,18 +620,18 @@ have a <code class="docutils literal notranslate"><span class="pre">&#64;pattern
 <p>The following example shows how to enforce that all uses of the
 <a class="reference internal" href="../spec/documentation-traits.html#externaldocumentation-trait"><span class="std std-ref">&#64;externaldocumentation</span></a> include a
 <code class="docutils literal notranslate"><span class="pre">Homepage</span></code> entry.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ExternalDocumentationMustIncludeHomePageValue&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ExternalDocumentationMustIncludeHomePageValue&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        @{id} has the `@@externalDocumentation` trait applied, but does not define a `&quot;HomePage&quot;` entry. </span><span class="se">\</span><span class="s2"></span>
-<span class="s2">        The following keys `@{trait|externalDocumentation|(keys)}` were defined for `@@externalDocumentation`, </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        @{id} has the `@@externalDocumentation` trait applied, but does not define a `&quot;HomePage&quot;` entry. </span><span class="se">\</span>
+<span class="s2">        The following keys `@{trait|externalDocumentation|(keys)}` were defined for `@@externalDocumentation`, </span><span class="se">\</span>
 <span class="s2">        but expected `&quot;HomePage&quot;` key.</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|externalDocumentation]:not([trait|externalDocumentation|(keys) = Homepage])&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|externalDocumentation]:not([trait|externalDocumentation|(keys) = Homepage])&quot;</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 </div>
@@ -639,18 +639,18 @@ have a <code class="docutils literal notranslate"><span class="pre">&#64;pattern
 <h2>Limit shape name length<a class="headerlink" href="#limit-shape-name-length" title="Permalink to this headline">#</a></h2>
 <p>The following example limits the length of shape names within the <code class="docutils literal notranslate"><span class="pre">com.example.weather</span></code>
 namespace to between 3 and 80 characters.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ShapeNameLength&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">namespace</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;com.example.weather&quot;</span>]<span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ShapeNameLength&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">namespace</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;com.example.weather&quot;</span>]<span class="p">,</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        Shape name @{id|name} is @{id|name|(length)} characters long.</span>
 <span class="s2">        Shape names must be less than 60 characters and longer than 3 characters.</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:not([@id|name: @{(length)} &lt;= 60 &amp;&amp; @{(length)} &gt;= 3])&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:not([@id|name: @{(length)} &lt;= 60 &amp;&amp; @{(length)} &gt;= 3])&quot;</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 </div>
@@ -658,54 +658,54 @@ namespace to between 3 and 80 characters.</p>
 <h2>Limit nesting depth of input and output shape members<a class="headerlink" href="#limit-nesting-depth-of-input-and-output-shape-members" title="Permalink to this headline">#</a></h2>
 <p>This example checks that resources are not deeply nested. In this case, it
 will check that the nesting depth is less than 4.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LimitNestingDepthToFourLayers&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="s2">&quot;configuration&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LimitNestingDepthToFourLayers&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;configuration&quot;</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">            `@{id}`, bound to operation `@{var|operation}` has a nesting depth &gt;4. This is typically not advised.</span>
 <span class="s2">            You should look for ways to reduce the nesting depth of this shape.</span>
-<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span>
 <span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">            $operation(*) -[input, output, error]-&gt;</span>
 <span class="s2">            :test(&gt; member &gt; * &gt; member &gt; * &gt; member &gt; * member &gt; *)</span>
-<span class="s2">            &quot;&quot;&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="s2">            &quot;&quot;&quot;</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 </div>
 <div class="section" id="operations-should-have-documentation">
 <h2>Operations should have documentation<a class="headerlink" href="#operations-should-have-documentation" title="Permalink to this headline">#</a></h2>
 <p>This example checks for documentation on all operation shapes.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingOperationDocumentation&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingOperationDocumentation&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">            Operation `@{id|name}` is missing documentation. Add the `@@documentation` </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">            Operation `@{id|name}` is missing documentation. Add the `@@documentation` </span><span class="se">\</span>
 <span class="s2">            trait to this operation.</span>
-<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation :not([trait|documentation])&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation :not([trait|documentation])&quot;</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 </div>
 <div class="section" id="examples-on-all-operations">
 <h2>Examples on all operations<a class="headerlink" href="#examples-on-all-operations" title="Permalink to this headline">#</a></h2>
 <p>This example checks for examples on all operation shapes.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingOperationExamples&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingOperationExamples&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">            Operation `@{id|name}` is missing examples. Add the `@@examples` </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">            Operation `@{id|name}` is missing examples. Add the `@@examples` </span><span class="se">\</span>
 <span class="s2">            trait to this operation.</span>
-<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation :not([trait|examples])&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation :not([trait|examples])&quot;</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 </div>
@@ -713,17 +713,17 @@ will check that the nesting depth is less than 4.</p>
 <h2>Operations should have common exception<a class="headerlink" href="#operations-should-have-common-exception" title="Permalink to this headline">#</a></h2>
 <p>The following example shows how to check that all operations throw a common
 exception.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationErrorsIncludesCommonException&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationErrorsIncludesCommonException&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        Expected error `CommonException` is not bound to operation @{id|name} . Add </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        Expected error `CommonException` is not bound to operation @{id|name} . Add </span><span class="se">\</span>
 <span class="s2">        `CommonException` to the list of errors bound to this operation.</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation :not(:test(-[error]-&gt; [id|name=CommonException]))&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="s2">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation :not(:test(-[error]-&gt; [id|name=CommonException]))&quot;</span><span class="p">,</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 <div class="admonition tip">
@@ -737,18 +737,18 @@ error. See <a class="reference internal" href="#operations-should-use-common-mix
 <span id="id1"></span><h2>Operations should use common mixin<a class="headerlink" href="#operations-should-use-common-mixin" title="Permalink to this headline">#</a></h2>
 <p>The following example checks that an operation uses a common <a class="reference internal" href="../spec/type-refinement-traits.html#mixin-trait"><span class="std std-ref">mixin</span></a>, <code class="docutils literal notranslate"><span class="pre">CommonMixin</span></code>. This is useful when you want operations to
 have a common set of errors added via a common mixin.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationShouldUseCommonMixin&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">namespace</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;com.example.weather&quot;</span>]<span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationShouldUseCommonMixin&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">namespace</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;com.example.weather&quot;</span>]<span class="p">,</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        Operation `@{id|name}` does not use expected mixin `CommonMixin`. Add the </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        Operation `@{id|name}` does not use expected mixin `CommonMixin`. Add the </span><span class="se">\</span>
 <span class="s2">        mixin to this operation. For example, `operation @{id|name} with [ CommonMixin ]`.</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation :not(-[mixin]-&gt; [id = CommonMixin])&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="s2">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation :not(-[mixin]-&gt; [id = CommonMixin])&quot;</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 </div>
@@ -758,20 +758,20 @@ have a common set of errors added via a common mixin.</p>
 within a smithy model. In this case we want to prevent our models from using
 the word &quot;spork&quot; in any member, structure, resource, operation, or service
 name or within any trait or comment.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DontUseInternalNamesValidator&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ReservedWords&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">reserved</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">            </span>{<span class="w"></span>
-<span class="w">                </span><span class="py">words</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;*spork*&quot;</span>]<span class="p">,</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DontUseInternalNamesValidator&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ReservedWords&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">reserved</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">            </span>{
+<span class="w">                </span><span class="py">words</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;*spork*&quot;</span>]<span class="p">,</span>
 <span class="w">                </span><span class="py">reason</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">                Sporks are a secret type of silverware. We can&#39;t let the rest of the world know about them.</span>
-<span class="s2">                &quot;&quot;&quot;</span><span class="w"></span>
-<span class="w">            </span>}<span class="w"></span>
-<span class="w">        </span>]<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="s2">                &quot;&quot;&quot;</span>
+<span class="w">            </span>}
+<span class="w">        </span>]
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 </div>
@@ -781,15 +781,15 @@ name or within any trait or comment.</p>
 of a trait is found in a model. The following example checks that at least
 one usage of the <code class="docutils literal notranslate"><span class="pre">&#64;length</span></code> trait is found within models in the <code class="docutils literal notranslate"><span class="pre">com.example</span>
 <span class="pre">.weather</span></code> namespace.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitNoneSelector&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NoInstancesOfLengthTrait&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;No instances of the length trait were found.&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="s2">&quot;namespace&quot;</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;com.example.weather&quot;</span>]<span class="w"></span>
-<span class="w">    </span><span class="s2">&quot;configuration&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="s2">&quot;selector&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|length]&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitNoneSelector&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NoInstancesOfLengthTrait&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;No instances of the length trait were found.&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;namespace&quot;</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;com.example.weather&quot;</span>]
+<span class="w">    </span><span class="s2">&quot;configuration&quot;</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="s2">&quot;selector&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|length]&quot;</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 <div class="admonition tip">
@@ -802,17 +802,17 @@ such as <code class="docutils literal notranslate"><span class="pre">&#64;range<
 <h2>Exceptions thrown from operations must have an <code class="docutils literal notranslate"><span class="pre">&#64;httpError</span></code> trait<a class="headerlink" href="#exceptions-thrown-from-operations-must-have-an-httperror-trait" title="Permalink to this headline">#</a></h2>
 <p>This example shows how to enforce that all errors bound to an operation have
 an <code class="docutils literal notranslate"><span class="pre">&#64;httpError</span></code> trait (and therefore <code class="docutils literal notranslate"><span class="pre">httpError</span></code> code) defined.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ErrorHasHttpErrorTrait&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ErrorHasHttpErrorTrait&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        `@{id|name}` is bound as an error but does not have the `@@httpErrorTrait`. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        `@{id|name}` is bound as an error but does not have the `@@httpErrorTrait`. </span><span class="se">\</span>
 <span class="s2">        Apply the `@@httpErrorTrait` to this shape.</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation -[error]-&gt; :not([trait|httpError])&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="s2">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation -[error]-&gt; :not([trait|httpError])&quot;</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 <div class="admonition note">
@@ -824,17 +824,17 @@ an <code class="docutils literal notranslate"><span class="pre">&#64;httpError</
 <h2>Prefix headers with X-<a class="headerlink" href="#prefix-headers-with-x" title="Permalink to this headline">#</a></h2>
 <p>Case insensitive check for &quot;X-&quot; prefix on all custom <code class="docutils literal notranslate"><span class="pre">&#64;httpHeaders</span></code> used in your
 model.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CustomHeadersHaveXDashPrefix&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CustomHeadersHaveXDashPrefix&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">            @{id|name} applies the `@@httpHeader` with a custom header value of `@{trait|httpHeader}` that does not begin with `x-`.</span>
 <span class="s2">            Custom headers should be prefixed with `x-`.</span>
-<span class="s2">            &quot;&quot;&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|httpHeader]:not([trait|httpHeader^=&#39;x-&#39; i])&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="s2">            &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|httpHeader]:not([trait|httpHeader^=&#39;x-&#39; i])&quot;</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 <div class="admonition note">
@@ -852,17 +852,17 @@ selector to <code class="docutils literal notranslate"><span class="pre">[trait|
 <p>Checks that operation names match with the lifecycle (CRUD) operations they
 are bound to. This example shows how to check that the operation shape bound
 to the &quot;create&quot; lifecycle operation prefixed with &quot;create&quot; (case insensitive).</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LifecycleCreateName&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LifecycleCreateName&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        Operation `@{id|name}` is bound to Lifecycle operation &#39;create&#39; on resource @{var|resource}. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">        Operation `@{id|name}` is bound to Lifecycle operation &#39;create&#39; on resource @{var|resource}. </span><span class="se">\</span>
 <span class="s2">        `Create` operation names should begin with &#39;Create&#39;. Did you mean `Create@{id|name}`?</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;$resource(*) -[create]-&gt; :not([id|name^=Create i])&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;$resource(*) -[create]-&gt; :not([id|name^=Create i])&quot;</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 </div>
@@ -872,18 +872,18 @@ to the &quot;create&quot; lifecycle operation prefixed with &quot;create&quot; (
 in most cases it is preferable to bind operations to a resource over binding
 to the service directly. The example below shows how to validate that
 operations are bound to resources and not to the service.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PreferResourceBindingOverServiceBinding&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;WARNING&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PreferResourceBindingOverServiceBinding&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;WARNING&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">            Operation @{id|name} is bound directly to the service @{var|target|id|name}. </span><span class="se">\</span><span class="s2"></span>
+<span class="s2">            Operation @{id|name} is bound directly to the service @{var|target|id|name}. </span><span class="se">\</span>
 <span class="s2">            Consider binding this operation to a resource instead.</span>
-<span class="s2">            &quot;&quot;&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;$target(service) ${target} &gt; operation&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="s2">            &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;$target(service) ${target} &gt; operation&quot;</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 </div>

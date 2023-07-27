@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -420,27 +420,27 @@ configuration properties are provided.</td>
 </table>
 </div>
 <p>The following Smithy document applies a custom validator named &quot;SomeValidator&quot;:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="c">// The name of the validator.</span><span class="w"></span>
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SomeValidator&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="c">// Uses a custom event ID for each validation event emitted.</span><span class="w"></span>
-<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CustomEventId&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="c">// Uses a custom message that also includes the default message.</span><span class="w"></span>
-<span class="w">        </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My custom message name. {super}&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="c">// Applies the rule only to the following namespaces.</span><span class="w"></span>
-<span class="w">        </span><span class="py">namespaces</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;foo.baz&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;bar.qux&quot;</span>]<span class="w"></span>
-<span class="w">        </span><span class="c">// The following properties are specific to the validator.</span><span class="w"></span>
-<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">          </span><span class="s2">&quot;someProperty&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-]<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[
+<span class="w">    </span>{
+<span class="w">        </span><span class="c">// The name of the validator.</span>
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SomeValidator&quot;</span>
+<span class="w">        </span><span class="c">// Uses a custom event ID for each validation event emitted.</span>
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CustomEventId&quot;</span>
+<span class="w">        </span><span class="c">// Uses a custom message that also includes the default message.</span>
+<span class="w">        </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My custom message name. {super}&quot;</span>
+<span class="w">        </span><span class="c">// Applies the rule only to the following namespaces.</span>
+<span class="w">        </span><span class="py">namespaces</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;foo.baz&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;bar.qux&quot;</span>]
+<span class="w">        </span><span class="c">// The following properties are specific to the validator.</span>
+<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">          </span><span class="s2">&quot;someProperty&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span>
+<span class="w">        </span>}
+<span class="w">    </span>}
+]
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="c">// shapes are defined here...</span><span class="w"></span>
+<span class="c">// shapes are defined here...</span>
 </pre></div>
 </div>
 <div class="section" id="missing-validators">
@@ -492,11 +492,11 @@ validation event ID to suppress for the shape.</dd>
 </dl>
 <p>The following example suppresses the <code class="docutils literal notranslate"><span class="pre">Foo</span></code> and <code class="docutils literal notranslate"><span class="pre">Bar</span></code> validation events
 for the <code class="docutils literal notranslate"><span class="pre">smithy.example#MyString</span></code> shape:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@suppress</span>([<span class="s2">&quot;Foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Bar&quot;</span>])<span class="w"></span>
-<span class="kd">string </span><span class="nc">MyString</span><span class="w"></span>
+<span class="nt">@suppress</span>([<span class="s2">&quot;Foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Bar&quot;</span>])
+<span class="kd">string </span><span class="nc">MyString</span>
 </pre></div>
 </div>
 </div>
@@ -541,25 +541,25 @@ specific shape.</td>
 </div>
 <p>The following example suppresses all validation events on shapes
 in the <code class="docutils literal notranslate"><span class="pre">foo.baz</span></code> namespace with an ID of <code class="docutils literal notranslate"><span class="pre">UnreferencedShape</span></code>:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">metadata </span><span class="nc">suppressions </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;UnreferencedShape&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">namespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo.baz&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">reason</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This is a test namespace.&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-]<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">metadata </span><span class="nc">suppressions </span><span class="nd">=</span><span class="w"> </span>[
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;UnreferencedShape&quot;</span>
+<span class="w">        </span><span class="py">namespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo.baz&quot;</span>
+<span class="w">        </span><span class="py">reason</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This is a test namespace.&quot;</span>
+<span class="w">    </span>}
+]
 </pre></div>
 </div>
 <p>The following example suppresses all validation events with an
 ID of <code class="docutils literal notranslate"><span class="pre">OverlyBroadValidator</span></code>:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">metadata </span><span class="nc">suppressions </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OverlyBroadValidator&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">namespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;*&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-]<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">metadata </span><span class="nc">suppressions </span><span class="nd">=</span><span class="w"> </span>[
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OverlyBroadValidator&quot;</span>
+<span class="w">        </span><span class="py">namespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;*&quot;</span>
+<span class="w">    </span>}
+]
 </pre></div>
 </div>
 </div>
@@ -686,67 +686,67 @@ following constraints:</p>
 <li>Simple types are excluded.</li>
 <li>List and map members are excluded.</li>
 </ul>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingDocumentation&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This shape is missing documentation&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingDocumentation&quot;</span>
+<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This shape is missing documentation&quot;</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">            :not([trait|documentation])</span>
 <span class="s2">            :not(simpleType)</span>
 <span class="s2">            :not(member :test(&lt; :test(list, map)))</span>
-<span class="s2">            :not(member &gt; [trait|documentation])&quot;&quot;&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}]<span class="w"></span>
+<span class="s2">            :not(member &gt; [trait|documentation])&quot;&quot;&quot;</span>
+<span class="w">    </span>}
+}]
 </pre></div>
 </div>
 <p>The following example emits a validation event for each structure referenced as
 input/output that has a shape name that does not case-insensitively end with
 &quot;Input&quot;/&quot;Output&quot;:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationInputName&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This shape is referenced as input but the name does not end with &#39;Input&#39;&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation -[input]-&gt; :not([id|name$=Input i])&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationOutputName&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This shape is referenced as output but the name does not end with &#39;Output&#39;&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation -[output]-&gt; :not([id|name$=Output i])&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-]<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span>
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationInputName&quot;</span>
+<span class="w">        </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This shape is referenced as input but the name does not end with &#39;Input&#39;&quot;</span>
+<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation -[input]-&gt; :not([id|name$=Input i])&quot;</span>
+<span class="w">        </span>}
+<span class="w">    </span>}
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span>
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OperationOutputName&quot;</span>
+<span class="w">        </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This shape is referenced as output but the name does not end with &#39;Output&#39;&quot;</span>
+<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation -[output]-&gt; :not([id|name$=Output i])&quot;</span>
+<span class="w">        </span>}
+<span class="w">    </span>}
+]
 </pre></div>
 </div>
 <p>The following example emits a validation event for each operation referenced
 as lifecycle 'read' or 'delete' that has a shape name that does not start with
 &quot;Get&quot; or &quot;Delete&quot;:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LifecycleGetName&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Lifecycle &#39;read&#39; operation shape names should start with &#39;Get&#39;&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation [read]-&gt; :not([id|name^=Get i])&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LifecycleDeleteName&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Lifecycle &#39;delete&#39; operation shape names should start with &#39;Delete&#39;&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation -[delete]-&gt; :not([id|name^=Delete i])&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-]<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span>
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LifecycleGetName&quot;</span>
+<span class="w">        </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Lifecycle &#39;read&#39; operation shape names should start with &#39;Get&#39;&quot;</span>
+<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation [read]-&gt; :not([id|name^=Get i])&quot;</span>
+<span class="w">        </span>}
+<span class="w">    </span>}
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span>
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LifecycleDeleteName&quot;</span>
+<span class="w">        </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Lifecycle &#39;delete&#39; operation shape names should start with &#39;Delete&#39;&quot;</span>
+<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation -[delete]-&gt; :not([id|name^=Delete i])&quot;</span>
+<span class="w">        </span>}
+<span class="w">    </span>}
+]
 </pre></div>
 </div>
 <div class="section" id="binding-events-to-traits">
@@ -758,27 +758,27 @@ events for shapes that have the referenced trait. The contextual location of
 where the violation occurred in the model SHOULD point to the location where
 the trait is applied to the matched shape.</p>
 <p>Consider the following model:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DocumentedString&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="c">// matches all shapes</span><span class="w"></span>
-<span class="w">            </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;*&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="c">// Only emitted for shapes with the documentation</span><span class="w"></span>
-<span class="w">            </span><span class="c">// trait, and each event points to where the</span><span class="w"></span>
-<span class="w">            </span><span class="c">// trait is defined.</span><span class="w"></span>
-<span class="w">            </span><span class="py">bindToTrait</span><span class="p">:</span><span class="w"> </span><span class="vc">documentation</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-]<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span>
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DocumentedString&quot;</span>
+<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="c">// matches all shapes</span>
+<span class="w">            </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;*&quot;</span>
+<span class="w">            </span><span class="c">// Only emitted for shapes with the documentation</span>
+<span class="w">            </span><span class="c">// trait, and each event points to where the</span>
+<span class="w">            </span><span class="c">// trait is defined.</span>
+<span class="w">            </span><span class="py">bindToTrait</span><span class="p">:</span><span class="w"> </span><span class="vc">documentation</span>
+<span class="w">        </span>}
+<span class="w">    </span>}
+]
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@documentation</span>(<span class="s2">&quot;Hello&quot;</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">A</span><span class="w"> </span><span class="c">// &lt;-- Emits an event</span><span class="w"></span>
+<span class="nt">@documentation</span>(<span class="s2">&quot;Hello&quot;</span>)
+<span class="kd">string </span><span class="nc">A</span><span class="w"> </span><span class="c">// &lt;-- Emits an event</span>
 
-<span class="kd">string </span><span class="nc">B</span><span class="w"> </span><span class="c">// &lt;-- Does not emit an event</span><span class="w"></span>
+<span class="kd">string </span><span class="nc">B</span><span class="w"> </span><span class="c">// &lt;-- Does not emit an event</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">DocumentedString</span></code> validator will only emit an event for
@@ -801,25 +801,25 @@ template is then expanded by retrieving nested properties from the shape
 using a pipe-delimited path (for example, <code class="docutils literal notranslate"><span class="pre">&#64;{id|name}</span></code> expands to the
 name of the matching shape's <a class="reference internal" href="selectors.html#id-attribute"><span class="std std-ref">shape ID</span></a>).</p>
 <p>Consider the following model:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|documentation]&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span>
+<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|documentation]&quot;</span>
 <span class="w">            </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">                This shape has a name of @{id|name} and a @@documentation </span><span class="se">\</span><span class="s2"></span>
-<span class="s2">                trait of &quot;@{trait|documentation}&quot;.&quot;&quot;&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-]<span class="w"></span>
+<span class="s2">                This shape has a name of @{id|name} and a @@documentation </span><span class="se">\</span>
+<span class="s2">                trait of &quot;@{trait|documentation}&quot;.&quot;&quot;&quot;</span>
+<span class="w">        </span>}
+<span class="w">    </span>}
+]
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@documentation</span>(<span class="s2">&quot;Hello&quot;</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">A</span><span class="w"></span>
+<span class="nt">@documentation</span>(<span class="s2">&quot;Hello&quot;</span>)
+<span class="kd">string </span><span class="nc">A</span>
 
-<span class="nt">@documentation</span>(<span class="s2">&quot;Goodbye&quot;</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">B</span><span class="w"></span>
+<span class="nt">@documentation</span>(<span class="s2">&quot;Goodbye&quot;</span>)
+<span class="kd">string </span><span class="nc">B</span>
 </pre></div>
 </div>
 <p>The above selector will emit two validation events:</p>
@@ -846,27 +846,27 @@ name of the matching shape's <a class="reference internal" href="selectors.html#
 </div>
 <p><a class="reference internal" href="selectors.html#selector-variables"><span class="std std-ref">Selector variables</span></a> can be used in the selector
 to make message templates more descriptive. Consider the following example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;UnstableTrait&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span>
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;UnstableTrait&quot;</span>
+<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">            </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">                  $matches(-[trait]-&gt; [trait|unstable])</span>
-<span class="s2">                  ${matches}&quot;&quot;&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This shape applies traits(s) that are unstable: @{var|matches|id}&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-]<span class="w"></span>
+<span class="s2">                  ${matches}&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="py">messageTemplate</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This shape applies traits(s) that are unstable: @{var|matches|id}&quot;</span>
+<span class="w">        </span>}
+<span class="w">    </span>}
+]
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@trait</span><span class="w"></span>
-<span class="nt">@unstable</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">doNotUseMe</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@trait</span>
+<span class="nt">@unstable</span>
+<span class="kd">structure </span><span class="nc">doNotUseMe</span><span class="w"> </span>{}
 
-<span class="nt">@doNotUseMe</span><span class="w"></span>
-<span class="kd">string </span><span class="nc">A</span><span class="w"></span>
+<span class="nt">@doNotUseMe</span>
+<span class="kd">string </span><span class="nc">A</span>
 </pre></div>
 </div>
 <p>The above selector will emit the following validation event:</p>
@@ -1004,17 +1004,17 @@ is emitted.</td>
 </dl>
 <p>The following example detects if the model does not contain any constraint
 traits.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitNoneSelector&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingConstraintTraits&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitNoneSelector&quot;</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingConstraintTraits&quot;</span>
 <span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        No instances of the enum, pattern, length, or range trait</span>
-<span class="s2">        could be found. Did you forget to apply these traits?&quot;&quot;&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:is([trait|enum], [trait|pattern], [trait|length], [trait|range])&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}]<span class="w"></span>
+<span class="s2">        could be found. Did you forget to apply these traits?&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;:is([trait|enum], [trait|pattern], [trait|length], [trait|range])&quot;</span>
+<span class="w">    </span>}
+}]
 </pre></div>
 </div>
 </div>

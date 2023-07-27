@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -325,28 +325,28 @@
 <p><strong>Smithy</strong> is a language for defining services and SDKs.</p>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">Example Smithy service</span><a class="headerlink" href="#id1" title="Permalink to this code">#</a></div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">example.weather</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">example.weather</span>
 
-<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">City</span>]<span class="w"></span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetCurrentTime</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">City</span>]
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetCurrentTime</span>]
+}
 
-<span class="kd">resource </span><span class="nc">City</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="w"> </span>}<span class="w"></span>
-<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCity</span><span class="w"></span>
-<span class="w">    </span><span class="py">list</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCities</span><span class="w"></span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">Forecast</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="kd">resource </span><span class="nc">City</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">cityId</span><span class="p">:</span><span class="w"> </span><span class="vc">CityId</span><span class="w"> </span>}
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetCity</span>
+<span class="w">    </span><span class="py">list</span><span class="p">:</span><span class="w"> </span><span class="vc">ListCities</span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">Forecast</span>]
+}
 </pre></div>
 </div>
 </div>
 <p class="rubric">Next steps</p>
 <ul class="simple">
 <li>Find out more about Smithy models and this example in the <a class="reference internal" href="quickstart.html"><span class="doc">Quick start</span></a>.</li>
-<li>Find the source code on <a class="reference external" href="https://github.com/awslabs/smithy">Github</a>.</li>
+<li>Find the source code on <a class="reference external" href="https://github.com/smithy-lang/smithy">Github</a>.</li>
 </ul>
 <div class="section" id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">#</a></h2>
@@ -450,7 +450,7 @@ metadata, and capabilities. Smithy can be used alongside OpenAPI by
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>

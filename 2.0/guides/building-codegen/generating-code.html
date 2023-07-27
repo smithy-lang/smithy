@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -325,22 +325,22 @@
 <p>A &quot;code writer&quot; is the main abstraction used to generate code. It can be
 used to write basically any kind of code, including whitespace sensitive
 and brace-based. The following example generates some Python code:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span>
 
-<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;def Foo(str):&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="w">      </span><span class="p">.</span><span class="na">indent</span><span class="p">()</span><span class="w"></span>
-<span class="w">      </span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;print str&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;def Foo(str):&quot;</span><span class="p">)</span>
+<span class="w">      </span><span class="p">.</span><span class="na">indent</span><span class="p">()</span>
+<span class="w">      </span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;print str&quot;</span><span class="p">);</span>
 
-<span class="n">String</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">();</span><span class="w"></span>
+<span class="n">String</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">();</span>
 </pre></div>
 </div>
 <p>There are few kinds of code writers:</p>
 <ul class="simple">
-<li><a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-utils/src/main/java/software/amazon/smithy/utils/AbstractCodeWriter.java">AbstractCodeWriter</a>: An abstract class that can be extended to
+<li><a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-utils/src/main/java/software/amazon/smithy/utils/AbstractCodeWriter.java">AbstractCodeWriter</a>: An abstract class that can be extended to
 create language-specific writers.</li>
-<li><a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-utils/src/main/java/software/amazon/smithy/utils/SimpleCodeWriter.java">SimpleCodeWriter</a>: An implementation of <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> with no
+<li><a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-utils/src/main/java/software/amazon/smithy/utils/SimpleCodeWriter.java">SimpleCodeWriter</a>: An implementation of <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> with no
 added methods or support for <code class="docutils literal notranslate"><span class="pre">Symbol</span></code>s.</li>
-<li><a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolWriter.java">SymbolWriter</a>: An abstract class that extends <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code>,
+<li><a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SymbolWriter.java">SymbolWriter</a>: An abstract class that extends <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code>,
 available in <a class="reference external" href="https://search.maven.org/artifact/software.amazon.smithy/smithy-codegen-core">software.amazon.smithy:smithy-codegen-core</a>.
 This class adds abstractions for managing imports and dependencies.
 Smithy code generators should extend this class.
@@ -355,12 +355,12 @@ conditionals, and loops. This removes the need to add a dependency on a Java
 templating engine and the need to integrate Smithy Symbols and dependency
 management into other templating languages. The following example uses Java 17
 text blocks to generate a contiguous section of code:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">pushState</span><span class="p">();</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">pushState</span><span class="p">();</span>
 
-<span class="c1">// Add variables that can be referenced in templates.</span><span class="w"></span>
-<span class="n">writer</span><span class="p">.</span><span class="na">putContext</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">settings</span><span class="p">.</span><span class="na">getModuleName</span><span class="p">());</span><span class="w"></span>
-<span class="n">writer</span><span class="p">.</span><span class="na">putContext</span><span class="p">(</span><span class="s">&quot;version&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">settings</span><span class="p">.</span><span class="na">getModuleVersion</span><span class="p">());</span><span class="w"></span>
-<span class="n">writer</span><span class="p">.</span><span class="na">putContext</span><span class="p">(</span><span class="s">&quot;description&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">settings</span><span class="p">.</span><span class="na">getModuleDescription</span><span class="p">());</span><span class="w"></span>
+<span class="c1">// Add variables that can be referenced in templates.</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">putContext</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">settings</span><span class="p">.</span><span class="na">getModuleName</span><span class="p">());</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">putContext</span><span class="p">(</span><span class="s">&quot;version&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">settings</span><span class="p">.</span><span class="na">getModuleVersion</span><span class="p">());</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">putContext</span><span class="p">(</span><span class="s">&quot;description&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">settings</span><span class="p">.</span><span class="na">getModuleDescription</span><span class="p">());</span>
 
 <span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
 <span class="s">    [flake8]</span>
@@ -383,9 +383,9 @@ text blocks to generate a contiguous section of code:</p>
 <span class="s">        Programming Language :: Python :: 3</span>
 <span class="s">        Programming Language :: Python :: 3 :: Only</span>
 <span class="s">        Programming Language :: Python :: 3.10</span>
-<span class="s">    &quot;&quot;&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="s">    &quot;&quot;&quot;</span><span class="p">);</span>
 
-<span class="n">writer</span><span class="p">.</span><span class="na">popState</span><span class="p">();</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">popState</span><span class="p">();</span>
 </pre></div>
 </div>
 </div>
@@ -396,14 +396,14 @@ string and a variadic list of arguments that are <em>interpolated</em>, or
 replaced, into the expression.</p>
 <p>In the following example, <code class="docutils literal notranslate"><span class="pre">$L</span></code> is interpolated and replaced with the
 relative argument, <code class="docutils literal notranslate"><span class="pre">&quot;there!&quot;</span></code>.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">CodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span><span class="w"></span>
-<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Hello, $L&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;there!&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;Hello, there!\n&quot;</span><span class="p">));</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">CodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Hello, $L&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;there!&quot;</span><span class="p">);</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;Hello, there!\n&quot;</span><span class="p">));</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">$</span></code> character is escaped using <code class="docutils literal notranslate"><span class="pre">$$</span></code>.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">().</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$$L&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;$L\n&quot;</span><span class="p">));</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">().</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$$L&quot;</span><span class="p">);</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;$L\n&quot;</span><span class="p">));</span>
 </pre></div>
 </div>
 <p>The default character used to start an expression is <code class="docutils literal notranslate"><span class="pre">$</span></code>, but this can
@@ -413,10 +413,10 @@ programming languages that make heavy use of <code class="docutils literal notra
 custom start character can be escaped using two start characters in a
 row. For example, given a custom start character of <code class="docutils literal notranslate"><span class="pre">#</span></code>, <code class="docutils literal notranslate"><span class="pre">#</span></code> can be
 escaped using <code class="docutils literal notranslate"><span class="pre">##</span></code>.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span><span class="w"></span>
-<span class="n">writer</span><span class="p">.</span><span class="na">setExpressionStart</span><span class="p">(</span><span class="sc">&#39;#&#39;</span><span class="p">);</span><span class="w"></span>
-<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;#L ##L $L&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hi&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;hi #L $L\n&quot;</span><span class="p">));</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">setExpressionStart</span><span class="p">(</span><span class="sc">&#39;#&#39;</span><span class="p">);</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;#L ##L $L&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hi&quot;</span><span class="p">);</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;hi #L $L\n&quot;</span><span class="p">));</span>
 </pre></div>
 </div>
 </div>
@@ -465,9 +465,9 @@ as relative parameters. The first instance of a relative parameter
 interpolates the first positional argument, the second, etc. All
 relative arguments must be used as part of an expression and relative
 interpolation cannot be mixed with positional variables.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span><span class="w"></span>
-<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$L $L $L&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;a b c\n&quot;</span><span class="p">));</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$L $L $L&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p">);</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;a b c\n&quot;</span><span class="p">));</span>
 </pre></div>
 </div>
 </div>
@@ -478,9 +478,9 @@ by a formatter name are treated as positional parameters. The number
 refers to the 1-based index of the argument to interpolate. All
 positional arguments must be used as part of an expression and relative
 interpolation cannot be mixed with positional variables.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span><span class="w"></span>
-<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$1L $2L $3L, $3L $2L $1L&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;a b c c b a\n&quot;</span><span class="p">));</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$1L $2L $3L, $3L $2L $1L&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;c&quot;</span><span class="p">);</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;a b c c b a\n&quot;</span><span class="p">));</span>
 </pre></div>
 </div>
 </div>
@@ -492,13 +492,13 @@ the current state. They take the following form
 starts with a lowercase letter, followed by any number of
 <code class="docutils literal notranslate"><span class="pre">[A-Za-z0-9_#$.]</span></code> characters, and <code class="docutils literal notranslate"><span class="pre">&lt;formatter&gt;</span></code> is the name of a
 formatter.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span><span class="w"></span>
-<span class="n">writer</span><span class="p">.</span><span class="na">pushState</span><span class="p">();</span><span class="w"></span>
-<span class="n">writer</span><span class="p">.</span><span class="na">putContext</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="n">writer</span><span class="p">.</span><span class="na">putContext</span><span class="p">(</span><span class="s">&quot;bar&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;b&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$foo:L $bar:L&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="n">writer</span><span class="p">.</span><span class="na">popState</span><span class="p">();</span><span class="w"></span>
-<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;a b\n&quot;</span><span class="p">));</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">pushState</span><span class="p">();</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">putContext</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;a&quot;</span><span class="p">);</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">putContext</span><span class="p">(</span><span class="s">&quot;bar&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;b&quot;</span><span class="p">);</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$foo:L $bar:L&quot;</span><span class="p">);</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">popState</span><span class="p">();</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;a b\n&quot;</span><span class="p">));</span>
 </pre></div>
 </div>
 </div>
@@ -514,7 +514,7 @@ For example, say we wanted to indent a variable list of names,
 </pre></div>
 </div>
 <p>Using normal <code class="docutils literal notranslate"><span class="pre">$L</span></code> expansion:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$L: $L&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Names&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Bob\nKaren\nLuis&quot;</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$L: $L&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Names&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Bob\nKaren\nLuis&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">$L</span></code> does not preserve the desired indentation, resulting in:</p>
@@ -526,7 +526,7 @@ Luis
 <p>Indentation can be preserved to match the desired list from the first
 example by using the inline block alignment operator (that is, putting
 <code class="docutils literal notranslate"><span class="pre">|</span></code> before the closing brace):</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$L: ${L|}&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Names&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Bob\nKaren\nLuis&quot;</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$L: ${L|}&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Names&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Bob\nKaren\nLuis&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>If all the characters on the line in the template leading up to the
@@ -537,9 +537,9 @@ tab-based languages:</p>
 <span class="s">    if (true) {</span>
 <span class="s">    \t\t${C|}</span>
 <span class="s">    }</span>
-<span class="s">    &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">   </span><span class="n">writer</span><span class="p">.</span><span class="na">call</span><span class="p">(</span><span class="n">w</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">w</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Hi\nHello&quot;</span><span class="p">))</span><span class="w"></span>
-<span class="p">);</span><span class="w"></span>
+<span class="s">    &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="n">writer</span><span class="p">.</span><span class="na">call</span><span class="p">(</span><span class="n">w</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">w</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Hi\nHello&quot;</span><span class="p">))</span>
+<span class="p">);</span>
 </pre></div>
 </div>
 <p>Outputs:</p>
@@ -559,25 +559,25 @@ you to generate indented sections of code within a larger template.</p>
 <p>The following example uses the <code class="docutils literal notranslate"><span class="pre">call</span></code> method of an
 <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> to properly type the <code class="docutils literal notranslate"><span class="pre">Function</span></code>, and a method
 reference is provided to invoke a method that accepts the writer.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">someMethod</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">someMethod</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
 <span class="s">        if (true) {</span>
 <span class="s">            ${C|}</span>
 <span class="s">        } else {</span>
 <span class="s">            ${C|}</span>
 <span class="s">        }</span>
-<span class="s">        &quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="n">writer</span><span class="p">.</span><span class="na">call</span><span class="p">(</span><span class="k">this</span><span class="p">::</span><span class="n">handleTrue</span><span class="p">),</span><span class="w"></span>
-<span class="w">        </span><span class="n">writer</span><span class="p">.</span><span class="na">call</span><span class="p">(</span><span class="k">this</span><span class="p">::</span><span class="n">handleFalse</span><span class="p">));</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="s">        &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="n">writer</span><span class="p">.</span><span class="na">call</span><span class="p">(</span><span class="k">this</span><span class="p">::</span><span class="n">handleTrue</span><span class="p">),</span>
+<span class="w">        </span><span class="n">writer</span><span class="p">.</span><span class="na">call</span><span class="p">(</span><span class="k">this</span><span class="p">::</span><span class="n">handleFalse</span><span class="p">));</span>
+<span class="p">}</span>
 
-<span class="kt">void</span><span class="w"> </span><span class="nf">handleTrue</span><span class="p">(</span><span class="n">CodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;True!&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">handleTrue</span><span class="p">(</span><span class="n">CodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;True!&quot;</span><span class="p">);</span>
+<span class="p">}</span>
 
-<span class="kt">void</span><span class="w"> </span><span class="nf">handleFalse</span><span class="p">(</span><span class="n">CodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;False!&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">handleFalse</span><span class="p">(</span><span class="n">CodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;False!&quot;</span><span class="p">);</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <div class="admonition tip">
@@ -601,16 +601,16 @@ current state. Mutations can then be made to the top-most state of the
 <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> and do not affect previous states. The previous
 transformation state of the <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> can later be restored
 using <code class="docutils literal notranslate"><span class="pre">popState</span></code>.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span><span class="w"></span>
-<span class="n">writer</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="na">pushState</span><span class="p">()</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;/**&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="na">setNewlinePrefix</span><span class="p">(</span><span class="s">&quot; * &quot;</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;This is some docs.&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;And more docs.\n\n\n&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Foo.&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="na">popState</span><span class="p">()</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot; */&quot;</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span>
+<span class="n">writer</span>
+<span class="w">    </span><span class="p">.</span><span class="na">pushState</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;/**&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">setNewlinePrefix</span><span class="p">(</span><span class="s">&quot; * &quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;This is some docs.&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;And more docs.\n\n\n&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Foo.&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">popState</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot; */&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>The above example outputs:</p>
@@ -638,10 +638,10 @@ calling <code class="docutils literal notranslate"><span class="pre">trimBlankLi
 the <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> is converted to a string. Lines that consist
 solely of spaces or tabs are considered blank. If the number of blank
 lines exceeds the allowed threshold, they are omitted from the result.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span><span class="w"></span>
-<span class="n">writer</span><span class="p">.</span><span class="na">trimBlankLines</span><span class="p">();</span><span class="w"></span>
-<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;hello\n\n\n\nhello&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;hello\n\nhello\n&quot;</span><span class="p">));</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">trimBlankLines</span><span class="p">();</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;hello\n\n\n\nhello&quot;</span><span class="p">);</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;hello\n\nhello\n&quot;</span><span class="p">));</span>
 </pre></div>
 </div>
 <p>In the above example, <code class="docutils literal notranslate"><span class="pre">\n\n\n\n</span></code> results in two blank lines (two
@@ -650,7 +650,7 @@ the successive blank line, resulting in <code class="docutils literal notranslat
 trailing newline is added by <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> by default
 separately). Two blank lines could be allowed if the above example was
 updated to pass <code class="docutils literal notranslate"><span class="pre">2</span></code> into <code class="docutils literal notranslate"><span class="pre">trimBlankLines</span></code>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">trimBlankLines</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">trimBlankLines</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -659,10 +659,10 @@ updated to pass <code class="docutils literal notranslate"><span class="pre">2</
 <p>Many coding standards do not allow trailing spaces on lines. Trailing
 spaces can be automatically trimmed from each line by calling
 <code class="docutils literal notranslate"><span class="pre">trimTrailingSpaces()</span></code>.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span><span class="w"></span>
-<span class="n">writer</span><span class="p">.</span><span class="na">trimTrailingSpaces</span><span class="p">();</span><span class="w"></span>
-<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;hello  &quot;</span><span class="p">);</span><span class="w"></span>
-<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">));</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">trimTrailingSpaces</span><span class="p">();</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;hello  &quot;</span><span class="p">);</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">));</span>
 </pre></div>
 </div>
 </div>
@@ -682,16 +682,16 @@ captures all the output written inside this state to an internal buffer.
 This buffer is then passed to each registered interceptor for that name.
 These interceptors can choose to use the default contents of the section
 or emit entirely different content.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span>
 
-<span class="n">writer</span><span class="p">.</span><span class="na">onSection</span><span class="p">(</span><span class="s">&quot;example&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Intercepted: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">text</span><span class="p">);</span><span class="w"></span>
-<span class="p">});</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">onSection</span><span class="p">(</span><span class="s">&quot;example&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Intercepted: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">text</span><span class="p">);</span>
+<span class="p">});</span>
 
-<span class="n">writer</span><span class="p">.</span><span class="na">pushState</span><span class="p">(</span><span class="s">&quot;example&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Original contents&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="n">writer</span><span class="p">.</span><span class="na">popState</span><span class="p">();</span><span class="w"></span>
-<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;Intercepted: Original contents\n&quot;</span><span class="p">));</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">pushState</span><span class="p">(</span><span class="s">&quot;example&quot;</span><span class="p">);</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Original contents&quot;</span><span class="p">);</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">popState</span><span class="p">();</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;Intercepted: Original contents\n&quot;</span><span class="p">));</span>
 </pre></div>
 </div>
 <p>A better method for creating and intercepting code sections is to use an
@@ -700,29 +700,29 @@ that is just required to return the name of the <code class="docutils literal no
 fact, using a string for <code class="docutils literal notranslate"><span class="pre">pushState</span></code> internally creates a
 <code class="docutils literal notranslate"><span class="pre">CodeSection</span></code>).</p>
 <p>Java records are an easy way to implement <code class="docutils literal notranslate"><span class="pre">CodeSection</span></code>s:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">record</span> <span class="nc">NameEvent</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">sectionName</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">person</span><span class="p">)</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">CodeSection</span><span class="p">;</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">record</span> <span class="nc">NameEvent</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">sectionName</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">person</span><span class="p">)</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">CodeSection</span><span class="p">;</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">CodeInterceptor</span></code>s can be registered to intercept sections by class.
 A simple way to create one-off interceptors is using
 <code class="docutils literal notranslate"><span class="pre">CodeSection#appender</span></code>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">onSection</span><span class="p">(</span><span class="n">CodeInterceptor</span><span class="p">.</span><span class="na">appender</span><span class="p">(</span><span class="n">NameEvent</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="n">section</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">w</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$L&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">section</span><span class="p">.</span><span class="na">sectionName</span><span class="p">()));</span><span class="w"></span>
-<span class="p">}));</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">onSection</span><span class="p">(</span><span class="n">CodeInterceptor</span><span class="p">.</span><span class="na">appender</span><span class="p">(</span><span class="n">NameEvent</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="n">section</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">w</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$L&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">section</span><span class="p">.</span><span class="na">sectionName</span><span class="p">()));</span>
+<span class="p">}));</span>
 
-<span class="n">writer</span><span class="p">.</span><span class="na">onSection</span><span class="p">(</span><span class="n">CodeInterceptor</span><span class="p">.</span><span class="na">appender</span><span class="p">(</span><span class="n">NameEvent</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="n">section</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">w</span><span class="p">.</span><span class="na">writeInline</span><span class="p">(</span><span class="s">&quot;Who? &quot;</span><span class="p">);</span><span class="w"></span>
-<span class="p">}));</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">onSection</span><span class="p">(</span><span class="n">CodeInterceptor</span><span class="p">.</span><span class="na">appender</span><span class="p">(</span><span class="n">NameEvent</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="n">section</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">w</span><span class="p">.</span><span class="na">writeInline</span><span class="p">(</span><span class="s">&quot;Who? &quot;</span><span class="p">);</span>
+<span class="p">}));</span>
 
-<span class="n">writer</span><span class="p">.</span><span class="na">onSection</span><span class="p">(</span><span class="n">CodeInterceptor</span><span class="p">.</span><span class="na">appender</span><span class="p">(</span><span class="n">NameEvent</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="n">section</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">w</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$L!&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">section</span><span class="p">.</span><span class="na">person</span><span class="p">());</span><span class="w"></span>
-<span class="p">}));</span><span class="w"></span>
+<span class="n">writer</span><span class="p">.</span><span class="na">onSection</span><span class="p">(</span><span class="n">CodeInterceptor</span><span class="p">.</span><span class="na">appender</span><span class="p">(</span><span class="n">NameEvent</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="w"> </span><span class="n">section</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">w</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;$L!&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">section</span><span class="p">.</span><span class="na">person</span><span class="p">());</span>
+<span class="p">}));</span>
 </pre></div>
 </div>
 <p>When a <code class="docutils literal notranslate"><span class="pre">CodeSection</span></code> is given to <code class="docutils literal notranslate"><span class="pre">pushState</span></code> or <code class="docutils literal notranslate"><span class="pre">injectState</span></code>,
 <code class="docutils literal notranslate"><span class="pre">CodeInterceptor</span></code>s are applied in the order they were registered.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">NameEvent</span><span class="w"> </span><span class="n">event</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">NameEvent</span><span class="p">(</span><span class="s">&quot;Zak&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;McKracken&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="n">writer</span><span class="p">.</span><span class="na">injectSection</span><span class="p">(</span><span class="n">event</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">NameEvent</span><span class="w"> </span><span class="n">event</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">NameEvent</span><span class="p">(</span><span class="s">&quot;Zak&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;McKracken&quot;</span><span class="p">);</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">injectSection</span><span class="p">(</span><span class="n">event</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>When applied, the <code class="docutils literal notranslate"><span class="pre">writer</span></code> contains the following output:</p>
@@ -743,16 +743,16 @@ after the formatter. For example, <code class="docutils literal notranslate"><sp
 uses the literal &quot;L&quot; value of a relative argument as the default value
 of the section and allows interceptors registered for the &quot;foo&quot; section
 to make calls to the <code class="docutils literal notranslate"><span class="pre">AbstractCodeWriter</span></code> to modify the section.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SimpleCodeWriter</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleCodeWriter</span><span class="p">();</span>
 
-<span class="c1">// Add an intercept for the &quot;example&quot; section.</span><span class="w"></span>
-<span class="n">writer</span><span class="p">.</span><span class="na">onSection</span><span class="p">(</span><span class="s">&quot;example&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Intercepted: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">text</span><span class="p">));</span><span class="w"></span>
+<span class="c1">// Add an intercept for the &quot;example&quot; section.</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">onSection</span><span class="p">(</span><span class="s">&quot;example&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Intercepted: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">text</span><span class="p">));</span>
 
-<span class="c1">// Write to the writer and define an inline &quot;example&quot; section.</span><span class="w"></span>
-<span class="c1">// If nothing intercepts this section, &quot;foo&quot; is written to it.</span><span class="w"></span>
-<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Leading...${L@example}...Trailing...&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;foo&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="c1">// Write to the writer and define an inline &quot;example&quot; section.</span>
+<span class="c1">// If nothing intercepts this section, &quot;foo&quot; is written to it.</span>
+<span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Leading...${L@example}...Trailing...&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;foo&quot;</span><span class="p">);</span>
 
-<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;Leading...Intercepted: foo...Trailing...\n&quot;</span><span class="p">));</span><span class="w"></span>
+<span class="k">assert</span><span class="p">(</span><span class="n">writer</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;Leading...Intercepted: foo...Trailing...\n&quot;</span><span class="p">));</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -769,7 +769,7 @@ following syntax:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
 <span class="s">    ${?foo}</span>
 <span class="s">    Foo is set: ${foo:L}</span>
-<span class="s">    ${/foo}&quot;&quot;&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="s">    ${/foo}&quot;&quot;&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>Assuming <code class="docutils literal notranslate"><span class="pre">foo</span></code> is <em>truthy</em> and set to &quot;hi&quot;, then the above template
@@ -782,7 +782,7 @@ not satisfied, then contents of the block are skipped.</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
 <span class="s">    ${^foo}</span>
 <span class="s">    Foo is not set</span>
-<span class="s">    ${/foo}&quot;&quot;&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="s">    ${/foo}&quot;&quot;&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>Assuming <code class="docutils literal notranslate"><span class="pre">foo</span></code> is set to &quot;hi&quot;, then the above template outputs
@@ -813,7 +813,7 @@ created using <code class="docutils literal notranslate"><span class="pre">#</sp
 <span class="s">    ${#foo}</span>
 <span class="s">    - ${key:L}: ${value:L} (first: ${key.first:L}, last: ${key.last:L})</span>
 <span class="s">    ${/foo}</span>
-<span class="s">    &quot;&quot;&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="s">    &quot;&quot;&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>Evaluates to:</p>
@@ -837,7 +837,7 @@ example:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
 <span class="s">    ${#foo as key1, value1}</span>
 <span class="s">    - ${key1:L}: ${value1:L} (first: ${key1.first:L}, last: ${key1.last:L})</span>
-<span class="s">    ${/foo}&quot;&quot;&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="s">    ${/foo}&quot;&quot;&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -850,7 +850,7 @@ to an empty string:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
 <span class="s">    ${?foo}</span>
 <span class="s">    Foo is set: ${foo:L}</span>
-<span class="s">    ${/foo}&quot;&quot;&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="s">    ${/foo}&quot;&quot;&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>Whitespace that comes before a template expression can be removed by
@@ -858,7 +858,7 @@ putting <code class="docutils literal notranslate"><span class="pre">-</span></c
 <p>Assuming that the first positional argument is &quot;hi&quot;:</p>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
 <span class="s">    Greeting:</span>
-<span class="s">        ${-L}&quot;&quot;&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="s">        ${-L}&quot;&quot;&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>Expands to:</p>
@@ -870,7 +870,7 @@ adding <code class="docutils literal notranslate"><span class="pre">-</span></co
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
 <span class="s">    ${L-}</span>
 
-<span class="s">    .&quot;&quot;&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="s">    .&quot;&quot;&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>Expands to:</p>
@@ -880,8 +880,8 @@ adding <code class="docutils literal notranslate"><span class="pre">-</span></co
 <p>Leading whitespace cannot be removed when using
 <a class="reference internal" href="#inline-block-alignment"><span class="std std-ref">inline block alignment</span></a>
 (<code class="docutils literal notranslate"><span class="pre">|</span></code>). The following is <em>invalid</em>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;${-C|}&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="w">             </span><span class="c1">// ^ ^ invalid combination</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;${-C|}&quot;</span><span class="p">);</span>
+<span class="w">             </span><span class="c1">// ^ ^ invalid combination</span>
 </pre></div>
 </div>
 </div>

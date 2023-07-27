@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -461,25 +461,25 @@ accessor methods to retrieve the raw string value of an enum,
 or some other technique to carry unknown values.</p>
 </div>
 <p>Consider the following Smithy model:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">enum </span><span class="nc">Suit</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="vc">DIAMOND</span><span class="w"></span>
-<span class="w">    </span><span class="vc">CLUB</span><span class="w"></span>
-<span class="w">    </span><span class="vc">HEART</span><span class="w"></span>
-<span class="w">    </span><span class="vc">SPADE</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">enum </span><span class="nc">Suit</span><span class="w"> </span>{
+<span class="w">    </span><span class="vc">DIAMOND</span>
+<span class="w">    </span><span class="vc">CLUB</span>
+<span class="w">    </span><span class="vc">HEART</span>
+<span class="w">    </span><span class="vc">SPADE</span>
+}
 </pre></div>
 </div>
 <p>It could be generated as the following enum in Rust:</p>
-<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="cp">#[non_exhaustive]</span><span class="w"></span>
-<span class="k">enum</span> <span class="nc">Suit</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">   </span><span class="n">DIAMOND</span><span class="p">,</span><span class="w"></span>
-<span class="w">   </span><span class="n">CLUB</span><span class="p">,</span><span class="w"></span>
-<span class="w">   </span><span class="n">HEART</span><span class="p">,</span><span class="w"></span>
-<span class="w">   </span><span class="n">SPADE</span><span class="p">,</span><span class="w"></span>
+<div class="highlight-rust notranslate"><div class="highlight"><pre><span></span><span class="cp">#[non_exhaustive]</span>
+<span class="k">enum</span> <span class="nc">Suit</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="n">DIAMOND</span><span class="p">,</span>
+<span class="w">   </span><span class="n">CLUB</span><span class="p">,</span>
+<span class="w">   </span><span class="n">HEART</span><span class="p">,</span>
+<span class="w">   </span><span class="n">SPADE</span><span class="p">,</span>
 
-<span class="w">   </span><span class="cp">#[non_exhaustive]</span><span class="w"></span>
-<span class="w">   </span><span class="n">Unknown</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">   </span><span class="cp">#[non_exhaustive]</span>
+<span class="w">   </span><span class="n">Unknown</span><span class="p">(</span><span class="nb">String</span><span class="p">)</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>Notice that unknown enum variants are captured in <code class="docutils literal notranslate"><span class="pre">Unknown</span></code>, along
@@ -491,13 +491,13 @@ future, and we want consumers of the generated code to account for this.</p>
 enum of integer values. <code class="docutils literal notranslate"><span class="pre">intEnum</span></code> shapes must also support sending and
 receiving unknown integer values to account for newly added enum
 members. For example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">intEnum </span><span class="nc">FaceCard</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="vc">JACK</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">1</span><span class="w"></span>
-<span class="w">    </span><span class="vc">QUEEN</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">2</span><span class="w"></span>
-<span class="w">    </span><span class="vc">KING</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">3</span><span class="w"></span>
-<span class="w">    </span><span class="vc">ACE</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">4</span><span class="w"></span>
-<span class="w">    </span><span class="vc">JOKER</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">5</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">intEnum </span><span class="nc">FaceCard</span><span class="w"> </span>{
+<span class="w">    </span><span class="vc">JACK</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">1</span>
+<span class="w">    </span><span class="vc">QUEEN</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">2</span>
+<span class="w">    </span><span class="vc">KING</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">3</span>
+<span class="w">    </span><span class="vc">ACE</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">4</span>
+<span class="w">    </span><span class="vc">JOKER</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">5</span>
+}
 </pre></div>
 </div>
 </div>
@@ -639,15 +639,15 @@ meaning the member has no meaningful value. If a member targets the unit type,
 implementations should generate code that omits the value for that variant or
 sets the value to a specific type (e.g., <code class="docutils literal notranslate"><span class="pre">Void</span></code> in Java). You can detect
 if a member targets the Unit type using the following:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.traits.UnitTypeTrait</span><span class="p">;</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.traits.UnitTypeTrait</span><span class="p">;</span>
 
-<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">MemberShape</span><span class="w"> </span><span class="n">member</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">unitShape</span><span class="p">.</span><span class="na">members</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">member</span><span class="p">.</span><span class="na">getTarget</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="n">UnitTypeTrait</span><span class="p">.</span><span class="na">UNIT</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="c1">// Generate special code to handle unit types.</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="c1">// The member is a normal shape.</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">MemberShape</span><span class="w"> </span><span class="n">member</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">unitShape</span><span class="p">.</span><span class="na">members</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">member</span><span class="p">.</span><span class="na">getTarget</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="n">UnitTypeTrait</span><span class="p">.</span><span class="na">UNIT</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Generate special code to handle unit types.</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// The member is a normal shape.</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -662,15 +662,15 @@ service, and the resources contained in the service.</p>
 <h4>Computing a service closure<a class="headerlink" href="#computing-a-service-closure" title="Permalink to this headline">#</a></h4>
 <p>The closure of shapes connected to a service are the shapes that will be
 code generated. You can compute this closure using a
-<a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/neighbor/Walker.java">Walker</a>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Walker</span><span class="w"> </span><span class="n">walker</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Walker</span><span class="p">(</span><span class="n">someModel</span><span class="p">);</span><span class="w"></span>
-<span class="n">Set</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">closure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">walker</span><span class="p">.</span><span class="na">walkShapes</span><span class="p">(</span><span class="n">someService</span><span class="p">);</span><span class="w"></span>
+<a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/neighbor/Walker.java">Walker</a>:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Walker</span><span class="w"> </span><span class="n">walker</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Walker</span><span class="p">(</span><span class="n">someModel</span><span class="p">);</span>
+<span class="n">Set</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">closure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">walker</span><span class="p">.</span><span class="na">walkShapes</span><span class="p">(</span><span class="n">someService</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>You can get the entire set of operations contained in a service using a
 <code class="docutils literal notranslate"><span class="pre">TopDownIndex</span></code>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">TopDownIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TopDownIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
-<span class="n">Set</span><span class="o">&lt;</span><span class="n">OperationShape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">operations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="p">.</span><span class="na">getContainedOperations</span><span class="p">(</span><span class="n">someService</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">TopDownIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TopDownIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
+<span class="n">Set</span><span class="o">&lt;</span><span class="n">OperationShape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">operations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">index</span><span class="p">.</span><span class="na">getContainedOperations</span><span class="p">(</span><span class="n">someService</span><span class="p">);</span>
 </pre></div>
 </div>
 <div class="admonition tip">
@@ -687,11 +687,11 @@ determining the name of a shape for use in codegen, never rely on the
 shape ID directly, but rather first check if the shape was renamed
 within the closure of a service. This can be done by passing a
 <code class="docutils literal notranslate"><span class="pre">ServiceShape</span></code> into <code class="docutils literal notranslate"><span class="pre">ShapeId#getName</span></code>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Good!</span><span class="w"></span>
-<span class="n">String</span><span class="w"> </span><span class="n">goodCodegenName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">someShapeId</span><span class="p">.</span><span class="na">getName</span><span class="p">(</span><span class="n">someServiceShape</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// Good!</span>
+<span class="n">String</span><span class="w"> </span><span class="n">goodCodegenName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">someShapeId</span><span class="p">.</span><span class="na">getName</span><span class="p">(</span><span class="n">someServiceShape</span><span class="p">);</span>
 
-<span class="c1">// Bad!</span><span class="w"></span>
-<span class="n">String</span><span class="w"> </span><span class="n">badCodegenName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">someShapeId</span><span class="p">.</span><span class="na">getName</span><span class="p">();</span><span class="w"></span>
+<span class="c1">// Bad!</span>
+<span class="n">String</span><span class="w"> </span><span class="n">badCodegenName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">someShapeId</span><span class="p">.</span><span class="na">getName</span><span class="p">();</span>
 </pre></div>
 </div>
 </div>
@@ -711,15 +711,15 @@ to evolve their API without breaking previously generated clients.</p>
 the input or output of an operation using <code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> and <code class="docutils literal notranslate"><span class="pre">&#64;output</span></code>
 traits. You can transform the model being code generated and create
 synthetic input and output shapes when necessary using the
-<a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/transform/ModelTransformer.java#L546">createDedicatedInputAndOutput</a>
+<a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/transform/ModelTransformer.java#L546">createDedicatedInputAndOutput</a>
 model transformer. The following example creates a new Model that has
 dedicated input and output shapes for every operation, each marked with
 the <code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> or <code class="docutils literal notranslate"><span class="pre">&#64;output</span></code> trait, and each uses a consistent name
 that ends with <code class="docutils literal notranslate"><span class="pre">Input</span></code> or <code class="docutils literal notranslate"><span class="pre">Output</span></code>.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">ModelTransformer</span><span class="w"> </span><span class="n">transformer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModelTransformer</span><span class="p">.</span><span class="na">create</span><span class="p">();</span><span class="w"></span>
-<span class="n">Model</span><span class="w"> </span><span class="n">transformed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">transformer</span><span class="p">.</span><span class="na">createDedicatedInputAndOutput</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="s">&quot;model&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Input&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Output&quot;</span><span class="w"></span>
-<span class="p">);</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">ModelTransformer</span><span class="w"> </span><span class="n">transformer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModelTransformer</span><span class="p">.</span><span class="na">create</span><span class="p">();</span>
+<span class="n">Model</span><span class="w"> </span><span class="n">transformed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">transformer</span><span class="p">.</span><span class="na">createDedicatedInputAndOutput</span><span class="p">(</span>
+<span class="w">    </span><span class="s">&quot;model&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Input&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Output&quot;</span>
+<span class="p">);</span>
 </pre></div>
 </div>
 <div class="admonition tip">
@@ -734,7 +734,7 @@ that ends with <code class="docutils literal notranslate"><span class="pre">Inpu
 <p>Resources add hierarchy to a model. You will need to traverse from a
 service to every operation and resource in order to crawl the entire
 service. This process can be simplified using the
-<a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/knowledge/TopDownIndex.java">TopDownIndex</a>.
+<a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/knowledge/TopDownIndex.java">TopDownIndex</a>.
 Iterating only over the operations attached to a service will not
 provide every operation in the closure of the service.</p>
 <div class="admonition note">
@@ -757,7 +757,7 @@ identify which member in a recursive loop needs to be heap allocated,
 implementations will need to utilize a topological sort. Smithy's
 <a class="reference internal" href="implementing-the-generator.html#directedcodegen"><span class="std std-ref">DirectedCodegen</span></a> abstraction will automatically generate code based
 on a topological sort, though generators that need more control over how to handle recursion will need to manually
-use a <a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/TopologicalIndex.java">TopologicalIndex</a>.</p>
+use a <a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/TopologicalIndex.java">TopologicalIndex</a>.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference external" href="https://github.com/awslabs/smithy-rs/blob/main/design/src/smithy/recursive_shapes.md">Rust design doc</a>
@@ -780,13 +780,13 @@ to code generation to remove mixins.</p>
 optional. The rules around nullability are defined in the Smithy
 specification. However, all of this complexity is accounted for
 automatically using the
-<a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/knowledge/NullableIndex.java">NullableIndex</a>.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">NullableIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NullableIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"></span>
-<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="p">.</span><span class="na">isNullable</span><span class="p">(</span><span class="n">someMember</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// optional</span><span class="w"></span>
-<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// always present</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-model/src/main/java/software/amazon/smithy/model/knowledge/NullableIndex.java">NullableIndex</a>.</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">NullableIndex</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NullableIndex</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="p">.</span><span class="na">isNullable</span><span class="p">(</span><span class="n">someMember</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// optional</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// always present</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>

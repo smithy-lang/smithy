@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -388,34 +388,34 @@ found or does not match the <code class="docutils literal notranslate"><span cla
 <p>To illustrate an example, a custom trait named <code class="docutils literal notranslate"><span class="pre">integerRef</span></code> is defined.
 This trait can be attached to any shape, and the value of the trait MUST
 contain a valid shape ID that targets an integer shape in the model.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@trait</span><span class="w"></span>
-<span class="nt">@idRef</span>(<span class="py">failWhenMissing</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">integerRef</span><span class="w"></span>
+<span class="nt">@trait</span>
+<span class="nt">@idRef</span>(<span class="py">failWhenMissing</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span>)
+<span class="kd">string </span><span class="nc">integerRef</span>
 </pre></div>
 </div>
 <p>Given the following model,</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@integerRef</span>(<span class="vc">NotFound</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">InvalidShape1</span><span class="w"></span>
+<span class="nt">@integerRef</span>(<span class="vc">NotFound</span>)
+<span class="kd">string </span><span class="nc">InvalidShape1</span>
 
-<span class="nt">@integerRef</span>(<span class="vc">String</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">InvalidShape2</span><span class="w"></span>
+<span class="nt">@integerRef</span>(<span class="vc">String</span>)
+<span class="kd">string </span><span class="nc">InvalidShape2</span>
 
-<span class="nt">@integerRef</span>(<span class="s2">&quot;invalid-shape-id!&quot;</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">InvalidShape3</span><span class="w"></span>
+<span class="nt">@integerRef</span>(<span class="s2">&quot;invalid-shape-id!&quot;</span>)
+<span class="kd">string </span><span class="nc">InvalidShape3</span>
 
-<span class="nt">@integerRef</span>(<span class="vc">Integer</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">ValidShape</span><span class="w"></span>
+<span class="nt">@integerRef</span>(<span class="vc">Integer</span>)
+<span class="kd">string </span><span class="nc">ValidShape</span>
 
-<span class="nt">@integerRef</span>(<span class="vc">MyShape</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">ValidShape2</span><span class="w"></span>
+<span class="nt">@integerRef</span>(<span class="vc">MyShape</span>)
+<span class="kd">string </span><span class="nc">ValidShape2</span>
 
-<span class="kd">integer </span><span class="nc">MyShape</span><span class="w"></span>
+<span class="kd">integer </span><span class="nc">MyShape</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -495,14 +495,14 @@ the corresponding shape:</p>
 </tbody>
 </table>
 </div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">10</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">MyString</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">10</span>)
+<span class="kd">string </span><span class="nc">MyString</span>
 
-<span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">NonEmptyString</span><span class="w"></span>
+<span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span>)
+<span class="kd">string </span><span class="nc">NonEmptyString</span>
 
-<span class="nt">@length</span>(<span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">10</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">StringLessThanOrEqualToTen</span><span class="w"></span>
+<span class="nt">@length</span>(<span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">10</span>)
+<span class="kd">string </span><span class="nc">StringLessThanOrEqualToTen</span>
 </pre></div>
 </div>
 </div>
@@ -520,8 +520,8 @@ the corresponding shape:</p>
 conditionals, directives, recursion, lookahead, look-behind, back-references,
 and look-around in order to ensure maximum compatibility across programming
 languages.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@pattern</span>(<span class="s2">&quot;^[A-Za-z]+$&quot;</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">Alphabetic</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@pattern</span>(<span class="s2">&quot;^[A-Za-z]+$&quot;</span>)
+<span class="kd">string </span><span class="nc">Alphabetic</span>
 </pre></div>
 </div>
 <div class="admonition warning">
@@ -545,8 +545,8 @@ requires that the entire string matches the regular expression.</p>
 <p>Pattern values that contain <code class="docutils literal notranslate"><span class="pre">\</span></code> need to <a class="reference internal" href="idl.html#string-escape-characters"><span class="std std-ref">escape it</span></a>.
 For example, the regular expression <code class="docutils literal notranslate"><span class="pre">^\w+$</span></code> would be specified as
 <code class="docutils literal notranslate"><span class="pre">&#64;pattern(&quot;^\\w+$&quot;)</span></code>.</p>
-<div class="last highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@pattern</span>(<span class="s2">&quot;</span><span class="se">\\</span><span class="s2">w+&quot;</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">ContainsWords</span><span class="w"></span>
+<div class="last highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@pattern</span>(<span class="s2">&quot;</span><span class="se">\\</span><span class="s2">w+&quot;</span>)
+<span class="kd">string </span><span class="nc">ContainsWords</span>
 </pre></div>
 </div>
 </div>
@@ -564,21 +564,21 @@ which the shape is defined. The <code class="docutils literal notranslate"><span
 access from within the model itself and SHOULD NOT influence code-generation
 of the targeted shape.</p>
 <p>Consider the following model:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@private</span><span class="w"></span>
-<span class="kd">string </span><span class="nc">PrivateString</span><span class="w"></span>
+<span class="nt">@private</span>
+<span class="kd">string </span><span class="nc">PrivateString</span>
 </pre></div>
 </div>
 <p>The following model is invalid because it attempts to refer to
 <code class="docutils literal notranslate"><span class="pre">PrivateString</span></code> from another namespace:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example.other</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example.other</span>
 
-<span class="kd">list </span><span class="nc">StringList</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">PrivateString</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">list </span><span class="nc">StringList</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">PrivateString</span>
+}
 </pre></div>
 </div>
 </div>
@@ -622,14 +622,14 @@ upper bound.</dd>
 integers and real numbers. Real numbers may only be applied to float, double,
 or bigDecimal shapes. <code class="docutils literal notranslate"><span class="pre">min</span></code> and <code class="docutils literal notranslate"><span class="pre">max</span></code> MUST fall within the allowable range
 of the targeted numeric shape to which it is applied.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@range</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">10</span>)<span class="w"></span>
-<span class="kd">integer </span><span class="nc">OneToTen</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@range</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">10</span>)
+<span class="kd">integer </span><span class="nc">OneToTen</span>
 
-<span class="nt">@range</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span>)<span class="w"></span>
-<span class="kd">integer </span><span class="nc">GreaterThanOne</span><span class="w"></span>
+<span class="nt">@range</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span>)
+<span class="kd">integer </span><span class="nc">GreaterThanOne</span>
 
-<span class="nt">@range</span>(<span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">10</span>)<span class="w"></span>
-<span class="kd">integer </span><span class="nc">LessThanTen</span><span class="w"></span>
+<span class="nt">@range</span>(<span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">10</span>)
+<span class="kd">integer </span><span class="nc">LessThanTen</span>
 </pre></div>
 </div>
 </div>
@@ -647,10 +647,10 @@ based on <a class="reference internal" href="#value-equality"><span class="std s
 </dd>
 <dt>Value type</dt><dd>Annotation trait.</dd>
 </dl>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@uniqueItems</span><span class="w"></span>
-<span class="kd">list </span><span class="nc">MyList</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@uniqueItems</span>
+<span class="kd">list </span><span class="nc">MyList</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <div class="section" id="value-equality">

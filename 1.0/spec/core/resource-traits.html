@@ -255,7 +255,7 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project links</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/">2.0 Documentation</a></li>
 </ul>
 
@@ -323,37 +323,37 @@ client, making it appropriate to model in Smithy as a <code class="docutils lite
 operation. However, <code class="docutils literal notranslate"><span class="pre">UpdateTable</span></code> is used to update a table and attempting
 to call <code class="docutils literal notranslate"><span class="pre">CreateTable</span></code> on a table that already exists will return an error.</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@noReplace</span><span class="w"></span>
-<span class="kd">resource </span><span class="nc">Table</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">put</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateTable</span><span class="w"></span>
-}<span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@noReplace</span>
+<span class="kd">resource </span><span class="nc">Table</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">put</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateTable</span>
+}
 
-<span class="nt">@idempotent</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">CreateTable</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="c">// ...</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@idempotent</span>
+<span class="kd">operation </span><span class="nc">CreateTable</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">// ...</span>
+}
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-0-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-0-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#Table&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;resource&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;put&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#CreateTable&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="p">},</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;smithy.api#noReplace&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="p">},</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#CreateTable&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nt">&quot;smithy.api#idempotent&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+</div><div aria-labelledby="tab-0-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-0-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;smithy.example#Table&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;resource&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;put&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#CreateTable&quot;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;smithy.api#noReplace&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;smithy.example#CreateTable&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;smithy.api#idempotent&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div></div>
@@ -437,20 +437,20 @@ runtime (e.g., a member is not marked as <a class="reference internal" href="con
 <p class="rubric">Implicit identifier mappings example</p>
 <p>The following example creates a reference to a <code class="docutils literal notranslate"><span class="pre">HistoricalForecast</span></code> resource
 (a resource that requires the &quot;forecastId&quot; and &quot;historicalId&quot; identifiers):</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">resource </span><span class="nc">HistoricalForecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">historicalId</span><span class="p">:</span><span class="w"> </span><span class="vc">HistoricalForecastId</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="kd">resource </span><span class="nc">HistoricalForecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="p">,</span>
+<span class="w">        </span><span class="py">historicalId</span><span class="p">:</span><span class="w"> </span><span class="vc">HistoricalForecastId</span><span class="p">,</span>
+<span class="w">    </span>}
+}
 
-<span class="nt">@references</span>([{<span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">HistoricalForecast</span>}])<span class="w"></span>
-<span class="kd">structure </span><span class="nc">HistoricalReference</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">historicalId</span><span class="p">:</span><span class="w"> </span><span class="vc">HistoricalForecastId</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@references</span>([{<span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">HistoricalForecast</span>}])
+<span class="kd">structure </span><span class="nc">HistoricalReference</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="p">,</span>
+<span class="w">    </span><span class="py">historicalId</span><span class="p">:</span><span class="w"> </span><span class="vc">HistoricalForecastId</span>
+}
 </pre></div>
 </div>
 <p>Notice that in the above example, the identifiers of the resource were not
@@ -460,53 +460,53 @@ contains members with names that match the names of the identifiers of the
 <p class="rubric">Explicit identifier mappings example</p>
 <p>Explicit mappings between identifier names and structure member names can be
 defined if needed. For example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@references</span>([<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">HistoricalForecast</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">ids</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;customForecastId&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="py">historicalId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;customHistoricalId&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-])<span class="w"></span>
-<span class="kd">structure </span><span class="nc">AnotherHistoricalReference</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">customForecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">customHistoricalId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@references</span>([
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">HistoricalForecast</span><span class="p">,</span>
+<span class="w">        </span><span class="py">ids</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;customForecastId&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="py">historicalId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;customHistoricalId&quot;</span>
+<span class="w">        </span>}
+<span class="w">    </span>}
+])
+<span class="kd">structure </span><span class="nc">AnotherHistoricalReference</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">customForecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span><span class="py">customHistoricalId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 </pre></div>
 </div>
 <p class="rubric">Additional examples</p>
 <p>The following example defines several references:</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@references</span>([<span class="w"></span>
-<span class="w">    </span>{<span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">Forecast</span>}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span>{<span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">ShapeName</span>}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span>{<span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">Meteorologist</span>}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">com.foo.baz#Object</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">service</span><span class="p">:</span><span class="w"> </span><span class="vc">com.foo.baz#Service</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">ids</span><span class="p">:</span><span class="w"> </span>{<span class="py">bucket</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;bucketName&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">object</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;objectKey&quot;</span>}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span>])<span class="w"></span>
-<span class="kd">structure </span><span class="nc">ForecastInformation</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">someId</span><span class="p">:</span><span class="w"> </span><span class="vc">SomeShapeIdentifier</span><span class="p">,</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@references</span>([
+<span class="w">    </span>{<span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">Forecast</span>}<span class="p">,</span>
+<span class="w">    </span>{<span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">ShapeName</span>}<span class="p">,</span>
+<span class="w">    </span>{<span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">Meteorologist</span>}<span class="p">,</span>
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">com.foo.baz#Object</span><span class="p">,</span>
+<span class="w">        </span><span class="py">service</span><span class="p">:</span><span class="w"> </span><span class="vc">com.foo.baz#Service</span><span class="p">,</span>
+<span class="w">        </span><span class="py">ids</span><span class="p">:</span><span class="w"> </span>{<span class="py">bucket</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;bucketName&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">object</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;objectKey&quot;</span>}<span class="p">,</span>
+<span class="w">    </span>])
+<span class="kd">structure </span><span class="nc">ForecastInformation</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">someId</span><span class="p">:</span><span class="w"> </span><span class="vc">SomeShapeIdentifier</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">meteorologistId</span><span class="p">:</span><span class="w"> </span><span class="vc">MeteorologistId</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">meteorologistId</span><span class="p">:</span><span class="w"> </span><span class="vc">MeteorologistId</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">otherData</span><span class="p">:</span><span class="w"> </span><span class="vc">SomeOtherShape</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">otherData</span><span class="p">:</span><span class="w"> </span><span class="vc">SomeOtherShape</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">bucketName</span><span class="p">:</span><span class="w"> </span><span class="vc">BucketName</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">bucketName</span><span class="p">:</span><span class="w"> </span><span class="vc">BucketName</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">objectKey</span><span class="p">:</span><span class="w"> </span><span class="vc">ObjectKey</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">objectKey</span><span class="p">:</span><span class="w"> </span><span class="vc">ObjectKey</span><span class="p">,</span>
+}
 </pre></div>
 </div>
 </div></div>
@@ -514,14 +514,14 @@ defined if needed. For example:</p>
 <p>A reference can be formed on a string shape for resources that have one
 identifier. References applied to a string shape MUST omit the &quot;ids&quot;
 property in the reference.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">SimpleResource</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">SimpleResource</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span>}
+}
 
-<span class="nt">@references</span>([{<span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">SimpleResource</span>}])<span class="w"></span>
-<span class="kd">string </span><span class="nc">SimpleResourceReference</span><span class="w"></span>
+<span class="nt">@references</span>([{<span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">SimpleResource</span>}])
+<span class="kd">string </span><span class="nc">SimpleResourceReference</span>
 </pre></div>
 </div>
 <div class="section" id="implicit-ids">
@@ -551,32 +551,32 @@ serve as input shapes for operations bound to resources. The string value
 provided must correspond to the name of an identifier for said resource. The
 trait is not required when the name of the input structure member is an exact
 match for the name of the resource identifier.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">File</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">directory</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">fileName</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFile</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">File</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">directory</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">fileName</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="p">,</span>
+<span class="w">    </span>}<span class="p">,</span>
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFile</span><span class="p">,</span>
+}
 
-<span class="nt">@readonly</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetFile</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFileInput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFileOutput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">NoSuchResource</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@readonly</span>
+<span class="kd">operation </span><span class="nc">GetFile</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFileInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFileOutput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">NoSuchResource</span>]
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetFileInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">directory</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetFileInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">directory</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="c">// resourceIdentifier is used because the input member name</span><span class="w"></span>
-<span class="w">    </span><span class="c">// does not match the resource identifier name</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@resourceIdentifier</span>(<span class="s2">&quot;fileName&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="c">// resourceIdentifier is used because the input member name</span>
+<span class="w">    </span><span class="c">// does not match the resource identifier name</span>
+<span class="w">    </span><span class="nt">@resourceIdentifier</span>(<span class="s2">&quot;fileName&quot;</span>)
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 </pre></div>
 </div>
 </div>

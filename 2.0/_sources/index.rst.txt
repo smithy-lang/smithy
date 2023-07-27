@@ -28,7 +28,7 @@ Smithy
 .. rubric:: Next steps
 
 * Find out more about Smithy models and this example in the :doc:`quickstart`.
-* Find the source code on `Github <https://github.com/awslabs/smithy>`_.
+* Find the source code on `Github <https://github.com/smithy-lang/smithy>`_.
 
 
 Features
@@ -148,6 +148,6 @@ Read more
     :caption: Project
     :maxdepth: 1
 
-    Source code <https://github.com/awslabs/smithy>
+    Source code <https://github.com/smithy-lang/smithy>
     Awesome Smithy <https://github.com/smithy-lang/awesome-smithy>
     1.0 Documentation <https://smithy.io/1.0/>

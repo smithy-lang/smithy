@@ -302,19 +302,24 @@ Smithy defines the following built-in timestamp formats:
       - Description
     * - date-time
       - Date time as defined by the ``date-time`` production in
-        `RFC3339 section 5.6 <https://www.rfc-editor.org/rfc/rfc3339#section-5.6>`_
-        with optional fractional precision but no UTC offset (for example,
-        ``1985-04-12T23:20:50.52Z``).
-        *However*, offsets are parsed gracefully, but the datetime is normalized
-        to an offset of zero by converting to UTC.
+        :rfc:`3339#section-5.6` with optional millisecond precision but no
+        UTC offset (for example, ``1985-04-12T23:20:50.520Z``). Values that
+        are more granular than millisecond precision SHOULD be truncated to
+        fit millisecond precision. Deserializers SHOULD parse ``date-time``
+        values that contain offsets gracefully by normalizing them to UTC.
     * - http-date
       - An HTTP date as defined by the ``IMF-fixdate`` production in
         :rfc:`7231#section-7.1.1.1` (for example,
-        ``Tue, 29 Apr 2014 18:30:38 GMT``).
+        ``Tue, 29 Apr 2014 18:30:38 GMT``). A deserializer that encounters an
+        ``http-date`` timestamp with fractional precision SHOULD fail to
+        deserialize the value (for example, an HTTP server SHOULD return a 400
+        status code).
     * - epoch-seconds
       - Also known as Unix time, the number of seconds that have elapsed since
         00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970,
-        with optional fractional precision (for example, ``1515531081.1234``).
+        with optional millisecond precision (for example, ``1515531081.123``).
+        Values that are more granular than millisecond precision SHOULD be
+        truncated to fit millisecond precision.
 
 .. rubric:: Resolving timestamp formats
 

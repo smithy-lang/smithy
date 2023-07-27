@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -398,26 +398,26 @@ original shape ID name.</li>
 </table>
 </div>
 <p>The following example defines a service with no operations or resources.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+}
 </pre></div>
 </div>
 <p>The following example defines a service shape that defines a set of errors
 that are common to every operation in the service:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">SomeError</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">SomeError</span>]
+}
 
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">SomeError</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="kd">structure </span><span class="nc">SomeError</span><span class="w"> </span>{}
 </pre></div>
 </div>
 <div class="section" id="service-operations">
@@ -426,18 +426,18 @@ that are common to every operation in the service:</p>
 shape ID of an operation to the <code class="docutils literal notranslate"><span class="pre">operations</span></code> property of a service.
 Operations bound directly to a service are typically RPC-style operations
 that do not fit within a resource hierarchy.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetServerTime</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetServerTime</span>]
+}
 
-<span class="nt">@readonly</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetServerTime</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetServerTimeOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@readonly</span>
+<span class="kd">operation </span><span class="nc">GetServerTime</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetServerTimeOutput</span>
+}
 </pre></div>
 </div>
 </div>
@@ -445,15 +445,15 @@ that do not fit within a resource hierarchy.</p>
 <span id="id4"></span><h3><span class="section-number">4.1.2. </span>Service resources<a class="headerlink" href="#service-resources" title="Permalink to this headline">#</a></h3>
 <p><a class="reference internal" href="#resource"><span class="std std-ref">Resource</span></a> shapes can be bound to a service by adding the
 shape ID of a resource to the <code class="docutils literal notranslate"><span class="pre">resources</span></code> property of a service.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]
+}
 
-<span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{}<span class="w"></span>
+<span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{}
 </pre></div>
 </div>
 </div>
@@ -499,32 +499,32 @@ a single service.</p>
 <p>The following example defines a service that contains two shapes named
 &quot;Widget&quot; in its closure. The <code class="docutils literal notranslate"><span class="pre">rename</span></code> property is used to disambiguate
 the conflicting shapes.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetSomething</span>]<span class="w"></span>
-<span class="w">    </span><span class="py">rename</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="s2">&quot;foo.example#Widget&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FooWidget&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetSomething</span>]
+<span class="w">    </span><span class="py">rename</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="s2">&quot;foo.example#Widget&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FooWidget&quot;</span>
+<span class="w">    </span>}
+}
 
-<span class="kd">operation </span><span class="nc">GetSomething</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetSomethingInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetSomethingOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">operation </span><span class="nc">GetSomething</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetSomethingInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetSomethingOutput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetSomethingInput</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetSomethingInput</span><span class="w"> </span>{}
 
-<span class="nt">@output</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetSomethingOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">widget1</span><span class="p">:</span><span class="w"> </span><span class="vc">Widget</span><span class="w"></span>
-<span class="w">    </span><span class="py">fooWidget</span><span class="p">:</span><span class="w"> </span><span class="vc">foo.example#Widget</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">GetSomethingOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">widget1</span><span class="p">:</span><span class="w"> </span><span class="vc">Widget</span>
+<span class="w">    </span><span class="py">fooWidget</span><span class="p">:</span><span class="w"> </span><span class="vc">foo.example#Widget</span>
+}
 
-<span class="kd">structure </span><span class="nc">Widget</span><span class="w"> </span>{}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">Widget</span><span class="w"> </span>{}
 </pre></div>
 </div>
 <p class="rubric">Resources and operations can be bound once</p>
@@ -602,39 +602,39 @@ marked with the <a class="reference internal" href="type-refinement-traits.html#
 named <code class="docutils literal notranslate"><span class="pre">MyOperationInput</span></code>, returns an output structure named
 <code class="docutils literal notranslate"><span class="pre">MyOperationOutput</span></code>, and can potentially return the <code class="docutils literal notranslate"><span class="pre">NotFound</span></code> or
 <code class="docutils literal notranslate"><span class="pre">BadRequest</span></code> <a class="reference internal" href="type-refinement-traits.html#error-trait"><span class="std std-ref">error structures</span></a>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">MyOperationInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">MyOperationOutput</span><span class="w"></span>
-<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">NotFoundError</span><span class="p">,</span><span class="w"> </span><span class="vc">BadRequestError</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">MyOperationInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">MyOperationOutput</span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">NotFoundError</span><span class="p">,</span><span class="w"> </span><span class="vc">BadRequestError</span>]
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">MyOperationInput</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">MyOperationInput</span><span class="w"> </span>{}
 
-<span class="nt">@output</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">MyOperationOutput</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">MyOperationOutput</span><span class="w"> </span>{}
 </pre></div>
 </div>
 <p>While, input and output SHOULD be explicitly defined for every operation,
 omitting them is allowed. The default value for input and output is
 <code class="docutils literal notranslate"><span class="pre">smithy.api#Unit</span></code>, indicating that there is no meaningful value.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">operation </span><span class="nc">MySideEffectOperation</span><span class="w"> </span>{}<span class="w"></span>
+<span class="kd">operation </span><span class="nc">MySideEffectOperation</span><span class="w"> </span>{}
 </pre></div>
 </div>
 <p>The following example is equivalent, but more explicit in intent:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">operation </span><span class="nc">MySideEffectOperation</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">Unit</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">Unit</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">operation </span><span class="nc">MySideEffectOperation</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">Unit</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">Unit</span>
+}
 </pre></div>
 </div>
 <div class="admonition warning">
@@ -741,14 +741,14 @@ The identifiers property of a resource is a map of identifier names to
 <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">shape IDs</span></a> that MUST target string shapes.</p>
 <p>For example, the following model defines a <code class="docutils literal notranslate"><span class="pre">Forecast</span></code> resource with a
 single identifier named <code class="docutils literal notranslate"><span class="pre">forecastId</span></code> that targets the <code class="docutils literal notranslate"><span class="pre">ForecastId</span></code> shape:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"> </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"> </span>}
+}
 
-<span class="kd">string </span><span class="nc">ForecastId</span><span class="w"></span>
+<span class="kd">string </span><span class="nc">ForecastId</span>
 </pre></div>
 </div>
 <p>When a resource is bound as a child to another resource using the &quot;resources&quot;
@@ -761,28 +761,28 @@ operation bound as a child to a resource. <em class="dfn">Child identifiers</em>
 identifiers that a child resource contains that are not present in the parent
 identifiers.</p>
 <p>For example, given the following model,</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">ResourceA</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ResourceB</span>]<span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">ResourceA</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span>}
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ResourceB</span>]
+}
 
-<span class="kd">resource </span><span class="nc">ResourceB</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">        </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ResourceC</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="kd">resource </span><span class="nc">ResourceB</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">        </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span>}
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ResourceC</span>]
+}
 
-<span class="kd">resource </span><span class="nc">ResourceC</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">        </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">        </span><span class="py">c</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="kd">resource </span><span class="nc">ResourceC</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">        </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">        </span><span class="py">c</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">ResourceB</span></code> is a valid child of <code class="docutils literal notranslate"><span class="pre">ResourceA</span></code> and contains a child
@@ -790,28 +790,28 @@ identifier of &quot;b&quot;. <code class="docutils literal notranslate"><span cl
 contains a child identifier of &quot;c&quot;.</p>
 <p>However, the following defines two <em>invalid</em> child resources that do not
 define an <code class="docutils literal notranslate"><span class="pre">identifiers</span></code> property that is compatible with their parents:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">ResourceA</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">        </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">Invalid1</span><span class="p">,</span><span class="w"> </span><span class="vc">Invalid2</span>]<span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">ResourceA</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">        </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span>}
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">Invalid1</span><span class="p">,</span><span class="w"> </span><span class="vc">Invalid2</span>]
+}
 
-<span class="kd">resource </span><span class="nc">Invalid1</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="c">// Invalid: missing &quot;a&quot;.</span><span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="kd">resource </span><span class="nc">Invalid1</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">// Invalid: missing &quot;a&quot;.</span>
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span>}
+}
 
-<span class="kd">resource </span><span class="nc">Invalid2</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">        </span><span class="c">// Invalid: does not target the same shape.</span><span class="w"></span>
-<span class="w">        </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">SomeOtherString</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="kd">resource </span><span class="nc">Invalid2</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">a</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">        </span><span class="c">// Invalid: does not target the same shape.</span>
+<span class="w">        </span><span class="py">b</span><span class="p">:</span><span class="w"> </span><span class="vc">SomeOtherString</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 <div class="section" id="binding-identifiers-to-operations">
@@ -847,30 +847,30 @@ resource.</p>
 contains member names that target the same shapes that are defined in the
 &quot;identifiers&quot; property of the resource to which an operation is bound.</p>
 <p>For example, given the following model,</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecast</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span>
+<span class="w">    </span>}
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecast</span>
+}
 
-<span class="nt">@readonly</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@readonly</span>
+<span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetForecastInput</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">Forecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nl">$forecastId</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetForecastInput</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">Forecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nl">$forecastId</span>
+}
 
-<span class="nt">@output</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetForecastOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">weather</span><span class="p">:</span><span class="w"> </span><span class="vc">WeatherData</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">GetForecastOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">weather</span><span class="p">:</span><span class="w"> </span><span class="vc">WeatherData</span>
+}
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">GetForecast</span></code> forms a valid instance operation because the operation is
@@ -887,23 +887,23 @@ without having to repeat the target definition.</p>
 similar way to an instance operation, but MUST NOT contain identifier bindings
 for <em>all</em> child identifiers of the resource.</p>
 <p>Given the following model,</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-<span class="w">    </span><span class="py">collectionOperations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">BatchPutForecasts</span>]<span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span>
+<span class="w">    </span>}
+<span class="w">    </span><span class="py">collectionOperations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">BatchPutForecasts</span>]
+}
 
-<span class="kd">operation </span><span class="nc">BatchPutForecasts</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">BatchPutForecastsInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">BatchPutForecastsOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">operation </span><span class="nc">BatchPutForecasts</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">BatchPutForecastsInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">BatchPutForecastsOutput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">BatchPutForecastsInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">forecasts</span><span class="p">:</span><span class="w"> </span><span class="vc">BatchPutForecastList</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">BatchPutForecastsInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">forecasts</span><span class="p">:</span><span class="w"> </span><span class="vc">BatchPutForecastList</span>
+}
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">BatchPutForecasts</span></code> forms a valid collection operation with implicit
@@ -918,36 +918,36 @@ operation bound to a resource. Explicit bindings are necessary when the name of
 the input structure member differs from the name of the resource identifier to
 which the input member corresponds.</p>
 <p>For example, given the following,</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="c">// continued from above</span><span class="w"></span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">HistoricalForecast</span>]<span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">// continued from above</span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">HistoricalForecast</span>]
+}
 
-<span class="kd">resource </span><span class="nc">HistoricalForecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"></span>
-<span class="w">        </span><span class="py">historicalId</span><span class="p">:</span><span class="w"> </span><span class="vc">HistoricalForecastId</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetHistoricalForecast</span><span class="w"></span>
-<span class="w">    </span><span class="py">list</span><span class="p">:</span><span class="w"> </span><span class="vc">ListHistoricalForecasts</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">resource </span><span class="nc">HistoricalForecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span>
+<span class="w">        </span><span class="py">historicalId</span><span class="p">:</span><span class="w"> </span><span class="vc">HistoricalForecastId</span>
+<span class="w">    </span>}
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetHistoricalForecast</span>
+<span class="w">    </span><span class="py">list</span><span class="p">:</span><span class="w"> </span><span class="vc">ListHistoricalForecasts</span>
+}
 
-<span class="nt">@readonly</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetHistoricalForecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetHistoricalForecastInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetHistoricalForecastOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@readonly</span>
+<span class="kd">operation </span><span class="nc">GetHistoricalForecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetHistoricalForecastInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetHistoricalForecastOutput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetHistoricalForecastInput</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">HistoricalForecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@resourceIdentifier</span>(<span class="s2">&quot;forecastId&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">customForecastIdName</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetHistoricalForecastInput</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">HistoricalForecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nt">@resourceIdentifier</span>(<span class="s2">&quot;forecastId&quot;</span>)
+<span class="w">    </span><span class="py">customForecastIdName</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span>
 
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@resourceIdentifier</span>(<span class="s2">&quot;historicalId&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nl">$customHistoricalIdName</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nt">@resourceIdentifier</span>(<span class="s2">&quot;historicalId&quot;</span>)
+<span class="w">    </span><span class="nl">$customHistoricalIdName</span>
+}
 </pre></div>
 </div>
 <p>the <a class="reference internal" href="resource-traits.html#resourceidentifier-trait"><span class="std std-ref">resourceIdentifier trait</span></a> on <code class="docutils literal notranslate"><span class="pre">GetHistoricalForecastInput$customForecastIdName</span></code>
@@ -969,22 +969,22 @@ least one instance operation's input or output.</p>
 <p>For example, the following model defines a <code class="docutils literal notranslate"><span class="pre">Forecast</span></code> resource with a
 single property <code class="docutils literal notranslate"><span class="pre">chanceOfRain</span></code> read by the GetForecast operation, and the
 output operation shape <code class="docutils literal notranslate"><span class="pre">GetForecastOutput</span></code> contains that output property.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">properties</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="w"> </span>}<span class="w"></span>
-<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecast</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">properties</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="w"> </span>}
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecast</span>
+}
 
-<span class="nt">@readonly</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">   </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@readonly</span>
+<span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{
+<span class="w">   </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span>
+}
 
-<span class="kd">structure </span><span class="nc">GetForecastOutput</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">Forecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">$chanceOfRain</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">GetForecastOutput</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">Forecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="nl">$chanceOfRain</span>
+}
 </pre></div>
 </div>
 <div class="section" id="binding-members-to-properties">
@@ -992,22 +992,22 @@ output operation shape <code class="docutils literal notranslate"><span class="p
 <p><em>Property bindings</em> associate top-level members of input or output shapes
 with resource properties. The match occurs through a match between member
 name and property name by default.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2.0&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">properties</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="w"> </span>}<span class="w"></span>
-<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecast</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">properties</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="w"> </span>}
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecast</span>
+}
 
-<span class="nt">@readonly</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">   </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@readonly</span>
+<span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{
+<span class="w">   </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span>
+}
 
-<span class="kd">structure </span><span class="nc">GetForecastOutput</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">Forecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">$chanceOfRain</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">GetForecastOutput</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="vc">Forecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="nl">$chanceOfRain</span>
+}
 </pre></div>
 </div>
 <p>The <a class="reference internal" href="resource-traits.html#property-trait"><span class="std std-ref">property trait</span></a> is used to bind a member to
@@ -1016,20 +1016,20 @@ useful if the member name cannot be changed due backwards compatibility reasons,
 but resource property modeling is being added to your Smithy model.</p>
 <p>The following example demonstrates the <code class="docutils literal notranslate"><span class="pre">howLikelyToRain</span></code> member of
 <code class="docutils literal notranslate"><span class="pre">GetForecastOutput</span></code> can be bound to the <code class="docutils literal notranslate"><span class="pre">chanceOfRain</span></code> resource property:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">properties</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="w"> </span>}<span class="w"></span>
-<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecast</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">properties</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="w"> </span>}
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecast</span>
+}
 
-<span class="nt">@readonly</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">   </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@readonly</span>
+<span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{
+<span class="w">   </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span>
+}
 
-<span class="kd">structure </span><span class="nc">GetForecastOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@property</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;chanceOfRain&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">howLikelyToRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">GetForecastOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@property</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;chanceOfRain&quot;</span>)
+<span class="w">    </span><span class="py">howLikelyToRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span>
+}
 </pre></div>
 </div>
 <p>Though resource properties are usually bound to top level input and output
@@ -1063,18 +1063,18 @@ shape ID to the <code class="docutils literal notranslate"><span class="pre">put
 <a class="reference internal" href="#operation"><span class="std std-ref">operation</span></a> that is compatible with the semantics of the
 lifecycle.</p>
 <p>The following example defines a resource with each lifecycle method:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"> </span>}<span class="w"></span>
-<span class="w">    </span><span class="py">put</span><span class="p">:</span><span class="w"> </span><span class="vc">PutForecast</span><span class="w"></span>
-<span class="w">    </span><span class="py">create</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateForecast</span><span class="w"></span>
-<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecast</span><span class="w"></span>
-<span class="w">    </span><span class="py">update</span><span class="p">:</span><span class="w"> </span><span class="vc">UpdateForecast</span><span class="w"></span>
-<span class="w">    </span><span class="py">delete</span><span class="p">:</span><span class="w"> </span><span class="vc">DeleteForecast</span><span class="w"></span>
-<span class="w">    </span><span class="py">list</span><span class="p">:</span><span class="w"> </span><span class="vc">ListForecasts</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">resource </span><span class="nc">Forecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"> </span>}
+<span class="w">    </span><span class="py">put</span><span class="p">:</span><span class="w"> </span><span class="vc">PutForecast</span>
+<span class="w">    </span><span class="py">create</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateForecast</span>
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecast</span>
+<span class="w">    </span><span class="py">update</span><span class="p">:</span><span class="w"> </span><span class="vc">UpdateForecast</span>
+<span class="w">    </span><span class="py">delete</span><span class="p">:</span><span class="w"> </span><span class="vc">DeleteForecast</span>
+<span class="w">    </span><span class="py">list</span><span class="p">:</span><span class="w"> </span><span class="vc">ListForecasts</span>
+}
 </pre></div>
 </div>
 <div class="section" id="put-lifecycle">
@@ -1087,20 +1087,20 @@ provided by the client.</p>
 <li>Put operations MUST form valid <a class="reference internal" href="#instance-operations"><span class="std std-ref">instance operations</span></a>.</li>
 </ul>
 <p>The following example defines the <code class="docutils literal notranslate"><span class="pre">PutForecast</span></code> operation.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@idempotent</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">PutForecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutForecastInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">PutForecastOutput</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@idempotent</span>
+<span class="kd">operation </span><span class="nc">PutForecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutForecastInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">PutForecastOutput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">PutForecastInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="c">// The client provides the resource identifier.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">PutForecastInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">// The client provides the resource identifier.</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span>
 
-<span class="w">    </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span>
+}
 </pre></div>
 </div>
 <p class="rubric">Put semantics</p>
@@ -1123,22 +1123,22 @@ identifiers created by the service.</p>
 <li>The <code class="docutils literal notranslate"><span class="pre">create</span></code> operation MAY be marked with the <a class="reference internal" href="behavior-traits.html#idempotent-trait"><span class="std std-ref">idempotent trait</span></a>.</li>
 </ul>
 <p>The following example defines the <code class="docutils literal notranslate"><span class="pre">CreateForecast</span></code> operation.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">CreateForecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateForecastInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateForecastOutput</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">CreateForecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateForecastInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateForecastOutput</span>
+}
 
-<span class="kd">operation </span><span class="nc">CreateForecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateForecastInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateForecastOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">operation </span><span class="nc">CreateForecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateForecastInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateForecastOutput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">CreateForecastInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="c">// No identifier is provided by the client, so the service is</span><span class="w"></span>
-<span class="w">    </span><span class="c">// responsible for providing the identifier of the resource.</span><span class="w"></span>
-<span class="w">    </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">CreateForecastInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">// No identifier is provided by the client, so the service is</span>
+<span class="w">    </span><span class="c">// responsible for providing the identifier of the resource.</span>
+<span class="w">    </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span>
+}
 </pre></div>
 </div>
 </div>
@@ -1151,18 +1151,18 @@ representation of a resource.</p>
 <li>Read operations MUST be marked with the <a class="reference internal" href="behavior-traits.html#readonly-trait"><span class="std std-ref">readonly trait</span></a>.</li>
 </ul>
 <p>For example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span><span class="w"></span>
-<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ResourceNotFound</span>]<span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
+<span class="kd">operation </span><span class="nc">GetForecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetForecastOutput</span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ResourceNotFound</span>]
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetForecastInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetForecastInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span>
+}
 </pre></div>
 </div>
 </div>
@@ -1175,19 +1175,19 @@ resource.</p>
 <li>Update operations MUST NOT be marked with the <a class="reference internal" href="behavior-traits.html#readonly-trait"><span class="std std-ref">readonly trait</span></a>.</li>
 </ul>
 <p>For example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">UpdateForecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">UpdateForecastInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">UpdateForecastOutput</span><span class="w"></span>
-<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ResourceNotFound</span>]<span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">UpdateForecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">UpdateForecastInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">UpdateForecastOutput</span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ResourceNotFound</span>]
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">UpdateForecastInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">UpdateForecastInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span>
 
-<span class="w">    </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="py">chanceOfRain</span><span class="p">:</span><span class="w"> </span><span class="vc">Float</span>
+}
 </pre></div>
 </div>
 </div>
@@ -1200,18 +1200,18 @@ resource.</p>
 <li>Delete operations MUST be marked with the <a class="reference internal" href="behavior-traits.html#idempotent-trait"><span class="std std-ref">idempotent trait</span></a>.</li>
 </ul>
 <p>For example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@idempotent</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">DeleteForecast</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">DeleteForecastInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">DeleteForecastOutput</span><span class="w"></span>
-<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ResourceNotFound</span>]<span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@idempotent</span>
+<span class="kd">operation </span><span class="nc">DeleteForecast</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">DeleteForecastInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">DeleteForecastOutput</span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">ResourceNotFound</span>]
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">DeleteForecastInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">DeleteForecastInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">forecastId</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span>
+}
 </pre></div>
 </div>
 </div>
@@ -1227,28 +1227,28 @@ being listed.</li>
 <li>List operations SHOULD be <a class="reference internal" href="behavior-traits.html#paginated-trait"><span class="std std-ref">paginated</span></a>.</li>
 </ul>
 <p>For example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span><span class="w"> </span><span class="nt">@paginated</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">ListForecasts</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ListForecastsInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">ListForecastsOutput</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span><span class="w"> </span><span class="nt">@paginated</span>
+<span class="kd">operation </span><span class="nc">ListForecasts</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ListForecastsInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">ListForecastsOutput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">ListForecastsInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">maxResults</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="w"></span>
-<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">ListForecastsInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">maxResults</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span>
+<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="nt">@output</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">ListForecastsOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">forecasts</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastList</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">ListForecastsOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">forecasts</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastList</span>
+}
 
-<span class="kd">list </span><span class="nc">ForecastList</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">list </span><span class="nc">ForecastList</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">ForecastId</span>
+}
 </pre></div>
 </div>
 </div>

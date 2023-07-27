@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -340,14 +340,14 @@ operation would entail.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
 </dl>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">aws.iam#actionPermissionDescription</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.iam#actionPermissionDescription</span>
 
-<span class="nt">@actionPermissionDescription</span>(<span class="s2">&quot;This will allow the user to Foo.&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">FooOperation</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@actionPermissionDescription</span>(<span class="s2">&quot;This will allow the user to Foo.&quot;</span>)
+<span class="kd">operation </span><span class="nc">FooOperation</span><span class="w"> </span>{}
 </pre></div>
 </div>
 </div>
@@ -364,29 +364,29 @@ explicitly defined via the <a class="reference internal" href="#aws-iam-defineco
 <p>The following example's <code class="docutils literal notranslate"><span class="pre">MyResource</span></code> resource has the
 <code class="docutils literal notranslate"><span class="pre">myservice:MyResourceFoo</span></code> and  <code class="docutils literal notranslate"><span class="pre">otherservice:Bar</span></code> condition keys. The
 <code class="docutils literal notranslate"><span class="pre">MyOperation</span></code> operation has the <code class="docutils literal notranslate"><span class="pre">aws:region</span></code> condition key.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">aws.api#service</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">aws.iam#definedContextKeys</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">aws.iam#conditionKeys</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.api#service</span>
+<span class="kd">use </span><span class="nc">aws.iam#definedContextKeys</span>
+<span class="kd">use </span><span class="nc">aws.iam#conditionKeys</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)<span class="w"></span>
-<span class="nt">@defineConditionKeys</span>(<span class="s2">&quot;otherservice:Bar&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>})<span class="w"></span>
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)
+<span class="nt">@defineConditionKeys</span>(<span class="s2">&quot;otherservice:Bar&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>})
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]
+}
 
-<span class="nt">@conditionKeys</span>([<span class="s2">&quot;otherservice:Bar&quot;</span>])<span class="w"></span>
-<span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}<span class="w"></span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyOperation</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@conditionKeys</span>([<span class="s2">&quot;otherservice:Bar&quot;</span>])
+<span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyOperation</span>]
+}
 
-<span class="nt">@conditionKeys</span>([<span class="s2">&quot;aws:region&quot;</span>])<span class="w"></span>
-<span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@conditionKeys</span>([<span class="s2">&quot;aws:region&quot;</span>])
+<span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{}
 </pre></div>
 </div>
 <div class="admonition note">
@@ -442,24 +442,24 @@ for more information.</td>
 </tbody>
 </table>
 </div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">aws.api#service</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">aws.iam#defineConditionKeys</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.api#service</span>
+<span class="kd">use </span><span class="nc">aws.iam#defineConditionKeys</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)<span class="w"></span>
-<span class="nt">@defineConditionKeys</span>(<span class="w"></span>
-<span class="w">    </span><span class="s2">&quot;otherservice:Bar&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The Bar string&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">externalDocumentation</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://example.com&quot;</span><span class="w"></span>
-<span class="w">    </span>})<span class="w"></span>
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)
+<span class="nt">@defineConditionKeys</span>(
+<span class="w">    </span><span class="s2">&quot;otherservice:Bar&quot;</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span>
+<span class="w">        </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The Bar string&quot;</span>
+<span class="w">        </span><span class="py">externalDocumentation</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://example.com&quot;</span>
+<span class="w">    </span>})
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]
+}
 </pre></div>
 </div>
 <div class="admonition note">
@@ -542,26 +542,26 @@ not have its condition keys automatically inferred from its identifiers and
 the identifiers of its ancestors (if present.)</p>
 <p>The following example shows a resource, <code class="docutils literal notranslate"><span class="pre">MyResource</span></code>, that has had its
 condition key inference disabled.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">aws.api#service</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">aws.iam#disableConditionKeyInference</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.api#service</span>
+<span class="kd">use </span><span class="nc">aws.iam#disableConditionKeyInference</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)<span class="w"></span>
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]
+}
 
-<span class="nt">@disableConditionKeyInference</span><span class="w"></span>
-<span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">        </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@disableConditionKeyInference</span>
+<span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">        </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 </div>
@@ -579,26 +579,26 @@ be authorized to execute in order invoke an operation. The following example
 indicates that, in order to invoke the <code class="docutils literal notranslate"><span class="pre">MyOperation</span></code> operation, the invoker
 must also be authorized to execute the <code class="docutils literal notranslate"><span class="pre">otherservice:OtherOperation</span></code>
 operation for it to complete successfully.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">aws.api#service</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">aws.iam#requiredActions</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.api#service</span>
+<span class="kd">use </span><span class="nc">aws.iam#requiredActions</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)<span class="w"></span>
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]
+}
 
-<span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}<span class="w"></span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyOperation</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyOperation</span>]
+}
 
-<span class="nt">@requiredActions</span>([<span class="s2">&quot;otherservice:OtherOperation&quot;</span>])<span class="w"></span>
-<span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@requiredActions</span>([<span class="s2">&quot;otherservice:OtherOperation&quot;</span>])
+<span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{}
 </pre></div>
 </div>
 </div>
@@ -620,22 +620,22 @@ using the <code class="docutils literal notranslate"><span class="pre">supported
 the IAM principal types supported by this operation are the principal types
 applied to the service.</li>
 </ul>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">aws.iam#supportedPrincipalTypes</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.iam#supportedPrincipalTypes</span>
 
-<span class="nt">@supportedPrincipalTypes</span>([<span class="s2">&quot;Root&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;IAMUser&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;IAMRole&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;FederatedUser&quot;</span>])<span class="w"></span>
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-07-02&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationB</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@supportedPrincipalTypes</span>([<span class="s2">&quot;Root&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;IAMUser&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;IAMRole&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;FederatedUser&quot;</span>])
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-07-02&quot;</span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationB</span>]
+}
 
-<span class="nt">@supportedPrincipalTypes</span>([<span class="s2">&quot;Root&quot;</span>])<span class="w"></span>
-<span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@supportedPrincipalTypes</span>([<span class="s2">&quot;Root&quot;</span>])
+<span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{}
 
-<span class="kd">operation </span><span class="nc">OperationB</span><span class="w"> </span>{}<span class="w"></span>
+<span class="kd">operation </span><span class="nc">OperationB</span><span class="w"> </span>{}
 </pre></div>
 </div>
 </div>
@@ -671,18 +671,18 @@ members:</p>
 </div>
 <p>The following example defines a simple resource with a name in AWS IAM that
 deviates from the <a class="reference internal" href="../spec/model.html#shape-id"><span class="std std-ref">shape name of the shape ID</span></a> of the resource.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">aws.iam#iamResource</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.iam#iamResource</span>
 
-<span class="nt">@iamResource</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;super&quot;</span>)<span class="w"></span>
-<span class="kd">resource </span><span class="nc">SuperResource</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">superId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@iamResource</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;super&quot;</span>)
+<span class="kd">resource </span><span class="nc">SuperResource</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">superId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span>}
+}
 </pre></div>
 </div>
 </div>
@@ -702,21 +702,21 @@ resolves the action name of <code class="docutils literal notranslate"><span cla
 <li><code class="docutils literal notranslate"><span class="pre">OperationB</span></code> has the <code class="docutils literal notranslate"><span class="pre">actionName</span></code> trait, so has the action
 name <code class="docutils literal notranslate"><span class="pre">OverridingActionName</span></code>.</li>
 </ul>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">aws.iam#actionName</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.iam#actionName</span>
 
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-07-02&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationB</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-07-02&quot;</span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationB</span>]
+}
 
-<span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{}<span class="w"></span>
+<span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{}
 
-<span class="nt">@actionName</span>(<span class="s2">&quot;OverridingActionName&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">OperationB</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@actionName</span>(<span class="s2">&quot;OverridingActionName&quot;</span>)
+<span class="kd">operation </span><span class="nc">OperationB</span><span class="w"> </span>{}
 </pre></div>
 </div>
 </div>
@@ -733,36 +733,36 @@ the <a class="reference internal" href="#aws-iam-disableconditionkeyinference-tr
 resources, are only derived from those applied via the <a class="reference internal" href="#aws-iam-conditionkeys-trait"><span class="std std-ref">aws.iam#conditionKeys trait</span></a>
 trait.</p>
 <p>Given the following model,</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">aws.api#service</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">aws.iam#defineConditionKeys</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">aws.iam#conditionKeys</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">aws.iam#iamResource</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.api#service</span>
+<span class="kd">use </span><span class="nc">aws.iam#defineConditionKeys</span>
+<span class="kd">use </span><span class="nc">aws.iam#conditionKeys</span>
+<span class="kd">use </span><span class="nc">aws.iam#iamResource</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)<span class="w"></span>
-<span class="nt">@defineConditionKeys</span>(<span class="s2">&quot;otherservice:Bar&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>})<span class="w"></span>
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)
+<span class="nt">@defineConditionKeys</span>(<span class="s2">&quot;otherservice:Bar&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>})
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]
+}
 
-<span class="nt">@conditionKeys</span>([<span class="s2">&quot;otherservice:Bar&quot;</span>])<span class="w"></span>
-<span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}<span class="w"></span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyOperation</span>]<span class="w"></span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyInnerResource</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@conditionKeys</span>([<span class="s2">&quot;otherservice:Bar&quot;</span>])
+<span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyOperation</span>]
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyInnerResource</span>]
+}
 
-<span class="nt">@iamResource</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;InnerResource&quot;</span>)<span class="w"></span>
-<span class="kd">resource </span><span class="nc">MyInnerResource</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">yum</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}<span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@iamResource</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;InnerResource&quot;</span>)
+<span class="kd">resource </span><span class="nc">MyInnerResource</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">yum</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}
+}
 
-<span class="nt">@conditionKeys</span>([<span class="s2">&quot;aws:region&quot;</span>])<span class="w"></span>
-<span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@conditionKeys</span>([<span class="s2">&quot;aws:region&quot;</span>])
+<span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{}
 </pre></div>
 </div>
 <p>The computed condition keys for the service are:</p>

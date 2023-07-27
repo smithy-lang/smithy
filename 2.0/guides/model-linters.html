@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -331,10 +331,10 @@ that is configurable. Linter implementations are found in code. The
 can be used to apply additional validation to Smithy models.</p>
 <p>The following example adds <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code> as a Gradle dependency
 to a <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code> file:</p>
-<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.34.0&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.34.0&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.35.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.35.0&quot;</span><span class="p">)</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>After the dependency is added and available on the Java classpath, validators
@@ -381,11 +381,11 @@ letters. Defaults to an empty list.</td>
 </dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">    </span>{<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AbbreviationName&quot;</span>}<span class="w"></span>
-]<span class="w"></span>
+<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[
+<span class="w">    </span>{<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AbbreviationName&quot;</span>}
+]
 </pre></div>
 </div>
 </div>
@@ -426,11 +426,11 @@ models.</dd>
 </dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">    </span>{<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CamelCase&quot;</span>}<span class="w"></span>
-]<span class="w"></span>
+<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[
+<span class="w">    </span>{<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CamelCase&quot;</span>}
+]
 </pre></div>
 </div>
 </div>
@@ -480,15 +480,15 @@ If set to true, <code class="docutils literal notranslate"><span class="pre">ter
 </dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingSensitiveTrait&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">excludeDefaults</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">terms</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;home planet&quot;</span>]<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}]<span class="w"></span>
+<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingSensitiveTrait&quot;</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">excludeDefaults</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">        </span><span class="py">terms</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;home planet&quot;</span>]
+<span class="w">    </span>}
+}]
 </pre></div>
 </div>
 </div>
@@ -545,18 +545,18 @@ This property is not required and defaults to false.</td>
 </dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NoninclusiveTerms&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">excludeDefaults</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">terms</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">mankind</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;humankind&quot;</span>]<span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="py">mailman</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;mail carrier&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;postal worker&quot;</span>]<span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}]<span class="w"></span>
+<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NoninclusiveTerms&quot;</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">excludeDefaults</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">        </span><span class="py">terms</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="py">mankind</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;humankind&quot;</span>]<span class="p">,</span>
+<span class="w">            </span><span class="py">mailman</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;mail carrier&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;postal worker&quot;</span>]
+<span class="w">        </span>}
+<span class="w">    </span>}
+}]
 </pre></div>
 </div>
 </div>
@@ -621,20 +621,20 @@ evaluated instead of the shape name.</p>
 </dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[{<span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FooReservedWords&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ReservedWords&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">reserved</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">            </span>{<span class="w"></span>
-<span class="w">                </span><span class="py">words</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Codename&quot;</span>]<span class="w"></span>
-<span class="w">                </span><span class="py">reason</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This is the internal project name.&quot;</span><span class="w"></span>
-<span class="w">            </span>}<span class="w"></span>
-<span class="w">        </span>]<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}]<span class="w"></span>
+<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[{
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FooReservedWords&quot;</span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ReservedWords&quot;</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">reserved</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">            </span>{
+<span class="w">                </span><span class="py">words</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Codename&quot;</span>]
+<span class="w">                </span><span class="py">reason</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This is the internal project name.&quot;</span>
+<span class="w">            </span>}
+<span class="w">        </span>]
+<span class="w">    </span>}
+}]
 </pre></div>
 </div>
 <div class="section" id="wildcards-in-reservedwords">
@@ -928,19 +928,19 @@ verbs to use instead.</td>
 be provided.</p>
 </div>
 <p>Example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;StandardOperationVerb&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">verbs</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Register&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Deregister&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Associate&quot;</span>]<span class="w"></span>
-<span class="w">        </span><span class="py">prefixes</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Batch&quot;</span>]<span class="w"></span>
-<span class="w">        </span><span class="py">suggestAlternatives</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="s2">&quot;Make&quot;</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Create&quot;</span>]<span class="w"></span>
-<span class="w">            </span><span class="s2">&quot;Transition&quot;</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Update&quot;</span>]<span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}]<span class="w"></span>
+<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;StandardOperationVerb&quot;</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">verbs</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Register&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Deregister&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Associate&quot;</span>]
+<span class="w">        </span><span class="py">prefixes</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Batch&quot;</span>]
+<span class="w">        </span><span class="py">suggestAlternatives</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="s2">&quot;Make&quot;</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Create&quot;</span>]
+<span class="w">            </span><span class="s2">&quot;Transition&quot;</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Update&quot;</span>]
+<span class="w">        </span>}
+<span class="w">    </span>}
+}]
 </pre></div>
 </div>
 </div>
@@ -1062,9 +1062,9 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">[&quot;
 </dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">    </span>{<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingPaginatedTrait&quot;</span>}<span class="w"></span>
-]<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[
+<span class="w">    </span>{<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingPaginatedTrait&quot;</span>}
+]
 </pre></div>
 </div>
 </div>
@@ -1177,29 +1177,29 @@ needs to be made optional.</td>
 </dl>
 <p>The following example requires that <code class="docutils literal notranslate"><span class="pre">&#64;required</span></code> members that target a structure or
 union are marked with the <code class="docutils literal notranslate"><span class="pre">&#64;clientOptional</span></code> trait.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingClientOptionalTrait&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingClientOptionalTrait&quot;</span><span class="p">,</span>
 
-<span class="w">        </span><span class="c">// Limit validation to a specific set of namespaces.</span><span class="w"></span>
-<span class="w">        </span><span class="py">namespaces</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;smithy.example&quot;</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="c">// Limit validation to a specific set of namespaces.</span>
+<span class="w">        </span><span class="py">namespaces</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;smithy.example&quot;</span>]<span class="p">,</span>
 
-<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">onRequiredStructureOrUnion</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-]<span class="w"></span>
+<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="py">onRequiredStructureOrUnion</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">        </span>}
+<span class="w">    </span>}
+]
 </pre></div>
 </div>
 <p>This validation can be suppressed for any member that the service provider
 decides is not at risk of ever needing to become optional in the future:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Sprocket</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@suppress</span>([<span class="s2">&quot;MissingClientOptionalTrait&quot;</span>])<span class="w"></span>
-<span class="w">    </span><span class="py">owner</span><span class="p">:</span><span class="w"> </span><span class="vc">OwnerStructure</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Sprocket</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nt">@suppress</span>([<span class="s2">&quot;MissingClientOptionalTrait&quot;</span>])
+<span class="w">    </span><span class="py">owner</span><span class="p">:</span><span class="w"> </span><span class="vc">OwnerStructure</span>
+}
 </pre></div>
 </div>
 </div>
@@ -1215,24 +1215,24 @@ classpath.</p>
 validators should extend from <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.model.validation.AbstractValidator</span></code>.</p>
 <p>The following linter emits a <code class="docutils literal notranslate"><span class="pre">ValidationEvent</span></code> for every shape in the
 model that is not documented.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span><span class="w"> </span><span class="nn">com.example.mypackage</span><span class="p">;</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span><span class="w"> </span><span class="nn">com.example.mypackage</span><span class="p">;</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span><span class="w"></span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.stream.Collectors</span><span class="p">;</span><span class="w"></span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.Model</span><span class="p">;</span><span class="w"></span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.traits.DocumentationTrait</span><span class="p">;</span><span class="w"></span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.validation.AbstractValidator</span><span class="p">;</span><span class="w"></span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.validation.ValidationEvent</span><span class="p">;</span><span class="w"></span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.stream.Collectors</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.Model</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.traits.DocumentationTrait</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.validation.AbstractValidator</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.validation.ValidationEvent</span><span class="p">;</span>
 
-<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">DocumentationValidator</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">AbstractValidator</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">ValidationEvent</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">shapes</span><span class="p">()</span><span class="w"></span>
-<span class="w">                </span><span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">!</span><span class="n">shape</span><span class="p">.</span><span class="na">hasTrait</span><span class="p">(</span><span class="n">DocumentationTrait</span><span class="p">.</span><span class="na">class</span><span class="p">))</span><span class="w"></span>
-<span class="w">                </span><span class="p">.</span><span class="na">map</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">error</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;This shape is not documented!&quot;</span><span class="p">))</span><span class="w"></span>
-<span class="w">                </span><span class="p">.</span><span class="na">collect</span><span class="p">(</span><span class="n">Collectors</span><span class="p">.</span><span class="na">toList</span><span class="p">());</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">DocumentationValidator</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">AbstractValidator</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">ValidationEvent</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">shapes</span><span class="p">()</span>
+<span class="w">                </span><span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">!</span><span class="n">shape</span><span class="p">.</span><span class="na">hasTrait</span><span class="p">(</span><span class="n">DocumentationTrait</span><span class="p">.</span><span class="na">class</span><span class="p">))</span>
+<span class="w">                </span><span class="p">.</span><span class="na">map</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">error</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;This shape is not documented!&quot;</span><span class="p">))</span>
+<span class="w">                </span><span class="p">.</span><span class="na">collect</span><span class="p">(</span><span class="n">Collectors</span><span class="p">.</span><span class="na">toList</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>Validators need to be registered as Java service providers. Add the following
@@ -1256,84 +1256,84 @@ linters are configurable, they are created using an implementation of the
 <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.model.validation.ValidatorService</span></code> interface.</p>
 <p>The following validator emits a <code class="docutils literal notranslate"><span class="pre">ValidationEvent</span></code> for every shape in the
 model that has documentation that contains a forbidden string.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span><span class="w"> </span><span class="nn">com.example.mypackage</span><span class="p">;</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span><span class="w"> </span><span class="nn">com.example.mypackage</span><span class="p">;</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span><span class="w"></span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.Optional</span><span class="p">;</span><span class="w"></span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.stream.Collectors</span><span class="p">;</span><span class="w"></span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.stream.Stream</span><span class="p">;</span><span class="w"></span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.Model</span><span class="p">;</span><span class="w"></span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.node.NodeMapper</span><span class="p">;</span><span class="w"></span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.shapes.Shape</span><span class="p">;</span><span class="w"></span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.traits.DocumentationTrait</span><span class="p">;</span><span class="w"></span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.validation.AbstractValidator</span><span class="p">;</span><span class="w"></span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.validation.ValidationEvent</span><span class="p">;</span><span class="w"></span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.validation.ValidatorService</span><span class="p">;</span><span class="w"></span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.Optional</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.stream.Collectors</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.stream.Stream</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.Model</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.node.NodeMapper</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.shapes.Shape</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.traits.DocumentationTrait</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.validation.AbstractValidator</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.validation.ValidationEvent</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.validation.ValidatorService</span><span class="p">;</span>
 
-<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ForbiddenDocumentationValidator</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">AbstractValidator</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ForbiddenDocumentationValidator</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">AbstractValidator</span><span class="w"> </span><span class="p">{</span>
 
 <span class="w">    </span><span class="cm">/**</span>
 <span class="cm">     * ForbiddenDocumentation configuration settings.</span>
-<span class="cm">     */</span><span class="w"></span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Config</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="kd">private</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">forbid</span><span class="p">;</span><span class="w"></span>
+<span class="cm">     */</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Config</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">private</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">forbid</span><span class="p">;</span>
 
-<span class="w">        </span><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">getForbid</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">forbid</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">getForbid</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">forbid</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
 
-<span class="w">        </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setForbid</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">forbid</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="k">this</span><span class="p">.</span><span class="na">forbid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">forbid</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setForbid</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">forbid</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">this</span><span class="p">.</span><span class="na">forbid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">forbid</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="c1">// Does the actual work of converting metadata found in a Smithy</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// model into an actual implementation of a Validator.</span><span class="w"></span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Provider</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">ValidatorService</span><span class="p">.</span><span class="na">Provider</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="kd">public</span><span class="w"> </span><span class="nf">Provider</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="kd">super</span><span class="p">(</span><span class="n">ForbiddenDocumentationValidator</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="n">configuration</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="c1">// Deserialize the Node value into the Config POJO.</span><span class="w"></span>
-<span class="w">                </span><span class="n">NodeMapper</span><span class="w"> </span><span class="n">mapper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">NodeMapper</span><span class="p">();</span><span class="w"></span>
-<span class="w">                </span><span class="n">ForbiddenDocumentationValidator</span><span class="p">.</span><span class="na">Config</span><span class="w"> </span><span class="n">config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mapper</span><span class="p">.</span><span class="na">deserialize</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span><span class="w"> </span><span class="n">Config</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w"></span>
-<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ForbiddenDocumentationValidator</span><span class="p">(</span><span class="n">config</span><span class="p">);</span><span class="w"></span>
-<span class="w">            </span><span class="p">});</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// Does the actual work of converting metadata found in a Smithy</span>
+<span class="w">    </span><span class="c1">// model into an actual implementation of a Validator.</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Provider</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">ValidatorService</span><span class="p">.</span><span class="na">Provider</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">public</span><span class="w"> </span><span class="nf">Provider</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="kd">super</span><span class="p">(</span><span class="n">ForbiddenDocumentationValidator</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="n">configuration</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">// Deserialize the Node value into the Config POJO.</span>
+<span class="w">                </span><span class="n">NodeMapper</span><span class="w"> </span><span class="n">mapper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">NodeMapper</span><span class="p">();</span>
+<span class="w">                </span><span class="n">ForbiddenDocumentationValidator</span><span class="p">.</span><span class="na">Config</span><span class="w"> </span><span class="n">config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mapper</span><span class="p">.</span><span class="na">deserialize</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span><span class="w"> </span><span class="n">Config</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ForbiddenDocumentationValidator</span><span class="p">(</span><span class="n">config</span><span class="p">);</span>
+<span class="w">            </span><span class="p">});</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">forbid</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">forbid</span><span class="p">;</span>
 
-<span class="w">    </span><span class="c1">// The constructor is private since the validator is only intended to</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// be created when loading a model via the Provider class.</span><span class="w"></span>
-<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="nf">ForbiddenDocumentationValidator</span><span class="p">(</span><span class="n">Config</span><span class="w"> </span><span class="n">config</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">forbid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="na">forbid</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// The constructor is private since the validator is only intended to</span>
+<span class="w">    </span><span class="c1">// be created when loading a model via the Provider class.</span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="nf">ForbiddenDocumentationValidator</span><span class="p">(</span><span class="n">Config</span><span class="w"> </span><span class="n">config</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">forbid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="na">forbid</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">ValidationEvent</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="c1">// Find every shape that violates the linter and return a list</span><span class="w"></span>
-<span class="w">        </span><span class="c1">// of ValidationEvents.</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">shapes</span><span class="p">()</span><span class="w"></span>
-<span class="w">                </span><span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">hasTrait</span><span class="p">(</span><span class="n">DocumentationTrait</span><span class="p">.</span><span class="na">class</span><span class="p">))</span><span class="w"></span>
-<span class="w">                </span><span class="p">.</span><span class="na">flatMap</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">validateShape</span><span class="p">(</span><span class="n">shape</span><span class="p">).</span><span class="na">map</span><span class="p">(</span><span class="n">Stream</span><span class="p">::</span><span class="n">of</span><span class="p">).</span><span class="na">orElseGet</span><span class="p">(</span><span class="n">Stream</span><span class="p">::</span><span class="n">empty</span><span class="p">))</span><span class="w"></span>
-<span class="w">                </span><span class="p">.</span><span class="na">collect</span><span class="p">(</span><span class="n">Collectors</span><span class="p">.</span><span class="na">toList</span><span class="p">());</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">ValidationEvent</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Find every shape that violates the linter and return a list</span>
+<span class="w">        </span><span class="c1">// of ValidationEvents.</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">shapes</span><span class="p">()</span>
+<span class="w">                </span><span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">hasTrait</span><span class="p">(</span><span class="n">DocumentationTrait</span><span class="p">.</span><span class="na">class</span><span class="p">))</span>
+<span class="w">                </span><span class="p">.</span><span class="na">flatMap</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">validateShape</span><span class="p">(</span><span class="n">shape</span><span class="p">).</span><span class="na">map</span><span class="p">(</span><span class="n">Stream</span><span class="p">::</span><span class="n">of</span><span class="p">).</span><span class="na">orElseGet</span><span class="p">(</span><span class="n">Stream</span><span class="p">::</span><span class="n">empty</span><span class="p">))</span>
+<span class="w">                </span><span class="p">.</span><span class="na">collect</span><span class="p">(</span><span class="n">Collectors</span><span class="p">.</span><span class="na">toList</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">ValidationEvent</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">validateShape</span><span class="p">(</span><span class="n">Shape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="c1">// Grab the trait by type.</span><span class="w"></span>
-<span class="w">        </span><span class="n">DocumentationTrait</span><span class="w"> </span><span class="n">trait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">expectTrait</span><span class="p">(</span><span class="n">DocumentationTrait</span><span class="p">.</span><span class="na">class</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">docString</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">trait</span><span class="p">.</span><span class="na">getValue</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">ValidationEvent</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">validateShape</span><span class="p">(</span><span class="n">Shape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Grab the trait by type.</span>
+<span class="w">        </span><span class="n">DocumentationTrait</span><span class="w"> </span><span class="n">trait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">expectTrait</span><span class="p">(</span><span class="n">DocumentationTrait</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">docString</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">trait</span><span class="p">.</span><span class="na">getValue</span><span class="p">();</span>
 
-<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">forbid</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">docString</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">text</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="c1">// Emit an event that points at the location of the trait</span><span class="w"></span>
-<span class="w">                </span><span class="c1">// and associates the warning with the shape.</span><span class="w"></span>
-<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">Optional</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">warning</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span><span class="w"> </span><span class="n">trait</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Documentation uses forbidden text: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">text</span><span class="p">));</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">forbid</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">docString</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">text</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">// Emit an event that points at the location of the trait</span>
+<span class="w">                </span><span class="c1">// and associates the warning with the shape.</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">Optional</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">warning</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span><span class="w"> </span><span class="n">trait</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Documentation uses forbidden text: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">text</span><span class="p">));</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
 
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Optional</span><span class="p">.</span><span class="na">empty</span><span class="p">();</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Optional</span><span class="p">.</span><span class="na">empty</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>Configurable linters need to be registered as Java service providers. Add the following
@@ -1346,16 +1346,16 @@ Java package:</p>
 <p>When added to the classpath (typically as a dependency of a published JAR),
 the custom validator is available to be used as a validator. The following
 example warns each time the word &quot;meow&quot; appears in documentation:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ForbiddenDocumentation&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">forbid</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;meow&quot;</span>]<span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-]<span class="w"></span>
+<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ForbiddenDocumentation&quot;</span>
+<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="py">forbid</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;meow&quot;</span>]
+<span class="w">        </span>}
+<span class="w">    </span>}
+]
 </pre></div>
 </div>
 <div class="admonition tip">
@@ -1363,18 +1363,18 @@ example warns each time the word &quot;meow&quot; appears in documentation:</p>
 <p>The <a class="reference internal" href="../spec/model-validation.html#emiteachselector"><span class="std std-ref">EmitEachSelector</span></a> can get you pretty far without needing to
 write any Java code. For example, the above linter can be implemented
 using the following Smithy model:</p>
-<div class="last highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="last highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ForbiddenDocumentation&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Documentation uses forbidden text&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|documentation*=&#39;meow&#39;]&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-]<span class="w"></span>
+<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span>
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ForbiddenDocumentation&quot;</span>
+<span class="w">        </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Documentation uses forbidden text&quot;</span>
+<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|documentation*=&#39;meow&#39;]&quot;</span>
+<span class="w">        </span>}
+<span class="w">    </span>}
+]
 </pre></div>
 </div>
 </div>

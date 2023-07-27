@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -328,49 +328,49 @@ style guide makes models easier to read.</p>
 <h2>Model files<a class="headerlink" href="#model-files" title="Permalink to this headline">#</a></h2>
 <p>Smithy models SHOULD be authored using the <a class="reference internal" href="../spec/idl.html#idl"><span class="std std-ref">Smithy IDL</span></a>.
 Smithy models SHOULD resemble the following example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[]<span class="w"></span>
-<span class="kd">metadata </span><span class="nc">suppressions </span><span class="nd">=</span><span class="w"> </span>[]<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[]
+<span class="kd">metadata </span><span class="nc">suppressions </span><span class="nd">=</span><span class="w"> </span>[]
 
-<span class="kd">namespace </span><span class="nc">smithy.example.namespace</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example.namespace</span>
 
-<span class="c">/// This is the documentation</span><span class="w"></span>
-<span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">1000</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">MyShape</span><span class="w"></span>
+<span class="c">/// This is the documentation</span>
+<span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">1000</span>)
+<span class="kd">string </span><span class="nc">MyShape</span>
 
-<span class="c">/// This is the documentation.</span><span class="w"></span>
-<span class="kd">integer </span><span class="nc">AnotherShape</span><span class="w"></span>
+<span class="c">/// This is the documentation.</span>
+<span class="kd">integer </span><span class="nc">AnotherShape</span>
 
-<span class="c">/// Documentation about the structure.</span><span class="w"></span>
-<span class="c">///</span><span class="w"></span>
-<span class="c">/// More descriptive documentation if needed...</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="c">/// Documentation about the member.</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="c">/// Documentation about the structure.</span>
+<span class="c">///</span>
+<span class="c">/// More descriptive documentation if needed...</span>
+<span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
+<span class="w">    </span><span class="c">/// Documentation about the member.</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="c">// Example of creating custom traits.</span><span class="w"></span>
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">myTrait</span><span class="w"> </span>{}<span class="w"></span>
+<span class="c">// Example of creating custom traits.</span>
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>)
+<span class="kd">structure </span><span class="nc">myTrait</span><span class="w"> </span>{}
 
-<span class="c">// Structures with no members place the braces on the same line.</span><span class="w"></span>
-<span class="nt">@mixin</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">MyMixin</span><span class="w"> </span>{}<span class="w"></span>
+<span class="c">// Structures with no members place the braces on the same line.</span>
+<span class="nt">@mixin</span>
+<span class="kd">structure </span><span class="nc">MyMixin</span><span class="w"> </span>{}
 
-<span class="c">// When using a single mixin, place &quot;with&quot; and the shape on the same line</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">UsesMixin</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">MyMixin</span>]<span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="c">// When using a single mixin, place &quot;with&quot; and the shape on the same line</span>
+<span class="kd">structure </span><span class="nc">UsesMixin</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="vc">MyMixin</span>]<span class="w"> </span>{
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="c">// When using multiple mixins, place each shape ID on its own line,</span><span class="w"></span>
-<span class="c">// followed by a line that contains the opening brace.</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">UsesMixin</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">    </span><span class="vc">MyMixin</span><span class="w"></span>
-<span class="w">    </span><span class="vc">SomeOtherMixin</span><span class="w"></span>
-]<span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="c">// When using multiple mixins, place each shape ID on its own line,</span>
+<span class="c">// followed by a line that contains the opening brace.</span>
+<span class="kd">structure </span><span class="nc">UsesMixin</span><span class="w"> </span><span class="k">with</span><span class="w"> </span>[
+<span class="w">    </span><span class="vc">MyMixin</span>
+<span class="w">    </span><span class="vc">SomeOtherMixin</span>
+]<span class="w"> </span>{
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <ul class="simple">
@@ -417,51 +417,51 @@ Smithy models SHOULD resemble the following example:</p>
 <p>Omit commas everywhere except in traits or node values defined on a
 single line.</p>
 <p>Do:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;StandardOperationVerb&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">verbs</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Get&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Delete&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Create&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Update&quot;</span>]<span class="w"></span>
-<span class="w">        </span><span class="py">prefixes</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Batch&quot;</span>]<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-}]<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;StandardOperationVerb&quot;</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">verbs</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Get&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Delete&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Create&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Update&quot;</span>]
+<span class="w">        </span><span class="py">prefixes</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Batch&quot;</span>]
+<span class="w">    </span>}
+}]
 
-<span class="kd">namespace </span><span class="nc">smithy.example.namespace</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example.namespace</span>
 
-<span class="c">/// Gets a resource by ID.</span><span class="w"></span>
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/message/{userId}&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetMessage</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetMessageInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetMessageOutput</span><span class="w"></span>
-<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">        </span><span class="vc">ValidationError</span><span class="w"></span>
-<span class="w">        </span><span class="vc">ResourceNotFoundError</span><span class="w"></span>
-<span class="w">    </span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="c">/// Gets a resource by ID.</span>
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/message/{userId}&quot;</span>)
+<span class="kd">operation </span><span class="nc">GetMessage</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetMessageInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetMessageOutput</span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span><span class="vc">ValidationError</span>
+<span class="w">        </span><span class="vc">ResourceNotFoundError</span>
+<span class="w">    </span>]
+}
 </pre></div>
 </div>
 <p>Do not:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[{<span class="w"></span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;StandardOperationVerb&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">verbs</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Get&quot;</span><span class="w"> </span><span class="s2">&quot;Delete&quot;</span><span class="w"> </span><span class="s2">&quot;Create&quot;</span><span class="w"> </span><span class="s2">&quot;Update&quot;</span>]<span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">prefixes</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Batch&quot;</span>]<span class="p">,</span><span class="w"></span>
-<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
-}<span class="p">,</span>]<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[{
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;StandardOperationVerb&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">verbs</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Get&quot;</span><span class="w"> </span><span class="s2">&quot;Delete&quot;</span><span class="w"> </span><span class="s2">&quot;Create&quot;</span><span class="w"> </span><span class="s2">&quot;Update&quot;</span>]<span class="p">,</span>
+<span class="w">        </span><span class="py">prefixes</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Batch&quot;</span>]<span class="p">,</span>
+<span class="w">    </span>}<span class="p">,</span>
+}<span class="p">,</span>]
 
-<span class="kd">namespace </span><span class="nc">smithy.example.namespace</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example.namespace</span>
 
-<span class="c">/// Gets a resource by ID.</span><span class="w"></span>
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/message/{userId}&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetMessage</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetMessageInput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetMessageOutput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">        </span><span class="vc">ValidationError</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="vc">ResourceNotFoundError</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span>]<span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="c">/// Gets a resource by ID.</span>
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/message/{userId}&quot;</span>)
+<span class="kd">operation </span><span class="nc">GetMessage</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetMessageInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetMessageOutput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span><span class="vc">ValidationError</span><span class="p">,</span>
+<span class="w">        </span><span class="vc">ResourceNotFoundError</span><span class="p">,</span>
+<span class="w">    </span>]<span class="p">,</span>
+}
 </pre></div>
 </div>
 </div>
@@ -479,13 +479,13 @@ single line.</p>
 <div class="section" id="trait-names">
 <h3>Trait names<a class="headerlink" href="#trait-names" title="Permalink to this headline">#</a></h3>
 <p>By convention, traits use lowerCamelCase (e.g., &quot;xmlRequest&quot;, &quot;fooId&quot;).</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example.namespace</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example.namespace</span>
 
-<span class="c">/// This is the documentation about the trait.</span><span class="w"></span>
-<span class="c">///</span><span class="w"></span>
-<span class="c">/// This is more documentation.</span><span class="w"></span>
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">myTrait</span><span class="w"> </span>{}<span class="w"></span>
+<span class="c">/// This is the documentation about the trait.</span>
+<span class="c">///</span>
+<span class="c">/// This is more documentation.</span>
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>)
+<span class="kd">structure </span><span class="nc">myTrait</span><span class="w"> </span>{}
 </pre></div>
 </div>
 </div>

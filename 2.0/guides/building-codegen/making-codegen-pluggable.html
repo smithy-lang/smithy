@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -378,15 +378,15 @@ are used to enable customizations performed by integrations.</p>
 <div class="section" id="creating-a-smithyintegrations">
 <h2>Creating a <code class="docutils literal notranslate"><span class="pre">SmithyIntegrations</span></code><a class="headerlink" href="#creating-a-smithyintegrations" title="Permalink to this headline">#</a></h2>
 <p>Smithy codegen provides a pre-built integration interface,
-<a class="reference external" href="https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SmithyIntegration.java">SmithyIntegration</a>,
+<a class="reference external" href="https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/SmithyIntegration.java">SmithyIntegration</a>,
 that <em>should</em> be used by every Smithy code generator. Using this
 standardized interface ensures all code generators follow the same basic
 framework and makes it easier to contribute features that span multiple
 code generators.</p>
 <p><code class="docutils literal notranslate"><span class="pre">SmithyIntegration</span></code> requires a few generic type parameters:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SmithyIntegration</span><span class="o">&lt;</span><span class="n">S</span><span class="p">,</span><span class="w"></span>
-<span class="w">                  </span><span class="n">W</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">SymbolWriter</span><span class="o">&lt;</span><span class="n">W</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="p">,</span><span class="w"></span>
-<span class="w">                  </span><span class="n">C</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CodegenContext</span><span class="o">&lt;</span><span class="n">S</span><span class="p">,</span><span class="w"> </span><span class="n">W</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;&gt;</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">SmithyIntegration</span><span class="o">&lt;</span><span class="n">S</span><span class="p">,</span>
+<span class="w">                  </span><span class="n">W</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">SymbolWriter</span><span class="o">&lt;</span><span class="n">W</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;</span><span class="p">,</span>
+<span class="w">                  </span><span class="n">C</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CodegenContext</span><span class="o">&lt;</span><span class="n">S</span><span class="p">,</span><span class="w"> </span><span class="n">W</span><span class="p">,</span><span class="w"> </span><span class="o">?&gt;&gt;</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -409,30 +409,30 @@ implementation is expected to create a specific subtype of
 <code class="docutils literal notranslate"><span class="pre">CodegenContext</span></code>.</li>
 </ul>
 <p>Example of a custom <code class="docutils literal notranslate"><span class="pre">SmithyIntegration</span></code> for Python:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">interface</span> <span class="nc">PythonIntegration</span><span class="w"> </span><span class="kd">extends</span><span class="w"></span>
-<span class="w">        </span><span class="n">SmithyIntegration</span><span class="o">&lt;</span><span class="n">PythonSettings</span><span class="p">,</span><span class="w"> </span><span class="n">PythonWriter</span><span class="p">,</span><span class="w"> </span><span class="n">PythonContext</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">interface</span> <span class="nc">PythonIntegration</span><span class="w"> </span><span class="kd">extends</span>
+<span class="w">        </span><span class="n">SmithyIntegration</span><span class="o">&lt;</span><span class="n">PythonSettings</span><span class="p">,</span><span class="w"> </span><span class="n">PythonWriter</span><span class="p">,</span><span class="w"> </span><span class="n">PythonContext</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{}</span>
 </pre></div>
 </div>
 <p>Example codegen settings type:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">record</span> <span class="nc">PythonSettings</span><span class="p">(</span><span class="n">ShapeId</span><span class="w"> </span><span class="n">service</span><span class="p">,</span><span class="w"> </span><span class="n">ShapeId</span><span class="w"> </span><span class="n">protocol</span><span class="p">);</span><span class="w"></span>
-<span class="c1">// A builder pattern could be applied later if the number of arguments grows.</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">record</span> <span class="nc">PythonSettings</span><span class="p">(</span><span class="n">ShapeId</span><span class="w"> </span><span class="n">service</span><span class="p">,</span><span class="w"> </span><span class="n">ShapeId</span><span class="w"> </span><span class="n">protocol</span><span class="p">);</span>
+<span class="c1">// A builder pattern could be applied later if the number of arguments grows.</span>
 </pre></div>
 </div>
 <p>Example of a custom <code class="docutils literal notranslate"><span class="pre">CodegenContext</span></code>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">record</span> <span class="nc">PythonContext</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">PythonSettings</span><span class="w"> </span><span class="n">settings</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">SymbolProvider</span><span class="w"> </span><span class="n">symbolProvider</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">FileManifest</span><span class="w"> </span><span class="n">fileManifest</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">WriterDelegator</span><span class="o">&lt;</span><span class="n">PythonWriter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">writerDelegator</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">PythonIntegration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">integrations</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">CodegenContext</span><span class="o">&lt;</span><span class="n">PythonSettings</span><span class="p">,</span><span class="w"> </span><span class="n">PythonWriter</span><span class="p">,</span><span class="w"> </span><span class="n">PythonIntegration</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">record</span> <span class="nc">PythonContext</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">,</span>
+<span class="w">    </span><span class="n">PythonSettings</span><span class="w"> </span><span class="n">settings</span><span class="p">,</span>
+<span class="w">    </span><span class="n">SymbolProvider</span><span class="w"> </span><span class="n">symbolProvider</span><span class="p">,</span>
+<span class="w">    </span><span class="n">FileManifest</span><span class="w"> </span><span class="n">fileManifest</span><span class="p">,</span>
+<span class="w">    </span><span class="n">WriterDelegator</span><span class="o">&lt;</span><span class="n">PythonWriter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">writerDelegator</span><span class="p">,</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">PythonIntegration</span><span class="o">&gt;</span><span class="w"> </span><span class="n">integrations</span>
+<span class="p">)</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">CodegenContext</span><span class="o">&lt;</span><span class="n">PythonSettings</span><span class="p">,</span><span class="w"> </span><span class="n">PythonWriter</span><span class="p">,</span><span class="w"> </span><span class="n">PythonIntegration</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{}</span>
 </pre></div>
 </div>
 <p>This integration is then implemented to implement customizations:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">AddCodeLicense</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">PythonIntegration</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// implement overrides, detailed below</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">AddCodeLicense</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">PythonIntegration</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// implement overrides, detailed below</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <div class="section" id="identifying-integrations">
@@ -449,24 +449,24 @@ graph. Integrations can specify that they should be applied before other
 integrations by name and/or after other integrations by name. The
 following example states that the integration needs to run before
 <code class="docutils literal notranslate"><span class="pre">&quot;Foo&quot;</span></code> but after <code class="docutils literal notranslate"><span class="pre">&quot;CodeLicenseHeader&quot;</span></code>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span><span class="w"></span>
-<span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">runBefore</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;Foo&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span>
+<span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">runBefore</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;Foo&quot;</span><span class="p">);</span>
+<span class="p">}</span>
 
-<span class="nd">@Override</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">runAfter</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;CodeLicenseHeader&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="nd">@Override</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">runAfter</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;CodeLicenseHeader&quot;</span><span class="p">);</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>In rare cases, you might need more granular control over the order of
 an integration. A priority can be provided to influence when the integration
 is applied relative to other integrations when their dependencies are
 resolved. The higher the priority, the earlier an integration is applied.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span><span class="w"></span>
-<span class="kd">public</span><span class="w"> </span><span class="kt">byte</span><span class="w"> </span><span class="nf">priority</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">64</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">byte</span><span class="w"> </span><span class="nf">priority</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">64</span><span class="p">;</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <div class="admonition tip">
@@ -486,11 +486,11 @@ their code generation strategy.</p>
 <p>The model can be preprocessed by implementing the
 <code class="docutils literal notranslate"><span class="pre">SmithyIntegration#preprocessModel</span></code> method and returning an updated
 model.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span><span class="w"></span>
-<span class="n">Model</span><span class="w"> </span><span class="nf">preprocessModel</span><span class="p">(</span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">PythonSettings</span><span class="w"> </span><span class="n">settings</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// Perform some transformation and return the updated model.</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">model</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span>
+<span class="n">Model</span><span class="w"> </span><span class="nf">preprocessModel</span><span class="p">(</span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">PythonSettings</span><span class="w"> </span><span class="n">settings</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Perform some transformation and return the updated model.</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">model</span><span class="p">;</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <div class="admonition seealso">
@@ -504,14 +504,14 @@ model.</p>
 used for naming shapes, the file location of shapes, or just adding
 metadata to each <a class="reference internal" href="../glossary.html#term-Symbol"><span class="xref std std-term">Symbol</span></a> created by a <a class="reference internal" href="../glossary.html#term-SymbolProvider"><span class="xref std std-term">SymbolProvider</span></a>. This can
 be achieved by implementing <code class="docutils literal notranslate"><span class="pre">SmithyIntegration#decorateSymbolProvider</span></code>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span><span class="w"></span>
-<span class="kd">public</span><span class="w"> </span><span class="n">SymbolProvider</span><span class="w"> </span><span class="nf">decorateSymbolProvider</span><span class="p">(</span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">PythonSetting</span><span class="w"> </span><span class="n">settings</span><span class="p">,</span><span class="w"> </span><span class="n">SymbolProvider</span><span class="w"> </span><span class="n">symbolProvider</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// Decorate the symbol provider and add a &quot;foo&quot; property to every symbol.</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">symbolProvider</span><span class="p">.</span><span class="na">toSymbol</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span><span class="w"></span>
-<span class="w">            </span><span class="p">.</span><span class="na">toBuilder</span><span class="p">()</span><span class="w"></span>
-<span class="w">            </span><span class="p">.</span><span class="na">putProperty</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hello!&quot;</span><span class="p">)</span><span class="w"></span>
-<span class="w">            </span><span class="p">.</span><span class="na">build</span><span class="p">());</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span>
+<span class="kd">public</span><span class="w"> </span><span class="n">SymbolProvider</span><span class="w"> </span><span class="nf">decorateSymbolProvider</span><span class="p">(</span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">PythonSetting</span><span class="w"> </span><span class="n">settings</span><span class="p">,</span><span class="w"> </span><span class="n">SymbolProvider</span><span class="w"> </span><span class="n">symbolProvider</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Decorate the symbol provider and add a &quot;foo&quot; property to every symbol.</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">symbolProvider</span><span class="p">.</span><span class="na">toSymbol</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="w">            </span><span class="p">.</span><span class="na">toBuilder</span><span class="p">()</span>
+<span class="w">            </span><span class="p">.</span><span class="na">putProperty</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hello!&quot;</span><span class="p">)</span>
+<span class="w">            </span><span class="p">.</span><span class="na">build</span><span class="p">());</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -529,20 +529,20 @@ where headers for the code could be modified to add a custom license
 header or disclaimer that the code is generated. This can be achieved by
 first creating an implementation of <code class="docutils literal notranslate"><span class="pre">CodeSection</span></code>. We'll call it
 <code class="docutils literal notranslate"><span class="pre">CodeHeader</span></code>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// This event does not need any properties.</span><span class="w"></span>
-<span class="kd">record</span> <span class="nc">CodeHeader</span><span class="p">()</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">CodeSection</span><span class="p">;</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// This event does not need any properties.</span>
+<span class="kd">record</span> <span class="nc">CodeHeader</span><span class="p">()</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">CodeSection</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>When generating code, inject the section at the start of each file:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">mywriter</span><span class="p">.</span><span class="na">injectSection</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">CodeHeader</span><span class="p">());</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">mywriter</span><span class="p">.</span><span class="na">injectSection</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">CodeHeader</span><span class="p">());</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">injectSection</span></code> is used because this section of code is empty by default.
 If the section should have content by default, then use <code class="docutils literal notranslate"><span class="pre">pushSection</span></code> and
 <code class="docutils literal notranslate"><span class="pre">popSection</span></code>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">mywriter</span><span class="p">.</span><span class="na">pushSection</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">CodeHeader</span><span class="p">());</span><span class="w"></span>
-<span class="n">mywriter</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;// This is generated code&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="n">mywriter</span><span class="p">.</span><span class="na">popSection</span><span class="p">();</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">mywriter</span><span class="p">.</span><span class="na">pushSection</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">CodeHeader</span><span class="p">());</span>
+<span class="n">mywriter</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;// This is generated code&quot;</span><span class="p">);</span>
+<span class="n">mywriter</span><span class="p">.</span><span class="na">popSection</span><span class="p">();</span>
 </pre></div>
 </div>
 <p>The call to <code class="docutils literal notranslate"><span class="pre">injectSection</span></code> implicitly calls <code class="docutils literal notranslate"><span class="pre">popSection</span></code>. When
@@ -551,30 +551,30 @@ sent to each matching interceptor so that they can prepend to the contents,
 append to the contents, or completely rewrite the contents.</p>
 <p><code class="docutils literal notranslate"><span class="pre">CodeInterceptor</span></code>s can be registered to append to this section by
 returning interceptors from <code class="docutils literal notranslate"><span class="pre">SmithyIntegration#interceptors</span></code>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span><span class="w"></span>
-<span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;?</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CodeInterceptor</span><span class="o">&lt;?</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CodeSection</span><span class="p">,</span><span class="w"> </span><span class="n">PythonWriter</span><span class="o">&gt;&gt;</span><span class="w"></span>
-<span class="w">        </span><span class="nf">interceptors</span><span class="p">(</span><span class="n">C</span><span class="w"> </span><span class="n">codegenContext</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">CodeHeaderInterceptor</span><span class="p">());</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span>
+<span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;?</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CodeInterceptor</span><span class="o">&lt;?</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CodeSection</span><span class="p">,</span><span class="w"> </span><span class="n">PythonWriter</span><span class="o">&gt;&gt;</span>
+<span class="w">        </span><span class="nf">interceptors</span><span class="p">(</span><span class="n">C</span><span class="w"> </span><span class="n">codegenContext</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">List</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">CodeHeaderInterceptor</span><span class="p">());</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>Interceptors should be created as a dedicated class. The following interceptor
 appends to the existing content in the section:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">CodeHeaderInterceptor</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CodeInterceptor</span><span class="p">.</span><span class="na">Appender</span><span class="o">&lt;</span><span class="n">CodeHeader</span><span class="p">,</span><span class="w"> </span><span class="n">PythonWriter</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Class</span><span class="o">&lt;</span><span class="n">CodeHeader</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">sectionType</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">CodeHeader</span><span class="p">.</span><span class="na">class</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">CodeHeaderInterceptor</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">CodeInterceptor</span><span class="p">.</span><span class="na">Appender</span><span class="o">&lt;</span><span class="n">CodeHeader</span><span class="p">,</span><span class="w"> </span><span class="n">PythonWriter</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">Class</span><span class="o">&lt;</span><span class="n">CodeHeader</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">sectionType</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">CodeHeader</span><span class="p">.</span><span class="na">class</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="nd">@Override</span><span class="w"></span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">append</span><span class="p">(</span><span class="n">PythonWriter</span><span class="w"> </span><span class="n">writer</span><span class="p">,</span><span class="w"> </span><span class="n">CodeHeader</span><span class="w"> </span><span class="n">section</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">append</span><span class="p">(</span><span class="n">PythonWriter</span><span class="w"> </span><span class="n">writer</span><span class="p">,</span><span class="w"> </span><span class="n">CodeHeader</span><span class="w"> </span><span class="n">section</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
 <span class="s">            /*</span>
 <span class="s">             * Copyright 2023 example.com, Inc. or its affiliates. All Rights Reserved.</span>
 <span class="s">             */</span>
-<span class="s">            &quot;&quot;&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="s">            &quot;&quot;&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -588,16 +588,16 @@ with the integration, allowing the <code class="docutils literal notranslate"><s
 model, settings object, symbol provider, <code class="docutils literal notranslate"><span class="pre">WriterDelegator</span></code>, and
 <code class="docutils literal notranslate"><span class="pre">FileManifest</span></code> used to save and read files.</p>
 <p>The following example writes a custom README.md file:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span><span class="w"></span>
-<span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">customize</span><span class="p">(</span><span class="n">PythonContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">context</span><span class="p">.</span><span class="na">writerDelegator</span><span class="p">().</span><span class="na">useFileWriter</span><span class="p">(</span><span class="s">&quot;README.md&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Override</span>
+<span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">customize</span><span class="p">(</span><span class="n">PythonContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">context</span><span class="p">.</span><span class="na">writerDelegator</span><span class="p">().</span><span class="na">useFileWriter</span><span class="p">(</span><span class="s">&quot;README.md&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">writer</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="n">writer</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
 <span class="s">            # $L service client</span>
-<span class="s">            Client SDK library ...&quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="n">context</span><span class="p">.</span><span class="na">settings</span><span class="p">().</span><span class="na">service</span><span class="p">()</span><span class="w"></span>
-<span class="w">        </span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">});</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="s">            Client SDK library ...&quot;&quot;&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="n">context</span><span class="p">.</span><span class="na">settings</span><span class="p">().</span><span class="na">service</span><span class="p">()</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>

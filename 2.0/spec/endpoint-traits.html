@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -364,22 +364,22 @@ a domain that you do not control.</p>
 </table>
 </div>
 <p>The following example defines an operation that uses a custom endpoint:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@readonly</span><span class="w"></span>
-<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{foo}.data.&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetStatus</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@readonly</span>
+<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{foo}.data.&quot;</span>)
+<span class="kd">operation </span><span class="nc">GetStatus</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusOutput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetStatusInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@hostLabel</span><span class="w"></span>
-<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetStatusInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nt">@hostLabel</span>
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <div class="section" id="labels">
@@ -391,19 +391,19 @@ MUST correspond to a top-level operation input member, the input member MUST
 be marked as <a class="reference internal" href="type-refinement-traits.html#required-trait"><span class="std std-ref">required</span></a>, the input member MUST have the
 <a class="reference internal" href="#hostlabel-trait"><span class="std std-ref">hostLabel trait</span></a>, and the input member MUST reference a string.</p>
 <p>Given the following operation,</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span><span class="w"></span>
-<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{foo}.data.&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetStatus</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusOutput</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
+<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{foo}.data.&quot;</span>)
+<span class="kd">operation </span><span class="nc">GetStatus</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusOutput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetStatusInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@hostLabel</span><span class="w"></span>
-<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetStatusInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nt">@hostLabel</span>
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p>and the following value provided for <code class="docutils literal notranslate"><span class="pre">GetStatusInput</span></code>,</p>
@@ -414,22 +414,22 @@ be marked as <a class="reference internal" href="type-refinement-traits.html#req
 <p>Any number of labels can be included within a pattern, provided that they are
 not immediately adjacent and do not have identical label names.</p>
 <p>Given the following operation,</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span><span class="w"></span>
-<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{foo}-{bar}.data.&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetStatus</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusOutput</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
+<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{foo}-{bar}.data.&quot;</span>)
+<span class="kd">operation </span><span class="nc">GetStatus</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusOutput</span>
+}
 
-<span class="kd">structure </span><span class="nc">GetStatusInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@hostLabel</span><span class="w"></span>
-<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">GetStatusInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nt">@hostLabel</span>
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@hostLabel</span><span class="w"></span>
-<span class="w">    </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nt">@hostLabel</span>
+<span class="w">    </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p>and the following values provided for <code class="docutils literal notranslate"><span class="pre">GetStatusInput</span></code>,</p>
@@ -440,12 +440,12 @@ not immediately adjacent and do not have identical label names.</p>
 <p>the expanded <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code> evaluates to <code class="docutils literal notranslate"><span class="pre">abc-def.data.</span></code>.</p>
 <p>Labels MUST NOT be adjacent in a <code class="docutils literal notranslate"><span class="pre">hostPrefix</span></code>. The following operation is
 invalid because the <code class="docutils literal notranslate"><span class="pre">{foo}</span></code> and <code class="docutils literal notranslate"><span class="pre">{bar}</span></code> labels are adjacent:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span><span class="w"></span>
-<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{foo}{bar}.data.&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetStatus</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusOutput</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
+<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{foo}{bar}.data.&quot;</span>)
+<span class="kd">operation </span><span class="nc">GetStatus</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusOutput</span>
+}
 </pre></div>
 </div>
 </div>
@@ -468,20 +468,20 @@ regardless of this flag.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">hostLabel</span></code> trait MUST NOT affect the protocol-specific serialization
 logic of a member.</p>
 <p>Given the following operation,</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span><span class="w"></span>
-<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{foo}.data.&quot;</span>)<span class="w"></span>
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/status&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetStatus</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusOutput</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
+<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{foo}.data.&quot;</span>)
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/status&quot;</span>)
+<span class="kd">operation </span><span class="nc">GetStatus</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusOutput</span>
+}
 
-<span class="kd">structure </span><span class="nc">GetStatusInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@hostLabel</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;X-Foo&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">GetStatusInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nt">@hostLabel</span>
+<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;X-Foo&quot;</span>)
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p>and the following value provided for <code class="docutils literal notranslate"><span class="pre">GetStatusInput</span></code>,</p>
@@ -510,21 +510,21 @@ value of <code class="docutils literal notranslate"><span class="pre">{spam}.egg
 member named <code class="docutils literal notranslate"><span class="pre">spam</span></code> that is annotated with the <code class="docutils literal notranslate"><span class="pre">hostLabel</span></code> trait. Any
 <code class="docutils literal notranslate"><span class="pre">hostLabel</span></code> trait applied to a member that is not a top-level input member
 to an operation marked with the <a class="reference internal" href="#endpoint-trait"><span class="std std-ref">endpoint trait</span></a> will be ignored.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@readonly</span><span class="w"></span>
-<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{foo}.data.&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetStatus</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@readonly</span>
+<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{foo}.data.&quot;</span>)
+<span class="kd">operation </span><span class="nc">GetStatus</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusOutput</span>
+}
 
-<span class="kd">structure </span><span class="nc">GetStatusInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@hostLabel</span><span class="w"></span>
-<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">GetStatusInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nt">@hostLabel</span>
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 </div>

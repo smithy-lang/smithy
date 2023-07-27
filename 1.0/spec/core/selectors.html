@@ -255,7 +255,7 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project links</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/">2.0 Documentation</a></li>
 </ul>
 
@@ -939,50 +939,50 @@ comparator when compared against any value in the right projection.</p>
 <p>To illustrate an example, the following model defines a trait,
 <code class="docutils literal notranslate"><span class="pre">allowedTags</span></code>, that is meant to constrain the set of tags that can appear
 in the closure of a service.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)<span class="w"></span>
-<span class="kd">list </span><span class="nc">allowedTags</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)
+<span class="kd">list </span><span class="nc">allowedTags</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 
-<span class="nt">@allowedTags</span>([<span class="s2">&quot;internal&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;external&quot;</span>])<span class="w"></span>
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-28&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationB</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationC</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationD</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@allowedTags</span>([<span class="s2">&quot;internal&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;external&quot;</span>])
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-28&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationB</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationC</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationD</span>]
+}
 
-<span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">OperationAInput</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">OperationAInput</span><span class="p">,</span>
+}
 
-<span class="nt">@tags</span>([<span class="s2">&quot;internal&quot;</span>])<span class="w"></span>
-<span class="kd">operation </span><span class="nc">OperationB</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@tags</span>([<span class="s2">&quot;internal&quot;</span>])
+<span class="kd">operation </span><span class="nc">OperationB</span><span class="w"> </span>{}
 
-<span class="nt">@tags</span>([<span class="s2">&quot;internal&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;external&quot;</span>])<span class="w"></span>
-<span class="kd">operation </span><span class="nc">OperationC</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@tags</span>([<span class="s2">&quot;internal&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;external&quot;</span>])
+<span class="kd">operation </span><span class="nc">OperationC</span><span class="w"> </span>{}
 
-<span class="nt">@tags</span>([<span class="s2">&quot;invalid&quot;</span>])<span class="w"></span>
-<span class="kd">operation </span><span class="nc">OperationD</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@tags</span>([<span class="s2">&quot;invalid&quot;</span>])
+<span class="kd">operation </span><span class="nc">OperationD</span><span class="w"> </span>{}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">OperationAInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">badValue</span><span class="p">:</span><span class="w"> </span><span class="vc">BadEnum</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">goodValue</span><span class="p">:</span><span class="w"> </span><span class="vc">GoodEnum</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">OperationAInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">badValue</span><span class="p">:</span><span class="w"> </span><span class="vc">BadEnum</span><span class="p">,</span>
+<span class="w">    </span><span class="py">goodValue</span><span class="p">:</span><span class="w"> </span><span class="vc">GoodEnum</span><span class="p">,</span>
+}
 
-<span class="nt">@enum</span>([<span class="w"></span>
-<span class="w">    </span>{<span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;internal&quot;</span>]}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span>{<span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;invalid&quot;</span>]}<span class="p">,</span><span class="w"></span>
-])<span class="w"></span>
-<span class="kd">string </span><span class="nc">BadEnum</span><span class="w"></span>
+<span class="nt">@enum</span>([
+<span class="w">    </span>{<span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;internal&quot;</span>]}<span class="p">,</span>
+<span class="w">    </span>{<span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;invalid&quot;</span>]}<span class="p">,</span>
+])
+<span class="kd">string </span><span class="nc">BadEnum</span>
 
-<span class="nt">@enum</span>([<span class="w"></span>
-<span class="w">    </span>{<span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a&quot;</span>}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span>{<span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;internal&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;external&quot;</span>]}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span>{<span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;c&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;internal&quot;</span>]}<span class="p">,</span><span class="w"></span>
-])<span class="w"></span>
-<span class="kd">string </span><span class="nc">GoodEnum</span><span class="w"></span>
+<span class="nt">@enum</span>([
+<span class="w">    </span>{<span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a&quot;</span>}<span class="p">,</span>
+<span class="w">    </span>{<span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;internal&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;external&quot;</span>]}<span class="p">,</span>
+<span class="w">    </span>{<span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;c&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;internal&quot;</span>]}<span class="p">,</span>
+])
+<span class="kd">string </span><span class="nc">GoodEnum</span>
 </pre></div>
 </div>
 <p>The following selector finds all shapes within the closure of a service
@@ -1578,24 +1578,24 @@ to override the default.</p>
 <p>The above selector applied to the following model matches <code class="docutils literal notranslate"><span class="pre">Example</span></code>,
 <code class="docutils literal notranslate"><span class="pre">OperationA</span></code>, and <code class="docutils literal notranslate"><span class="pre">OperationB</span></code>. It does not match <code class="docutils literal notranslate"><span class="pre">Foo</span></code> because <code class="docutils literal notranslate"><span class="pre">Foo</span></code>
 matches the disqualifier selector.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@aws.api#dataPlane</span><span class="w"></span>
-<span class="kd">service </span><span class="nc">Example</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-09-08&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">Foo</span>]<span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span>]<span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@aws.api#dataPlane</span>
+<span class="kd">service </span><span class="nc">Example</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-09-08&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">Foo</span>]<span class="p">,</span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span>]<span class="p">,</span>
+}
 
-<span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{}<span class="w"></span>
+<span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{}
 
-<span class="nt">@aws.api#controlPlane</span><span class="w"></span>
-<span class="kd">resource </span><span class="nc">Foo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationB</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@aws.api#controlPlane</span>
+<span class="kd">resource </span><span class="nc">Foo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationB</span>]
+}
 
-<span class="nt">@aws.api#dataPlane</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">OperationB</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@aws.api#dataPlane</span>
+<span class="kd">operation </span><span class="nc">OperationB</span><span class="w"> </span>{}
 </pre></div>
 </div>
 <p>In the following example, the <code class="docutils literal notranslate"><span class="pre">:topdown</span></code> function does not inherit any
@@ -1650,22 +1650,22 @@ operation
 </div>
 <p>Given the following model, the selector matches the <code class="docutils literal notranslate"><span class="pre">HasDigestAuth</span></code>
 operation:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@httpBasicAuth</span><span class="w"></span>
-<span class="nt">@httpBearerAuth</span><span class="w"></span>
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-21&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">HasDigestAuth</span><span class="p">,</span><span class="w"> </span><span class="vc">HasBasicAuth</span><span class="p">,</span><span class="w"> </span><span class="vc">NoAuth</span>]<span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@httpBasicAuth</span>
+<span class="nt">@httpBearerAuth</span>
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-21&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">HasDigestAuth</span><span class="p">,</span><span class="w"> </span><span class="vc">HasBasicAuth</span><span class="p">,</span><span class="w"> </span><span class="vc">NoAuth</span>]
+}
 
-<span class="nt">@auth</span>([<span class="vc">httpDigestAuth</span>])<span class="w"></span>
-<span class="kd">operation </span><span class="nc">HasDigestAuth</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@auth</span>([<span class="vc">httpDigestAuth</span>])
+<span class="kd">operation </span><span class="nc">HasDigestAuth</span><span class="w"> </span>{}
 
-<span class="nt">@auth</span>([<span class="vc">httpBasicAuth</span>])<span class="w"></span>
-<span class="kd">operation </span><span class="nc">HasBasicAuth</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@auth</span>([<span class="vc">httpBasicAuth</span>])
+<span class="kd">operation </span><span class="nc">HasBasicAuth</span><span class="w"> </span>{}
 
-<span class="kd">operation </span><span class="nc">NoAuth</span><span class="w"> </span>{}<span class="w"></span>
+<span class="kd">operation </span><span class="nc">NoAuth</span><span class="w"> </span>{}
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">HasDigestAuth</span></code> operation is matched because it is bound within the
@@ -1867,46 +1867,46 @@ the expected matched shapes, and additional configuration options. The test case
 </table>
 </div>
 <p>Below is an example selector compliance test:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
 
-<span class="kd">metadata </span><span class="nc">selectorTests </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|length|min &gt; 1]&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">matches</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">            </span><span class="vc">smithy.example#AtLeastTen</span><span class="w"></span>
-<span class="w">        </span>]<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|length|min &gt;= 1]&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">skipPreludeShapes</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
-<span class="w">        </span><span class="py">matches</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">            </span><span class="vc">smithy.example#AtLeastOne</span><span class="w"></span>
-<span class="w">            </span><span class="vc">smithy.example#AtLeastTen</span><span class="w"></span>
-<span class="w">        </span>]<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|length|min &lt; 2]&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">skipPreludeShapes</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
-<span class="w">        </span><span class="py">matches</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">            </span><span class="vc">smithy.example#AtLeastOne</span><span class="w"></span>
-<span class="w">        </span>]<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-]<span class="w"></span>
+<span class="kd">metadata </span><span class="nc">selectorTests </span><span class="nd">=</span><span class="w"> </span>[
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|length|min &gt; 1]&quot;</span>
+<span class="w">        </span><span class="py">matches</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">            </span><span class="vc">smithy.example#AtLeastTen</span>
+<span class="w">        </span>]
+<span class="w">    </span>}
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|length|min &gt;= 1]&quot;</span>
+<span class="w">        </span><span class="py">skipPreludeShapes</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">        </span><span class="py">matches</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">            </span><span class="vc">smithy.example#AtLeastOne</span>
+<span class="w">            </span><span class="vc">smithy.example#AtLeastTen</span>
+<span class="w">        </span>]
+<span class="w">    </span>}
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|length|min &lt; 2]&quot;</span>
+<span class="w">        </span><span class="py">skipPreludeShapes</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">        </span><span class="py">matches</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">            </span><span class="vc">smithy.example#AtLeastOne</span>
+<span class="w">        </span>]
+<span class="w">    </span>}
+]
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">AtLeastOne</span><span class="w"></span>
+<span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">1</span>)
+<span class="kd">string </span><span class="nc">AtLeastOne</span>
 
-<span class="nt">@length</span>(<span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">5</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">AtMostFive</span><span class="w"></span>
+<span class="nt">@length</span>(<span class="py">max</span><span class="p">:</span><span class="w"> </span><span class="m">5</span>)
+<span class="kd">string </span><span class="nc">AtMostFive</span>
 
-<span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">10</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">AtLeastTen</span><span class="w"></span>
+<span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">10</span>)
+<span class="kd">string </span><span class="nc">AtLeastTen</span>
 </pre></div>
 </div>
 <p>The compliance tests can also be accessed in this
-<a class="reference external" href="https://github.com/awslabs/smithy/tree/main/smithy-model/src/test/resources/software/amazon/smithy/model/selector/cases">directory</a>
+<a class="reference external" href="https://github.com/smithy-lang/smithy/tree/main/smithy-model/src/test/resources/software/amazon/smithy/model/selector/cases">directory</a>
 of the Smithy Github repository.</p>
 </div>
 </div>

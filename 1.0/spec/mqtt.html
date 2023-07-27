@@ -255,7 +255,7 @@ Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project links</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/">2.0 Documentation</a></li>
 </ul>
 
@@ -361,27 +361,27 @@ are substituted into the topic template at runtime to resolve the actual
 MQTT topic.</p>
 <p>The following example defines a publish operation with two labels, <code class="docutils literal notranslate"><span class="pre">{first}</span></code>
 and <code class="docutils literal notranslate"><span class="pre">{second}</span></code>, in the MQTT topic template:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use </span><span class="nc">smithy.mqtt#publish</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">smithy.mqtt#topicLabel</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use </span><span class="nc">smithy.mqtt#publish</span>
+<span class="kd">use </span><span class="nc">smithy.mqtt#topicLabel</span>
 
-<span class="nt">@publish</span>(<span class="s2">&quot;{first}/{second}&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">ExampleOperation</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ExampleOperationInput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">Unit</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@publish</span>(<span class="s2">&quot;{first}/{second}&quot;</span>)
+<span class="kd">operation </span><span class="nc">ExampleOperation</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ExampleOperationInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">Unit</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">ExampleOperationInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@topicLabel</span><span class="w"></span>
-<span class="w">    </span><span class="py">first</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">ExampleOperationInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nt">@topicLabel</span>
+<span class="w">    </span><span class="py">first</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@topicLabel</span><span class="w"></span>
-<span class="w">    </span><span class="py">second</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nt">@topicLabel</span>
+<span class="w">    </span><span class="py">second</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 </pre></div>
 </div>
 <p>MQTT topic templates MUST adhere to the following constraints:</p>
@@ -424,26 +424,26 @@ member name.</dd>
 come together to form the protocol-specific payload of the PUBLISH message.</p>
 <p>The following example defines an operation that publishes messages to the
 <code class="docutils literal notranslate"><span class="pre">foo/{bar}</span></code> topic:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">smithy.mqtt#publish</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">smithy.mqtt#topicLabel</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">smithy.mqtt#publish</span>
+<span class="kd">use </span><span class="nc">smithy.mqtt#topicLabel</span>
 
-<span class="nt">@publish</span>(<span class="s2">&quot;foo/{bar}&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">PostFoo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PostFooInput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">Unit</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@publish</span>(<span class="s2">&quot;foo/{bar}&quot;</span>)
+<span class="kd">operation </span><span class="nc">PostFoo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PostFooInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">Unit</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">PostFooInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@topicLabel</span><span class="w"></span>
-<span class="w">    </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">PostFooInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nt">@topicLabel</span>
+<span class="w">    </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="py">someValue</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">anotherValue</span><span class="p">:</span><span class="w"> </span><span class="vc">Boolean</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="py">someValue</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span><span class="py">anotherValue</span><span class="p">:</span><span class="w"> </span><span class="vc">Boolean</span><span class="p">,</span>
+}
 </pre></div>
 </div>
 <p>The &quot;bar&quot; member of the above <code class="docutils literal notranslate"><span class="pre">PostFoo</span></code> operation is marked with the
@@ -495,35 +495,35 @@ payload to be sent as the payload of a message.</p>
 </div>
 <p>The following example operation subscribes to the <code class="docutils literal notranslate"><span class="pre">events/{id}</span></code>
 topic using an <a class="reference internal" href="core/stream-traits.html#event-streams"><span class="std std-ref">event stream</span></a>:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use </span><span class="nc">smithy.mqtt#subscribe</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">smithy.mqtt#topicLabel</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use </span><span class="nc">smithy.mqtt#subscribe</span>
+<span class="kd">use </span><span class="nc">smithy.mqtt#topicLabel</span>
 
-<span class="nt">@subscribe</span>(<span class="s2">&quot;events/{id}&quot;</span>)<span class="w"></span>
-<span class="kd">operation </span><span class="nc">SubscribeForEvents</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">SubscribeForEventsInput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">SubscribeForEventsOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@subscribe</span>(<span class="s2">&quot;events/{id}&quot;</span>)
+<span class="kd">operation </span><span class="nc">SubscribeForEvents</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">SubscribeForEventsInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">SubscribeForEventsOutput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">SubscribeForEventsInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@topicLabel</span><span class="w"></span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">SubscribeForEventsInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nt">@topicLabel</span>
+<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 
-<span class="nt">@output</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">SubscribeForEventsOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">events</span><span class="p">:</span><span class="w"> </span><span class="vc">EventStream</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">SubscribeForEventsOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">events</span><span class="p">:</span><span class="w"> </span><span class="vc">EventStream</span><span class="p">,</span>
+}
 
-<span class="nt">@streaming</span><span class="w"></span>
-<span class="kd">union </span><span class="nc">EventStream</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">Event</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@streaming</span>
+<span class="kd">union </span><span class="nc">EventStream</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">Event</span><span class="p">,</span>
+}
 
-<span class="kd">structure </span><span class="nc">Event</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">Event</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 </pre></div>
 </div>
 <div class="section" id="subscribe-validation">
@@ -645,30 +645,30 @@ same number of levels.</li>
 <h2>Model definition<a class="headerlink" href="#model-definition" title="Permalink to this headline">#</a></h2>
 <p>The following Smithy model defines the traits and shapes used to define
 MQTT protocol bindings.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">smithy.mqtt</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.mqtt</span>
 
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)<span class="w"></span>
-<span class="nt">@protocolDefinition</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">mqttJson</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)
+<span class="nt">@protocolDefinition</span>
+<span class="kd">structure </span><span class="nc">mqttJson</span><span class="w"> </span>{}
 
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation:not(-[output]-&gt; * &gt; member)&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">       </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;smithy.mqtt#subscribe&quot;</span>])<span class="w"></span>
-<span class="nt">@tags</span>([<span class="s2">&quot;diff.error.const&quot;</span>])<span class="w"></span>
-<span class="c">// Matches one or more characters that are not &quot;#&quot; or &quot;+&quot;.</span><span class="w"></span>
-<span class="nt">@pattern</span>(<span class="s2">&quot;^[^#+]+$&quot;</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">publish</span><span class="w"></span>
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation:not(-[output]-&gt; * &gt; member)&quot;</span><span class="p">,</span>
+<span class="w">       </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;smithy.mqtt#subscribe&quot;</span>])
+<span class="nt">@tags</span>([<span class="s2">&quot;diff.error.const&quot;</span>])
+<span class="c">// Matches one or more characters that are not &quot;#&quot; or &quot;+&quot;.</span>
+<span class="nt">@pattern</span>(<span class="s2">&quot;^[^#+]+$&quot;</span>)
+<span class="kd">string </span><span class="nc">publish</span>
 
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation:test(-[output]-&gt; structure &gt; member &gt; union[trait|streaming])&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">       </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;smithy.mqtt#publish&quot;</span>])<span class="w"></span>
-<span class="nt">@tags</span>([<span class="s2">&quot;diff.error.const&quot;</span>])<span class="w"></span>
-<span class="c">// Matches one or more characters that are not &quot;#&quot; or &quot;+&quot;.</span><span class="w"></span>
-<span class="nt">@pattern</span>(<span class="s2">&quot;^[^#+]+$&quot;</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">subscribe</span><span class="w"></span>
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation:test(-[output]-&gt; structure &gt; member &gt; union[trait|streaming])&quot;</span><span class="p">,</span>
+<span class="w">       </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;smithy.mqtt#publish&quot;</span>])
+<span class="nt">@tags</span>([<span class="s2">&quot;diff.error.const&quot;</span>])
+<span class="c">// Matches one or more characters that are not &quot;#&quot; or &quot;+&quot;.</span>
+<span class="nt">@pattern</span>(<span class="s2">&quot;^[^#+]+$&quot;</span>)
+<span class="kd">string </span><span class="nc">subscribe</span>
 
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;member[trait|required] :test(&gt; :test(string, byte, short, integer, long, boolean, timestamp))&quot;</span>)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">topicLabel</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;member[trait|required] :test(&gt; :test(string, byte, short, integer, long, boolean, timestamp))&quot;</span>)
+<span class="kd">structure </span><span class="nc">topicLabel</span><span class="w"> </span>{}
 </pre></div>
 </div>
 </div>

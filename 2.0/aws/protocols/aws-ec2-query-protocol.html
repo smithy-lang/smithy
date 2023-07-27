@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -343,16 +343,16 @@ of the <code class="docutils literal notranslate"><span class="pre">awsQuery</sp
 HTTP binding traits MUST be ignored if they are present.</li>
 </ul>
 </div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">aws.protocols#ec2Query</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.protocols#ec2Query</span>
 
-<span class="nt">@ec2Query</span><span class="w"></span>
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@ec2Query</span>
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span>
+}
 </pre></div>
 </div>
 </div>
@@ -372,14 +372,14 @@ used in the model.</dd>
 operation inputs using the <code class="docutils literal notranslate"><span class="pre">aws.protocols#ec2</span></code> protocol.</p>
 </div>
 <p>Given the following structure definition:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">use </span><span class="nc">aws.protocols#ec2QueryName</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.protocols#ec2QueryName</span>
 
-<span class="kd">structure </span><span class="nc">MyStruct</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@ec2QueryName</span>(<span class="s2">&quot;foo&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">MyStruct</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@ec2QueryName</span>(<span class="s2">&quot;foo&quot;</span>)
+<span class="w">    </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p>and the following values provided for <code class="docutils literal notranslate"><span class="pre">MyStruct</span></code>,</p>
@@ -657,26 +657,26 @@ with a &quot;.&quot; separator and the member name appended to the container's k
 See <a class="reference internal" href="#aws-protocols-ec2queryname-query-key-naming"><span class="std std-ref">Query key resolution</span></a>
 for how to serialize a property using a custom name. Members with null values are not serialized.</p>
 <p>For example, given the following:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">Ec2QueryStructuresInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">Ec2QueryStructuresInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@ec2QueryName</span>(<span class="s2">&quot;A&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">HasQueryName</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@ec2QueryName</span>(<span class="s2">&quot;A&quot;</span>)
+<span class="w">    </span><span class="py">HasQueryName</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@ec2QueryName</span>(<span class="s2">&quot;B&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;IgnoreMe&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">HasQueryAndXmlName</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@ec2QueryName</span>(<span class="s2">&quot;B&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;IgnoreMe&quot;</span>)
+<span class="w">    </span><span class="py">HasQueryAndXmlName</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;c&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">UsesXmlName</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;c&quot;</span>)
+<span class="w">    </span><span class="py">UsesXmlName</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="vc">MyStructure</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="vc">MyStructure</span>
+}
 
-<span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">temp</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">temp</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">x-www-form-urlencoded</span></code> serialization is:</p>
@@ -696,27 +696,27 @@ for how to serialize a property using a custom name. Members with null values ar
 a &quot;.&quot; separator and a &quot;1&quot; indexed incrementing counter appended to the
 container's key.</p>
 <p>For example, given the following:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">Ec2QueryListsInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">ListArg</span><span class="p">:</span><span class="w"> </span><span class="vc">StringList</span><span class="w"></span>
-<span class="w">    </span><span class="py">ComplexListArg</span><span class="p">:</span><span class="w"> </span><span class="vc">GreetingList</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">Ec2QueryListsInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">ListArg</span><span class="p">:</span><span class="w"> </span><span class="vc">StringList</span>
+<span class="w">    </span><span class="py">ComplexListArg</span><span class="p">:</span><span class="w"> </span><span class="vc">GreetingList</span>
 
-<span class="w">    </span><span class="nt">@ec2QueryName</span>(<span class="s2">&quot;Renamed&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;IgnoreMe&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">RenamedListArg</span><span class="p">:</span><span class="w"> </span><span class="vc">StringList</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@ec2QueryName</span>(<span class="s2">&quot;Renamed&quot;</span>)
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;IgnoreMe&quot;</span>)
+<span class="w">    </span><span class="py">RenamedListArg</span><span class="p">:</span><span class="w"> </span><span class="vc">StringList</span>
+}
 
-<span class="kd">list </span><span class="nc">StringList</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">list </span><span class="nc">StringList</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="kd">list </span><span class="nc">GreetingList</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">GreetingStruct</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">list </span><span class="nc">GreetingList</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">GreetingStruct</span>
+}
 
-<span class="kd">structure </span><span class="nc">GreetingStruct</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">hi</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">GreetingStruct</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">hi</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">application/x-www-form-urlencoded</span></code> serialization is:</p>
@@ -742,8 +742,8 @@ contents of the successful response.</p>
 <p>The value of the <code class="docutils literal notranslate"><span class="pre">uri</span></code> member of the <a class="reference internal" href="../../spec/protocol-traits.html#xmlnamespace-trait"><span class="std std-ref">xmlNamespace trait</span></a>
 is serialized in an <code class="docutils literal notranslate"><span class="pre">xmlns</span></code> attribute on the response's XML root node. The
 following is a sample response to an operation named <code class="docutils literal notranslate"><span class="pre">XmlTest</span></code>.</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;XmlTestResponse</span> <span class="na">xmlns=</span><span class="s">&quot;https://example.com/&quot;</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;testValue&gt;</span>Hello!<span class="nt">&lt;/testValue&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;XmlTestResponse</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;https://example.com/&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;testValue&gt;</span>Hello!<span class="nt">&lt;/testValue&gt;</span>
 <span class="nt">&lt;/XmlTestResponse&gt;</span>
 </pre></div>
 </div>
@@ -863,14 +863,14 @@ that contains only the <a class="reference internal" href="../../spec/model.html
 <a class="reference internal" href="../../spec/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>. This can be used to distinguish which specific error has been
 serialized in the response.</p>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;Response&gt;</span>
-    <span class="nt">&lt;Errors&gt;</span>
-        <span class="nt">&lt;Error&gt;</span>
-            <span class="nt">&lt;Code&gt;</span>InvalidGreeting<span class="nt">&lt;/Code&gt;</span>
-            <span class="nt">&lt;Message&gt;</span>Hi<span class="nt">&lt;/Message&gt;</span>
-            <span class="nt">&lt;AnotherSetting&gt;</span>setting<span class="nt">&lt;/AnotherSetting&gt;</span>
-        <span class="nt">&lt;/Error&gt;</span>
-    <span class="nt">&lt;/Errors&gt;</span>
-    <span class="nt">&lt;RequestId&gt;</span>foo-id<span class="nt">&lt;/RequestId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;Errors&gt;</span>
+<span class="w">        </span><span class="nt">&lt;Error&gt;</span>
+<span class="w">            </span><span class="nt">&lt;Code&gt;</span>InvalidGreeting<span class="nt">&lt;/Code&gt;</span>
+<span class="w">            </span><span class="nt">&lt;Message&gt;</span>Hi<span class="nt">&lt;/Message&gt;</span>
+<span class="w">            </span><span class="nt">&lt;AnotherSetting&gt;</span>setting<span class="nt">&lt;/AnotherSetting&gt;</span>
+<span class="w">        </span><span class="nt">&lt;/Error&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/Errors&gt;</span>
+<span class="w">    </span><span class="nt">&lt;RequestId&gt;</span>foo-id<span class="nt">&lt;/RequestId&gt;</span>
 <span class="nt">&lt;/Response&gt;</span>
 </pre></div>
 </div>
@@ -916,7 +916,7 @@ strings with the following values:</p>
 <div class="section" id="protocol-compliance-tests">
 <span id="ec2query-compliance-tests"></span><h2>Protocol compliance tests<a class="headerlink" href="#protocol-compliance-tests" title="Permalink to this headline">#</a></h2>
 <p>A full compliance test suite is provided and SHALL be considered a normative
-reference: <a class="reference external" href="https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/ec2Query">https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/ec2Query</a></p>
+reference: <a class="reference external" href="https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/ec2Query">https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/ec2Query</a></p>
 <p>These compliance tests define a model that is used to define test cases and
 the expected serialized HTTP requests and responses for each case.</p>
 <p><em>TODO: Add specifications, protocol examples, etc.</em></p>

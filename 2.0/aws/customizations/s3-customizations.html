@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -488,37 +488,37 @@ resolved to &quot;virtual&quot; to enable this setting.</p>
 <dt>Value type</dt><dd>Annotation trait</dd>
 </dl>
 <p>Consider the following <em>abridged</em> model of S3's <code class="docutils literal notranslate"><span class="pre">GetBucketLocation</span></code> operation:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">use </span><span class="nc">aws.customizations#s3UnwrappedXmlOutput</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.customizations#s3UnwrappedXmlOutput</span>
 
-<span class="nt">@http</span>(<span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/GetBucketLocation&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span>)<span class="w"></span>
-<span class="nt">@s3UnwrappedXmlOutput</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">GetBucketLocation</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetBucketLocationInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetBucketLocationOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@http</span>(<span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/GetBucketLocation&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span>)
+<span class="nt">@s3UnwrappedXmlOutput</span>
+<span class="kd">operation </span><span class="nc">GetBucketLocation</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetBucketLocationInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetBucketLocationOutput</span>
+}
 
-<span class="nt">@output</span><span class="w"></span>
-<span class="nt">@xmlName</span>(<span class="s2">&quot;LocationConstraint&quot;</span>)<span class="w"></span>
-<span class="kd">structure </span><span class="nc">GetBucketLocationOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">LocationConstraint</span><span class="p">:</span><span class="w"> </span><span class="vc">BucketLocationConstraint</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="nt">@xmlName</span>(<span class="s2">&quot;LocationConstraint&quot;</span>)
+<span class="kd">structure </span><span class="nc">GetBucketLocationOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">LocationConstraint</span><span class="p">:</span><span class="w"> </span><span class="vc">BucketLocationConstraint</span>
+}
 
-<span class="kd">enum </span><span class="nc">BucketLocationConstraint</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="vc">us_west_2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;us-west-2&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">enum </span><span class="nc">BucketLocationConstraint</span><span class="w"> </span>{
+<span class="w">    </span><span class="vc">us_west_2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;us-west-2&quot;</span>
+}
 </pre></div>
 </div>
 <p>Since this operation is modeled with <code class="docutils literal notranslate"><span class="pre">&#64;s3UnwrappedXmlOutput</span></code>,
 an Amazon S3 client should expect the response from S3 to be unwrapped as shown below:</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;LocationConstraint</span> <span class="na">xmlns=</span><span class="s">&quot;http://s3.amazonaws.com/doc/2006-03-01/&quot;</span><span class="nt">&gt;</span>us-west-2<span class="nt">&lt;/LocationConstraint&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;LocationConstraint</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;http://s3.amazonaws.com/doc/2006-03-01/&quot;</span><span class="nt">&gt;</span>us-west-2<span class="nt">&lt;/LocationConstraint&gt;</span>
 </pre></div>
 </div>
 <p>Without <code class="docutils literal notranslate"><span class="pre">&#64;s3UnwrappedXmlOutput</span></code> on the operation, the response would be expected to be
 wrapped with the <a class="reference internal" href="../protocols/aws-restxml-protocol.html#aws-restxml-protocol"><span class="std std-ref">AWS restXml protocol</span></a> operation-level XML node:</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;LocationConstraint</span> <span class="na">xmlns=</span><span class="s">&quot;http://s3.amazonaws.com/doc/2006-03-01/&quot;</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;LocationConstraint&gt;</span>us-west-2<span class="nt">&lt;/LocationConstraint&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;LocationConstraint</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;http://s3.amazonaws.com/doc/2006-03-01/&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;LocationConstraint&gt;</span>us-west-2<span class="nt">&lt;/LocationConstraint&gt;</span>
 <span class="nt">&lt;/LocationConstraint&gt;</span>
 </pre></div>
 </div>

@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -326,89 +326,105 @@
 <div class="section" id="blob">
 <span id="id2"></span><h2><span class="section-number">2.1. </span>blob<a class="headerlink" href="#blob" title="Permalink to this headline">#</a></h2>
 <p>A blob is uninterpreted binary data.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">blob </span><span class="nc">MyBlob</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">blob </span><span class="nc">MyBlob</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="boolean">
 <span id="id3"></span><h2><span class="section-number">2.2. </span>boolean<a class="headerlink" href="#boolean" title="Permalink to this headline">#</a></h2>
 <p>A boolean is a Boolean value type.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">boolean </span><span class="nc">MyBoolean</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">boolean </span><span class="nc">MyBoolean</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="string">
 <span id="id4"></span><h2><span class="section-number">2.3. </span>string<a class="headerlink" href="#string" title="Permalink to this headline">#</a></h2>
 <p>A string is a UTF-8 encoded string.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">string </span><span class="nc">MyString</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">string </span><span class="nc">MyString</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="byte">
 <span id="id5"></span><h2><span class="section-number">2.4. </span>byte<a class="headerlink" href="#byte" title="Permalink to this headline">#</a></h2>
 <p>A byte is an 8-bit signed integer ranging from -128 to 127 (inclusive).</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">byte </span><span class="nc">MyByte</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">byte </span><span class="nc">MyByte</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="short">
 <span id="id6"></span><h2><span class="section-number">2.5. </span>short<a class="headerlink" href="#short" title="Permalink to this headline">#</a></h2>
 <p>A short is a 16-bit signed integer ranging from -32,768 to 32,767 (inclusive).</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">short </span><span class="nc">MyShort</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">short </span><span class="nc">MyShort</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="integer">
 <span id="id7"></span><h2><span class="section-number">2.6. </span>integer<a class="headerlink" href="#integer" title="Permalink to this headline">#</a></h2>
 <p>An integer is a 32-bit signed integer ranging from -2^31 to (2^31)-1 (inclusive).</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">integer </span><span class="nc">MyInteger</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">integer </span><span class="nc">MyInteger</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="long">
 <span id="id8"></span><h2><span class="section-number">2.7. </span>long<a class="headerlink" href="#long" title="Permalink to this headline">#</a></h2>
 <p>A long is a 64-bit signed integer ranging from -2^63 to (2^63)-1 (inclusive).</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">long </span><span class="nc">MyLong</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">long </span><span class="nc">MyLong</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="float">
 <span id="id9"></span><h2><span class="section-number">2.8. </span>float<a class="headerlink" href="#float" title="Permalink to this headline">#</a></h2>
 <p>A float is a single precision IEEE-754 floating point number.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">float </span><span class="nc">MyFloat</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">float </span><span class="nc">MyFloat</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="double">
 <span id="id10"></span><h2><span class="section-number">2.9. </span>double<a class="headerlink" href="#double" title="Permalink to this headline">#</a></h2>
 <p>A double is a double precision IEEE-754 floating point number.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">double </span><span class="nc">MyDouble</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">double </span><span class="nc">MyDouble</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="biginteger">
 <span id="id11"></span><h2><span class="section-number">2.10. </span>bigInteger<a class="headerlink" href="#biginteger" title="Permalink to this headline">#</a></h2>
 <p>A bigInteger is an arbitrarily large signed integer.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">bigInteger </span><span class="nc">MyBigInteger</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">bigInteger </span><span class="nc">MyBigInteger</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="bigdecimal">
 <span id="id12"></span><h2><span class="section-number">2.11. </span>bigDecimal<a class="headerlink" href="#bigdecimal" title="Permalink to this headline">#</a></h2>
 <p>A bigDecimal is an arbitrary precision signed decimal number.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">bigDecimal </span><span class="nc">MyBigDecimal</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">bigDecimal </span><span class="nc">MyBigDecimal</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="timestamp">
 <span id="id13"></span><h2><span class="section-number">2.12. </span>timestamp<a class="headerlink" href="#timestamp" title="Permalink to this headline">#</a></h2>
-<p>A timestamp represents an instant in time with no UTC offset or timezone.
-The serialization of a timestamp is an implementation detail that is
-determined by a <a class="reference internal" href="protocol-traits.html#protocoldefinition-trait"><span class="std std-ref">protocol</span></a> and MUST NOT
-have any effect on the types exposed by tooling to represent a timestamp
-value.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">timestamp </span><span class="nc">MyTimestamp</span><span class="w"></span>
+<p>A timestamp represents an instant in time in the proleptic Gregorian calendar,
+independent of local times or timezones. Timestamps support an allowable date
+range between midnight January 1, 0001 CE to 23:59:59.999 on
+December 31, 9999 CE, with a temporal resolution of 1 millisecond. This
+resolution and range ensures broad support across programming languages and
+guarantees compatibility with <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3339.html"><strong>RFC 3339</strong></a>.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">timestamp </span><span class="nc">MyTimestamp</span>
 </pre></div>
+</div>
+<div class="section" id="timestamp-serialization-and-deserialization">
+<h3><span class="section-number">2.12.1. </span>Timestamp serialization and deserialization<a class="headerlink" href="#timestamp-serialization-and-deserialization" title="Permalink to this headline">#</a></h3>
+<p>The serialization format of a timestamp is an implementation detail that is
+determined by a <a class="reference internal" href="protocol-traits.html#protocoldefinition-trait"><span class="std std-ref">protocol</span></a> and or
+<a class="reference internal" href="protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat trait</span></a>. The format of a timestamp MUST NOT have any
+effect on the types exposed by tooling to represent a timestamp value.</p>
+<p>Protocols and <code class="docutils literal notranslate"><span class="pre">timestampFormat</span></code> traits MAY support temporal resolutions
+other than 1 millisecond. For example, the <code class="docutils literal notranslate"><span class="pre">http-date</span></code> timestamp format
+supports only seconds and forbids fractional precision. Modelers need to be
+aware of these limitations when defining timestamps to avoid an unintended
+loss of precision.</p>
+<p>The use of timestamps outside the allowable range risk not interoperating
+correctly across Smithy implementations; deserializers that encounter
+timestamps outside the allowable range SHOULD fail to deserialize the value.</p>
 </div>
 </div>
 <div class="section" id="document">
@@ -422,7 +438,7 @@ be modeled using rigid types, or data that has a schema that evolves outside
 of the purview of a model. The serialization format of a document is an
 implementation detail of a protocol and MUST NOT have any effect on the types
 exposed by tooling to represent a document value.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">document </span><span class="nc">MyDocument</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">document </span><span class="nc">MyDocument</span>
 </pre></div>
 </div>
 </div>
@@ -432,22 +448,22 @@ exposed by tooling to represent a document value.</p>
 Each value listed in the enum is a <a class="reference internal" href="model.html#member"><span class="std std-ref">member</span></a> that implicitly
 targets the <a class="reference internal" href="model.html#unit-type"><span class="std std-ref">unit type</span></a>.</p>
 <p>The following example defines an enum shape:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">enum </span><span class="nc">Suit</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="vc">DIAMOND</span><span class="w"></span>
-<span class="w">    </span><span class="vc">CLUB</span><span class="w"></span>
-<span class="w">    </span><span class="vc">HEART</span><span class="w"></span>
-<span class="w">    </span><span class="vc">SPADE</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">enum </span><span class="nc">Suit</span><span class="w"> </span>{
+<span class="w">    </span><span class="vc">DIAMOND</span>
+<span class="w">    </span><span class="vc">CLUB</span>
+<span class="w">    </span><span class="vc">HEART</span>
+<span class="w">    </span><span class="vc">SPADE</span>
+}
 </pre></div>
 </div>
 <p>The following example is exactly equivalent to the previous example, but the
 enum values are made explicit:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">enum </span><span class="nc">Suit</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="vc">DIAMOND</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;DIAMOND&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="vc">CLUB</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;CLUB&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="vc">HEART</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;HEART&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="vc">SPADE</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;SPADE&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">enum </span><span class="nc">Suit</span><span class="w"> </span>{
+<span class="w">    </span><span class="vc">DIAMOND</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;DIAMOND&quot;</span>
+<span class="w">    </span><span class="vc">CLUB</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;CLUB&quot;</span>
+<span class="w">    </span><span class="vc">HEART</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;HEART&quot;</span>
+<span class="w">    </span><span class="vc">SPADE</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;SPADE&quot;</span>
+}
 </pre></div>
 </div>
 <div class="section" id="enum-values">
@@ -458,28 +474,28 @@ explicit <code class="docutils literal notranslate"><span class="pre">enumValue<
 the member with the trait value set to the member's name.</p>
 <p>The following example provides custom enum values for each member using
 syntactic sugar in the Smithy IDL:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">enum </span><span class="nc">Suit</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="vc">DIAMOND</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;diamond&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="vc">CLUB</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;club&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="vc">HEART</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;heart&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="vc">SPADE</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;spade&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">enum </span><span class="nc">Suit</span><span class="w"> </span>{
+<span class="w">    </span><span class="vc">DIAMOND</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;diamond&quot;</span>
+<span class="w">    </span><span class="vc">CLUB</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;club&quot;</span>
+<span class="w">    </span><span class="vc">HEART</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;heart&quot;</span>
+<span class="w">    </span><span class="vc">SPADE</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;spade&quot;</span>
+}
 </pre></div>
 </div>
 <p>The above example is exactly equivalent to the following:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">enum </span><span class="nc">Suit</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@enumValue</span>(<span class="s2">&quot;diamond&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="vc">DIAMOND</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">enum </span><span class="nc">Suit</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@enumValue</span>(<span class="s2">&quot;diamond&quot;</span>)
+<span class="w">    </span><span class="vc">DIAMOND</span>
 
-<span class="w">    </span><span class="nt">@enumValue</span>(<span class="s2">&quot;club&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="vc">CLUB</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@enumValue</span>(<span class="s2">&quot;club&quot;</span>)
+<span class="w">    </span><span class="vc">CLUB</span>
 
-<span class="w">    </span><span class="nt">@enumValue</span>(<span class="s2">&quot;heart&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="vc">HEART</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@enumValue</span>(<span class="s2">&quot;heart&quot;</span>)
+<span class="w">    </span><span class="vc">HEART</span>
 
-<span class="w">    </span><span class="nt">@enumValue</span>(<span class="s2">&quot;spade&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="vc">SPADE</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@enumValue</span>(<span class="s2">&quot;spade&quot;</span>)
+<span class="w">    </span><span class="vc">SPADE</span>
+}
 </pre></div>
 </div>
 </div>
@@ -510,32 +526,32 @@ to apply the <code class="docutils literal notranslate"><span class="pre">enumVa
 <a class="reference internal" href="model.html#member"><span class="std std-ref">member</span></a> that implicitly targets the <a class="reference internal" href="model.html#unit-type"><span class="std std-ref">unit type</span></a>.</p>
 <p>The following example defines an intEnum shape using Smithy IDL syntactic
 sugar:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">intEnum </span><span class="nc">FaceCard</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="vc">JACK</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">1</span><span class="w"></span>
-<span class="w">    </span><span class="vc">QUEEN</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">2</span><span class="w"></span>
-<span class="w">    </span><span class="vc">KING</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">3</span><span class="w"></span>
-<span class="w">    </span><span class="vc">ACE</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">4</span><span class="w"></span>
-<span class="w">    </span><span class="vc">JOKER</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">5</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">intEnum </span><span class="nc">FaceCard</span><span class="w"> </span>{
+<span class="w">    </span><span class="vc">JACK</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">1</span>
+<span class="w">    </span><span class="vc">QUEEN</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">2</span>
+<span class="w">    </span><span class="vc">KING</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">3</span>
+<span class="w">    </span><span class="vc">ACE</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">4</span>
+<span class="w">    </span><span class="vc">JOKER</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="m">5</span>
+}
 </pre></div>
 </div>
 <p>The above example is exactly equivalent to the following:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">intEnum </span><span class="nc">FaceCard</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@enumValue</span>(<span class="m">1</span>)<span class="w"></span>
-<span class="w">    </span><span class="vc">JACK</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">intEnum </span><span class="nc">FaceCard</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@enumValue</span>(<span class="m">1</span>)
+<span class="w">    </span><span class="vc">JACK</span>
 
-<span class="w">    </span><span class="nt">@enumValue</span>(<span class="m">2</span>)<span class="w"></span>
-<span class="w">    </span><span class="vc">QUEEN</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@enumValue</span>(<span class="m">2</span>)
+<span class="w">    </span><span class="vc">QUEEN</span>
 
-<span class="w">    </span><span class="nt">@enumValue</span>(<span class="m">3</span>)<span class="w"></span>
-<span class="w">    </span><span class="vc">KING</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@enumValue</span>(<span class="m">3</span>)
+<span class="w">    </span><span class="vc">KING</span>
 
-<span class="w">    </span><span class="nt">@enumValue</span>(<span class="m">4</span>)<span class="w"></span>
-<span class="w">    </span><span class="vc">ACE</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@enumValue</span>(<span class="m">4</span>)
+<span class="w">    </span><span class="vc">ACE</span>
 
-<span class="w">    </span><span class="nt">@enumValue</span>(<span class="m">5</span>)<span class="w"></span>
-<span class="w">    </span><span class="vc">JOKER</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@enumValue</span>(<span class="m">5</span>)
+<span class="w">    </span><span class="vc">JOKER</span>
+}
 </pre></div>
 </div>
 <div class="section" id="intenum-is-a-specialization-of-integer">
@@ -632,7 +648,10 @@ That is, enum names SHOULD match the following regular expression:
 <li><a class="reference internal" href="#double">2.9. double</a></li>
 <li><a class="reference internal" href="#biginteger">2.10. bigInteger</a></li>
 <li><a class="reference internal" href="#bigdecimal">2.11. bigDecimal</a></li>
-<li><a class="reference internal" href="#timestamp">2.12. timestamp</a></li>
+<li><a class="reference internal" href="#timestamp">2.12. timestamp</a><ul>
+<li><a class="reference internal" href="#timestamp-serialization-and-deserialization">2.12.1. Timestamp serialization and deserialization</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#document">2.13. document</a></li>
 <li><a class="reference internal" href="#enum">2.14. enum</a><ul>
 <li><a class="reference internal" href="#enum-values">2.14.1. enum values</a></li>

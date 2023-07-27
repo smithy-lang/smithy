@@ -147,6 +147,6 @@ The following changes to trait definitions are backward compatible:
 Using Smithy Diff
 =================
 
-`Smithy Diff <https://github.com/awslabs/smithy/tree/main/smithy-diff>`_ is a
+`Smithy Diff <https://github.com/smithy-lang/smithy/tree/main/smithy-diff>`_ is a
 tool used to compare two Smithy models to check for backward compatibility
 issues. Smithy Diff can be run via a Java library or via the Smithy CLI.

@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -330,7 +330,7 @@
 responses with JSON documents.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
 <dt>Value type</dt><dd>Structure</dd>
-<dt>See</dt><dd><a class="reference external" href="https://github.com/awslabs/smithy/tree/1.34.0/smithy-aws-protocol-tests/model/awsJson1_0">Protocol tests</a></dd>
+<dt>See</dt><dd><a class="reference external" href="https://github.com/smithy-lang/smithy/tree/1.35.0/smithy-aws-protocol-tests/model/awsJson1_0">Protocol tests</a></dd>
 </dl>
 <p><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsJson1_0</span></code> is a structure that supports the following
 members:</p>
@@ -370,65 +370,65 @@ list they understand when connecting to a service. A client SHOULD assume
 that a service supports <code class="docutils literal notranslate"><span class="pre">http/1.1</span></code> when no <code class="docutils literal notranslate"><span class="pre">http</span></code> or <code class="docutils literal notranslate"><span class="pre">eventStreamHttp</span></code>
 values are provided.</p>
 <p>The following example defines a service that uses <code class="docutils literal notranslate"><span class="pre">aws.protocols#awsJson1_0</span></code>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">aws.protocols#awsJson1_0</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.protocols#awsJson1_0</span>
 
-<span class="nt">@awsJson1</span><span class="vc">_0</span><span class="w"></span>
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@awsJson1</span><span class="vc">_0</span>
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span>
+}
 </pre></div>
 </div>
 <p>The following example defines a service that requires the use of
 <code class="docutils literal notranslate"><span class="pre">h2</span></code> when using event streams.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">aws.protocols#awsJson1_0</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.protocols#awsJson1_0</span>
 
-<span class="nt">@awsJson1</span><span class="vc">_0</span>(<span class="w"></span>
-<span class="w">    </span><span class="py">http</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;h2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;http/1.1&quot;</span>]<span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">eventStreamHttp</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;h2&quot;</span>]<span class="w"></span>
-)<span class="w"></span>
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@awsJson1</span><span class="vc">_0</span>(
+<span class="w">    </span><span class="py">http</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;h2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;http/1.1&quot;</span>]<span class="p">,</span>
+<span class="w">    </span><span class="py">eventStreamHttp</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;h2&quot;</span>]
+)
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span>
+}
 </pre></div>
 </div>
 <p>The following example defines a service that requires the use of
 <code class="docutils literal notranslate"><span class="pre">h2</span></code> or <code class="docutils literal notranslate"><span class="pre">http/1.1</span></code> when using event streams, where <code class="docutils literal notranslate"><span class="pre">h2</span></code> is
 preferred over <code class="docutils literal notranslate"><span class="pre">http/1.1</span></code>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">aws.protocols#awsJson1_0</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.protocols#awsJson1_0</span>
 
-<span class="nt">@awsJson1</span><span class="vc">_1</span>(<span class="w"></span>
-<span class="w">    </span><span class="py">http</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;h2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;http/1.1&quot;</span>]<span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="py">eventStreamHttp</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;h2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;http/1.1&quot;</span>]<span class="w"></span>
-)<span class="w"></span>
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@awsJson1</span><span class="vc">_1</span>(
+<span class="w">    </span><span class="py">http</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;h2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;http/1.1&quot;</span>]<span class="p">,</span>
+<span class="w">    </span><span class="py">eventStreamHttp</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;h2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;http/1.1&quot;</span>]
+)
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span>
+}
 </pre></div>
 </div>
 <p>The following example defines a service that requires the use of
 <code class="docutils literal notranslate"><span class="pre">h2</span></code> for all requests, including event streams.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">aws.protocols#awsJson1_0</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.protocols#awsJson1_0</span>
 
-<span class="nt">@awsJson1</span><span class="vc">_0</span>(<span class="py">http</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;h2&quot;</span>])<span class="w"></span>
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@awsJson1</span><span class="vc">_0</span>(<span class="py">http</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;h2&quot;</span>])
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span>
+}
 </pre></div>
 </div>
 </div>
@@ -696,7 +696,7 @@ deserialize errors for <code class="docutils literal notranslate"><span class="p
 <div class="section" id="protocol-compliance-tests">
 <h2>Protocol compliance tests<a class="headerlink" href="#protocol-compliance-tests" title="Permalink to this headline">#</a></h2>
 <p>A full compliance test suite is provided and SHALL be considered a normative
-reference: <a class="reference external" href="https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/awsJson1_0">https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/awsJson1_0</a></p>
+reference: <a class="reference external" href="https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/awsJson1_0">https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/awsJson1_0</a></p>
 <p>These compliance tests define a model that is used to define test cases and
 the expected serialized HTTP requests and responses for each case.</p>
 <p><em>TODO: Add event stream handling specifications.</em></p>

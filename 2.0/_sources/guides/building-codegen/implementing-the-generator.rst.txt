@@ -3,7 +3,7 @@ Implementing the Generator
 --------------------------
 
 This document describes how to implement a code generator using the
-high-level `DirectedCodegen <https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/directed/DirectedCodegen.java>`__
+high-level `DirectedCodegen <https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/directed/DirectedCodegen.java>`__
 interface.
 
 
@@ -219,4 +219,4 @@ Tips for using ``DirectedCodegen``
       data you need.
 
 
-.. _source code for DirectedCodegen: https://github.com/awslabs/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/directed/DirectedCodegen.java
+.. _source code for DirectedCodegen: https://github.com/smithy-lang/smithy/blob/main/smithy-codegen-core/src/main/java/software/amazon/smithy/codegen/core/directed/DirectedCodegen.java

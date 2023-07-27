@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -584,56 +584,56 @@ member are implemented by both client and server implementations.</p>
 <h3>HTTP request example<a class="headerlink" href="#http-request-example" title="Permalink to this headline">#</a></h3>
 <p>The following example defines a protocol compliance test for a JSON protocol
 that uses <a class="reference internal" href="../spec/http-bindings.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">smithy.test#httpRequestTests</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">smithy.test#httpRequestTests</span>
 
-<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{hostLabel}.prefix.&quot;</span>)<span class="w"></span>
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span>)<span class="w"></span>
-<span class="nt">@httpRequestTests</span>([<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;say_hello&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">protocol</span><span class="p">:</span><span class="w"> </span><span class="vc">exampleProtocol</span><span class="w"></span>
-<span class="w">        </span><span class="py">params</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="s2">&quot;hostLabel&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="s2">&quot;greeting&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hi&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Teddy&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="s2">&quot;query&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hello there&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">        </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">host</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.com&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">resolvedHost</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo.prefix.example.com&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">queryParams</span><span class="p">:</span><span class="w"> </span>[<span class="w"></span>
-<span class="w">            </span><span class="s2">&quot;Hi=Hello%20there&quot;</span><span class="w"></span>
-<span class="w">        </span>]<span class="w"></span>
-<span class="w">        </span><span class="py">headers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="s2">&quot;X-Greeting&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hi&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">        </span><span class="py">body</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{</span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2">: </span><span class="se">\&quot;</span><span class="s2">Teddy</span><span class="se">\&quot;</span><span class="s2">}&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">bodyMediaType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;application/json&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-])<span class="w"></span>
-<span class="kd">operation </span><span class="nc">SayHello</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">SayHelloInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">Unit</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@endpoint</span>(<span class="py">hostPrefix</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{hostLabel}.prefix.&quot;</span>)
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span>)
+<span class="nt">@httpRequestTests</span>([
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;say_hello&quot;</span>
+<span class="w">        </span><span class="py">protocol</span><span class="p">:</span><span class="w"> </span><span class="vc">exampleProtocol</span>
+<span class="w">        </span><span class="py">params</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="s2">&quot;hostLabel&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span>
+<span class="w">            </span><span class="s2">&quot;greeting&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hi&quot;</span>
+<span class="w">            </span><span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Teddy&quot;</span>
+<span class="w">            </span><span class="s2">&quot;query&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hello there&quot;</span>
+<span class="w">        </span>}
+<span class="w">        </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span>
+<span class="w">        </span><span class="py">host</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.com&quot;</span>
+<span class="w">        </span><span class="py">resolvedHost</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo.prefix.example.com&quot;</span>
+<span class="w">        </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span>
+<span class="w">        </span><span class="py">queryParams</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">            </span><span class="s2">&quot;Hi=Hello%20there&quot;</span>
+<span class="w">        </span>]
+<span class="w">        </span><span class="py">headers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="s2">&quot;X-Greeting&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hi&quot;</span>
+<span class="w">        </span>}
+<span class="w">        </span><span class="py">body</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{</span><span class="se">\&quot;</span><span class="s2">name</span><span class="se">\&quot;</span><span class="s2">: </span><span class="se">\&quot;</span><span class="s2">Teddy</span><span class="se">\&quot;</span><span class="s2">}&quot;</span>
+<span class="w">        </span><span class="py">bodyMediaType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;application/json&quot;</span>
+<span class="w">    </span>}
+])
+<span class="kd">operation </span><span class="nc">SayHello</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">SayHelloInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">Unit</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">SayHelloInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@hostLabel</span><span class="w"></span>
-<span class="w">    </span><span class="py">hostLabel</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">SayHelloInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="nt">@hostLabel</span>
+<span class="w">    </span><span class="py">hostLabel</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;X-Greeting&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">greeting</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;X-Greeting&quot;</span>)
+<span class="w">    </span><span class="py">greeting</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">&quot;Hi&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">query</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">&quot;Hi&quot;</span>)
+<span class="w">    </span><span class="py">query</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 </div>
@@ -784,37 +784,37 @@ member are implemented by both client and server implementations.</p>
 <h3>HTTP response example<a class="headerlink" href="#http-response-example" title="Permalink to this headline">#</a></h3>
 <p>The following example defines a protocol compliance test for a JSON protocol
 that uses <a class="reference internal" href="../spec/http-bindings.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">smithy.test#httpResponseTests</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">smithy.test#httpResponseTests</span>
 
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span>)<span class="w"></span>
-<span class="nt">@httpResponseTests</span>([<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;say_goodbye&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">protocol</span><span class="p">:</span><span class="w"> </span><span class="vc">exampleProtocol</span><span class="w"></span>
-<span class="w">        </span><span class="py">params</span><span class="p">:</span><span class="w"> </span>{<span class="py">farewell</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Bye&quot;</span>}<span class="w"></span>
-<span class="w">        </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span><span class="w"></span>
-<span class="w">        </span><span class="py">headers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="s2">&quot;X-Farewell&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Bye&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="s2">&quot;Content-Length&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-])<span class="w"></span>
-<span class="kd">operation </span><span class="nc">SayGoodbye</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">SayGoodbyeInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">SayGoodbyeOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/&quot;</span>)
+<span class="nt">@httpResponseTests</span>([
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;say_goodbye&quot;</span>
+<span class="w">        </span><span class="py">protocol</span><span class="p">:</span><span class="w"> </span><span class="vc">exampleProtocol</span>
+<span class="w">        </span><span class="py">params</span><span class="p">:</span><span class="w"> </span>{<span class="py">farewell</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Bye&quot;</span>}
+<span class="w">        </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span>
+<span class="w">        </span><span class="py">headers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="s2">&quot;X-Farewell&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Bye&quot;</span>
+<span class="w">            </span><span class="s2">&quot;Content-Length&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span>
+<span class="w">        </span>}
+<span class="w">    </span>}
+])
+<span class="kd">operation </span><span class="nc">SayGoodbye</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">SayGoodbyeInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">SayGoodbyeOutput</span>
+}
 
-<span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">SayGoodbyeInput</span><span class="w"> </span>{}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">SayGoodbyeInput</span><span class="w"> </span>{}
 
-<span class="nt">@output</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">SayGoodbyeOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;X-Farewell&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">farewell</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">SayGoodbyeOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;X-Farewell&quot;</span>)
+<span class="w">    </span><span class="py">farewell</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 </div>
@@ -826,30 +826,30 @@ implementations SHOULD ensure that each error with the <code class="docutils lit
 trait associated with an operation can be properly deserialized.</p>
 <p>The following example defines a protocol compliance test for a JSON protocol
 that uses <a class="reference internal" href="../spec/http-bindings.html#http-traits"><span class="std std-ref">HTTP binding traits</span></a>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">smithy.test#httpResponseTests</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">smithy.test#httpResponseTests</span>
 
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
-<span class="nt">@httpError</span>(<span class="m">400</span>)<span class="w"></span>
-<span class="nt">@httpResponseTests</span>([<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;invalid_greeting&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">protocol</span><span class="p">:</span><span class="w"> </span><span class="vc">exampleProtocol</span><span class="w"></span>
-<span class="w">        </span><span class="py">params</span><span class="p">:</span><span class="w"> </span>{<span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;baz&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hi&quot;</span>}<span class="w"></span>
-<span class="w">        </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">400</span><span class="w"></span>
-<span class="w">        </span><span class="py">headers</span><span class="p">:</span><span class="w"> </span>{<span class="s2">&quot;X-Foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;baz&quot;</span>}<span class="w"></span>
-<span class="w">        </span><span class="py">body</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{</span><span class="se">\&quot;</span><span class="s2">message</span><span class="se">\&quot;</span><span class="s2">: </span><span class="se">\&quot;</span><span class="s2">Hi</span><span class="se">\&quot;</span><span class="s2">}&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">bodyMediaType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;application/json&quot;</span><span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-])<span class="w"></span>
-<span class="kd">structure </span><span class="nc">InvalidGreeting</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;X-Foo&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="nt">@httpError</span>(<span class="m">400</span>)
+<span class="nt">@httpResponseTests</span>([
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;invalid_greeting&quot;</span>
+<span class="w">        </span><span class="py">protocol</span><span class="p">:</span><span class="w"> </span><span class="vc">exampleProtocol</span>
+<span class="w">        </span><span class="py">params</span><span class="p">:</span><span class="w"> </span>{<span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;baz&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hi&quot;</span>}
+<span class="w">        </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">400</span>
+<span class="w">        </span><span class="py">headers</span><span class="p">:</span><span class="w"> </span>{<span class="s2">&quot;X-Foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;baz&quot;</span>}
+<span class="w">        </span><span class="py">body</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{</span><span class="se">\&quot;</span><span class="s2">message</span><span class="se">\&quot;</span><span class="s2">: </span><span class="se">\&quot;</span><span class="s2">Hi</span><span class="se">\&quot;</span><span class="s2">}&quot;</span>
+<span class="w">        </span><span class="py">bodyMediaType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;application/json&quot;</span>
+<span class="w">    </span>}
+])
+<span class="kd">structure </span><span class="nc">InvalidGreeting</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;X-Foo&quot;</span>)
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 </div>
@@ -933,7 +933,7 @@ in length. One test permutation is generated for each index the
 parameter lists. For example, parameters with 5 values for each key
 will generate 5 tests in total.</p>
 <p>Parameter values are substituted using the conventions described by
-the documentation for <a class="reference external" href="https://smithy.io/javadoc/1.34.0/software/amazon/smithy/utils/CodeWriter.html">CodeWriter</a>. They are available as named
+the documentation for <a class="reference external" href="https://smithy.io/javadoc/1.35.0/software/amazon/smithy/utils/CodeWriter.html">CodeWriter</a>. They are available as named
 parameters, and implementations must support both the <code class="docutils literal notranslate"><span class="pre">L</span></code> and <code class="docutils literal notranslate"><span class="pre">S</span></code>
 formatters.</p>
 <div class="last admonition note">
@@ -1125,51 +1125,51 @@ is rejecting many different variants of invalid numerics, and uses
 <code class="docutils literal notranslate"><span class="pre">testParameters</span></code> to test three different invalid values, and tags each test
 with a descriptive string that allows implementations to run, or skip,
 specific types of malformed values.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use </span><span class="nc">smithy.test#httpMalformedRequestTests</span><span class="w"></span>
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/InvertNumber/{numberValue}&quot;</span>)<span class="w"></span>
-<span class="nt">@httpMalformedRequestTests</span>([<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MalformedLongsInPathsRejected&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">smithy.test#httpMalformedRequestTests</span>
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/InvertNumber/{numberValue}&quot;</span>)
+<span class="nt">@httpMalformedRequestTests</span>([
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MalformedLongsInPathsRejected&quot;</span><span class="p">,</span>
 <span class="w">        </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        Malformed values in the path should be rejected&quot;&quot;&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">protocol</span><span class="p">:</span><span class="w"> </span><span class="vc">exampleProtocol</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">request</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/InvertNumber/$value:L&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">response</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">400</span><span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="py">headers</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">                </span><span class="s2">&quot;errorType&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;BadNumeric&quot;</span><span class="w"></span>
-<span class="w">            </span>}<span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="py">body</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">                </span><span class="py">assertion</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="s2">        Malformed values in the path should be rejected&quot;&quot;&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="py">protocol</span><span class="p">:</span><span class="w"> </span><span class="vc">exampleProtocol</span><span class="p">,</span>
+<span class="w">        </span><span class="py">request</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/InvertNumber/$value:L&quot;</span>
+<span class="w">        </span>}<span class="p">,</span>
+<span class="w">        </span><span class="py">response</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">400</span><span class="p">,</span>
+<span class="w">            </span><span class="py">headers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                </span><span class="s2">&quot;errorType&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;BadNumeric&quot;</span>
+<span class="w">            </span>}<span class="p">,</span>
+<span class="w">            </span><span class="py">body</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                </span><span class="py">assertion</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">                    </span><span class="py">contents</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">                    {&quot;errorMessage&quot;: &quot;Invalid value </span><span class="se">\&quot;</span><span class="s2">$value:L</span><span class="se">\&quot;</span><span class="s2">&quot;}&quot;&quot;&quot;</span><span class="w"></span>
-<span class="w">                </span>}<span class="p">,</span><span class="w"></span>
-<span class="w">                </span><span class="py">mediaType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;application/json&quot;</span><span class="w"></span>
-<span class="w">            </span>}<span class="w"></span>
+<span class="s2">                    {&quot;errorMessage&quot;: &quot;Invalid value </span><span class="se">\&quot;</span><span class="s2">$value:L</span><span class="se">\&quot;</span><span class="s2">&quot;}&quot;&quot;&quot;</span>
+<span class="w">                </span>}<span class="p">,</span>
+<span class="w">                </span><span class="py">mediaType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;application/json&quot;</span>
+<span class="w">            </span>}
 
-<span class="w">        </span>}<span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">testParameters</span><span class="w"> </span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="s2">&quot;value&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;true&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;1.001&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;2ABC&quot;</span>]<span class="p">,</span><span class="w"></span>
-<span class="w">            </span><span class="s2">&quot;tag&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;boolean_coercion&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;float_truncation&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;trailing_chars&quot;</span>]<span class="w"></span>
-<span class="w">        </span>}<span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span>[<span class="w"> </span><span class="s2">&quot;$tag:L&quot;</span><span class="w"> </span>]<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-])<span class="w"></span>
-<span class="kd">operation </span><span class="nc">InvertNumber</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">InvertNumberInput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">        </span>}<span class="p">,</span>
+<span class="w">        </span><span class="py">testParameters</span><span class="w"> </span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="s2">&quot;value&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;true&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;1.001&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;2ABC&quot;</span>]<span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;tag&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;boolean_coercion&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;float_truncation&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;trailing_chars&quot;</span>]
+<span class="w">        </span>}<span class="p">,</span>
+<span class="w">        </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span>[<span class="w"> </span><span class="s2">&quot;$tag:L&quot;</span><span class="w"> </span>]
+<span class="w">    </span>}
+])
+<span class="kd">operation </span><span class="nc">InvertNumber</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">InvertNumberInput</span>
+}
 
-<span class="kd">structure </span><span class="nc">InvertNumberInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@httpLabel</span><span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">numberValue</span><span class="p">:</span><span class="w"> </span><span class="vc">Long</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">InvertNumberInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@httpLabel</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">numberValue</span><span class="p">:</span><span class="w"> </span><span class="vc">Long</span>
+}
 </pre></div>
 </div>
 </div>

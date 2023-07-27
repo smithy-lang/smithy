@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -356,20 +356,20 @@ of the <a class="reference internal" href="aws-core.html#aws-api-service-trait">
 </div>
 </dd>
 </dl>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">aws.fooBaz</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">aws.fooBaz</span>
 
-<span class="kd">use </span><span class="nc">aws.api#service</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">aws.auth#sigv4</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">aws.protocols#restJson1</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.api#service</span>
+<span class="kd">use </span><span class="nc">aws.auth#sigv4</span>
+<span class="kd">use </span><span class="nc">aws.protocols#restJson1</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>)<span class="w"></span>
-<span class="nt">@sigv4</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foobaz&quot;</span>)<span class="w"></span>
-<span class="nt">@restJson1</span><span class="w"></span>
-<span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>)
+<span class="nt">@sigv4</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foobaz&quot;</span>)
+<span class="nt">@restJson1</span>
+<span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
+}
 </pre></div>
 </div>
 </div>
@@ -387,15 +387,15 @@ with an unknown size at the time a request is initiated might require that the
 payload of a request is not signed.</p>
 <p>The following example defines an operation that indicates the payload of the
 operation MUST NOT be used as part of the request signature calculation:</p>
-<div class="highlight-Smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;2&quot;</span><span class="w"></span>
+<div class="highlight-Smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;2&quot;</span>
 
-<span class="kd">use</span><span class="nc"> aws.auth#unsignedPayload</span><span class="w"></span>
+<span class="kd">use</span><span class="nc"> aws.auth#unsignedPayload</span>
 
-<span class="nd">@unsignedPayload</span><span class="w"></span>
-<span class="kd">operation</span><span class="nc"> PutThings</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">PutThingsInput</span><span class="w"></span>
-<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">PutThingsOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nd">@unsignedPayload</span>
+<span class="kd">operation</span><span class="nc"> PutThings</span><span class="w"> </span>{
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">PutThingsInput</span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">PutThingsOutput</span>
+}
 </pre></div>
 </div>
 <div class="section" id="unsigned-payloads-and-signature-version-4">
@@ -437,21 +437,21 @@ element is of this format: <code class="docutils literal notranslate"><span clas
 </div>
 </dd>
 </dl>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
-<span class="kd">namespace </span><span class="nc">aws.fooBaz</span><span class="w"></span>
+<span class="kd">namespace </span><span class="nc">aws.fooBaz</span>
 
-<span class="kd">use </span><span class="nc">aws.api#service</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">aws.auth#cognitoUserPools</span><span class="w"></span>
-<span class="kd">use </span><span class="nc">aws.protocols#restJson1</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.api#service</span>
+<span class="kd">use </span><span class="nc">aws.auth#cognitoUserPools</span>
+<span class="kd">use </span><span class="nc">aws.protocols#restJson1</span>
 
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>)<span class="w"></span>
-<span class="nt">@cognitoUserPools</span>(<span class="w"></span>
-<span class="w">    </span><span class="py">providerArns</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;arn:aws:cognito-idp:us-east-1:123:userpool/123&quot;</span>])<span class="w"></span>
-<span class="nt">@restJson1</span><span class="w"></span>
-<span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>)
+<span class="nt">@cognitoUserPools</span>(
+<span class="w">    </span><span class="py">providerArns</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;arn:aws:cognito-idp:us-east-1:123:userpool/123&quot;</span>])
+<span class="nt">@restJson1</span>
+<span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
+}
 </pre></div>
 </div>
 </div>

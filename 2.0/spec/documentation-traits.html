@@ -275,7 +275,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/awslabs/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
@@ -358,11 +358,11 @@ deprecated.</td>
 </tbody>
 </table>
 </div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@deprecated</span><span class="w"></span>
-<span class="kd">string </span><span class="nc">SomeString</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@deprecated</span>
+<span class="kd">string </span><span class="nc">SomeString</span>
 
-<span class="nt">@deprecated</span>(<span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This shape is no longer used.&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">since</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.3&quot;</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">OtherString</span><span class="w"></span>
+<span class="nt">@deprecated</span>(<span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This shape is no longer used.&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">since</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.3&quot;</span>)
+<span class="kd">string </span><span class="nc">OtherString</span>
 </pre></div>
 </div>
 </div>
@@ -373,8 +373,8 @@ deprecated.</td>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">*</span></code></dd>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
 </dl>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@documentation</span>(<span class="s2">&quot;This *is* documentation about the shape.&quot;</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">MyString</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@documentation</span>(<span class="s2">&quot;This *is* documentation about the shape.&quot;</span>)
+<span class="kd">string </span><span class="nc">MyString</span>
 </pre></div>
 </div>
 <p class="rubric">Effective documentation</p>
@@ -386,17 +386,17 @@ process:</p>
 the shape targeted by the member, if present.</li>
 </ol>
 <p>For example, given the following model,</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Foo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@documentation</span>(<span class="s2">&quot;Member documentation&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="vc">Baz</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">Foo</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@documentation</span>(<span class="s2">&quot;Member documentation&quot;</span>)
+<span class="w">    </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="vc">Baz</span>
 
-<span class="w">    </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">Baz</span><span class="w"></span>
+<span class="w">    </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">Baz</span>
 
-<span class="w">    </span><span class="py">qux</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="py">qux</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="nt">@documentation</span>(<span class="s2">&quot;Shape documentation&quot;</span>)<span class="w"></span>
-<span class="kd">string </span><span class="nc">Baz</span><span class="w"></span>
+<span class="nt">@documentation</span>(<span class="s2">&quot;Shape documentation&quot;</span>)
+<span class="kd">string </span><span class="nc">Baz</span>
 </pre></div>
 </div>
 <p>the effective documentation of <code class="docutils literal notranslate"><span class="pre">Foo$baz</span></code> resolves to &quot;Member documentation&quot;,
@@ -459,45 +459,45 @@ These values use the same semantics and format as
 <a class="reference internal" href="model.html#trait-node-values"><span class="std std-ref">custom trait values</span></a>.</p>
 <p>A value for <code class="docutils literal notranslate"><span class="pre">output</span></code> or <code class="docutils literal notranslate"><span class="pre">error</span></code> SHOULD be provided. However, both
 MUST NOT be defined for the same example.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span><span class="w"></span>
-<span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">MyOperationInput</span><span class="w"></span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">MyOperationOutput</span><span class="w"></span>
-<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyOperationError</span>]<span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
+<span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">MyOperationInput</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">MyOperationOutput</span>
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyOperationError</span>]
+}
 
-<span class="kd">apply </span><span class="nc">MyOperation</span><span class="w"> </span><span class="nt">@examples</span>([<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">title</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Invoke MyOperation&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">input</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;baz&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;bar&quot;</span>]<span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">        </span><span class="py">output</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PENDING&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">title</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Another example for MyOperation&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">input</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;baz&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">        </span><span class="py">output</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PENDING&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-<span class="w">    </span>{<span class="w"></span>
-<span class="w">        </span><span class="py">title</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Error example for MyOperation&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="py">input</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;!&quot;</span><span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">        </span><span class="py">error</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">            </span><span class="py">shapeId</span><span class="p">:</span><span class="w"> </span><span class="vc">MyOperationError</span><span class="w"></span>
-<span class="w">            </span><span class="py">content</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">                </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Invalid &#39;foo&#39;. Special character not allowed.&quot;</span><span class="w"></span>
-<span class="w">            </span>}<span class="w"></span>
-<span class="w">        </span>}<span class="w"></span>
-<span class="w">    </span>}<span class="w"></span>
-])<span class="w"></span>
+<span class="kd">apply </span><span class="nc">MyOperation</span><span class="w"> </span><span class="nt">@examples</span>([
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">title</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Invoke MyOperation&quot;</span>
+<span class="w">        </span><span class="py">input</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;baz&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;bar&quot;</span>]
+<span class="w">        </span>}
+<span class="w">        </span><span class="py">output</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="py">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PENDING&quot;</span>
+<span class="w">        </span>}
+<span class="w">    </span>}
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">title</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Another example for MyOperation&quot;</span>
+<span class="w">        </span><span class="py">input</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;baz&quot;</span>
+<span class="w">        </span>}
+<span class="w">        </span><span class="py">output</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="py">status</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PENDING&quot;</span>
+<span class="w">        </span>}
+<span class="w">    </span>}
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">title</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Error example for MyOperation&quot;</span>
+<span class="w">        </span><span class="py">input</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;!&quot;</span>
+<span class="w">        </span>}
+<span class="w">        </span><span class="py">error</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">            </span><span class="py">shapeId</span><span class="p">:</span><span class="w"> </span><span class="vc">MyOperationError</span>
+<span class="w">            </span><span class="py">content</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Invalid &#39;foo&#39;. Special character not allowed.&quot;</span>
+<span class="w">            </span>}
+<span class="w">        </span>}
+<span class="w">    </span>}
+])
 </pre></div>
 </div>
 <div class="section" id="errorexample-structure">
@@ -543,13 +543,13 @@ value of the member.</td>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code> containing a name to <code class="docutils literal notranslate"><span class="pre">string</span></code> containing a valid
 URL.</dd>
 </dl>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@externalDocumentation</span>(<span class="w"></span>
-<span class="w">    </span><span class="s2">&quot;Homepage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://www.example.com/&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="s2">&quot;API Reference&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://www.example.com/api-ref&quot;</span><span class="w"></span>
-)<span class="w"></span>
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@externalDocumentation</span>(
+<span class="w">    </span><span class="s2">&quot;Homepage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://www.example.com/&quot;</span>
+<span class="w">    </span><span class="s2">&quot;API Reference&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://www.example.com/api-ref&quot;</span>
+)
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span>
+}
 </pre></div>
 </div>
 </div>
@@ -566,12 +566,12 @@ that are not intended for external customers.</dd>
 includes features that are only available to internal customers within the
 same company, whereas clients for external customers could be built from a
 filtered version of the model.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@internal</span><span class="w"></span>
-<span class="w">    </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@internal</span>
+<span class="w">    </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 </div>
@@ -608,14 +608,14 @@ or cannot be made required backward compatibly.</dd>
 </dd>
 <dt>Conflicts with</dt><dd><a class="reference internal" href="type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a></dd>
 </dl>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span><span class="w"></span>
-<span class="kd">structure </span><span class="nc">PutContentsInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nt">@required</span><span class="w"></span>
-<span class="w">    </span><span class="py">contents</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">PutContentsInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">contents</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 
-<span class="w">    </span><span class="nt">@recommended</span>(<span class="py">reason</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Validation will reject contents if they are invalid.&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="py">validateContents</span><span class="p">:</span><span class="w"> </span><span class="vc">Boolean</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@recommended</span>(<span class="py">reason</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Validation will reject contents if they are invalid.&quot;</span>)
+<span class="w">    </span><span class="py">validateContents</span><span class="p">:</span><span class="w"> </span><span class="vc">Boolean</span>
+}
 </pre></div>
 </div>
 </div>
@@ -632,8 +632,8 @@ handled with care.</dd>
 <p>Sensitive data MUST NOT be exposed in things like exception messages or log
 output. Application of this trait SHOULD NOT affect wire logging
 (i.e., logging of all data transmitted to and from servers or clients).</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@sensitive</span><span class="w"></span>
-<span class="kd">string </span><span class="nc">MyString</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@sensitive</span>
+<span class="kd">string </span><span class="nc">MyString</span>
 </pre></div>
 </div>
 </div>
@@ -657,8 +657,8 @@ shapes in the model.</dd>
 <p>Tools can use these tags to filter shapes that should not be visible for a
 particular consumer of a model. The string values that can be provided to the
 tags trait are arbitrary and up to the model author.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@tags</span>([<span class="s2">&quot;experimental&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;public&quot;</span>])<span class="w"></span>
-<span class="kd">string </span><span class="nc">SomeStructure</span><span class="w"> </span>{}<span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@tags</span>([<span class="s2">&quot;experimental&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;public&quot;</span>])
+<span class="kd">string </span><span class="nc">SomeStructure</span><span class="w"> </span>{}
 </pre></div>
 </div>
 </div>
@@ -673,13 +673,13 @@ provide a user friendly name for services and resources.</dd>
 </dd>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
 </dl>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="w"></span>
-<span class="kd">namespace </span><span class="nc">acme.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">acme.example</span>
 
-<span class="nt">@title</span>(<span class="s2">&quot;ACME Simple Image Service&quot;</span>)<span class="w"></span>
-<span class="kd">service </span><span class="nc">MySimpleImageService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@title</span>(<span class="s2">&quot;ACME Simple Image Service&quot;</span>)
+<span class="kd">service </span><span class="nc">MySimpleImageService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2006-03-01&quot;</span>
+}
 </pre></div>
 </div>
 </div>
@@ -693,8 +693,8 @@ when code generated from unstable features are used.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">*</span></code></dd>
 <dt>Value type</dt><dd>Annotation trait</dd>
 </dl>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@unstable</span><span class="w"></span>
-<span class="kd">string </span><span class="nc">MyString</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@unstable</span>
+<span class="kd">string </span><span class="nc">MyString</span>
 </pre></div>
 </div>
 </div>
