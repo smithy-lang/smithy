@@ -191,8 +191,9 @@ final class InitCommand implements Command {
         List<String> includedFiles = getIncludedFiles(templateNode);
 
         try (ProgressTracker t = new ProgressTracker(env,
-                ProgressStyle.dots("cloning template", "template cloned"))
-        ) {
+                ProgressStyle.dots("cloning template", "template cloned"),
+                standardOptions.quiet()
+        )) {
             // Specify the subdirectory to download
             exec(ListUtils.of("git", "sparse-checkout", "set", "--no-cone", templatePath), temp);
             // add any additional files that should be included

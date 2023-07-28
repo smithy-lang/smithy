@@ -21,19 +21,28 @@ public final class ProgressTracker implements AutoCloseable {
     private final ScheduledFuture<?> task;
     private final ProgressStyle style;
     private final Command.Env env;
+    private final boolean quiet;
 
-    public ProgressTracker(Command.Env env, ProgressStyle style) {
+    public ProgressTracker(Command.Env env, ProgressStyle style, boolean quiet) {
         this.env = env;
         this.style = style;
-        task = EXECUTOR.scheduleAtFixedRate(this::write, 0, INTERVAL_MILLIS, TimeUnit.MILLISECONDS);
+        this.quiet = quiet;
+        // Do not print a progress bar if the quiet setting is enabled
+        if (quiet) {
+            task = null;
+        } else {
+            task = EXECUTOR.scheduleAtFixedRate(this::write, 0, INTERVAL_MILLIS, TimeUnit.MILLISECONDS);
+        }
     }
 
     @Override
     public void close() {
-        task.cancel(false);
-        try {
-            EXECUTOR.schedule(this::executeClose, 0, TimeUnit.NANOSECONDS).get();
-        } catch (ExecutionException | InterruptedException e) { /* ignored */ }
+        if (!quiet) {
+            task.cancel(false);
+            try {
+                EXECUTOR.schedule(this::executeClose, 0, TimeUnit.NANOSECONDS).get();
+            } catch (ExecutionException | InterruptedException e) { /* ignored */ }
+        }
     }
 
     private void write() {
