@@ -17,7 +17,7 @@ public final class ProgressTracker implements AutoCloseable {
         thread.setDaemon(true);
         return thread;
     });
-    private final long intervalMillis = 400L;
+    private static final long INTERVAL_MILLIS = 400L;
     private final ScheduledFuture<?> task;
     private final ProgressStyle style;
     private final Command.Env env;
@@ -25,7 +25,7 @@ public final class ProgressTracker implements AutoCloseable {
     public ProgressTracker(Command.Env env, ProgressStyle style) {
         this.env = env;
         this.style = style;
-        task = EXECUTOR.scheduleAtFixedRate(this::write, 0, intervalMillis, TimeUnit.MILLISECONDS);
+        task = EXECUTOR.scheduleAtFixedRate(this::write, 0, INTERVAL_MILLIS, TimeUnit.MILLISECONDS);
     }
 
     @Override
