@@ -6,3 +6,9 @@
 [ERROR] com.test#WrongMemberMap: Missing required member of shape `com.test#WrongMemberMap`: key | Model
 [ERROR] com.test#OtherWrongMemberMap: Missing required member of shape `com.test#OtherWrongMemberMap`: value | Model
 [ERROR] com.test#BothWrongMembersMap: Missing required members of shape `com.test#BothWrongMembersMap`: key, value | Model
+[WARNING] com.test#WrongMemberList: Expected an object with possible properties of `member`, `mixins`, `traits`, `type`, but found additional properties: `foo` | Model
+[WARNING] com.test#WrongMemberMap: Expected an object with possible properties of `key`, `mixins`, `traits`, `type`, `value`, but found additional properties: `foo` | Model
+[WARNING] com.test#OtherWrongMemberMap: Expected an object with possible properties of `key`, `mixins`, `traits`, `type`, `value`, but found additional properties: `foo` | Model
+[WARNING] com.test#BothWrongMembersMap: Expected an object with possible properties of `key`, `mixins`, `traits`, `type`, `value`, but found additional properties: `bar`, `foo` | Model
+[WARNING] com.test#ExtraMemberList: Expected an object with possible properties of `member`, `mixins`, `traits`, `type`, but found additional properties: `foo` | Model
+[WARNING] com.test#ExtraMemberMap: Expected an object with possible properties of `key`, `mixins`, `traits`, `type`, `value`, but found additional properties: `foo` | Model

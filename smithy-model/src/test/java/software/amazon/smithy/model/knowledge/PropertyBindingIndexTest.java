@@ -15,18 +15,20 @@
 
 package software.amazon.smithy.model.knowledge;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
-import software.amazon.smithy.model.validation.ValidatedResultException;
 
 public class PropertyBindingIndexTest {
 
@@ -68,6 +70,9 @@ public class PropertyBindingIndexTest {
 
         assertTrue(index.doesMemberShapeRequireProperty(model.expectShape(
                 ShapeId.from("com.example#ChangeResourceOutput$id"), MemberShape.class)));
-        Assertions.assertThrows(ValidatedResultException.class, () -> vrmodel.unwrap());
+
+        assertThat(vrmodel.getValidationEvents(Severity.SUPPRESSED), hasSize(1));
+        assertThat(vrmodel.getValidationEvents(Severity.SUPPRESSED).get(0).getId(),
+                   equalTo("ResourceOperationInputOutput"));
     }
 }

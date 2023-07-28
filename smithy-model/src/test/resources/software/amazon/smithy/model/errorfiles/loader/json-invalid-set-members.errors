@@ -1,2 +1,4 @@
 [ERROR] com.test#NoMemberSet: Missing required member of shape `com.test#NoMemberSet`: member | Model
 [ERROR] com.test#WrongMemberSet: Missing required member of shape `com.test#WrongMemberSet`: member | Model
+[WARNING] com.test#WrongMemberSet: Expected an object with possible properties of `member`, `mixins`, `traits`, `type`, but found additional properties: `foo` | Model
+[WARNING] com.test#ExtraMemberSet: Expected an object with possible properties of `member`, `mixins`, `traits`, `type`, but found additional properties: `foo` | Model

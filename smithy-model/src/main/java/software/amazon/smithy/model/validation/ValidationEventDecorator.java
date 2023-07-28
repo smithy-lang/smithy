@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.model.validation;
 
+import java.util.List;
+
 /**
  * Validation event decorators take validation events and transform them by adding more contextual information,
  * usually adding a hint to let the user know what can it be done to solve the issue. This might add context specific
@@ -37,4 +39,49 @@ public interface ValidationEventDecorator {
      * @return The decorated event or the original one if no decoration took place.
      */
     ValidationEvent decorate(ValidationEvent ev);
+
+    /**
+     * Creates a decorator composed of one or more decorators.
+     *
+     * @param decorators Decorators to compose.
+     * @return Returns the composed decorator.
+     */
+    static ValidationEventDecorator compose(List<ValidationEventDecorator> decorators) {
+        if (decorators.isEmpty()) {
+            return new ValidationEventDecorator() {
+                @Override
+                public boolean canDecorate(ValidationEvent ev) {
+                    return false;
+                }
+
+                @Override
+                public ValidationEvent decorate(ValidationEvent ev) {
+                    return ev;
+                }
+            };
+        } else {
+            return new ValidationEventDecorator() {
+                @Override
+                public boolean canDecorate(ValidationEvent ev) {
+                    for (ValidationEventDecorator decorator : decorators) {
+                        if (decorator.canDecorate(ev)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                @Override
+                public ValidationEvent decorate(ValidationEvent ev) {
+                    ValidationEvent decoratedEvent = ev;
+                    for (ValidationEventDecorator decorator : decorators) {
+                        if (decorator.canDecorate(ev)) {
+                            decoratedEvent = decorator.decorate(decoratedEvent);
+                        }
+                    }
+                    return decoratedEvent;
+                }
+            };
+        }
+    }
 }
