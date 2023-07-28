@@ -1247,4 +1247,29 @@ public class ModelAssemblerTest {
 
         assertThat(e.getMessage(), containsString("Invalid file referenced by Smithy JAR manifest"));
     }
+
+    @Test
+    public void doesNotThrowOnInvalidSuppression() {
+        ObjectNode node = Node.objectNode()
+                .withMember("smithy", "1.0")
+                .withMember("metadata", Node.objectNode().withMember("suppressions", "hi!"));
+
+        ValidatedResult<Model> result = new ModelAssembler().addDocumentNode(node).assemble();
+
+        assertThat(result.getValidationEvents(Severity.ERROR), not(empty()));
+    }
+
+    @Test
+    public void modelLoadingErrorsAreEmittedToListener() {
+        ObjectNode node = Node.objectNode().withMember("smithy", Node.fromStrings("Hi", "there"));
+        List<ValidationEvent> events = new ArrayList<>();
+
+        ValidatedResult<Model> result = new ModelAssembler()
+                .addDocumentNode(node)
+                .validationEventListener(events::add)
+                .assemble();
+
+        assertThat(result.getValidationEvents(Severity.ERROR), hasSize(1));
+        assertThat(events, equalTo(result.getValidationEvents()));
+    }
 }
