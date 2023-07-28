@@ -2,6 +2,7 @@ package software.amazon.smithy.cli;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.utils.IoUtils;
@@ -228,6 +229,22 @@ public class InitCommandTest {
 
                 assertThat(result.getOutput(), containsString("Output directory `quickstart-cli` already exists."));
                 assertThat(result.getExitCode(), is(1));
+            });
+        });
+    }
+
+    @Test
+    public void executesInitSuccessQuiet() {
+        IntegUtils.withProject(PROJECT_NAME, templatesDir -> {
+            setupTemplatesDirectory(templatesDir);
+
+            IntegUtils.withTempDir("exitZeroQuiet", dir -> {
+                RunResult result = IntegUtils.run(
+                        dir, ListUtils.of("init", "--quiet", "-t", "quickstart-cli", "-u", templatesDir.toString()));
+
+                assertThat(result.getOutput().trim(), emptyString());
+                assertThat(result.getExitCode(), is(0));
+                assertThat(Files.exists(Paths.get(dir.toString(), "quickstart-cli")), is(true));
             });
         });
     }

@@ -35,6 +35,7 @@ import software.amazon.smithy.cli.ColorBuffer;
 import software.amazon.smithy.cli.ColorTheme;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.HelpPrinter;
+import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
@@ -83,6 +84,8 @@ final class InitCommand implements Command {
 
     private int run(Arguments arguments, Env env) {
         Options options = arguments.getReceiver(Options.class);
+        StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
+
         try {
             final Path root = Paths.get(".");
             final Path temp = Files.createTempDirectory("temp");
@@ -94,7 +97,7 @@ final class InitCommand implements Command {
             if (options.listTemplates) {
                 this.listTemplates(smithyTemplatesNode, env);
             } else {
-                this.cloneTemplate(temp, smithyTemplatesNode, options.template, options.directory, env);
+                this.cloneTemplate(temp, smithyTemplatesNode, options, standardOptions, env);
             }
         } catch (IOException | InterruptedException | URISyntaxException e) {
             throw new RuntimeException(e);
@@ -153,8 +156,12 @@ final class InitCommand implements Command {
         return builder.toString();
     }
 
-    private void cloneTemplate(Path temp, ObjectNode smithyTemplatesNode, String template, String directory, Env env)
+    private void cloneTemplate(Path temp, ObjectNode smithyTemplatesNode, Options options,
+                               StandardOptions standardOptions, Env env)
             throws IOException, InterruptedException, URISyntaxException {
+
+        String template = options.template;
+        String directory = options.directory;
 
         if (template == null || template.isEmpty()) {
             throw new IllegalArgumentException("Please specify a template name using `--template` or `-t`");
@@ -194,8 +201,10 @@ final class InitCommand implements Command {
         IoUtils.copyDir(Paths.get(temp.toString(), templatePath), dest);
         copyIncludedFiles(temp.toString(), dest.toString(), includedFiles, template, env);
 
-        try (ColorBuffer buffer = ColorBuffer.of(env.colors(), env.stderr())) {
-            buffer.println(String.format("Smithy project created in directory: %s", directory), ColorTheme.SUCCESS);
+        if (!standardOptions.quiet()) {
+            try (ColorBuffer buffer = ColorBuffer.of(env.colors(), env.stderr())) {
+                buffer.println(String.format("Smithy project created in directory: %s", directory), ColorTheme.SUCCESS);
+            }
         }
     }
 
