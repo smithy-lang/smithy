@@ -790,6 +790,89 @@ supportNonNumericFloats (``boolean``)
         }
 
 
+.. _generate-openapi-setting-disableDefaultValues:
+
+disableDefaultValues (``boolean``)
+    Set to true to disable adding default values.
+
+    .. code-block:: json
+
+        {
+            "version": "2.0",
+            "plugins": {
+                "openapi": {
+                    "service": "example.weather#Weather",
+                    "disableDefaultValues": true
+                }
+            }
+        }
+
+    With this disabled, default values will not appear in the output:
+
+    .. code-block:: json
+
+        {
+            "Foo": {
+                "type": "object",
+                "properties": {
+                    "bam": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "bar": {
+                        "type": "number"
+                    },
+                    "bat": {
+                        "$ref": "#/definitions/MyEnum"
+                    },
+                    "baz": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+
+    With this enabled (the default), default values will be added, with ``$ref``
+    pointers wrapped in an ``allOf``:
+
+    .. code-block:: json
+
+        {
+            "Foo": {
+                "type": "object",
+                "properties": {
+                    "bam": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "default": []
+                    },
+                    "bar": {
+                        "type": "number",
+                        "default": 0
+                    },
+                    "bat": {
+                        "allOf": [
+                            {
+                                "$ref": "#/definitions/MyEnum"
+                            },
+                            {
+                                "default": "FOO"
+                            }
+                        ]
+                    },
+                    "baz": {
+                        "type": "string",
+                        "default": ""
+                    }
+                }
+            }
+        }
+
+
 ----------------
 Security schemes
 ----------------
@@ -1438,7 +1521,9 @@ Amazon API Gateway limitations
 
 The ``default`` property in OpenAPI is not currently supported by Amazon
 API Gateway. The ``default`` property is automatically removed from OpenAPI
-models when they are generated for Amazon API Gateway.
+models when they are generated for Amazon API Gateway. Additionally, ``default``
+values will not be set on ``$ref`` pointers or wrapped in an ``allOf`` as
+described in :ref:`disableDefaultValues <generate-openapi-setting-disableDefaultValues>`.
 
 
 -------------------------------

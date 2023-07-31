@@ -2,7 +2,6 @@ $version: "2.0"
 
 namespace example.smithy
 
-use aws.protocols#httpChecksum
 use aws.protocols#restJson1
 
 @restJson1
@@ -20,9 +19,15 @@ operation HasDefault {
     output := {
         foo: String = ""
         bar: StringList = []
+        baz: DefaultEnum = "FOO"
     }
 }
 
 list StringList {
     member: String
+}
+
+enum DefaultEnum {
+    FOO
+    BAR
 }
