@@ -39,12 +39,12 @@ Releases of the Smithy CLI can be found on the `Smithy GitHub releases`_ page.
     .. tab:: Homebrew
 
         You can get the CLI via Homebrew by first tapping the official
-        `AWS Homebrew Tap`_, and then installing the ``smithy-cli`` formula.
+        `Smithy Homebrew Tap`_, and then installing the ``smithy-cli`` formula.
 
         .. code-block:: sh
             :caption: /bin/sh
 
-            brew tap aws/tap && brew install smithy-cli
+            brew tap smithy-lang/tap && brew install smithy-cli
 
         After the install completes, you may run ``smithy --help`` to verify
         your installation.
@@ -503,6 +503,6 @@ We'll be using these to perform the verification.
 
 
 .. _Smithy GitHub releases: https://github.com/smithy-lang/smithy/releases
-.. _AWS Homebrew Tap: https://github.com/aws/homebrew-tap
+.. _Smithy Homebrew Tap: https://github.com/smithy-lang/homebrew-tap
 .. _release: https://github.com/smithy-lang/smithy/releases/download/__smithy_version__
 .. _key validation: https://www.gnupg.org/gph/en/manual/x334.html
