@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import software.amazon.smithy.cli.Command;
 
 final class ProgressTracker implements AutoCloseable {
@@ -22,12 +23,19 @@ final class ProgressTracker implements AutoCloseable {
     private final ScheduledFuture<?> task;
     private final ProgressStyle style;
     private final Command.Env env;
+    private final AtomicInteger tracker;
     private final boolean quiet;
 
     ProgressTracker(Command.Env env, ProgressStyle style, boolean quiet) {
+        this(env, style, quiet, new AtomicInteger());
+    }
+
+    ProgressTracker(Command.Env env, ProgressStyle style, boolean quiet, AtomicInteger tracker) {
         this.env = env;
         this.style = style;
         this.quiet = quiet;
+        this.tracker = tracker;
+
         // Do not print a progress bar if the quiet setting is enabled
         if (quiet) {
             task = null;
@@ -47,7 +55,7 @@ final class ProgressTracker implements AutoCloseable {
     }
 
     private void write() {
-        style.updateAction(env);
+        style.updateAction(env, tracker);
         // Flush so the output is written immediately
         env.stdout().flush();
     }
