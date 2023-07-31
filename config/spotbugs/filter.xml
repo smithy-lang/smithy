@@ -190,7 +190,7 @@
 
     <!-- It is not worth catching if the closing task of a progress bar fails to execute -->
     <Match>
-        <Class name="software.amazon.smithy.cli.ProgressTracker"/>
+        <Class name="software.amazon.smithy.cli.commands.ProgressTracker"/>
         <Bug pattern="DE_MIGHT_IGNORE"/>
     </Match>
 

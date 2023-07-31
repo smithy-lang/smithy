@@ -3,15 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.cli;
+package software.amazon.smithy.cli.commands;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import software.amazon.smithy.cli.Command;
 
-public final class ProgressTracker implements AutoCloseable {
+final class ProgressTracker implements AutoCloseable {
     private static final ScheduledThreadPoolExecutor EXECUTOR = new ScheduledThreadPoolExecutor(1, runnable -> {
         Thread thread = Executors.defaultThreadFactory().newThread(runnable);
         thread.setDaemon(true);
@@ -23,7 +24,7 @@ public final class ProgressTracker implements AutoCloseable {
     private final Command.Env env;
     private final boolean quiet;
 
-    public ProgressTracker(Command.Env env, ProgressStyle style, boolean quiet) {
+    ProgressTracker(Command.Env env, ProgressStyle style, boolean quiet) {
         this.env = env;
         this.style = style;
         this.quiet = quiet;

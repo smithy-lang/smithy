@@ -35,8 +35,6 @@ import software.amazon.smithy.cli.ColorBuffer;
 import software.amazon.smithy.cli.ColorTheme;
 import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.cli.HelpPrinter;
-import software.amazon.smithy.cli.ProgressStyle;
-import software.amazon.smithy.cli.ProgressTracker;
 import software.amazon.smithy.cli.StandardOptions;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;

@@ -3,12 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.cli;
+package software.amazon.smithy.cli.commands;
 
+import software.amazon.smithy.cli.ColorBuffer;
+import software.amazon.smithy.cli.ColorTheme;
+import software.amazon.smithy.cli.Command;
 import software.amazon.smithy.utils.StringUtils;
 
 
-public interface ProgressStyle {
+interface ProgressStyle {
 
     void updateAction(Command.Env env);
 
