@@ -188,13 +188,18 @@ final class InitCommand implements Command {
         final String templatePath = getTemplatePath(templateNode, template);
         List<String> includedFiles = getIncludedFiles(templateNode);
 
-        // Specify the subdirectory to download
-        exec(ListUtils.of("git", "sparse-checkout", "set", "--no-cone", templatePath), temp);
-        // add any additional files that should be included
-        for (String includedFile : includedFiles) {
-            exec(ListUtils.of("git", "sparse-checkout", "add", "--no-cone", includedFile), temp);
+        try (ProgressTracker t = new ProgressTracker(env,
+                ProgressStyle.dots("cloning template", "template cloned"),
+                standardOptions.quiet()
+        )) {
+            // Specify the subdirectory to download
+            exec(ListUtils.of("git", "sparse-checkout", "set", "--no-cone", templatePath), temp);
+            // add any additional files that should be included
+            for (String includedFile : includedFiles) {
+                exec(ListUtils.of("git", "sparse-checkout", "add", "--no-cone", includedFile), temp);
+            }
+            exec(ListUtils.of("git", "checkout"), temp);
         }
-        exec(ListUtils.of("git", "checkout"), temp);
 
 
 
