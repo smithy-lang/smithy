@@ -1012,6 +1012,8 @@ public enum TreeType {
                         optionalWs(tokenizer);
                         break;
                     case EOF:
+                        tokenizer.eof();
+                        break;
                     default:
                         break;
                 }
