@@ -17,7 +17,7 @@ import software.amazon.smithy.utils.IoUtils;
 public class TreeCursorTest {
     @Test
     public void hasChildren() {
-        TokenTree tree = createTree();
+        TokenTree tree = createTree("simple-model.smithy");
         TreeCursor cursor = tree.zipper();
         List<TreeCursor> children = cursor.getChildren();
 
@@ -36,7 +36,7 @@ public class TreeCursorTest {
 
     @Test
     public void hasParentAndSiblings() {
-        TokenTree tree = createTree();
+        TokenTree tree = createTree("simple-model.smithy");
         TreeCursor cursor = tree.zipper();
         List<TreeCursor> children = cursor.getChildren();
 
@@ -55,7 +55,7 @@ public class TreeCursorTest {
 
     @Test
     public void findsNodeAtPosition() {
-        TokenTree tree = createTree();
+        TokenTree tree = createTree("simple-model.smithy");
         TreeCursor cursor = tree.zipper();
         TreeCursor click = cursor.findAt(3, 17);
 
@@ -65,8 +65,32 @@ public class TreeCursorTest {
         assertThat(click.getRoot(), equalTo(cursor));
     }
 
-    private TokenTree createTree() {
-        String model = IoUtils.readUtf8Url(getClass().getResource("formatter/simple-model.smithy"));
+    @Test
+    public void findsNodeAtPositionBetweenTokens() {
+        TokenTree tree = createTree("incorrect-indentation.smithy");
+        TreeCursor cursor = tree.zipper();
+        TreeCursor click = cursor.findAt(10, 5);
+
+        assertThat(click, notNullValue());
+        assertThat(click.getTree().getType(), is(TreeType.TOKEN));
+        assertThat(click.getTree().tokens().iterator().next().getLexeme().toString(), equalTo("@"));
+        assertThat(click.getRoot(), equalTo(cursor));
+    }
+
+    @Test
+    public void findsNodeAtLastLineOfFile() {
+        TokenTree tree = createTree("missing-trailing-newline.smithy");
+        TreeCursor cursor = tree.zipper();
+        TreeCursor click = cursor.findAt(8, 4);
+
+        assertThat(click, notNullValue());
+        assertThat(click.getTree().getType(), is(TreeType.TOKEN));
+        assertThat(click.getTree().tokens().iterator().next().getLexeme().toString(), equalTo("foo"));
+        assertThat(click.getRoot(), equalTo(cursor));
+    }
+
+    private TokenTree createTree(String filename) {
+        String model = IoUtils.readUtf8Url(getClass().getResource("formatter/" + filename));
         IdlTokenizer tokenizer = IdlTokenizer.create(model);
         return TokenTree.of(tokenizer);
     }

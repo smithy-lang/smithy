@@ -304,7 +304,7 @@ public final class TreeCursor implements FromSourceLocation {
                     isMatch = column >= startColumn && column < endColumn;
                 } else if (line == startLine && column >= startColumn) {
                     isMatch = true;
-                } else if (line == endLine && column <= endColumn) {
+                } else if (line == endLine && column < endColumn) {
                     isMatch = true;
                 } else if (line > startLine && line < endLine) {
                     isMatch = true;
