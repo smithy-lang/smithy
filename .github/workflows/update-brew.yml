@@ -112,6 +112,5 @@ jobs:
             --title "[Automation] chore: upgrade smithy-cli to ${GITHUB_REF##*/}" \
             --body "Created by ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" \
             --base main
-          echo "PR Created for version bump to ${{ steps.fetch-latest.outputs.latestSmithy }}"
         env:
           GITHUB_TOKEN: ${{ secrets.PR_TOKEN }}
