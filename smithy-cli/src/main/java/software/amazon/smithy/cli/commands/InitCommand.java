@@ -16,8 +16,8 @@
 package software.amazon.smithy.cli.commands;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -41,8 +41,12 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.StringUtils;
+
 
 final class InitCommand implements Command {
+    private static final Path DEFAULT_TEMP_DIR_PATH = Paths.get(System.getProperty("java.io.tmpdir"));
+    private static final Path SMITHY_INIT_CACHE_DIR = DEFAULT_TEMP_DIR_PATH.resolve("smithy-templates");
     private static final String SMITHY_TEMPLATE_JSON = "smithy-templates.json";
     private static final String DEFAULT_REPOSITORY_URL = "https://github.com/smithy-lang/smithy-examples.git";
     private static final String DEFAULT_TEMPLATE_NAME = "quickstart-cli";
@@ -86,30 +90,98 @@ final class InitCommand implements Command {
         Options options = arguments.getReceiver(Options.class);
         StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
 
-        try {
-            Path root = Paths.get(".");
-            Path temp = Files.createTempDirectory("temp");
+        boolean isLocalRepo = isLocalRepo(options.repositoryUrl);
+        Path templateRepoDirPath = getTemplateRepoDirPath(options.repositoryUrl, isLocalRepo);
 
-            loadSmithyTemplateJsonFile(options.repositoryUrl, root, temp);
-
-            ObjectNode smithyTemplatesNode = getSmithyTemplatesNode(temp);
-
-            if (options.listTemplates) {
-                this.listTemplates(smithyTemplatesNode, env);
-            } else {
-                this.cloneTemplate(temp, smithyTemplatesNode, options, standardOptions, env);
+        // If the cache directory does not exist, create it
+        if (!Files.exists(templateRepoDirPath)) {
+            try (ProgressTracker t = new ProgressTracker(env,
+                    ProgressStyle.dots("cloning template repo", "template repo cloned"),
+                    standardOptions.quiet()
+            )) {
+                String relativeTemplateDir = SMITHY_INIT_CACHE_DIR.relativize(templateRepoDirPath).toString();
+                // Only clone the latest commit from HEAD. Do not include history
+                exec(ListUtils.of("git", "clone", "--depth", "1", "--single-branch",
+                        options.repositoryUrl, relativeTemplateDir), SMITHY_INIT_CACHE_DIR);
             }
-        } catch (IOException | InterruptedException | URISyntaxException e) {
-            throw new RuntimeException(e);
+        }
+
+        validateTemplateDir(templateRepoDirPath, options.repositoryUrl);
+
+        // Check for updates and update repo to latest if applicable
+        if (!isLocalRepo) {
+            // update remote
+            exec(ListUtils.of("git", "fetch", "--depth", "1"), templateRepoDirPath);
+            String response = exec(ListUtils.of("git", "status", "-s"), templateRepoDirPath);
+
+            // If a change was detected, force the template repo to update
+            if (!StringUtils.isEmpty(response)) {
+                try (ProgressTracker t = new ProgressTracker(env,
+                        ProgressStyle.dots("updating template repo", "template repo updated"),
+                        standardOptions.quiet()
+                )) {
+                    exec(ListUtils.of("git", "reset", "--hard", "origin/main"), templateRepoDirPath);
+                    exec(ListUtils.of("git", "clean", "-dfx"), templateRepoDirPath);
+                }
+            }
+        }
+
+
+        ObjectNode smithyTemplatesNode = readJsonFileAsNode(templateRepoDirPath.resolve(SMITHY_TEMPLATE_JSON))
+                .expectObjectNode();
+        if (options.listTemplates) {
+            this.listTemplates(smithyTemplatesNode, env);
+        } else {
+            this.cloneTemplate(templateRepoDirPath, smithyTemplatesNode, options, standardOptions, env);
         }
 
         return 0;
     }
 
-    private void listTemplates(ObjectNode smithyTemplatesNode, Env env) throws IOException {
+    private void validateTemplateDir(Path templateRepoDirPath, String templateUrl) {
+        if (!Files.isDirectory(templateRepoDirPath)) {
+            throw new CliError("Template repository " + templateRepoDirPath + " is not a directory");
+        }
+        Path templateJsonPath = templateRepoDirPath.resolve(SMITHY_TEMPLATE_JSON);
+        if (!Files.exists(templateJsonPath) && Files.isRegularFile(templateJsonPath)) {
+            throw new CliError("Template repository " + templateUrl
+                    + " does not contain a valid `smithy-templates.json`.");
+        }
+    }
+
+    private Path getTemplateRepoDirPath(String repoPath, boolean isLocalRepo) {
+        if (isLocalRepo) {
+            // Just use the local path if the git repo is local
+            return Paths.get(repoPath);
+        } else {
+            return SMITHY_INIT_CACHE_DIR.resolve(getCacheDirFromURL(repoPath));
+        }
+
+    }
+
+    // Remove any trailing .git
+    // Remove "/" and ".." and ":" characters so a directory can be created with no nesting
+    private String getCacheDirFromURL(final String repositoryUrl) {
+        return repositoryUrl.replace(".git", "")
+                .replace(":", "_")
+                .replace("/", "_")
+                .replace(".", "_");
+    }
+
+    private void listTemplates(ObjectNode smithyTemplatesNode, Env env) {
         try (ColorBuffer buffer = ColorBuffer.of(env.colors(), env.stdout())) {
             buffer.println(getTemplateList(smithyTemplatesNode, env));
         }
+    }
+
+    private boolean isLocalRepo(String repoPath) {
+        try  {
+            Path localPath = Paths.get(repoPath);
+            return Files.exists(localPath);
+        } catch (InvalidPathException exc) {
+            return false;
+        }
+
     }
 
     private String getTemplateList(ObjectNode smithyTemplatesNode, Env env) {
@@ -156,9 +228,8 @@ final class InitCommand implements Command {
         return builder.toString();
     }
 
-    private void cloneTemplate(Path temp, ObjectNode smithyTemplatesNode, Options options,
-                               StandardOptions standardOptions, Env env)
-            throws IOException, InterruptedException, URISyntaxException {
+    private void cloneTemplate(Path templateRepoDirPath, ObjectNode smithyTemplatesNode, Options options,
+                               StandardOptions standardOptions, Env env) {
 
         String template = options.template;
         String directory = options.directory;
@@ -171,7 +242,7 @@ final class InitCommand implements Command {
         if (directory == null) {
             directory = template;
         }
-        final Path dest = Paths.get(directory);
+        Path dest = Paths.get(directory);
         if (Files.exists(dest)) {
             throw new CliError("Output directory `" + directory + "` already exists.");
         }
@@ -182,27 +253,25 @@ final class InitCommand implements Command {
                     "Invalid template `%s`. `%s` provides the following templates:%n%n%s",
                     template, getTemplatesName(smithyTemplatesNode), getTemplateList(smithyTemplatesNode, env)));
         }
-
         ObjectNode templateNode = templatesNode.expectObjectMember(template).expectObjectNode();
 
-        final String templatePath = getTemplatePath(templateNode, template);
+        String templatePath = getTemplatePath(templateNode, template);
         List<String> includedFiles = getIncludedFiles(templateNode);
 
-        try (ProgressTracker t = new ProgressTracker(env,
-                ProgressStyle.dots("cloning template", "template cloned"),
-                standardOptions.quiet()
-        )) {
-            // Specify the subdirectory to download
-            exec(ListUtils.of("git", "sparse-checkout", "set", "--no-cone", templatePath), temp);
-            // add any additional files that should be included
-            for (String includedFile : includedFiles) {
-                exec(ListUtils.of("git", "sparse-checkout", "add", "--no-cone", includedFile), temp);
-            }
-            exec(ListUtils.of("git", "checkout"), temp);
-        }
 
-        IoUtils.copyDir(Paths.get(temp.toString(), templatePath), dest);
-        copyIncludedFiles(temp.toString(), dest.toString(), includedFiles, template, env);
+        Path stagingPath = createStagingRepo(templateRepoDirPath);
+
+        // Specify the subdirectory to check out
+        exec(ListUtils.of("git", "sparse-checkout", "set", "--no-cone", templatePath), stagingPath);
+        // add any additional files that should be included
+        for (String includedFile : includedFiles) {
+            exec(ListUtils.of("git", "sparse-checkout", "add", "--no-cone", includedFile), stagingPath);
+        }
+        exec(ListUtils.of("git", "checkout"), stagingPath);
+
+
+        IoUtils.copyDir(Paths.get(stagingPath.toString(), templatePath), dest);
+        copyIncludedFiles(stagingPath.toString(), dest.toString(), includedFiles, template, env);
 
         if (!standardOptions.quiet()) {
             try (ColorBuffer buffer = ColorBuffer.of(env.colors(), env.stdout())) {
@@ -211,13 +280,17 @@ final class InitCommand implements Command {
         }
     }
 
-    private static void loadSmithyTemplateJsonFile(String repositoryUrl, Path root, Path temp) {
-        exec(ListUtils.of("git", "clone", "--filter=blob:none", "--no-checkout", "--depth", "1", "--sparse",
-                repositoryUrl, temp.toString()), root);
+    private static Path createStagingRepo(Path repoPath) {
+        Path temp;
+        try {
+            temp = Files.createTempDirectory("temp");
+        } catch (IOException exc) {
+            throw new CliError("Unable to create staging directory for template.");
+        }
+        exec(ListUtils.of("git", "clone", "--no-checkout", "--depth", "1", "--sparse",
+                "file://" + repoPath.toString(), temp.toString()), Paths.get("."));
 
-        exec(ListUtils.of("git", "sparse-checkout", "set", "--no-cone", SMITHY_TEMPLATE_JSON), temp);
-
-        exec(ListUtils.of("git", "checkout"), temp);
+        return temp;
     }
 
     private static ObjectNode getSmithyTemplatesNode(Path jsonFilePath) {
@@ -253,7 +326,7 @@ final class InitCommand implements Command {
     }
 
     private static void copyIncludedFiles(String temp, String dest, List<String> includedFiles,
-                                          String templateName, Env env) throws IOException {
+                                          String templateName, Env env) {
         for (String included : includedFiles) {
             Path includedPath = Paths.get(temp, included);
             if (!Files.exists(includedPath)) {
@@ -268,7 +341,12 @@ final class InitCommand implements Command {
             if (Files.isDirectory(includedPath)) {
                 IoUtils.copyDir(includedPath, target);
             } else if (Files.isRegularFile(includedPath)) {
-                Files.copy(includedPath, target);
+                try {
+                    Files.copy(includedPath, target);
+                } catch (IOException e) {
+                    throw new CliError("Unable to copy included file: " + includedPath
+                            + "to destination directory: " + target);
+                }
             }
         }
     }
