@@ -470,7 +470,18 @@ single line.</p>
 <h2>Naming<a class="headerlink" href="#naming" title="Permalink to this headline">#</a></h2>
 <div class="section" id="shape-names">
 <h3>Shape names<a class="headerlink" href="#shape-names" title="Permalink to this headline">#</a></h3>
-<p>Shape names use a strict form of UpperCamelCase (e.g., &quot;XmlRequest&quot;, &quot;FooId&quot;).</p>
+<ul class="simple">
+<li>Shape names use a strict form of UpperCamelCase (e.g., &quot;XmlRequest&quot;, &quot;FooId&quot;).</li>
+<li>Numeric shapes should use descriptive names, including units of measurement
+(e.g., prefer &quot;SizeInMb&quot; over &quot;Size&quot;).</li>
+<li>Enums should use a singular noun (e.g., prefer &quot;Suit&quot; over &quot;Suits&quot;).</li>
+<li>Lists should use plural names (e.g., prefer &quot;Users&quot; over &quot;UserList&quot;).</li>
+<li>Operations should follow the format of &quot;VerbNoun&quot; (e.g., &quot;UpdateUser&quot;).</li>
+<li>Resources should use a singular noun (e.g., use &quot;User&quot; over &quot;Users&quot;).</li>
+<li>Services should be named after the name of a service, omitting the word
+&quot;Service&quot; and branding when possible (e.g., prefer &quot;S3&quot; over
+&quot;AmazonS3Service&quot;).</li>
+</ul>
 </div>
 <div class="section" id="member-names">
 <h3>Member names<a class="headerlink" href="#member-names" title="Permalink to this headline">#</a></h3>
