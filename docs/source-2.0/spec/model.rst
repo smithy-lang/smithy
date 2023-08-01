@@ -285,11 +285,11 @@ Multiple :ref:`model files <model-files>` can be used to create a
 :ref:`semantic model <semantic-model>`. Implementations MUST
 take the following steps when merging two or more model files:
 
-#. Merge the metadata objects of all model files. If top-level metadata
+1. Merge the metadata objects of all model files. If top-level metadata
    key-value pairs conflict, :ref:`merge the metadata <merging-metadata>`
    if possible or fail.
-#. Shapes defined in a single model file are added to the semantic model as-is.
-#. Shapes with the same shape ID defined in multiple model files are
+2. Shapes defined in a single model file are added to the semantic model as-is.
+3. Shapes with the same shape ID defined in multiple model files are
    reconciled using the following rules:
 
    #. All conflicting shapes MUST have the same shape type.
@@ -297,9 +297,12 @@ take the following steps when merging two or more model files:
       the same members that target the same shapes.
    #. Conflicting :ref:`service shape types <service-types>` MUST contain the
       same properties and target the same shapes.
-#. Conflicting traits defined in shape definitions or through
-   :ref:`apply statements <apply-statements>` are reconciled using
-   :ref:`trait conflict resolution <trait-conflict-resolution>`.
+   #. The traits from each shape are treated as if they are defined using
+      an :ref:`apply statement <apply-statements>`: non-conflicting traits are
+      added to the merged shape, and conflicting traits are resolved through
+      step (4).
+4. Conflicting traits defined in shape definitions or through apply statements
+   are reconciled using :ref:`trait conflict resolution <trait-conflict-resolution>`.
 
 
 .. _shapes:
