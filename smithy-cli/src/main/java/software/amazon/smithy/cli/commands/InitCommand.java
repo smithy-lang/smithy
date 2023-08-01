@@ -87,12 +87,12 @@ final class InitCommand implements Command {
         StandardOptions standardOptions = arguments.getReceiver(StandardOptions.class);
 
         try {
-            final Path root = Paths.get(".");
-            final Path temp = Files.createTempDirectory("temp");
+            Path root = Paths.get(".");
+            Path temp = Files.createTempDirectory("temp");
 
             loadSmithyTemplateJsonFile(options.repositoryUrl, root, temp);
 
-            final ObjectNode smithyTemplatesNode = getSmithyTemplatesNode(temp);
+            ObjectNode smithyTemplatesNode = getSmithyTemplatesNode(temp);
 
             if (options.listTemplates) {
                 this.listTemplates(smithyTemplatesNode, env);
@@ -107,7 +107,7 @@ final class InitCommand implements Command {
     }
 
     private void listTemplates(ObjectNode smithyTemplatesNode, Env env) throws IOException {
-        try (ColorBuffer buffer = ColorBuffer.of(env.colors(), env.stderr())) {
+        try (ColorBuffer buffer = ColorBuffer.of(env.colors(), env.stdout())) {
             buffer.println(getTemplateList(smithyTemplatesNode, env));
         }
     }
@@ -201,13 +201,11 @@ final class InitCommand implements Command {
             exec(ListUtils.of("git", "checkout"), temp);
         }
 
-
-
         IoUtils.copyDir(Paths.get(temp.toString(), templatePath), dest);
         copyIncludedFiles(temp.toString(), dest.toString(), includedFiles, template, env);
 
         if (!standardOptions.quiet()) {
-            try (ColorBuffer buffer = ColorBuffer.of(env.colors(), env.stderr())) {
+            try (ColorBuffer buffer = ColorBuffer.of(env.colors(), env.stdout())) {
                 buffer.println(String.format("Smithy project created in directory: %s", directory), ColorTheme.SUCCESS);
             }
         }
@@ -257,7 +255,7 @@ final class InitCommand implements Command {
     private static void copyIncludedFiles(String temp, String dest, List<String> includedFiles,
                                           String templateName, Env env) throws IOException {
         for (String included : includedFiles) {
-            final Path includedPath = Paths.get(temp, included);
+            Path includedPath = Paths.get(temp, included);
             if (!Files.exists(includedPath)) {
                 try (ColorBuffer buffer = ColorBuffer.of(env.colors(), env.stderr())) {
                     buffer.println(String.format(
