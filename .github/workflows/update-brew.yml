@@ -60,7 +60,7 @@ jobs:
       - name: Checkout bottle repo
         uses: actions/checkout@v3
         with:
-          repository: 'aws/homebrew-tap'
+          repository: 'smithy-lang/homebrew-tap'
           path: 'homebrew-tap'
           ref: 'master'
       - name: Update version
@@ -97,26 +97,20 @@ jobs:
           sha=$(cut -d " " -f1 ${{steps.download.outputs.download-path}}/smithy-cli-linux-aarch64.tar.gz.sha256)
           tmp=$(mktemp)
           jq --arg sha "$sha" '.bottle.sha256.linux_arm = "'$sha'"' homebrew-tap/bottle-configs/smithy-cli.json > "$tmp" && mv "$tmp" homebrew-tap/bottle-configs/smithy-cli.json
-      - name: Create commits
+      - name: Set up new git branch for version bump
         run: |
           cd homebrew-tap
           git config user.name 'smithy-automation'
           git config user.email 'github-smithy-automation@amazon.com'
+          git checkout -b "automation/bump-smithy-cli-version/${GITHUB_REF##*/}"
+      - name: Create PR
+        run: |
           git add bottle-configs/smithy-cli.json
           git commit -m "chore: upgrade smithy-cli to ${GITHUB_REF##*/}"
-      - name: Set pull-request variables
-        id: vars
-        run: |
-          echo version="${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
-          echo pr_title="chore: upgrade smithy-cli to ${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
-          echo pr_body="Created by ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" >> $GITHUB_OUTPUT
-      - name: Create pull-request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          path: homebrew-tap
-          delete-branch: true
-          push-to-fork: smithy-automation/homebrew-tap
-          title: ${{ steps.vars.outputs.pr_title }}
-          body: ${{ steps.vars.outputs.pr_body }}
-          branch: "upgrade-smithy-cli-${{ steps.vars.outputs.version }}"
-          token: ${{ secrets.PR_TOKEN }}
+          git push --set-upstream origin "automation/bump-smithy-cli-version/${GITHUB_REF##*/}"
+          gh pr create \
+            --title "[Automation] chore: upgrade smithy-cli to ${GITHUB_REF##*/}" \
+            --body "Created by ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" \
+            --base main
+        env:
+          GITHUB_TOKEN: ${{ secrets.PR_TOKEN }}
