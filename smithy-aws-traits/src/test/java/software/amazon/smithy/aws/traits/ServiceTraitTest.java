@@ -19,9 +19,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
@@ -125,5 +125,23 @@ public class ServiceTraitTest {
         assertThat(trait.getEndpointPrefix(), equalTo("some-service"));
         assertFalse(trait.getDocId().isPresent());
         assertThat(trait.resolveDocId(service), equalTo("some-value-2018-03-17"));
+    }
+
+    @Test
+    public void equality() {
+        Node node1 = Node.parse("{\"sdkId\": \"Foo1\", \"arnNamespace\": \"service\", \"cloudFormationName\": \"Baz\", "
+                + "\"endpointPrefix\": \"endpoint-prefix\"}");
+
+        Node node2 = Node.parse("{\"sdkId\": \"Foo2\", \"arnNamespace\": \"service\", \"cloudFormationName\": \"Baz\", "
+                + "\"endpointPrefix\": \"endpoint-prefix\"}");
+
+        TraitFactory provider = TraitFactory.createServiceFactory();
+        Optional<Trait> trait1 = provider.createTrait(ServiceTrait.ID, ShapeId.from("ns.foo#foo1"), node1);
+        Optional<Trait> trait2 = provider.createTrait(ServiceTrait.ID, ShapeId.from("ns.foo#foo2"), node2);
+
+        ServiceTrait serviceTrait1 = (ServiceTrait) trait1.get();
+        ServiceTrait serviceTrait2 = (ServiceTrait) trait2.get();
+
+        assertNotEquals(serviceTrait1, serviceTrait2);
     }
 }
