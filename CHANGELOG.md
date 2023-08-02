@@ -1,5 +1,33 @@
 # Smithy Changelog
 
+## 1.36.0 (2023-08-03)
+
+### Features
+* Allowed disabling format on integers when converting to OpenAPI ([#1904](https://github.com/smithy-lang/smithy/pull/1904))
+* Added intEnum support when converting to OpenAPI ([#1898](https://github.com/smithy-lang/smithy/pull/1898))
+* Added support for overriding validation severity ([#1890](https://github.com/smithy-lang/smithy/pull/1890))
+* Added `disableDefaultValues` option when converting to OpenAPI ([#1887](https://github.com/smithy-lang/smithy/pull/1887))
+* Updated brew workflow to use new smithy tap ([#1897](https://github.com/smithy-lang/smithy/pull/1897))
+* Added progress tracker and message for CLI while cloning a template ([#1888](https://github.com/smithy-lang/smithy/pull/1888))
+* Updated init command to honor quiet setting ([#1889](https://github.com/smithy-lang/smithy/pull/1889))
+* Updated appearance of smithy init list output ([#1901](https://github.com/smithy-lang/smithy/pull/1901))
+* Added exceptions for invalid paths in template definition ([#1907](https://github.com/smithy-lang/smithy/pull/1907))
+* Check for existing directory when creating template with init ([#1885](https://github.com/smithy-lang/smithy/pull/1885))
+
+### Documentation
+* Clarified constraint trait enforcement ([#1902](https://github.com/smithy-lang/smithy/pull/1902))
+* Better document trait merging ([#1895](https://github.com/smithy-lang/smithy/pull/1895))
+* Updated docs to use new smithy-lang tap ([#1893](https://github.com/smithy-lang/smithy/pull/1893))
+* Added naming recommendations ([#1892](https://github.com/smithy-lang/smithy/pull/1892))
+
+### Bug Fixes
+* Fixed NPE when docId is null when ServiceTrait.equals is called ([#1903](https://github.com/smithy-lang/smithy/pull/1903))
+* Fixed off-by-one issues in TokenTree and TreeCursor ([#1891](https://github.com/smithy-lang/smithy/pull/1891))
+* Fixed snapshot dependency resolution ([#1884](https://github.com/smithy-lang/smithy/pull/1884))
+
+### Other
+* Use standard output for regular messages ([#1894](https://github.com/smithy-lang/smithy/pull/1894))
+
 ## 1.35.0 (2023-07-27)
 
 ### Features
