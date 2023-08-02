@@ -45,8 +45,6 @@ import software.amazon.smithy.utils.StringUtils;
 
 
 final class InitCommand implements Command {
-    private static final Path DEFAULT_TEMP_DIR_PATH = Paths.get(System.getProperty("java.io.tmpdir"));
-    private static final Path SMITHY_INIT_CACHE_DIR = DEFAULT_TEMP_DIR_PATH.resolve("smithy-templates");
     private static final String SMITHY_TEMPLATE_JSON = "smithy-templates.json";
     private static final String DEFAULT_REPOSITORY_URL = "https://github.com/smithy-lang/smithy-examples.git";
     private static final String DEFAULT_TEMPLATE_NAME = "quickstart-cli";
@@ -99,10 +97,11 @@ final class InitCommand implements Command {
                     ProgressStyle.dots("cloning template repo", "template repo cloned"),
                     standardOptions.quiet()
             )) {
-                String relativeTemplateDir = SMITHY_INIT_CACHE_DIR.relativize(templateRepoDirPath).toString();
+                Path templateCachePath = CliCache.getTemplateCache().get();
+                String relativeTemplateDir = templateCachePath.relativize(templateRepoDirPath).toString();
                 // Only clone the latest commit from HEAD. Do not include history
                 exec(ListUtils.of("git", "clone", "--depth", "1", "--single-branch",
-                        options.repositoryUrl, relativeTemplateDir), SMITHY_INIT_CACHE_DIR);
+                        options.repositoryUrl, relativeTemplateDir), templateCachePath);
             }
         }
 
@@ -153,9 +152,8 @@ final class InitCommand implements Command {
             // Just use the local path if the git repo is local
             return Paths.get(repoPath);
         } else {
-            return SMITHY_INIT_CACHE_DIR.resolve(getCacheDirFromURL(repoPath));
+            return CliCache.getTemplateCache().get().resolve(getCacheDirFromURL(repoPath));
         }
-
     }
 
     // Remove any trailing .git
