@@ -159,9 +159,9 @@ final class InitCommand implements Command {
     }
 
     private static void writeTemplateBorder(ColorBuffer writer, int maxNameLength, int maxDocLength) {
-        writer.print(pad("", maxNameLength).replace(' ', '─'), ColorTheme.TEMPLATE_LIST_BORDER)
+        writer.print(pad("", maxNameLength).replace(" ", "─"), ColorTheme.TEMPLATE_LIST_BORDER)
                 .print(COLUMN_SEPARATOR)
-                .print(pad("", maxDocLength).replace(' ', '─'), ColorTheme.TEMPLATE_LIST_BORDER)
+                .print(pad("", maxDocLength).replace(" ", "─"), ColorTheme.TEMPLATE_LIST_BORDER)
                 .println();
     }
 
