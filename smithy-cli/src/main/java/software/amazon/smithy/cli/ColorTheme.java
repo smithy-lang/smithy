@@ -49,5 +49,8 @@ public final class ColorTheme {
 
     public static final Style HINT_TITLE = Style.of(Style.BRIGHT_GREEN);
 
+    public static final Style TEMPLATE_TITLE = Style.of(Style.BOLD, Style.BRIGHT_WHITE);
+    public static final Style TEMPLATE_LIST_BORDER = Style.of(Style.BRIGHT_WHITE);
+
     private ColorTheme() {}
 }
