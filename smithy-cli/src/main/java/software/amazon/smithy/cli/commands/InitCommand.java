@@ -112,12 +112,11 @@ final class InitCommand implements Command {
         if (!isLocalRepo) {
             // update remote
             exec(ListUtils.of("git", "fetch", "--depth", "1"), templateRepoDirPath);
-            String response = exec(ListUtils.of("git", "status", "-s"), templateRepoDirPath);
-
+            String response = exec(ListUtils.of("git", "rev-list", "origin..HEAD"), templateRepoDirPath);
             // If a change was detected, force the template repo to update
             if (!StringUtils.isEmpty(response)) {
                 try (ProgressTracker t = new ProgressTracker(env,
-                        ProgressStyle.dots("updating template repo", "template repo updated"),
+                        ProgressStyle.dots("updating template cache", "template repo updated"),
                         standardOptions.quiet()
                 )) {
                     exec(ListUtils.of("git", "reset", "--hard", "origin/main"), templateRepoDirPath);
