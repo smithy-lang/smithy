@@ -873,6 +873,63 @@ disableDefaultValues (``boolean``)
         }
 
 
+.. _generate-openapi-setting-disableIntEnums:
+
+disableIntEnums (``boolean``)
+    Set to true to disable setting the ``enum`` property for intEnum shapes.
+
+    .. code-block:: json
+
+        {
+            "version": "2.0",
+            "plugins": {
+                "openapi": {
+                    "service": "example.weather#Weather",
+                    "disableIntEnums": true
+                }
+            }
+        }
+
+    With this disabled, intEnum shapes will be inlined and the ``enum`` property
+    will not be set:
+
+    .. code-block:: json
+
+        {
+            "Foo": {
+                "type": "object",
+                "properties": {
+                    "bar": {
+                        "type": "number"
+                    }
+                }
+            }
+        }
+
+    With this enabled (the default), intEnum shapes will have the ``enum``
+    property set and the schema will use a ``$ref``.
+
+    .. code-block:: json
+
+        {
+            "Foo": {
+                "type": "object",
+                "properties": {
+                    "bar": {
+                        "$ref": "#/definitions/MyIntEnum"
+                    }
+                }
+            },
+            "MyIntEnum": {
+                "type": "number",
+                "enum": [
+                    1,
+                    2
+                ]
+            }
+        }
+
+
 ----------------
 Security schemes
 ----------------

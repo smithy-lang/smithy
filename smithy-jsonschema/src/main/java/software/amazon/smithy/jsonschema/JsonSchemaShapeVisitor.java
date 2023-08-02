@@ -321,6 +321,10 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
                 .map(EnumTrait::getEnumDefinitionValues)
                 .ifPresent(builder::enumValues);
 
+        if (shape.isIntEnumShape() && !converter.getConfig().getDisableIntEnums()) {
+            builder.intEnumValues(shape.asIntEnumShape().get().getEnumValues().values());
+        }
+
         if (shape.hasTrait(DefaultTrait.class) && !converter.getConfig().getDisableDefaultValues()) {
             builder.defaultValue(shape.expectTrait(DefaultTrait.class).toNode());
         }
