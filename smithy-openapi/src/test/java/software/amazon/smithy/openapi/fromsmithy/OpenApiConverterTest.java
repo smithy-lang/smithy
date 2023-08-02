@@ -603,6 +603,7 @@ public class OpenApiConverterTest {
 
         Node.assertEquals(result, expectedNode);
     }
+
     @Test
     public void convertsToOpenAPI3_1_0() {
         Model model = Model.assembler()

@@ -42,7 +42,6 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.traits.BoxTrait;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
@@ -65,23 +64,6 @@ public class OpenApiJsonSchemaMapperTest {
                 .convert();
 
         assertTrue(document.toNode().expectObjectNode().getMember("components").isPresent());
-    }
-
-    @Test
-    public void stripsUnsupportedKeywords() {
-        StringShape string = StringShape.builder().id("smithy.api#String").build();
-        MemberShape key = MemberShape.builder().id("smithy.example#Map$key").target("smithy.api#String").build();
-        MemberShape value = MemberShape.builder().id("smithy.example#Map$value").target("smithy.api#String").build();
-        MapShape shape = MapShape.builder().id("smithy.example#Map").key(key).value(value).build();
-        Model model = Model.builder().addShapes(string, shape, key, value).build();
-        SchemaDocument document = JsonSchemaConverter.builder()
-                .addMapper(new OpenApiJsonSchemaMapper())
-                .model(model)
-                .build()
-                .convertShape(shape);
-        Schema schema = document.getRootSchema();
-
-        assertFalse(schema.getPropertyNames().isPresent());
     }
 
     @Test

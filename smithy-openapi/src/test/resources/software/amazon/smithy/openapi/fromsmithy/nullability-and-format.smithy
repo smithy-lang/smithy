@@ -26,7 +26,8 @@ blob FilePayload
 
 @output
 structure FooBarOutput {
-    bar: BoxedInteger
+    bar: BoxedInteger,
+    baz: MyMap
 }
 
 @error("client")
@@ -36,3 +37,18 @@ structure FooBarError {
 
 @box
 integer BoxedInteger
+
+map MyMap {
+    key: MyEnum,
+    value: String
+}
+
+@enum([
+    {
+        value: "FOO"
+    },
+    {
+        value: "BAR"
+    }
+])
+string MyEnum
