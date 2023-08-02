@@ -536,6 +536,48 @@ useIntegerType (``boolean``)
             }
         }
 
+
+.. _generate-openapi-setting-disableIntegerFormat:
+
+disableIntegerFormat (``boolean``)
+    Set to true to disable setting the ``format`` property when using the
+    "integer" type that is enabled by the :ref:`useIntegerType <generate-openapi-setting-useIntegerType>`
+    configuration setting.
+
+    .. code-block:: json
+
+        {
+            "version": "2.0",
+            "plugins": {
+                "openapi": {
+                    "service": "example.weather#Weather",
+                    "useIntegerType": true,
+                    "disableIntegerFormat": true
+                }
+            }
+        }
+
+    With this enabled (the default), the ``format`` property is set to ``int32``
+    or ``int64`` for Integer or Long shapes respectively.
+
+    .. code-block:: json
+
+        {
+            "Foo": {
+                "type": "object",
+                "properties": {
+                    "myInteger": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "myLong": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                }
+            }
+        }
+
 .. _generate-openapi-setting-onErrorStatusConflict:
 
 onErrorStatusConflict (``String``)
