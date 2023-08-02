@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 import java.util.function.Consumer;
 import software.amazon.smithy.cli.ArgumentReceiver;
 import software.amazon.smithy.cli.Arguments;
@@ -116,8 +117,18 @@ final class InitCommand implements Command {
 
     private String getTemplateList(ObjectNode smithyTemplatesNode, Env env) {
         int maxTemplateLength = 0;
-        ObjectNode templatesNode = getTemplatesNode(smithyTemplatesNode);
-        for (String template : templatesNode.getStringMap().keySet()) {
+        Map<String, String> templates = new TreeMap<>();
+        for (Map.Entry<StringNode, Node> entry : getTemplatesNode(smithyTemplatesNode).getMembers().entrySet()) {
+            String template = entry.getKey().getValue();
+            String documentation = entry.getValue()
+                    .expectObjectNode()
+                    .expectMember(DOCUMENTATION, String.format(
+                            "Missing expected member `%s` from `%s` object", DOCUMENTATION, template))
+                    .expectStringNode()
+                    .getValue();
+
+            templates.put(template, documentation);
+
             maxTemplateLength = Math.max(maxTemplateLength, template.length());
         }
         int maxDocLength = LINE_LENGTH - maxTemplateLength - COLUMN_SEPARATOR.length();
@@ -133,18 +144,13 @@ final class InitCommand implements Command {
 
         int offset = maxTemplateLength + COLUMN_SEPARATOR.length();
 
-        for (Map.Entry<StringNode, Node> entry : templatesNode.getMembers().entrySet()) {
-            String template = entry.getKey().getValue();
-            String documentation = entry.getValue()
-                    .expectObjectNode()
-                    .expectMember(DOCUMENTATION, String.format(
-                            "Missing expected member `%s` from `%s` object", DOCUMENTATION, template))
-                    .expectStringNode()
-                    .getValue();
+        for (Map.Entry<String, String> entry : templates.entrySet()) {
+            String template = entry.getKey();
+            String doc = entry.getValue();
 
             builder.print(pad(template, maxTemplateLength), ColorTheme.TEMPLATE_TITLE)
                     .print(COLUMN_SEPARATOR)
-                    .print(wrapDocumentation(documentation, maxDocLength, offset),
+                    .print(wrapDocumentation(doc, maxDocLength, offset),
                             ColorTheme.MUTED)
                     .println();
         }
