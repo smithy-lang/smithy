@@ -127,6 +127,10 @@ public class InitCommandTest {
                         .append(System.lineSeparator())
                         .append("─────────────────────  ─────────────────────────────────────────────────────────────────────────────")
                         .append(System.lineSeparator())
+                        .append("bad-include-path       Template with incorrect include path. Should throw error.")
+                        .append(System.lineSeparator())
+                        .append("bad-template-path      Template with incorrect path. Should throw error.")
+                        .append(System.lineSeparator())
                         .append("included-file-json     Smithy Quickstart example with json file included.")
                         .append(System.lineSeparator())
                         .append("included-files-gradle  Smithy Quickstart example with gradle files included.")
@@ -199,6 +203,10 @@ public class InitCommandTest {
                         .append(System.lineSeparator())
                         .append("─────────────────────  ─────────────────────────────────────────────────────────────────────────────")
                         .append(System.lineSeparator())
+                        .append("bad-include-path       Template with incorrect include path. Should throw error.")
+                        .append(System.lineSeparator())
+                        .append("bad-template-path      Template with incorrect path. Should throw error.")
+                        .append(System.lineSeparator())
                         .append("included-file-json     Smithy Quickstart example with json file included.")
                         .append(System.lineSeparator())
                         .append("included-files-gradle  Smithy Quickstart example with gradle files included.")
@@ -249,6 +257,40 @@ public class InitCommandTest {
                 assertThat(result.getOutput().trim(), emptyString());
                 assertThat(result.getExitCode(), is(0));
                 assertThat(Files.exists(Paths.get(dir.toString(), "quickstart-cli")), is(true));
+            });
+        });
+    }
+
+    @Test
+    public void badTemplatePathFailureExpected() {
+        IntegUtils.withProject(PROJECT_NAME, templatesDir -> {
+            setupTemplatesDirectory(templatesDir);
+
+            IntegUtils.withTempDir("badTemplatePath", dir -> {
+                RunResult result = IntegUtils.run(
+                        dir, ListUtils.of("init", "-t", "bad-template-path", "-u", templatesDir.toString()));
+                assertThat(Files.exists(Paths.get(dir.toString(), "bad-template-path")), is(false));
+                assertThat(result.getExitCode(), is(1));
+                assertThat(result.getOutput(),
+                        containsString("Template path `getting-started-example/does-not-exist` for template"
+                                +" \"bad-template-path\" is invalid."));
+            });
+        });
+    }
+
+    @Test
+    public void badIncludePathFailureExpected() {
+        IntegUtils.withProject(PROJECT_NAME, templatesDir -> {
+            setupTemplatesDirectory(templatesDir);
+
+            IntegUtils.withTempDir("badIncludePath", dir -> {
+                RunResult result = IntegUtils.run(
+                        dir, ListUtils.of("init", "-t", "bad-include-path", "-u", templatesDir.toString()));
+                assertThat(Files.exists(Paths.get(dir.toString(), " bad-include-path")), is(false));
+                assertThat(result.getExitCode(), is(1));
+                assertThat(result.getOutput(),
+                        containsString("File or directory `getting-started-example/does-not-exist` is marked"
+                                + " for inclusion in template \"bad-include-path\", but was not found"));
             });
         });
     }

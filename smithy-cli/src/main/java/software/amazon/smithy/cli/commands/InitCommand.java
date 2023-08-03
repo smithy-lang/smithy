@@ -268,7 +268,6 @@ final class InitCommand implements Command {
         String templatePath = getTemplatePath(templateNode, template);
         List<String> includedFiles = getIncludedFiles(templateNode);
 
-
         Path stagingPath = createStagingRepo(templateRepoDirPath);
 
         // Specify the subdirectory to check out
@@ -279,7 +278,10 @@ final class InitCommand implements Command {
         }
         exec(ListUtils.of("git", "checkout"), stagingPath);
 
-
+        if (!Files.exists(temp.resolve(templatePath))) {
+            throw new CliError(String.format("Template path `%s` for template \"%s\" is invalid.",
+                    templatePath, template));
+        }
         IoUtils.copyDir(Paths.get(stagingPath.toString(), templatePath), dest);
         copyIncludedFiles(stagingPath.toString(), dest.toString(), includedFiles, template, env);
 
@@ -340,11 +342,9 @@ final class InitCommand implements Command {
         for (String included : includedFiles) {
             Path includedPath = Paths.get(temp, included);
             if (!Files.exists(includedPath)) {
-                try (ColorBuffer buffer = ColorBuffer.of(env.colors(), env.stderr())) {
-                    buffer.println(String.format(
-                            "File or directory %s is marked for inclusion in template %s but was not found",
-                            included, templateName), ColorTheme.WARNING);
-                }
+                throw new CliError(String.format(
+                        "File or directory `%s` is marked for inclusion in template \"%s\", but was not found",
+                        included, templateName));
             }
 
             Path target = Paths.get(dest, Objects.requireNonNull(includedPath.getFileName()).toString());
