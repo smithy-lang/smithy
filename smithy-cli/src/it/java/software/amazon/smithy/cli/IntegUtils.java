@@ -150,8 +150,6 @@ public final class IntegUtils {
     }
 
     public static void clearCacheDirIfExists() {
-        if (Files.exists(SMITHY_ROOT_CACHE_PATH)) {
-            IoUtils.rmdir(SMITHY_ROOT_CACHE_PATH);
-        }
+        IoUtils.rmdir(SMITHY_ROOT_CACHE_PATH);
     }
 }
