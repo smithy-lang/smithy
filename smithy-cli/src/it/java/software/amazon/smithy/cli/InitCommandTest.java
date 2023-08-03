@@ -121,15 +121,17 @@ public class InitCommandTest {
                         .append("Invalid template `blabla`. `Smithy-Examples` provides the following templates:")
                         .append(System.lineSeparator())
                         .append(System.lineSeparator())
-                        .append("NAME                    DOCUMENTATION")
+                        .append("─────────────────────  ─────────────────────────────────────────────────────────────────────────────")
                         .append(System.lineSeparator())
-                        .append("---------------------   -----------------------------------------------------")
+                        .append("NAME                   DOCUMENTATION")
                         .append(System.lineSeparator())
-                        .append("included-file-json      Smithy Quickstart example with json file included.   ")
+                        .append("─────────────────────  ─────────────────────────────────────────────────────────────────────────────")
                         .append(System.lineSeparator())
-                        .append("included-files-gradle   Smithy Quickstart example with gradle files included.")
+                        .append("included-file-json     Smithy Quickstart example with json file included.")
                         .append(System.lineSeparator())
-                        .append("quickstart-cli          Smithy Quickstart example weather service.           ")
+                        .append("included-files-gradle  Smithy Quickstart example with gradle files included.")
+                        .append(System.lineSeparator())
+                        .append("quickstart-cli         Smithy Quickstart example weather service.")
                         .append(System.lineSeparator())
                         .toString();
 
@@ -191,17 +193,19 @@ public class InitCommandTest {
                     "init", "--list", "--url", templatesDir.toString()));
 
                 String expectedOutput = new StringBuilder()
-                    .append("NAME                    DOCUMENTATION")
-                    .append(System.lineSeparator())
-                    .append("---------------------   -----------------------------------------------------")
-                    .append(System.lineSeparator())
-                    .append("included-file-json      Smithy Quickstart example with json file included.   ")
-                    .append(System.lineSeparator())
-                    .append("included-files-gradle   Smithy Quickstart example with gradle files included.")
-                    .append(System.lineSeparator())
-                    .append("quickstart-cli          Smithy Quickstart example weather service.           ")
-                    .append(System.lineSeparator())
-                    .toString();
+                        .append("─────────────────────  ─────────────────────────────────────────────────────────────────────────────")
+                        .append(System.lineSeparator())
+                        .append("NAME                   DOCUMENTATION")
+                        .append(System.lineSeparator())
+                        .append("─────────────────────  ─────────────────────────────────────────────────────────────────────────────")
+                        .append(System.lineSeparator())
+                        .append("included-file-json     Smithy Quickstart example with json file included.")
+                        .append(System.lineSeparator())
+                        .append("included-files-gradle  Smithy Quickstart example with gradle files included.")
+                        .append(System.lineSeparator())
+                        .append("quickstart-cli         Smithy Quickstart example weather service.")
+                        .append(System.lineSeparator())
+                        .toString();
 
                 assertThat(result.getOutput(), containsString(expectedOutput));
                 assertThat(result.getExitCode(), is(0));

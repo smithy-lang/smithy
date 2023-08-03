@@ -41,8 +41,11 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.StringUtils;
 
 final class InitCommand implements Command {
+    private static final int LINE_LENGTH = 100;
+    private static final String COLUMN_SEPARATOR = "  ";
     private static final String SMITHY_TEMPLATE_JSON = "smithy-templates.json";
     private static final String DEFAULT_REPOSITORY_URL = "https://github.com/smithy-lang/smithy-examples.git";
     private static final String DEFAULT_TEMPLATE_NAME = "quickstart-cli";
@@ -114,46 +117,56 @@ final class InitCommand implements Command {
 
     private String getTemplateList(ObjectNode smithyTemplatesNode, Env env) {
         int maxTemplateLength = 0;
-        int maxDocumentationLength = 0;
         Map<String, String> templates = new TreeMap<>();
-
         for (Map.Entry<StringNode, Node> entry : getTemplatesNode(smithyTemplatesNode).getMembers().entrySet()) {
             String template = entry.getKey().getValue();
             String documentation = entry.getValue()
-                .expectObjectNode()
-                .expectMember(DOCUMENTATION, String.format(
-                        "Missing expected member `%s` from `%s` object", DOCUMENTATION, template))
-                .expectStringNode()
-                .getValue();
+                    .expectObjectNode()
+                    .expectMember(DOCUMENTATION, String.format(
+                            "Missing expected member `%s` from `%s` object", DOCUMENTATION, template))
+                    .expectStringNode()
+                    .getValue();
 
             templates.put(template, documentation);
 
             maxTemplateLength = Math.max(maxTemplateLength, template.length());
-            maxDocumentationLength = Math.max(maxDocumentationLength, documentation.length());
         }
+        int maxDocLength = LINE_LENGTH - maxTemplateLength - COLUMN_SEPARATOR.length();
 
-        final String space = "   ";
+        ColorBuffer builder = ColorBuffer.of(env.colors(), new StringBuilder());
 
-        ColorBuffer builder = ColorBuffer.of(env.colors(), new StringBuilder())
-                .print(pad(NAME.toUpperCase(Locale.US), maxTemplateLength), ColorTheme.LITERAL)
-                .print(space)
-                .print(DOCUMENTATION.toUpperCase(Locale.US), ColorTheme.LITERAL)
-                .println()
-                .print(pad("", maxTemplateLength).replace(' ', '-'), ColorTheme.MUTED)
-                .print(space)
-                .print(pad("", maxDocumentationLength).replace(' ', '-'), ColorTheme.MUTED)
+        writeTemplateBorder(builder, maxTemplateLength, maxDocLength);
+        builder.print(pad(NAME.toUpperCase(Locale.US), maxTemplateLength), ColorTheme.NOTE)
+                .print(COLUMN_SEPARATOR)
+                .print(DOCUMENTATION.toUpperCase(Locale.US), ColorTheme.NOTE)
                 .println();
+        writeTemplateBorder(builder, maxTemplateLength, maxDocLength);
+
+        int offset = maxTemplateLength + COLUMN_SEPARATOR.length();
 
         for (Map.Entry<String, String> entry : templates.entrySet()) {
             String template = entry.getKey();
             String doc = entry.getValue();
-            builder.print(pad(template, maxTemplateLength))
-                    .print(space)
-                    .print(pad(doc, maxDocumentationLength))
+
+            builder.print(pad(template, maxTemplateLength), ColorTheme.TEMPLATE_TITLE)
+                    .print(COLUMN_SEPARATOR)
+                    .print(wrapDocumentation(doc, maxDocLength, offset),
+                            ColorTheme.MUTED)
                     .println();
         }
 
         return builder.toString();
+    }
+
+    private static void writeTemplateBorder(ColorBuffer writer, int maxNameLength, int maxDocLength) {
+        writer.print(pad("", maxNameLength).replace(" ", "─"), ColorTheme.TEMPLATE_LIST_BORDER)
+                .print(COLUMN_SEPARATOR)
+                .print(pad("", maxDocLength).replace(" ", "─"), ColorTheme.TEMPLATE_LIST_BORDER)
+                .println();
+    }
+
+    private static String wrapDocumentation(String doc, int maxLength, int offset) {
+        return StringUtils.wrap(doc, maxLength, System.lineSeparator() + pad("", offset), false);
     }
 
     private void cloneTemplate(Path temp, ObjectNode smithyTemplatesNode, Options options,
