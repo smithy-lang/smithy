@@ -62,7 +62,8 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
         }
 
         boolean useOpenApiIntegerType = config instanceof OpenApiConfig
-                && ((OpenApiConfig) config).getUseIntegerType();
+                && ((OpenApiConfig) config).getUseIntegerType()
+                && !((OpenApiConfig) config).getDisableIntegerFormat();
 
         // Don't overwrite an existing format setting.
         if (!builder.getFormat().isPresent()) {

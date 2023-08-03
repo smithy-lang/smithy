@@ -1,0 +1,3 @@
+[DANGER] smithy.example#IntegerTarget: Note the integer please | NoteTheInteger
+[DANGER] smithy.example#ListTarget: Note the list please | NoteTheList
+[WARNING] smithy.example#MyString: Note the string please | NoteTheString

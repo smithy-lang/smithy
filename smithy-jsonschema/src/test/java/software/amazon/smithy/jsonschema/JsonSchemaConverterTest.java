@@ -722,4 +722,39 @@ public class JsonSchemaConverterTest {
                 IoUtils.toUtf8String(getClass().getResourceAsStream("default-values-disabled.jsonschema.v07.json")));
         Node.assertEquals(document.toNode(), expected);
     }
+
+    @Test
+    public void supportsIntEnumsByDefault() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("int-enums.smithy"))
+                .assemble()
+                .unwrap();
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .model(model)
+                .build()
+                .convert();
+
+        Node expected = Node.parse(
+                IoUtils.toUtf8String(getClass().getResourceAsStream("int-enums.jsonschema.v07.json")));
+        Node.assertEquals(document.toNode(), expected);
+    }
+
+    @Test
+    public void intEnumsCanBeDisabled() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("int-enums.smithy"))
+                .assemble()
+                .unwrap();
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setDisableIntEnums(true);
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .config(config)
+                .model(model)
+                .build()
+                .convert();
+
+        Node expected = Node.parse(
+                IoUtils.toUtf8String(getClass().getResourceAsStream("int-enums-disabled.jsonschema.v07.json")));
+        Node.assertEquals(document.toNode(), expected);
+    }
 }

@@ -23,7 +23,8 @@ import software.amazon.smithy.openapi.OpenApiConfig;
  * Disables OpenAPI and JSON Schema features not supported by API Gateway.
  *
  * <p>API Gateway does not allow characters like "_". API Gateway
- * doesn't support the "default" trait.
+ * doesn't support the "default" trait or `int32` or `int64` "format"
+ * values.
  */
 final class AddDefaultConfigSettings implements ApiGatewayMapper {
     @Override
@@ -36,5 +37,9 @@ final class AddDefaultConfigSettings implements ApiGatewayMapper {
         config.setAlphanumericOnlyRefs(true);
         config.getDisableFeatures().add("default");
         config.setDisableDefaultValues(true);
+        // If the `useIntegerType` config has been set, this assures that
+        // `int32` and `int64` formats are not set on those integer types.
+        // See https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-known-issues.html
+        config.setDisableIntegerFormat(true);
     }
 }

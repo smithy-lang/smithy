@@ -12,6 +12,20 @@ impact the types signatures of generated code.
        that also functions like a constraint.
 
 
+Constraint trait enforcement
+============================
+
+Constraint traits SHOULD be enforced after deserializing input. For example,
+when a server deserializes a request from a client, the server SHOULD enforce
+any defined constraint traits and reject the request if appropriate.
+
+Constraint traits SHOULD NOT be enforced when serializing shapes or when
+deserializing output. For example, when returning a response from a server
+to a client, failing to serialize a response due to a constraint trait
+violation would prevent a client from observing a state change of the server
+and would provide no real recourse for the client or server to recover.
+
+
 .. smithy-trait:: smithy.api#idRef
 .. _idref-trait:
 

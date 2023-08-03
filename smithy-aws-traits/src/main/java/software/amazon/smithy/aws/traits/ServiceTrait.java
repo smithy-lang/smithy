@@ -232,9 +232,7 @@ public final class ServiceTrait extends AbstractTrait implements ToSmithyBuilder
                     && arnNamespace.equals(os.arnNamespace)
                     && cloudFormationName.equals(os.cloudFormationName)
                     && cloudTrailEventSource.equals(os.cloudTrailEventSource)
-                    && docId == null
-                        ? os.docId == null
-                        : docId.equals(os.docId)
+                    && Objects.equals(docId, os.docId)
                     && endpointPrefix.equals(os.endpointPrefix);
         }
     }

@@ -31,6 +31,7 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.traits.TraitFactory;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.ValidationEventDecorator;
 
 final class LoadOperationProcessor implements Consumer<LoadOperation> {
 
@@ -47,22 +48,25 @@ final class LoadOperationProcessor implements Consumer<LoadOperation> {
             TraitFactory traitFactory,
             Model prelude,
             boolean allowUnknownTraits,
-            Consumer<ValidationEvent> validationEventListener
+            Consumer<ValidationEvent> validationEventListener,
+            ValidationEventDecorator decorator
     ) {
         // Emit events as the come in.
         this.events = new ArrayList<ValidationEvent>() {
             @Override
             public boolean add(ValidationEvent e) {
+                e = decorator.decorate(e);
                 validationEventListener.accept(e);
                 return super.add(e);
             }
 
             @Override
             public boolean addAll(Collection<? extends ValidationEvent> validationEvents) {
+                ensureCapacity(size() + validationEvents.size());
                 for (ValidationEvent e : validationEvents) {
-                    validationEventListener.accept(e);
+                    add(e);
                 }
-                return super.addAll(validationEvents);
+                return true;
             }
         };
 

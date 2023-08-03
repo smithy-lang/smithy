@@ -179,6 +179,29 @@ public class OpenApiJsonSchemaMapperTest {
     }
 
     @Test
+    public void canDisableIntegerFormats() {
+        IntegerShape integerShape = IntegerShape.builder().id("a.b#C").build();
+        LongShape longShape = LongShape.builder().id("a.b#D").build();
+        Model model = Model.builder().addShapes(integerShape, longShape).build();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setUseIntegerType(true);
+        config.setDisableIntegerFormat(true);
+        JsonSchemaConverter converter = JsonSchemaConverter.builder()
+                .addMapper(new OpenApiJsonSchemaMapper())
+                .config(config)
+                .model(model)
+                .build();
+
+        SchemaDocument integerDocument = converter.convertShape(integerShape);
+        SchemaDocument longDocument = converter.convertShape(longShape);
+
+        assertThat(integerDocument.getRootSchema().getFormat().isPresent(), equalTo(false));
+        assertThat(integerDocument.getRootSchema().getType().get(), equalTo("integer"));
+        assertThat(longDocument.getRootSchema().getFormat().isPresent(), equalTo(false));
+        assertThat(longDocument.getRootSchema().getType().get(), equalTo("integer"));
+    }
+
+    @Test
     public void supportsFloatFormat() {
         FloatShape shape = FloatShape.builder().id("a.b#C").build();
         Model model = Model.builder().addShape(shape).build();

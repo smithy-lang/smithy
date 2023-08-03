@@ -83,6 +83,7 @@ public class OpenApiConfig extends JsonSchemaConfig {
     private Map<String, Node> jsonAdd = Collections.emptyMap();
     private List<String> externalDocs = ListUtils.of(
             "Homepage", "API Reference", "User Guide", "Developer Guide", "Reference", "Guide");
+    private boolean disableIntegerFormat = false;
     private OpenApiVersion version = OpenApiVersion.VERSION_3_0_2;
 
     public OpenApiConfig() {
@@ -319,6 +320,20 @@ public class OpenApiConfig extends JsonSchemaConfig {
     public void setVersion(OpenApiVersion version) {
         this.version = Objects.requireNonNull(version);
         super.setJsonSchemaVersion(version.getJsonSchemaVersion());
+    }
+
+
+    public boolean getDisableIntegerFormat() {
+        return this.disableIntegerFormat;
+    }
+
+    /**
+     * Set to true to disable setting the `format` property on integer types.
+     *
+     * @param disableIntegerFormat True to disable setting format on integer types.
+     */
+    public void setDisableIntegerFormat(boolean disableIntegerFormat) {
+        this.disableIntegerFormat = disableIntegerFormat;
     }
 
     /**

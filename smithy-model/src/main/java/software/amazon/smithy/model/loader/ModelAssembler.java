@@ -36,9 +36,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
@@ -47,7 +45,6 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitFactory;
-import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationEventDecorator;
@@ -487,10 +484,9 @@ public final class ModelAssembler {
      * while loading and validating the model.
      *
      * <p>The consumer could be invoked simultaneously by multiple threads. It's
-     * up to the consumer to perform any necessary synchronization. Providing
-     * an event listener is useful for things like CLIs so that events can
-     * be streamed to stdout as soon as they are encountered, rather than
-     * waiting until the entire model is parsed and validated.
+     * up to the consumer to perform any necessary synchronization. If a validator
+     * or decorator throws, then there is no guarantee that all validation events
+     * are emitted to the listener.
      *
      * @param eventListener Listener invoked for each ValidationEvent.
      * @return Returns the assembler.
@@ -510,13 +506,19 @@ public final class ModelAssembler {
         if (traitFactory == null) {
             traitFactory = LazyTraitFactoryHolder.INSTANCE;
         }
+
         if (validatorFactory == null) {
             validatorFactory = ModelValidator.defaultValidationFactory();
         }
 
+        // Create a singular, composed event decorator used to modify events.
+        ValidationEventDecorator decorator = ValidationEventDecorator.compose(validatorFactory.loadDecorators());
+
         Model prelude = disablePrelude ? null : Prelude.getPreludeModel();
+
+        // As issues are encountered, they are decorated and then emitted.
         LoadOperationProcessor processor = new LoadOperationProcessor(
-                traitFactory, prelude, areUnknownTraitsAllowed(), validationEventListener);
+                traitFactory, prelude, areUnknownTraitsAllowed(), validationEventListener, decorator);
         List<ValidationEvent> events = processor.events();
 
         // Register manually added metadata.
@@ -560,32 +562,24 @@ public final class ModelAssembler {
         }
 
         Model processedModel = processor.buildModel();
-        Model transformed;
 
         // Do the 1.0 -> 2.0 transform before full-model validation.
-        try {
-            transformed = new ModelInteropTransformer(processedModel, events, processor::getShapeVersion)
-                    .transform();
-        } catch (SourceException e) {
-            // The transformation shouldn't throw, but if it does, return here with the original model.
-            LOGGER.log(Level.SEVERE, "Error in ModelInteropTransformer: ", e);
-            events.add(ValidationEvent.fromSourceException(e));
-            return new ValidatedResult<>(processedModel, events);
-        }
+        Model transformed = new ModelInteropTransformer(processedModel, events, processor::getShapeVersion).transform();
 
-        // If ERROR validation events occur while loading, then performing more
-        // granular semantic validation will only obscure the root cause of errors.
-        if (LoaderUtils.containsErrorEvents(events)) {
-            return returnOnlyErrors(transformed, events);
-        }
-
-        if (disableValidation) {
-            List<ValidationEventDecorator> decorators = validatorFactory.loadDecorators();
-            return new ValidatedResult<>(transformed, ModelValidator.decorateEvents(decorators, events));
+        if (disableValidation || LoaderUtils.containsErrorEvents(events)) {
+            // All events have been emitted and decorated at this point.
+            return new ValidatedResult<>(transformed, events);
         }
 
         try {
-            return validate(transformed, events);
+            List<ValidationEvent> mergedEvents = ModelValidator.builder()
+                    .validators(validators)
+                    .validatorFactory(validatorFactory, decorator)
+                    .eventListener(validationEventListener)
+                    .includeEvents(events)
+                    .build()
+                    .validate(transformed);
+            return new ValidatedResult<>(transformed, mergedEvents);
         } catch (SourceException e) {
             events.add(ValidationEvent.fromSourceException(e));
             return new ValidatedResult<>(transformed, events);
@@ -596,28 +590,6 @@ public final class ModelAssembler {
         for (Map.Entry<String, Node> entry : metadataMap.entrySet()) {
             processor.accept(new LoadOperation.PutMetadata(Version.UNKNOWN, entry.getKey(), entry.getValue()));
         }
-    }
-
-    private ValidatedResult<Model> returnOnlyErrors(Model model, List<ValidationEvent> events) {
-        List<ValidationEventDecorator> decorators = validatorFactory.loadDecorators();
-        return new ValidatedResult<>(model, events.stream()
-                                                  .filter(event -> event.getSeverity() == Severity.ERROR)
-                                                  .map(event -> ModelValidator.decorateEvent(decorators, event))
-                                                  .collect(Collectors.toList()));
-    }
-
-    private ValidatedResult<Model> validate(Model model, List<ValidationEvent> events) {
-        // Validate the model based on the explicit validators and model metadata.
-        // Note the ModelValidator handles emitting events to the validationEventListener.
-        List<ValidationEvent> mergedEvents = new ModelValidator()
-                .validators(validators)
-                .validatorFactory(validatorFactory)
-                .eventListener(validationEventListener)
-                .includeEvents(events)
-                .createValidator()
-                .validate(model);
-
-        return new ValidatedResult<>(model, mergedEvents);
     }
 
     private boolean areUnknownTraitsAllowed() {

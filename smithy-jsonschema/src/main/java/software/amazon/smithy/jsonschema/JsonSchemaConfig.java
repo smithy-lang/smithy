@@ -113,6 +113,7 @@ public class JsonSchemaConfig {
     private boolean enableOutOfServiceReferences = false;
     private boolean useIntegerType;
     private boolean disableDefaultValues = false;
+    private boolean disableIntEnums = false;
 
     public JsonSchemaConfig() {
         nodeMapper.setWhenMissingSetter(NodeMapper.WhenMissing.IGNORE);
@@ -418,6 +419,21 @@ public class JsonSchemaConfig {
      */
     public void setDisableDefaultValues(boolean disableDefaultValues) {
         this.disableDefaultValues = disableDefaultValues;
+    }
+
+
+    public boolean getDisableIntEnums() {
+        return disableIntEnums;
+    }
+
+    /**
+     * Set to true to disable setting an `enum` property for intEnums. When disabled,
+     * intEnums are inlined instead of using a $ref.
+     *
+     * @param disableIntEnums True to disable setting `enum` property for intEnums.
+     */
+    public void setDisableIntEnums(boolean disableIntEnums) {
+        this.disableIntEnums = disableIntEnums;
     }
 
 
