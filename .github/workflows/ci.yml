@@ -28,14 +28,15 @@ jobs:
       - name: Clean, build and javadoc
         run: ./gradlew clean build javadoc -Plog-tests --stacktrace
 
-      - name: CLI integration tests non-windows
-        if: matrix.java >= 17 && matrix.os != 'windows-latest'
-        run: ./gradlew :smithy-cli:integ -Plog-tests --stacktrace
+      - name: Override temp directory for windows runners
+        if: matrix.os == 'windows-latest'
+        run: |
+          set TMP=%USERPROFILE%\AppData\Local\Temp
+          set TEMP=%USERPROFILE%\AppData\Local\Temp
 
-      # Overrides the temp directory used by windows runners
-      - name: CLI integration tests windows
-        if: matrix.java >= 17 && matrix.os == 'windows-latest'
-        run: ./gradlew :smithy-cli:integ -Djava.io.tmpdir=%USERPROFILE%\AppData\Local\Temp -Plog-tests --stacktrace
+      - name: CLI integration tests
+        if: matrix.java >= 17
+        run: ./gradlew :smithy-cli:integ -Plog-tests --stacktrace
 
       - uses: actions/upload-artifact@v3
         if: failure()
