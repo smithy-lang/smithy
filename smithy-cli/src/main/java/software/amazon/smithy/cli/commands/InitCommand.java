@@ -214,8 +214,8 @@ final class InitCommand implements Command {
             exec(ListUtils.of("git", "checkout"), temp);
         }
 
-        if (!Files.exists(temp.resolve(directory))) {
-            throw new CliError(String.format("Template path `%s` specified in template %s is invalid.",
+        if (!Files.exists(temp.resolve(templatePath))) {
+            throw new CliError(String.format("Template path `%s` for template \"%s\" is invalid.",
                     templatePath, template));
         }
 
@@ -276,7 +276,7 @@ final class InitCommand implements Command {
             Path includedPath = Paths.get(temp, included);
             if (!Files.exists(includedPath)) {
                 throw new CliError(String.format(
-                        "File or directory %s is marked for inclusion in template %s but was not found",
+                        "File or directory `%s` is marked for inclusion in template \"%s\", but was not found",
                         included, templateName));
             }
 

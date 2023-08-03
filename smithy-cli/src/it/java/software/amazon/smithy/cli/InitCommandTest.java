@@ -269,13 +269,11 @@ public class InitCommandTest {
             IntegUtils.withTempDir("badTemplatePath", dir -> {
                 RunResult result = IntegUtils.run(
                         dir, ListUtils.of("init", "-t", "bad-template-path", "-u", templatesDir.toString()));
-                System.out.println(result.getOutput());
                 assertThat(Files.exists(Paths.get(dir.toString(), "bad-template-path")), is(false));
                 assertThat(result.getExitCode(), is(1));
                 assertThat(result.getOutput(),
-                        containsString("Template path `getting-started-example/does-not-exist` specified in"
-                                + " template bad-template-path is invalid."));
-
+                        containsString("Template path `getting-started-example/does-not-exist` for template"
+                                +" \"bad-template-path\" is invalid."));
             });
         });
     }
@@ -288,12 +286,11 @@ public class InitCommandTest {
             IntegUtils.withTempDir("badIncludePath", dir -> {
                 RunResult result = IntegUtils.run(
                         dir, ListUtils.of("init", "-t", "bad-include-path", "-u", templatesDir.toString()));
-                System.out.println(result.getOutput());
                 assertThat(Files.exists(Paths.get(dir.toString(), " bad-include-path")), is(false));
                 assertThat(result.getExitCode(), is(1));
                 assertThat(result.getOutput(),
-                        containsString("File or directory getting-started-example/does-not-exist is marked"
-                                + " for inclusion in template bad-include-path but was not found"));
+                        containsString("File or directory `getting-started-example/does-not-exist` is marked"
+                                + " for inclusion in template \"bad-include-path\", but was not found"));
             });
         });
     }
