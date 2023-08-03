@@ -10,7 +10,7 @@ use aws.protocoltests.shared#TextPlainBlob
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
-/// This examples serializes a blob shape in the payload.
+/// This example serializes a blob shape in the payload.
 ///
 /// In this example, no XML document is synthesized because the payload is
 /// not a structure or a union type.
@@ -93,7 +93,7 @@ structure HttpPayloadTraitsInputOutput {
     blob: Blob,
 }
 
-/// This examples uses a `@mediaType` trait on the payload to force a custom
+/// This example uses a `@mediaType` trait on the payload to force a custom
 /// content-type to be serialized.
 @http(uri: "/HttpPayloadTraitsWithMediaType", method: "POST")
 operation HttpPayloadTraitsWithMediaType {
@@ -149,7 +149,7 @@ structure HttpPayloadTraitsWithMediaTypeInputOutput {
     blob: TextPlainBlob,
 }
 
-/// This examples serializes a structure in the payload.
+/// This example serializes a structure in the payload.
 ///
 /// Note that serializing a structure changes the wrapper element name
 /// to match the targeted structure.
@@ -529,4 +529,94 @@ structure HttpPayloadWithXmlNamespaceAndPrefixInputOutput {
 @xmlNamespace(uri: "http://foo.com", prefix: "baz")
 structure PayloadWithXmlNamespaceAndPrefix {
     name: String
+}
+
+
+/// This example serializes a union in the payload.
+@idempotent
+@http(uri: "/HttpPayloadWithUnion", method: "PUT")
+operation HttpPayloadWithUnion {
+    input: HttpPayloadWithUnionInputOutput,
+    output: HttpPayloadWithUnionInputOutput
+}
+
+apply HttpPayloadWithUnion @httpRequestTests([
+    {
+        id: "RestXmlHttpPayloadWithUnion",
+        documentation: "Serializes a union in the payload.",
+        protocol: restXml,
+        method: "PUT",
+        uri: "/HttpPayloadWithUnion",
+        body: """
+              <UnionPayload>
+                  <greeting>hello</greeting>
+              </UnionPayload>""",
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml",
+        },
+        requireHeaders: [
+            "Content-Length"
+        ],
+        params: {
+            nested: {
+                greeting: "hello"
+            }
+        }
+    },
+    {
+        id: "RestXmlHttpPayloadWithUnsetUnion",
+        documentation: "No payload is sent if the union has no value.",
+        protocol: restXml,
+        method: "PUT",
+        uri: "/HttpPayloadWithUnion",
+        body: "",
+        headers: {
+            "Content-Type": "application/xml",
+            "Content-Length": "0"
+        },
+        params: {}
+    }
+])
+
+apply HttpPayloadWithUnion @httpResponseTests([
+    {
+        id: "RestXmlHttpPayloadWithUnion",
+        documentation: "Serializes a union in the payload.",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <UnionPayload>
+                  <greeting>hello</greeting>
+              </UnionPayload>""",
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml",
+        },
+        params: {
+            nested: {
+                greeting: "hello"
+            }
+        }
+    },
+    {
+        id: "RestXmlHttpPayloadWithUnsetUnion",
+        documentation: "No payload is sent if the union has no value.",
+        protocol: restXml,
+        code: 200,
+        body: "",
+        headers: {
+            "Content-Length": "0"
+        },
+        params: {}
+    }
+])
+
+structure HttpPayloadWithUnionInputOutput {
+    @httpPayload
+    nested: UnionPayload,
+}
+
+union UnionPayload {
+    greeting: String
 }
