@@ -18,6 +18,17 @@
                 "getting-started-example/common-gradle-configs/gradlew",
                 "getting-started-example/common-gradle-configs/gradle.properties"
             ]
+        },
+        "bad-template-path": {
+            "documentation": "Template with incorrect path. Should throw error.",
+            "path": "getting-started-example/does-not-exist"
+        },
+        "bad-include-path": {
+            "documentation": "Template with incorrect include path. Should throw error.",
+            "path": "getting-started-example/included-files-gradle",
+            "include": [
+                "getting-started-example/does-not-exist"
+            ]
         }
     }
 }

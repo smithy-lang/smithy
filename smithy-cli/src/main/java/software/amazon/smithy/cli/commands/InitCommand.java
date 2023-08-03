@@ -201,7 +201,7 @@ final class InitCommand implements Command {
         final String templatePath = getTemplatePath(templateNode, template);
         List<String> includedFiles = getIncludedFiles(templateNode);
 
-        try (ProgressTracker t = new ProgressTracker(env,
+        try (ProgressTracker ignored = new ProgressTracker(env,
                 ProgressStyle.dots("cloning template", "template cloned"),
                 standardOptions.quiet()
         )) {
@@ -214,8 +214,13 @@ final class InitCommand implements Command {
             exec(ListUtils.of("git", "checkout"), temp);
         }
 
+        if (!Files.exists(temp.resolve(templatePath))) {
+            throw new CliError(String.format("Template path `%s` for template \"%s\" is invalid.",
+                    templatePath, template));
+        }
+
         IoUtils.copyDir(Paths.get(temp.toString(), templatePath), dest);
-        copyIncludedFiles(temp.toString(), dest.toString(), includedFiles, template, env);
+        copyIncludedFiles(temp.toString(), dest.toString(), includedFiles, template);
 
         if (!standardOptions.quiet()) {
             try (ColorBuffer buffer = ColorBuffer.of(env.colors(), env.stdout())) {
@@ -266,15 +271,13 @@ final class InitCommand implements Command {
     }
 
     private static void copyIncludedFiles(String temp, String dest, List<String> includedFiles,
-                                          String templateName, Env env) throws IOException {
+                                          String templateName) throws IOException {
         for (String included : includedFiles) {
             Path includedPath = Paths.get(temp, included);
             if (!Files.exists(includedPath)) {
-                try (ColorBuffer buffer = ColorBuffer.of(env.colors(), env.stderr())) {
-                    buffer.println(String.format(
-                            "File or directory %s is marked for inclusion in template %s but was not found",
-                            included, templateName), ColorTheme.WARNING);
-                }
+                throw new CliError(String.format(
+                        "File or directory `%s` is marked for inclusion in template \"%s\", but was not found",
+                        included, templateName));
             }
 
             Path target = Paths.get(dest, Objects.requireNonNull(includedPath.getFileName()).toString());
