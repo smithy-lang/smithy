@@ -278,7 +278,7 @@ final class InitCommand implements Command {
         }
         exec(ListUtils.of("git", "checkout"), stagingPath);
 
-        if (!Files.exists(temp.resolve(templatePath))) {
+        if (!Files.exists(stagingPath.resolve(templatePath))) {
             throw new CliError(String.format("Template path `%s` for template \"%s\" is invalid.",
                     templatePath, template));
         }
