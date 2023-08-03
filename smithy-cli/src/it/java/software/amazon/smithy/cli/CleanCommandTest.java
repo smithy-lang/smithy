@@ -19,8 +19,6 @@ import software.amazon.smithy.utils.ListUtils;
 
 
 public class CleanCommandTest {
-    private static final Path SMITHY_ROOT_CACHE_PATH = Paths.get(System.getProperty("java.io.tmpdir")).resolve("smithy-cache");
-    private static final Path SMITHY_TEMPLATE_CACHE_PATH = SMITHY_ROOT_CACHE_PATH.resolve("templates");
     private static final String PROJECT_NAME = "simple-config-sources";
     @Test
     public void exitNormallyIfBuildDirMissing() {
@@ -47,28 +45,28 @@ public class CleanCommandTest {
 
     @Test
     public void cleanRemovesAllCacheDirectories() throws IOException {
-        clearCacheDirIfExists();
+        IntegUtils.clearCacheDirIfExists();
         try {
-            Files.createDirectories(SMITHY_TEMPLATE_CACHE_PATH);
-            assertTrue(Files.exists(SMITHY_TEMPLATE_CACHE_PATH)
-                    && Files.isDirectory(SMITHY_ROOT_CACHE_PATH));
+            Files.createDirectories(IntegUtils.SMITHY_TEMPLATE_CACHE_PATH);
+            assertTrue(Files.exists(IntegUtils.SMITHY_TEMPLATE_CACHE_PATH)
+                    && Files.isDirectory(IntegUtils.SMITHY_ROOT_CACHE_PATH));
             IntegUtils.run(PROJECT_NAME, ListUtils.of("clean"), result -> {
                 assertThat(result.getExitCode(), equalTo(0));
                 assertThat(result.getOutput(), hasLength(0));
-                assertFalse(Files.exists(SMITHY_ROOT_CACHE_PATH));
+                assertFalse(Files.exists(IntegUtils.SMITHY_ROOT_CACHE_PATH));
             });
         } finally {
-            IoUtils.rmdir(SMITHY_ROOT_CACHE_PATH);
+            IntegUtils.clearCacheDirIfExists();
         }
     }
 
     @Test
     public void cleanWithTemplateOptionRemovesOnlyTemplateDir() throws IOException {
-        clearCacheDirIfExists();
+        IntegUtils.clearCacheDirIfExists();
         try {
-            Files.createDirectories(SMITHY_TEMPLATE_CACHE_PATH);
-            assertTrue(Files.exists(SMITHY_TEMPLATE_CACHE_PATH)
-                    && Files.isDirectory(SMITHY_ROOT_CACHE_PATH));
+            Files.createDirectories(IntegUtils.SMITHY_TEMPLATE_CACHE_PATH);
+            assertTrue(Files.exists(IntegUtils.SMITHY_TEMPLATE_CACHE_PATH)
+                    && Files.isDirectory(IntegUtils.SMITHY_ROOT_CACHE_PATH));
 
             IntegUtils.withProject(PROJECT_NAME, root -> {
                 Path created = null;
@@ -78,8 +76,8 @@ public class CleanCommandTest {
                     RunResult result = IntegUtils.run(root, ListUtils.of("clean", "--templates"));
                     assertThat(Files.exists(created), is(true));
                     assertThat(result.getExitCode(), is(0));
-                    assertTrue(Files.exists(SMITHY_ROOT_CACHE_PATH));
-                    assertFalse(Files.exists(SMITHY_TEMPLATE_CACHE_PATH));
+                    assertTrue(Files.exists(IntegUtils.SMITHY_ROOT_CACHE_PATH));
+                    assertFalse(Files.exists(IntegUtils.SMITHY_TEMPLATE_CACHE_PATH));
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 } finally {
@@ -89,11 +87,7 @@ public class CleanCommandTest {
                 }
             });
         } finally {
-            IoUtils.rmdir(SMITHY_ROOT_CACHE_PATH);
+            IntegUtils.clearCacheDirIfExists();
         }
-    }
-
-    private void clearCacheDirIfExists() {
-        IoUtils.rmdir(SMITHY_ROOT_CACHE_PATH);
     }
 }

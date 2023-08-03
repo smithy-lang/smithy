@@ -3,7 +3,12 @@ package software.amazon.smithy.cli;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
@@ -291,6 +296,54 @@ public class InitCommandTest {
                 assertThat(result.getOutput(),
                         containsString("File or directory `getting-started-example/does-not-exist` is marked"
                                 + " for inclusion in template \"bad-include-path\", but was not found"));
+            });
+        });
+    }
+
+    @Test
+    public void cacheCreatedOnFirstCreationOfTemplate() {
+        IntegUtils.clearCacheDirIfExists();
+        IntegUtils.withProject(PROJECT_NAME, root -> {
+            try {
+                RunResult resultFirst = IntegUtils.run(root, ListUtils.of("init", "-o", "hello-world"));
+                assertTrue(Files.exists(IntegUtils.SMITHY_TEMPLATE_CACHE_PATH)
+                        && Files.isDirectory(IntegUtils.SMITHY_TEMPLATE_CACHE_PATH));
+                assertThat(resultFirst.getExitCode(), equalTo(0));
+                assertThat(resultFirst.getOutput(),
+                        containsString("template repo cloned"));
+                assertThat(resultFirst.getOutput(),
+                        containsString("Smithy project created in directory: hello-world"));
+                IoUtils.rmdir(root.resolve("hello-world"));
+
+                RunResult resultSecond = IntegUtils.run(root, ListUtils.of("init", "-o", "hello-world"));
+                assertTrue(Files.exists(IntegUtils.SMITHY_TEMPLATE_CACHE_PATH)
+                        && Files.isDirectory(IntegUtils.SMITHY_TEMPLATE_CACHE_PATH));
+                assertThat(resultSecond.getExitCode(), equalTo(0));
+                assertThat(resultSecond.getOutput(), not(containsString("template repo cloned")));
+                assertThat(resultSecond.getOutput(),
+                        containsString("Smithy project created in directory: hello-world"));
+            } finally {
+                IntegUtils.clearCacheDirIfExists();
+            }
+        });
+    }
+
+    @Test
+    public void noCacheCreatedWhenLocalRepo() {
+        IntegUtils.clearCacheDirIfExists();
+        IntegUtils.withProject(PROJECT_NAME, templatesDir -> {
+            setupTemplatesDirectory(templatesDir);
+
+            IntegUtils.withTempDir("exitZero", dir -> {
+                RunResult result = IntegUtils.run(
+                        dir, ListUtils.of("init", "-t", "quickstart-cli", "-u", templatesDir.toString()));
+                assertThat(result.getOutput(),
+                        containsString("Smithy project created in directory: quickstart-cli"));
+                assertThat(result.getExitCode(), is(0));
+                assertThat(Files.exists(Paths.get(dir.toString(), "quickstart-cli")), is(true));
+
+                assertFalse(Files.exists(IntegUtils.SMITHY_TEMPLATE_CACHE_PATH));
+                assertFalse(Files.exists(IntegUtils.SMITHY_ROOT_CACHE_PATH));
             });
         });
     }
