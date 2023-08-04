@@ -39,7 +39,9 @@ import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.MapUtils;
 
 public final class IntegUtils {
-
+    public static final Path SMITHY_ROOT_CACHE_PATH = Paths.get(System.getProperty("java.io.tmpdir"))
+            .resolve("smithy-cache");
+    public static final Path SMITHY_TEMPLATE_CACHE_PATH = SMITHY_ROOT_CACHE_PATH.resolve("templates");
     private static final Logger LOGGER = Logger.getLogger(IntegUtils.class.getName());
 
     private IntegUtils() {}
@@ -145,5 +147,9 @@ public final class IntegUtils {
                 return FileVisitResult.CONTINUE;
             }
         });
+    }
+
+    public static void clearCacheDirIfExists() {
+        IoUtils.rmdir(SMITHY_ROOT_CACHE_PATH);
     }
 }

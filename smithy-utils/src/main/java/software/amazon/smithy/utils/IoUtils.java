@@ -334,6 +334,9 @@ public final class IoUtils {
             Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    // Workaround for Windows systems that set some git packfiles to readonly
+                    file.toFile().setWritable(true);
+
                     Files.delete(file);
                     return FileVisitResult.CONTINUE;
                 }
