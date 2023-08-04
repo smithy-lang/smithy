@@ -150,6 +150,6 @@ public final class IntegUtils {
     }
 
     public static void clearCacheDirIfExists() {
-        IoUtils.rmd ir(SMITHY_ROOT_CACHE_PATH);
+        IoUtils.rmdir(SMITHY_ROOT_CACHE_PATH);
     }
 }
