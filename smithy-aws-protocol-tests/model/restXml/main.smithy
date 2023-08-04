@@ -80,6 +80,7 @@ service RestXml {
         FlattenedXmlMap,
         FlattenedXmlMapWithXmlName,
         FlattenedXmlMapWithXmlNamespace,
+        XmlMapWithXmlNamespace,
 
         // @xmlAttribute tests
         XmlAttributes,
