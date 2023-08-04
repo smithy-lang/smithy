@@ -32,6 +32,10 @@ jobs:
         if: matrix.java >= 17
         run: ./gradlew :smithy-cli:integ -Plog-tests --stacktrace
 
+      - name: Allow long file names in git for windows
+        if: matrix.os == 'windows-latest'
+        run: git config --system core.longpaths true
+
       - uses: actions/upload-artifact@v3
         if: failure()
         with:
