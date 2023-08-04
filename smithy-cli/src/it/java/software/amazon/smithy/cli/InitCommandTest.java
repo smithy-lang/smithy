@@ -10,6 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
 
@@ -301,6 +303,7 @@ public class InitCommandTest {
     }
 
     @Test
+    @Execution(ExecutionMode.SAME_THREAD)
     public void cacheCreatedOnFirstCreationOfTemplate() {
         IntegUtils.clearCacheDirIfExists();
         IntegUtils.withProject(PROJECT_NAME, root -> {
@@ -329,6 +332,7 @@ public class InitCommandTest {
     }
 
     @Test
+    @Execution(ExecutionMode.SAME_THREAD)
     public void noCacheCreatedWhenLocalRepo() {
         IntegUtils.clearCacheDirIfExists();
         IntegUtils.withProject(PROJECT_NAME, templatesDir -> {
