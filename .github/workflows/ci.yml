@@ -28,16 +28,6 @@ jobs:
       - name: Clean, build and javadoc
         run: ./gradlew clean build javadoc -Plog-tests --stacktrace
 
-      # Workaround to handle that the init templates git directory
-      # packfiles created on windows are created with READONLY permissions within
-      # the temp directory.
-      - name: Take ownership of windows temp directory
-        if: matrix.os == 'windows-latest'
-        run: |
-          takeown /f %TEMP% /r /d y
-          icacls %TEMP% /grant "*S-1-5-32-544:F" /inheritance:d /T
-        shell: powershell
-
       - name: CLI integration tests
         if: matrix.java >= 17
         run: ./gradlew :smithy-cli:integ -Plog-tests --stacktrace

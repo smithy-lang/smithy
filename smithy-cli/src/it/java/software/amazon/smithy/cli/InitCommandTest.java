@@ -303,7 +303,6 @@ public class InitCommandTest {
     }
 
     @Test
-    @Execution(ExecutionMode.SAME_THREAD)
     public void cacheCreatedOnFirstCreationOfTemplate() {
         IntegUtils.clearCacheDirIfExists();
         IntegUtils.withProject(PROJECT_NAME, root -> {
@@ -332,7 +331,6 @@ public class InitCommandTest {
     }
 
     @Test
-    @Execution(ExecutionMode.SAME_THREAD)
     public void noCacheCreatedWhenLocalRepo() {
         IntegUtils.clearCacheDirIfExists();
         IntegUtils.withProject(PROJECT_NAME, templatesDir -> {

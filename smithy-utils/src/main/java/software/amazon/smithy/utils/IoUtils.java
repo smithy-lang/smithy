@@ -17,6 +17,7 @@ package software.amazon.smithy.utils;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -334,6 +335,9 @@ public final class IoUtils {
             Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    // Workaround for Windows systems that set some git packfiles to readonly
+                    file.toFile().setWritable(true);
+
                     Files.delete(file);
                     return FileVisitResult.CONTINUE;
                 }
