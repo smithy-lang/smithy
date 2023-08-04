@@ -27,6 +27,7 @@ ext {
 dependencies {
     implementation project(path: ":smithy-cli", configuration: "shadow")
     implementation project(":smithy-protocol-test-traits")
+    implementation project(":smithy-protocol-traits")
     implementation project(":smithy-aws-traits")
     api project(":smithy-validation-model")
 }
