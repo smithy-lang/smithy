@@ -639,3 +639,91 @@ apply NestedXmlMaps @httpResponseTests([
         }
     },
 ])
+
+/// Maps with @xmlNamespace and @xmlName
+@http(uri: "/XmlMapWithXmlNamespace", method: "POST")
+operation XmlMapWithXmlNamespace {
+    input: XmlMapWithXmlNamespaceInputOutput
+    output: XmlMapWithXmlNamespaceInputOutput
+}
+
+apply XmlMapWithXmlNamespace @httpRequestTests([
+    {
+        id: "RestXmlXmlMapWithXmlNamespace",
+        documentation: "Serializes XML maps in requests that have xmlNamespace and xmlName on members",
+        protocol: restXml,
+        method: "POST",
+        uri: "/XmlMapWithXmlNamespace",
+        body: """
+              <XmlMapWithXmlNamespaceInputOutput>
+                  <KVP xmlns="https://the-member.example.com">
+                      <entry>
+                          <K xmlns="https://the-key.example.com">a</K>
+                          <V xmlns="https://the-value.example.com">A</V>
+                      </entry>
+                      <entry>
+                          <K xmlns="https://the-key.example.com">b</K>
+                          <V xmlns="https://the-value.example.com">B</V>
+                      </entry>
+                  </KVP>
+              </XmlMapWithXmlNamespaceInputOutput>""",
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            myMap: {
+                a: "A",
+                b: "B",
+            }
+        }
+    }
+])
+
+apply XmlMapWithXmlNamespace @httpResponseTests([
+    {
+        id: "RestXmlXmlMapWithXmlNamespace",
+        documentation: "Serializes XML maps in responses that have xmlNamespace and xmlName on members",
+        protocol: restXml,
+        code: 200,
+        body: """
+              <XmlMapWithXmlNamespaceInputOutput>
+                  <KVP xmlns="https://the-member.example.com">
+                      <entry>
+                          <K xmlns="https://the-key.example.com">a</K>
+                          <V xmlns="https://the-value.example.com">A</V>
+                      </entry>
+                      <entry>
+                          <K xmlns="https://the-key.example.com">b</K>
+                          <V xmlns="https://the-value.example.com">B</V>
+                      </entry>
+                  </KVP>
+              </XmlMapWithXmlNamespaceInputOutput>""",
+        bodyMediaType: "application/xml",
+        headers: {
+            "Content-Type": "application/xml"
+        },
+        params: {
+            myMap: {
+                a: "A",
+                b: "B",
+            }
+        }
+    }
+])
+
+structure XmlMapWithXmlNamespaceInputOutput {
+    @xmlName("KVP")
+    @xmlNamespace(uri: "https://the-member.example.com")
+    myMap: XmlMapWithXmlNamespaceInputOutputMap,
+}
+
+map XmlMapWithXmlNamespaceInputOutputMap {
+    @xmlName("K")
+    @xmlNamespace(uri: "https://the-key.example.com")
+    key: String,
+
+    @xmlName("V")
+    @xmlNamespace(uri: "https://the-value.example.com")
+    value: String,
+}
