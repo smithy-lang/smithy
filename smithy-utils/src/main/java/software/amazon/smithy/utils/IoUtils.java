@@ -335,8 +335,6 @@ public final class IoUtils {
             Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    File fileFile = new File(file.toUri());
-                    fileFile.setWritable(true);
                     Files.delete(file);
                     return FileVisitResult.CONTINUE;
                 }
