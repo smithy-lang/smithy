@@ -308,11 +308,6 @@ public class InitCommandTest {
                 RunResult resultFirst = IntegUtils.run(root, ListUtils.of("init", "-o", "hello-world"));
                 assertTrue(Files.exists(IntegUtils.SMITHY_TEMPLATE_CACHE_PATH)
                         && Files.isDirectory(IntegUtils.SMITHY_TEMPLATE_CACHE_PATH));
-
-                if (resultFirst.getExitCode() != 0) {
-                    throw new RuntimeException("RESULT FAILED WITH: " + resultFirst.getOutput());
-                };
-
                 assertThat(resultFirst.getExitCode(), equalTo(0));
                 assertThat(resultFirst.getOutput(),
                         containsString("template repo cloned"));
