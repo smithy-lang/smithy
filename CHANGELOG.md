@@ -12,6 +12,7 @@
 * Updated init command to honor quiet setting ([#1889](https://github.com/smithy-lang/smithy/pull/1889))
 * Updated appearance of smithy init list output ([#1901](https://github.com/smithy-lang/smithy/pull/1901))
 * Added exceptions for invalid paths in template definition ([#1907](https://github.com/smithy-lang/smithy/pull/1907))
+* Added Cache template directory in init command ([#1896](https://github.com/smithy-lang/smithy/pull/1896))
 * Check for existing directory when creating template with init ([#1885](https://github.com/smithy-lang/smithy/pull/1885))
 
 ### Documentation
