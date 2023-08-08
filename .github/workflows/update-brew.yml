@@ -62,7 +62,7 @@ jobs:
         with:
           repository: 'smithy-lang/homebrew-tap'
           path: 'homebrew-tap'
-          ref: 'master'
+          ref: 'main'
       - name: Update version
         run: |
           version="${GITHUB_REF##*/}"
