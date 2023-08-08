@@ -1250,67 +1250,18 @@ Prelude
 
 All Smithy models automatically include a *prelude*. The prelude defines
 various simple shapes and every trait defined in the core specification.
-When using the :ref:`IDL <idl>`, shapes defined in the prelude can be
-referenced from within any namespace using a relative shape ID.
+When using the :ref:`IDL <idl>`, shapes defined in the prelude that are not
+marked with the :ref:`private-trait` can be referenced from within any
+namespace using a relative shape ID.
 
-.. code-block:: smithy
-    :caption: Public prelude shapes
+.. literalinclude:: ../../../smithy-model/src/main/resources/software/amazon/smithy/model/loader/prelude.smithy
+    :language: smithy
+    :caption: Smithy Prelude
     :name: prelude-shapes
 
-    $version: "2"
-    namespace smithy.api
+.. note::
 
-    string String
-
-    blob Blob
-
-    bigInteger BigInteger
-
-    bigDecimal BigDecimal
-
-    timestamp Timestamp
-
-    document Document
-
-    boolean Boolean
-
-    byte Byte
-
-    short Short
-
-    integer Integer
-
-    long Long
-
-    float Float
-
-    double Double
-
-    /// The single unit type shape, similar to Void and None in other
-    /// languages, used to represent no meaningful value.
-    @unitType
-    structure Unit {}
-
-    @default(false)
-    boolean PrimitiveBoolean
-
-    @default(0)
-    byte PrimitiveByte
-
-    @default(0)
-    short PrimitiveShort
-
-    @default(0)
-    integer PrimitiveInteger
-
-    @default(0)
-    long PrimitiveLong
-
-    @default(0)
-    float PrimitiveFloat
-
-    @default(0)
-    double PrimitiveDouble
+    Private shapes defined in the prelude are subject to change at any time.
 
 
 .. _unit-type:
