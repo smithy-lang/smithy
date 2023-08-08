@@ -8,7 +8,7 @@ AWS-specific :ref:`rules engine built-ins <rules-engine-parameters-built-ins>`
 make it possible to integrate with AWS concepts like `Regions`_. An additional
 dependency is required to access these functions:
 
-The following example adds ``smithy-aws-rules-engine`` as a Gradle dependency
+The following example adds ``smithy-aws-endpoints`` as a Gradle dependency
 to a Smithy project:
 
 .. tab:: Gradle
@@ -17,7 +17,7 @@ to a Smithy project:
 
         dependencies {
             ...
-            implementation("software.amazon.smithy:smithy-aws-rules-engine:__smithy_version__")
+            implementation("software.amazon.smithy:smithy-aws-endpoints:__smithy_version__")
             ...
         }
 
@@ -28,7 +28,7 @@ to a Smithy project:
         {
             "maven": {
                 "dependencies": [
-                    "software.amazon.smithy:smithy-aws-rules-engine:__smithy_version__"
+                    "software.amazon.smithy:smithy-aws-endpoints:__smithy_version__"
                 ]
             }
         }
