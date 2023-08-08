@@ -523,7 +523,7 @@ following properties:</p>
 <tbody valign="top">
 <tr class="row-even"><td>id</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td><strong>Required</strong>. The validation event ID to suppress.</td>
+<td><strong>Required</strong>. The hierarchical validation event ID to suppress.</td>
 </tr>
 <tr class="row-odd"><td>namespace</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
@@ -628,13 +628,71 @@ specific. Further, a suppression ID of &quot;ABC&quot; does not match an event I
 </div>
 </div>
 </div>
+<div class="section" id="severity-overrides">
+<h2><span class="section-number">17.5. </span>Severity overrides<a class="headerlink" href="#severity-overrides" title="Permalink to this headline">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">severityOverrides</span></code> metadata property is used to elevate the severity
+of non-suppressed validation events. This property contains an array of
+severity override objects that support the following properties:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>id</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. The hierarchical validation event ID to elevate.</td>
+</tr>
+<tr class="row-odd"><td>namespace</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. The validation event is only elevated if it matches the
+supplied namespace. A value of <code class="docutils literal notranslate"><span class="pre">*</span></code> can be provided to match any namespace.</td>
+</tr>
+<tr class="row-even"><td>severity</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Defines the <a class="reference internal" href="#severity-definition"><span class="std std-ref">severity</span></a> to elevate matching
+events to. This value can only be set to <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> or <code class="docutils literal notranslate"><span class="pre">DANGER</span></code>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The following example elevates the events of <code class="docutils literal notranslate"><span class="pre">SomeValidator</span></code> to <code class="docutils literal notranslate"><span class="pre">DANGER</span></code>
+in any namespace, and <code class="docutils literal notranslate"><span class="pre">OtherValidator</span></code> is elevated to <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> but only
+for events emitted for shapes in the <code class="docutils literal notranslate"><span class="pre">smithy.example</span></code> namespace:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">metadata </span><span class="nc">severityOverrides </span><span class="nd">=</span><span class="w"> </span>[
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">namespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;*&quot;</span>
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SomeValidator&quot;</span>
+<span class="w">        </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DANGER&quot;</span>
+<span class="w">    </span>}
+<span class="w">    </span>{
+<span class="w">        </span><span class="py">namespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example&quot;</span>
+<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OtherValidator&quot;</span>
+<span class="w">        </span><span class="py">severity</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;WARNING&quot;</span>
+<span class="w">    </span>}
+]
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="built-in-validators">
-<h2><span class="section-number">17.5. </span>Built-in validators<a class="headerlink" href="#built-in-validators" title="Permalink to this headline">#</a></h2>
+<h2><span class="section-number">17.6. </span>Built-in validators<a class="headerlink" href="#built-in-validators" title="Permalink to this headline">#</a></h2>
 <p>Smithy provides built-in validators that can be used in any model in
 the <code class="docutils literal notranslate"><span class="pre">validators</span></code> metadata property. Implementations MAY support
 additional validators.</p>
 <div class="section" id="emiteachselector">
-<span id="id3"></span><h3><span class="section-number">17.5.1. </span>EmitEachSelector<a class="headerlink" href="#emiteachselector" title="Permalink to this headline">#</a></h3>
+<span id="id3"></span><h3><span class="section-number">17.6.1. </span>EmitEachSelector<a class="headerlink" href="#emiteachselector" title="Permalink to this headline">#</a></h3>
 <p>Emits a validation event for each shape that matches the given
 <a class="reference internal" href="selectors.html#selectors"><span class="std std-ref">selector</span></a>.</p>
 <dl class="docutils">
@@ -750,7 +808,7 @@ as lifecycle 'read' or 'delete' that has a shape name that does not start with
 </pre></div>
 </div>
 <div class="section" id="binding-events-to-traits">
-<span id="emit-each-bind-to-trait"></span><h4><span class="section-number">17.5.1.1. </span>Binding events to traits<a class="headerlink" href="#binding-events-to-traits" title="Permalink to this headline">#</a></h4>
+<span id="emit-each-bind-to-trait"></span><h4><span class="section-number">17.6.1.1. </span>Binding events to traits<a class="headerlink" href="#binding-events-to-traits" title="Permalink to this headline">#</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">bindToTrait</span></code> property contains a <a class="reference internal" href="model.html#shape-id"><span class="std std-ref">shape ID</span></a> that MUST
 reference a <a class="reference internal" href="model.html#trait-shapes"><span class="std std-ref">trait definition</span></a> shape. When set, this
 property causes the <code class="docutils literal notranslate"><span class="pre">EmitEachSelector</span></code> validator to only emit validation
@@ -786,7 +844,7 @@ the trait is applied to the matched shape.</p>
 <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a>.</p>
 </div>
 <div class="section" id="message-templates">
-<span id="emit-each-message-template"></span><h4><span class="section-number">17.5.1.2. </span>Message templates<a class="headerlink" href="#message-templates" title="Permalink to this headline">#</a></h4>
+<span id="emit-each-message-template"></span><h4><span class="section-number">17.6.1.2. </span>Message templates<a class="headerlink" href="#message-templates" title="Permalink to this headline">#</a></h4>
 <p>A <code class="docutils literal notranslate"><span class="pre">messageTemplate</span></code> is used to create more granular error messages. The
 template consists of literal spans and <a class="reference internal" href="selectors.html#grammar-token-selectors-SelectorContextValue"><code class="xref std std-token docutils literal notranslate"><span class="pre">selector</span> <span class="pre">context</span> <span class="pre">value</span></code></a>
 templates (for example, <code class="docutils literal notranslate"><span class="pre">&#64;{id}</span></code>). A selector context value MAY be escaped
@@ -890,7 +948,7 @@ to make message templates more descriptive. Consider the following example:</p>
 </div>
 </div>
 <div class="section" id="variable-message-formatting">
-<h4><span class="section-number">17.5.1.3. </span>Variable message formatting<a class="headerlink" href="#variable-message-formatting" title="Permalink to this headline">#</a></h4>
+<h4><span class="section-number">17.6.1.3. </span>Variable message formatting<a class="headerlink" href="#variable-message-formatting" title="Permalink to this headline">#</a></h4>
 <p>Different types of variables expand to different kinds of strings in message
 templates.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -969,7 +1027,7 @@ to:</p>
 </div>
 </div>
 <div class="section" id="emitnoneselector">
-<span id="id9"></span><h3><span class="section-number">17.5.2. </span>EmitNoneSelector<a class="headerlink" href="#emitnoneselector" title="Permalink to this headline">#</a></h3>
+<span id="id9"></span><h3><span class="section-number">17.6.2. </span>EmitNoneSelector<a class="headerlink" href="#emitnoneselector" title="Permalink to this headline">#</a></h3>
 <p>Emits a validation event if no shape in the model matches the given
 <a class="reference internal" href="selectors.html#selectors"><span class="std std-ref">selector</span></a>.</p>
 <dl class="docutils">
@@ -1096,14 +1154,15 @@ traits.</p>
 <li><a class="reference internal" href="#matching-suppression-event-ids">17.4.3. Matching suppression event IDs</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#built-in-validators">17.5. Built-in validators</a><ul>
-<li><a class="reference internal" href="#emiteachselector">17.5.1. EmitEachSelector</a><ul>
-<li><a class="reference internal" href="#binding-events-to-traits">17.5.1.1. Binding events to traits</a></li>
-<li><a class="reference internal" href="#message-templates">17.5.1.2. Message templates</a></li>
-<li><a class="reference internal" href="#variable-message-formatting">17.5.1.3. Variable message formatting</a></li>
+<li><a class="reference internal" href="#severity-overrides">17.5. Severity overrides</a></li>
+<li><a class="reference internal" href="#built-in-validators">17.6. Built-in validators</a><ul>
+<li><a class="reference internal" href="#emiteachselector">17.6.1. EmitEachSelector</a><ul>
+<li><a class="reference internal" href="#binding-events-to-traits">17.6.1.1. Binding events to traits</a></li>
+<li><a class="reference internal" href="#message-templates">17.6.1.2. Message templates</a></li>
+<li><a class="reference internal" href="#variable-message-formatting">17.6.1.3. Variable message formatting</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#emitnoneselector">17.5.2. EmitNoneSelector</a></li>
+<li><a class="reference internal" href="#emitnoneselector">17.6.2. EmitNoneSelector</a></li>
 </ul>
 </li>
 </ul>

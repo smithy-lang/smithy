@@ -581,11 +581,14 @@ reconciled using the following rules:<ol class="arabic">
 the same members that target the same shapes.</li>
 <li>Conflicting <a class="reference internal" href="service-types.html#service-types"><span class="std std-ref">service shape types</span></a> MUST contain the
 same properties and target the same shapes.</li>
+<li>The traits from each shape are treated as if they are defined using
+an <a class="reference internal" href="#apply-statements"><span class="std std-ref">apply statement</span></a>: non-conflicting traits are
+added to the merged shape, and conflicting traits are resolved through
+step (4).</li>
 </ol>
 </li>
-<li>Conflicting traits defined in shape definitions or through
-<a class="reference internal" href="#apply-statements"><span class="std std-ref">apply statements</span></a> are reconciled using
-<a class="reference internal" href="#trait-conflict-resolution"><span class="std std-ref">trait conflict resolution</span></a>.</li>
+<li>Conflicting traits defined in shape definitions or through apply statements
+are reconciled using <a class="reference internal" href="#trait-conflict-resolution"><span class="std std-ref">trait conflict resolution</span></a>.</li>
 </ol>
 </div>
 <div class="section" id="shapes">
