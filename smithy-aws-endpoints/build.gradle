@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-description = "AWS specific components for the Smithy rules engine"
+description = "AWS specific components for managing endpoints in Smithy"
 
 ext {
-    displayName = "Smithy :: AWS Rules Components"
-    moduleName = "software.amazon.smithy.aws.rulesengine"
+    displayName = "Smithy :: AWS Endpoints Components"
+    moduleName = "software.amazon.smithy.aws.endpoints"
 }
 
 dependencies {
