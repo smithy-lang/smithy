@@ -24,22 +24,18 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.SuppressTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationEventDecorator;
 import software.amazon.smithy.model.validation.Validator;
 import software.amazon.smithy.model.validation.ValidatorFactory;
+import software.amazon.smithy.model.validation.suppressions.ModelBasedEventDecorator;
 import software.amazon.smithy.model.validation.suppressions.SeverityOverride;
-import software.amazon.smithy.model.validation.suppressions.Suppression;
 import software.amazon.smithy.model.validation.validators.ResourceCycleValidator;
 import software.amazon.smithy.model.validation.validators.TargetValidator;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 
@@ -64,9 +60,6 @@ import software.amazon.smithy.utils.SmithyBuilder;
  * performs the actual validation in an isolated context from the ModelValidator.
  */
 final class ModelValidator implements Validator {
-
-    private static final String SUPPRESSIONS = "suppressions";
-    private static final String SEVERITY_OVERRIDES = "severityOverrides";
 
     // Lazy initialization holder class idiom to hold a default validator factory.
     private static final class LazyValidatorFactoryHolder {
@@ -194,7 +187,6 @@ final class ModelValidator implements Validator {
     private static final class LoadedModelValidator {
 
         private final Model model;
-        private final List<Suppression> suppressions = new ArrayList<>();
         private final List<SeverityOverride> severityOverrides;
         private final List<Validator> validators;
         private final List<ValidationEvent> events = new ArrayList<>();
@@ -203,54 +195,36 @@ final class ModelValidator implements Validator {
 
         private LoadedModelValidator(Model model, ModelValidator validator) {
             this.model = model;
-            this.validationEventDecorator = validator.validationEventDecorator;
             this.eventListener = validator.eventListener;
             this.severityOverrides = new ArrayList<>(validator.severityOverrides);
             this.validators = new ArrayList<>(validator.validators);
 
-            loadMetadataSuppressions();
-            loadMetadataSeverityOverrides();
+            // Suppressing and elevating events is handled by composing a given decorator with a
+            // ModelBasedEventDecorator.
+            ModelBasedEventDecorator modelBasedEventDecorator = new ModelBasedEventDecorator();
+            modelBasedEventDecorator.severityOverrides(validator.severityOverrides);
+            ValidatedResult<ValidationEventDecorator> result = modelBasedEventDecorator.createDecorator(model);
+            this.validationEventDecorator = result.getResult()
+                    .map(decorator -> ValidationEventDecorator.compose(
+                            ListUtils.of(decorator, validator.validationEventDecorator)))
+                    .orElse(validator.validationEventDecorator);
 
-            // Given events have already been emitted and decorated, but have not been suppressed/elevated.
-            for (ValidationEvent event : validator.events) {
-                events.add(modifyEventSeverity(event));
+            // Events encountered while loading suppressions and overrides have been modified by everything the
+            // modelBasedEventDecorator knows about, but has not been modified by any custom decorator (if any).
+            for (ValidationEvent event : result.getValidationEvents()) {
+                if (validationEventDecorator.canDecorate(event)) {
+                    event = validationEventDecorator.decorate(event);
+                }
+                events.add(event);
             }
 
+            // Now that the decorator is available, emit/decorate/suppress/collect explicitly provided events.
+            for (ValidationEvent event : validator.events) {
+                pushEvent(event);
+            }
+
+            // The decorator itself doesn't handle loading and applying validators, just modifying events.
             loadModelValidators(validator.validatorFactory);
-        }
-
-        private void loadMetadataSeverityOverrides() {
-            model.getMetadataProperty(SEVERITY_OVERRIDES).ifPresent(value -> {
-                try {
-                    List<ObjectNode> values = value.expectArrayNode().getElementsAs(ObjectNode.class);
-                    for (ObjectNode rule : values) {
-                        try {
-                            severityOverrides.add(SeverityOverride.fromMetadata(rule));
-                        } catch (SourceException e) {
-                            pushEvent(ValidationEvent.fromSourceException(e));
-                        }
-                    }
-                } catch (SourceException e) {
-                    pushEvent(ValidationEvent.fromSourceException(e));
-                }
-            });
-        }
-
-        private void loadMetadataSuppressions() {
-            model.getMetadataProperty(SUPPRESSIONS).ifPresent(value -> {
-                try {
-                    List<ObjectNode> values = value.expectArrayNode().getElementsAs(ObjectNode.class);
-                    for (ObjectNode rule : values) {
-                        try {
-                            suppressions.add(Suppression.fromMetadata(rule));
-                        } catch (SourceException e) {
-                            pushEvent(ValidationEvent.fromSourceException(e));
-                        }
-                    }
-                } catch (SourceException e) {
-                    pushEvent(ValidationEvent.fromSourceException(e));
-                }
-            });
         }
 
         private void loadModelValidators(ValidatorFactory validatorFactory) {
@@ -291,8 +265,9 @@ final class ModelValidator implements Validator {
         }
 
         private void pushEvent(ValidationEvent event) {
-            event = modifyEventSeverity(event);
-            event = validationEventDecorator.decorate(event);
+            if (validationEventDecorator.canDecorate(event)) {
+                event = validationEventDecorator.decorate(event);
+            }
             events.add(event);
             eventListener.accept(event);
         }
@@ -310,8 +285,7 @@ final class ModelValidator implements Validator {
             List<ValidationEvent> result = validators.parallelStream()
                     .flatMap(validator -> validator.validate(model).stream())
                     .filter(this::filterPrelude)
-                    .map(this::modifyEventSeverity)
-                    .map(validationEventDecorator::decorate)
+                    .map(e -> validationEventDecorator.canDecorate(e) ? validationEventDecorator.decorate(e) : e)
                     // Emit events as they occur during validation.
                     .peek(eventListener)
                     .collect(Collectors.toList());
@@ -329,53 +303,6 @@ final class ModelValidator implements Validator {
             return event.getSeverity() == Severity.ERROR || !event.getShapeId()
                     .filter(Prelude::isPreludeShape)
                     .isPresent();
-        }
-
-        private ValidationEvent modifyEventSeverity(ValidationEvent event) {
-            // Use a suppress trait if present.
-            if (event.getShapeId().isPresent()) {
-                ShapeId target = event.getShapeId().get();
-                Shape shape = model.getShape(target).orElse(null);
-                if (shape != null) {
-                    if (shape.hasTrait(SuppressTrait.class)) {
-                        Suppression suppression = Suppression.fromSuppressTrait(shape);
-                        if (suppression.test(event)) {
-                            return changeSeverity(event, Severity.SUPPRESSED, suppression.getReason().orElse(null));
-                        }
-                    }
-                }
-            }
-
-            // Check metadata and manual suppressions.
-            for (Suppression suppression : suppressions) {
-                if (suppression.test(event)) {
-                    return changeSeverity(event, Severity.SUPPRESSED, suppression.getReason().orElse(null));
-                }
-            }
-
-            Severity appliedSeverity = event.getSeverity();
-            for (SeverityOverride override : severityOverrides) {
-                Severity overrideResult = override.apply(event);
-                if (overrideResult.ordinal() > appliedSeverity.ordinal()) {
-                    appliedSeverity = overrideResult;
-                }
-            }
-
-            return changeSeverity(event, appliedSeverity, null);
-        }
-
-        private static ValidationEvent changeSeverity(ValidationEvent event, Severity severity, String reason) {
-            if (event.getSeverity() == severity) {
-                return event;
-            } else {
-                // The event was suppressed so change the severity and reason.
-                ValidationEvent.Builder builder = event.toBuilder();
-                builder.severity(severity);
-                if (reason != null) {
-                    builder.suppressionReason(reason);
-                }
-                return builder.build();
-            }
         }
     }
 }
