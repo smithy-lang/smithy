@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-
 package software.amazon.smithy.jsonschema;
 
 import software.amazon.smithy.model.Model;
@@ -11,17 +10,15 @@ import software.amazon.smithy.model.shapes.Shape;
 
 /**
  * Context for a JSON schema mapping.
- *
- * @param <T> Type of Smithy {@link Shape} being mapped.
  */
-public class JsonSchemaMapperContext<T extends Shape> {
+public class JsonSchemaMapperContext {
     private final Model model;
-    private final T shape;
+    private final Shape shape;
     private final JsonSchemaConfig config;
 
     JsonSchemaMapperContext(
             Model model,
-            T shape,
+            Shape shape,
             JsonSchemaConfig config
     ) {
         this.model = model;
@@ -43,7 +40,7 @@ public class JsonSchemaMapperContext<T extends Shape> {
      *
      * @return Returns the Smithy shape.
      */
-    public T getShape() {
+    public Shape getShape() {
         return shape;
     }
 

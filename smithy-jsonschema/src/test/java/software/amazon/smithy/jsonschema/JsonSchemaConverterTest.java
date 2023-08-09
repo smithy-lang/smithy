@@ -211,7 +211,30 @@ public class JsonSchemaConverterTest {
     public void canAddCustomSchemaMapper() {
         Shape struct = StructureShape.builder().id("smithy.example#Foo").build();
         Model model = Model.builder().addShape(struct).build();
-        JsonSchemaMapper mapper = (shape, builder, conf) -> builder.putExtension("Hi", Node.from("There"));
+        class CustomMapper implements JsonSchemaMapper {
+            @Override
+            public Schema.Builder updateSchema(Shape shape, Schema.Builder builder, JsonSchemaConfig conf) {
+                return builder.putExtension("Hi", Node.from("There"));
+            }
+        }
+        JsonSchemaMapper mapper = new CustomMapper();
+        SchemaDocument doc = JsonSchemaConverter.builder().addMapper(mapper).model(model).build().convert();
+
+        assertTrue(doc.getDefinition("#/definitions/Foo").isPresent());
+        assertTrue(doc.getDefinition("#/definitions/Foo").get().getExtension("Hi").isPresent());
+    }
+
+    @Test
+    public void canAddCustomSchemaMapperContextMethod() {
+        Shape struct = StructureShape.builder().id("smithy.example#Foo").build();
+        Model model = Model.builder().addShape(struct).build();
+        class CustomMapper implements JsonSchemaMapper {
+            @Override
+            public Schema.Builder updateSchema(JsonSchemaMapperContext context, Schema.Builder builder) {
+                return builder.putExtension("Hi", Node.from("There"));
+            }
+        }
+        JsonSchemaMapper mapper = new CustomMapper();
         SchemaDocument doc = JsonSchemaConverter.builder().addMapper(mapper).model(model).build().convert();
 
         assertTrue(doc.getDefinition("#/definitions/Foo").isPresent());

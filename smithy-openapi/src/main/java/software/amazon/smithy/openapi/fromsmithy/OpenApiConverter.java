@@ -330,10 +330,7 @@ public final class OpenApiConverter {
         openapi.components(environment.components.build());
 
         // Add arbitrary extensions if they're configured.
-        context.getConfig()
-                .getSchemaDocumentExtensions()
-                .getStringMap()
-                .forEach(openapi::putExtension);
+        openapi.getExtensions().putAll(context.getConfig().getSchemaDocumentExtensions().getStringMap());
 
         return mapper.after(context, openapi.build());
     }

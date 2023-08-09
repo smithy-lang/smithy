@@ -2,8 +2,6 @@ package software.amazon.smithy.openapi.fromsmithy.mappers;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.stream.Stream;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import software.amazon.smithy.model.Model;
@@ -25,20 +23,19 @@ public class SpecificationExtensionsMapperTest {
         OpenApiConfig config = new OpenApiConfig();
         config.setService(ShapeId.from("smithy.example#Service"));
 
-        Node.assertEquals(
-                OpenApiConverter
+        Node actual = OpenApiConverter
                         .create()
                         .config(config)
-                        .convertToNode(getModel(name)),
+                        .convertToNode(getSpecificationExtensionTraits(name));
+        Node expected = getExpectedOpenAPI(name);
 
-                getExpectedOpenAPI(name)
-        );
+        Node.assertEquals(actual, expected);
     }
 
-    private static Model getModel(String name) {
+    private static Model getSpecificationExtensionTraits(String name) {
         return Model.assembler()
                 .addImport(getResource(name + ".smithy"))
-                .addImport(getResource("trait-shapes.smithy"))
+                .addImport(getResource("specification-extension-traits.smithy"))
                 .discoverModels()
                 .assemble()
                 .unwrap();

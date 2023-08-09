@@ -5,8 +5,9 @@
 
 package software.amazon.smithy.openapi.traits;
 
+import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
@@ -17,14 +18,12 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * <code>smithy.openapi#specificationExtension</code> - Indicates a trait shape should be converted into an <a href="https://spec.openapis.org/oas/v3.1.0#specification-extensions">OpenAPI specification extension</a>.
  */
 public final class SpecificationExtensionTrait extends AbstractTrait
-        implements ToSmithyBuilder<SpecificationExtensionTrait> {
+    implements ToSmithyBuilder<SpecificationExtensionTrait> {
     public static final ShapeId ID = ShapeId.from("smithy.openapi#specificationExtension");
-
-    private static final String AS_MEMBER_NAME = "as";
 
     private final String as;
 
-    private SpecificationExtensionTrait(SpecificationExtensionTrait.Builder builder) {
+    private SpecificationExtensionTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
         this.as = builder.as;
     }
@@ -36,53 +35,47 @@ public final class SpecificationExtensionTrait extends AbstractTrait
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            ObjectNode node = value.expectObjectNode();
-            SpecificationExtensionTrait.Builder builder = builder().sourceLocation(value);
-            node.getStringMember(AS_MEMBER_NAME, builder::as);
-            SpecificationExtensionTrait trait = builder.build();
+            SpecificationExtensionTrait trait = new NodeMapper().deserialize(value, SpecificationExtensionTrait.class);
             trait.setNodeCache(value);
             return trait;
         }
     }
 
     /**
-     * Gets the extension name for a given trait shape.
-     * Either an explicitly configured extension name, or a default transformation of the shape ID.
+     * Gets the specification extension header value in "as".
      *
-     * @param traitShapeId Trait shape to get the extension name.
-     * @return Extension name for the given trait shape.
+     * @return Returns the optionally present "as".
      */
-    public String extensionNameFor(ShapeId traitShapeId) {
-        return as != null
-                ? as
-                : "x-" + traitShapeId.toString().replaceAll("[.#]", "-");
+    public Optional<String> getAs() {
+        return Optional.ofNullable(as);
     }
 
-    public static SpecificationExtensionTrait.Builder builder() {
-        return new SpecificationExtensionTrait.Builder();
+    public static Builder builder() {
+        return new Builder();
     }
 
     @Override
     protected Node createNode() {
-        return Node.objectNodeBuilder()
-                .sourceLocation(getSourceLocation())
-                .withMember(AS_MEMBER_NAME, this.as)
-                .build();
+        NodeMapper mapper = new NodeMapper();
+        mapper.disableToNodeForClass(SpecificationExtensionTrait.class);
+        mapper.setOmitEmptyValues(true);
+        return mapper.serialize(this).expectObjectNode();
     }
 
     @Override
-    public SpecificationExtensionTrait.Builder toBuilder() {
+    public Builder toBuilder() {
         return builder()
                 .sourceLocation(getSourceLocation())
                 .as(this.as);
     }
 
-    public static final class Builder
-            extends AbstractTraitBuilder<SpecificationExtensionTrait, SpecificationExtensionTrait.Builder> {
+    /**
+     * Builds a {@link SpecificationExtensionTrait} trait.
+     */
+    public static final class Builder extends AbstractTraitBuilder<SpecificationExtensionTrait, Builder> {
         private String as;
 
-        private Builder() {
-        }
+        private Builder() {}
 
         @Override
         public SpecificationExtensionTrait build() {
@@ -95,7 +88,7 @@ public final class SpecificationExtensionTrait extends AbstractTrait
          * @param as Explicit name for the target specification extension, or null.
          * @return This builder instance.
          */
-        public SpecificationExtensionTrait.Builder as(String as) {
+        public Builder as(String as) {
             this.as = as;
             return this;
         }
