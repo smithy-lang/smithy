@@ -24,6 +24,20 @@ import java.util.List;
  * relevant only to the context where Smithy is being used.
  */
 public interface ValidationEventDecorator {
+
+    /** A decorator that does nothing. */
+    ValidationEventDecorator IDENTITY = new ValidationEventDecorator() {
+        @Override
+        public boolean canDecorate(ValidationEvent ev) {
+            return false;
+        }
+
+        @Override
+        public ValidationEvent decorate(ValidationEvent ev) {
+            return ev;
+        }
+    };
+
     /**
      * Returns true if this decorator knows how to decorate this event, usually by looking at the event id.
      *
@@ -48,17 +62,7 @@ public interface ValidationEventDecorator {
      */
     static ValidationEventDecorator compose(List<ValidationEventDecorator> decorators) {
         if (decorators.isEmpty()) {
-            return new ValidationEventDecorator() {
-                @Override
-                public boolean canDecorate(ValidationEvent ev) {
-                    return false;
-                }
-
-                @Override
-                public ValidationEvent decorate(ValidationEvent ev) {
-                    return ev;
-                }
-            };
+            return IDENTITY;
         } else {
             return new ValidationEventDecorator() {
                 @Override

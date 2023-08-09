@@ -14,6 +14,9 @@ Model modelB = loadModelB();
 List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 ```
 
+Smithy Diff will load and apply metadata suppressions and severityOverrides
+from the new model to any emitted diff events. 
+
 # Adding a custom DiffEvaluator
 
 This library finds all instances of `DiffEvaluator`

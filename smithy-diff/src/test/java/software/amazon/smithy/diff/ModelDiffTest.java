@@ -94,4 +94,33 @@ public class ModelDiffTest {
 
         assertThat(result.isDiffBreaking(), is(false));
     }
+
+    @Test
+    public void appliesSuppressionsToDiff() {
+        Model oldModel = Model.assembler()
+                .addImport(getClass().getResource("suppressions-a.smithy"))
+                .assemble()
+                .unwrap();
+        Model newModel = Model.assembler()
+                .addImport(getClass().getResource("suppressions-b.smithy"))
+                .assemble()
+                .unwrap();
+
+        ModelDiff.Result result = ModelDiff.builder()
+                .oldModel(oldModel)
+                .newModel(newModel)
+                .compare();
+
+        assertThat(result.isDiffBreaking(), is(false));
+
+        boolean found = false;
+        for (ValidationEvent event : result.getDiffEvents()) {
+            if (event.getId().equals("ChangedMemberOrder")) {
+                assertThat(event.getSeverity(), equalTo(Severity.SUPPRESSED));
+                found = true;
+            }
+        }
+
+        assertThat(found, is(true));
+    }
 }
