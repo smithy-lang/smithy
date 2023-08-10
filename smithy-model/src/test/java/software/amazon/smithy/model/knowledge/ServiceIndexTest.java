@@ -19,7 +19,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.equalTo;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -68,10 +71,11 @@ public class ServiceIndexTest {
         Map<ShapeId, Trait> auth = serviceIndex.getAuthSchemes(
                 ShapeId.from("smithy.example#ServiceWithNoAuthTrait"));
 
-        assertThat(auth.keySet(), hasSize(3));
-        assertThat(auth, hasKey(HttpBasicAuthTrait.ID));
-        assertThat(auth, hasKey(HttpDigestAuthTrait.ID));
-        assertThat(auth, hasKey(HttpBearerAuthTrait.ID));
+        List<ShapeId> ids = new ArrayList<>(auth.keySet());
+        assertThat(ids, hasSize(3));
+        assertThat(ids.get(0), equalTo(HttpBasicAuthTrait.ID));
+        assertThat(ids.get(1), equalTo(HttpBearerAuthTrait.ID));
+        assertThat(ids.get(2), equalTo(HttpDigestAuthTrait.ID));
     }
 
     @Test
@@ -80,10 +84,11 @@ public class ServiceIndexTest {
         Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(
                 ShapeId.from("smithy.example#ServiceWithNoAuthTrait"));
 
-        assertThat(auth.keySet(), hasSize(3));
-        assertThat(auth, hasKey(HttpBasicAuthTrait.ID));
-        assertThat(auth, hasKey(HttpDigestAuthTrait.ID));
-        assertThat(auth, hasKey(HttpBearerAuthTrait.ID));
+        List<ShapeId> ids = new ArrayList<>(auth.keySet());
+        assertThat(ids, hasSize(3));
+        assertThat(ids.get(0), equalTo(HttpBasicAuthTrait.ID));
+        assertThat(ids.get(1), equalTo(HttpBearerAuthTrait.ID));
+        assertThat(ids.get(2), equalTo(HttpDigestAuthTrait.ID));
     }
 
     @Test
@@ -92,9 +97,10 @@ public class ServiceIndexTest {
         Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(
                 ShapeId.from("smithy.example#ServiceWithAuthTrait"));
 
+        List<ShapeId> ids = new ArrayList<>(auth.keySet());
         assertThat(auth.keySet(), hasSize(2));
-        assertThat(auth, hasKey(HttpBasicAuthTrait.ID));
-        assertThat(auth, hasKey(HttpDigestAuthTrait.ID));
+        assertThat(ids.get(0), equalTo(HttpBasicAuthTrait.ID));
+        assertThat(ids.get(1), equalTo(HttpDigestAuthTrait.ID));
     }
 
     @Test
@@ -104,10 +110,11 @@ public class ServiceIndexTest {
                 ShapeId.from("smithy.example#ServiceWithNoAuthTrait"),
                 ShapeId.from("smithy.example#OperationWithNoAuthTrait"));
 
-        assertThat(auth.keySet(), hasSize(3));
-        assertThat(auth, hasKey(HttpBasicAuthTrait.ID));
-        assertThat(auth, hasKey(HttpDigestAuthTrait.ID));
-        assertThat(auth, hasKey(HttpBearerAuthTrait.ID));
+        List<ShapeId> ids = new ArrayList<>(auth.keySet());
+        assertThat(ids, hasSize(3));
+        assertThat(ids.get(0), equalTo(HttpBasicAuthTrait.ID));
+        assertThat(ids.get(1), equalTo(HttpBearerAuthTrait.ID));
+        assertThat(ids.get(2), equalTo(HttpDigestAuthTrait.ID));
     }
 
     @Test
@@ -117,9 +124,10 @@ public class ServiceIndexTest {
                 ShapeId.from("smithy.example#ServiceWithAuthTrait"),
                 ShapeId.from("smithy.example#OperationWithNoAuthTrait"));
 
-        assertThat(auth.keySet(), hasSize(2));
-        assertThat(auth, hasKey(HttpBasicAuthTrait.ID));
-        assertThat(auth, hasKey(HttpDigestAuthTrait.ID));
+        List<ShapeId> ids = new ArrayList<>(auth.keySet());
+        assertThat(ids, hasSize(2));
+        assertThat(ids.get(0), equalTo(HttpBasicAuthTrait.ID));
+        assertThat(ids.get(1), equalTo(HttpDigestAuthTrait.ID));
     }
 
     @Test

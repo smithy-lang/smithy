@@ -127,7 +127,7 @@ public final class ServiceIndex implements KnowledgeIndex {
      *
      * <p>The returned map is provided in the same order as the values in the
      * {@code auth} trait if an auth trait is present, otherwise the result
-     * is returned in an undefined order.
+     * returned is ordered alphabetically by absolute shape id.
      *
      * <p>An empty map is returned if {@code service} cannot be found in the
      * model or is not a service shape.
@@ -167,7 +167,7 @@ public final class ServiceIndex implements KnowledgeIndex {
      *
      * <p>The returned map is provided in the same order as the values in the
      * {@code auth} trait if an auth trait is present, otherwise the result
-     * is returned in an undefined order.
+     * returned is ordered alphabetically by absolute shape id.
      *
      * <p>An empty map is returned if {@code service} shape cannot be found
      * in the model or is not a service shape. An empty map is returned if
