@@ -69,7 +69,26 @@
         "properties": {
           "bar": {
             "type": "number"
+          },
+          "baz": {
+            "$ref": "#/components/schemas/MyMap"
           }
+        }
+      },
+      "MyEnum": {
+        "type": "string",
+        "enum": [
+          "FOO",
+          "BAR"
+        ]
+      },
+      "MyMap": {
+        "type": "object",
+        "propertyNames": {
+          "$ref": "#/components/schemas/MyEnum"
+        },
+        "additionalProperties": {
+          "type": "string"
         }
       }
     }
