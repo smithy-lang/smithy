@@ -16,30 +16,37 @@
 package software.amazon.smithy.aws.apigateway.openapi;
 
 import java.util.List;
+import java.util.logging.Logger;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.openapi.OpenApiConfig;
 
 /**
- * Disables OpenAPI and JSON Schema features not supported by API Gateway.
+ * Sets default config settings for API Gateway.
+ *
+ * <p>By default, this disables OpenAPI and JSON Schema features not
+ * supported by API Gateway.</p>
  *
  * <p>API Gateway does not allow characters like "_". API Gateway
  * doesn't support the "default" trait or `int32` or `int64` "format"
  * values.
  */
 final class AddDefaultConfigSettings implements ApiGatewayMapper {
+    private static final Logger LOGGER = Logger.getLogger(AddDefaultConfigSettings.class.getName());
+    private static final ApiGatewayDefaults DEFAULT_VERSION = ApiGatewayDefaults.VERSION_2023_08_11;
+
     @Override
     public List<ApiGatewayConfig.ApiType> getApiTypes() {
         return null;
     }
 
     @Override
-    public void updateDefaultSettings(Model model, OpenApiConfig config) {
-        config.setAlphanumericOnlyRefs(true);
-        config.getDisableFeatures().add("default");
-        config.setDisableDefaultValues(true);
-        // If the `useIntegerType` config has been set, this assures that
-        // `int32` and `int64` formats are not set on those integer types.
-        // See https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-known-issues.html
-        config.setDisableIntegerFormat(true);
+    public void updateDefaultSettings(Model model, OpenApiConfig openApiConfig) {
+        ApiGatewayConfig config = openApiConfig.getExtensions(ApiGatewayConfig.class);
+        if (config.getApiGatewayDefaults() == null) {
+            LOGGER.warning(String.format("`apiGatewayDefaults` configuration not set for opeanapi plugin. Assuming %s.",
+                    DEFAULT_VERSION));
+            config.setApiGatewayDefaults(DEFAULT_VERSION);
+        }
+        config.getApiGatewayDefaults().setDefaults(openApiConfig);
     }
 }

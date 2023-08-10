@@ -20,6 +20,8 @@ operation HasDefault {
         foo: String = ""
         bar: StringList = []
         baz: DefaultEnum = "FOO"
+        withAlphaOnlyRef: Foo_Baz,
+        anInt: Long
     }
 }
 
@@ -31,3 +33,5 @@ enum DefaultEnum {
     FOO
     BAR
 }
+
+structure Foo_Baz {}

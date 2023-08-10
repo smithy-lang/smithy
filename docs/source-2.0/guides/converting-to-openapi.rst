@@ -1176,6 +1176,40 @@ dependency on ``software.amazon.smithy:smithy-aws-apigateway-openapi``.
 Amazon API Gateway configuration settings
 =========================================
 
+apiGatewayDefaults (``string``)
+    Sets recommended default configuration settings and allows for those defaults
+    to be disabled.
+
+    This setting can be set to one of the following:
+
+    * ``2023-08-11`` Set the defaults described below.
+    * ``DISABLED`` Disables setting defaults.
+
+    The ``2023-08-11`` version sets the following configuration settings:
+
+    * :ref:`alphanumericOnlyRefs <generate-openapi-jsonschema-setting-alphanumericOnlyRefs>`: ``true``
+    * :ref:`disableDefaultValues <generate-openapi-setting-disableDefaultValues>`: ``true``
+    * :ref:`disableIntegerFormat <generate-openapi-setting-disableIntegerFormat>`: ``true``
+    * :ref:`disableFeatures <generate-openapi-jsonschema-setting-disableFeatures>`: ``["default"]``
+
+    .. important::
+
+        This setting should be set explicitly to one of the allowed values.
+        If omitted, it will default to ``2023-08-11``.
+
+    .. code-block:: json
+        :caption: smithy-build.json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "example.weather#Weather",
+                    "apiGatewayDefaults": "2023-08-11"
+                }
+            }
+        }
+
 apiGatewayType (``string``)
     Defines the type of API Gateway to define in the generated OpenAPI model.
     This setting influences which API Gateway specific plugins apply
