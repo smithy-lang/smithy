@@ -221,7 +221,7 @@ the conflicting shapes.
     @output
     structure GetSomethingOutput {
         widget1: Widget
-        fooWidget: foo.example#Widget
+        widget2: FooWidget
     }
 
     structure Widget {}
