@@ -28,7 +28,8 @@ public final class AwsRuleSetExtension implements EndpointRuleSetExtension {
                 AwsBuiltIns.S3_USE_ARN_REGION,
                 AwsBuiltIns.S3_USE_GLOBAL_ENDPOINT,
                 AwsBuiltIns.S3_CONTROL_USE_ARN_REGION,
-                AwsBuiltIns.STS_USE_GLOBAL_ENDPOINT);
+                AwsBuiltIns.STS_USE_GLOBAL_ENDPOINT,
+                AwsBuiltIns.CREDENTIAL_SCOPE);
     }
 
     @Override

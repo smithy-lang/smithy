@@ -54,6 +54,19 @@ public final class AwsBuiltIns {
                     .build();
 
     /**
+     * Built-in parameter representing the AWS credential scope parameter for SDKs.
+     *
+     */
+    public static final Parameter CREDENTIAL_SCOPE =
+            Parameter.builder()
+                    .name("CredentialScope")
+                    .type(ParameterType.STRING)
+                    .builtIn("AWS::Auth::CredentialScope")
+                    .documentation("When set, this must be a single valid AWS region (e.g. 'us-east-1').")
+                    .required(false)
+                    .build();
+
+    /**
      * This MUST only be used by the S3 rules.
      */
     public static final Parameter S3_ACCELERATE =
