@@ -492,9 +492,10 @@ useIntegerType (``boolean``)
     By default, these shape types are converted with a type of ``number``.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "cloudformation": {
                     "service": "smithy.example#Queues",
