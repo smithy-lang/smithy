@@ -144,7 +144,7 @@ that builds an OpenAPI specification from a service for the
     :name: open-api-smithy-build-json
 
     {
-        "version": "2.0",
+        "version": "1.0",
         "plugins": {
             "openapi": {
                 "service": "example.weather#Weather",
@@ -181,9 +181,10 @@ service (``string``)
     For example, ``example.weather#Weather``.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather"
@@ -211,9 +212,10 @@ protocol (``string``)
           service provider found on the classpath.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -235,6 +237,7 @@ version (``string``)
         ``3.1.0`` will use JSON schema version ``draft2020-12`` for model schemas.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
             "version": "1.0",
@@ -254,9 +257,10 @@ tags (``boolean``)
     model to the OpenAPI model.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -273,9 +277,10 @@ supportedTags (``[string]``)
     ``true`` in order to have an effect.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -293,9 +298,10 @@ defaultBlobFormat (``string``)
     See `OpenAPI Data types`_ for more information.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -314,9 +320,10 @@ externalDocs (``[string]``)
     "Reference", and "Guide".
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -335,9 +342,10 @@ keepUnusedComponents (``boolean``)
     removed from the created specification.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -353,9 +361,10 @@ jsonContentType (``string``)
     JSON-based protocols.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -372,9 +381,10 @@ forbidGreedyLabels (``boolean``)
     "/{foo+}".
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -392,9 +402,10 @@ removeGreedyParameterSuffix (``boolean``)
     If enabled, the parameter name will instead be "foo".
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -416,9 +427,10 @@ onHttpPrefixHeaders (``string``)
     * WARN: The header is omitted from the OpenAPI model and a warning is logged.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -434,9 +446,10 @@ ignoreUnsupportedTraits (``boolean``)
     ``endpoint`` and ``hostLabel`` are encountered.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -468,9 +481,10 @@ substitutions (``Map<String, any>``)
         change.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -497,9 +511,10 @@ jsonAdd (``Map<String, Node>``)
     result as needed.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -525,9 +540,10 @@ useIntegerType (``boolean``)
     "number".
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -545,9 +561,10 @@ disableIntegerFormat (``boolean``)
     configuration setting.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -614,6 +631,7 @@ onErrorStatusConflict (``String``)
     By default, this setting is set to ``oneOf``.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
             "version": "1.0",
@@ -651,9 +669,10 @@ useJsonName (``boolean``)
     automatically set to ``true`` depending on the protocol being converted.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -671,9 +690,10 @@ defaultTimestampFormat (``string``)
     "epoch-seconds", or "http-date".
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -696,9 +716,10 @@ unionStrategy (``string``)
       structure.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -723,9 +744,10 @@ mapStrategy (``string``)
       is applied.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -741,9 +763,10 @@ schemaDocumentExtensions (``Map<String, any>``)
     Any existing value is overwritten.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -764,9 +787,10 @@ disableFeatures (``[string]``)
     generated OpenAPI model.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -787,9 +811,10 @@ supportNonNumericFloats (``boolean``)
     By default, these non-numeric values are not supported.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -838,9 +863,10 @@ disableDefaultValues (``boolean``)
     Set to true to disable adding default values.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -921,9 +947,10 @@ disableIntEnums (``boolean``)
     Set to true to disable setting the ``enum`` property for intEnum shapes.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -1164,9 +1191,10 @@ apiGatewayType (``string``)
       is inadvertently placed on the classpath by a dependency.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -1180,9 +1208,10 @@ disableCloudFormationSubstitution (``boolean``)
     into CloudFormation intrinsic functions.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -1201,9 +1230,10 @@ additionalAllowedCorsHeaders (``[string]``)
     headers will be omitted.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
