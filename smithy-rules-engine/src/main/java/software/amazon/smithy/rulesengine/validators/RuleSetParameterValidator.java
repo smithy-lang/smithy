@@ -147,15 +147,18 @@ public final class RuleSetParameterValidator extends AbstractValidator {
         List<ValidationEvent> errors = new ArrayList<>();
         Set<String> matchedParams = new HashSet<>();
         for (Parameter parameter : ruleSetParams) {
-            // Don't worry about checking built-in parameters.
+            String name = parameter.getName().toString();
+
+            // Don't worry about checking built-in based parameters.
             if (parameter.isBuiltIn()) {
+                matchedParams.add(name);
                 continue;
             }
 
-            String name = parameter.getName().toString();
             if (!modelParams.containsKey(name)) {
                 errors.add(parameterError(serviceShape, parameter, "RuleSet.UnmatchedName",
-                        String.format("Parameter `%s` exists in ruleset but not in service model", name)));
+                        String.format("Parameter `%s` exists in ruleset but not in service model, existing params: %s",
+                                name, String.join(", ", modelParams.keySet()))));
             } else {
                 matchedParams.add(name);
                 if (parameter.getType() != modelParams.get(name).getType()) {
@@ -167,8 +170,10 @@ public final class RuleSetParameterValidator extends AbstractValidator {
 
         for (Map.Entry<String, Parameter> entry : modelParams.entrySet()) {
             if (!matchedParams.contains(entry.getKey())) {
-                errors.add(parameterError(serviceShape, entry.getValue(), "RuleSet.UnmatchedName",
-                        String.format("Parameter `%s` exists in service model but not in ruleset", entry.getKey())));
+                errors.add(parameterError(serviceShape, serviceShape.expectTrait(EndpointRuleSetTrait.class),
+                        "RuleSet.UnmatchedName",
+                        String.format("Parameter `%s` exists in service model but not in ruleset, existing params: %s",
+                                entry.getKey(), matchedParams)));
             }
         }
 

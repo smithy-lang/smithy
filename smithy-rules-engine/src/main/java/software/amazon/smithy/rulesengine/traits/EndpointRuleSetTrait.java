@@ -66,7 +66,7 @@ public final class EndpointRuleSetTrait extends AbstractTrait implements ToSmith
 
         @Override
         public Trait createTrait(ShapeId target, Node value) {
-            EndpointRuleSetTrait trait = builder()
+            EndpointRuleSetTrait trait = builder().sourceLocation(value)
                     .ruleSet(value)
                     .build();
             trait.setNodeCache(value);
