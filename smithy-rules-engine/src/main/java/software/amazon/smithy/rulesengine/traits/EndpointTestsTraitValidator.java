@@ -16,6 +16,7 @@ import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.NodeValidationVisitor;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -51,7 +52,19 @@ public final class EndpointTestsTraitValidator extends AbstractValidator {
                     if (operationNameMap.containsKey(operationName)) {
                         StructureShape inputShape = model.expectShape(
                                 operationNameMap.get(operationName).getInputShape(), StructureShape.class);
-                        events.addAll(validateOperationInput(model, serviceShape, inputShape, testOperationInput));
+
+                        List<ValidationEvent> operationInputEvents = validateOperationInput(model, serviceShape,
+                                inputShape, testOperationInput);
+
+                        // Error test cases may use invalid inputs as the mechanism to trigger their error,
+                        // so lower the severity before emitting.
+                        if (testCase.getExpect().getError().isPresent()) {
+                            for (ValidationEvent event : operationInputEvents) {
+                                events.add(event.toBuilder().severity(Severity.WARNING).build());
+                            }
+                        } else {
+                            events.addAll(operationInputEvents);
+                        }
                     }
                 }
             }

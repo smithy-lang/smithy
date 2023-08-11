@@ -25,12 +25,18 @@ use smithy.rules#staticContextParams
         "ExtraParameter": {
             "type": "string",
             "documentation": "docs"
+        },
+        "ExtraBuiltIn": {
+            "type": "string",
+            "documentation": "docs",
+            "builtIn": "SDK::Endpoint"
         }
     },
     "rules": []
 })
 @clientContextParams(
-    Region: {type: "string", documentation: "docs"}
+    Region: {type: "string", documentation: "docs"},
+    ExtraBuiltIn: {type: "string", documentation: "docs"}
 )
 service FizzBuzz {
     operations: [GetResource, GetAnotherResource]
