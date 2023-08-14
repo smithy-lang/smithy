@@ -721,7 +721,16 @@ string pattern
 
 /// Marks a structure member as required, meaning a value for the member MUST
 /// be present.
-@trait(selector: "structure > member")
+@trait(
+    selector: "structure > member"
+    breakingChanges: [
+        {
+            change: "add"
+            severity: "WARNING"
+            message: "If any consumers were previously omitting this member in operation inputs, making it required is backwards incompatible"
+        }
+    ]
+)
 structure required {}
 
 /// Configures a structure member's resource property mapping behavior.
