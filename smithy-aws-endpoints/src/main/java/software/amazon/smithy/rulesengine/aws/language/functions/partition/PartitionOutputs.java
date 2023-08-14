@@ -29,16 +29,16 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
     private static final String DUAL_STACK_DNS_SUFFIX = "dualStackDnsSuffix";
     private static final String SUPPORTS_FIPS = "supportsFIPS";
     private static final String SUPPORTS_DUAL_STACK = "supportsDualStack";
-    private static final String DEFAULT_GLOBAL_REGION = "defaultGlobalRegion";
+    private static final String IMPLICIT_GLOBAL_REGION = "implicitGlobalRegion";
     private static final List<String> PROPERTIES = ListUtils.of(NAME, DNS_SUFFIX, DUAL_STACK_DNS_SUFFIX,
-            SUPPORTS_FIPS, SUPPORTS_DUAL_STACK, DEFAULT_GLOBAL_REGION);
+            SUPPORTS_FIPS, SUPPORTS_DUAL_STACK, IMPLICIT_GLOBAL_REGION);
 
     private final String name;
     private final String dnsSuffix;
     private final String dualStackDnsSuffix;
     private final boolean supportsFips;
     private final boolean supportsDualStack;
-    private final String defaultGlobalRegion;
+    private final String implicitGlobalRegion;
     private final SourceLocation sourceLocation;
 
     private PartitionOutputs(Builder builder) {
@@ -48,7 +48,7 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
         dualStackDnsSuffix = builder.dualStackDnsSuffix;
         supportsFips = builder.supportsFips;
         supportsDualStack = builder.supportsDualStack;
-        defaultGlobalRegion = builder.defaultGlobalRegion;
+        implicitGlobalRegion = builder.implicitGlobalRegion;
     }
 
     /**
@@ -76,7 +76,7 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
         objectNode.getStringMember(DUAL_STACK_DNS_SUFFIX, builder::dualStackDnsSuffix);
         objectNode.getBooleanMember(SUPPORTS_FIPS, builder::supportsFips);
         objectNode.getBooleanMember(SUPPORTS_DUAL_STACK, builder::supportsDualStack);
-        objectNode.getStringMember(DEFAULT_GLOBAL_REGION, builder::defaultGlobalRegion);
+        objectNode.getStringMember(IMPLICIT_GLOBAL_REGION, builder::implicitGlobalRegion);
 
         return builder.build();
     }
@@ -127,13 +127,13 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
     }
 
     /**
-     * Gets this partition's default global region: the region that
+     * Gets this partition's implicit global region: the region that
      * non-regionalized (global) services should use for signing.
      *
-     * @return returns the partition's default global region.
+     * @return returns the partition's implicit global region.
      */
-    public Optional<String> getDefaultGlobalRegion() {
-        return Optional.ofNullable(defaultGlobalRegion);
+    public Optional<String> getImplicitGlobalRegion() {
+        return Optional.ofNullable(implicitGlobalRegion);
     }
 
     @Override
@@ -149,7 +149,7 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
                 .dualStackDnsSuffix(dualStackDnsSuffix)
                 .supportsFips(supportsFips)
                 .supportsDualStack(supportsDualStack)
-                .defaultGlobalRegion(defaultGlobalRegion);
+                .implicitGlobalRegion(implicitGlobalRegion);
     }
 
     @Override
@@ -164,8 +164,8 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
             builder.withMember(NAME, name);
         }
 
-        if (defaultGlobalRegion != null) {
-            builder.withMember(DEFAULT_GLOBAL_REGION, defaultGlobalRegion);
+        if (implicitGlobalRegion != null) {
+            builder.withMember(IMPLICIT_GLOBAL_REGION, implicitGlobalRegion);
         }
         return builder.build();
     }
@@ -183,14 +183,14 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
                 && Objects.equals(name, partitionOutputs.name)
                 && Objects.equals(dnsSuffix, partitionOutputs.dnsSuffix)
                 && Objects.equals(dualStackDnsSuffix, partitionOutputs.dualStackDnsSuffix)
-                && Objects.equals(defaultGlobalRegion, partitionOutputs.defaultGlobalRegion);
+                && Objects.equals(implicitGlobalRegion, partitionOutputs.implicitGlobalRegion);
 
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(name, dnsSuffix, dualStackDnsSuffix,
-                supportsFips, supportsDualStack, defaultGlobalRegion);
+                supportsFips, supportsDualStack, implicitGlobalRegion);
     }
 
     /**
@@ -202,7 +202,7 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
         private String dualStackDnsSuffix;
         private boolean supportsFips;
         private boolean supportsDualStack;
-        private String defaultGlobalRegion;
+        private String implicitGlobalRegion;
 
         public Builder(FromSourceLocation sourceLocation) {
             super(sourceLocation);
@@ -233,8 +233,8 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
             return this;
         }
 
-        public Builder defaultGlobalRegion(String defaultGlobalRegion) {
-            this.defaultGlobalRegion = defaultGlobalRegion;
+        public Builder implicitGlobalRegion(String implicitGlobalRegion) {
+            this.implicitGlobalRegion = implicitGlobalRegion;
             return this;
         }
 

@@ -13,7 +13,7 @@
         "dualStackDnsSuffix": "api.aws",
         "supportsFIPS": true,
         "supportsDualStack": true,
-        "defaultGlobalRegion": "us-east-1"
+        "implicitGlobalRegion": "us-east-1"
       }
     },
     {

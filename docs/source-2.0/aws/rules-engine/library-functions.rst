@@ -94,7 +94,7 @@ properties:
     * - supportsDualStack
       - ``bool``
       - Indicates whether the partition supports dual-stack endpoints.
-    * - defaultGlobalRegion
+    * - implicitGlobalRegion
       - ``string``
       - The region used by non-regionalized (global) services for signing.
 
