@@ -29,8 +29,11 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.traits.AuthDefinitionTrait;
 import software.amazon.smithy.model.traits.AuthTrait;
+import software.amazon.smithy.model.traits.OptionalAuthTrait;
 import software.amazon.smithy.model.traits.ProtocolDefinitionTrait;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.model.traits.synthetic.NoAuthTrait;
+import software.amazon.smithy.utils.MapUtils;
 
 /**
  * An index that resolves service protocols and auth schemes.
@@ -61,6 +64,25 @@ public final class ServiceIndex implements KnowledgeIndex {
 
     public static ServiceIndex of(Model model) {
         return model.getKnowledge(ServiceIndex.class, ServiceIndex::new);
+    }
+
+     /**
+     * Defines the type of auth schemes returned by {@link #getEffectiveAuthSchemes}.
+     */
+    public enum AuthSchemeMode {
+
+        /**
+         * Use only the modeled auth schemes. This is the default.
+         */
+        MODELED,
+
+        /**
+         * Use the modeled auth schemes, as well as the synthetic {@link NoAuthTrait} where applicable.
+         *
+         * <p>The Smithy Reference Architecture recommends using the {@code smithy.api#noAuth} auth scheme to represent
+         * no authentication which is available as the {@link NoAuthTrait}.
+         */
+        NO_AUTH_AWARE;
     }
 
     /**
@@ -155,6 +177,30 @@ public final class ServiceIndex implements KnowledgeIndex {
     }
 
     /**
+     * Gets a list of effective authentication schemes applied to a service, based on the AuthSchemeMode.
+     *
+     * <p>If AuthSchemeMode is {@code MODELED}, which is the default, the behavior is same as
+     * {@link #getEffectiveAuthSchemes(ToShapeId)}.
+     *
+     * <p>If AuthSchemeMode is {@code NO_AUTH_AWARE}, the behavior is same, except that if the service has no effective
+     * auth schemes, instead of an empty map, it returns the {@code smithy.api#noAuth} auth scheme. It avoids having to
+     * special case handling an empty result. The returned map will always contain at least 1 entry.
+     *
+     * @param service Service to get the effective authentication schemes of.
+     * @param authSchemeMode AuthSchemeMode to determine which authentication schemes to include.
+     * @return Returns a map of the trait shape ID to the auth trait itself.
+     */
+    public Map<ShapeId, Trait> getEffectiveAuthSchemes(ToShapeId service, AuthSchemeMode authSchemeMode) {
+        Map<ShapeId, Trait> authSchemes = getEffectiveAuthSchemes(service);
+        if (authSchemeMode == AuthSchemeMode.NO_AUTH_AWARE) {
+            if (authSchemes.isEmpty()) {
+                authSchemes = MapUtils.of(NoAuthTrait.ID, new NoAuthTrait());
+            }
+        }
+        return authSchemes;
+    }
+
+    /**
      * Gets a list of effective authentication schemes applied to an operation
      * bound within a service.
      *
@@ -198,7 +244,49 @@ public final class ServiceIndex implements KnowledgeIndex {
                 .orElse(Collections.emptyMap());
     }
 
-    private Map<ShapeId, Trait> getAuthTraitValues(Shape service, Shape subject) {
+    /**
+     * Gets a list of effective authentication schemes applied to an operation
+     * bound within a service, based on the AuthSchemeMode.
+     *
+     * <p>If AuthSchemeMode is {@code MODELED}, which is the default, the behavior is same as
+     * {@link #getEffectiveAuthSchemes(ToShapeId, ToShapeId)}.
+     *
+     * <p>If AuthSchemeMode is {@code NO_AUTH_AWARE}, the behavior is same, with the following differences:
+     * If the operation has no effective auth schemes, instead of an empty map, it returns the {@code smithy.api#noAuth}
+     * auth scheme.
+     * If the operation has the {@code smithy.api#optionalAuth} trait, it adds {@code smithy.api#noAuth} to the end.
+     *
+     * <p>Using {@code NO_AUTH_AWARE} accounts for {@code smithy.api#optionalAuth} and avoids having to special case
+     * handling an empty result. The returned map will always contain at least 1 entry.
+     *
+     * <p>The {@code smithy.api#noAuth} scheme, if present, is always the last scheme.
+     *
+     * @param service Service the operation is within.
+     * @param operation Operation to get the effective authentication schemes of.
+     * @param authSchemeMode AuthSchemeMode to determine which authentication schemes to include.
+     * @return Returns a map of the trait shape ID to the auth trait itself.
+     */
+    public Map<ShapeId, Trait> getEffectiveAuthSchemes(ToShapeId service,
+                                                       ToShapeId operation,
+                                                       AuthSchemeMode authSchemeMode) {
+        Map<ShapeId, Trait> authSchemes = getEffectiveAuthSchemes(service, operation);
+        if (authSchemeMode == AuthSchemeMode.NO_AUTH_AWARE) {
+            if (authSchemes.isEmpty() || hasOptionalAuth(operation)) {
+                authSchemes = new LinkedHashMap<>(authSchemes);
+                authSchemes.put(NoAuthTrait.ID, new NoAuthTrait());
+            }
+        }
+        return authSchemes;
+    }
+
+    private boolean hasOptionalAuth(ToShapeId operation) {
+        return getModel()
+                .getShape(operation.toShapeId())
+                .filter(shape -> shape.hasTrait(OptionalAuthTrait.class))
+                .isPresent();
+    }
+
+    private static Map<ShapeId, Trait> getAuthTraitValues(Shape service, Shape subject) {
         if (!subject.hasTrait(AuthTrait.class)) {
             return null;
         }

@@ -16,12 +16,13 @@
 package software.amazon.smithy.model.knowledge;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.equalTo;
+import static software.amazon.smithy.model.knowledge.ServiceIndex.AuthSchemeMode.NO_AUTH_AWARE;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.AfterAll;
@@ -33,8 +34,11 @@ import software.amazon.smithy.model.traits.HttpBasicAuthTrait;
 import software.amazon.smithy.model.traits.HttpBearerAuthTrait;
 import software.amazon.smithy.model.traits.HttpDigestAuthTrait;
 import software.amazon.smithy.model.traits.Trait;
+import software.amazon.smithy.model.traits.synthetic.NoAuthTrait;
 
 public class ServiceIndexTest {
+
+    private static final ShapeId CUSTOM_AUTH_ID = ShapeId.from("smithy.example#customAuth");
 
     private static Model model;
 
@@ -52,7 +56,7 @@ public class ServiceIndexTest {
     }
 
     @Test
-    public void returnsProtocolsOfService() {
+    public void protocolsOfService() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("service-index-loads-protocols.smithy"))
                 .assemble()
@@ -66,88 +70,193 @@ public class ServiceIndexTest {
     }
 
     @Test
-    public void returnsAuthSchemesOfService() {
+    public void authSchemesOfService() {
         ServiceIndex serviceIndex = ServiceIndex.of(model);
         Map<ShapeId, Trait> auth = serviceIndex.getAuthSchemes(
-                ShapeId.from("smithy.example#ServiceWithNoAuthTrait"));
-
-        List<ShapeId> ids = new ArrayList<>(auth.keySet());
-        assertThat(ids, hasSize(3));
-        assertThat(ids.get(0), equalTo(HttpBasicAuthTrait.ID));
-        assertThat(ids.get(1), equalTo(HttpBearerAuthTrait.ID));
-        assertThat(ids.get(2), equalTo(HttpDigestAuthTrait.ID));
+                ShapeId.from("smithy.example#ServiceWithoutAuthTrait"));
+        assertAuthSchemes(auth, HttpBasicAuthTrait.ID, HttpBearerAuthTrait.ID, HttpDigestAuthTrait.ID, CUSTOM_AUTH_ID);
     }
 
     @Test
-    public void getsAuthSchemesOfServiceWithNoAuthTrait() {
+    public void authSchemesOfServiceWithoutAuthTrait() {
         ServiceIndex serviceIndex = ServiceIndex.of(model);
-        Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(
-                ShapeId.from("smithy.example#ServiceWithNoAuthTrait"));
+        ShapeId service = ShapeId.from("smithy.example#ServiceWithoutAuthTrait");
 
-        List<ShapeId> ids = new ArrayList<>(auth.keySet());
-        assertThat(ids, hasSize(3));
-        assertThat(ids.get(0), equalTo(HttpBasicAuthTrait.ID));
-        assertThat(ids.get(1), equalTo(HttpBearerAuthTrait.ID));
-        assertThat(ids.get(2), equalTo(HttpDigestAuthTrait.ID));
+        Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(service);
+        assertAuthSchemes(auth, HttpBasicAuthTrait.ID, HttpBearerAuthTrait.ID, HttpDigestAuthTrait.ID, CUSTOM_AUTH_ID);
+
+        auth = serviceIndex.getEffectiveAuthSchemes(service, NO_AUTH_AWARE);
+        assertAuthSchemes(auth, HttpBasicAuthTrait.ID, HttpBearerAuthTrait.ID, HttpDigestAuthTrait.ID, CUSTOM_AUTH_ID);
     }
 
     @Test
-    public void getsAuthSchemesOfServiceWithAuthTrait() {
+    public void authSchemesOfServiceWithAuthTrait() {
         ServiceIndex serviceIndex = ServiceIndex.of(model);
-        Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(
-                ShapeId.from("smithy.example#ServiceWithAuthTrait"));
+        ShapeId service = ShapeId.from("smithy.example#ServiceWithAuthTrait");
 
-        List<ShapeId> ids = new ArrayList<>(auth.keySet());
-        assertThat(auth.keySet(), hasSize(2));
-        assertThat(ids.get(0), equalTo(HttpBasicAuthTrait.ID));
-        assertThat(ids.get(1), equalTo(HttpDigestAuthTrait.ID));
+        Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(service);
+        assertAuthSchemes(auth, HttpBasicAuthTrait.ID, HttpDigestAuthTrait.ID);
+
+        auth = serviceIndex.getEffectiveAuthSchemes(service, NO_AUTH_AWARE);
+        assertAuthSchemes(auth, HttpBasicAuthTrait.ID, HttpDigestAuthTrait.ID);
     }
 
     @Test
-    public void getsAuthSchemesOfOperationWithNoAuthTraitAndServiceWithNoAuthTrait() {
+    public void authSchemesOfServiceWithEmptyAuthTrait() {
         ServiceIndex serviceIndex = ServiceIndex.of(model);
-        Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(
-                ShapeId.from("smithy.example#ServiceWithNoAuthTrait"),
-                ShapeId.from("smithy.example#OperationWithNoAuthTrait"));
+        ShapeId service = ShapeId.from("smithy.example#ServiceWithEmptyAuthTrait");
 
-        List<ShapeId> ids = new ArrayList<>(auth.keySet());
-        assertThat(ids, hasSize(3));
-        assertThat(ids.get(0), equalTo(HttpBasicAuthTrait.ID));
-        assertThat(ids.get(1), equalTo(HttpBearerAuthTrait.ID));
-        assertThat(ids.get(2), equalTo(HttpDigestAuthTrait.ID));
+        Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(service);
+        assertAuthSchemes(auth);
+
+        auth = serviceIndex.getEffectiveAuthSchemes(service, NO_AUTH_AWARE);
+        assertAuthSchemes(auth, NoAuthTrait.ID);
     }
 
     @Test
-    public void getsAuthSchemesOfOperationWithNoAuthTraitAndServiceWithAuthTrait() {
+    public void authSchemesOfServiceWithoutAuthDefinitionTraits() {
         ServiceIndex serviceIndex = ServiceIndex.of(model);
-        Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(
-                ShapeId.from("smithy.example#ServiceWithAuthTrait"),
-                ShapeId.from("smithy.example#OperationWithNoAuthTrait"));
+        ShapeId service = ShapeId.from("smithy.example#ServiceWithoutAuthDefinitionTraits");
 
-        List<ShapeId> ids = new ArrayList<>(auth.keySet());
-        assertThat(ids, hasSize(2));
-        assertThat(ids.get(0), equalTo(HttpBasicAuthTrait.ID));
-        assertThat(ids.get(1), equalTo(HttpDigestAuthTrait.ID));
+        Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(service);
+        assertAuthSchemes(auth);
+
+        auth = serviceIndex.getEffectiveAuthSchemes(service, NO_AUTH_AWARE);
+        assertAuthSchemes(auth, NoAuthTrait.ID);
     }
 
     @Test
-    public void getsAuthSchemesOfOperationWithAuthTrait() {
+    public void authSchemesOfOperationWithoutAuthTraitAndServiceWithoutAuthTrait() {
+        ServiceIndex serviceIndex = ServiceIndex.of(model);
+        ShapeId service = ShapeId.from("smithy.example#ServiceWithoutAuthTrait");
+        ShapeId operation = ShapeId.from("smithy.example#OperationWithoutAuthTrait");
+
+        Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(service, operation);
+        assertAuthSchemes(auth, HttpBasicAuthTrait.ID, HttpBearerAuthTrait.ID, HttpDigestAuthTrait.ID, CUSTOM_AUTH_ID);
+
+        auth = serviceIndex.getEffectiveAuthSchemes(service, operation, NO_AUTH_AWARE);
+        assertAuthSchemes(auth, HttpBasicAuthTrait.ID, HttpBearerAuthTrait.ID, HttpDigestAuthTrait.ID, CUSTOM_AUTH_ID);
+    }
+
+    @Test
+    public void authSchemesOfOperationWithoutAuthTraitAndServiceWithAuthTrait() {
+        ServiceIndex serviceIndex = ServiceIndex.of(model);
+        ShapeId service = ShapeId.from("smithy.example#ServiceWithAuthTrait");
+        ShapeId operation = ShapeId.from("smithy.example#OperationWithoutAuthTrait");
+
+        Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(service, operation);
+        assertAuthSchemes(auth, HttpBasicAuthTrait.ID, HttpDigestAuthTrait.ID);
+
+        auth = serviceIndex.getEffectiveAuthSchemes(service, operation, NO_AUTH_AWARE);
+        assertAuthSchemes(auth, HttpBasicAuthTrait.ID, HttpDigestAuthTrait.ID);
+    }
+
+    @Test
+    public void authSchemesOfOperationWithoutAuthTraitAndServiceWithEmptyAuthTrait() {
+        ServiceIndex serviceIndex = ServiceIndex.of(model);
+        ShapeId service = ShapeId.from("smithy.example#ServiceWithEmptyAuthTrait");
+        ShapeId operation = ShapeId.from("smithy.example#OperationWithoutAuthTrait");
+
+        Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(service, operation);
+        assertAuthSchemes(auth);
+
+        auth = serviceIndex.getEffectiveAuthSchemes(service, operation, NO_AUTH_AWARE);
+        assertAuthSchemes(auth, NoAuthTrait.ID);
+    }
+
+    @Test
+    public void authSchemesOfOperationWithAuthTrait() {
         ServiceIndex serviceIndex = ServiceIndex.of(model);
         Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(
                 ShapeId.from("smithy.example#ServiceWithAuthTrait"),
                 ShapeId.from("smithy.example#OperationWithAuthTrait"));
-
-        assertThat(auth.keySet(), hasSize(1));
-        assertThat(auth, hasKey(HttpDigestAuthTrait.ID));
+        assertAuthSchemes(auth, HttpDigestAuthTrait.ID);
     }
 
     @Test
-    public void returnsAnEmptyCollectionWhenTheServiceDoesNotExist() {
+    public void authSchemesOfOperationWithEmptyAuthTrait() {
         ServiceIndex serviceIndex = ServiceIndex.of(model);
-        Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(
-                ShapeId.from("smithy.example#Invalid"),
-                ShapeId.from("smithy.example#OperationWithAuthTrait"));
+        ShapeId service = ShapeId.from("smithy.example#ServiceWithAuthTrait");
+        ShapeId operation = ShapeId.from("smithy.example#OperationWithEmptyAuthTrait");
 
-        assertThat(auth.keySet(), empty());
+        Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(service, operation);
+        assertAuthSchemes(auth);
+
+        auth = serviceIndex.getEffectiveAuthSchemes(service, operation, NO_AUTH_AWARE);
+        assertAuthSchemes(auth, NoAuthTrait.ID);
+    }
+
+    @Test
+    public void authSchemesOfOperationWithOptionalAuthTrait() {
+        ServiceIndex serviceIndex = ServiceIndex.of(model);
+        ShapeId service = ShapeId.from("smithy.example#ServiceWithAuthTrait");
+        ShapeId operation = ShapeId.from("smithy.example#OperationWithOptionalAuthTrait");
+
+        Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(service, operation);
+        assertAuthSchemes(auth, HttpBasicAuthTrait.ID, HttpDigestAuthTrait.ID);
+
+        auth = serviceIndex.getEffectiveAuthSchemes(service, operation, NO_AUTH_AWARE);
+        assertAuthSchemes(auth, HttpBasicAuthTrait.ID, HttpDigestAuthTrait.ID, NoAuthTrait.ID);
+    }
+
+    // Test to assert that smithy.api#noAuth trait is not part of traits that are sorted alphabetically, but last.
+    // The authSchemesOfOperationWithOptionalAuthTrait() test above doesn't really assert that, because
+    // smithy.api#noAuth would have been last if included in sorting.
+    @Test
+    public void authSchemesOfOperationWithOptionalAuthTraitAndServiceWithoutAuthTrait() {
+        ServiceIndex serviceIndex = ServiceIndex.of(model);
+        ShapeId service = ShapeId.from("smithy.example#ServiceWithoutAuthTrait");
+        ShapeId operation = ShapeId.from("smithy.example#OperationWithOptionalAuthTrait");
+
+        Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(service, operation);
+        assertAuthSchemes(auth, HttpBasicAuthTrait.ID, HttpBearerAuthTrait.ID, HttpDigestAuthTrait.ID, CUSTOM_AUTH_ID);
+
+        auth = serviceIndex.getEffectiveAuthSchemes(service, operation, NO_AUTH_AWARE);
+        assertAuthSchemes(auth, HttpBasicAuthTrait.ID, HttpBearerAuthTrait.ID, HttpDigestAuthTrait.ID, CUSTOM_AUTH_ID,
+                NoAuthTrait.ID);
+    }
+
+    @Test
+    public void authSchemesOfInvalidService() {
+        ServiceIndex serviceIndex = ServiceIndex.of(model);
+        ShapeId service = ShapeId.from("smithy.example#Invalid");
+
+        Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(service);
+        assertAuthSchemes(auth);
+
+        auth = serviceIndex.getEffectiveAuthSchemes(service, NO_AUTH_AWARE);
+        assertAuthSchemes(auth, NoAuthTrait.ID);
+    }
+
+    @Test
+    public void authSchemesOfInvalidServiceWithInvalidOperation() {
+        ServiceIndex serviceIndex = ServiceIndex.of(model);
+        ShapeId service = ShapeId.from("smithy.example#Invalid");
+        ShapeId operation = ShapeId.from("smithy.example#OperationWithAuthTrait");
+
+        Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(service, operation);
+        assertAuthSchemes(auth);
+
+        auth = serviceIndex.getEffectiveAuthSchemes(service, operation, NO_AUTH_AWARE);
+        assertAuthSchemes(auth, NoAuthTrait.ID);
+    }
+
+    @Test
+    public void authSchemesOfServiceWithInvalidOperation() {
+        ServiceIndex serviceIndex = ServiceIndex.of(model);
+        ShapeId service = ShapeId.from("smithy.example#ServiceWithoutAuthTrait");
+        ShapeId operation = ShapeId.from("smithy.example#InvalidOperation");
+
+        Map<ShapeId, Trait> auth = serviceIndex.getEffectiveAuthSchemes(service, operation);
+        assertAuthSchemes(auth);
+
+        auth = serviceIndex.getEffectiveAuthSchemes(service, operation, NO_AUTH_AWARE);
+        assertAuthSchemes(auth, NoAuthTrait.ID);
+    }
+
+    private void assertAuthSchemes(Map<ShapeId, Trait> auth, ShapeId... authSchemes) {
+        List<ShapeId> ids = new ArrayList<>(auth.keySet());
+        assertThat(ids, hasSize(authSchemes.length));
+        assertThat(ids, equalTo(Arrays.asList(authSchemes)));
     }
 }
