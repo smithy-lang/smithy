@@ -131,6 +131,51 @@ public class ModelAssemblerTest {
     }
 
     @Test
+    public void addsExplicitTraitsToBuiltModel() {
+        StringShape shape = StringShape.builder().id("ns.foo#Bar").build();
+        SuppressTrait trait = SuppressTrait.builder().build();
+        ValidatedResult<Model> result = new ModelAssembler()
+                .addModel(Model.assembler().addShape(shape).assemble().unwrap())
+                .addTrait(shape.toShapeId(), trait)
+                .assemble();
+
+        assertThat(result.getValidationEvents(), empty());
+        Shape resultShape = result.unwrap().getShape(ShapeId.from("ns.foo#Bar")).get();
+        assertTrue(resultShape.findTrait("smithy.api#suppress").isPresent());
+        assertTrue(resultShape.getTrait(SuppressTrait.class).isPresent());
+    }
+
+    @Test
+    public void addsExplicitTraitsToUnparsedModel() {
+        String unparsed = "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"shapes\": { \"ns.foo#Bar\": { \"type\": \"string\"}}}";
+        SuppressTrait trait = SuppressTrait.builder().build();
+        ValidatedResult<Model> result = new ModelAssembler()
+                .addUnparsedModel(SourceLocation.NONE.getFilename(), unparsed)
+                .addTrait(ShapeId.from("ns.foo#Bar"), trait)
+                .assemble();
+
+        assertThat(result.getValidationEvents(), empty());
+        Shape resultShape = result.unwrap().getShape(ShapeId.from("ns.foo#Bar")).get();
+        assertTrue(resultShape.findTrait("smithy.api#suppress").isPresent());
+        assertTrue(resultShape.getTrait(SuppressTrait.class).isPresent());
+    }
+
+    @Test
+    public void addsExplicitTraitsToParsedDocumentNode() {
+        String unparsed = "{\"smithy\": \"" + Model.MODEL_VERSION + "\", \"shapes\": { \"ns.foo#Bar\": { \"type\": \"string\"}}}";
+        SuppressTrait trait = SuppressTrait.builder().build();
+        ValidatedResult<Model> result = new ModelAssembler()
+                .addDocumentNode(Node.parse(unparsed, SourceLocation.NONE.getFilename()))
+                .addTrait(ShapeId.from("ns.foo#Bar"), trait)
+                .assemble();
+
+        assertThat(result.getValidationEvents(), empty());
+        Shape resultShape = result.unwrap().getShape(ShapeId.from("ns.foo#Bar")).get();
+        assertTrue(resultShape.findTrait("smithy.api#suppress").isPresent());
+        assertTrue(resultShape.getTrait(SuppressTrait.class).isPresent());
+    }
+
+    @Test
     public void addsExplicitDocumentNode_1_0_0() {
         ObjectNode node = Node.objectNode()
                 .withMember("smithy", "1.0")

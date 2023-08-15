@@ -527,11 +527,6 @@ public final class ModelAssembler {
         // Register manually added shapes. Skip members because they are part of aggregate shapes.
         shapes.forEach(processor::putCreatedShape);
 
-        // Register manually added traits.
-        for (Pair<ShapeId, Trait> entry : pendingTraits) {
-            processor.accept(LoadOperation.ApplyTrait.from(entry.getKey(), entry.getValue()));
-        }
-
         // Register manually added Models.
         for (Model model : mergeModels) {
             // Add manually added metadata from the Model.
@@ -559,6 +554,12 @@ public final class ModelAssembler {
             } catch (SourceException e) {
                 processor.accept(new LoadOperation.Event(ValidationEvent.fromSourceException(e)));
             }
+        }
+
+        // Register manually added traits. Do this after loading any other sources of shapes
+        // so that traits can be applied to them.
+        for (Pair<ShapeId, Trait> entry : pendingTraits) {
+            processor.accept(LoadOperation.ApplyTrait.from(entry.getKey(), entry.getValue()));
         }
 
         Model processedModel = processor.buildModel();
