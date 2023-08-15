@@ -41,14 +41,19 @@
                     "BAR"
                 ]
             },
+            "Foo_Baz": {
+                "type": "object"
+            },
             "HasDefaultRequestContent": {
                 "type": "object",
                 "properties": {
                     "foo": {
-                        "type": "string"
+                        "type": "string",
+                        "default": ""
                     },
                     "bar": {
                         "type": "array",
+                        "default": [],
                         "items": {
                             "type": "string"
                         }
@@ -59,16 +64,32 @@
                 "type": "object",
                 "properties": {
                     "foo": {
-                        "type": "string"
+                        "type": "string",
+                        "default": ""
                     },
                     "bar": {
                         "type": "array",
+                        "default": [],
                         "items": {
                             "type": "string"
                         }
                     },
                     "baz": {
-                        "$ref": "#/components/schemas/DefaultEnum"
+                        "allOf": [
+                            {
+                            "$ref": "#/components/schemas/DefaultEnum"
+                            },
+                            {
+                                "default": "FOO"
+                            }
+                        ]
+                    },
+                    "withAlphaOnlyRef": {
+                        "$ref": "#/components/schemas/Foo_Baz"
+                    },
+                    "anInt": {
+                        "type": "integer",
+                        "format": "int64"
                     }
                 }
             }
