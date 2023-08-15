@@ -45,6 +45,27 @@ public interface TokenTree extends FromSourceLocation {
     }
 
     /**
+     * Create a TokenTree of the given {@link TreeType} from an {@link IdlTokenizer}.
+     *
+     * <p>The following example shows how to create a {@link TokenTree} for a trait.</p>
+     *
+     * <pre>{@code
+     * IdlTokenizer tokenizer = IdlTokenizer.create("@someTrait");
+     * TokenTree traitTree = TokenTree.of(tokenizer, TreeType.TRAIT);
+     * }</pre>
+     *
+     * @param tokenizer Tokenizer to traverse.
+     * @param type Type of tree to create.
+     * @return Returns the created tree.
+     */
+    static TokenTree of(IdlTokenizer tokenizer, TreeType type) {
+        CapturingTokenizer capturingTokenizer = new CapturingTokenizer(tokenizer);
+        type.parse(capturingTokenizer);
+        // The root of the tree is always IDL with children appended, so the first child is the one we want.
+        return capturingTokenizer.getRoot().getChildren().get(0);
+    }
+
+    /**
      * Create a leaf tree from a single token.
      *
      * @param token Token to wrap into a tree.
