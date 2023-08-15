@@ -34,6 +34,18 @@ public class TokenTreeTest {
     }
 
     @Test
+    public void createsFromTokenizerAndType() {
+        IdlTokenizer tokenizer = IdlTokenizer.create("@foo");
+        TokenTree tree = TokenTree.of(tokenizer, TreeType.TRAIT);
+
+        assertThat(tree.getType(), is(TreeType.TRAIT));
+        assertThat(tree.getChildren(), hasSize(2));
+        assertThat(tree.getError(), nullValue());
+        assertThat(tree.getChildren().get(0).getType(), equalTo(TreeType.TOKEN));
+        assertThat(tree.getChildren().get(1).getType(), equalTo(TreeType.SHAPE_ID));
+    }
+
+    @Test
     public void createsFromCapturedToken() {
         IdlTokenizer tokenizer = IdlTokenizer.create("foo");
         CapturedToken token = CapturedToken.from(tokenizer);

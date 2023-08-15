@@ -1860,9 +1860,7 @@ public class TreeTypeTest {
     }
 
     private static TokenTree getTree(TreeType type, String forText) {
-        CapturingTokenizer tokenizer = new CapturingTokenizer(IdlTokenizer.create(forText));
-        type.parse(tokenizer);
-        // The root of the tree is always IDL with children appended, so the first child is the one we want.
-        return tokenizer.getRoot().getChildren().get(0);
+        IdlTokenizer tokenizer = IdlTokenizer.create(forText);
+        return TokenTree.of(tokenizer, type);
     }
 }
