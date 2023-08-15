@@ -154,13 +154,13 @@ final class InitCommand implements Command {
             // Just use the local path if the git repo is local
             return Paths.get(repoPath);
         } else {
-            return CliCache.getTemplateCache().get().resolve(getCacheDirFromURL(repoPath));
+            return CliCache.getTemplateCache().get().resolve(getCacheDirFromUrl(repoPath));
         }
     }
 
     // Remove any trailing .git
     // Remove "/" and ".." and ":" characters so a directory can be created with no nesting
-    private String getCacheDirFromURL(final String repositoryUrl) {
+    private String getCacheDirFromUrl(final String repositoryUrl) {
         return repositoryUrl.replace(".git", "")
                 .replace(":", "_")
                 .replace("/", "_")
