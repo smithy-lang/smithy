@@ -1151,6 +1151,157 @@ The following is an example OpenAPI model for the above Smithy example value.
             }
         }
 
+-------------------------
+OpenAPI conversion traits
+-------------------------
+
+The ``software.amazon.smithy:smithy-openapi-traits`` package defines traits used to augment the conversion
+of a Smithy model into an OpenAPI specification.
+
+The following example shows how to add it to your Gradle build alongside the ``smithy-openapi`` plugin:
+
+.. code-block:: kotlin
+    :caption: build.gradle.kts
+
+    plugins {
+        java
+        id("software.amazon.smithy").version("0.6.0")
+    }
+
+    buildscript {
+        dependencies {
+            classpath("software.amazon.smithy:smithy-openapi:__smithy_version__")
+            classpath("software.amazon.smithy:smithy-openapi-traits:__smithy_version__")
+        }
+    }
+
+    dependencies {
+        implementation("software.amazon.smithy:smithy-openapi-traits:__smithy_version__")
+    }
+
+Refer to `Converting to OpenAPI with smithy-build`_ for more detailed information about using the plugin and Gradle.
+
+.. smithy-trait:: smithy.openapi#specificationExtension
+.. _specification-extension-trait:
+
+``specificationExtension`` trait
+================================
+
+Summary
+    Indicates a trait shape should be converted into an `OpenAPI specification extension`_.
+    Any custom trait that has been annotated with this trait will be serialized into the OpenAPI specification using
+    its :ref:`Smithy JSON AST representation <json-ast>`.
+Trait selector
+    ``[trait|trait]``
+Value type
+    ``structure``
+
+The ``specificationExtension`` trait is a structure that supports the following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 25 65
+
+    * - Property
+      - Type
+      - Description
+    * - as
+      - ``string``
+      - Explicitly name the specification extension.
+        If set, it must begin with ``"x-"``.
+        Otherwise, it defaults to the target trait's shape ID normalized with hyphens and prepended with ``"x-"``.
+
+The following example defines a specification extension representing a custom metadata structure using the ``specificationExtension`` trait:
+
+.. code-block:: smithy
+
+    $version: "2"
+    namespace smithy.example
+
+    use smithy.openapi#specificationExtension
+
+    @trait
+    @specificationExtension(as: "x-meta")
+    structure metadata {
+        owner: String
+    }
+
+    @output
+    @metadata(owner: "greetings-team-b")
+    structure GreetResponse {
+        greeting: String
+    }
+
+    @readonly
+    @http(method: "GET", uri: "/greet")
+    @metadata(owner: "greetings-team-a")
+    operation Greet {
+        output: GreetResponse
+    }
+
+This results in an ``x-meta`` property being added to the respective objects in the OpenAPI output:
+
+.. code-block:: json
+
+    {
+        "...": "...",
+        "paths": {
+            "/greet": {
+                "get": {
+                    "operationId": "Greet",
+                    "responses": {
+                        "200": {
+                            "description": "Greet 200 response",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/GreetResponseContent"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "x-meta": {
+                        "owner": "greetings-team-a"
+                    }
+                }
+            }
+        },
+        "components": {
+            "schemas": {
+                "GreetResponseContent": {
+                    "type": "object",
+                    "properties": {
+                        "greeting": {
+                            "type": "string"
+                        }
+                    },
+                    "x-meta": {
+                        "owner": "greetings-team-b"
+                    }
+                }
+            }
+        }
+    }
+
+.. rubric:: Supported trait locations:
+
+Only a subset of OpenAPI locations are supported in the conversion:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 50 50
+
+    * - Smithy Location
+      - OpenAPI Location
+    * - Service shape
+      - `Root OpenAPI schema <https://spec.openapis.org/oas/v3.1.0#openapi-object>`_
+    * - Operation shape
+      - `Operation object <https://spec.openapis.org/oas/v3.1.0#operation-object>`_
+    * - Simple & Aggregate shapes
+      - `Schema object <https://spec.openapis.org/oas/v3.1.0#schema-object>`_
+
+Unsupported use cases can likely be covered by the :ref:`jsonAdd <generate-openapi-setting-jsonAdd>` feature of the ``smithy-openapi`` plugin.
 
 -----------------------------
 Amazon API Gateway extensions
@@ -1754,3 +1905,4 @@ The conversion process is highly extensible through
 .. _x-amazon-apigateway-authorizer: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authorizer.html
 .. _Lambda authorizers: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authorizer.html
 .. _API Gateway's API key usage plans: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-usage-plans.html
+.. _OpenAPI specification extension: https://spec.openapis.org/oas/v3.1.0#specification-extensions

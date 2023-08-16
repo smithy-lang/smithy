@@ -101,7 +101,7 @@ public final class OpenApi extends Component implements ToSmithyBuilder<OpenApi>
         security.forEach(builder::addSecurity);
         servers.forEach(builder::addServer);
         tags.forEach(builder::addTag);
-        return builder.extensions(getExtensions());
+        return builder;
     }
 
     @Override

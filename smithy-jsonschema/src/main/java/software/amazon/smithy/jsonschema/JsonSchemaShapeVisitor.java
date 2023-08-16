@@ -344,8 +344,9 @@ final class JsonSchemaShapeVisitor extends ShapeVisitor.Default<Schema> {
      * @return Returns the built schema.
      */
     private Schema buildSchema(Shape shape, Schema.Builder builder) {
+        JsonSchemaMapperContext context = new JsonSchemaMapperContext(model, shape, converter.getConfig());
         for (JsonSchemaMapper mapper : mappers) {
-            mapper.updateSchema(shape, builder, converter.getConfig());
+            builder = mapper.updateSchema(context, builder);
         }
 
         return builder.build();

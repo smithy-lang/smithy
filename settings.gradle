@@ -21,6 +21,7 @@ include ":smithy-linters"
 include ":smithy-mqtt-traits"
 include ":smithy-jsonschema"
 include ":smithy-openapi"
+include ":smithy-openapi-traits"
 include ":smithy-utils"
 include ":smithy-protocol-test-traits"
 include ':smithy-jmespath'
