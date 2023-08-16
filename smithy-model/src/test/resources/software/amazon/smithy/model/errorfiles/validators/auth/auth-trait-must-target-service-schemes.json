@@ -10,7 +10,11 @@
             ],
             "traits": {
                 "smithy.api#httpBasicAuth": {},
-                "smithy.api#httpDigestAuth": {}
+                "smithy.api#httpDigestAuth": {},
+                "smithy.api#auth": [
+                    "smithy.api#httpDigestAuth",
+                    "smithy.api#httpBasicAuth"
+                ]
             }
         },
         "ns.foo#ValidOperation": {
