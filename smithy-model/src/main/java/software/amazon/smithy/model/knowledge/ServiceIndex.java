@@ -105,6 +105,8 @@ public final class ServiceIndex implements KnowledgeIndex {
      * <p>An <em>auth defining trait</em> is a trait that is marked with
      * the {@code smithy.api#authDefinition} trait.
      *
+     * <p>The returned map is ordered alphabetically by absolute shape ID.
+     *
      * <p>An empty map is returned if {@code id} cannot be found in the
      * model or is not a service shape.
      *
@@ -127,7 +129,7 @@ public final class ServiceIndex implements KnowledgeIndex {
      *
      * <p>The returned map is provided in the same order as the values in the
      * {@code auth} trait if an auth trait is present, otherwise the result
-     * returned is ordered alphabetically by absolute shape id.
+     * returned is ordered alphabetically by absolute shape ID.
      *
      * <p>An empty map is returned if {@code service} cannot be found in the
      * model or is not a service shape.
@@ -167,7 +169,7 @@ public final class ServiceIndex implements KnowledgeIndex {
      *
      * <p>The returned map is provided in the same order as the values in the
      * {@code auth} trait if an auth trait is present, otherwise the result
-     * returned is ordered alphabetically by absolute shape id.
+     * returned is ordered alphabetically by absolute shape ID.
      *
      * <p>An empty map is returned if {@code service} shape cannot be found
      * in the model or is not a service shape. An empty map is returned if
