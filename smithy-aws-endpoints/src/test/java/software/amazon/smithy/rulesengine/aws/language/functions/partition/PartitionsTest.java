@@ -24,6 +24,7 @@ public class PartitionsTest {
                                 .dualStackDnsSuffix("api.aws")
                                 .supportsFips(true)
                                 .supportsDualStack(true)
+                                .implicitGlobalRegion("us-east-1")
                                 .build())
                         .build())
                 .addPartition(Partition.builder()

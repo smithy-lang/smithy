@@ -94,6 +94,9 @@ properties:
     * - supportsDualStack
       - ``bool``
       - Indicates whether the partition supports dual-stack endpoints.
+    * - implicitGlobalRegion
+      - ``string``
+      - The region used by partitional (non-regionalized/global) services for signing.
 
 
 .. _rules-engine-aws-library-awsParseArn:

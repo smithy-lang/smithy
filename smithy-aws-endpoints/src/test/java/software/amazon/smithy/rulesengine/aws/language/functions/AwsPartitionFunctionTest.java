@@ -18,6 +18,7 @@ public class AwsPartitionFunctionTest {
         assertThat(result.get(AwsPartition.DUAL_STACK_DNS_SUFFIX).expectStringValue().getValue(), not(equalTo("")));
         assertThat(result.get(AwsPartition.SUPPORTS_FIPS).expectBooleanValue().getValue(), equalTo(true));
         assertThat(result.get(AwsPartition.SUPPORTS_DUAL_STACK).expectBooleanValue().getValue(), equalTo(true));
+        assertThat(result.get(AwsPartition.IMPLICIT_GLOBAL_REGION).expectStringValue().getValue(), not(equalTo("")));
     }
 
     @Test
