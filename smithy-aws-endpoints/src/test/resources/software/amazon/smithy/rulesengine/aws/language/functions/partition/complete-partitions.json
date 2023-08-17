@@ -27,7 +27,8 @@
         "dnsSuffix": "amazonaws.com.cn",
         "dualStackDnsSuffix": "api.amazonwebservices.com.cn",
         "supportsFIPS": true,
-        "supportsDualStack": true
+        "supportsDualStack": true,
+        "implicitGlobalRegion": "cn-northwest-1"
       }
     }
   ]
