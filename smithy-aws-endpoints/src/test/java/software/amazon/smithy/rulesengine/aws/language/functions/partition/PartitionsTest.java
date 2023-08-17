@@ -24,6 +24,7 @@ public class PartitionsTest {
                                 .dualStackDnsSuffix("api.aws")
                                 .supportsFips(true)
                                 .supportsDualStack(true)
+                                .implicitGlobalRegion("us-east-1")
                                 .build())
                         .build())
                 .addPartition(Partition.builder()
@@ -36,6 +37,7 @@ public class PartitionsTest {
                                 .dualStackDnsSuffix("api.amazonwebservices.com.cn")
                                 .supportsFips(true)
                                 .supportsDualStack(true)
+                                .implicitGlobalRegion("cn-northwest-1")
                                 .build())
                         .build())
                 .build();
