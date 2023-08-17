@@ -132,8 +132,8 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
      *
      * @return returns the partition's implicit global region.
      */
-    public Optional<String> getImplicitGlobalRegion() {
-        return Optional.ofNullable(implicitGlobalRegion);
+    public String getImplicitGlobalRegion() {
+        return implicitGlobalRegion;
     }
 
     @Override
@@ -158,14 +158,11 @@ public final class PartitionOutputs implements ToSmithyBuilder<PartitionOutputs>
                 .withMember(DNS_SUFFIX, dnsSuffix)
                 .withMember(DUAL_STACK_DNS_SUFFIX, dualStackDnsSuffix)
                 .withMember(SUPPORTS_FIPS, supportsFips)
-                .withMember(SUPPORTS_DUAL_STACK, supportsDualStack);
+                .withMember(SUPPORTS_DUAL_STACK, supportsDualStack)
+                .withMember(IMPLICIT_GLOBAL_REGION, implicitGlobalRegion);
 
         if (name != null) {
             builder.withMember(NAME, name);
-        }
-
-        if (implicitGlobalRegion != null) {
-            builder.withMember(IMPLICIT_GLOBAL_REGION, implicitGlobalRegion);
         }
         return builder.build();
     }

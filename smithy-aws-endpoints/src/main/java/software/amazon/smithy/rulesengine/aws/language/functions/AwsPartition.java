@@ -96,7 +96,7 @@ public final class AwsPartition extends LibraryFunction {
             type.put(DUAL_STACK_DNS_SUFFIX, Type.stringType());
             type.put(SUPPORTS_DUAL_STACK, Type.booleanType());
             type.put(SUPPORTS_FIPS, Type.booleanType());
-            type.put(IMPLICIT_GLOBAL_REGION, Type.optionalType(Type.stringType()));
+            type.put(IMPLICIT_GLOBAL_REGION, Type.stringType());
             returnType = Type.optionalType(Type.recordType(type));
         }
 
@@ -150,18 +150,14 @@ public final class AwsPartition extends LibraryFunction {
             }
 
             PartitionOutputs matchedPartitionOutputs = matchedPartition.getOutputs();
-            Map<Identifier, Value> values = new HashMap<>(MapUtils.of(
+            return Value.recordValue(MapUtils.of(
                     NAME, Value.stringValue(matchedPartition.getId()),
                     DNS_SUFFIX, Value.stringValue(matchedPartitionOutputs.getDnsSuffix()),
                     DUAL_STACK_DNS_SUFFIX, Value.stringValue(matchedPartitionOutputs.getDualStackDnsSuffix()),
                     SUPPORTS_FIPS, Value.booleanValue(matchedPartitionOutputs.supportsFips()),
                     SUPPORTS_DUAL_STACK, Value.booleanValue(matchedPartitionOutputs.supportsDualStack()),
-                    INFERRED, Value.booleanValue(inferred)));
-
-            matchedPartitionOutputs.getImplicitGlobalRegion().ifPresent((implicitGlobalRegion) -> {
-                values.put(IMPLICIT_GLOBAL_REGION, Value.stringValue(implicitGlobalRegion));
-            });
-            return Value.recordValue(values);
+                    INFERRED, Value.booleanValue(inferred),
+                    IMPLICIT_GLOBAL_REGION, Value.stringValue(matchedPartitionOutputs.getImplicitGlobalRegion())));
         }
 
         @Override
