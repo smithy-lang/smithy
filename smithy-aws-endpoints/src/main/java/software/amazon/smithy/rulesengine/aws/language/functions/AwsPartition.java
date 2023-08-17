@@ -37,6 +37,7 @@ public final class AwsPartition extends LibraryFunction {
     public static final Identifier DUAL_STACK_DNS_SUFFIX = Identifier.of("dualStackDnsSuffix");
     public static final Identifier SUPPORTS_FIPS = Identifier.of("supportsFIPS");
     public static final Identifier SUPPORTS_DUAL_STACK = Identifier.of("supportsDualStack");
+    public static final Identifier IMPLICIT_GLOBAL_REGION = Identifier.of("implicitGlobalRegion");
     public static final Identifier INFERRED = Identifier.of("inferred");
 
     private static final Definition DEFINITION = new Definition();
@@ -95,6 +96,7 @@ public final class AwsPartition extends LibraryFunction {
             type.put(DUAL_STACK_DNS_SUFFIX, Type.stringType());
             type.put(SUPPORTS_DUAL_STACK, Type.booleanType());
             type.put(SUPPORTS_FIPS, Type.booleanType());
+            type.put(IMPLICIT_GLOBAL_REGION, Type.stringType());
             returnType = Type.optionalType(Type.recordType(type));
         }
 
@@ -154,7 +156,8 @@ public final class AwsPartition extends LibraryFunction {
                     DUAL_STACK_DNS_SUFFIX, Value.stringValue(matchedPartitionOutputs.getDualStackDnsSuffix()),
                     SUPPORTS_FIPS, Value.booleanValue(matchedPartitionOutputs.supportsFips()),
                     SUPPORTS_DUAL_STACK, Value.booleanValue(matchedPartitionOutputs.supportsDualStack()),
-                    INFERRED, Value.booleanValue(inferred)));
+                    INFERRED, Value.booleanValue(inferred),
+                    IMPLICIT_GLOBAL_REGION, Value.stringValue(matchedPartitionOutputs.getImplicitGlobalRegion())));
         }
 
         @Override
