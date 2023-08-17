@@ -12,7 +12,8 @@
         "dnsSuffix": "amazonaws.com",
         "dualStackDnsSuffix": "api.aws",
         "supportsFIPS": true,
-        "supportsDualStack": true
+        "supportsDualStack": true,
+        "implicitGlobalRegion": "us-east-1"
       }
     },
     {

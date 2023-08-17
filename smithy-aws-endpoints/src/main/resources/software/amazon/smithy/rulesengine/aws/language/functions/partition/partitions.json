@@ -35,7 +35,8 @@
         "dnsSuffix": "amazonaws.com",
         "dualStackDnsSuffix": "api.aws",
         "supportsFIPS": true,
-        "supportsDualStack": true
+        "supportsDualStack": true,
+        "implicitGlobalRegion": "us-east-1"
       }
     },
     {
@@ -51,7 +52,8 @@
         "dnsSuffix": "amazonaws.com",
         "dualStackDnsSuffix": "api.aws",
         "supportsFIPS": true,
-        "supportsDualStack": true
+        "supportsDualStack": true,
+        "implicitGlobalRegion": "us-gov-west-1"
       }
     },
     {
@@ -67,7 +69,8 @@
         "dnsSuffix": "amazonaws.com.cn",
         "dualStackDnsSuffix": "api.amazonwebservices.com.cn",
         "supportsFIPS": true,
-        "supportsDualStack": true
+        "supportsDualStack": true,
+        "implicitGlobalRegion": "cn-northwest-1"
       }
     },
     {
@@ -78,7 +81,8 @@
         "dnsSuffix": "c2s.ic.gov",
         "supportsFIPS": true,
         "supportsDualStack": false,
-        "dualStackDnsSuffix": "c2s.ic.gov"
+        "dualStackDnsSuffix": "c2s.ic.gov",
+        "implicitGlobalRegion": "us-iso-east-1"
       },
       "regions": {
         "us-iso-east-1":  {},
@@ -94,7 +98,8 @@
         "dnsSuffix": "sc2s.sgov.gov",
         "supportsFIPS": true,
         "supportsDualStack": false,
-        "dualStackDnsSuffix": "sc2s.sgov.gov"
+        "dualStackDnsSuffix": "sc2s.sgov.gov",
+        "implicitGlobalRegion": "us-isob-east-1"
       },
       "regions": {
         "us-isob-east-1": {},
