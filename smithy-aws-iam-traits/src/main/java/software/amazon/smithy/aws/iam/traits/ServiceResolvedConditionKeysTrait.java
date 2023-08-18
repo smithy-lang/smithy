@@ -14,11 +14,11 @@ import software.amazon.smithy.model.traits.StringListTrait;
 public final class ServiceResolvedConditionKeysTrait extends StringListTrait {
     public static final ShapeId ID = ShapeId.from("aws.iam#serviceResolvedConditionKeys");
 
-    private ServiceResolvedConditionKeysTrait(List<String> conditionKeys) {
+    public ServiceResolvedConditionKeysTrait(List<String> conditionKeys) {
         super(ID, conditionKeys, SourceLocation.NONE);
     }
 
-    private ServiceResolvedConditionKeysTrait(List<String> conditionKeys, FromSourceLocation sourceLocation) {
+    public ServiceResolvedConditionKeysTrait(List<String> conditionKeys, FromSourceLocation sourceLocation) {
         super(ID, conditionKeys, sourceLocation);
     }
 

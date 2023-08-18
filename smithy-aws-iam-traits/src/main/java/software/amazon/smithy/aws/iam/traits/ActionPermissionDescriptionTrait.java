@@ -25,7 +25,11 @@ import software.amazon.smithy.model.traits.StringTrait;
 public final class ActionPermissionDescriptionTrait extends StringTrait {
     public static final ShapeId ID = ShapeId.from("aws.iam#actionPermissionDescription");
 
-    private ActionPermissionDescriptionTrait(String value, SourceLocation sourceLocation) {
+    public ActionPermissionDescriptionTrait(String value) {
+        super(ID, value, SourceLocation.NONE);
+    }
+
+    public ActionPermissionDescriptionTrait(String value, SourceLocation sourceLocation) {
         super(ID, value, sourceLocation);
     }
 

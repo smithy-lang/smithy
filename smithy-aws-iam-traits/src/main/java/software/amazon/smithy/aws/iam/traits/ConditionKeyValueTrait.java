@@ -13,11 +13,11 @@ import software.amazon.smithy.model.traits.StringTrait;
 public final class ConditionKeyValueTrait extends StringTrait {
     public static final ShapeId ID = ShapeId.from("aws.iam#conditionKeyValue");
 
-    private ConditionKeyValueTrait(String conditionKey) {
+    public ConditionKeyValueTrait(String conditionKey) {
         super(ID, conditionKey, SourceLocation.NONE);
     }
 
-    private ConditionKeyValueTrait(String conditionKey, FromSourceLocation sourceLocation) {
+    public ConditionKeyValueTrait(String conditionKey, FromSourceLocation sourceLocation) {
         super(ID, conditionKey, sourceLocation);
     }
 
