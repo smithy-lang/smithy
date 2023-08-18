@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.loader.ModelSyntaxException;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.StringUtils;
 
 /**
@@ -307,16 +308,24 @@ public final class Formatter {
                 case OPERATION_ERRORS: {
                     return skippedComments(cursor, false)
                             .append(Doc.text("errors: "))
-                            .append(bracketed("[", "]", cursor, TreeType.SHAPE_ID));
+                            .append(new BracketBuilder()
+                                            .open(Doc.text("["))
+                                            .close(Doc.text("]"))
+                                            .extractChildrenByType(cursor, TreeType.SHAPE_ID)
+                                            .forceLineBreaks(true) // always put each error on separate lines.
+                                            .build());
                 }
 
                 case MIXINS: {
                     return Doc.text("with ")
-                            .append(bracketed("[", "]", cursor, cursor, child -> {
-                                return child.getTree().getType() == TreeType.SHAPE_ID
-                                       ? Stream.of(child)
-                                       : Stream.empty();
-                            }));
+                            .append(new BracketBuilder()
+                                            .open(Doc.text("["))
+                                            .close(Doc.text("]"))
+                                            .extractChildren(cursor, cursor, child -> {
+                                                return child.getTree().getType() == TreeType.SHAPE_ID
+                                                       ? Stream.of(child)
+                                                       : Stream.empty();
+                                            }).build());
                 }
 
                 case VALUE_ASSIGNMENT: {
@@ -344,27 +353,35 @@ public final class Formatter {
                 case TRAIT_BODY: {
                     TreeCursor structuredBody = cursor.getFirstChild(TreeType.TRAIT_STRUCTURE);
                     if (structuredBody != null) {
-                        return bracketed("(", ")", cursor, cursor, child -> {
-                            if (child.getTree().getType() == TreeType.TRAIT_STRUCTURE) {
-                                // Split WS and NODE_OBJECT_KVP so that they appear on different lines.
-                                return child.getChildrenByType(TreeType.NODE_OBJECT_KVP, TreeType.WS).stream();
-                            }
-                            return Stream.empty();
-                        });
+                        return new BracketBuilder()
+                                .open(Doc.text("("))
+                                .close(Doc.text(")"))
+                                .extractChildren(cursor, cursor, child -> {
+                                    if (child.getTree().getType() == TreeType.TRAIT_STRUCTURE) {
+                                        // Split WS and NODE_OBJECT_KVP so that they appear on different lines.
+                                        return child.getChildrenByType(TreeType.NODE_OBJECT_KVP, TreeType.WS).stream();
+                                    }
+                                    return Stream.empty();
+                                })
+                                .build();
                     } else {
                         // Check the inner trait node for hard line breaks rather than the wrapper.
                         TreeCursor traitNode = cursor
                                 .getFirstChild(TreeType.TRAIT_NODE)
                                 .getFirstChild(TreeType.NODE_VALUE)
                                 .getFirstChild(); // The actual node value.
-                        return bracketed("(", ")", cursor, traitNode, child -> {
-                            if (child.getTree().getType() == TreeType.TRAIT_NODE) {
-                                // Split WS and NODE_VALUE so that they appear on different lines.
-                                return child.getChildrenByType(TreeType.NODE_VALUE, TreeType.WS).stream();
-                            } else {
-                                return Stream.empty();
-                            }
-                        });
+                        return new BracketBuilder()
+                                .open(Doc.text("("))
+                                .close(Doc.text(")"))
+                                .extractChildren(cursor, traitNode, child -> {
+                                    if (child.getTree().getType() == TreeType.TRAIT_NODE) {
+                                        // Split WS and NODE_VALUE so that they appear on different lines.
+                                        return child.getChildrenByType(TreeType.NODE_VALUE, TreeType.WS).stream();
+                                    } else {
+                                        return Stream.empty();
+                                    }
+                                })
+                                .build();
                     }
                 }
 
@@ -403,11 +420,19 @@ public final class Formatter {
                 }
 
                 case NODE_ARRAY: {
-                    return bracketed("[", "]", cursor, TreeType.NODE_VALUE);
+                    return new BracketBuilder()
+                            .open(Doc.text("["))
+                            .close(Doc.text("]"))
+                            .extractChildrenByType(cursor, TreeType.NODE_VALUE)
+                            .build();
                 }
 
                 case NODE_OBJECT: {
-                    return bracketed("{", "}", cursor, TreeType.NODE_OBJECT_KVP);
+                    return new BracketBuilder()
+                            .open(Doc.text("{"))
+                            .close(Doc.text("}"))
+                            .extractChildrenByType(cursor, TreeType.NODE_OBJECT_KVP)
+                            .build();
                 }
 
                 case NODE_OBJECT_KVP: {
@@ -557,54 +582,6 @@ public final class Formatter {
             return (leadingLine ? Doc.line() : Doc.empty()).append(Doc.fold(docs, Doc::append));
         }
 
-        // Brackets children of childType between open and closed brackets. If the children can fit together
-        // on a single line, they are comma separated. If not, they are split onto multiple lines with no commas.
-        private Doc bracketed(String open, String close, TreeCursor cursor, TreeType childType) {
-            return bracketed(open, close, cursor, cursor, child -> child.getTree().getType() == childType
-                                                                   ? Stream.of(child) : Stream.empty());
-        }
-
-        private Doc bracketed(String open, String close, TreeCursor cursor, TreeCursor hardLineSubject,
-                Function<TreeCursor, Stream<TreeCursor>> childExtractor) {
-            Stream<Doc> children = cursor.children()
-                    .flatMap(c -> {
-                        TreeType type = c.getTree().getType();
-                        return type == TreeType.WS || type == TreeType.COMMENT
-                               ? Stream.of(c)
-                               : childExtractor.apply(c);
-                    })
-                    .flatMap(c -> {
-                        // If the child extracts WS, then filter it down to just comments.
-                        return c.getTree().getType() == TreeType.WS
-                               ? c.getChildrenByType(TreeType.COMMENT).stream()
-                               : Stream.of(c);
-                    })
-                    .map(this::visit)
-                    .filter(doc -> doc != Doc.empty()); // empty lines add extra lines we don't need.
-
-            if (!hasHardLine(hardLineSubject)) {
-                return Doc.intersperse(LINE_OR_COMMA, children).bracket(4, Doc.lineOrEmpty(), open, close);
-            } else {
-                return renderBlock(Doc.text(open), close, Doc.intersperse(Doc.line(), children));
-            }
-        }
-
-        // Check if the given tree has any hard lines. Nested arrays and objects are always considered hard lines.
-        private static boolean hasHardLine(TreeCursor cursor) {
-            List<TreeCursor> children = cursor.findChildrenByType(
-                    TreeType.COMMENT, TreeType.TEXT_BLOCK, TreeType.NODE_ARRAY, TreeType.NODE_OBJECT,
-                    TreeType.QUOTED_TEXT);
-            for (TreeCursor child : children) {
-                if (child.getTree().getType() != TreeType.QUOTED_TEXT) {
-                    return true;
-                } else if (child.getTree().getStartLine() != child.getTree().getEndLine()) {
-                    // Detect strings with line breaks.
-                    return true;
-                }
-            }
-            return false;
-        }
-
         // Renders "members" in braces, grouping related comments and members together.
         private Doc renderMembers(TreeCursor container, TreeType memberType) {
             boolean noComments = container.findChildrenByType(TreeType.COMMENT, TreeType.TRAIT).isEmpty();
@@ -644,15 +621,15 @@ public final class Formatter {
             }
 
             Doc open = LINE_OR_SPACE.append(Doc.text("{"));
-            return renderBlock(open, "}", Doc.intersperse(separator, memberDocs));
+            return renderBlock(open, Doc.text("}"), Doc.intersperse(separator, memberDocs));
         }
 
         // Renders members and anything bracketed that are known to need expansion on multiple lines.
-        private Doc renderBlock(Doc open, String close, Doc contents) {
+        private static Doc renderBlock(Doc open, Doc close, Doc contents) {
             return open
                     .append(Doc.line().append(contents).indent(4))
                     .append(Doc.line())
-                    .append(Doc.text(close));
+                    .append(close);
         }
 
         // Renders control, metadata, and use sections so that each statement has a leading and trailing newline
@@ -701,6 +678,92 @@ public final class Formatter {
             }
 
             return result;
+        }
+
+        private final class BracketBuilder {
+            Doc open;
+            Doc close;
+            Stream<Doc> children;
+            boolean forceLineBreaks;
+
+            BracketBuilder open(Doc open) {
+                this.open = open;
+                return this;
+            }
+
+            BracketBuilder close(Doc close) {
+                this.close = close;
+                return this;
+            }
+
+            BracketBuilder children(Stream<Doc> children) {
+                this.children = children;
+                return this;
+            }
+
+            // Brackets children of childType between open and closed brackets. If the children can fit together
+            // on a single line, they are comma separated. If not, they are split onto multiple lines with no commas.
+            BracketBuilder extractChildrenByType(TreeCursor cursor, TreeType childType) {
+                return extractChildren(cursor, cursor, child -> child.getTree().getType() == childType
+                                                                ? Stream.of(child) : Stream.empty());
+            }
+
+            BracketBuilder extractChildren(
+                    TreeCursor cursor,
+                    TreeCursor hardLineSubject,
+                    Function<TreeCursor, Stream<TreeCursor>> childExtractor
+            ) {
+                children(cursor.children()
+                                 .flatMap(c -> {
+                                     TreeType type = c.getTree().getType();
+                                     return type == TreeType.WS || type == TreeType.COMMENT
+                                            ? Stream.of(c)
+                                            : childExtractor.apply(c);
+                                 })
+                                 .flatMap(c -> {
+                                     // If the child extracts WS, then filter it down to just comments.
+                                     return c.getTree().getType() == TreeType.WS
+                                            ? c.getChildrenByType(TreeType.COMMENT).stream()
+                                            : Stream.of(c);
+                                 })
+                                 .map(TreeVisitor.this::visit)
+                                 .filter(doc -> doc != Doc.empty()));
+
+                forceLineBreaks = hasHardLine(hardLineSubject);
+                return this;
+            }
+
+            // Check if the given tree has any hard lines. Nested arrays and objects are always considered hard lines.
+            private boolean hasHardLine(TreeCursor cursor) {
+                List<TreeCursor> children = cursor.findChildrenByType(
+                        TreeType.COMMENT, TreeType.TEXT_BLOCK, TreeType.NODE_ARRAY, TreeType.NODE_OBJECT,
+                        TreeType.QUOTED_TEXT);
+                for (TreeCursor child : children) {
+                    if (child.getTree().getType() != TreeType.QUOTED_TEXT) {
+                        return true;
+                    } else if (child.getTree().getStartLine() != child.getTree().getEndLine()) {
+                        // Detect strings with line breaks.
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            BracketBuilder forceLineBreaks(boolean forceLineBreaks) {
+                this.forceLineBreaks = forceLineBreaks;
+                return this;
+            }
+
+            Doc build() {
+                SmithyBuilder.requiredState("open", open);
+                SmithyBuilder.requiredState("close", close);
+                SmithyBuilder.requiredState("children", children);
+                if (forceLineBreaks) {
+                    return renderBlock(open, close, Doc.intersperse(Doc.line(), children));
+                } else {
+                    return Doc.intersperse(LINE_OR_COMMA, children).bracket(4, Doc.lineOrEmpty(), open, close);
+                }
+            }
         }
     }
 }
