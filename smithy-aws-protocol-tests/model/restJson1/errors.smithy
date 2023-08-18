@@ -95,7 +95,6 @@ apply InvalidGreeting @httpResponseTests([
               }""",
         bodyMediaType: "application/json",
     },
-
 ])
 
 /// This error is thrown when a request is invalid.
@@ -305,6 +304,23 @@ apply FooError @httpResponseTests([
                   "__type": "aws.protocoltests.restjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
               }""",
         bodyMediaType: "application/json",
+        appliesTo: "client",
+    },
+    {
+        id: "RestJsonWithMultipleAmznErrorTypes",
+        documentation: """
+            API-Gateway always adds its own x-amzn-errortype header on gateway responses.
+            However, this header does not match the error configured in customers model and \
+            results in two X-Amzn-Errortype header values. \
+            The first value is provided by the customer and the second value is from API Gateway \
+
+            Clients need to split the header value on ',' and take only the first element. \
+            For example, 'FooError,InvalidParameterException' is to be interpreted as 'FooError'.""",
+        protocol: restJson1,
+        code: 500,
+        headers: {
+            "X-Amzn-Errortype": "FooError,InvalidParameterException",
+        },
         appliesTo: "client",
     }
 ])
