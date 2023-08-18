@@ -273,6 +273,27 @@
                 },
                 "smithy.api#documentation": "Provides a custom IAM action name. By default, the action name is the same as the operation name."
             }
+        },
+        "aws.iam#serviceResolvedConditionKeys": {
+            "type": "list",
+            "member": {
+                "target": "aws.iam#IamIdentifier"
+            },
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "service"
+                },
+                "smithy.api#documentation": "Specifies the list of IAM condition keys which must be resolved by the service, as opposed to being pulled from the request."
+            }
+        },
+        "aws.iam#conditionKeyValue": {
+            "type": "string",
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "member"
+                },
+                "smithy.api#documentation": "Uses the associated member’s value as this condition key’s value. Needed when the member name doesn't match the condition key name."
+            }
         }
     }
 }
