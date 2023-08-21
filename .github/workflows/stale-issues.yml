@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Stale issue job
     steps:
-      - uses: aws-actions/stale-issue-cleanup@v3
+      - uses: aws-actions/stale-issue-cleanup@v6
         with:
           # Targeted types
           issue-types: issues
@@ -22,7 +22,7 @@ jobs:
 
           # Labels
           stale-issue-label: closing-soon
-          exempt-issue-label: bug,documentation,feature-request,investigating,protocol-test
+          exempt-issue-labels: bug,documentation,feature-request,investigating,protocol-test
           response-requested-label: response-requested
 
           # Messages
@@ -41,3 +41,4 @@ jobs:
 
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           loglevel: DEBUG
+          dryrun: true
