@@ -1,5 +1,29 @@
 # Smithy Changelog
 
+## 1.37.0 (2023-08-22)
+
+### Features
+* Formatted operation errors onto multiple lines ([#1933](https://github.com/smithy-lang/smithy/pull/1933))
+* Added support for creating specific `TreeType` to smithy-syntax ([#1925](https://github.com/smithy-lang/smithy/pull/1925))
+* Added validator for services with noAuth trait ([#1929](https://github.com/smithy-lang/smithy/pull/1929))
+* Added ServiceIndex method for noAuth scheme ([#1924](https://github.com/smithy-lang/smithy/pull/1924))
+* Added warning on addition of required trait ([#1923](https://github.com/smithy-lang/smithy/pull/1923))
+* Added versioning for API Gateway defaults ([#1916](https://github.com/smithy-lang/smithy/pull/1916))
+* Added support for enum map keys with OpenApi 3.1.0 ([#1905](https://github.com/smithy-lang/smithy/pull/1905))
+* Added support for suppressions to smithy-diff ([#1861](https://github.com/smithy-lang/smithy/pull/1861))
+* Added `specificationExtension` trait for OpenAPI extensions ([#1609](https://github.com/smithy-lang/smithy/pull/1609))
+* Added `conditionKeyValue` and `conditionKeysResolvedByService` traits ([#1677](https://github.com/smithy-lang/smithy/pull/1677))
+
+### Documentation
+* Updated `getAuthSchemes` javadoc ([#1930](https://github.com/smithy-lang/smithy/pull/1930))
+* Clarified `default` and `clientOptional` traits ([#1920](https://github.com/smithy-lang/smithy/pull/1920))
+* Fixed version numbers in smithy-build.json examples ([#1918](https://github.com/smithy-lang/smithy/pull/1918))
+* Clarified ordering of auth schemes in ServiceIndex ([#1915](https://github.com/smithy-lang/smithy/pull/1915))
+* Included prelude in spec ([#1913](https://github.com/smithy-lang/smithy/pull/1913))
+
+### Bug Fixes
+* Fixed assembler addTraits for some resource models ([#1927](https://github.com/smithy-lang/smithy/pull/1927))
+
 ## 1.36.0 (2023-08-03)
 
 ### Features
