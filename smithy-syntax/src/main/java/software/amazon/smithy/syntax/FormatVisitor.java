@@ -328,24 +328,29 @@ final class FormatVisitor {
                             .detectHardLines(cursor)
                             .write();
                 } else {
-                    // Check the inner trait node for hard line breaks rather than the wrapper.
-                    TreeCursor traitNode = cursor
-                            .getFirstChild(TreeType.TRAIT_NODE)
-                            .getFirstChild(TreeType.NODE_VALUE)
-                            .getFirstChild(); // The actual node value.
-                    return new BracketFormatter()
-                            .open(Formatter.LPAREN)
-                            .close(Formatter.RPAREN)
-                            .extractChildren(cursor, BracketFormatter.extractor(this::visit, child -> {
-                                if (child.getTree().getType() == TreeType.TRAIT_NODE) {
-                                    // Split WS and NODE_VALUE so that they appear on different lines.
-                                    return child.getChildrenByType(TreeType.NODE_VALUE, TreeType.WS).stream();
-                                } else {
-                                    return Stream.empty();
-                                }
-                            }))
-                            .detectHardLines(traitNode)
-                            .write();
+                    if (cursor.getFirstChild(TreeType.TRAIT_NODE) != null) {
+                        // Check the inner trait node for hard line breaks rather than the wrapper.
+                        TreeCursor traitNode = cursor
+                                .getFirstChild(TreeType.TRAIT_NODE)
+                                .getFirstChild(TreeType.NODE_VALUE)
+                                .getFirstChild(); // The actual node value.
+                        return new BracketFormatter()
+                                .open(Formatter.LPAREN)
+                                .close(Formatter.RPAREN)
+                                .extractChildren(cursor, BracketFormatter.extractor(this::visit, child -> {
+                                    if (child.getTree().getType() == TreeType.TRAIT_NODE) {
+                                        // Split WS and NODE_VALUE so that they appear on different lines.
+                                        return child.getChildrenByType(TreeType.NODE_VALUE, TreeType.WS).stream();
+                                    } else {
+                                        return Stream.empty();
+                                    }
+                                }))
+                                .detectHardLines(traitNode)
+                                .write();
+                    } else {
+                        // If the trait node is empty, remove the empty parentheses.
+                        return Doc.text("");
+                    }
                 }
             }
 
