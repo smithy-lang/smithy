@@ -86,7 +86,9 @@ structure HasMixins with [MyMixin1, MyMixin2] {
 structure HasForResource for MyResource with [MyMixin1] {}
 
 resource MyResource {
-    operations: [PutMyResource]
+    operations: [
+        PutMyResource
+    ]
 }
 
 operation PutMyResource {
