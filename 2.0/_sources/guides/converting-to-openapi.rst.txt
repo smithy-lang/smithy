@@ -144,7 +144,7 @@ that builds an OpenAPI specification from a service for the
     :name: open-api-smithy-build-json
 
     {
-        "version": "2.0",
+        "version": "1.0",
         "plugins": {
             "openapi": {
                 "service": "example.weather#Weather",
@@ -181,9 +181,10 @@ service (``string``)
     For example, ``example.weather#Weather``.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather"
@@ -211,9 +212,10 @@ protocol (``string``)
           service provider found on the classpath.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -235,6 +237,7 @@ version (``string``)
         ``3.1.0`` will use JSON schema version ``draft2020-12`` for model schemas.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
             "version": "1.0",
@@ -254,9 +257,10 @@ tags (``boolean``)
     model to the OpenAPI model.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -273,9 +277,10 @@ supportedTags (``[string]``)
     ``true`` in order to have an effect.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -293,9 +298,10 @@ defaultBlobFormat (``string``)
     See `OpenAPI Data types`_ for more information.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -314,9 +320,10 @@ externalDocs (``[string]``)
     "Reference", and "Guide".
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -335,9 +342,10 @@ keepUnusedComponents (``boolean``)
     removed from the created specification.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -353,9 +361,10 @@ jsonContentType (``string``)
     JSON-based protocols.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -372,9 +381,10 @@ forbidGreedyLabels (``boolean``)
     "/{foo+}".
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -392,9 +402,10 @@ removeGreedyParameterSuffix (``boolean``)
     If enabled, the parameter name will instead be "foo".
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -416,9 +427,10 @@ onHttpPrefixHeaders (``string``)
     * WARN: The header is omitted from the OpenAPI model and a warning is logged.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -434,9 +446,10 @@ ignoreUnsupportedTraits (``boolean``)
     ``endpoint`` and ``hostLabel`` are encountered.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -468,9 +481,10 @@ substitutions (``Map<String, any>``)
         change.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -497,9 +511,10 @@ jsonAdd (``Map<String, Node>``)
     result as needed.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -525,9 +540,10 @@ useIntegerType (``boolean``)
     "number".
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -545,9 +561,10 @@ disableIntegerFormat (``boolean``)
     configuration setting.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -614,6 +631,7 @@ onErrorStatusConflict (``String``)
     By default, this setting is set to ``oneOf``.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
             "version": "1.0",
@@ -651,9 +669,10 @@ useJsonName (``boolean``)
     automatically set to ``true`` depending on the protocol being converted.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -671,9 +690,10 @@ defaultTimestampFormat (``string``)
     "epoch-seconds", or "http-date".
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -696,9 +716,10 @@ unionStrategy (``string``)
       structure.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -723,9 +744,10 @@ mapStrategy (``string``)
       is applied.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -741,9 +763,10 @@ schemaDocumentExtensions (``Map<String, any>``)
     Any existing value is overwritten.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -764,9 +787,10 @@ disableFeatures (``[string]``)
     generated OpenAPI model.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -787,9 +811,10 @@ supportNonNumericFloats (``boolean``)
     By default, these non-numeric values are not supported.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -838,9 +863,10 @@ disableDefaultValues (``boolean``)
     Set to true to disable adding default values.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -921,9 +947,10 @@ disableIntEnums (``boolean``)
     Set to true to disable setting the ``enum`` property for intEnum shapes.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -1124,6 +1151,157 @@ The following is an example OpenAPI model for the above Smithy example value.
             }
         }
 
+-------------------------
+OpenAPI conversion traits
+-------------------------
+
+The ``software.amazon.smithy:smithy-openapi-traits`` package defines traits used to augment the conversion
+of a Smithy model into an OpenAPI specification.
+
+The following example shows how to add it to your Gradle build alongside the ``smithy-openapi`` plugin:
+
+.. code-block:: kotlin
+    :caption: build.gradle.kts
+
+    plugins {
+        java
+        id("software.amazon.smithy").version("0.6.0")
+    }
+
+    buildscript {
+        dependencies {
+            classpath("software.amazon.smithy:smithy-openapi:__smithy_version__")
+            classpath("software.amazon.smithy:smithy-openapi-traits:__smithy_version__")
+        }
+    }
+
+    dependencies {
+        implementation("software.amazon.smithy:smithy-openapi-traits:__smithy_version__")
+    }
+
+Refer to `Converting to OpenAPI with smithy-build`_ for more detailed information about using the plugin and Gradle.
+
+.. smithy-trait:: smithy.openapi#specificationExtension
+.. _specification-extension-trait:
+
+``specificationExtension`` trait
+================================
+
+Summary
+    Indicates a trait shape should be converted into an `OpenAPI specification extension`_.
+    Any custom trait that has been annotated with this trait will be serialized into the OpenAPI specification using
+    its :ref:`Smithy JSON AST representation <json-ast>`.
+Trait selector
+    ``[trait|trait]``
+Value type
+    ``structure``
+
+The ``specificationExtension`` trait is a structure that supports the following members:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 25 65
+
+    * - Property
+      - Type
+      - Description
+    * - as
+      - ``string``
+      - Explicitly name the specification extension.
+        If set, it must begin with ``"x-"``.
+        Otherwise, it defaults to the target trait's shape ID normalized with hyphens and prepended with ``"x-"``.
+
+The following example defines a specification extension representing a custom metadata structure using the ``specificationExtension`` trait:
+
+.. code-block:: smithy
+
+    $version: "2"
+    namespace smithy.example
+
+    use smithy.openapi#specificationExtension
+
+    @trait
+    @specificationExtension(as: "x-meta")
+    structure metadata {
+        owner: String
+    }
+
+    @output
+    @metadata(owner: "greetings-team-b")
+    structure GreetResponse {
+        greeting: String
+    }
+
+    @readonly
+    @http(method: "GET", uri: "/greet")
+    @metadata(owner: "greetings-team-a")
+    operation Greet {
+        output: GreetResponse
+    }
+
+This results in an ``x-meta`` property being added to the respective objects in the OpenAPI output:
+
+.. code-block:: json
+
+    {
+        "...": "...",
+        "paths": {
+            "/greet": {
+                "get": {
+                    "operationId": "Greet",
+                    "responses": {
+                        "200": {
+                            "description": "Greet 200 response",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/GreetResponseContent"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "x-meta": {
+                        "owner": "greetings-team-a"
+                    }
+                }
+            }
+        },
+        "components": {
+            "schemas": {
+                "GreetResponseContent": {
+                    "type": "object",
+                    "properties": {
+                        "greeting": {
+                            "type": "string"
+                        }
+                    },
+                    "x-meta": {
+                        "owner": "greetings-team-b"
+                    }
+                }
+            }
+        }
+    }
+
+.. rubric:: Supported trait locations:
+
+Only a subset of OpenAPI locations are supported in the conversion:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 50 50
+
+    * - Smithy Location
+      - OpenAPI Location
+    * - Service shape
+      - `Root OpenAPI schema <https://spec.openapis.org/oas/v3.1.0#openapi-object>`_
+    * - Operation shape
+      - `Operation object <https://spec.openapis.org/oas/v3.1.0#operation-object>`_
+    * - Simple & Aggregate shapes
+      - `Schema object <https://spec.openapis.org/oas/v3.1.0#schema-object>`_
+
+Unsupported use cases can likely be covered by the :ref:`jsonAdd <generate-openapi-setting-jsonAdd>` feature of the ``smithy-openapi`` plugin.
 
 -----------------------------
 Amazon API Gateway extensions
@@ -1149,6 +1327,40 @@ dependency on ``software.amazon.smithy:smithy-aws-apigateway-openapi``.
 Amazon API Gateway configuration settings
 =========================================
 
+apiGatewayDefaults (``string``)
+    Sets recommended default configuration settings and allows for those defaults
+    to be disabled.
+
+    This setting can be set to one of the following:
+
+    * ``2023-08-11`` Set the defaults described below.
+    * ``DISABLED`` Disables setting defaults.
+
+    The ``2023-08-11`` version sets the following configuration settings:
+
+    * :ref:`alphanumericOnlyRefs <generate-openapi-jsonschema-setting-alphanumericOnlyRefs>`: ``true``
+    * :ref:`disableDefaultValues <generate-openapi-setting-disableDefaultValues>`: ``true``
+    * :ref:`disableIntegerFormat <generate-openapi-setting-disableIntegerFormat>`: ``true``
+    * :ref:`disableFeatures <generate-openapi-jsonschema-setting-disableFeatures>`: ``["default"]``
+
+    .. important::
+
+        This setting should be set explicitly to one of the allowed values.
+        If omitted, it will default to ``2023-08-11``.
+
+    .. code-block:: json
+        :caption: smithy-build.json
+
+        {
+            "version": "1.0",
+            "plugins": {
+                "openapi": {
+                    "service": "example.weather#Weather",
+                    "apiGatewayDefaults": "2023-08-11"
+                }
+            }
+        }
+
 apiGatewayType (``string``)
     Defines the type of API Gateway to define in the generated OpenAPI model.
     This setting influences which API Gateway specific plugins apply
@@ -1164,9 +1376,10 @@ apiGatewayType (``string``)
       is inadvertently placed on the classpath by a dependency.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -1180,9 +1393,10 @@ disableCloudFormationSubstitution (``boolean``)
     into CloudFormation intrinsic functions.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -1201,9 +1415,10 @@ additionalAllowedCorsHeaders (``[string]``)
     headers will be omitted.
 
     .. code-block:: json
+        :caption: smithy-build.json
 
         {
-            "version": "2.0",
+            "version": "1.0",
             "plugins": {
                 "openapi": {
                     "service": "example.weather#Weather",
@@ -1690,3 +1905,4 @@ The conversion process is highly extensible through
 .. _x-amazon-apigateway-authorizer: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authorizer.html
 .. _Lambda authorizers: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authorizer.html
 .. _API Gateway's API key usage plans: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-usage-plans.html
+.. _OpenAPI specification extension: https://spec.openapis.org/oas/v3.1.0#specification-extensions

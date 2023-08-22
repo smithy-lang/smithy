@@ -556,6 +556,12 @@ the <code class="docutils literal notranslate"><span class="pre">auth</span></co
 <a class="reference internal" href="#authdefinition-trait"><span class="std std-ref">authentication scheme traits</span></a> applied to the
 service. Each entry in the <code class="docutils literal notranslate"><span class="pre">auth</span></code> trait is a shape ID that MUST refer to an
 authentication scheme trait applied to the service in which it is bound.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">When a service has multiple authentication scheme traits applied and no
+<code class="docutils literal notranslate"><span class="pre">auth</span></code> trait, the ordering of authentication schemes is alphabetical
+based on the absolute shape ID of each authentication scheme trait.</p>
+</div>
 <p>The following example defines all combinations in which <code class="docutils literal notranslate"><span class="pre">auth</span></code> can be applied
 to services and operations:</p>
 <ul class="simple">

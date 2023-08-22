@@ -720,8 +720,80 @@ name <code class="docutils literal notranslate"><span class="pre">OverridingActi
 </pre></div>
 </div>
 </div>
+<div class="section" id="aws-iam-serviceresolvedconditionkeys-trait">
+<span id="aws-iam-serviceresolvedconditionkeys-trait"></span><span id="id11"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#serviceResolvedConditionKeys</span></code> trait<a class="headerlink" href="#aws-iam-serviceresolvedconditionkeys-trait" title="Permalink to this headline">#</a></h2>
+<dl class="docutils">
+<dt>Summary</dt><dd>Specifies the list of IAM condition keys which must be resolved by the
+service, as opposed to the value being pulled from the request.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></dd>
+</dl>
+<p>All condition keys defined with the <code class="docutils literal notranslate"><span class="pre">serviceResolvedConditionKeys</span></code> trait
+MUST also be defined via the <a class="reference internal" href="#aws-iam-defineconditionkeys-trait"><span class="std std-ref">aws.iam#defineConditionKeys trait</span></a> trait.
+Derived resource condition keys MUST NOT be included
+with the <code class="docutils literal notranslate"><span class="pre">serviceResolvedConditionKeys</span></code> trait.</p>
+<p>The following example defines two service-specific condition keys:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">myservice:ActionContextKey1</span></code> is expected to be resolved by the service.</li>
+<li><code class="docutils literal notranslate"><span class="pre">myservice:ActionContextKey2</span></code> is expected to be pulled from the request.</li>
+</ul>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="nt">@defineConditionKeys</span>(
+<span class="w">    </span><span class="s2">&quot;myservice:ActionContextKey1&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>}<span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;myservice:ActionContextKey2&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>}
+)
+<span class="nt">@serviceResolvedConditionKeys</span>([<span class="s2">&quot;myservice:ActionContextKey1&quot;</span>])
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-05-10&quot;</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="aws-iam-conditionkeyvalue-trait">
+<span id="aws-iam-conditionkeyvalue-trait"></span><span id="id12"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeyValue</span></code> trait<a class="headerlink" href="#aws-iam-conditionkeyvalue-trait" title="Permalink to this headline">#</a></h2>
+<dl class="docutils">
+<dt>Summary</dt><dd>Uses the associated member’s value for the specified condition key.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">member</span></code></dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
+</dl>
+<p>Members not annotated with the <code class="docutils literal notranslate"><span class="pre">conditionKeyValue</span></code> trait, default to the
+<a class="reference internal" href="../spec/model.html#shape-id"><span class="std std-ref">shape name of the shape ID</span></a> of the targeted member. All
+condition keys defined with the <code class="docutils literal notranslate"><span class="pre">conditionKeyValue</span></code> trait MUST also be
+defined via the <a class="reference internal" href="#aws-iam-defineconditionkeys-trait"><span class="std std-ref">aws.iam#defineConditionKeys trait</span></a> trait.</p>
+<p>In the input shape for <code class="docutils literal notranslate"><span class="pre">OperationA</span></code>, the trait <code class="docutils literal notranslate"><span class="pre">conditionKeyValue</span></code>
+explicitly binds <code class="docutils literal notranslate"><span class="pre">ActionContextKey1</span></code> to the field <code class="docutils literal notranslate"><span class="pre">key</span></code>.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="nt">@defineConditionKeys</span>(
+<span class="w">    </span><span class="s2">&quot;myservice:ActionContextKey1&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>}
+)
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-07-02&quot;</span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span>]
+}
+
+<span class="nt">@conditionKeys</span>([<span class="s2">&quot;myservice:ActionContextKey1&quot;</span>])
+<span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
+<span class="w">        </span><span class="nt">@conditionKeyValue</span>(<span class="s2">&quot;ActionContextKey1&quot;</span>)
+<span class="w">        </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span>}
+<span class="w">    </span><span class="py">output</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">out</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span>}
+}
+</pre></div>
+</div>
+</div>
 <div class="section" id="deriving-condition-keys">
-<span id="id11"></span><h2>Deriving Condition Keys<a class="headerlink" href="#deriving-condition-keys" title="Permalink to this headline">#</a></h2>
+<span id="id13"></span><h2>Deriving Condition Keys<a class="headerlink" href="#deriving-condition-keys" title="Permalink to this headline">#</a></h2>
 <p>Smithy will automatically derive condition key information for a service, as
 well as its resources and operations.</p>
 <p>A resource's condition keys include those that are inferred from their
@@ -879,6 +951,8 @@ trait.</p>
 <li><a class="reference internal" href="#aws-iam-supportedprincipaltypes-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#supportedPrincipalTypes</span></code> trait</a></li>
 <li><a class="reference internal" href="#aws-iam-iamresource-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#iamResource</span></code> trait</a></li>
 <li><a class="reference internal" href="#aws-iam-actionname-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#actionName</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-iam-serviceresolvedconditionkeys-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#serviceResolvedConditionKeys</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-iam-conditionkeyvalue-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeyValue</span></code> trait</a></li>
 <li><a class="reference internal" href="#deriving-condition-keys">Deriving Condition Keys</a></li>
 </ul>
 </li>

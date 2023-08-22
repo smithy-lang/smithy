@@ -276,6 +276,11 @@ the ``auth`` trait, then the operation is expected to support each of the
 service. Each entry in the ``auth`` trait is a shape ID that MUST refer to an
 authentication scheme trait applied to the service in which it is bound.
 
+.. note::
+    When a service has multiple authentication scheme traits applied and no
+    ``auth`` trait, the ordering of authentication schemes is alphabetical
+    based on the absolute shape ID of each authentication scheme trait.
+
 The following example defines all combinations in which ``auth`` can be applied
 to services and operations:
 

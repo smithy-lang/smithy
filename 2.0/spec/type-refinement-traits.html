@@ -396,6 +396,9 @@ value requirement of a targeted shape.</p>
 <li>The <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait on root-level shapes has no impact when targeted by
 any other shape than a structure member.</li>
 <li>The <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> trait on root-level shapes cannot be set to <code class="docutils literal notranslate"><span class="pre">null</span></code>.</li>
+<li>The <a class="reference internal" href="#clientoptional-trait"><span class="std std-ref">clientOptional trait</span></a> applied to a member marked with the
+<code class="docutils literal notranslate"><span class="pre">default</span></code> trait causes non-authoritative generators to ignore the
+<code class="docutils literal notranslate"><span class="pre">default</span></code> trait.</li>
 </ul>
 </div>
 <div class="section" id="default-value-constraints">
@@ -442,12 +445,18 @@ of a member because they are using different versions of the same model.</p>
 <div class="section" id="default-value-serialization">
 <h3><span class="section-number">7.1.4. </span>Default value serialization<a class="headerlink" href="#default-value-serialization" title="Permalink to this headline">#</a></h3>
 <ol class="arabic simple">
-<li>All default values SHOULD be serialized. This ensures that messages are
-unambiguous so that messages do not change during deserialization if the
+<li>Implementations that ignore <code class="docutils literal notranslate"><span class="pre">default</span></code> traits do not assume a default
+value for a member. For example, non-authoritative implementations
+will ignore the <code class="docutils literal notranslate"><span class="pre">default</span></code> trait when a member is marked with the
+<a class="reference internal" href="#clientoptional-trait"><span class="std std-ref">clientOptional trait</span></a>. These implementations would serialize any
+explicitly given value, even if it happens to be the default value.</li>
+<li>All effective default values SHOULD be serialized. This ensures that
+messages are unambiguous and do not change during deserialization if the
 default value for a member changes after the message was serialized.</li>
 <li>To avoid information disclosure, implementations MAY choose to not serialize
-a default values if the member is marked with the <a class="reference internal" href="documentation-traits.html#internal-trait"><span class="std std-ref">internal trait</span></a>.</li>
-<li>A member that is both <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code> and <code class="docutils literal notranslate"><span class="pre">&#64;required</span></code> MUST be serialized.</li>
+a default value if the member is marked with the <a class="reference internal" href="documentation-traits.html#internal-trait"><span class="std std-ref">internal trait</span></a>.</li>
+<li>A member marked <code class="docutils literal notranslate"><span class="pre">&#64;required</span></code> MUST be serialized, including members that
+have a default.</li>
 </ol>
 </div>
 </div>
