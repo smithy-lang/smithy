@@ -5,7 +5,7 @@ on:
   workflow_dispatch: # on button click
 
 env:
-  release_prefix: https://github.com/awslabs/smithy/releases/download
+  release_prefix: https://github.com/smithy-lang/smithy/releases/download
 
 jobs:
   download-and-save:
@@ -98,12 +98,13 @@ jobs:
           tmp=$(mktemp)
           jq --arg sha "$sha" '.bottle.sha256.linux_arm = "'$sha'"' homebrew-tap/bottle-configs/smithy-cli.json > "$tmp" && mv "$tmp" homebrew-tap/bottle-configs/smithy-cli.json
       - name: Set up new git branch for version bump
+        working-directory: homebrew-tap
         run: |
-          cd homebrew-tap
           git config user.name 'smithy-automation'
           git config user.email 'github-smithy-automation@amazon.com'
           git checkout -b "automation/bump-smithy-cli-version/${GITHUB_REF##*/}"
       - name: Create PR
+        working-directory: homebrew-tap
         run: |
           git add bottle-configs/smithy-cli.json
           git commit -m "chore: upgrade smithy-cli to ${GITHUB_REF##*/}"
