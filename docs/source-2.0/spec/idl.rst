@@ -1745,8 +1745,10 @@ Trait values
 ------------
 
 The value that can be provided for a trait depends on its type. A value for a
-trait is defined by enclosing the value in parenthesis. Trait values can only
-appear immediately before a shape.
+trait is defined by enclosing the value in parenthesis, provided as a
+:ref:`node value <node-values>`. Trait values MUST adhere to the JSON type
+mappings defined in :ref:`trait-node-values`. Trait values can only appear
+immediately before a shape.
 
 The following example applies various traits to a structure shape and its
 members.
@@ -1759,36 +1761,39 @@ members.
         name: smithy.api#String,
 
         @length(min: 0)
-        @tags(["private-beta"])
+        @tags(["private-beta", "metered"])
         age: smithy.api#Integer,
     }
 
 
-Structure, map, and union trait values
---------------------------------------
+.. _structured-trait-values:
 
-Traits that are a ``structure``, ``union``, or ``map`` are defined using
-a special syntax that places key-value pairs inside of the trait
-parenthesis. Wrapping braces, "{" and "}", are not permitted.
+Structure, map, and union trait value syntax
+--------------------------------------------
 
-.. code-block:: smithy
-
-    @structuredTrait(foo: "bar", baz: "bam")
-
-Nested structure, map, and union values are defined using
-:ref:`node value <node-values>` productions:
+A special syntax is provided for structure, map, and union traits that
+allows placing key-value pairs directly inside of the trait parenthesis.
 
 .. code-block:: smithy
 
-    @structuredTrait(
-        foo: {
-            bar: "baz",
-            qux: "true",
-        }
-    )
+    @structuredTrait(bar: "baz", qux: "true")
 
-Omitting a value is allowed on ``list``, ``set``, ``map``, and ``structure``
-traits if the shapes have no ``length`` constraints or ``required`` members.
+Is equivalent to:
+
+.. code-block:: smithy
+
+    @structuredTrait({bar: "baz", qux: "true"})
+
+
+Omitted trait values
+--------------------
+
+An applied trait with no value, with or without empty parenthesis, assumes
+a default value based on the shape of the trait.
+
+If a value is omitted for a ``structure`` or ``map``, the value defaults to an empty
+object (``{}``).
+
 The following applications of the ``foo`` trait are equivalent:
 
 .. tab:: Smithy
@@ -1796,8 +1801,10 @@ The following applications of the ``foo`` trait are equivalent:
     .. code-block:: smithy
 
         $version: "2"
+
         namespace smithy.example
 
+        // Define an example structure trait.
         @trait
         structure foo {}
 
@@ -1806,6 +1813,9 @@ The following applications of the ``foo`` trait are equivalent:
 
         @foo()
         string MyString2
+
+        @foo({})
+        string MyString3
 
 .. tab:: JSON
 
@@ -1831,33 +1841,68 @@ The following applications of the ``foo`` trait are equivalent:
                     "traits": {
                         "smithy.api#foo": {}
                     }
+                },
+                "smithy.example#MyString3": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#foo": {}
+                    }
                 }
             }
         }
 
+If a value is omitted for a ``list``, the value defaults to an empty list
+(``[]``).
 
-List and set trait values
--------------------------
+The following applications of the :ref:`tags-trait` are equivalent:
 
-Traits that are a ``list`` or ``set`` shape are defined inside
-of brackets (``[``) and (``]``) using a :token:`smithy:NodeArray` production.
+.. tab:: Smithy
 
-.. code-block:: smithy
+    .. code-block:: smithy
 
-    @tags(["a", "b"])
+        $version: "2"
 
+        namespace smithy.example
 
-Other trait values
-------------------
+        @tags
+        string MyString1
 
-All other trait values MUST adhere to the JSON type mappings defined
-in :ref:`trait-node-values`.
+        @tags()
+        string MyString2
 
-The following example defines a string trait value:
+        @tags([])
+        string MyString3
 
-.. code-block:: smithy
+.. tab:: JSON
 
-    @documentation("Hello")
+    .. code-block:: json
+
+        {
+            "smithy": "2",
+            "shapes": {
+                "smithy.example#MyString1": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#tags": []
+                    }
+                },
+                "smithy.example#MyString2": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#tags": []
+                    }
+                },
+                "smithy.example#MyString3": {
+                    "type": "string",
+                    "traits": {
+                        "smithy.api#tags": []
+                    }
+                }
+            }
+        }
+
+All other shapes default to ``null``, which may or may not be valid for the
+shape of the trait.
 
 
 .. _apply-statement:
