@@ -15,12 +15,8 @@
 
 package software.amazon.smithy.model.validation;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.knowledge.NullableIndex;
@@ -51,6 +47,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.model.validation.node.NodeValidatorPlugin;
 import software.amazon.smithy.model.validation.node.TimestampValidationStrategy;
 import software.amazon.smithy.utils.BuilderRef;
@@ -354,11 +351,20 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
     @Override
     public List<ValidationEvent> memberShape(MemberShape shape) {
-        List<ValidationEvent> events = applyPlugins(shape);
-        events.addAll(model.getShape(shape.getTarget())
-                              .map(member -> member.accept(this))
-                              .orElse(ListUtils.of()));
-        return events;
+        List<ValidationEvent> allEvents = applyPlugins(shape);
+        Optional<Shape> target = model.getShape(shape.getTarget());
+        if (target.map(t -> t.isTimestampShape() && shape.hasTrait(TimestampFormatTrait.class)).orElse(false)) {
+            TimestampShape t = target.get().asTimestampShape().get();
+            TimestampFormatTrait fmt = shape.expectTrait(TimestampFormatTrait.class);
+            TimestampShape updatedShape = t.toBuilder().addTrait(fmt).build();
+            allEvents.addAll(updatedShape.accept(this));
+        } else {
+            allEvents.addAll(model.getShape(shape.getTarget())
+                    .map(member -> member.accept(this))
+                    .orElse(ListUtils.of()));
+        }
+
+        return allEvents;
     }
 
     @Override

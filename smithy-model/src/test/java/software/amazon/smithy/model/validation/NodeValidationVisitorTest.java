@@ -242,6 +242,7 @@ public class NodeValidationVisitorTest {
                 {"ns.foo#HttpDate", "\"Tuesday, 29 April 2014 18:30:38 GMT\"", new String[] {"Invalid value provided for http-date formatted timestamp. Expected a string value that matches the IMF-fixdate production of RFC 7231 section-7.1.1.1. Found: Tuesday, 29 April 2014 18:30:38 GMT"}},
                 {"ns.foo#HttpDate", "\"Tue, 29 Apr 2014 18:30:38 PST\"", new String[] {"Invalid value provided for http-date formatted timestamp. Expected a string value that matches the IMF-fixdate production of RFC 7231 section-7.1.1.1. Found: Tue, 29 Apr 2014 18:30:38 PST"}},
                 {"ns.foo#HttpDate", "11", new String[] {"Invalid value provided for http-date formatted timestamp. Expected a string value that matches the IMF-fixdate production of RFC 7231 section-7.1.1.1. Found: number"}},
+                {"ns.foo#Structure4", "{\"httpDate\": \"Tue, 29 Apr 2014 18:30:38 GMT\"}", null},
 
                 // date-time
                 {"ns.foo#DateTime", "\"1985-04-12T23:20:50.52Z\"", null},
@@ -257,8 +258,7 @@ public class NodeValidationVisitorTest {
                 // timestamp member with format.
                 {"ns.foo#TimestampList", "[\"1985-04-12T23:20:50.52Z\"]", null},
                 {"ns.foo#TimestampList", "[\"1985-04-12T23:20:50.52-07:00\"]", new String[] {
-                        "0: Invalid string value, `1985-04-12T23:20:50.52-07:00`, provided for timestamp, `smithy.api#Timestamp`. Expected an RFC 3339 formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")",
-                        "0: Invalid string value, `1985-04-12T23:20:50.52-07:00`, provided for timestamp, `ns.foo#TimestampList$member`. Expected an RFC 3339 formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")"
+                        "0: Invalid string value, `1985-04-12T23:20:50.52-07:00`, provided for timestamp, `smithy.api#Timestamp`. Expected an RFC 3339 formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")"
                 }},
                 {"ns.foo#TimestampList", "[123]", new String[] {"0: Expected a string value for a date-time timestamp (e.g., \"1985-04-12T23:20:50.52Z\")"}},
 
