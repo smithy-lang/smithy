@@ -509,4 +509,31 @@ apply JsonUnions @httpResponseTests([
             }
         }
     },
+    {
+        id: "AwsJson10DeserializeIgnoreType"
+        appliesTo: "client"
+        documentation: "Ignores an unrecognized __type property"
+        protocol: awsJson1_0
+        code: 200
+        body: """
+            {
+                "contents": {
+                    "__type": "aws.protocoltests.json10#MyUnion",
+                    "structureValue": {
+                        "hi": "hello"
+                    }
+                }
+            }"""
+        bodyMediaType: "application/json"
+        headers: {
+            "Content-Type": "application/x-amz-json-1.0"
+        },
+        params: {
+            contents: {
+                structureValue: {
+                    hi: "hello"
+                }
+            }
+        }
+    }
 ])
