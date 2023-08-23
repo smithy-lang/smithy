@@ -442,6 +442,33 @@ apply JsonUnions @httpResponseTests([
             }
         }
     },
+    {
+        id: "RestJsonDeserializeIgnoreType"
+        appliesTo: "client"
+        documentation: "Ignores an unrecognized __type property"
+        protocol: restJson1
+        code: 200
+        body: """
+            {
+                "contents": {
+                    "__type": "aws.protocoltests.json10#MyUnion",
+                    "structureValue": {
+                        "hi": "hello"
+                    }
+                }
+            }"""
+        bodyMediaType: "application/json"
+        headers: {
+            "Content-Type": "application/json"
+        }
+        params: {
+            contents: {
+                structureValue: {
+                    hi: "hello"
+                }
+            }
+        }
+    }
 ])
 
 

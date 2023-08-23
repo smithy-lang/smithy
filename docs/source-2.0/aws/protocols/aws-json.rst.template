@@ -132,6 +132,7 @@ to convert each shape type:
     * - ``union``
       - JSON object. A union is serialized identically as a ``structure``
         shape, but only a single member can be set to a non-null value.
+        Deserializers MUST ignore an unrecognized ``__type`` member if present.
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~
