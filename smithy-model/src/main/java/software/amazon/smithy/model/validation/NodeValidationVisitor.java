@@ -355,9 +355,13 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
     @Override
     public List<ValidationEvent> memberShape(MemberShape shape) {
         List<ValidationEvent> events = applyPlugins(shape);
-        events.addAll(model.getShape(shape.getTarget())
-                              .map(member -> member.accept(this))
-                              .orElse(ListUtils.of()));
+        model.getShape(shape.getTarget()).ifPresent(target -> {
+            // We only need to keep track of a single referring member, so a stack of members or anything like that
+            // isn't needed here.
+            validationContext.setReferringMember(shape);
+            events.addAll(target.accept(this));
+            validationContext.setReferringMember(null);
+        });
         return events;
     }
 

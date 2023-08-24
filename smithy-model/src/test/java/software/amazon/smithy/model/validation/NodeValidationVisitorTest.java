@@ -257,10 +257,11 @@ public class NodeValidationVisitorTest {
                 // timestamp member with format.
                 {"ns.foo#TimestampList", "[\"1985-04-12T23:20:50.52Z\"]", null},
                 {"ns.foo#TimestampList", "[\"1985-04-12T23:20:50.52-07:00\"]", new String[] {
-                        "0: Invalid string value, `1985-04-12T23:20:50.52-07:00`, provided for timestamp, `smithy.api#Timestamp`. Expected an RFC 3339 formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")",
                         "0: Invalid string value, `1985-04-12T23:20:50.52-07:00`, provided for timestamp, `ns.foo#TimestampList$member`. Expected an RFC 3339 formatted timestamp (e.g., \"1985-04-12T23:20:50.52Z\")"
                 }},
                 {"ns.foo#TimestampList", "[123]", new String[] {"0: Expected a string value for a date-time timestamp (e.g., \"1985-04-12T23:20:50.52Z\")"}},
+                {"ns.foo#Structure4", "{\"httpDate\": 1234}", new String[] {"httpDate: Invalid value provided for http-date formatted timestamp. Expected a string value that matches the IMF-fixdate production of RFC 7231 section-7.1.1.1. Found: number"}},
+                {"ns.foo#Structure4", "{\"httpDateTarget\": 1234}", new String[] {"httpDateTarget: Invalid value provided for http-date formatted timestamp. Expected a string value that matches the IMF-fixdate production of RFC 7231 section-7.1.1.1. Found: number"}},
 
                 // timestamp member with no format.
                 {"ns.foo#TimestampListNoFormatTrait", "[123]", null},

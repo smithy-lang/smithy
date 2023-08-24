@@ -268,6 +268,20 @@
                 }
             }
         },
+        "ns.foo#Structure4": {
+            "type": "structure",
+            "members": {
+                "httpDate": {
+                    "target": "smithy.api#Timestamp",
+                    "traits": {
+                        "smithy.api#timestampFormat": "http-date"
+                    }
+                },
+                "httpDateTarget": {
+                    "target": "ns.foo#HttpDate"
+                }
+            }
+        },
         "ns.foo#Service": {
             "type": "service",
             "version": "2017-17-01",
