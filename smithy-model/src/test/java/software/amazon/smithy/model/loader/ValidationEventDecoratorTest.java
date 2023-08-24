@@ -44,7 +44,8 @@ public class ValidationEventDecoratorTest {
     static final String UNREFERENCED_SHAPE_EVENT_ID = "UnreferencedShape";
     static final Set<ShapeId> STRUCT_SHAPE_IDS = SetUtils.of(ShapeId.from("ns.foo#Structure"),
                                                              ShapeId.from("ns.foo#Structure2"),
-                                                             ShapeId.from("ns.foo#Structure3"));
+                                                             ShapeId.from("ns.foo#Structure3"),
+                                                             ShapeId.from("ns.foo#Structure4"));
 
     @Test
     public void canDecorateValidationEvents() {
