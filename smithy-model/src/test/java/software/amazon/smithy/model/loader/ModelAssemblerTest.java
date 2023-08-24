@@ -1317,4 +1317,28 @@ public class ModelAssemblerTest {
         assertThat(result.getValidationEvents(Severity.ERROR), hasSize(1));
         assertThat(events, equalTo(result.getValidationEvents()));
     }
+
+    @Test
+    public void exceptionsThrownWhenCreatingTraitsDontCrashSmithy() {
+        String document = "{\n"
+                          + "\"smithy\": \"" + Model.MODEL_VERSION + "\",\n"
+                          + "    \"shapes\": {\n"
+                          + "        \"ns.foo#Test\": {\n"
+                          + "            \"type\": \"string\",\n"
+                          + "            \"traits\": {\"smithy.foo#baz\": true}\n"
+                          + "        }\n"
+                          + "    }\n"
+                          + "}";
+        ValidatedResult<Model> result = new ModelAssembler()
+                .addUnparsedModel(SourceLocation.NONE.getFilename(), document)
+                .putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true)
+                .traitFactory((traitId, target, value) -> {
+                    throw new RuntimeException("Oops!");
+                })
+                .assemble();
+
+        assertThat(result.getValidationEvents(Severity.ERROR), not(empty()));
+        assertThat(result.getValidationEvents(Severity.ERROR).get(0).getMessage(),
+                   equalTo("Error creating trait `smithy.foo#baz`: Oops!"));
+    }
 }
