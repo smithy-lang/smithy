@@ -363,6 +363,8 @@ structure Example {
     output: Document
 
     error: ExampleError
+
+    lowerInputValidationSeverity: NonEmptyStringList
 }
 
 @private

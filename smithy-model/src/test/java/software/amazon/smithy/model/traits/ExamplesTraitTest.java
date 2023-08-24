@@ -25,11 +25,14 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.validation.NodeValidationVisitor;
 
 public class ExamplesTraitTest {
     @Test
     public void loadsTrait() {
         TraitFactory provider = TraitFactory.createServiceFactory();
+        ArrayNode lowerInputValidationSeverity = Node.fromStrings(
+                NodeValidationVisitor.Feature.REQUIRED_TRAIT_WARNING.name() );
         ArrayNode node = Node.arrayNode(
                 Node.objectNode()
                         .withMember("title", Node.from("foo")),
@@ -40,7 +43,8 @@ public class ExamplesTraitTest {
                         .withMember("output", Node.objectNode().withMember("c", Node.from("d")))
                         .withMember("error", Node.objectNode()
                                 .withMember(Node.from("shapeId"), Node.from("smithy.example#FooError"))
-                                .withMember(Node.from("content"), Node.objectNode().withMember("e", Node.from("f")))));
+                                .withMember(Node.from("content"), Node.objectNode().withMember("e", Node.from("f"))))
+                        .withMember("lowerInputValidationSeverity", lowerInputValidationSeverity));
 
         Optional<Trait> trait = provider.createTrait(
                 ShapeId.from("smithy.api#examples"), ShapeId.from("ns.qux#foo"), node);

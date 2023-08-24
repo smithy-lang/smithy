@@ -19,12 +19,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.validation.NodeValidationVisitor;
 import software.amazon.smithy.model.validation.validators.ExamplesTraitValidator;
+import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -56,6 +59,24 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
     }
 
     @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof ExamplesTrait)) {
+            return false;
+        } else if (other == this) {
+            return true;
+        } else {
+            ExamplesTrait trait = (ExamplesTrait) other;
+            return this.examples.size() == trait.examples.size() && this.examples.containsAll(trait.examples);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(toShapeId(), examples);
+    }
+
+
+    @Override
     public Builder toBuilder() {
         Builder builder = new Builder().sourceLocation(getSourceLocation());
         examples.forEach(builder::addExample);
@@ -70,7 +91,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
     }
 
     /**
-     * Builds and examples trait.
+     * Builds an examples trait.
      */
     public static final class Builder extends AbstractTraitBuilder<ExamplesTrait, Builder> {
         private final List<Example> examples = new ArrayList<>();
@@ -100,6 +121,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
         private final ObjectNode input;
         private final ObjectNode output;
         private final ErrorExample error;
+        private final List<NodeValidationVisitor.Feature> lowerInputValidationSeverity;
 
         private Example(Builder builder) {
             this.title = Objects.requireNonNull(builder.title, "Example title must not be null");
@@ -107,6 +129,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
             this.input = builder.input;
             this.output = builder.output;
             this.error = builder.error;
+            this.lowerInputValidationSeverity = builder.lowerInputValidationSeverity.get();
         }
 
         /**
@@ -144,6 +167,13 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
             return Optional.ofNullable(error);
         }
 
+        /**
+         * @return Gets the list of lowered input validation severities.
+         */
+        public Optional<List<NodeValidationVisitor.Feature>> getLowerInputValidationSeverity() {
+            return Optional.ofNullable(lowerInputValidationSeverity);
+        }
+
         @Override
         public Node toNode() {
             ObjectNode.Builder builder = Node.objectNodeBuilder()
@@ -157,13 +187,20 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
             if (this.getOutput().isPresent()) {
                 builder.withMember("output", output);
             }
+            if (this.getLowerInputValidationSeverity().isPresent()) {
+                builder.withMember("lowerInputValidationSeverity", ArrayNode.fromNodes(lowerInputValidationSeverity
+                        .stream()
+                        .map(NodeValidationVisitor.Feature::toNode)
+                        .collect(Collectors.toList())));
+            }
 
             return builder.build();
         }
 
         @Override
         public Builder toBuilder() {
-            return new Builder().documentation(documentation).title(title).input(input).output(output).error(error);
+            return new Builder().documentation(documentation).title(title).input(input).output(output).error(error)
+                    .lowerInputValidationSeverity(lowerInputValidationSeverity);
         }
 
         public static Builder builder() {
@@ -179,6 +216,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
             private ObjectNode input = Node.objectNode();
             private ObjectNode output;
             private ErrorExample error;
+            private BuilderRef<List<NodeValidationVisitor.Feature>> lowerInputValidationSeverity = BuilderRef.forList();
 
             @Override
             public Example build() {
@@ -207,6 +245,14 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
 
             public Builder error(ErrorExample error) {
                 this.error = error;
+                return this;
+            }
+
+            public Builder lowerInputValidationSeverity(
+                    List<NodeValidationVisitor.Feature> lowerInputValidationSeverity
+            ) {
+                this.lowerInputValidationSeverity.clear();
+                this.lowerInputValidationSeverity.get().addAll(lowerInputValidationSeverity);
                 return this;
             }
         }
@@ -302,7 +348,9 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
                     .getStringMember("documentation", builder::documentation)
                     .getObjectMember("input", builder::input)
                     .getObjectMember("output", builder::output)
-                    .getMember("error", ErrorExample::fromNode, builder::error);
+                    .getMember("error", ErrorExample::fromNode, builder::error)
+                    .getArrayMember("lowerInputValidationSeverity", NodeValidationVisitor.Feature::fromNode,
+                                    builder::lowerInputValidationSeverity);
             return builder.build();
         }
     }

@@ -104,10 +104,36 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
          * Emit a warning when a range trait is incompatible with a default value of 0.
          *
          * <p>This was a common pattern in Smithy 1.0 and earlier. It implies that the value is effectively
-         * required. However, chaning the type of the value by un-boxing it or adjusting the range trait would
-         * be a lossy tranformation when migrating a model from 1.0 to 2.0.
+         * required. However, changing the type of the value by un-boxing it or adjusting the range trait would
+         * be a lossy transformation when migrating a model from 1.0 to 2.0.
          */
-        RANGE_TRAIT_ZERO_VALUE_WARNING
+        RANGE_TRAIT_ZERO_VALUE_WARNING,
+
+        // Lowers severity of Length Trait validations on blobs to a WARNING.
+        BLOB_LENGTH_WARNING,
+
+        // Lowers severity of Length Trait validations on maps to a WARNING.
+        MAP_LENGTH_WARNING,
+
+        // Lowers severity of Pattern Trait validations to a WARNING.
+        PATTERN_TRAIT_WARNING,
+
+        // Lowers severity of Range Trait validations to a WARNING.
+        RANGE_TRAIT_WARNING,
+
+        // Lowers severity of Required Trait validations to a WARNING.
+        REQUIRED_TRAIT_WARNING,
+
+        // Lowers severity of Length Trait validations on strings to a WARNING.
+        STRING_LENGTH_WARNING,;
+
+        public static Feature fromNode(Node node) {
+            return Feature.valueOf(node.expectStringNode().getValue());
+        }
+
+        public static Node toNode(Feature feature) {
+            return StringNode.from(feature.toString());
+        }
     }
 
     public static Builder builder() {
@@ -317,9 +343,11 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
                     for (MemberShape member : members.values()) {
                         if (member.isRequired() && !object.getMember(member.getMemberName()).isPresent()) {
+                            Severity severity = this.validationContext.hasFeature(Feature.REQUIRED_TRAIT_WARNING)
+                                    ? Severity.WARNING : Severity.ERROR;
                             events.add(event(String.format(
                                     "Missing required structure member `%s` for `%s`",
-                                    member.getMemberName(), shape.getId())));
+                                    member.getMemberName(), shape.getId()), severity));
                         }
                     }
                     return events;
