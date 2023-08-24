@@ -16,6 +16,8 @@
 package software.amazon.smithy.model.loader;
 
 import static java.lang.String.format;
+import static software.amazon.smithy.model.validation.Severity.ERROR;
+import static software.amazon.smithy.model.validation.Validator.MODEL_ERROR;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -106,6 +108,17 @@ final class LoaderTraitMap {
         } catch (SourceException e) {
             String message = format("Error creating trait `%s`: ", Trait.getIdiomaticTraitName(traitId));
             events.add(ValidationEvent.fromSourceException(e, message, target));
+            return null;
+        } catch (RuntimeException e) {
+            events.add(ValidationEvent.builder()
+                    .id(MODEL_ERROR)
+                    .severity(ERROR)
+                    .shapeId(target)
+                    .sourceLocation(traitValue)
+                    .message(format("Error creating trait `%s`: %s",
+                                    Trait.getIdiomaticTraitName(traitId),
+                                    e.getMessage()))
+                    .build());
             return null;
         }
     }
