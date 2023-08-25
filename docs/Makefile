@@ -24,4 +24,7 @@ merge-versions:
 	cp -R "build/2.0/html" "build/html/2.0"
 	cp -R "root/" "build/html"
 
+openhtml:
+	open "build/html/index.html"
+
 .PHONY: Makefile clean

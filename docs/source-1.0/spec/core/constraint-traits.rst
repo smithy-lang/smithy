@@ -315,6 +315,7 @@ Given the following model,
   ``smithy.example#MyShape``.
 
 
+.. smithy-trait:: smithy.api#length
 .. _length-trait:
 
 ----------------
