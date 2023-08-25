@@ -105,6 +105,14 @@ public class BuildCommandTest {
     }
 
     @Test
+    public void projectionUnknownTraitsAreAllowedWithShortFlag() throws Exception {
+        String config = Paths.get(getClass().getResource("projection-model-import.json").toURI()).toString();
+        CliUtils.Result result = CliUtils.runSmithy("build", "--aut",  "--config", config);
+
+        assertThat(result.code(), equalTo(0));
+    }
+
+    @Test
     public void exceptionsThrownByProjectionsAreDetected() {
         // TODO: need to make a plugin throw an exception
     }
