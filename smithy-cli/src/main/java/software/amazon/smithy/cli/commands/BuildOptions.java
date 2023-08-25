@@ -29,6 +29,7 @@ import software.amazon.smithy.cli.HelpPrinter;
 final class BuildOptions implements ArgumentReceiver {
 
     static final String ALLOW_UNKNOWN_TRAITS = "--allow-unknown-traits";
+    static final String ALLOW_UNKNOWN_TRAITS_SHORT = "--aut";
     static final String MODELS = "<MODELS>";
 
     private boolean allowUnknownTraits;
@@ -37,7 +38,8 @@ final class BuildOptions implements ArgumentReceiver {
 
     @Override
     public void registerHelp(HelpPrinter printer) {
-        printer.option(ALLOW_UNKNOWN_TRAITS, null, "Ignore unknown traits when validating models.");
+        printer.option(ALLOW_UNKNOWN_TRAITS, ALLOW_UNKNOWN_TRAITS_SHORT,
+                       "Ignore unknown traits when validating models.");
         printer.param("--output", null, "OUTPUT_PATH",
                       "Where to write Smithy artifacts, caches, and other files (defaults to './build/smithy').");
 
@@ -48,7 +50,7 @@ final class BuildOptions implements ArgumentReceiver {
 
     @Override
     public boolean testOption(String name) {
-        if (ALLOW_UNKNOWN_TRAITS.equals(name)) {
+        if (ALLOW_UNKNOWN_TRAITS.equals(name) || ALLOW_UNKNOWN_TRAITS_SHORT.equalsIgnoreCase(name)) {
             allowUnknownTraits = true;
             return true;
         }
