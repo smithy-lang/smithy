@@ -15,7 +15,9 @@
 
 package software.amazon.smithy.model.node;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -240,5 +242,45 @@ public class NumberNodeTest {
             boolean result = new NumberNode(k, SourceLocation.NONE).isZero();
             assertEquals(v, result, "Expected " + k + " to be " + v);
         });
+    }
+
+    @Test
+    public void compareIntAndShort() {
+        Node left = Node.from(1);
+        Node right = Node.from((short) 1);
+
+        assertThat(left, equalTo(right));
+    }
+
+    @Test
+    public void compareShortAndFloat() {
+        Node left = Node.from((float) 1.0);
+        Node right = Node.from((short) 1);
+
+        assertThat(left, not(equalTo(right)));
+    }
+
+    @Test
+    public void compareByteAndFloat() {
+        Node left = Node.from((float) 1.0);
+        Node right = Node.from((byte) 1);
+
+        assertThat(left, not(equalTo(right)));
+    }
+
+    @Test
+    public void compareDoubleAndBigDecimal() {
+        Node left = Node.from(new BigDecimal("1.0e+10"));
+        Node right = Node.from(1.0e+10);
+
+        assertThat(left, equalTo(right));
+    }
+
+    @Test
+    public void compareDoubleAndFloat() {
+        Node left = Node.from((float) 1.0e+10);
+        Node right = Node.from((double) 1.0e+10);
+
+        assertThat(left, equalTo(right));
     }
 }
