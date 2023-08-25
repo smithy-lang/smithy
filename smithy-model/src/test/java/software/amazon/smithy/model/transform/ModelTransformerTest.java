@@ -145,6 +145,36 @@ public class ModelTransformerTest {
                    Matchers.equalTo(concrete.toBuilder().flattenMixins().build()));
     }
 
+    @Test
+    public void canFilterAndRemoveMixinsWhenUnusedMixinsArePresent() {
+        ModelTransformer transformer = ModelTransformer.create();
+        Model.Builder builder = Model.builder();
+        StringShape string = StringShape.builder().id("smithy.example#String").build();
+        StructureShape mixin1 = StructureShape.builder()
+                .id("smithy.example#Mixin1")
+                .addTrait(MixinTrait.builder().build())
+                .addMember("a", string.getId())
+                .build();
+        StructureShape mixin2 = StructureShape.builder()
+                .id("smithy.example#Mixin2")
+                .addMember("b", string.getId())
+                .addTrait(MixinTrait.builder().build())
+                .build();
+        StructureShape mixin3 = StructureShape.builder()
+                .id("smithy.example#Mixin3")
+                .addMember("c", string.getId())
+                .addTrait(MixinTrait.builder().build())
+                .addMixin(mixin2)
+                .build();
+        builder.addShapes(mixin1, mixin2, mixin3);
+        Model model = builder.build();
+        Model result = transformer.flattenAndRemoveMixins(model);
+
+        assertThat(result.toSet(), Matchers.not(Matchers.hasItem(mixin1)));
+        assertThat(result.toSet(), Matchers.not(Matchers.hasItem(mixin2)));
+        assertThat(result.toSet(), Matchers.not(Matchers.hasItem(mixin3)));
+    }
+
     @ParameterizedTest
     @MethodSource("flattenShapesData")
     public void flattenShapes(String name) {
