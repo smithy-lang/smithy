@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -86,28 +87,86 @@ final class SelectCommand implements Command {
     }
 
     private String getDocumentation(ColorFormatter colors) {
-        return "By default, each matching shape ID is printed to stdout on a new line. Pass --show-vars to print out "
-               + "a JSON array that contains a 'shape' and 'vars' property, where the 'vars' property is a map of "
-               + "each variable that was captured when the shape was matched.";
+        return "By default, each matching shape ID is printed to stdout on a new line. Pass --show or --show-traits "
+               + "to get JSON array output.";
     }
 
     private static final class Options implements ArgumentReceiver {
-        private boolean showVars;
         private Selector selector;
         private final List<ShapeId> showTraits = new ArrayList<>();
+        private final Set<Show> show = new TreeSet<>();
+
+        private enum Show {
+            TYPE("type") {
+                @Override
+                protected void inject(Selector.ShapeMatch match, ObjectNode.Builder builder) {
+                    builder.withMember("type", match.getShape().getType().toString());
+                }
+            },
+
+            FILE("file") {
+                @Override
+                protected void inject(Selector.ShapeMatch match, ObjectNode.Builder builder) {
+                    SourceLocation source = match.getShape().getSourceLocation();
+                    // Only shapes with a real source location add a file.
+                    if (!source.getFilename().equals(SourceLocation.NONE.getFilename())) {
+                        builder.withMember("file", source.getFilename()
+                                                   + ':' + source.getLine()
+                                                   + ':' + source.getColumn());
+                    }
+                }
+            },
+
+            VARS("vars") {
+                @Override
+                protected void inject(Selector.ShapeMatch match, ObjectNode.Builder builder) {
+                    if (!match.isEmpty()) {
+                        ObjectNode.Builder varBuilder = Node.objectNodeBuilder();
+                        for (Map.Entry<String, Set<Shape>> varEntry : match.entrySet()) {
+                            varBuilder.withMember(
+                                varEntry.getKey(),
+                                sortShapeIds(varEntry.getValue()).map(Node::from).collect(ArrayNode.collect())
+                            );
+                        }
+                        ObjectNode collectedVars = varBuilder.build();
+                        builder.withMember("vars", collectedVars);
+                    }
+                }
+            };
+
+            private final String value;
+
+            Show(String value) {
+                this.value = value;
+            }
+
+            protected abstract void inject(Selector.ShapeMatch match, ObjectNode.Builder builder);
+
+            private static Show from(String value) {
+                for (Show variant : values()) {
+                    if (variant.value.equals(value)) {
+                        return variant;
+                    }
+                }
+                throw new CliError("Invalid value given to --show: `" + value + "`");
+            }
+        }
 
         @Override
         public boolean testOption(String name) {
             switch (name) {
                 case "--vars":
-                    LOGGER.warning("--vars is deprecated. Use --show-vars instead.");
-                    // fall-through
                 case "--show-vars":
-                    showVars = true;
-                    return true;
+                    return deprecatedVars(name);
                 default:
                     return false;
             }
+        }
+
+        private boolean deprecatedVars(String name) {
+            LOGGER.warning(name + " is deprecated. Use `--show vars` instead.");
+            show.add(Show.VARS);
+            return true;
         }
 
         @Override
@@ -128,6 +187,13 @@ final class SelectCommand implements Command {
                             throw new CliError("--show-traits must contain traits");
                         }
                     };
+                case "--show":
+                    return value -> {
+                        String[] parts = value.split("\\s*,\\s*");
+                        for (String part : parts) {
+                            show.add(Show.from(part));
+                        }
+                    };
                 default:
                     return null;
             }
@@ -137,16 +203,17 @@ final class SelectCommand implements Command {
         public void registerHelp(HelpPrinter printer) {
             printer.param("--selector", null, "SELECTOR",
                           "The Smithy selector to execute. Reads from STDIN when not provided.");
+            printer.param("--show", null, "DATA",
+                          "Displays additional top-level members in each match and forces JSON output. This parameter "
+                          + "accepts a comma-separated list of values, including 'type', 'file', and 'vars'. 'type' "
+                          + "adds a string member containing the shape type of each match. 'file' adds a string "
+                          + "member containing the absolute path to where the shape is defined followed by the line "
+                          + "number then column (e.g., '/path/example.smithy:10:1'). 'vars' adds an object containing "
+                          + "the variables that were captured when a shape was matched.");
             printer.param("--show-traits", null, "TRAITS",
                           "Returns JSON output that includes the values of specific traits applied to matched shapes, "
                           + "stored in a 'traits' property. Provide a comma-separated list of trait shape IDs. "
                           + "Prelude traits may omit a namespace (e.g., 'required' or 'smithy.api#required').");
-            printer.option("--show-vars", null, "Returns JSON output that includes the variables that were captured "
-                                                + "when a shape was matched, stored in a 'vars' property.");
-        }
-
-        public boolean showVars() {
-            return showVars;
         }
 
         public Selector selector() {
@@ -199,8 +266,8 @@ final class SelectCommand implements Command {
                     ObjectNode.Builder builder = Node.objectNodeBuilder()
                             .withMember("shape", Node.from(match.getShape().getId().toString()));
 
-                    if (!match.isEmpty()) {
-                        builder.withMember("vars", collectVars(match));
+                    for (Options.Show showData : options.show) {
+                        showData.inject(match, builder);
                     }
 
                     if (!options.showTraits.isEmpty()) {
@@ -223,21 +290,11 @@ final class SelectCommand implements Command {
         abstract void dumpResults(Selector selector, Model model, Options options, CliPrinter stdout);
 
         static OutputFormat determineFormat(Options options) {
-            // If --show-vars isn't provided and --show-traits is empty, then use the SHAPE_ID_LINES output.
-            return !options.showVars() && options.showTraits.isEmpty() ? SHAPE_ID_LINES : JSON;
+            return options.showTraits.isEmpty() && options.show.isEmpty() ? SHAPE_ID_LINES : JSON;
         }
+    }
 
-        private static Stream<String> sortShapeIds(Collection<Shape> shapes) {
-            return shapes.stream().map(Shape::getId).map(ShapeId::toString).sorted();
-        }
-
-        private static ObjectNode collectVars(Map<String, Set<Shape>> vars) {
-            ObjectNode.Builder varBuilder = Node.objectNodeBuilder();
-            for (Map.Entry<String, Set<Shape>> varEntry : vars.entrySet()) {
-                ArrayNode value = sortShapeIds(varEntry.getValue()).map(Node::from).collect(ArrayNode.collect());
-                varBuilder.withMember(varEntry.getKey(), value);
-            }
-            return varBuilder.build();
-        }
+    private static Stream<String> sortShapeIds(Collection<Shape> shapes) {
+        return shapes.stream().map(Shape::getId).map(ShapeId::toString).sorted();
     }
 }
