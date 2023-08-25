@@ -33,11 +33,16 @@ public final class NumberNode extends Node {
 
     private final Number value;
     private final String stringCache;
+    private volatile BigDecimal equality;
 
     public NumberNode(Number value, SourceLocation sourceLocation) {
         super(sourceLocation);
         this.value = Objects.requireNonNull(value);
         stringCache = value.toString();
+
+        if (value instanceof BigDecimal) {
+            equality = (BigDecimal) value;
+        }
     }
 
     /**
@@ -129,7 +134,47 @@ public final class NumberNode extends Node {
 
     @Override
     public boolean equals(Object other) {
-        return other instanceof NumberNode && stringCache.equals(((NumberNode) other).stringCache);
+        if (!(other instanceof NumberNode)) {
+            return false;
+        } else if (other == this) {
+            return true;
+        } else {
+            NumberNode otherNode = (NumberNode) other;
+
+            // This only works if both values are the same type.
+            if (value.equals(otherNode.value)) {
+                return true;
+            }
+
+            // Attempt a cheap check based on the string cache.
+            if (stringCache.equals(otherNode.stringCache)) {
+                return true;
+            }
+
+            // Convert both to BigDecimal and compare equality.
+            return getEquality().equals(otherNode.getEquality());
+        }
+    }
+
+    private BigDecimal getEquality() {
+        BigDecimal e = equality;
+
+        if (e == null) {
+            if (value instanceof Integer) {
+                e = BigDecimal.valueOf(value.intValue());
+            } else if (value instanceof Short) {
+                e = BigDecimal.valueOf(value.shortValue());
+            } else if (value instanceof Byte) {
+                e = BigDecimal.valueOf(value.byteValue());
+            } else if (value instanceof Long) {
+                e = BigDecimal.valueOf(value.longValue());
+            } else {
+                e = new BigDecimal(stringCache);
+            }
+            equality = e;
+        }
+
+        return e;
     }
 
     @Override
