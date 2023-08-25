@@ -31,7 +31,7 @@ public class SelectTest {
 
     @Test
     public void selectsVariables() {
-        List<String> args = Arrays.asList("select", "--show-vars", "--selector", "list $list(*) > member > string");
+        List<String> args = Arrays.asList("select", "--show", "vars", "--selector", "list $list(*) > member > string");
         IntegUtils.run("simple-config-sources", args, result -> {
             assertThat(result.getExitCode(), equalTo(0));
             String content = result.getOutput().trim();
@@ -77,6 +77,82 @@ public class SelectTest {
         List<String> args = Arrays.asList("select", "--show-traits", "documentation,", "--selector", "service");
         IntegUtils.run("simple-config-sources", args, result -> {
             assertThat(result.getExitCode(), not(equalTo(0)));
+        });
+    }
+
+    @Test
+    public void showCannotBeEmpty() {
+        List<String> args = Arrays.asList("select", "--show", "", "--selector", "string");
+        IntegUtils.run("simple-config-sources", args, result -> {
+            assertThat(result.getExitCode(), equalTo(1));
+        });
+    }
+
+    @Test
+    public void showCannotContainInvalidValues() {
+        List<String> args = Arrays.asList("select", "--show", "foo", "--selector", "string");
+        IntegUtils.run("simple-config-sources", args, result -> {
+            assertThat(result.getExitCode(), equalTo(1));
+        });
+    }
+
+    @Test
+    public void showCannotContainInvalidValuesInCsv() {
+        List<String> args = Arrays.asList("select", "--show", "vars,foo", "--selector", "string");
+        IntegUtils.run("simple-config-sources", args, result -> {
+            assertThat(result.getExitCode(), equalTo(1));
+        });
+    }
+
+    @Test
+    public void includesType() {
+        List<String> args = Arrays.asList("select", "--show", "type", "--selector", "string");
+        IntegUtils.run("simple-config-sources", args, result -> {
+            assertThat(result.getExitCode(), equalTo(0));
+            String content = result.getOutput().trim();
+            // Ensure it's valid JSON
+            Node.parse(content);
+            assertThat(content, containsString("\"type\": \"string\""));
+        });
+    }
+
+    @Test
+    public void includesFile() {
+        List<String> args = Arrays.asList("select", "--show", "file", "--selector", "string");
+        IntegUtils.run("simple-config-sources", args, result -> {
+            assertThat(result.getExitCode(), equalTo(0));
+            String content = result.getOutput().trim();
+            // Ensure it's valid JSON
+            Node.parse(content);
+            assertThat(content, containsString("\"file\": "));
+        });
+    }
+
+    @Test
+    public void includesFileAndType() {
+        List<String> args = Arrays.asList("select", "--show", "file, type", "--selector", "string");
+        IntegUtils.run("simple-config-sources", args, result -> {
+            assertThat(result.getExitCode(), equalTo(0));
+            String content = result.getOutput().trim();
+            // Ensure it's valid JSON
+            Node.parse(content);
+            assertThat(content, containsString("\"type\": \"string\""));
+            assertThat(content, containsString("\"file\": "));
+        });
+    }
+
+    @Test
+    public void includesFileAndTypeAndVars() {
+        List<String> args = Arrays.asList("select", "--show", "file, type,vars", "--selector", "string $hi(*)");
+        IntegUtils.run("simple-config-sources", args, result -> {
+            assertThat(result.getExitCode(), equalTo(0));
+            String content = result.getOutput().trim();
+            // Ensure it's valid JSON
+            Node.parse(content);
+            assertThat(content, containsString("\"type\": \"string\""));
+            assertThat(content, containsString("\"file\": "));
+            assertThat(content, containsString("\"vars\": "));
+            assertThat(content, containsString("\"hi\": "));
         });
     }
 }

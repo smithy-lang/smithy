@@ -57,7 +57,7 @@ public class SelectCommandTest {
     public void printsJsonVarsToStdout() throws Exception {
         String model = Paths.get(getClass().getResource("valid-model.smithy").toURI()).toString();
         CliUtils.Result result = CliUtils.runSmithy("select", "--selector", "string $referenceMe(<)",
-                                                    "--show-vars", model);
+                                                    "--show", "vars", model);
 
         assertThat(result.code(), equalTo(0));
         validateSelectorOutput(result.stdout());
@@ -81,7 +81,7 @@ public class SelectCommandTest {
         try {
             // Send the selector through input stream.
             System.setIn(new ByteArrayInputStream("string $referenceMe(<)".getBytes()));
-            CliUtils.Result result = CliUtils.runSmithy("select", "--show-vars", model);
+            CliUtils.Result result = CliUtils.runSmithy("select", "--show", "vars", model);
 
             assertThat(result.code(), equalTo(0));
             validateSelectorOutput(result.stdout());
