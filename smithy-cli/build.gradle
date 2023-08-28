@@ -57,6 +57,7 @@ dependencies {
     implementation "org.slf4j:slf4j-jdk14:1.7.36" // Route slf4j used by Maven through JUL like the rest of Smithy.
 
     testImplementation "org.mock-server:mockserver-netty:3.10.8"
+
 }
 
 // ------ Shade Maven dependency resolvers into the JAR. -------
@@ -223,7 +224,7 @@ tasks["runtime"].dependsOn("shadowJar")
 
 sourceSets {
     create("it") {
-        compileClasspath += sourceSets["main"].output + configurations["testRuntimeClasspath"]
+        compileClasspath += sourceSets["main"].output + configurations["testRuntimeClasspath"] + configurations["testCompileClasspath"]
         runtimeClasspath += output + compileClasspath + sourceSets["test"].runtimeClasspath
     }
 }
@@ -233,7 +234,11 @@ task integ(type: Test) {
     systemProperty "SMITHY_BINARY", "${smithyBinary}"
     testClassesDirs = sourceSets["it"].output.classesDirs
     classpath = sourceSets["it"].runtimeClasspath
-    maxParallelForks = Runtime.getRuntime().availableProcessors() / 2
+
+    // Configuration parameters to execute top-level classes in parallel but methods in same thread
+    systemProperties["junit.jupiter.execution.parallel.enabled"] = "true"
+    systemProperties["junit.jupiter.execution.parallel.mode.default"] = "same_thread"
+    systemProperties["junit.jupiter.execution.parallel.mode.classes.default"] = "concurrent"
 
     testLogging {
         events = ["passed", "skipped", "failed"]
