@@ -253,7 +253,8 @@ The *list* type represents an ordered homogeneous collection of values.
 A list type should be code generated using the list or array type
 provided in the standard library of the target environment.
 
-.. rubric:: Value presence
+Value presence
+~~~~~~~~~~~~~~
 
 *  List values are always present (non-nullable) unless the list is marked
    with the ``@sparse`` trait.
@@ -284,7 +285,8 @@ The :ref:`map` type represents a map data structure that maps
 maintain insertion order. Implementations should use the idiomatic
 map data structure of the target environment when possible.
 
-.. rubric:: Key and value presence
+Key and value presence
+~~~~~~~~~~~~~~~~~~~~~~
 
 * Map keys are always present and never nullable.
 * Map values are always present (non-nullable) unless the map is

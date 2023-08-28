@@ -513,7 +513,8 @@ conversion table:
     * - union
       - object [#funion]_
 
-.. rubric:: Footnotes
+Footnotes
+~~~~~~~~~
 
 .. [#fnumbers] ``long``, ``bigInteger``, ``bigDecimal`` are exposed as
    numbers to JMESPath. If a value for one of these types truly exceeds

@@ -162,7 +162,8 @@ The following example defines a ``video/quicktime`` blob:
     @mediaType("video/quicktime")
     blob VideoData
 
-.. rubric:: Use cases
+Use cases
+---------
 
 The primary function of the ``mediaType`` trait is to send open content
 data over the wire inside of values that are isolated from the rest of
@@ -176,7 +177,8 @@ validation, special-cased helpers to serialize and deserialize media type
 contents in code, assigning a fixed Content-Type when using
 :ref:`HTTP bindings <http-traits>`, etc.
 
-.. rubric:: Comparisons to document types
+Comparisons to document types
+-----------------------------
 
 The serialization format of a shape marked with the ``@mediaType`` trait is
 an important part of its contract. In contrast, document types are
@@ -206,7 +208,8 @@ the :ref:`protocol <protocolDefinition-trait>` of a service; however, the
 serialization format can be explicitly configured in some protocols to
 override the default format using the ``timestampFormat`` trait.
 
-.. rubric:: Timestamp formats
+Timestamp formats
+-----------------
 
 Smithy defines the following built-in timestamp formats:
 
@@ -237,7 +240,8 @@ Smithy defines the following built-in timestamp formats:
         Values that are more granular than millisecond precision SHOULD be
         truncated to fit millisecond precision.
 
-.. rubric:: Resolving timestamp formats
+Resolving timestamp formats
+---------------------------
 
 The following steps are taken to determine the serialization format of a
 :ref:`member <member>` that targets a timestamp:

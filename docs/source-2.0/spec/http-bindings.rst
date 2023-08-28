@@ -497,7 +497,8 @@ The following example defines an error with an HTTP status code of ``404``.
     @httpError(404)
     structure MyError {}
 
-.. rubric:: Default HTTP status codes
+Default HTTP status codes
+-------------------------
 
 The ``httpError`` trait is used to set a *custom* HTTP response status code.
 By default, error structures with no ``httpError`` trait use the default
@@ -537,7 +538,8 @@ Conflicts with
    :ref:`httpPayload-trait`,
    :ref:`httpResponseCode-trait`
 
-.. rubric:: ``httpHeader`` serialization rules:
+``httpHeader`` serialization rules:
+-----------------------------------
 
 * When a :ref:`list <list>` shape is targeted, each member of the shape is
   serialized as a separate HTTP header either by concatenating the values
@@ -550,12 +552,12 @@ Conflicts with
   :rfc:`7231#section-7.1.1.1`. The :ref:`timestampFormat-trait` MAY be used
   to use a custom serialization format.
 
-.. rubric:: Do not put too much data in HTTP headers
+.. note::
 
-While there is no limit placed on the length of an HTTP header field, many
-HTTP client and server implementations enforce limits in practice.
-Carefully consider the maximum allowed length of each member that is bound
-to an HTTP header.
+    While there is no limit placed on the length of an HTTP header field, many
+    HTTP client and server implementations enforce limits in practice.
+    Carefully consider the maximum allowed length of each member that is bound
+    to an HTTP header.
 
 
 .. _restricted-headers:
@@ -659,14 +661,16 @@ The following example defines an operation that send an HTTP label named
         foo: String
     }
 
-.. rubric:: Relationship to :ref:`http-trait`
+Relationship to :ref:`http-trait`
+---------------------------------
 
 When a structure is used as the input of an operation, any member of the
 structure with the ``httpLabel`` trait MUST have a corresponding
 :ref:`URI label <http-uri-label>` with the same name as the member.
 ``httpLabel`` traits are ignored when serializing operation output or errors.
 
-.. rubric:: Applying the ``httpLabel`` trait to members
+Applying the ``httpLabel`` trait to members
+-------------------------------------------
 
 * ``httpLabel`` can only be applied to structure members that are marked as
   :ref:`required <required-trait>`.
@@ -677,7 +681,8 @@ structure with the ``httpLabel`` trait MUST have a corresponding
 * If the corresponding URI label in the operation is greedy, then the
   ``httpLabel`` trait MUST target a member that targets a ``string`` shape.
 
-.. rubric:: ``httpLabel`` serialization rules:
+``httpLabel`` serialization rules
+---------------------------------
 
 - ``boolean`` values are serialized as ``true`` or ``false``.
 - ``timestamp`` values are serialized as an :rfc:`3339` string by default
@@ -690,7 +695,8 @@ structure with the ``httpLabel`` trait MUST have a corresponding
 - However, if the label is greedy, then "/" MUST NOT be percent-encoded
   because greedy labels are meant to span multiple path segments.
 
-.. rubric:: ``httpLabel`` is only used on input
+``httpLabel`` is only used on input
+-----------------------------------
 
 ``httpLabel`` is ignored when resolving the HTTP bindings of an operation's
 output or an error. This means that if a structure that contains members
@@ -751,7 +757,8 @@ data in a response:
 
 .. _http-protocol-document-payloads:
 
-.. rubric:: Protocol-specific document payloads
+Protocol-specific document payloads
+-----------------------------------
 
 By default, all structure members that are not bound as part of the HTTP
 message are serialized in a protocol-specific document sent in the body of
@@ -760,7 +767,8 @@ bind a single top-level operation input, output, or error structure member to
 the body of the HTTP message. Multiple members of the same structure MUST NOT
 be bound to ``httpPayload``.
 
-.. rubric:: Binding members to ``httpPayload``
+Binding members to ``httpPayload``
+----------------------------------
 
 If the ``httpPayload`` trait is present on the structure referenced by the
 input of an operation, then all other structure members MUST be bound with
@@ -772,7 +780,8 @@ output of an operation or a structure targeted by the :ref:`error-trait`,
 then all other structure members MUST be bound to a :ref:`httpHeader-trait`
 or :ref:`httpPrefixHeaders-trait`.
 
-.. rubric:: Serialization rules
+Serialization rules
+-------------------
 
 #. When a string or blob member is referenced, the raw value is serialized
    as the body of the message.
@@ -852,7 +861,8 @@ An example HTTP request would be serialized as:
     X-Foo-first: hi
     X-Foo-second: there
 
-.. rubric:: Disambiguation of ``httpPrefixHeaders``
+Disambiguation of ``httpPrefixHeaders``
+---------------------------------------
 
 In order to differentiate ``httpPrefixHeaders`` from other headers, when
 ``httpPrefixHeaders`` are used, no other :ref:`httpHeader-trait` bindings can
@@ -913,7 +923,8 @@ request:
         size: Integer
     }
 
-.. rubric:: Serialization rules
+Serialization rules
+-------------------
 
 * "&" is used to separate query string parameter key-value pairs.
 * "=" is used to separate query string parameter names from values.
@@ -946,7 +957,8 @@ request:
     HTTP requests and automatically percent-decoded when deserializing HTTP
     requests.
 
-.. rubric:: ``httpQuery`` is only used on input
+``httpQuery`` is only used on input
+-----------------------------------
 
 ``httpQuery`` is ignored when resolving the HTTP bindings of an operation's
 output or an error. This means that if a structure that contains members
@@ -955,12 +967,13 @@ of an operation, then those members are sent as part of the
 :ref:`protocol-specific document <http-protocol-document-payloads>` sent in
 the body of the response.
 
-.. rubric:: Do not put too much data in the query string
+.. note::
 
-While there is no limit placed on the length of an
-:rfc:`HTTP request line <7230#section-3.1.1>`, many HTTP client and server
-implementations enforce limits in practice. Carefully consider the maximum
-allowed length of each member that is bound to an HTTP query string or path.
+    While there is no limit placed on the length of an
+    :rfc:`HTTP request line <7230#section-3.1.1>`, many HTTP client and server
+    implementations enforce limits in practice. Carefully consider the maximum
+    allowed length of each member that is bound to an HTTP query string or
+    path.
 
 
 .. smithy-trait:: smithy.api#httpQueryParams
@@ -1013,16 +1026,8 @@ target input map as query string parameters in an HTTP request:
         value: String
     }
 
-.. rubric:: ``httpQueryParams`` is only used on input
-
-``httpQueryParams`` is ignored when resolving the HTTP bindings of an operation's
-output or an error. This means that if a structure that contains members
-marked with the ``httpQueryParams`` trait is used as the top-level output structure
-of an operation, then those members are sent as part of the
-:ref:`protocol-specific document <http-protocol-document-payloads>` sent in
-the body of the response.
-
-.. rubric:: Serialization rules
+Serialization rules
+-------------------
 
 See the :ref:`httpQuery-trait` serialization rules that define how the keys and values of the
 target map will be serialized in the request query string. Key-value pairs in the target map
@@ -1122,6 +1127,16 @@ A server should deserialize the following input structure:
         }
     }
 
+``httpQueryParams`` is only used on input
+-----------------------------------------
+
+``httpQueryParams`` is ignored when resolving the HTTP bindings of an operation's
+output or an error. This means that if a structure that contains members
+marked with the ``httpQueryParams`` trait is used as the top-level output structure
+of an operation, then those members are sent as part of the
+:ref:`protocol-specific document <http-protocol-document-payloads>` sent in
+the body of the response.
+
 .. smithy-trait:: smithy.api#httpResponseCode
 .. _httpResponseCode-trait:
 
@@ -1147,14 +1162,16 @@ Conflicts with
    :ref:`httpPrefixHeaders-trait`, :ref:`httpPayload-trait`,
    :ref:`httpQuery-trait`, :ref:`httpQueryParams-trait`,
 
-.. rubric:: ``httpResponseCode`` use cases
+``httpResponseCode`` use cases
+------------------------------
 
 Marking an output ``structure`` member with this trait can be used to provide
 different response codes for an operation, like a 200 or 201 for a PUT
 operation. If this member isn't provided, server implementations MUST default
 to the `code` set by the :ref:`http-trait`.
 
-.. rubric:: ``httpResponseCode`` is only used on output
+``httpResponseCode`` is only used on output
+-------------------------------------------
 
 ``httpResponseCode`` is ignored when resolving the HTTP bindings of any
 structure except an operation's output structure. This means that if a

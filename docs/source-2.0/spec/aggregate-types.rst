@@ -76,13 +76,15 @@ The following example defines a map of strings to integers:
 Map member optionality
 ----------------------
 
-.. rubric:: Map keys are never optional
+Map keys are never optional
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Map keys are not permitted to be ``null``. Not all protocol serialization
 formats have a way to define ``null`` map keys, and map implementations
 across programming languages often do not allow ``null`` keys in maps.
 
-.. rubric:: Map values are always present by default
+Map values are always present by default
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Maps values are considered *dense* by default, meaning they cannot contain
 ``null`` values. A map MAY be made *sparse* by applying the
@@ -258,7 +260,8 @@ Requirements change; what is required today might not be required tomorrow.
 Smithy provides several ways to make it so that required members no longer
 need to be provided without breaking previously generated code.
 
-.. rubric:: Migrating ``@required`` to ``@default``
+Migrating ``@required`` to ``@default``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If a ``required`` member no longer needs to be be required, the ``required``
 trait MAY be removed and replaced with the :ref:`default-trait`. Alternatively,
@@ -283,7 +286,8 @@ added to a previously published member. Some tooling does not treat the
 ``required`` trait as non-nullable but does treat the ``default`` trait as
 non-nullable.
 
-.. rubric:: Requiring members to be optional
+Requiring members to be optional
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The :ref:`clientOptional-trait` is used to indicate that a member that is
 currently required by authoritative model consumers like servers MAY become
@@ -315,7 +319,8 @@ trait is *not* a backward compatible change because model consumers would
 transition from assuming the value is optional to assuming that it is always
 present due to a default value.
 
-.. rubric:: Model evolution and the ``@input`` trait
+Model evolution and the ``@input`` trait
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The :ref:`input-trait` specializes a structure as the input of a single
 operation. Transitioning top-level members from ``required`` to optional is
