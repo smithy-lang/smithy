@@ -420,7 +420,8 @@ The following example defines an ``@input`` structure:
         name: String
     }
 
-.. rubric:: ``@input`` structure constraints
+``@input`` structure constraints
+--------------------------------
 
 Structure shapes marked with the ``@input`` trait MUST adhere to the
 following constraints:
@@ -435,7 +436,8 @@ following constraints:
 These constraints allow tooling to specialize operation input shapes in
 ways that would otherwise require complex model transformations.
 
-.. rubric:: Impact on backward compatibility
+Impact on backward compatibility
+--------------------------------
 
 Required members of a structure marked with the ``@input`` trait are implicitly
 considered :ref:`clientOptional <clientOptional-trait>`. It is backward
@@ -461,6 +463,9 @@ Value type
     Annotation trait.
 Conflicts with
     :ref:`input-trait`, :ref:`error-trait`
+
+``@output`` structure constraints
+---------------------------------
 
 Structure shapes marked with the ``@output`` trait MUST adhere to the
 following constraints:

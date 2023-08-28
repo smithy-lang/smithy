@@ -1499,7 +1499,8 @@ hierarchy of a qualified service or resource shape. This function essentially
 allows shapes to be matched by inheriting from the resource or service they
 are bound to.
 
-.. rubric:: Selector arguments
+Selector arguments
+~~~~~~~~~~~~~~~~~~
 
 Exactly one or two selectors MUST be provided to the ``:topdown`` selector:
 
@@ -1515,7 +1516,8 @@ Exactly one or two selectors MUST be provided to the ``:topdown`` selector:
    shape because resource and operation shapes bound to the current shape
    could yield matching results.
 
-.. rubric:: Examples
+Examples
+~~~~~~~~
 
 The following selector finds all service, resource, and operation shapes that
 are marked with the ``aws.api#dataPlane`` trait or that are bound within the

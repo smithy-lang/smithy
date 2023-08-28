@@ -220,7 +220,8 @@ Trait selector
 Value type
     ``list`` of ``Reference`` structures
 
-.. rubric:: ``Reference`` structure
+``Reference`` structure
+-----------------------
 
 The ``references`` trait is a list of ``Reference`` structures that contain
 the following members:
@@ -264,7 +265,8 @@ the following members:
         contain a link relation as defined in :rfc:`5988#section-4` (i.e.,
         this value SHOULD contain either a `standard link relation`_ or URI).
 
-.. rubric:: Runtime resolution of references
+Runtime resolution of references
+--------------------------------
 
 References MAY NOT be resolvable at runtime in the following circumstances:
 
@@ -273,7 +275,8 @@ References MAY NOT be resolvable at runtime in the following circumstances:
 #. The targeted resource and/or service shape is not part of the model
 #. The reference is bound to a specific service that is unknown to the tool
 
-.. rubric:: Implicit identifier mappings example
+Implicit identifier mappings example
+------------------------------------
 
 The following example creates a reference to a ``HistoricalForecast`` resource
 (a resource that requires the "forecastId" and "historicalId" identifiers):
@@ -301,7 +304,8 @@ explicitly mapped to structure members. This is because the targeted structure
 contains members with names that match the names of the identifiers of the
 ``HistoricalForecast`` resource.
 
-.. rubric:: Explicit identifier mappings example
+Explicit identifier mappings example
+------------------------------------
 
 Explicit mappings between identifier names and structure member names can be
 defined if needed. For example:
@@ -325,7 +329,8 @@ defined if needed. For example:
         customHistoricalId: String
     }
 
-.. rubric:: Additional examples
+Additional examples
+-------------------
 
 The following example defines several references:
 
@@ -359,7 +364,8 @@ The following example defines several references:
         objectKey: ObjectKey
     }
 
-.. rubric:: References on string shapes
+References on string shapes
+---------------------------
 
 A reference can be formed on a string shape for resources that have one
 identifier. References applied to a string shape MUST omit the "ids"

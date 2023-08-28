@@ -8,7 +8,8 @@ This is the specification of Smithy |release|, an interface definition language
 and set of tools used to build clients, servers, and other kinds of artifacts
 through model transformations.
 
-.. rubric:: Conventions used in this document
+Conventions used in this document
+=================================
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
@@ -21,14 +22,16 @@ Please report technical errors and ambiguities in this specification to the
 Smithy GitHub repository at https://github.com/smithy-lang/smithy.
 This specification is open source; contributions are welcome.
 
-.. rubric:: Examples
+Examples
+========
 
 Unless declared otherwise, example Smithy models given in this specification
 are written using the :ref:`Smithy interface definition language (IDL) <idl>`
 syntax. Complementary :ref:`JSON AST <json-ast>` examples are provided
 alongside Smithy IDL examples where appropriate.
 
-.. rubric:: Table of contents
+Table of contents
+=================
 
 .. toctree::
     :numbered:
