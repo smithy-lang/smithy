@@ -78,8 +78,8 @@ apply MalformedPattern @httpMalformedRequestTests([
                 mediaType: "application/json",
                 assertion: {
                     contents: """
-                    { "message" : "1 validation error detected. Value at '/string' failed to satisfy constraint: Member must satisfy regular expression pattern: ^[a-m]+$$",
-                      "fieldList" : [{"message": "Value at '/string' failed to satisfy constraint: Member must satisfy regular expression pattern: ^[a-m]+$$", "path": "/string"}]}"""
+                    { "message" : "1 validation error detected. Value 000000000000000000000000000000000000000000000000000000000000000000000000000000000000! at '/evilString' failed to satisfy constraint: Member must satisfy regular expression pattern: ^([0-9]+)+$$",
+                      "fieldList" : [{"message": "Value 000000000000000000000000000000000000000000000000000000000000000000000000000000000000! at '/evilString' failed to satisfy constraint: Member must satisfy regular expression pattern: ^([0-9]+)+$$", "path": "/evilString"}]}"""
                 }
             }
         }
