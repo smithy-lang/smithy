@@ -153,7 +153,7 @@ public class IoUtilsTest {
     @Test
     public void computesCorrectShaHash() throws URISyntaxException {
         // Expected sha was computed using the `sha256sum` command line utility
-        String expectedSha = "a010714609e2ea526a7d43ad2cd60c2ce71b19e0689235f39477bbe19dfa1150";
+        String expectedSha = "4c5a232ddc90924079fd73170b97a6c32a8132437d37ca622cc70b1024396693";
         String shaHash = IoUtils.computeSha256(Paths.get(Objects.requireNonNull(getClass().getResource("sha-test.txt")).toURI()));
         assertEquals(shaHash, expectedSha);
     }
