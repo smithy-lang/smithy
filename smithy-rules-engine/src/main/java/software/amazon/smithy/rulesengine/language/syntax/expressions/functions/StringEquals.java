@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
+import software.amazon.smithy.rulesengine.language.syntax.ToExpression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.ExpressionVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -41,8 +42,19 @@ public final class StringEquals extends LibraryFunction {
      * @param arg2 the second argument to compare.
      * @return The resulting {@link StringEquals} function.
      */
-    public static StringEquals ofExpressions(Expression arg1, Expression arg2) {
+    public static StringEquals ofExpressions(ToExpression arg1, ToExpression arg2) {
         return DEFINITION.createFunction(FunctionNode.ofExpressions(ID, arg1, arg2));
+    }
+
+    /**
+     * Creates a {@link StringEquals} function from the given expressions.
+     *
+     * @param arg1 the first argument to compare.
+     * @param arg2 the second argument to compare.
+     * @return The resulting {@link StringEquals} function.
+     */
+    public static StringEquals ofExpressions(ToExpression arg1, String arg2) {
+        return ofExpressions(arg1, Expression.of(arg2));
     }
 
     @Override

@@ -19,6 +19,7 @@ import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.TypeCheck;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
+import software.amazon.smithy.rulesengine.language.syntax.SyntaxElement;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -29,7 +30,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * Can assign the results of functions to new parameters within the current scope.
  */
 @SmithyUnstableApi
-public final class Condition implements TypeCheck, FromSourceLocation, ToNode {
+public final class Condition extends SyntaxElement implements TypeCheck, FromSourceLocation, ToNode {
     public static final String ASSIGN = "assign";
     private final Expression function;
     private final Identifier result;
@@ -90,17 +91,28 @@ public final class Condition implements TypeCheck, FromSourceLocation, ToNode {
         return function;
     }
 
-    /**
-     * Converts this condition to an expression reference if the condition has a result assignment. Otherwise throws
-     * an exception.
-     *
-     * @return the result as a reference expression.
-     */
+    @Override
+    public Builder toConditionBuilder() {
+        return toBuilder();
+    }
+
+    @Override
+    public Condition toCondition() {
+        return this;
+    }
+
+    @Override
     public Expression toExpression() {
         if (result == null) {
             throw new RuntimeException("Cannot generate expression from a condition without a result");
         }
         return Expression.getReference(result, javaLocation());
+    }
+
+    public Builder toBuilder() {
+        return builder()
+                .fn(function)
+                .result(result);
     }
 
     @Override

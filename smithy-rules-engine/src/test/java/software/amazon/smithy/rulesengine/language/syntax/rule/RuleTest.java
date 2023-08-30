@@ -23,9 +23,9 @@ public class RuleTest {
         Parameter p1 = Parameter.builder().name("param1").type(ParameterType.STRING).required(true).build();
         Parameter p2 = Parameter.builder().name("param2").type(ParameterType.STRING).required(true).build();
         Parameter p3 = Parameter.builder().name("param3").type(ParameterType.STRING).required(true).build();
-        StringEquals equalsA = StringEquals.ofExpressions(p1.toExpression(), Expression.of("a"));
-        StringEquals equalsB = StringEquals.ofExpressions(p2.toExpression(), Expression.of("b"));
-        StringEquals equalsC = StringEquals.ofExpressions(p3.toExpression(), Expression.of("c"));
+        StringEquals equalsA = StringEquals.ofExpressions(p1.toExpression(), "a");
+        StringEquals equalsB = StringEquals.ofExpressions(p2.toExpression(), "b");
+        StringEquals equalsC = StringEquals.ofExpressions(p3.toExpression(), "c");
         Rule rule = Rule.builder()
                 .validateOrElse("param1 value is not a", condition(equalsA))
                 .errorOrElse("param2 is b", condition(equalsB))

@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
+import software.amazon.smithy.rulesengine.language.syntax.ToExpression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.ExpressionVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -37,14 +38,32 @@ public final class Substring extends LibraryFunction {
     /**
      * Creates a {@link Substring} function from the given expressions.
      *
-     * @param arg1 the string to extract from.
-     * @param arg2 the starting index.
-     * @param arg3 the ending index.
-     * @param arg4 the reverse order argument.
+     * @param expression the string to extract from.
+     * @param startIndex the starting index.
+     * @param stopIndex  the ending index.
+     * @param reverse    the reverse order argument.
      * @return The resulting {@link Substring} function.
      */
-    public static Substring ofExpressions(Expression arg1, Expression arg2, Expression arg3, Expression arg4) {
-        return DEFINITION.createFunction(FunctionNode.ofExpressions(ID, arg1, arg2, arg3, arg4));
+    public static Substring ofExpressions(
+            ToExpression expression,
+            ToExpression startIndex,
+            ToExpression stopIndex,
+            ToExpression reverse
+    ) {
+        return DEFINITION.createFunction(FunctionNode.ofExpressions(ID, expression, startIndex, stopIndex, reverse));
+    }
+
+    /**
+     * Creates a {@link Substring} function from the given expressions.
+     *
+     * @param expression the string to extract from.
+     * @param startIndex the starting index.
+     * @param stopIndex  the ending index.
+     * @param reverse    the reverse order argument.
+     * @return The resulting {@link Substring} function.
+     */
+    public static Substring ofExpressions(ToExpression expression, int startIndex, int stopIndex, boolean reverse) {
+        return ofExpressions(expression, Expression.of(startIndex), Expression.of(stopIndex), Expression.of(reverse));
     }
 
     @Override
