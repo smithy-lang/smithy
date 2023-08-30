@@ -19,7 +19,9 @@ import software.amazon.smithy.rulesengine.language.error.RuleError;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
+import software.amazon.smithy.rulesengine.language.syntax.SyntaxElement;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -29,7 +31,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * A rule-set parameter, representing a value usable in conditions and rules.
  */
 @SmithyUnstableApi
-public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLocation, ToNode {
+public final class Parameter extends SyntaxElement implements ToSmithyBuilder<Parameter>, FromSourceLocation, ToNode {
     public static final String TYPE = "type";
     public static final String DEPRECATED = "deprecated";
     public static final String DOCUMENTATION = "documentation";
@@ -215,11 +217,12 @@ public final class Parameter implements ToSmithyBuilder<Parameter>, FromSourceLo
         return Optional.ofNullable(defaultValue);
     }
 
-    /**
-     * Provides a reference to this parameter as an expression.
-     *
-     * @return a reference to the parameter.
-     */
+    @Override
+    public Condition.Builder toConditionBuilder() {
+        return Condition.builder().fn(toExpression());
+    }
+
+    @Override
     public Expression toExpression() {
         return Expression.getReference(name, SourceLocation.none());
     }

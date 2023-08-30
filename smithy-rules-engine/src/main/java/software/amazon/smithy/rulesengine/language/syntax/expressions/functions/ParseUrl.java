@@ -14,7 +14,7 @@ import java.util.Map;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.ToExpression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.ExpressionVisitor;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
@@ -51,7 +51,7 @@ public final class ParseUrl extends LibraryFunction {
      * @param arg1 the URI to parse.
      * @return The resulting {@link ParseUrl} function.
      */
-    public static ParseUrl ofExpressions(Expression arg1) {
+    public static ParseUrl ofExpressions(ToExpression arg1) {
         return DEFINITION.createFunction(FunctionNode.ofExpressions(ID, arg1));
     }
 

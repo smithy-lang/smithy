@@ -44,7 +44,7 @@ public final class Reference extends Expression {
     }
 
     @Override
-    public String getTemplate() {
+    public String template() {
         return String.format("{%s}", name);
     }
 

@@ -14,7 +14,7 @@ import java.util.Optional;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.ToExpression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.ExpressionVisitor;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionDefinition;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
@@ -56,7 +56,7 @@ public final class ParseArn extends LibraryFunction {
      * @param arg1 the ARN to parse.
      * @return The resulting {@link ParseArn} function.
      */
-    public static ParseArn ofExpressions(Expression arg1) {
+    public static ParseArn ofExpressions(ToExpression arg1) {
         return DEFINITION.createFunction(FunctionNode.ofExpressions(ID, arg1));
     }
 

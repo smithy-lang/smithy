@@ -21,10 +21,11 @@ import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.TypeCheck;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
+import software.amazon.smithy.rulesengine.language.syntax.SyntaxElement;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.GetAttr;
-import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.Not;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
+import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -33,7 +34,7 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * Expressions are the fundamental building block of the rule language.
  */
 @SmithyUnstableApi
-public abstract class Expression implements FromSourceLocation, ToNode, TypeCheck {
+public abstract class Expression extends SyntaxElement implements FromSourceLocation, ToNode, TypeCheck {
     private final SourceLocation sourceLocation;
     private Type cachedType;
 
@@ -63,15 +64,6 @@ public abstract class Expression implements FromSourceLocation, ToNode, TypeChec
      */
     public static Literal of(String value) {
         return getLiteral(StringNode.from(value));
-    }
-
-    /**
-     * Negates the current expression.
-     *
-     * @return the negated expression.
-     */
-    public Expression not() {
-        return Not.ofExpressions(this);
     }
 
     /**
@@ -160,14 +152,14 @@ public abstract class Expression implements FromSourceLocation, ToNode, TypeChec
         return cachedType;
     }
 
-    /**
-     * Converts this expression to a string template. By default,
-     * this implementation returns a {@link RuntimeException}.
-     *
-     * @return the string template.
-     */
-    public String getTemplate() {
-        throw new RuntimeException(String.format("Cannot convert `%s` to a string template.", this));
+    @Override
+    public Condition.Builder toConditionBuilder() {
+        return Condition.builder().fn(this);
+    }
+
+    @Override
+    public Expression toExpression() {
+        return this;
     }
 
     @Override
