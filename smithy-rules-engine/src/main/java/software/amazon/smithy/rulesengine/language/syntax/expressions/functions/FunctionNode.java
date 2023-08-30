@@ -20,6 +20,7 @@ import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.RulesComponentBuilder;
 import software.amazon.smithy.rulesengine.language.error.RuleError;
+import software.amazon.smithy.rulesengine.language.syntax.ToExpression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -34,14 +35,16 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
     private static final String ARGV = "argv";
     private static final String FN = "fn";
 
+    private final List<Expression> arguments = new ArrayList<>();
     private final StringNode name;
     private final SourceLocation sourceLocation;
-    private final List<Expression> arguments;
 
     FunctionNode(Builder builder) {
-        this.name = SmithyBuilder.requiredState("functionName", builder.function);
-        this.sourceLocation = builder.getSourceLocation();
-        this.arguments = builder.argv.copy();
+        for (ToExpression expression : builder.argv.get()) {
+            arguments.add(expression.toExpression());
+        }
+        name = SmithyBuilder.requiredState("functionName", builder.function);
+        sourceLocation = builder.getSourceLocation();
     }
 
     /**
@@ -51,7 +54,7 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
      * @param arguments zero or more expressions as arguments to the function.
      * @return the {@link FunctionNode}.
      */
-    public static FunctionNode ofExpressions(String functionName, Expression... arguments) {
+    public static FunctionNode ofExpressions(String functionName, ToExpression... arguments) {
         return ofExpressions(functionName, SourceLocation.none(), arguments);
     }
 
@@ -66,7 +69,7 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
     public static FunctionNode ofExpressions(
             String functionName,
             FromSourceLocation sourceLocation,
-            Expression... arguments
+            ToExpression... arguments
     ) {
         return builder()
                 .sourceLocation(sourceLocation)
@@ -183,13 +186,13 @@ public final class FunctionNode implements FromSourceLocation, ToNode, ToSmithyB
      */
     public static final class Builder extends RulesComponentBuilder<Builder, FunctionNode> {
         private StringNode function;
-        private final BuilderRef<List<Expression>> argv = BuilderRef.forList();
+        private final BuilderRef<List<ToExpression>> argv = BuilderRef.forList();
 
         private Builder() {
             super(SourceLocation.none());
         }
 
-        public Builder arguments(List<Expression> argv) {
+        public Builder arguments(List<? extends ToExpression> argv) {
             this.argv.clear();
             this.argv.get().addAll(argv);
             return this;

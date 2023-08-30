@@ -10,6 +10,7 @@ import java.util.List;
 import software.amazon.smithy.rulesengine.language.evaluation.Scope;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
+import software.amazon.smithy.rulesengine.language.syntax.ToExpression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.ExpressionVisitor;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Reference;
@@ -34,6 +35,16 @@ public final class IsSet extends LibraryFunction {
      */
     public static Definition getDefinition() {
         return DEFINITION;
+    }
+
+    /**
+     * Creates a {@link IsSet} function from the given expressions.
+     *
+     * @param arg1 the expression to negate.
+     * @return The resulting {@link IsSet} function.
+     */
+    public static IsSet ofExpressions(ToExpression arg1) {
+        return DEFINITION.createFunction(FunctionNode.ofExpressions(ID, arg1));
     }
 
     @Override

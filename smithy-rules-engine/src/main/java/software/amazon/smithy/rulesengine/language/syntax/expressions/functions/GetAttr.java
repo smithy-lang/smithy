@@ -23,6 +23,7 @@ import software.amazon.smithy.rulesengine.language.evaluation.type.RecordType;
 import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
+import software.amazon.smithy.rulesengine.language.syntax.ToExpression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.ExpressionVisitor;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.Reference;
@@ -64,8 +65,19 @@ public final class GetAttr extends LibraryFunction {
      * @param arg2 the path to extract.
      * @return The resulting {@link GetAttr} function.
      */
-    public static GetAttr ofExpressions(Expression arg1, Expression arg2) {
+    public static GetAttr ofExpressions(ToExpression arg1, ToExpression arg2) {
         return DEFINITION.createFunction(FunctionNode.ofExpressions(ID, arg1, arg2));
+    }
+
+    /**
+     * Creates a {@link GetAttr} function from the given expressions.
+     *
+     * @param arg1 the argument to extract from.
+     * @param arg2 the path to extract.
+     * @return The resulting {@link GetAttr} function.
+     */
+    public static GetAttr ofExpressions(ToExpression arg1, String arg2) {
+        return ofExpressions(arg1, Expression.of(arg2));
     }
 
     /**
@@ -157,7 +169,7 @@ public final class GetAttr extends LibraryFunction {
     }
 
     @Override
-    public String getTemplate() {
+    public String template() {
         String targetString = ((Reference) target).getName().toString();
         return "{" + targetString + "#" + unparsedPath + "}";
     }
