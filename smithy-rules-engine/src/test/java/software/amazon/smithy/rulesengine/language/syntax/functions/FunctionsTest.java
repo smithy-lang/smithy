@@ -18,23 +18,32 @@ import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.
 
 public class FunctionsTest {
     @Test
-    public void booleanEqualsOfExpression() {
-        BooleanEquals function = BooleanEquals.ofExpressions(Expression.of(true), Expression.of(true));
+    public void booleanEqualsOfExpressions() {
+        BooleanEquals function = BooleanEquals.ofExpressions(Expression.of(true), true);
         assertThat(function, instanceOf(BooleanEquals.class));
+
+        BooleanEquals function2 = BooleanEquals.ofExpressions(Expression.of(true), Expression.of(true));
+        assertThat(function2, instanceOf(BooleanEquals.class));
     }
 
     @Test
-    public void getAttrOfExpression() {
+    public void getAttrOfExpressions() {
         GetAttr function = GetAttr.ofExpressions(
-                Expression.getReference(Identifier.of("a"), SourceLocation.none()),
-                Expression.of("b"));
+                Expression.getReference(Identifier.of("a"), SourceLocation.none()), "b");
         assertThat(function, instanceOf(GetAttr.class));
+
+        GetAttr function2 = GetAttr.ofExpressions(
+                Expression.getReference(Identifier.of("a"), SourceLocation.none()), Expression.of("b"));
+        assertThat(function2, instanceOf(GetAttr.class));
     }
 
     @Test
     public void isValidHostLabelOfExpression() {
-        IsValidHostLabel function = IsValidHostLabel.ofExpressions(Expression.of("foobar"), Expression.of(true));
+        IsValidHostLabel function = IsValidHostLabel.ofExpressions(Expression.of("foobar"), true);
         assertThat(function, instanceOf(IsValidHostLabel.class));
+
+        IsValidHostLabel function2 = IsValidHostLabel.ofExpressions(Expression.of("foobar"), Expression.of(true));
+        assertThat(function2, instanceOf(IsValidHostLabel.class));
     }
 
     @Test
@@ -53,18 +62,24 @@ public class FunctionsTest {
 
     @Test
     public void stringEqualsOfExpression() {
-        StringEquals function = StringEquals.ofExpressions(Expression.of("foo"), Expression.of("foo"));
+        StringEquals function = StringEquals.ofExpressions(Expression.of("foo"), "foo");
         assertThat(function, instanceOf(StringEquals.class));
+
+        StringEquals function2 = StringEquals.ofExpressions(Expression.of("foo"), Expression.of("foo"));
+        assertThat(function2, instanceOf(StringEquals.class));
     }
 
     @Test
     public void substringOfExpression() {
-        Substring function = Substring.ofExpressions(
+        Substring function = Substring.ofExpressions(Expression.of("foobar"), 1, 2, false);
+        assertThat(function, instanceOf(Substring.class));
+
+        Substring function2 = Substring.ofExpressions(
                 Expression.of("foobar"),
                 Expression.of(1),
                 Expression.of(2),
                 Expression.of(false));
-        assertThat(function, instanceOf(Substring.class));
+        assertThat(function2, instanceOf(Substring.class));
     }
 
     @Test

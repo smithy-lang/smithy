@@ -16,8 +16,12 @@ public class FunctionsTest {
     @Test
     public void isVirtualHostableS3BucketOfExpression() {
         IsVirtualHostableS3Bucket function = IsVirtualHostableS3Bucket.ofExpressions(
-                Expression.of("foobar"), Expression.of(true));
+                Expression.of("foobar"), true);
         assertThat(function, instanceOf(IsVirtualHostableS3Bucket.class));
+
+        IsVirtualHostableS3Bucket function2 = IsVirtualHostableS3Bucket.ofExpressions(
+                Expression.of("foobar"), Expression.of(true));
+        assertThat(function2, instanceOf(IsVirtualHostableS3Bucket.class));
     }
 
     @Test
