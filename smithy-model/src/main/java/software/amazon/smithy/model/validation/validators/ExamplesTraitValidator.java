@@ -15,18 +15,9 @@
 
 package software.amazon.smithy.model.validation.validators;
 
-import static software.amazon.smithy.model.validation.NodeValidationVisitor.Feature.BLOB_LENGTH_WARNING;
-import static software.amazon.smithy.model.validation.NodeValidationVisitor.Feature.MAP_LENGTH_WARNING;
-import static software.amazon.smithy.model.validation.NodeValidationVisitor.Feature.PATTERN_TRAIT_WARNING;
-import static software.amazon.smithy.model.validation.NodeValidationVisitor.Feature.RANGE_TRAIT_WARNING;
-import static software.amazon.smithy.model.validation.NodeValidationVisitor.Feature.REQUIRED_TRAIT_WARNING;
-import static software.amazon.smithy.model.validation.NodeValidationVisitor.Feature.STRING_LENGTH_WARNING;
-
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -40,14 +31,6 @@ import software.amazon.smithy.model.validation.ValidationEvent;
  * Validates that examples traits are valid for their operations.
  */
 public final class ExamplesTraitValidator extends AbstractValidator {
-
-    private static final Set<NodeValidationVisitor.Feature> ALLOWED_FEATURES = EnumSet.of(
-            BLOB_LENGTH_WARNING,
-            MAP_LENGTH_WARNING,
-            PATTERN_TRAIT_WARNING,
-            RANGE_TRAIT_WARNING,
-            REQUIRED_TRAIT_WARNING,
-            STRING_LENGTH_WARNING);
 
     @Override
     public List<ValidationEvent> validate(Model model) {
@@ -69,16 +52,12 @@ public final class ExamplesTraitValidator extends AbstractValidator {
 
             model.getShape(shape.getInputShape()).ifPresent(input -> {
                 NodeValidationVisitor validator;
-                if (!example.getLowerInputValidationSeverity().isEmpty()) {
-                    if (!isErrorDefined) {
-                        events.add(error(shape, trait, String.format(
-                            "Example: `%s` has lowerInputValidationSeverity defined, so error must also be defined.",
+                if (example.getDisableConstraints() && !isErrorDefined) {
+                    events.add(error(shape, trait, String.format(
+                            "Example: `%s` has disableConstraints enabled, so error must be defined.",
                             example.getTitle())));
-                    }
-                    validator = createVisitor("input", example.getInput(), model, shape, example, true);
-                } else {
-                    validator = createVisitor("input", example.getInput(), model, shape, example, false);
                 }
+                validator = createVisitor("input", example.getInput(), model, shape, example);
                 List<ValidationEvent> inputValidationEvents = input.accept(validator);
                 events.addAll(inputValidationEvents);
             });
@@ -90,7 +69,7 @@ public final class ExamplesTraitValidator extends AbstractValidator {
             } else if (isOutputDefined) {
                 model.getShape(shape.getOutputShape()).ifPresent(output -> {
                     NodeValidationVisitor validator = createVisitor(
-                            "output", example.getOutput().get(), model, shape, example, false);
+                            "output", example.getOutput().get(), model, shape, example);
                     events.addAll(output.accept(validator));
                 });
             } else if (isErrorDefined) {
@@ -98,7 +77,7 @@ public final class ExamplesTraitValidator extends AbstractValidator {
                 Optional<Shape> errorShape = model.getShape(errorExample.getShapeId());
                 if (errorShape.isPresent() && shape.getErrors().contains(errorExample.getShapeId())) {
                     NodeValidationVisitor validator = createVisitor(
-                            "error", errorExample.getContent(), model, shape, example, false);
+                            "error", errorExample.getContent(), model, shape, example);
                     events.addAll(errorShape.get().accept(validator));
                 } else {
                     events.add(error(shape, trait, String.format(
@@ -116,8 +95,7 @@ public final class ExamplesTraitValidator extends AbstractValidator {
             ObjectNode value,
             Model model,
             Shape shape,
-            ExamplesTrait.Example example,
-            boolean enableFeatures
+            ExamplesTrait.Example example
     ) {
         NodeValidationVisitor.Builder builder = NodeValidationVisitor.builder()
                 .model(model)
@@ -125,10 +103,8 @@ public final class ExamplesTraitValidator extends AbstractValidator {
                 .value(value)
                 .startingContext("Example " + name + " of `" + example.getTitle() + "`")
                 .eventId(getName());
-        if (enableFeatures) {
-            example.getLowerInputValidationSeverity().stream()
-                    .filter(ALLOWED_FEATURES::contains)
-                    .forEach(builder::addFeature);
+        if (example.getDisableConstraints()) {
+            builder.addFeature(NodeValidationVisitor.Feature.DISABLE_CONSTRAINTS);
         }
         return builder.build();
     }

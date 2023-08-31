@@ -6,7 +6,7 @@
 [WARNING] ns.foo#Operation: Example output of `Testing 2`: Invalid structure member `additional` found for `ns.foo#OperationOutput` | ExamplesTrait
 [ERROR] ns.foo#Operation: Example output of `Testing 2`: Missing required structure member `bam` for `ns.foo#OperationOutput` | ExamplesTrait
 [WARNING] ns.foo#Operation: Example error of `Testing 1`: Invalid structure member `extra` found for `ns.foo#OperationError` | ExamplesTrait
-[ERROR] ns.foo#Operation: Example: `Testing 4` has lowerInputValidationSeverity defined, so error must also be defined. | ExamplesTrait
+[ERROR] ns.foo#Operation: Example: `Testing 4` has disableConstraints enabled, so error must be defined. | ExamplesTrait
 [WARNING] ns.foo#Operation: Example input of `Testing 5`.blobMin: Value provided for `ns.foo#OperationInput$blobMin` must have at least 3 bytes, but the provided value only has 1 bytes | ExamplesTrait
 [WARNING] ns.foo#Operation: Example input of `Testing 5`.blobMax: Value provided for `ns.foo#OperationInput$blobMax` must have no more than 3 bytes, but the provided value has 6 bytes | ExamplesTrait
 [WARNING] ns.foo#Operation: Example input of `Testing 5`: Missing required structure member `foo` for `ns.foo#OperationInput` | ExamplesTrait

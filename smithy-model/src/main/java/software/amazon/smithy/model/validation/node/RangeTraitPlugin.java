@@ -97,12 +97,12 @@ class RangeTraitPlugin implements NodeValidatorPlugin {
     private Severity getSeverity(NumberNode node, Context context) {
         boolean zeroValueWarning = context
                 .hasFeature(NodeValidationVisitor.Feature.RANGE_TRAIT_ZERO_VALUE_WARNING);
-        boolean rangeTraitWarning = context.hasFeature(NodeValidationVisitor.Feature.RANGE_TRAIT_WARNING);
+        boolean rangeTraitWarning = context.hasFeature(NodeValidationVisitor.Feature.DISABLE_CONSTRAINTS);
         return (zeroValueWarning && node.isZero()) || rangeTraitWarning ? Severity.WARNING : Severity.ERROR;
     }
 
     private Severity getSeverity(Context context) {
-        return context.hasFeature(NodeValidationVisitor.Feature.RANGE_TRAIT_WARNING)
+        return context.hasFeature(NodeValidationVisitor.Feature.DISABLE_CONSTRAINTS)
                 ? Severity.WARNING : Severity.ERROR;
     }
 }

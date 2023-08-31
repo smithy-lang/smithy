@@ -109,23 +109,8 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
          */
         RANGE_TRAIT_ZERO_VALUE_WARNING,
 
-        // Lowers severity of Length Trait validations on blobs to a WARNING.
-        BLOB_LENGTH_WARNING,
-
-        // Lowers severity of Length Trait validations on maps to a WARNING.
-        MAP_LENGTH_WARNING,
-
-        // Lowers severity of Pattern Trait validations to a WARNING.
-        PATTERN_TRAIT_WARNING,
-
-        // Lowers severity of Range Trait validations to a WARNING.
-        RANGE_TRAIT_WARNING,
-
-        // Lowers severity of Required Trait validations to a WARNING.
-        REQUIRED_TRAIT_WARNING,
-
-        // Lowers severity of Length Trait validations on strings to a WARNING.
-        STRING_LENGTH_WARNING,;
+        // Lowers severity of constraint trait validations to WARNING.
+        DISABLE_CONSTRAINTS;
 
         public static Feature fromNode(Node node) {
             return Feature.valueOf(node.expectStringNode().getValue());
@@ -343,7 +328,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
                     for (MemberShape member : members.values()) {
                         if (member.isRequired() && !object.getMember(member.getMemberName()).isPresent()) {
-                            Severity severity = this.validationContext.hasFeature(Feature.REQUIRED_TRAIT_WARNING)
+                            Severity severity = this.validationContext.hasFeature(Feature.DISABLE_CONSTRAINTS)
                                     ? Severity.WARNING : Severity.ERROR;
                             events.add(event(String.format(
                                     "Missing required structure member `%s` for `%s`",

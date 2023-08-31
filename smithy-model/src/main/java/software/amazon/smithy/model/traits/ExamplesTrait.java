@@ -19,15 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import software.amazon.smithy.model.node.ArrayNode;
+import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.validation.NodeValidationVisitor;
 import software.amazon.smithy.model.validation.validators.ExamplesTraitValidator;
-import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -121,7 +119,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
         private final ObjectNode input;
         private final ObjectNode output;
         private final ErrorExample error;
-        private final List<NodeValidationVisitor.Feature> lowerInputValidationSeverity;
+        private final boolean disableConstraints;
 
         private Example(Builder builder) {
             this.title = Objects.requireNonNull(builder.title, "Example title must not be null");
@@ -129,7 +127,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
             this.input = builder.input;
             this.output = builder.output;
             this.error = builder.error;
-            this.lowerInputValidationSeverity = builder.lowerInputValidationSeverity.get();
+            this.disableConstraints = builder.disableConstraints;
         }
 
         /**
@@ -168,10 +166,10 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
         }
 
         /**
-         * @return Gets the list of lowered input validation severities.
+         * @return Returns true if input constraints validation has been disabled.
          */
-        public List<NodeValidationVisitor.Feature> getLowerInputValidationSeverity() {
-            return lowerInputValidationSeverity;
+        public boolean getDisableConstraints() {
+            return disableConstraints;
         }
 
         @Override
@@ -180,10 +178,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
                     .withMember("title", Node.from(title))
                     .withOptionalMember("documentation", getDocumentation().map(Node::from))
                     .withOptionalMember("error", getError().map(ErrorExample::toNode))
-                    .withMember("lowerInputValidationSeverity", ArrayNode.fromNodes(lowerInputValidationSeverity
-                                    .stream()
-                                    .map(NodeValidationVisitor.Feature::toNode)
-                                    .collect(Collectors.toList())));
+                    .withOptionalMember("disableConstraints", BooleanNode.from(disableConstraints).asBooleanNode());
 
             if (!input.isEmpty()) {
                 builder.withMember("input", input);
@@ -198,7 +193,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
         @Override
         public Builder toBuilder() {
             return new Builder().documentation(documentation).title(title).input(input).output(output).error(error)
-                    .lowerInputValidationSeverity(lowerInputValidationSeverity);
+                    .disableConstraints(disableConstraints);
         }
 
         public static Builder builder() {
@@ -214,7 +209,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
             private ObjectNode input = Node.objectNode();
             private ObjectNode output;
             private ErrorExample error;
-            private BuilderRef<List<NodeValidationVisitor.Feature>> lowerInputValidationSeverity = BuilderRef.forList();
+            private boolean disableConstraints;
 
             @Override
             public Example build() {
@@ -246,11 +241,8 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
                 return this;
             }
 
-            public Builder lowerInputValidationSeverity(
-                    List<NodeValidationVisitor.Feature> lowerInputValidationSeverity
-            ) {
-                this.lowerInputValidationSeverity.clear();
-                this.lowerInputValidationSeverity.get().addAll(lowerInputValidationSeverity);
+            public Builder disableConstraints(Boolean disableConstraints) {
+                this.disableConstraints = disableConstraints;
                 return this;
             }
         }
@@ -347,8 +339,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
                     .getObjectMember("input", builder::input)
                     .getObjectMember("output", builder::output)
                     .getMember("error", ErrorExample::fromNode, builder::error)
-                    .getArrayMember("lowerInputValidationSeverity", NodeValidationVisitor.Feature::fromNode,
-                                    builder::lowerInputValidationSeverity);
+                    .getBooleanMember("disableConstraints", builder::disableConstraints);
             return builder.build();
         }
     }

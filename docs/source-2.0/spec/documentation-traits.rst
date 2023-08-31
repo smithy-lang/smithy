@@ -139,22 +139,17 @@ Each ``example`` trait value is a structure with the following members:
       - :ref:`examples-ErrorExample-structure`
       - Provides an error shape ID and example error parameters for the
         operation.
-    * - lowerInputValidationSeverity
-      - ``[string]``
-      - Lowers input validation events from ERROR to WARNING for specific
-        validation types. List can include: ``BLOB_LENGTH_WARNING``,
-        ``MAP_LENGTH_WARNING``, ``PATTERN_TRAIT_WARNING``,
-        ``RANGE_TRAIT_WARNING``, ``REQUIRED_TRAIT_WARNING``,
-        ``STRING_LENGTH_WARNING``.
-
+    * - disableConstraints
+      - ``boolean``
+      - Set to true to lower input constraint trait validations to warnings.
 
 When ``input`` and ``output`` members are present, both MUST be compatible
 with the shapes and constraints of the corresponding structure. When ``input``
 and ``error`` members are present, input validation events will be emitted as
-an ``ERROR`` by default. Specific validation events for the ``input`` can be
-lowered to a ``WARNING`` by setting the appropriate
-``lowerInputValidationSeverity`` value. ``input`` and ``output`` members use
-the same semantics and format as :ref:`custom trait values <trait-node-values>`.
+an ``ERROR`` by default. Constraint trait validation events for the ``input``
+can be lowered to a ``WARNING`` by setting ``disableConstraints`` to true.
+``input`` and ``output`` members use the same semantics and format as
+:ref:`custom trait values <trait-node-values>`.
 
 A value for ``output`` or ``error`` SHOULD be provided. However, both
 MUST NOT be defined for the same example.
@@ -198,7 +193,7 @@ MUST NOT be defined for the same example.
                     message: "Invalid 'foo'. Special character not allowed."
                 }
             },
-            lowerInputValidationSeverity: ["PATTERN_TRAIT_WARNING"]
+            disableConstraints: true
         }
     ])
 

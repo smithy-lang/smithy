@@ -364,7 +364,7 @@ structure Example {
 
     error: ExampleError
 
-    lowerInputValidationSeverity: NonEmptyStringList
+    disableConstraints: Boolean
 }
 
 @private

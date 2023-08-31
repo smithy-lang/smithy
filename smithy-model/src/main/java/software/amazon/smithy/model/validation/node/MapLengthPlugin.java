@@ -53,7 +53,7 @@ final class MapLengthPlugin extends MemberAndShapeTraitPlugin<MapShape, ObjectNo
     }
 
     private Severity getSeverity(Context context) {
-        return context.hasFeature(NodeValidationVisitor.Feature.MAP_LENGTH_WARNING)
+        return context.hasFeature(NodeValidationVisitor.Feature.DISABLE_CONSTRAINTS)
                 ? Severity.WARNING : Severity.ERROR;
     }
 }

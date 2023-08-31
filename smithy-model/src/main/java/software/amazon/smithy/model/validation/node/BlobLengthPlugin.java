@@ -57,7 +57,7 @@ final class BlobLengthPlugin extends MemberAndShapeTraitPlugin<BlobShape, String
     }
 
     private Severity getSeverity(Context context) {
-        return context.hasFeature(NodeValidationVisitor.Feature.BLOB_LENGTH_WARNING)
+        return context.hasFeature(NodeValidationVisitor.Feature.DISABLE_CONSTRAINTS)
                 ? Severity.WARNING : Severity.ERROR;
     }
 }

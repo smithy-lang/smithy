@@ -62,9 +62,7 @@
                         "output": {
                             "bam": "value3"
                         },
-                        "lowerInputValidationSeverity": [
-                            "REQUIRED_TRAIT_WARNING"
-                        ]
+                        "disableConstraints": true
                     },
                     {
                         "title": "Testing 5",
@@ -93,14 +91,7 @@
                                 "bat": "baz"
                             }
                         },
-                        "lowerInputValidationSeverity": [
-                            "BLOB_LENGTH_WARNING",
-                            "MAP_LENGTH_WARNING",
-                            "PATTERN_TRAIT_WARNING",
-                            "RANGE_TRAIT_WARNING",
-                            "REQUIRED_TRAIT_WARNING",
-                            "STRING_LENGTH_WARNING"
-                        ]
+                        "disableConstraints": true
                     }
                 ]
             }

@@ -51,7 +51,7 @@ final class StringLengthPlugin extends MemberAndShapeTraitPlugin<StringShape, St
     }
 
     private Severity getSeverity(Context context) {
-        return context.hasFeature(NodeValidationVisitor.Feature.STRING_LENGTH_WARNING)
+        return context.hasFeature(NodeValidationVisitor.Feature.DISABLE_CONSTRAINTS)
                 ? Severity.WARNING : Severity.ERROR;
     }
 }
