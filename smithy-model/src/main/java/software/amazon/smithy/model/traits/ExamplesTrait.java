@@ -170,8 +170,8 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
         /**
          * @return Gets the list of lowered input validation severities.
          */
-        public Optional<List<NodeValidationVisitor.Feature>> getLowerInputValidationSeverity() {
-            return Optional.ofNullable(lowerInputValidationSeverity);
+        public List<NodeValidationVisitor.Feature> getLowerInputValidationSeverity() {
+            return lowerInputValidationSeverity;
         }
 
         @Override
@@ -179,19 +179,17 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
             ObjectNode.Builder builder = Node.objectNodeBuilder()
                     .withMember("title", Node.from(title))
                     .withOptionalMember("documentation", getDocumentation().map(Node::from))
-                    .withOptionalMember("error", getError().map(ErrorExample::toNode));
+                    .withOptionalMember("error", getError().map(ErrorExample::toNode))
+                    .withMember("lowerInputValidationSeverity", ArrayNode.fromNodes(lowerInputValidationSeverity
+                                    .stream()
+                                    .map(NodeValidationVisitor.Feature::toNode)
+                                    .collect(Collectors.toList())));
 
             if (!input.isEmpty()) {
                 builder.withMember("input", input);
             }
             if (this.getOutput().isPresent()) {
                 builder.withMember("output", output);
-            }
-            if (this.getLowerInputValidationSeverity().isPresent()) {
-                builder.withMember("lowerInputValidationSeverity", ArrayNode.fromNodes(lowerInputValidationSeverity
-                        .stream()
-                        .map(NodeValidationVisitor.Feature::toNode)
-                        .collect(Collectors.toList())));
             }
 
             return builder.build();

@@ -69,8 +69,7 @@ public final class ExamplesTraitValidator extends AbstractValidator {
 
             model.getShape(shape.getInputShape()).ifPresent(input -> {
                 NodeValidationVisitor validator;
-                if (example.getLowerInputValidationSeverity().isPresent()
-                        && !example.getLowerInputValidationSeverity().get().isEmpty()) {
+                if (!example.getLowerInputValidationSeverity().isEmpty()) {
                     if (!isErrorDefined) {
                         events.add(error(shape, trait, String.format(
                             "Example: `%s` has lowerInputValidationSeverity defined, so error must also be defined.",
@@ -127,9 +126,9 @@ public final class ExamplesTraitValidator extends AbstractValidator {
                 .startingContext("Example " + name + " of `" + example.getTitle() + "`")
                 .eventId(getName());
         if (enableFeatures) {
-            example.getLowerInputValidationSeverity().ifPresent(features -> features.stream()
+            example.getLowerInputValidationSeverity().stream()
                     .filter(ALLOWED_FEATURES::contains)
-                    .forEach(builder::addFeature));
+                    .forEach(builder::addFeature);
         }
         return builder.build();
     }
