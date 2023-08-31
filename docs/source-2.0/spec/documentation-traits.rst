@@ -142,14 +142,7 @@ Each ``example`` trait value is a structure with the following members:
     * - disableConstraints
       - ``boolean``
       - Set to true to lower input constraint trait validations to warnings.
-
-When ``input`` and ``output`` members are present, both MUST be compatible
-with the shapes and constraints of the corresponding structure. When ``input``
-and ``error`` members are present, input validation events will be emitted as
-an ``ERROR`` by default. Constraint trait validation events for the ``input``
-can be lowered to a ``WARNING`` by setting ``disableConstraints`` to true.
-``input`` and ``output`` members use the same semantics and format as
-:ref:`custom trait values <trait-node-values>`.
+        This can only be set when ``error`` is provided.
 
 A value for ``output`` or ``error`` SHOULD be provided. However, both
 MUST NOT be defined for the same example.
