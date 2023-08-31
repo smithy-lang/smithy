@@ -173,8 +173,13 @@ public final class IoUtils {
                 } while (n > 0);
             }
             StringBuilder sb = new StringBuilder();
-            for (byte b: md.digest()) {
-                sb.append(String.format("%02x", b));
+            for (byte b : md.digest()) {
+                int decimal = (int) b & 0xff;
+                String hex = Integer.toHexString(decimal);
+                if (hex.length() == 1) {
+                    sb.append('0');
+                }
+                sb.append(hex);
             }
             return sb.toString();
         } catch (NoSuchAlgorithmException e) {

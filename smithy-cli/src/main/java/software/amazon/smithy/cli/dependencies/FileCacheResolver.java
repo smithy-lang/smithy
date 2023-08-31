@@ -116,7 +116,7 @@ public final class FileCacheResolver implements DependencyResolver {
         // If the version of the cache file does not match the current version or does not exist
         // invalidate it so we can replace it with a more recent version.
         if (!node.containsMember("version")
-                || !node.expectStringMember("version").getValue().equals(CURRENT_CACHE_FILE_VERSION)
+                || !CURRENT_CACHE_FILE_VERSION.equals(node.expectStringMember("version").getValue())
         ) {
             LOGGER.fine(() -> "Invalidating dependency cache: cache file uses old version");
             invalidate();

@@ -129,7 +129,7 @@ public final class ResolvedArtifact implements ToNode {
 
     @Override
     public String toString() {
-        return "{path=" + path + ", coordinates='" + coordinates + " , shaSum=`" + shaSum + "'}";
+        return "{path=" + path + ", coordinates='" + coordinates + ", shaSum='" + shaSum + "'}";
     }
 
     @Override
