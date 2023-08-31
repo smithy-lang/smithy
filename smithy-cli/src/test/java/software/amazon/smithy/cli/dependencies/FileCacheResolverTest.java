@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.model.MavenRepository;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
 
@@ -41,7 +43,7 @@ public class FileCacheResolverTest {
         File jar = File.createTempFile("foo", ".json");
 
         List<ResolvedArtifact> result = ListUtils.of(
-                ResolvedArtifact.fromCoordinates(jar.toPath(), "com.foo:bar:1.0.0"));
+                ResolvedArtifact.fromNode("com.foo:bar:1.0.0", getNodeForPath(jar.toPath())));
         Mock mock = new Mock(result);
         DependencyResolver resolver = new FileCacheResolver(cache, System.currentTimeMillis(), mock);
 
@@ -67,7 +69,8 @@ public class FileCacheResolverTest {
         File jar = File.createTempFile("foo", ".jar");
         Files.write(jar.toPath(), "{}".getBytes(StandardCharsets.UTF_8));
 
-        ResolvedArtifact artifact = ResolvedArtifact.fromCoordinates(jar.toPath(), "com.foo:bar:1.0.0");
+        ResolvedArtifact artifact = ResolvedArtifact.fromNode("com.foo:bar:1.0.0",
+                getNodeForPath(jar.toPath()));
         List<ResolvedArtifact> result = new ArrayList<>();
         result.add(artifact);
 
@@ -104,7 +107,8 @@ public class FileCacheResolverTest {
         File jar = File.createTempFile("foo", ".jar");
         Files.write(jar.toPath(), "{}".getBytes(StandardCharsets.UTF_8));
 
-        ResolvedArtifact artifact = ResolvedArtifact.fromCoordinates(jar.toPath(), "com.foo:bar:1.0.0");
+        ResolvedArtifact artifact = ResolvedArtifact.fromNode("com.foo:bar:1.0.0",
+                getNodeForPath(jar.toPath()));
         List<ResolvedArtifact> result = new ArrayList<>();
         result.add(artifact);
 
@@ -135,7 +139,8 @@ public class FileCacheResolverTest {
         File jar = File.createTempFile("foo", ".jar");
         Files.write(jar.toPath(), "{}".getBytes(StandardCharsets.UTF_8));
 
-        ResolvedArtifact artifact = ResolvedArtifact.fromCoordinates(jar.toPath(), "com.foo:bar:1.0.0");
+        ResolvedArtifact artifact = ResolvedArtifact.fromNode("com.foo:bar:1.0.0",
+                getNodeForPath(jar.toPath()));
         List<ResolvedArtifact> result = new ArrayList<>();
         result.add(artifact);
 
@@ -181,5 +186,12 @@ public class FileCacheResolverTest {
         public List<ResolvedArtifact> resolve() {
             return artifacts;
         }
+    }
+
+    private static Node getNodeForPath(Path path) {
+        return Node.objectNodeBuilder()
+                .withMember("path", path.toString())
+                .withMember("shaSum", IoUtils.computeSha256(path))
+                .build();
     }
 }

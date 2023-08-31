@@ -31,6 +31,9 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -147,6 +150,40 @@ public final class IoUtils {
     public static String readUtf8Url(URL url) {
         try (InputStream is = url.openStream()) {
             return toUtf8String(is);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    /**
+     * Computes the sha256 digest of a file.
+     *
+     * @param path Path to file to compute hash for.
+     * @return sha256 digest string.
+     * @throws UncheckedIOException if the specified file could not be read.
+     */
+    public static String computeSha256(Path path) {
+        try (InputStream in = Files.newInputStream(path)) {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            try (DigestInputStream din = new DigestInputStream(in, md)) {
+                byte[] buf = new byte[8192];
+                int n;
+                do {
+                    n = din.read(buf);
+                } while (n > 0);
+            }
+            StringBuilder sb = new StringBuilder();
+            for (byte b : md.digest()) {
+                int decimal = (int) b & 0xff;
+                String hex = Integer.toHexString(decimal);
+                if (hex.length() == 1) {
+                    sb.append('0');
+                }
+                sb.append(hex);
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

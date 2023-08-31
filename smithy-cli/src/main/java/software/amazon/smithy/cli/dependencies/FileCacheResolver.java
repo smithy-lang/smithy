@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,6 +39,7 @@ import software.amazon.smithy.model.node.ObjectNode;
  * given reference point in time.
  */
 public final class FileCacheResolver implements DependencyResolver {
+    private static final String CURRENT_CACHE_FILE_VERSION = "1.0";
 
     // This is hard-coded for now to 1 day, and it can become an environment variable in the future if needed.
     private static final Duration SMITHY_MAVEN_TTL = Duration.parse("P1D");
@@ -113,17 +113,28 @@ public final class FileCacheResolver implements DependencyResolver {
             throw new DependencyResolverException("Error loading dependency cache file from " + location, e);
         }
 
-        List<ResolvedArtifact> result = new ArrayList<>(node.getStringMap().size());
-        for (Map.Entry<String, Node> entry : node.getStringMap().entrySet()) {
-            Path artifactLocation = Paths.get(entry.getValue().expectStringNode().getValue());
-            long lastModifiedOfArtifact = artifactLocation.toFile().lastModified();
+        // If the version of the cache file does not match the current version or does not exist
+        // invalidate it so we can replace it with a more recent version.
+        if (!node.containsMember("version")
+                || !CURRENT_CACHE_FILE_VERSION.equals(node.expectStringMember("version").getValue())
+        ) {
+            LOGGER.fine(() -> "Invalidating dependency cache: cache file uses old version");
+            invalidate();
+            return Collections.emptyList();
+        }
+
+        ObjectNode artifactNode = node.expectObjectMember("artifacts");
+        List<ResolvedArtifact> result = new ArrayList<>(artifactNode.getStringMap().size());
+        for (Map.Entry<String, Node> entry : artifactNode.getStringMap().entrySet()) {
+            ResolvedArtifact artifact = ResolvedArtifact.fromNode(entry.getKey(), entry.getValue());
+            long lastModifiedOfArtifact = artifact.getLastModified();
             // Invalidate the cache if the JAR file was updated since the cache was created.
             if (lastModifiedOfArtifact == 0 || lastModifiedOfArtifact > cacheLastModifiedMillis) {
-                LOGGER.fine(() -> "Invalidating dependency cache: artifact is newer than cache: " + artifactLocation);
+                LOGGER.fine(() -> "Invalidating dependency cache: artifact is newer than cache: " + artifact.getPath());
                 invalidate();
                 return Collections.emptyList();
             }
-            result.add(ResolvedArtifact.fromCoordinates(artifactLocation, entry.getKey()));
+            result.add(artifact);
         }
 
         return result;
@@ -139,11 +150,13 @@ public final class FileCacheResolver implements DependencyResolver {
         try {
             Files.createDirectories(parent);
             ObjectNode.Builder builder = Node.objectNodeBuilder();
+            builder.withMember("version", CURRENT_CACHE_FILE_VERSION);
+            ObjectNode.Builder artifactNodeBuilder = Node.objectNodeBuilder();
             for (ResolvedArtifact artifact : result) {
-                builder.withMember(artifact.getCoordinates(), artifact.getPath().toString());
+                artifactNodeBuilder.withMember(artifact.getCoordinates(), artifact.toNode());
             }
-            ObjectNode objectNode = builder.build();
-            Files.write(filePath, Node.printJson(objectNode).getBytes(StandardCharsets.UTF_8));
+            builder.withMember("artifacts", artifactNodeBuilder.build());
+            Files.write(filePath, Node.printJson(builder.build()).getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new DependencyResolverException("Unable to write classpath cache file: " + e.getMessage(), e);
         }
