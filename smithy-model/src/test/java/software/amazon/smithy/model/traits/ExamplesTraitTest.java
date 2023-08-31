@@ -40,7 +40,8 @@ public class ExamplesTraitTest {
                         .withMember("output", Node.objectNode().withMember("c", Node.from("d")))
                         .withMember("error", Node.objectNode()
                                 .withMember(Node.from("shapeId"), Node.from("smithy.example#FooError"))
-                                .withMember(Node.from("content"), Node.objectNode().withMember("e", Node.from("f")))));
+                                .withMember(Node.from("content"), Node.objectNode().withMember("e", Node.from("f"))))
+                        .withMember("allowConstraintErrors", Node.from(true)));
 
         Optional<Trait> trait = provider.createTrait(
                 ShapeId.from("smithy.api#examples"), ShapeId.from("ns.qux#foo"), node);
