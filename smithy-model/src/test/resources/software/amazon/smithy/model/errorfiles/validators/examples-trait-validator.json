@@ -62,7 +62,7 @@
                         "output": {
                             "bam": "value3"
                         },
-                        "disableConstraints": true
+                        "allowConstraintErrors": true
                     },
                     {
                         "title": "Testing 5",
@@ -91,7 +91,7 @@
                                 "bat": "baz"
                             }
                         },
-                        "disableConstraints": true
+                        "allowConstraintErrors": true
                     }
                 ]
             }

@@ -52,9 +52,9 @@ public final class ExamplesTraitValidator extends AbstractValidator {
 
             model.getShape(shape.getInputShape()).ifPresent(input -> {
                 NodeValidationVisitor validator;
-                if (example.getDisableConstraints() && !isErrorDefined) {
+                if (example.getAllowConstraintErrors() && !isErrorDefined) {
                     events.add(error(shape, trait, String.format(
-                            "Example: `%s` has disableConstraints enabled, so error must be defined.",
+                            "Example: `%s` has allowConstraintErrors enabled, so error must be defined.",
                             example.getTitle())));
                 }
                 validator = createVisitor("input", example.getInput(), model, shape, example);
@@ -103,8 +103,8 @@ public final class ExamplesTraitValidator extends AbstractValidator {
                 .value(value)
                 .startingContext("Example " + name + " of `" + example.getTitle() + "`")
                 .eventId(getName());
-        if (example.getDisableConstraints()) {
-            builder.addFeature(NodeValidationVisitor.Feature.DISABLE_CONSTRAINTS);
+        if (example.getAllowConstraintErrors()) {
+            builder.addFeature(NodeValidationVisitor.Feature.ALLOW_CONSTRAINT_ERRORS);
         }
         return builder.build();
     }

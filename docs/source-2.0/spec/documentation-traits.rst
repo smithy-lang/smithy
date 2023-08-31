@@ -139,7 +139,7 @@ Each ``example`` trait value is a structure with the following members:
       - :ref:`examples-ErrorExample-structure`
       - Provides an error shape ID and example error parameters for the
         operation.
-    * - disableConstraints
+    * - allowConstraintErrors
       - ``boolean``
       - Set to true to lower input constraint trait validations to warnings.
         This can only be set when ``error`` is provided.
@@ -186,7 +186,7 @@ MUST NOT be defined for the same example.
                     message: "Invalid 'foo'. Special character not allowed."
                 }
             },
-            disableConstraints: true
+            allowConstraintErrors: true
         }
     ])
 

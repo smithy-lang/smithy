@@ -110,7 +110,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         RANGE_TRAIT_ZERO_VALUE_WARNING,
 
         // Lowers severity of constraint trait validations to WARNING.
-        DISABLE_CONSTRAINTS;
+        ALLOW_CONSTRAINT_ERRORS;
 
         public static Feature fromNode(Node node) {
             return Feature.valueOf(node.expectStringNode().getValue());
@@ -328,7 +328,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
                     for (MemberShape member : members.values()) {
                         if (member.isRequired() && !object.getMember(member.getMemberName()).isPresent()) {
-                            Severity severity = this.validationContext.hasFeature(Feature.DISABLE_CONSTRAINTS)
+                            Severity severity = this.validationContext.hasFeature(Feature.ALLOW_CONSTRAINT_ERRORS)
                                     ? Severity.WARNING : Severity.ERROR;
                             events.add(event(String.format(
                                     "Missing required structure member `%s` for `%s`",

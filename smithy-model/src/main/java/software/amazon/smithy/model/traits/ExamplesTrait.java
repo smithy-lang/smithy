@@ -119,7 +119,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
         private final ObjectNode input;
         private final ObjectNode output;
         private final ErrorExample error;
-        private final boolean disableConstraints;
+        private final boolean allowConstraintErrors;
 
         private Example(Builder builder) {
             this.title = Objects.requireNonNull(builder.title, "Example title must not be null");
@@ -127,7 +127,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
             this.input = builder.input;
             this.output = builder.output;
             this.error = builder.error;
-            this.disableConstraints = builder.disableConstraints;
+            this.allowConstraintErrors = builder.allowConstraintErrors;
         }
 
         /**
@@ -166,10 +166,10 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
         }
 
         /**
-         * @return Returns true if input constraints validation has been disabled.
+         * @return Returns true if input constraints errors are allowed.
          */
-        public boolean getDisableConstraints() {
-            return disableConstraints;
+        public boolean getAllowConstraintErrors() {
+            return allowConstraintErrors;
         }
 
         @Override
@@ -178,7 +178,8 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
                     .withMember("title", Node.from(title))
                     .withOptionalMember("documentation", getDocumentation().map(Node::from))
                     .withOptionalMember("error", getError().map(ErrorExample::toNode))
-                    .withOptionalMember("disableConstraints", BooleanNode.from(disableConstraints).asBooleanNode());
+                    .withOptionalMember("allowConstraintErrors", BooleanNode.from(allowConstraintErrors)
+                            .asBooleanNode());
 
             if (!input.isEmpty()) {
                 builder.withMember("input", input);
@@ -193,7 +194,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
         @Override
         public Builder toBuilder() {
             return new Builder().documentation(documentation).title(title).input(input).output(output).error(error)
-                    .disableConstraints(disableConstraints);
+                    .allowConstraintErrors(allowConstraintErrors);
         }
 
         public static Builder builder() {
@@ -209,7 +210,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
             private ObjectNode input = Node.objectNode();
             private ObjectNode output;
             private ErrorExample error;
-            private boolean disableConstraints;
+            private boolean allowConstraintErrors;
 
             @Override
             public Example build() {
@@ -241,8 +242,8 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
                 return this;
             }
 
-            public Builder disableConstraints(Boolean disableConstraints) {
-                this.disableConstraints = disableConstraints;
+            public Builder allowConstraintErrors(Boolean allowConstraintErrors) {
+                this.allowConstraintErrors = allowConstraintErrors;
                 return this;
             }
         }
@@ -339,7 +340,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
                     .getObjectMember("input", builder::input)
                     .getObjectMember("output", builder::output)
                     .getMember("error", ErrorExample::fromNode, builder::error)
-                    .getBooleanMember("disableConstraints", builder::disableConstraints);
+                    .getBooleanMember("allowConstraintErrors", builder::allowConstraintErrors);
             return builder.build();
         }
     }

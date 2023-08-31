@@ -364,7 +364,7 @@ structure Example {
 
     error: ExampleError
 
-    disableConstraints: Boolean
+    allowConstraintErrors: Boolean
 }
 
 @private
