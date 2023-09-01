@@ -656,4 +656,14 @@ public final class ModelTransformer {
     public Model downgradeToV1(Model model) {
         return new DowngradeToV1().transform(this, model);
     }
+
+    /**
+     * Remove default traits if the default conflicts with the range trait of the shape.
+     *
+     * @param model Model to transform.
+     * @return Returns the transformed model.
+     */
+    public Model removeInvalidDefaults(Model model) {
+        return new RemoveInvalidDefaults().transform(this, model);
+    }
 }
