@@ -102,7 +102,6 @@ structure RestApis {
     @jsonName("item")
     items: ListOfRestApi,
 
-    @httpQuery("position")
     position: String,
 }
 

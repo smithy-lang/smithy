@@ -53,7 +53,7 @@ The ``http`` trait is a structure that supports the following members:
     * - code
       - ``integer``
       - The HTTP status code of a successful response. Defaults to ``200`` if
-        not provided. The provided value SHOULD be between 100 and 599, and
+        not provided. The provided value SHOULD be between 200 and 299, and
         it MUST be between 100 and 999. Status codes that do not allow a body
         like 204 and 205 SHOULD bind all output members to locations other than
         the body of the response.
@@ -487,7 +487,8 @@ Trait selector
     shapes that also have the :ref:`error-trait`.
 Value type
     ``integer`` value representing the HTTP response status code
-    (for example, ``404``).
+    (for example, ``404``). The provided value SHOULD be between 400 and 499
+    for "client" errors or between 500 and 599 for "server" errors.
 
 The following example defines an error with an HTTP status code of ``404``.
 
@@ -558,6 +559,12 @@ Conflicts with
     HTTP client and server implementations enforce limits in practice.
     Carefully consider the maximum allowed length of each member that is bound
     to an HTTP header.
+
+.. note::
+
+    ``httpHeader`` is only considered when applied to top-level members of an
+    operation's input, output, or error structures. This trait has no meaning
+    in any other context and is simply ignored.
 
 
 .. _restricted-headers:
@@ -695,15 +702,12 @@ Applying the ``httpLabel`` trait to members
 - However, if the label is greedy, then "/" MUST NOT be percent-encoded
   because greedy labels are meant to span multiple path segments.
 
-``httpLabel`` is only used on input
------------------------------------
+``httpLabel`` is only used on top-level input
+----------------------------------------------
 
-``httpLabel`` is ignored when resolving the HTTP bindings of an operation's
-output or an error. This means that if a structure that contains members
-marked with the ``httpLabel`` trait is used as the top-level output structure
-of an operation, then those members are sent as part of the
-:ref:`protocol-specific document <http-protocol-document-payloads>` sent in
-the body of the response.
+``httpLabel`` is only considered when applied to top-level members of an
+operation's input structure. This trait has no meaning in any other context and
+is simply ignored.
 
 
 .. smithy-trait:: smithy.api#httpPayload
@@ -789,6 +793,12 @@ Serialization rules
    as a :ref:`protocol-specific <protocolDefinition-trait>` value that is sent
    as the body of the message.
 
+.. note::
+
+    ``httpPayload`` is only considered when applied to top-level members of an
+    operation's input, output, or error structures. This trait has no meaning
+    in any other context and is simply ignored.
+
 
 .. smithy-trait:: smithy.api#httpPrefixHeaders
 .. _httpPrefixHeaders-trait:
@@ -869,6 +879,12 @@ In order to differentiate ``httpPrefixHeaders`` from other headers, when
 start with the same prefix provided in ``httpPrefixHeaders`` trait. If
 ``httpPrefixHeaders`` is set to an empty string, then no other members can be
 bound to ``headers``.
+
+.. note::
+
+    ``httpPrefixHeaders`` is only considered when applied to top-level members
+    of an operation's input, output, or error structures. This trait has no
+    meaning in any other context and is simply ignored.
 
 
 .. smithy-trait:: smithy.api#httpQuery
@@ -957,15 +973,12 @@ Serialization rules
     HTTP requests and automatically percent-decoded when deserializing HTTP
     requests.
 
-``httpQuery`` is only used on input
------------------------------------
+``httpQuery`` is only used on top-level input
+----------------------------------------------
 
-``httpQuery`` is ignored when resolving the HTTP bindings of an operation's
-output or an error. This means that if a structure that contains members
-marked with the ``httpQuery`` trait is used as the top-level output structure
-of an operation, then those members are sent as part of the
-:ref:`protocol-specific document <http-protocol-document-payloads>` sent in
-the body of the response.
+``httpQuery`` is only considered when applied to top-level members of an
+operation's input structure. This trait has no meaning in any other context and
+is simply ignored.
 
 .. note::
 
@@ -1127,15 +1140,12 @@ A server should deserialize the following input structure:
         }
     }
 
-``httpQueryParams`` is only used on input
------------------------------------------
+``httpQueryParams`` is only used on top-level input
+----------------------------------------------------
 
-``httpQueryParams`` is ignored when resolving the HTTP bindings of an operation's
-output or an error. This means that if a structure that contains members
-marked with the ``httpQueryParams`` trait is used as the top-level output structure
-of an operation, then those members are sent as part of the
-:ref:`protocol-specific document <http-protocol-document-payloads>` sent in
-the body of the response.
+``httpQueryParams`` is only considered when applied to top-level members of an
+operation's input structure. This trait has no meaning in any other context and
+is simply ignored.
 
 .. smithy-trait:: smithy.api#httpResponseCode
 .. _httpResponseCode-trait:
@@ -1170,15 +1180,12 @@ different response codes for an operation, like a 200 or 201 for a PUT
 operation. If this member isn't provided, server implementations MUST default
 to the `code` set by the :ref:`http-trait`.
 
-``httpResponseCode`` is only used on output
--------------------------------------------
+``httpResponseCode`` is only used on top-level output
+-----------------------------------------------------
 
-``httpResponseCode`` is ignored when resolving the HTTP bindings of any
-structure except an operation's output structure. This means that if a
-structure that contains members marked with the ``httpResponseCode`` trait
-is not used as an output structure of an operation, then those members are
-sent as part of the :ref:`protocol-specific document <http-protocol-document-payloads>`
-sent in the body of the request.
+``httpResponseCode`` is only considered when applied to top-level members of an
+operation's output structure. This trait has no meaning in any other context
+and is simply ignored.
 
 
 .. smithy-trait:: smithy.api#cors
