@@ -414,6 +414,7 @@ apply IgnoreQueryParamsInResponse @httpResponseTests([
 
 structure IgnoreQueryParamsInResponseOutput {
     @httpQuery("baz")
+    @suppress(["HttpBindingTraitIgnored"])
     baz: String
 }
 
