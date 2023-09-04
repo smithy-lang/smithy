@@ -23,7 +23,7 @@ jobs:
         role-to-assume: arn:aws:iam::048169001733:role/GuruGitHubCICDRole
         aws-region: us-west-2
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       if: steps.iam-role.outcome == 'success'
       with:
         fetch-depth: 0

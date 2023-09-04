@@ -58,7 +58,7 @@ jobs:
         with:
           name: brew-artifacts
       - name: Checkout bottle repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: 'smithy-lang/homebrew-tap'
           path: 'homebrew-tap'
