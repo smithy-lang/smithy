@@ -17,6 +17,7 @@ package software.amazon.smithy.model.node;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -199,6 +200,11 @@ public class NumberNodeTest {
             public double doubleValue() {
                 return 0;
             }
+
+            @Override
+            public String toString() {
+                return "0.000";
+            }
         }, true);
         cases.put(new Number() {
             @Override
@@ -282,5 +288,15 @@ public class NumberNodeTest {
         Node right = Node.from((double) 1.0e+10);
 
         assertThat(left, equalTo(right));
+    }
+
+    @Test
+    public void detectsNegativeValues() {
+        assertThat(NumberNode.from(Double.NEGATIVE_INFINITY).isNegative(), is(true));
+        assertThat(NumberNode.from(Double.POSITIVE_INFINITY).isNegative(), is(false));
+        assertThat(NumberNode.from(Double.NaN).isNegative(), is(false));
+        assertThat(NumberNode.from(0).isNegative(), is(false));
+        assertThat(NumberNode.from(1).isNegative(), is(false));
+        assertThat(NumberNode.from(-1).isNegative(), is(true));
     }
 }

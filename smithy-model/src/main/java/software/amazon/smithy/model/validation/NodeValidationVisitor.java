@@ -218,7 +218,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
     private List<ValidationEvent> validateNaturalNumber(Shape shape, Long min, Long max) {
         return value.asNumberNode()
                 .map(number -> {
-                    if (!number.isNaturalNumber()) {
+                    if (number.isFloatingPointNumber()) {
                         return ListUtils.of(event(String.format(
                                 "%s shapes must not have floating point values, but found `%s` provided for `%s`",
                                 shape.getType(), number.getValue(), shape.getId())));
