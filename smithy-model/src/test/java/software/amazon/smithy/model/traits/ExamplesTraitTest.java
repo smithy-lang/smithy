@@ -18,12 +18,14 @@ package software.amazon.smithy.model.traits;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 public class ExamplesTraitTest {
@@ -51,5 +53,32 @@ public class ExamplesTraitTest {
 
         assertThat(examples.toNode(), equalTo(node));
         assertThat(examples.toBuilder().build(), equalTo(examples));
+    }
+
+    @Test
+    public void omitsAllowConstraintErrorsFromSerializedNodeWhenNotTrue() {
+        TraitFactory provider = TraitFactory.createServiceFactory();
+        ArrayNode node = Node.arrayNode(
+                Node.objectNode()
+                        .withMember("title", Node.from("foo")),
+                Node.objectNode()
+                        .withMember("title", Node.from("qux"))
+                        .withMember("documentation", Node.from("docs"))
+                        .withMember("input", Node.objectNode().withMember("a", Node.from("b")))
+                        .withMember("output", Node.objectNode().withMember("c", Node.from("d")))
+                        .withMember("allowConstraintErrors", Node.from(false)),
+                Node.objectNode()
+                        .withMember("title", Node.from("qux"))
+                        .withMember("documentation", Node.from("docs"))
+                        .withMember("input", Node.objectNode().withMember("a", Node.from("b")))
+                        .withMember("output", Node.objectNode().withMember("c", Node.from("d")))
+                        .withMember("allowConstraintErrors", Node.from(true)));
+        Optional<Trait> trait = provider.createTrait(
+                ShapeId.from("smithy.api#examples"), ShapeId.from("ns.qux#foo"), node);
+        ArrayNode serialized = ((ExamplesTrait) trait.get()).createNode().expectArrayNode();
+
+        assertFalse(serialized.get(0).get().asObjectNode().get().getMember("allowConstraintErrors").isPresent());
+        assertFalse(serialized.get(1).get().asObjectNode().get().getMember("allowConstraintErrors").isPresent());
+        assertTrue(serialized.get(2).get().asObjectNode().get().getMember("allowConstraintErrors").isPresent());
     }
 }

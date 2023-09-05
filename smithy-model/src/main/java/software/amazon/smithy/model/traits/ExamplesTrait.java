@@ -177,15 +177,17 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
             ObjectNode.Builder builder = Node.objectNodeBuilder()
                     .withMember("title", Node.from(title))
                     .withOptionalMember("documentation", getDocumentation().map(Node::from))
-                    .withOptionalMember("error", getError().map(ErrorExample::toNode))
-                    .withOptionalMember("allowConstraintErrors", BooleanNode.from(allowConstraintErrors)
-                            .asBooleanNode());
+                    .withOptionalMember("error", getError().map(ErrorExample::toNode));
 
             if (!input.isEmpty()) {
                 builder.withMember("input", input);
             }
             if (this.getOutput().isPresent()) {
                 builder.withMember("output", output);
+            }
+
+            if (this.allowConstraintErrors) {
+                builder.withMember("allowConstraintErrors", BooleanNode.from(allowConstraintErrors));
             }
 
             return builder.build();
