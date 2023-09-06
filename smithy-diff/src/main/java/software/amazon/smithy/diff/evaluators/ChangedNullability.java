@@ -110,15 +110,15 @@ public class ChangedNullability extends AbstractDiffEvaluator {
             eventsToAdd.add(emit(Severity.DANGER, "AddedInputTrait", shape, message,
                             "The @input trait was added to " + newMember.getContainer()));
         } else if (!newHasInput) {
-            // Can't add nullable to a preexisting required member.
+            // Can't add clientOptional to a preexisting required member.
             if (change.isTraitAdded(ClientOptionalTrait.ID) && change.isTraitInBoth(RequiredTrait.ID)) {
-                eventsToAdd.add(emit(Severity.ERROR, "AddedNullableTrait", shape, message,
-                                "The @nullable trait was added to a @required member."));
+                eventsToAdd.add(emit(Severity.ERROR, "AddedClientOptionalTrait", shape, message,
+                                "The @clientOptional trait was added to a @required member."));
             }
-            // Can't add required to a member unless the member is marked as nullable.
+            // Can't add required to a member unless the member is marked as @clientOptional or part of @input.
             if (change.isTraitAdded(RequiredTrait.ID) && !newMember.hasTrait(ClientOptionalTrait.ID)) {
                 eventsToAdd.add(emit(Severity.ERROR, "AddedRequiredTrait", shape, message,
-                                "The @required trait was added to a member that is not marked as @nullable."));
+                                "The @required trait was added to a member."));
             }
             // Can't add the default trait to a member unless the member was previously required.
             if (change.isTraitAdded(DefaultTrait.ID) && !change.isTraitRemoved(RequiredTrait.ID)) {

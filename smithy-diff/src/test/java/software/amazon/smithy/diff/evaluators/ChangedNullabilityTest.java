@@ -159,13 +159,12 @@ public class ChangedNullabilityTest {
         assertThat(events.stream()
                            .filter(event -> event.getSeverity() == Severity.ERROR)
                            .filter(event -> event.getId().equals("ChangedNullability.AddedRequiredTrait"))
-                           .filter(event -> event.getMessage().contains("The @required trait was added to a member "
-                                                                        + "that is not marked as @nullable"))
+                           .filter(event -> event.getMessage().contains("The @required trait was added to a member"))
                            .count(), equalTo(1L));
     }
 
     @Test
-    public void detectAdditionOfNullableTrait() {
+    public void detectAdditionOfClientOptionalTrait() {
         MemberShape member1 = MemberShape.builder()
                 .id("foo.baz#Baz$bam")
                 .target("foo.baz#String")
@@ -181,8 +180,8 @@ public class ChangedNullabilityTest {
 
         assertThat(events.stream()
                            .filter(event -> event.getSeverity() == Severity.ERROR)
-                           .filter(event -> event.getId().equals("ChangedNullability.AddedNullableTrait"))
-                           .filter(event -> event.getMessage().contains("The @nullable trait was added to a "
+                           .filter(event -> event.getId().equals("ChangedNullability.AddedClientOptionalTrait"))
+                           .filter(event -> event.getMessage().contains("The @clientOptional trait was added to a "
                                                                         + "@required member"))
                            .count(), equalTo(1L));
     }
