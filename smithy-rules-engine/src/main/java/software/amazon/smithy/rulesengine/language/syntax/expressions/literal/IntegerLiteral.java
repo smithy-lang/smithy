@@ -31,7 +31,7 @@ public final class IntegerLiteral extends Literal {
 
     private void validateValue(NumberNode node) {
         int nodeValue = node.getValue().intValue();
-        if (!node.isNaturalNumber() || nodeValue < 0) {
+        if (node.isFloatingPointNumber() || nodeValue < 0) {
             throw new RuntimeException("Only integer values greater than or equal to 0 are supported.");
         }
     }
