@@ -65,7 +65,7 @@ public abstract class Value implements FromSourceLocation, ToNode {
             @Override
             public Value numberNode(NumberNode node) {
                 int nodeValue = node.getValue().intValue();
-                if (!node.isNaturalNumber() || nodeValue < 0) {
+                if (node.isFloatingPointNumber() || nodeValue < 0) {
                     throw new RuntimeException("only integers >=0 are supported");
                 }
                 return Value.integerValue(nodeValue);
