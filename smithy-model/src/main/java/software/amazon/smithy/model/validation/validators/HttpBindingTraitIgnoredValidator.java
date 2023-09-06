@@ -22,6 +22,7 @@ import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.Relationship;
 import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
@@ -31,6 +32,7 @@ import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
 import software.amazon.smithy.model.traits.HttpQueryParamsTrait;
 import software.amazon.smithy.model.traits.HttpQueryTrait;
 import software.amazon.smithy.model.traits.HttpResponseCodeTrait;
+import software.amazon.smithy.model.traits.MixinTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -70,6 +72,12 @@ public class HttpBindingTraitIgnoredValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
         NeighborProvider reverse = NeighborProviderIndex.of(model).getReverseProvider();
         for (MemberShape memberShape : model.getMemberShapes()) {
+            Shape container = model.expectShape(memberShape.getContainer());
+            // Skip non-structures (invalid) and mixins (handled at mixed site).
+            if (!container.isStructureShape() || container.hasTrait(MixinTrait.class)) {
+                continue;
+            }
+
             // Gather all traits that are HTTP member binding.
             // Keep the trait instance around so that it can be used it later for source location.
             Map<ShapeId, Trait> traits = new HashMap<>();
@@ -82,11 +90,9 @@ public class HttpBindingTraitIgnoredValidator extends AbstractValidator {
             // The traits set is now the HTTP binding traits that are ignored outside
             // the top level of an operation's components.
             if (!traits.isEmpty()) {
-                StructureShape containerShape = model.expectShape(memberShape.getContainer(), StructureShape.class);
-
                 // All relationships and trait possibilities are checked at once to de-duplicate
                 // several parts of the iteration logic.
-                events.addAll(checkRelationships(containerShape, memberShape, traits, reverse));
+                events.addAll(checkRelationships(container.asStructureShape().get(), memberShape, traits, reverse));
             }
         }
         return events;
@@ -151,19 +157,16 @@ public class HttpBindingTraitIgnoredValidator extends AbstractValidator {
         // immediate grabbing of next traits is all that's necessary.
         if (!ignoredRelationships.isEmpty()) {
             if (!ignoredOutsideInputTraits.isEmpty()) {
-                ShapeId traitId = ignoredOutsideInputTraits.iterator().next();
-                events.add(emit("Input", memberShape, traits, traitId,
-                        checkedRelationshipCount, ignoredRelationships));
+                Trait trait = traits.get(ignoredOutsideInputTraits.iterator().next());
+                events.add(emit("Input", memberShape, trait, checkedRelationshipCount, ignoredRelationships));
 
             } else if (!ignoredOutsideOutputTraits.isEmpty()) {
-                ShapeId traitId = ignoredOutsideOutputTraits.iterator().next();
-                events.add(emit("Output", memberShape, traits, traitId,
-                        checkedRelationshipCount, ignoredRelationships));
+                Trait trait = traits.get(ignoredOutsideOutputTraits.iterator().next());
+                events.add(emit("Output", memberShape, trait, checkedRelationshipCount, ignoredRelationships));
             } else {
                 // The traits list is always non-empty here, so just grab the first.
-                ShapeId traitId = traits.keySet().iterator().next();
-                events.add(emit("TopLevel", memberShape, traits, traitId,
-                        checkedRelationshipCount, ignoredRelationships));
+                Trait trait = traits.get(traits.keySet().iterator().next());
+                events.add(emit("TopLevel", memberShape, trait, checkedRelationshipCount, ignoredRelationships));
             }
         }
 
@@ -180,18 +183,18 @@ public class HttpBindingTraitIgnoredValidator extends AbstractValidator {
     private ValidationEvent emit(
             String type,
             MemberShape memberShape,
-            Map<ShapeId, Trait> traits,
-            ShapeId traitId,
+            Trait trait,
             int checkedRelationshipCount,
             Map<RelationshipType, List<ShapeId>> ignoredRelationships
     ) {
-        String message = "The `%s` trait applied to this member is ";
+        String mixedIn = memberShape.getMixins().isEmpty() ? "" : " mixed in";
+        String message = "The `%s` trait applied to this%s member is ";
         if (checkedRelationshipCount == ignoredRelationships.size()) {
             message += "ignored in all contexts.";
         } else {
-            message += format("ignored in some contexts: %s", formatIgnoredRelationships(ignoredRelationships));
+            message += "ignored in some contexts: " + formatIgnoredRelationships(ignoredRelationships);
         }
-        return warning(memberShape, traits.get(traitId), format(message, Trait.getIdiomaticTraitName(traitId)), type);
+        return warning(memberShape, trait, format(message, Trait.getIdiomaticTraitName(trait), mixedIn), type);
     }
 
     private String formatIgnoredRelationships(Map<RelationshipType, List<ShapeId>> ignoredRelationships) {

@@ -3,11 +3,12 @@ $version: "2"
 namespace smithy.example
 
 service InvalidExample {
-    version: "2020-12-29",
+    version: "2020-12-29"
     operations: [
         IgnoredBindingOperation
         NestedBindingOperation
-    ],
+        MixedBindingOperation
+    ]
 }
 
 @http(method: "POST", uri: "/ignored-binding")
@@ -76,4 +77,28 @@ structure NestedBindings {
 map StringMap {
     key: String
     value: String
+}
+
+@http(method: "POST", uri: "/mixed-binding")
+operation MixedBindingOperation {
+    input: MixedBindingOperationInput
+    output: MixedBindingOperationOutput
+}
+
+structure MixedBindingOperationInput with [MixedQuery, MixedResponseCode] {
+    content: MixedBindingOperationOutput
+}
+
+structure MixedBindingOperationOutput with [MixedQuery, MixedResponseCode] {}
+
+@mixin
+structure MixedQuery {
+    @httpQuery("query")
+    query: String
+}
+
+@mixin
+structure MixedResponseCode {
+    @httpResponseCode
+    code: Integer
 }
