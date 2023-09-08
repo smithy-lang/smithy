@@ -63,7 +63,7 @@ public class MavenResolverMultipleReposTest {
         }
     }
 
-    private void mockArtifactAndSha(ClientAndServer mockServer, String path, String contents) {
+    public static void mockArtifactAndSha(ClientAndServer mockServer, String path, String contents) {
         mockSuccess(
             mockServer,
             path,
