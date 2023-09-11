@@ -5,12 +5,12 @@
             {
                 // Use HTTP instead of HTTPS because we're running a mock server during tests
                 "id": "Artifactory 1",
-                "url": "http://localhost:5678/artifactory-1"
+                "url": "http://localhost:6789/artifactory-1"
             },
             {
                 // Use HTTP instead of HTTPS because we're running a mock server during tests
                 "id": "Artifactory 2",
-                "url": "http://localhost:5678/artifactory-2"
+                "url": "http://localhost:6789/artifactory-2"
             }
         ],
         "dependencies": [

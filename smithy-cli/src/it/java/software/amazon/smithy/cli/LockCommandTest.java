@@ -1,10 +1,10 @@
 package software.amazon.smithy.cli;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.mockserver.integration.ClientAndServer;
 import software.amazon.smithy.cli.dependencies.DependencyUtils;
 import software.amazon.smithy.cli.dependencies.LockFile;
-import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
 
 import java.io.IOException;
@@ -22,13 +22,14 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockserver.integration.ClientAndServer.startClientAndServer;
 import static software.amazon.smithy.cli.MavenResolverMultipleReposTest.mockArtifactAndSha;
 
+@Isolated
 public class LockCommandTest {
 
     @Test
     public void writesLockfile() throws IOException {
         ClientAndServer mockServer = null;
         try {
-            mockServer = startClientAndServer(5678);
+            mockServer = startClientAndServer(6789);
 
             // artifact
             mockArtifactAndSha(
