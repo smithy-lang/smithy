@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.cli.dependencies;
+package software.amazon.smithy.cli.commands;
 
 import java.io.IOException;
 import java.io.InputStream;

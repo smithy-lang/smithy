@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 import org.eclipse.aether.util.ChecksumUtils;
+import software.amazon.smithy.cli.commands.DependencyUtils;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
@@ -57,7 +58,7 @@ public final class ResolvedArtifact implements ToNode {
     }
 
     /**
-     * Creates a pinned artifact from JSON node and coordinate string.
+     * Creates a resolved artifact from a file path and Maven coordinates string.
      *
      * @param location    Location of the artifact.
      * @param coordinates Maven coordinates (e.g., group:artifact:version).
@@ -124,7 +125,11 @@ public final class ResolvedArtifact implements ToNode {
     }
 
     /**
+<<<<<<< HEAD
      * @return Get the sha1 digest of the artifact.
+=======
+     * @return Get the sha256 digest of the artifact.
+>>>>>>> 0eaef030 (Refactor to make classes package private)
      */
     public String getShaSum() {
         return shaSum;

@@ -34,10 +34,8 @@ import software.amazon.smithy.cli.EnvironmentVariable;
 import software.amazon.smithy.cli.SmithyCli;
 import software.amazon.smithy.cli.dependencies.DependencyResolver;
 import software.amazon.smithy.cli.dependencies.DependencyResolverException;
-import software.amazon.smithy.cli.dependencies.DependencyUtils;
 import software.amazon.smithy.cli.dependencies.FileCacheResolver;
 import software.amazon.smithy.cli.dependencies.FilterCliVersionResolver;
-import software.amazon.smithy.cli.dependencies.LockFile;
 import software.amazon.smithy.cli.dependencies.ResolvedArtifact;
 
 /**

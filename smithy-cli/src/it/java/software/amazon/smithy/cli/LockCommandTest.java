@@ -3,8 +3,6 @@ package software.amazon.smithy.cli;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.mockserver.integration.ClientAndServer;
-import software.amazon.smithy.cli.dependencies.DependencyUtils;
-import software.amazon.smithy.cli.dependencies.LockFile;
 import software.amazon.smithy.utils.ListUtils;
 
 import java.io.IOException;
@@ -16,7 +14,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockserver.integration.ClientAndServer.startClientAndServer;
@@ -68,12 +65,6 @@ public class LockCommandTest {
                 assertThat(lockResult.getExitCode(), equalTo(0));
                 assertThat(lockResult.getOutput(), containsString("software.amazon.smithy.cli.dependencies.DependencyResolver - Resolved Maven dependencies: [com.example:artifact:jar:1.0.0"));
                 assertThat(lockResult.getOutput(), containsString("Saving resolved artifacts to lockfile."));
-
-                // Check values of lockfile
-                LockFile lockFile = DependencyUtils.loadLockfile(root.resolve("smithy-lock.json").toFile()).orElseThrow(
-                        () -> new RuntimeException("Could not load smithy-lock file")
-                );
-                assertThat(lockFile.getDependencyCoordinateSet(), containsInAnyOrder("com.example:artifact:1.0.0", "com.example:dependency:1.0.0"));
 
                 // Confirm lockfile detected in path and used
                 RunResult validateResult = IntegUtils.run(root, ListUtils.of("validate", "--debug"), env);

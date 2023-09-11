@@ -1,8 +1,10 @@
-package software.amazon.smithy.cli.dependencies;
+package software.amazon.smithy.cli.commands;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.cli.CliError;
+import software.amazon.smithy.cli.commands.LockFile;
+import software.amazon.smithy.cli.dependencies.ResolvedArtifact;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.utils.ListUtils;
