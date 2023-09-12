@@ -5,7 +5,7 @@
   "repositories":["https://repo.maven.apache.org/maven2"],
   "artifacts":{
     "software.amazon.smithy:smithy-aws-traits:1.37.0":{
-      "sha256":"723b00f4473c0f3f308b57b2c95b32fad669904c68d8e287606304d841cd52ff"
+      "sha1":"723b00f4473c0f3f308b57b2c95b32fad669904c68d8e287606304d841cd52ff"
     }
   }
 }

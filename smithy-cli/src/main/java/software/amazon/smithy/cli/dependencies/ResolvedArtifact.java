@@ -125,11 +125,7 @@ public final class ResolvedArtifact implements ToNode {
     }
 
     /**
-<<<<<<< HEAD
      * @return Get the sha1 digest of the artifact.
-=======
-     * @return Get the sha256 digest of the artifact.
->>>>>>> 0eaef030 (Refactor to make classes package private)
      */
     public String getShaSum() {
         return shaSum;

@@ -52,7 +52,7 @@ public class LockFileTest {
                 ResolvedArtifact.fromCoordinateNode("software.amazon.smithy:smithy-aws-traits:1.37.0",
                         Node.objectNodeBuilder()
                                 .withMember("path", "/a")
-                                .withMember("shaSum", "sum")
+                                .withMember("sha1", "sum")
                                 .build()));
         lock.validateArtifacts(artifactList);
     }
@@ -64,7 +64,7 @@ public class LockFileTest {
                 ResolvedArtifact.fromCoordinateNode("software.amazon.smithy:smithy-aws-traits:1.37.0",
                         Node.objectNodeBuilder()
                         .withMember("path", "/a")
-                        .withMember("shaSum", "badSum")
+                        .withMember("sha1", "badSum")
                         .build()));
         Assertions.assertThrows(CliError.class, () -> lock.validateArtifacts(artifactList));
     }
@@ -77,7 +77,7 @@ public class LockFileTest {
                 .withMember("repositories", ArrayNode.fromNodes(Node.from("repo")))
                 .withMember("artifacts", Node.objectNode()
                         .withMember("software.amazon.smithy:smithy-aws-traits:1.37.0",
-                                        Node.objectNode().withMember("sha256", "sum")))
+                                        Node.objectNode().withMember("sha1", "sum")))
                 .build();
     }
 }
