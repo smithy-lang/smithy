@@ -145,7 +145,8 @@ class ClasspathAction implements CommandAction {
         if (lockFileOptional.isPresent()) {
             if (lockFileOptional.get().getConfigHash() != DependencyUtils.configHash(dependencies, repositories)) {
                 throw new CliError(
-                        "Lockfile does not match configured dependencies. Re-lock dependencies or revert changes.");
+                        "`smithy-lock.json` does not match configured dependencies. "
+                                + "Re-lock dependencies using the `lock` command or revert changes.");
             }
             LOGGER.fine(() -> "Lockfile found. Using pinned dependencies: "
                     + lockFileOptional.get().getDependencyCoordinateSet());

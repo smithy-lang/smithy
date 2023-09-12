@@ -18,6 +18,9 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Optional;
@@ -32,7 +35,7 @@ import software.amazon.smithy.utils.IoUtils;
 
 public final class DependencyUtils {
     private static final Logger LOGGER = Logger.getLogger(DependencyUtils.class.getName());
-    private static final File LOCK_FILE = new File("smithy-lock.json");
+    private static final Path LOCK_FILE = Paths.get("smithy-lock.json");
     private static final MavenRepository CENTRAL = MavenRepository.builder()
             .url("https://repo.maven.apache.org/maven2")
             .build();
@@ -119,13 +122,11 @@ public final class DependencyUtils {
      * @return combined hash
      */
     public static int configHash(Set<String> artifacts, Set<MavenRepository> repositories) {
-        Set<String> hashingSet = new LinkedHashSet<>(artifacts);
-        for (MavenRepository repo : repositories) {
-            hashingSet.add(repo.getUrl());
-        }
-        return hashingSet.hashCode();
+        String[] hashingArray = artifacts.toArray(new String[artifacts.size() + repositories.size()]);
+        String[] repoArray = repositories.stream().map(MavenRepository::getUrl).toArray(String[]::new);
+        System.arraycopy(repoArray, 0, hashingArray, artifacts.size(), repoArray.length);
+        return Arrays.hashCode(hashingArray);
     }
-
 
     public static Optional<LockFile> loadLockfile() {
         return loadLockfile(LOCK_FILE);
@@ -134,13 +135,13 @@ public final class DependencyUtils {
     /**
      * Loads  lockfile if it exists.
      *
-     * @param file file to load as a lockfile
-     * @return Lock file if it exists otherwise Optional.empty().
+     * @param path path of file to load as a lockfile
+     * @return Lockfile if it exists otherwise Optional.empty().
      */
-    public static Optional<LockFile> loadLockfile(File file) {
-        if (file.exists() && file.isFile()) {
-            String contents = IoUtils.readUtf8File(file.toPath());
-            Node result = Node.parseJsonWithComments(contents, file.getPath());
+    public static Optional<LockFile> loadLockfile(Path path) {
+        if (Files.exists(path) && Files.isRegularFile(path)) {
+            String contents = IoUtils.readUtf8File(path);
+            Node result = Node.parseJsonWithComments(contents);
             return Optional.of(LockFile.fromNode(result));
         }
         return Optional.empty();
@@ -151,7 +152,7 @@ public final class DependencyUtils {
      */
     public static void saveLockFile(LockFile lockFile) {
         try {
-            Files.write(LOCK_FILE.toPath(), Node.printJson(lockFile.toNode()).getBytes(StandardCharsets.UTF_8));
+            Files.write(LOCK_FILE, Node.printJson(lockFile.toNode()).getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

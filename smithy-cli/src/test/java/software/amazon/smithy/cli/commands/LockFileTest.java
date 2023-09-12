@@ -3,7 +3,6 @@ package software.amazon.smithy.cli.commands;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.cli.CliError;
-import software.amazon.smithy.cli.commands.LockFile;
 import software.amazon.smithy.cli.dependencies.ResolvedArtifact;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
@@ -74,11 +73,11 @@ public class LockFileTest {
     private Node getNode() {
         return Node.objectNodeBuilder()
                 .withMember("version", "1.0")
-                .withMember("config_hash", -1856284556)
+                .withMember("configHash", -1856284556)
                 .withMember("repositories", ArrayNode.fromNodes(Node.from("repo")))
                 .withMember("artifacts", Node.objectNode()
                         .withMember("software.amazon.smithy:smithy-aws-traits:1.37.0",
-                                        Node.objectNode().withMember("shaSum", "sum")))
+                                        Node.objectNode().withMember("sha256", "sum")))
                 .build();
     }
 }

@@ -111,7 +111,6 @@ public class LockCommandTest {
 
             IntegUtils.runWithEmptyCache("lockfile-used", ListUtils.of("validate", "--debug"),
                     Collections.emptyMap(), result -> {
-                        System.out.println("RESULT " + result.getOutput());
                         assertThat(result.getExitCode(), equalTo(0));
                         assertThat(result.getOutput(), containsString("software.amazon.smithy.cli.dependencies.DependencyResolver - Resolved Maven dependencies: [com.example:artifact:jar:1.1.0"));
                     });
@@ -127,7 +126,7 @@ public class LockCommandTest {
         IntegUtils.runWithEmptyCache("clashing-lockfile", ListUtils.of("validate", "--debug"),
                 Collections.emptyMap(), result -> {
                     assertThat(result.getExitCode(), equalTo(1));
-                    assertThat(result.getOutput(), containsString("Lockfile does not match configured dependencies."));
+                    assertThat(result.getOutput(), containsString("`smithy-lock.json` does not match configured dependencies."));
                 });
     }
 
