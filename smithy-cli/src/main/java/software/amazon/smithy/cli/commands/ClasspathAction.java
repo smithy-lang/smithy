@@ -143,6 +143,8 @@ class ClasspathAction implements CommandAction {
         // Use the lock file dependencies and repositories if a lockfile exists
         Optional<LockFile> lockFileOptional = DependencyUtils.loadLockfile();
         if (lockFileOptional.isPresent()) {
+            LOGGER.severe("HASH: " + DependencyUtils.configHash(dependencies, repositories));
+
             if (lockFileOptional.get().getConfigHash() != DependencyUtils.configHash(dependencies, repositories)) {
                 throw new CliError(
                         "`smithy-lock.json` does not match configured dependencies. "

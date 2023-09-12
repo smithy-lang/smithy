@@ -20,7 +20,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Optional;
@@ -122,10 +121,14 @@ public final class DependencyUtils {
      * @return combined hash
      */
     public static int configHash(Set<String> artifacts, Set<MavenRepository> repositories) {
-        String[] hashingArray = artifacts.toArray(new String[artifacts.size() + repositories.size()]);
-        String[] repoArray = repositories.stream().map(MavenRepository::getUrl).toArray(String[]::new);
-        System.arraycopy(repoArray, 0, hashingArray, artifacts.size(), repoArray.length);
-        return Arrays.hashCode(hashingArray);
+        int result = 0;
+        for (String artifact : artifacts) {
+            result = 31 * result + artifact.hashCode();
+        }
+        for (MavenRepository repo : repositories) {
+            result = 31 * result + repo.getUrl().hashCode();
+        }
+        return result;
     }
 
     public static Optional<LockFile> loadLockfile() {
