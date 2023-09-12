@@ -231,7 +231,7 @@ final class LockFile implements ToSmithyBuilder<LockFile>, ToNode {
         }
 
         boolean matchesResolved(ResolvedArtifact resolved) {
-            return coordinates.equals(resolved.getCoordinates()) && shaSum.equals(resolved.getShaSum());
+           return coordinates.equals(resolved.getCoordinates()) && shaSum.equals(resolved.getShaSum());
         }
     }
 }

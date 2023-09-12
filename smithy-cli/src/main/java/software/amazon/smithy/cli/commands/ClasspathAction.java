@@ -42,11 +42,7 @@ import software.amazon.smithy.cli.dependencies.ResolvedArtifact;
  * A {@code CommandAction} that runs a wrapped action within a custom classpath.
  */
 class ClasspathAction implements CommandAction {
-
     private static final Logger LOGGER = Logger.getLogger(ClasspathAction.class.getName());
-    private static final MavenRepository CENTRAL = MavenRepository.builder()
-            .url("https://repo.maven.apache.org/maven2")
-            .build();
     private final DependencyResolver.Factory dependencyResolverFactory;
     private final CommandActionWithConfig action;
 
@@ -138,25 +134,29 @@ class ClasspathAction implements CommandAction {
                 delegate);
 
         Set<MavenRepository> repositories = DependencyUtils.getConfiguredMavenRepos(smithyBuildConfig);
-        Set<String> dependencies = maven.getDependencies();
-
-        // Use the lock file dependencies and repositories if a lockfile exists
+        for (MavenRepository repository: repositories) {
+            resolver.addRepository(repository);
+        }
+        // Use the pinned lockfile dependencies if a lockfile exists otherwise use the configured dependencies
         Optional<LockFile> lockFileOptional = DependencyUtils.loadLockfile();
         if (lockFileOptional.isPresent()) {
-            LOGGER.severe("HASH: " + DependencyUtils.configHash(dependencies, repositories));
-
-            if (lockFileOptional.get().getConfigHash() != DependencyUtils.configHash(dependencies, repositories)) {
+            if (lockFileOptional.get().getConfigHash() != DependencyUtils.configHash(maven.getDependencies(),
+                    repositories)
+            ) {
                 throw new CliError(
                         "`smithy-lock.json` does not match configured dependencies. "
                                 + "Re-lock dependencies using the `lock` command or revert changes.");
             }
             LOGGER.fine(() -> "Lockfile found. Using pinned dependencies: "
                     + lockFileOptional.get().getDependencyCoordinateSet());
-            dependencies = lockFileOptional.get().getDependencyCoordinateSet();
+            for (String pinnedDep: lockFileOptional.get().getDependencyCoordinateSet()) {
+                resolver.addDependency(pinnedDep);
+            }
+        } else {
+            for (String dep: maven.getDependencies()) {
+                resolver.addDependency(dep);
+            }
         }
-
-        dependencies.forEach(resolver::addDependency);
-        repositories.forEach(resolver::addRepository);
 
         List<ResolvedArtifact> artifacts = resolver.resolve();
         LOGGER.fine(() -> "Classpath resolved with Maven: " + artifacts);

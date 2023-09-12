@@ -85,7 +85,6 @@ public final class DependencyUtils {
      * defaults to a singleton set of just the Maven Central repo.
      *
      * @param config Smithy build config to check for maven repository values.
-     * @return set of configured repositories.
      */
     public static Set<MavenRepository> getConfiguredMavenRepos(SmithyBuildConfig config) {
         Set<MavenRepository> repositories = new LinkedHashSet<>();
@@ -109,7 +108,6 @@ public final class DependencyUtils {
                     EnvironmentVariable.SMITHY_MAVEN_REPOS));
             repositories.add(CENTRAL);
         }
-
         return repositories;
     }
 
