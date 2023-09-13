@@ -113,6 +113,33 @@ use smithy.rules#endpointTests
       "expect": {
         "error": "Invalid hostlabel"
       }
+    },
+    {
+      "documentation": "ending with a dot is not a valid hostlabel",
+      "params": {
+        "Region": "part1."
+      },
+      "expect": {
+        "error": "Invalid hostlabel"
+      }
+    },
+    {
+      "documentation": "multiple consecutive dots are not allowed",
+      "params": {
+        "Region": "part1..part2"
+      },
+      "expect": {
+        "error": "Invalid hostlabel"
+      }
+    },
+    {
+      "documentation": "labels cannot start with a dash",
+      "params": {
+        "Region": "part1.-part2"
+      },
+      "expect": {
+        "error": "Invalid hostlabel"
+      }
     }
   ]
 )
