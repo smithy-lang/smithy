@@ -80,6 +80,17 @@ use smithy.rules#endpointTests
       }
     },
     {
+      "documentation": "bucket--with-multiple-dash: isVirtualHostable",
+      "params": {
+        "BucketName": "bucket--with-multiple-dash"
+      },
+      "expect": {
+        "endpoint": {
+          "url": "https://bucket--with-multiple-dash.s3.amazonaws.com"
+        }
+      }
+    },
+    {
       "documentation": "BucketName: not isVirtualHostable (uppercase characters)",
       "params": {
         "BucketName": "BucketName"
@@ -199,7 +210,16 @@ use smithy.rules#endpointTests
       "expect": {
         "error": "not isVirtualHostableS3Bucket"
       }
-    }
+    },
+    {
+      "documentation": "bucket..name: not isVirtualHostable (consequetive dots)",
+      "params": {
+        "BucketName": "bucket..name"
+      },
+      "expect": {
+        "error": "not isVirtualHostableS3Bucket"
+      }
+    },
   ]
 )
 @clientContextParams(
