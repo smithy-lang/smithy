@@ -87,10 +87,20 @@ public final class IsValidHostLabel extends LibraryFunction {
         public Value evaluate(List<Value> arguments) {
             String hostLabel = arguments.get(0).expectStringValue().getValue();
             boolean allowDots = arguments.get(1).expectBooleanValue().getValue();
+            return Value.booleanValue(isValidHostLabel(hostLabel, allowDots));
+        }
+
+        private boolean isValidHostLabel(String hostLabel, boolean allowDots) {
             if (allowDots) {
-                return Value.booleanValue(hostLabel.matches("[a-zA-Z\\d][a-zA-Z\\d\\-.]{0,62}"));
+                // ensure that empty matches at the end are included
+                for (String subLabel : hostLabel.split("[.]", -1)) {
+                    if (!isValidHostLabel(subLabel, false)) {
+                        return false;
+                    }
+                }
+                return true;
             } else {
-                return Value.booleanValue(hostLabel.matches("[a-zA-Z\\d][a-zA-Z\\d\\-]{0,62}"));
+                return hostLabel.matches("[a-zA-Z\\d][a-zA-Z\\d\\-]{1,62}");
             }
         }
 
