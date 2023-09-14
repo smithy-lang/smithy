@@ -79,7 +79,7 @@
                 "smithy.api#readonly": {},
                 "smithy.api#examples": [
                     {
-                        "title": "testing multiple noninclusive matches",
+                        "title": "testing noninclusive key and value",
                         "MasterUsername": "master"
                     }
                 ]

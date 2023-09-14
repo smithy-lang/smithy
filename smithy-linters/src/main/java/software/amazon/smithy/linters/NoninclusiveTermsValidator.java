@@ -19,11 +19,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
@@ -118,11 +116,11 @@ public final class NoninclusiveTermsValidator extends AbstractValidator {
     @Override
     public List<ValidationEvent> validate(Model model) {
         TextIndex textIndex = TextIndex.of(model);
-        Set<ValidationEvent> validationEvents = new HashSet<>();
+        List<ValidationEvent> validationEvents = new ArrayList<>();
         for (TextInstance text : textIndex.getTextInstances()) {
             validationEvents.addAll(getValidationEvents(text));
         }
-        return new ArrayList<>(validationEvents);
+        return validationEvents;
     }
 
     /**
@@ -174,10 +172,7 @@ public final class NoninclusiveTermsValidator extends AbstractValidator {
                     return validationEvent.toBuilder()
                             .message(String.format(
                                     "'%s' trait value at path {%s} contains a non-inclusive term `%s`.%s",
-                                    idiomaticTraitName,
-                                    valuePropertyPathFormatted,
-                                    matchedText.toLowerCase(),
-                                    getReplacementAddendum(matchedText.toLowerCase(), replacements)))
+                                    idiomaticTraitName, valuePropertyPathFormatted, matchedText, replacementAddendum))
                             .id(getName() + "." + TRAIT + "." + matchedText.toLowerCase(Locale.US)
                                     + "." + idiomaticTraitName + "." + valuePropertyPathFormatted)
                             .build();
