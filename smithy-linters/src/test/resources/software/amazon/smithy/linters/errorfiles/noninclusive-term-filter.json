@@ -76,7 +76,13 @@
                 "target": "ns.foo#AOutput"
             },
             "traits": {
-                "smithy.api#readonly": {}
+                "smithy.api#readonly": {},
+                "smithy.api#examples": [
+                    {
+                        "title": "testing noninclusive key and value",
+                        "MasterUsername": "master"
+                    }
+                ]
             }
         },
         "ns.foo#AInput": {
