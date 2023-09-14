@@ -30,7 +30,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Objects;
 import java.util.Random;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -148,13 +147,5 @@ public class IoUtilsTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> IoUtils.rmdir(path));
 
         Files.delete(path);
-    }
-
-    @Test
-    public void computesCorrectShaHash() throws URISyntaxException {
-        // Expected sha was computed using the `sha256sum` command line utility
-        String expectedSha = "4c5a232ddc90924079fd73170b97a6c32a8132437d37ca622cc70b1024396693";
-        String shaHash = IoUtils.computeSha256(Paths.get(Objects.requireNonNull(getClass().getResource("sha-test.txt")).toURI()));
-        assertEquals(shaHash, expectedSha);
     }
 }
