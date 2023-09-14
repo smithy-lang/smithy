@@ -1651,7 +1651,8 @@ hierarchy of a given shape to check if the shape is within the containment
 hierarchy of a qualified service or resource shape. This function essentially
 allows shapes to be matched by inheriting from the resource or service they
 are bound to.</p>
-<p class="rubric">Selector arguments</p>
+<div class="section" id="selector-arguments">
+<h4><span class="section-number">16.8.6.1. </span>Selector arguments<a class="headerlink" href="#selector-arguments" title="Permalink to this headline">#</a></h4>
 <p>Exactly one or two selectors MUST be provided to the <code class="docutils literal notranslate"><span class="pre">:topdown</span></code> selector:</p>
 <ol class="arabic simple">
 <li>The first selector is the &quot;qualifier&quot;. It is used to mark a shape as a
@@ -1666,7 +1667,9 @@ regardless of if the second selector removes the match flag for the current
 shape because resource and operation shapes bound to the current shape
 could yield matching results.</li>
 </ol>
-<p class="rubric">Examples</p>
+</div>
+<div class="section" id="examples">
+<h4><span class="section-number">16.8.6.2. </span>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">#</a></h4>
 <p>The following selector finds all service, resource, and operation shapes that
 are marked with the <code class="docutils literal notranslate"><span class="pre">aws.api#dataPlane</span></code> trait or that are bound within the
 containment hierarchy of resource and service shapes that are marked as such:</p>
@@ -1712,6 +1715,7 @@ to the function. When applied to the previous example model, the following
 selector matches only <code class="docutils literal notranslate"><span class="pre">OperationB</span></code>.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>resource :topdown([trait|aws.api#dataPlane], [trait|aws.api#controlPlane])
 </pre></div>
+</div>
 </div>
 </div>
 </div>
@@ -2132,7 +2136,11 @@ of the Smithy Github repository.</p>
 <li><a class="reference internal" href="#root-functions-are-evaluated-at-most-once">16.8.5.2. :root functions are evaluated at most once</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#topdown">16.8.6. <code class="docutils literal notranslate"><span class="pre">:topdown</span></code></a></li>
+<li><a class="reference internal" href="#topdown">16.8.6. <code class="docutils literal notranslate"><span class="pre">:topdown</span></code></a><ul>
+<li><a class="reference internal" href="#selector-arguments">16.8.6.1. Selector arguments</a></li>
+<li><a class="reference internal" href="#examples">16.8.6.2. Examples</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#variables">16.9. Variables</a><ul>

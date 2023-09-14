@@ -463,7 +463,8 @@ media type as defined by <span class="target" id="index-0"></span><a class="rfc 
 <span class="kd">blob </span><span class="nc">VideoData</span>
 </pre></div>
 </div>
-<p class="rubric">Use cases</p>
+<div class="section" id="use-cases">
+<h3><span class="section-number">12.3.1. </span>Use cases<a class="headerlink" href="#use-cases" title="Permalink to this headline">#</a></h3>
 <p>The primary function of the <code class="docutils literal notranslate"><span class="pre">mediaType</span></code> trait is to send open content
 data over the wire inside of values that are isolated from the rest of
 a payload using exact representations of customer provided data. While the
@@ -474,13 +475,16 @@ any kind of schema for the shape.</p>
 validation, special-cased helpers to serialize and deserialize media type
 contents in code, assigning a fixed Content-Type when using
 <a class="reference internal" href="http-bindings.html#http-traits"><span class="std std-ref">HTTP bindings</span></a>, etc.</p>
-<p class="rubric">Comparisons to document types</p>
+</div>
+<div class="section" id="comparisons-to-document-types">
+<h3><span class="section-number">12.3.2. </span>Comparisons to document types<a class="headerlink" href="#comparisons-to-document-types" title="Permalink to this headline">#</a></h3>
 <p>The serialization format of a shape marked with the <code class="docutils literal notranslate"><span class="pre">&#64;mediaType</span></code> trait is
 an important part of its contract. In contrast, document types are
 serialized in a protocol-agnostic way and can only express data types as
 granular as the JSON-type system. Design-time media types are preferred over
 document types when the exact bytes of a value are required for an
 application to function.</p>
+</div>
 </div>
 <div class="section" id="timestampformat-trait">
 <span id="smithy-api-timestampformat-trait"></span><span id="id4"></span><h2><span class="section-number">12.4. </span><code class="docutils literal notranslate"><span class="pre">timestampFormat</span></code> trait<a class="headerlink" href="#timestampformat-trait" title="Permalink to this headline">#</a></h2>
@@ -495,7 +499,8 @@ application to function.</p>
 the <a class="reference internal" href="#protocoldefinition-trait"><span class="std std-ref">protocol</span></a> of a service; however, the
 serialization format can be explicitly configured in some protocols to
 override the default format using the <code class="docutils literal notranslate"><span class="pre">timestampFormat</span></code> trait.</p>
-<p class="rubric">Timestamp formats</p>
+<div class="section" id="timestamp-formats">
+<h3><span class="section-number">12.4.1. </span>Timestamp formats<a class="headerlink" href="#timestamp-formats" title="Permalink to this headline">#</a></h3>
 <p>Smithy defines the following built-in timestamp formats:</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
@@ -535,7 +540,9 @@ truncated to fit millisecond precision.</td>
 </tbody>
 </table>
 </div>
-<p class="rubric">Resolving timestamp formats</p>
+</div>
+<div class="section" id="resolving-timestamp-formats">
+<h3><span class="section-number">12.4.2. </span>Resolving timestamp formats<a class="headerlink" href="#resolving-timestamp-formats" title="Permalink to this headline">#</a></h3>
 <p>The following steps are taken to determine the serialization format of a
 <a class="reference internal" href="model.html#member"><span class="std std-ref">member</span></a> that targets a timestamp:</p>
 <ol class="arabic simple">
@@ -548,6 +555,7 @@ truncated to fit millisecond precision.</td>
 <p class="last">This trait SHOULD NOT be used unless the intended serialization format of
 a timestamp differs from the default protocol format. Using this trait too
 liberally can cause other tooling to improperly interpret the timestamp.</p>
+</div>
 </div>
 </div>
 <div class="section" id="xml-bindings">
@@ -1291,8 +1299,16 @@ provides for <code class="docutils literal notranslate"><span class="pre">prefix
 <li><a class="reference internal" href="#">12. Serialization and Protocol traits</a><ul>
 <li><a class="reference internal" href="#protocoldefinition-trait">12.1. <code class="docutils literal notranslate"><span class="pre">protocolDefinition</span></code> trait</a></li>
 <li><a class="reference internal" href="#jsonname-trait">12.2. <code class="docutils literal notranslate"><span class="pre">jsonName</span></code> trait</a></li>
-<li><a class="reference internal" href="#mediatype-trait">12.3. <code class="docutils literal notranslate"><span class="pre">mediaType</span></code> trait</a></li>
-<li><a class="reference internal" href="#timestampformat-trait">12.4. <code class="docutils literal notranslate"><span class="pre">timestampFormat</span></code> trait</a></li>
+<li><a class="reference internal" href="#mediatype-trait">12.3. <code class="docutils literal notranslate"><span class="pre">mediaType</span></code> trait</a><ul>
+<li><a class="reference internal" href="#use-cases">12.3.1. Use cases</a></li>
+<li><a class="reference internal" href="#comparisons-to-document-types">12.3.2. Comparisons to document types</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#timestampformat-trait">12.4. <code class="docutils literal notranslate"><span class="pre">timestampFormat</span></code> trait</a><ul>
+<li><a class="reference internal" href="#timestamp-formats">12.4.1. Timestamp formats</a></li>
+<li><a class="reference internal" href="#resolving-timestamp-formats">12.4.2. Resolving timestamp formats</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#xml-bindings">12.5. XML bindings</a><ul>
 <li><a class="reference internal" href="#structure-and-union-serialization">12.5.1. Structure and union serialization</a><ul>
 <li><a class="reference internal" href="#custom-xml-element-names">12.5.1.1. Custom XML element names</a></li>

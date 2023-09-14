@@ -541,11 +541,13 @@ shapes in a service closure to detect specific types.</p>
 <p>The <em>list</em> type represents an ordered homogeneous collection of values.
 A list type should be code generated using the list or array type
 provided in the standard library of the target environment.</p>
-<p class="rubric">Value presence</p>
+<div class="section" id="value-presence">
+<h4>Value presence<a class="headerlink" href="#value-presence" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li>List values are always present (non-nullable) unless the list is marked
 with the <code class="docutils literal notranslate"><span class="pre">&#64;sparse</span></code> trait.</li>
 </ul>
+</div>
 <div class="section" id="ignore-set-shapes-from-smithy-1-0">
 <h4>Ignore set shapes from Smithy 1.0<a class="headerlink" href="#ignore-set-shapes-from-smithy-1-0" title="Permalink to this headline">#</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">set</span></code> type was deprecated in Smithy 1.0 and removed in Smithy
@@ -568,12 +570,14 @@ altogether.</p>
 <code class="docutils literal notranslate"><span class="pre">string</span></code> keys to homogeneous values. Maps are not required to
 maintain insertion order. Implementations should use the idiomatic
 map data structure of the target environment when possible.</p>
-<p class="rubric">Key and value presence</p>
+<div class="section" id="key-and-value-presence">
+<h4>Key and value presence<a class="headerlink" href="#key-and-value-presence" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li>Map keys are always present and never nullable.</li>
 <li>Map values are always present (non-nullable) unless the map is
 marked with the <a class="reference internal" href="../../spec/type-refinement-traits.html#sparse-trait"><span class="std std-ref">sparse trait</span></a>.</li>
 </ul>
+</div>
 </div>
 <div class="section" id="structure">
 <h3>Structure<a class="headerlink" href="#structure" title="Permalink to this headline">#</a></h3>
@@ -931,10 +935,14 @@ also something that <a class="reference internal" href="implementing-the-generat
 <li><a class="reference internal" href="#timestamp">Timestamp</a></li>
 <li><a class="reference internal" href="#numbers-byte-short-integer-long-float-double-biginteger-bigdecimal">Numbers: byte, short, integer, long, float, double, bigInteger, bigDecimal</a></li>
 <li><a class="reference internal" href="#list">List</a><ul>
+<li><a class="reference internal" href="#value-presence">Value presence</a></li>
 <li><a class="reference internal" href="#ignore-set-shapes-from-smithy-1-0">Ignore set shapes from Smithy 1.0</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#map">Map</a></li>
+<li><a class="reference internal" href="#map">Map</a><ul>
+<li><a class="reference internal" href="#key-and-value-presence">Key and value presence</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#structure">Structure</a><ul>
 <li><a class="reference internal" href="#error-structures">Error structures</a></li>
 </ul>

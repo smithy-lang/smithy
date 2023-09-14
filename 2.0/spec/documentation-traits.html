@@ -377,7 +377,8 @@ deprecated.</td>
 <span class="kd">string </span><span class="nc">MyString</span>
 </pre></div>
 </div>
-<p class="rubric">Effective documentation</p>
+<div class="section" id="effective-documentation">
+<h3><span class="section-number">8.2.1. </span>Effective documentation<a class="headerlink" href="#effective-documentation" title="Permalink to this headline">#</a></h3>
 <p>The <em>effective documentation trait</em> of a shape is resolved using the following
 process:</p>
 <ol class="arabic simple">
@@ -402,6 +403,7 @@ the shape targeted by the member, if present.</li>
 <p>the effective documentation of <code class="docutils literal notranslate"><span class="pre">Foo$baz</span></code> resolves to &quot;Member documentation&quot;,
 <code class="docutils literal notranslate"><span class="pre">Foo$bar</span></code> resolves to &quot;Shape documentation&quot;, <code class="docutils literal notranslate"><span class="pre">Foo$qux</span></code> is not documented,
 <code class="docutils literal notranslate"><span class="pre">Baz</span></code> resolves to &quot;Shape documentation&quot;, and <code class="docutils literal notranslate"><span class="pre">Foo</span></code> is not documented.</p>
+</div>
 </div>
 <div class="section" id="examples-trait">
 <span id="smithy-api-examples-trait"></span><span id="id4"></span><h2><span class="section-number">8.3. </span><code class="docutils literal notranslate"><span class="pre">examples</span></code> trait<a class="headerlink" href="#examples-trait" title="Permalink to this headline">#</a></h2>
@@ -450,13 +452,14 @@ value of the member.</td>
 <td>Provides an error shape ID and example error parameters for the
 operation.</td>
 </tr>
+<tr class="row-odd"><td>allowConstraintErrors</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>Set to true to lower input constraint trait validations to warnings.
+This can only be set when <code class="docutils literal notranslate"><span class="pre">error</span></code> is provided.</td>
+</tr>
 </tbody>
 </table>
 </div>
-<p>The values provided for the <code class="docutils literal notranslate"><span class="pre">input</span></code> and <code class="docutils literal notranslate"><span class="pre">output</span></code> members MUST be
-compatible with the shapes and constraints of the corresponding structure.
-These values use the same semantics and format as
-<a class="reference internal" href="model.html#trait-node-values"><span class="std std-ref">custom trait values</span></a>.</p>
 <p>A value for <code class="docutils literal notranslate"><span class="pre">output</span></code> or <code class="docutils literal notranslate"><span class="pre">error</span></code> SHOULD be provided. However, both
 MUST NOT be defined for the same example.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
@@ -495,7 +498,8 @@ MUST NOT be defined for the same example.</p>
 <span class="w">            </span><span class="py">content</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">                </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Invalid &#39;foo&#39;. Special character not allowed.&quot;</span>
 <span class="w">            </span>}
-<span class="w">        </span>}
+<span class="w">        </span>}<span class="p">,</span>
+<span class="w">        </span><span class="py">allowConstraintErrors</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">    </span>}
 ])
 </pre></div>
@@ -764,7 +768,10 @@ when code generated from unstable features are used.</dd>
             <ul>
 <li><a class="reference internal" href="#">8. Documentation traits</a><ul>
 <li><a class="reference internal" href="#deprecated-trait">8.1. <code class="docutils literal notranslate"><span class="pre">deprecated</span></code> trait</a></li>
-<li><a class="reference internal" href="#documentation-trait">8.2. <code class="docutils literal notranslate"><span class="pre">documentation</span></code> trait</a></li>
+<li><a class="reference internal" href="#documentation-trait">8.2. <code class="docutils literal notranslate"><span class="pre">documentation</span></code> trait</a><ul>
+<li><a class="reference internal" href="#effective-documentation">8.2.1. Effective documentation</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#examples-trait">8.3. <code class="docutils literal notranslate"><span class="pre">examples</span></code> trait</a><ul>
 <li><a class="reference internal" href="#errorexample-structure">8.3.1. <code class="docutils literal notranslate"><span class="pre">ErrorExample</span></code> structure</a></li>
 </ul>

@@ -674,7 +674,8 @@ members.</dd>
 }
 </pre></div>
 </div>
-<p class="rubric"><code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> structure constraints</p>
+<div class="section" id="input-structure-constraints">
+<h3><span class="section-number">7.7.1. </span><code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> structure constraints<a class="headerlink" href="#input-structure-constraints" title="Permalink to this headline">#</a></h3>
 <p>Structure shapes marked with the <code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> trait MUST adhere to the
 following constraints:</p>
 <ol class="arabic simple">
@@ -687,7 +688,9 @@ operation that targets it (if any). For example, the input shape of the
 </ol>
 <p>These constraints allow tooling to specialize operation input shapes in
 ways that would otherwise require complex model transformations.</p>
-<p class="rubric">Impact on backward compatibility</p>
+</div>
+<div class="section" id="impact-on-backward-compatibility">
+<h3><span class="section-number">7.7.2. </span>Impact on backward compatibility<a class="headerlink" href="#impact-on-backward-compatibility" title="Permalink to this headline">#</a></h3>
 <p>Required members of a structure marked with the <code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> trait are implicitly
 considered <a class="reference internal" href="#clientoptional-trait"><span class="std std-ref">clientOptional</span></a>. It is backward
 compatible to remove the <code class="docutils literal notranslate"><span class="pre">&#64;required</span></code> trait from top-level members of
@@ -697,6 +700,7 @@ as well). This gives service teams the ability to remove the <code class="docuti
 trait from top-level input members and loosen requirements without risking
 breaking previously generated clients.</p>
 </div>
+</div>
 <div class="section" id="output-trait">
 <span id="smithy-api-output-trait"></span><span id="id8"></span><h2><span class="section-number">7.8. </span><code class="docutils literal notranslate"><span class="pre">output</span></code> trait<a class="headerlink" href="#output-trait" title="Permalink to this headline">#</a></h2>
 <dl class="docutils">
@@ -705,6 +709,8 @@ breaking previously generated clients.</p>
 <dt>Value type</dt><dd>Annotation trait.</dd>
 <dt>Conflicts with</dt><dd><a class="reference internal" href="#input-trait"><span class="std std-ref">input trait</span></a>, <a class="reference internal" href="#error-trait"><span class="std std-ref">error trait</span></a></dd>
 </dl>
+<div class="section" id="output-structure-constraints">
+<h3><span class="section-number">7.8.1. </span><code class="docutils literal notranslate"><span class="pre">&#64;output</span></code> structure constraints<a class="headerlink" href="#output-structure-constraints" title="Permalink to this headline">#</a></h3>
 <p>Structure shapes marked with the <code class="docutils literal notranslate"><span class="pre">&#64;output</span></code> trait MUST adhere to the
 following constraints:</p>
 <ol class="arabic simple">
@@ -716,6 +722,7 @@ operation that targets it (if any). For example, the output shape of the
 </ol>
 <p>These constraints allow tooling to specialize operation output shapes in
 ways that would otherwise require complex model transformations.</p>
+</div>
 </div>
 <div class="section" id="sparse-trait">
 <span id="smithy-api-sparse-trait"></span><span id="id9"></span><h2><span class="section-number">7.9. </span><code class="docutils literal notranslate"><span class="pre">sparse</span></code> trait<a class="headerlink" href="#sparse-trait" title="Permalink to this headline">#</a></h2>
@@ -875,8 +882,15 @@ property and does not need to be explicitly added.</p>
 <li><a class="reference internal" href="#clientoptional-trait">7.4. <code class="docutils literal notranslate"><span class="pre">clientOptional</span></code> trait</a></li>
 <li><a class="reference internal" href="#enumvalue-trait">7.5. <code class="docutils literal notranslate"><span class="pre">enumValue</span></code> trait</a></li>
 <li><a class="reference internal" href="#error-trait">7.6. <code class="docutils literal notranslate"><span class="pre">error</span></code> trait</a></li>
-<li><a class="reference internal" href="#input-trait">7.7. <code class="docutils literal notranslate"><span class="pre">input</span></code> trait</a></li>
-<li><a class="reference internal" href="#output-trait">7.8. <code class="docutils literal notranslate"><span class="pre">output</span></code> trait</a></li>
+<li><a class="reference internal" href="#input-trait">7.7. <code class="docutils literal notranslate"><span class="pre">input</span></code> trait</a><ul>
+<li><a class="reference internal" href="#input-structure-constraints">7.7.1. <code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> structure constraints</a></li>
+<li><a class="reference internal" href="#impact-on-backward-compatibility">7.7.2. Impact on backward compatibility</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#output-trait">7.8. <code class="docutils literal notranslate"><span class="pre">output</span></code> trait</a><ul>
+<li><a class="reference internal" href="#output-structure-constraints">7.8.1. <code class="docutils literal notranslate"><span class="pre">&#64;output</span></code> structure constraints</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#sparse-trait">7.9. <code class="docutils literal notranslate"><span class="pre">sparse</span></code> trait</a></li>
 <li><a class="reference internal" href="#mixin-trait">7.10. <code class="docutils literal notranslate"><span class="pre">mixin</span></code> trait</a></li>
 </ul>

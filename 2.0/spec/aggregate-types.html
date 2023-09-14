@@ -375,11 +375,14 @@ The following example defines a map of strings to integers:</p>
 </div>
 <div class="section" id="map-member-optionality">
 <h3><span class="section-number">3.2.1. </span>Map member optionality<a class="headerlink" href="#map-member-optionality" title="Permalink to this headline">#</a></h3>
-<p class="rubric">Map keys are never optional</p>
+<div class="section" id="map-keys-are-never-optional">
+<h4><span class="section-number">3.2.1.1. </span>Map keys are never optional<a class="headerlink" href="#map-keys-are-never-optional" title="Permalink to this headline">#</a></h4>
 <p>Map keys are not permitted to be <code class="docutils literal notranslate"><span class="pre">null</span></code>. Not all protocol serialization
 formats have a way to define <code class="docutils literal notranslate"><span class="pre">null</span></code> map keys, and map implementations
 across programming languages often do not allow <code class="docutils literal notranslate"><span class="pre">null</span></code> keys in maps.</p>
-<p class="rubric">Map values are always present by default</p>
+</div>
+<div class="section" id="map-values-are-always-present-by-default">
+<h4><span class="section-number">3.2.1.2. </span>Map values are always present by default<a class="headerlink" href="#map-values-are-always-present-by-default" title="Permalink to this headline">#</a></h4>
 <p>Maps values are considered <em>dense</em> by default, meaning they cannot contain
 <code class="docutils literal notranslate"><span class="pre">null</span></code> values. A map MAY be made <em>sparse</em> by applying the
 <a class="reference internal" href="type-refinement-traits.html#sparse-trait"><span class="std std-ref">sparse trait</span></a>. The following example defines a sparse map:</p>
@@ -389,6 +392,7 @@ across programming languages often do not allow <code class="docutils literal no
 <span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
 }
 </pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="map-member-shape-ids">
@@ -543,7 +547,8 @@ a default value to the <code class="docutils literal notranslate"><span class="p
 <p>Requirements change; what is required today might not be required tomorrow.
 Smithy provides several ways to make it so that required members no longer
 need to be provided without breaking previously generated code.</p>
-<p class="rubric">Migrating <code class="docutils literal notranslate"><span class="pre">&#64;required</span></code> to <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code></p>
+<div class="section" id="migrating-required-to-default">
+<h5><span class="section-number">3.3.3.3.1. </span>Migrating <code class="docutils literal notranslate"><span class="pre">&#64;required</span></code> to <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code><a class="headerlink" href="#migrating-required-to-default" title="Permalink to this headline">#</a></h5>
 <p>If a <code class="docutils literal notranslate"><span class="pre">required</span></code> member no longer needs to be be required, the <code class="docutils literal notranslate"><span class="pre">required</span></code>
 trait MAY be removed and replaced with the <a class="reference internal" href="type-refinement-traits.html#default-trait"><span class="std std-ref">default trait</span></a>. Alternatively,
 a <code class="docutils literal notranslate"><span class="pre">default</span></code> trait MAY be added to a member marked as <code class="docutils literal notranslate"><span class="pre">required</span></code> to
@@ -564,7 +569,9 @@ a default value is automatically provided if missing. For example, the previous
 added to a previously published member. Some tooling does not treat the
 <code class="docutils literal notranslate"><span class="pre">required</span></code> trait as non-nullable but does treat the <code class="docutils literal notranslate"><span class="pre">default</span></code> trait as
 non-nullable.</p>
-<p class="rubric">Requiring members to be optional</p>
+</div>
+<div class="section" id="requiring-members-to-be-optional">
+<h5><span class="section-number">3.3.3.3.2. </span>Requiring members to be optional<a class="headerlink" href="#requiring-members-to-be-optional" title="Permalink to this headline">#</a></h5>
 <p>The <a class="reference internal" href="type-refinement-traits.html#clientoptional-trait"><span class="std std-ref">clientOptional trait</span></a> is used to indicate that a member that is
 currently required by authoritative model consumers like servers MAY become
 completely optional in the future. Non-authoritative model consumers like
@@ -589,7 +596,9 @@ the <code class="docutils literal notranslate"><span class="pre">clientOptional<
 trait is <em>not</em> a backward compatible change because model consumers would
 transition from assuming the value is optional to assuming that it is always
 present due to a default value.</p>
-<p class="rubric">Model evolution and the <code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> trait</p>
+</div>
+<div class="section" id="model-evolution-and-the-input-trait">
+<h5><span class="section-number">3.3.3.3.3. </span>Model evolution and the <code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> trait<a class="headerlink" href="#model-evolution-and-the-input-trait" title="Permalink to this headline">#</a></h5>
 <p>The <a class="reference internal" href="type-refinement-traits.html#input-trait"><span class="std std-ref">input trait</span></a> specializes a structure as the input of a single
 operation. Transitioning top-level members from <code class="docutils literal notranslate"><span class="pre">required</span></code> to optional is
 allowed for such structures because it is loosening an input constraint.
@@ -616,6 +625,7 @@ the <code class="docutils literal notranslate"><span class="pre">input</span></c
 <span class="w">    </span>}
 }
 </pre></div>
+</div>
 </div>
 </div>
 </div>
@@ -840,7 +850,11 @@ recursion and the <a class="reference internal" href="type-refinement-traits.htm
 </ul>
 </li>
 <li><a class="reference internal" href="#map">3.2. Map</a><ul>
-<li><a class="reference internal" href="#map-member-optionality">3.2.1. Map member optionality</a></li>
+<li><a class="reference internal" href="#map-member-optionality">3.2.1. Map member optionality</a><ul>
+<li><a class="reference internal" href="#map-keys-are-never-optional">3.2.1.1. Map keys are never optional</a></li>
+<li><a class="reference internal" href="#map-values-are-always-present-by-default">3.2.1.2. Map values are always present by default</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#map-member-shape-ids">3.2.2. Map member shape IDs</a></li>
 </ul>
 </li>
@@ -853,7 +867,12 @@ recursion and the <a class="reference internal" href="type-refinement-traits.htm
 </ul>
 </li>
 <li><a class="reference internal" href="#default-values">3.3.3.2. Default values</a></li>
-<li><a class="reference internal" href="#evolving-requirements-and-members">3.3.3.3. Evolving requirements and members</a></li>
+<li><a class="reference internal" href="#evolving-requirements-and-members">3.3.3.3. Evolving requirements and members</a><ul>
+<li><a class="reference internal" href="#migrating-required-to-default">3.3.3.3.1. Migrating <code class="docutils literal notranslate"><span class="pre">&#64;required</span></code> to <code class="docutils literal notranslate"><span class="pre">&#64;default</span></code></a></li>
+<li><a class="reference internal" href="#requiring-members-to-be-optional">3.3.3.3.2. Requiring members to be optional</a></li>
+<li><a class="reference internal" href="#model-evolution-and-the-input-trait">3.3.3.3.3. Model evolution and the <code class="docutils literal notranslate"><span class="pre">&#64;input</span></code> trait</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

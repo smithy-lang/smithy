@@ -330,7 +330,7 @@
 responses with JSON documents.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
 <dt>Value type</dt><dd>Structure</dd>
-<dt>See</dt><dd><a class="reference external" href="https://github.com/smithy-lang/smithy/tree/1.37.0/smithy-aws-protocol-tests/model/awsJson1_0">Protocol tests</a></dd>
+<dt>See</dt><dd><a class="reference external" href="https://github.com/smithy-lang/smithy/tree/1.38.0/smithy-aws-protocol-tests/model/awsJson1_0">Protocol tests</a></dd>
 </dl>
 <p><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsJson1_0</span></code> is a structure that supports the following
 members:</p>
@@ -605,7 +605,8 @@ a property using a custom name.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">union</span></code></td>
 <td>JSON object. A union is serialized identically as a <code class="docutils literal notranslate"><span class="pre">structure</span></code>
-shape, but only a single member can be set to a non-null value.</td>
+shape, but only a single member can be set to a non-null value.
+Deserializers MUST ignore an unrecognized <code class="docutils literal notranslate"><span class="pre">__type</span></code> member if present.</td>
 </tr>
 </tbody>
 </table>

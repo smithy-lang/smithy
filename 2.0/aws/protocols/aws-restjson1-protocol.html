@@ -650,7 +650,8 @@ a property using a custom name.</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">union</span></code></td>
 <td>JSON object. A union is serialized identically as a <code class="docutils literal notranslate"><span class="pre">structure</span></code>
-shape, but only a single member can be set to a non-null value.</td>
+shape, but only a single member can be set to a non-null value.
+Deserializers MUST ignore an unrecognized <code class="docutils literal notranslate"><span class="pre">__type</span></code> member if present.</td>
 </tr>
 </tbody>
 </table>

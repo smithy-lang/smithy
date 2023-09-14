@@ -1284,7 +1284,8 @@ This results in an ``x-meta`` property being added to the respective objects in 
         }
     }
 
-.. rubric:: Supported trait locations:
+Supported trait locations
+-------------------------
 
 Only a subset of OpenAPI locations are supported in the conversion:
 

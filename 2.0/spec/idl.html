@@ -2007,8 +2007,10 @@ and the current namespace in exactly the same way as
 <div class="section" id="trait-values">
 <span id="id7"></span><h4><span class="section-number">18.7.5.1. </span>Trait values<a class="headerlink" href="#trait-values" title="Permalink to this headline">#</a></h4>
 <p>The value that can be provided for a trait depends on its type. A value for a
-trait is defined by enclosing the value in parenthesis. Trait values can only
-appear immediately before a shape.</p>
+trait is defined by enclosing the value in parenthesis, provided as a
+<a class="reference internal" href="#node-values"><span class="std std-ref">node value</span></a>. Trait values MUST adhere to the JSON type
+mappings defined in <a class="reference internal" href="model.html#trait-node-values"><span class="std std-ref">Trait node values</span></a>. Trait values can only appear
+immediately before a shape.</p>
 <p>The following example applies various traits to a structure shape and its
 members.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@documentation</span>(<span class="s2">&quot;An animal in the animal kingdom&quot;</span>)
@@ -2017,38 +2019,38 @@ members.</p>
 <span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">smithy.api#String</span><span class="p">,</span>
 
 <span class="w">    </span><span class="nt">@length</span>(<span class="py">min</span><span class="p">:</span><span class="w"> </span><span class="m">0</span>)
-<span class="w">    </span><span class="nt">@tags</span>([<span class="s2">&quot;private-beta&quot;</span>])
+<span class="w">    </span><span class="nt">@tags</span>([<span class="s2">&quot;private-beta&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;metered&quot;</span>])
 <span class="w">    </span><span class="py">age</span><span class="p">:</span><span class="w"> </span><span class="vc">smithy.api#Integer</span><span class="p">,</span>
 }
 </pre></div>
 </div>
 </div>
-<div class="section" id="structure-map-and-union-trait-values">
-<h4><span class="section-number">18.7.5.2. </span>Structure, map, and union trait values<a class="headerlink" href="#structure-map-and-union-trait-values" title="Permalink to this headline">#</a></h4>
-<p>Traits that are a <code class="docutils literal notranslate"><span class="pre">structure</span></code>, <code class="docutils literal notranslate"><span class="pre">union</span></code>, or <code class="docutils literal notranslate"><span class="pre">map</span></code> are defined using
-a special syntax that places key-value pairs inside of the trait
-parenthesis. Wrapping braces, &quot;{&quot; and &quot;}&quot;, are not permitted.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@structuredTrait</span>(<span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;bar&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;bam&quot;</span>)
+<div class="section" id="structure-map-and-union-trait-value-syntax">
+<span id="structured-trait-values"></span><h4><span class="section-number">18.7.5.2. </span>Structure, map, and union trait value syntax<a class="headerlink" href="#structure-map-and-union-trait-value-syntax" title="Permalink to this headline">#</a></h4>
+<p>A special syntax is provided for structure, map, and union traits that
+allows placing key-value pairs directly inside of the trait parenthesis.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@structuredTrait</span>(<span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;baz&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">qux</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span>)
 </pre></div>
 </div>
-<p>Nested structure, map, and union values are defined using
-<a class="reference internal" href="#node-values"><span class="std std-ref">node value</span></a> productions:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@structuredTrait</span>(
-<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;baz&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="py">qux</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span>
-<span class="w">    </span>}
-)
+<p>Is equivalent to:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@structuredTrait</span>({<span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;baz&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">qux</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span>})
 </pre></div>
 </div>
-<p>Omitting a value is allowed on <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">set</span></code>, <code class="docutils literal notranslate"><span class="pre">map</span></code>, and <code class="docutils literal notranslate"><span class="pre">structure</span></code>
-traits if the shapes have no <code class="docutils literal notranslate"><span class="pre">length</span></code> constraints or <code class="docutils literal notranslate"><span class="pre">required</span></code> members.
-The following applications of the <code class="docutils literal notranslate"><span class="pre">foo</span></code> trait are equivalent:</p>
+</div>
+<div class="section" id="omitted-trait-values">
+<h4><span class="section-number">18.7.5.3. </span>Omitted trait values<a class="headerlink" href="#omitted-trait-values" title="Permalink to this headline">#</a></h4>
+<p>An applied trait with no value, with or without empty parenthesis, assumes
+a default value based on the shape of the trait.</p>
+<p>If a value is omitted for a <code class="docutils literal notranslate"><span class="pre">structure</span></code> or <code class="docutils literal notranslate"><span class="pre">map</span></code>, the value defaults to an empty
+object (<code class="docutils literal notranslate"><span class="pre">{}</span></code>).</p>
+<p>The following applications of the <code class="docutils literal notranslate"><span class="pre">foo</span></code> trait are equivalent:</p>
 <div class="tab-set docutils container">
 <input checked="True" class="tab-input" id="tab-set--18-input--1" name="tab-set--18" type="radio"><label class="tab-label" for="tab-set--18-input--1">Smithy</label><div class="tab-content docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
+<span class="c">// Define an example structure trait.</span>
 <span class="nt">@trait</span>
 <span class="kd">structure </span><span class="nc">foo</span><span class="w"> </span>{}
 
@@ -2057,6 +2059,9 @@ The following applications of the <code class="docutils literal notranslate"><sp
 
 <span class="nt">@foo</span>()
 <span class="kd">string </span><span class="nc">MyString2</span>
+
+<span class="nt">@foo</span>({})
+<span class="kd">string </span><span class="nc">MyString3</span>
 </pre></div>
 </div>
 </div>
@@ -2081,6 +2086,12 @@ The following applications of the <code class="docutils literal notranslate"><sp
 <span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">                </span><span class="nt">&quot;smithy.api#foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
 <span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;smithy.example#MyString3&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;smithy.api#foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -2088,32 +2099,65 @@ The following applications of the <code class="docutils literal notranslate"><sp
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="list-and-set-trait-values">
-<h4><span class="section-number">18.7.5.3. </span>List and set trait values<a class="headerlink" href="#list-and-set-trait-values" title="Permalink to this headline">#</a></h4>
-<p>Traits that are a <code class="docutils literal notranslate"><span class="pre">list</span></code> or <code class="docutils literal notranslate"><span class="pre">set</span></code> shape are defined inside
-of brackets (<code class="docutils literal notranslate"><span class="pre">[</span></code>) and (<code class="docutils literal notranslate"><span class="pre">]</span></code>) using a <a class="reference internal" href="#grammar-token-smithy-NodeArray"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:NodeArray</span></code></a> production.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@tags</span>([<span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;b&quot;</span>])
+<p>If a value is omitted for a <code class="docutils literal notranslate"><span class="pre">list</span></code>, the value defaults to an empty list
+(<code class="docutils literal notranslate"><span class="pre">[]</span></code>).</p>
+<p>The following applications of the <a class="reference internal" href="documentation-traits.html#tags-trait"><span class="std std-ref">tags trait</span></a> are equivalent:</p>
+<div class="tab-set docutils container">
+<input checked="True" class="tab-input" id="tab-set--19-input--1" name="tab-set--19" type="radio"><label class="tab-label" for="tab-set--19-input--1">Smithy</label><div class="tab-content docutils container">
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="nt">@tags</span>
+<span class="kd">string </span><span class="nc">MyString1</span>
+
+<span class="nt">@tags</span>()
+<span class="kd">string </span><span class="nc">MyString2</span>
+
+<span class="nt">@tags</span>([])
+<span class="kd">string </span><span class="nc">MyString3</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="other-trait-values">
-<h4><span class="section-number">18.7.5.4. </span>Other trait values<a class="headerlink" href="#other-trait-values" title="Permalink to this headline">#</a></h4>
-<p>All other trait values MUST adhere to the JSON type mappings defined
-in <a class="reference internal" href="model.html#trait-node-values"><span class="std std-ref">Trait node values</span></a>.</p>
-<p>The following example defines a string trait value:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@documentation</span>(<span class="s2">&quot;Hello&quot;</span>)
+<input class="tab-input" id="tab-set--19-input--2" name="tab-set--19" type="radio"><label class="tab-label" for="tab-set--19-input--2">JSON</label><div class="tab-content docutils container">
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;smithy.example#MyString1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;smithy.api#tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;smithy.example#MyString2&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;smithy.api#tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;smithy.example#MyString3&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;smithy.api#tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
+</div>
+</div>
+<p>All other shapes default to <code class="docutils literal notranslate"><span class="pre">null</span></code>, which may or may not be valid for the
+shape of the trait.</p>
 </div>
 <div class="section" id="apply-statement">
-<span id="id8"></span><h4><span class="section-number">18.7.5.5. </span>Apply statement<a class="headerlink" href="#apply-statement" title="Permalink to this headline">#</a></h4>
+<span id="id8"></span><h4><span class="section-number">18.7.5.4. </span>Apply statement<a class="headerlink" href="#apply-statement" title="Permalink to this headline">#</a></h4>
 <p>Traits can be applied to shapes outside of a shape's definition using an
 <a class="reference internal" href="#grammar-token-smithy-ApplyStatement"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:ApplyStatement</span></code></a>.</p>
 <p>The following example applies the <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a> to the
 <code class="docutils literal notranslate"><span class="pre">smithy.example#MyString</span></code> shape:</p>
 <div class="tab-set docutils container">
-<input checked="True" class="tab-input" id="tab-set--19-input--1" name="tab-set--19" type="radio"><label class="tab-label" for="tab-set--19-input--1">Smithy</label><div class="tab-content docutils container">
+<input checked="True" class="tab-input" id="tab-set--20-input--1" name="tab-set--20" type="radio"><label class="tab-label" for="tab-set--20-input--1">Smithy</label><div class="tab-content docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
@@ -2121,7 +2165,7 @@ in <a class="reference internal" href="model.html#trait-node-values"><span class
 </pre></div>
 </div>
 </div>
-<input class="tab-input" id="tab-set--19-input--2" name="tab-set--19" type="radio"><label class="tab-label" for="tab-set--19-input--2">JSON</label><div class="tab-content docutils container">
+<input class="tab-input" id="tab-set--20-input--2" name="tab-set--20" type="radio"><label class="tab-label" for="tab-set--20-input--2">JSON</label><div class="tab-content docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -2141,7 +2185,7 @@ in <a class="reference internal" href="model.html#trait-node-values"><span class
 statement. The following example applies the <a class="reference internal" href="documentation-traits.html#documentation-trait"><span class="std std-ref">documentation trait</span></a>
 and <a class="reference internal" href="constraint-traits.html#length-trait"><span class="std std-ref">length trait</span></a> to the <code class="docutils literal notranslate"><span class="pre">smithy.example#MyString</span></code> shape:</p>
 <div class="tab-set docutils container">
-<input checked="True" class="tab-input" id="tab-set--20-input--1" name="tab-set--20" type="radio"><label class="tab-label" for="tab-set--20-input--1">Smithy</label><div class="tab-content docutils container">
+<input checked="True" class="tab-input" id="tab-set--21-input--1" name="tab-set--21" type="radio"><label class="tab-label" for="tab-set--21-input--1">Smithy</label><div class="tab-content docutils container">
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
@@ -2152,7 +2196,7 @@ and <a class="reference internal" href="constraint-traits.html#length-trait"><sp
 </pre></div>
 </div>
 </div>
-<input class="tab-input" id="tab-set--20-input--2" name="tab-set--20" type="radio"><label class="tab-label" for="tab-set--20-input--2">JSON</label><div class="tab-content docutils container">
+<input class="tab-input" id="tab-set--21-input--2" name="tab-set--21" type="radio"><label class="tab-label" for="tab-set--21-input--2">JSON</label><div class="tab-content docutils container">
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -2640,10 +2684,9 @@ example is interpreted as <code class="docutils literal notranslate"><span class
 <li><a class="reference internal" href="#documentation-comment">18.7.4. Documentation comment</a></li>
 <li><a class="reference internal" href="#applying-traits">18.7.5. Applying traits</a><ul>
 <li><a class="reference internal" href="#trait-values">18.7.5.1. Trait values</a></li>
-<li><a class="reference internal" href="#structure-map-and-union-trait-values">18.7.5.2. Structure, map, and union trait values</a></li>
-<li><a class="reference internal" href="#list-and-set-trait-values">18.7.5.3. List and set trait values</a></li>
-<li><a class="reference internal" href="#other-trait-values">18.7.5.4. Other trait values</a></li>
-<li><a class="reference internal" href="#apply-statement">18.7.5.5. Apply statement</a></li>
+<li><a class="reference internal" href="#structure-map-and-union-trait-value-syntax">18.7.5.2. Structure, map, and union trait value syntax</a></li>
+<li><a class="reference internal" href="#omitted-trait-values">18.7.5.3. Omitted trait values</a></li>
+<li><a class="reference internal" href="#apply-statement">18.7.5.4. Apply statement</a></li>
 </ul>
 </li>
 </ul>

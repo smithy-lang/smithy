@@ -449,7 +449,8 @@ a model validator:</p>
 ]
 </pre></div>
 </div>
-<p class="rubric" id="merging-metadata">Metadata conflicts</p>
+<div class="section" id="metadata-conflicts">
+<span id="merging-metadata"></span><h3><span class="section-number">1.3.1. </span>Metadata conflicts<a class="headerlink" href="#metadata-conflicts" title="Permalink to this headline">#</a></h3>
 <p>When a conflict occurs between top-level metadata key-value pairs,
 the following conflict resolution logic is used:</p>
 <ol class="arabic simple">
@@ -485,6 +486,7 @@ model:</p>
 <span class="kd">metadata </span><span class="nc">&quot;lorem&quot; </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;ipsum&quot;</span>
 <span class="kd">metadata </span><span class="nc">&quot;validConflict&quot; </span><span class="nd">=</span><span class="w"> </span><span class="s2">&quot;hi!&quot;</span>
 </pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="node-values">
@@ -527,7 +529,8 @@ an applied trait.</p>
 <span class="kd">string </span><span class="nc">MyString</span>
 </pre></div>
 </div>
-<p class="rubric">Node value types</p>
+<div class="section" id="node-value-types">
+<h3><span class="section-number">1.4.1. </span>Node value types<a class="headerlink" href="#node-value-types" title="Permalink to this headline">#</a></h3>
 <p>Node values have the same data model as JSON; they consist of the following
 kinds of values:</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -562,6 +565,7 @@ kinds of values:</p>
 </tr>
 </tbody>
 </table>
+</div>
 </div>
 </div>
 <div class="section" id="merging-model-files">
@@ -920,7 +924,8 @@ description of how traits are applied in the IDL.</li>
 <li>Refer to the <a class="reference internal" href="json-ast.html#json-ast"><span class="std std-ref">JSON AST specification</span></a> for a
 description of how traits are applied in the JSON AST.</li>
 </ul>
-<p class="rubric">Scope of member traits</p>
+<div class="section" id="scope-of-member-traits">
+<h4><span class="section-number">1.7.1.1. </span>Scope of member traits<a class="headerlink" href="#scope-of-member-traits" title="Permalink to this headline">#</a></h4>
 <p>Traits that target <a class="reference internal" href="#member"><span class="std std-ref">members</span></a> apply only in the context of
 the member shape and do not affect the shape targeted by the member. Traits
 applied to a member supersede traits applied to the shape targeted by the
@@ -937,8 +942,9 @@ takes precedence over the trait applied to <code class="docutils literal notrans
 <span class="kd">integer </span><span class="nc">PositiveInteger</span>
 </pre></div>
 </div>
+</div>
 <div class="section" id="applying-traits-externally">
-<span id="apply-statements"></span><h4><span class="section-number">1.7.1.1. </span>Applying traits externally<a class="headerlink" href="#applying-traits-externally" title="Permalink to this headline">#</a></h4>
+<span id="apply-statements"></span><h4><span class="section-number">1.7.1.2. </span>Applying traits externally<a class="headerlink" href="#applying-traits-externally" title="Permalink to this headline">#</a></h4>
 <p>Both the IDL and JSON AST model representations allow traits to be applied
 to shapes outside of a shape's definition. This is done using an
 <a class="reference internal" href="idl.html#grammar-token-smithy-ApplyStatement"><code class="xref std std-token docutils literal notranslate"><span class="pre">apply</span></code></a> statement in the IDL, or the
@@ -964,7 +970,7 @@ definition.</p>
 </div>
 </div>
 <div class="section" id="trait-conflict-resolution">
-<span id="id7"></span><h4><span class="section-number">1.7.1.2. </span>Trait conflict resolution<a class="headerlink" href="#trait-conflict-resolution" title="Permalink to this headline">#</a></h4>
+<span id="id7"></span><h4><span class="section-number">1.7.1.3. </span>Trait conflict resolution<a class="headerlink" href="#trait-conflict-resolution" title="Permalink to this headline">#</a></h4>
 <p>Trait conflict resolution is used when the same trait is applied multiple
 times to a shape. Duplicate traits applied to shapes are allowed in the
 following cases:</p>
@@ -1014,7 +1020,7 @@ duplicated on the <code class="docutils literal notranslate"><span class="pre">M
 </div>
 </div>
 <div class="section" id="trait-node-values">
-<span id="id8"></span><h4><span class="section-number">1.7.1.3. </span>Trait node values<a class="headerlink" href="#trait-node-values" title="Permalink to this headline">#</a></h4>
+<span id="id8"></span><h4><span class="section-number">1.7.1.4. </span>Trait node values<a class="headerlink" href="#trait-node-values" title="Permalink to this headline">#</a></h4>
 <p>The value provided for a trait MUST be compatible with the <code class="docutils literal notranslate"><span class="pre">shape</span></code> of the
 trait. The following table defines each shape type that is available to
 target from traits and how their values are defined in
@@ -1114,9 +1120,11 @@ compatible with the corresponding shape.</td>
 </tbody>
 </table>
 </div>
-<p class="rubric">Constraint traits</p>
-<p>Trait values MUST be compatible with the <a class="reference internal" href="type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a> and any
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">Trait values MUST be compatible with the <a class="reference internal" href="type-refinement-traits.html#required-trait"><span class="std std-ref">required trait</span></a> and any
 associated <a class="reference internal" href="constraint-traits.html"><span class="doc">constraint traits</span></a>.</p>
+</div>
 </div>
 </div>
 <div class="section" id="defining-traits">
@@ -1172,15 +1180,19 @@ visually stand out from normal shapes.</p>
 <span class="kd">string </span><span class="nc">StringShape</span>
 </pre></div>
 </div>
-<p class="rubric">Prelude traits</p>
+<div class="section" id="prelude-traits">
+<h4><span class="section-number">1.7.2.1. </span>Prelude traits<a class="headerlink" href="#prelude-traits" title="Permalink to this headline">#</a></h4>
 <p>When using the IDL, built-in traits defined in the Smithy
 <a class="reference internal" href="#prelude"><span class="std std-ref">prelude</span></a> namespace, <code class="docutils literal notranslate"><span class="pre">smithy.api</span></code>, are automatically
 available in every Smithy model and namespace through relative shape IDs.</p>
-<p class="rubric">References to traits</p>
+</div>
+<div class="section" id="references-to-traits">
+<h4><span class="section-number">1.7.2.2. </span>References to traits<a class="headerlink" href="#references-to-traits" title="Permalink to this headline">#</a></h4>
 <p>The only valid reference to a trait is through applying a trait to a
 shape. Members and references within a model MUST NOT target shapes.</p>
+</div>
 <div class="section" id="trait-trait">
-<span id="smithy-api-trait-trait"></span><span id="id10"></span><h4><span class="section-number">1.7.2.1. </span><code class="docutils literal notranslate"><span class="pre">trait</span></code> trait<a class="headerlink" href="#trait-trait" title="Permalink to this headline">#</a></h4>
+<span id="smithy-api-trait-trait"></span><span id="id10"></span><h4><span class="section-number">1.7.2.3. </span><code class="docutils literal notranslate"><span class="pre">trait</span></code> trait<a class="headerlink" href="#trait-trait" title="Permalink to this headline">#</a></h4>
 <dl class="docutils">
 <dt>Summary</dt><dd>Marks a shape as a <a class="reference internal" href="#traits"><span class="std std-ref">trait</span></a>.</dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">:is(simpleType,</span> <span class="pre">list,</span> <span class="pre">map,</span> <span class="pre">set,</span> <span class="pre">structure,</span> <span class="pre">union)</span></code></p>
@@ -1189,7 +1201,8 @@ shape. Members and references within a model MUST NOT target shapes.</p>
 </dd>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
 </dl>
-<p class="rubric">Trait properties</p>
+<div class="section" id="trait-properties">
+<h5><span class="section-number">1.7.2.3.1. </span>Trait properties<a class="headerlink" href="#trait-properties" title="Permalink to this headline">#</a></h5>
 <p><code class="docutils literal notranslate"><span class="pre">smithy.api#trait</span></code> is a structure that supports the following members:</p>
 <div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
@@ -1235,8 +1248,9 @@ marked with this trait.</td>
 </table>
 </div>
 </div>
+</div>
 <div class="section" id="annotation-traits">
-<span id="annotation-trait"></span><h4><span class="section-number">1.7.2.2. </span>Annotation traits<a class="headerlink" href="#annotation-traits" title="Permalink to this headline">#</a></h4>
+<span id="annotation-trait"></span><h4><span class="section-number">1.7.2.4. </span>Annotation traits<a class="headerlink" href="#annotation-traits" title="Permalink to this headline">#</a></h4>
 <p>A structure trait with no members is called an <em>annotation trait</em>. It's hard
 to predict what information a trait needs to capture when modeling a domain;
 a trait might start out as a simple annotation, but later might benefit
@@ -1268,7 +1282,7 @@ after adding a member to the <code class="docutils literal notranslate"><span cl
 </div>
 </div>
 <div class="section" id="breaking-change-rules">
-<span id="trait-breaking-change-rules"></span><h4><span class="section-number">1.7.2.3. </span>Breaking change rules<a class="headerlink" href="#breaking-change-rules" title="Permalink to this headline">#</a></h4>
+<span id="trait-breaking-change-rules"></span><h4><span class="section-number">1.7.2.5. </span>Breaking change rules<a class="headerlink" href="#breaking-change-rules" title="Permalink to this headline">#</a></h4>
 <p>Backward compatibility rules of a trait can be defined in the <code class="docutils literal notranslate"><span class="pre">breakingChanges</span></code>
 member of a trait definition. This member is a list of diff rules. Smithy
 tooling that performs semantic diff analysis between two versions of the same
@@ -1400,7 +1414,8 @@ following trait or to remove the &quot;baz&quot; member:</p>
 </div>
 <p>Then the change to the <code class="docutils literal notranslate"><span class="pre">foo</span></code> member from &quot;a&quot; to &quot;b&quot; is backward
 incompatible, as is the removal of the <code class="docutils literal notranslate"><span class="pre">baz</span></code> member.</p>
-<p class="rubric">Referring to list members</p>
+<div class="section" id="referring-to-list-members">
+<h5><span class="section-number">1.7.2.5.1. </span>Referring to list members<a class="headerlink" href="#referring-to-list-members" title="Permalink to this headline">#</a></h5>
 <p>The JSON pointer can path into the members of a list using a <code class="docutils literal notranslate"><span class="pre">member</span></code>
 segment.</p>
 <p>In the following example, it is a breaking change to change values of lists
@@ -1435,7 +1450,9 @@ or sets in instances of the <code class="docutils literal notranslate"><span cla
 </div>
 <p>Then the change to the second value of the <code class="docutils literal notranslate"><span class="pre">names</span></code> member is
 backward incompatible because it changed from <code class="docutils literal notranslate"><span class="pre">Luke</span></code> to <code class="docutils literal notranslate"><span class="pre">Chewy</span></code>.</p>
-<p class="rubric">Referring to map members</p>
+</div>
+<div class="section" id="referring-to-map-members">
+<h5><span class="section-number">1.7.2.5.2. </span>Referring to map members<a class="headerlink" href="#referring-to-map-members" title="Permalink to this headline">#</a></h5>
 <p>Members of a map shape can be referenced in a JSON pointer using
 <code class="docutils literal notranslate"><span class="pre">key</span></code> and <code class="docutils literal notranslate"><span class="pre">value</span></code>.</p>
 <p>The following example defines a trait where it is backward incompatible
@@ -1500,6 +1517,7 @@ backward incompatible.</p>
 <li>Using any <code class="docutils literal notranslate"><span class="pre">change</span></code> type other than &quot;update&quot; with map values has no
 effect.</li>
 </ul>
+</div>
 </div>
 </div>
 </div>
@@ -1878,6 +1896,8 @@ namespace using a relative shape ID.</p>
 <span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">Document</span>
 
 <span class="w">    </span><span class="py">error</span><span class="p">:</span><span class="w"> </span><span class="vc">ExampleError</span>
+
+<span class="w">    </span><span class="py">allowConstraintErrors</span><span class="p">:</span><span class="w"> </span><span class="vc">Boolean</span>
 }
 
 <span class="nt">@private</span>
@@ -2834,8 +2854,14 @@ model that can be marked with the <code class="docutils literal notranslate"><sp
 <li><a class="reference internal" href="#">1. The Smithy model</a><ul>
 <li><a class="reference internal" href="#smithy-overview">1.1. Smithy overview</a></li>
 <li><a class="reference internal" href="#the-semantic-model">1.2. The semantic model</a></li>
-<li><a class="reference internal" href="#model-metadata">1.3. Model metadata</a></li>
-<li><a class="reference internal" href="#node-values">1.4. Node values</a></li>
+<li><a class="reference internal" href="#model-metadata">1.3. Model metadata</a><ul>
+<li><a class="reference internal" href="#metadata-conflicts">1.3.1. Metadata conflicts</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#node-values">1.4. Node values</a><ul>
+<li><a class="reference internal" href="#node-value-types">1.4.1. Node value types</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#merging-model-files">1.5. Merging model files</a></li>
 <li><a class="reference internal" href="#shapes">1.6. Shapes</a><ul>
 <li><a class="reference internal" href="#shape-types">1.6.1. Shape types</a></li>
@@ -2849,15 +2875,25 @@ model that can be marked with the <code class="docutils literal notranslate"><sp
 </li>
 <li><a class="reference internal" href="#traits">1.7. Traits</a><ul>
 <li><a class="reference internal" href="#applying-traits">1.7.1. Applying traits</a><ul>
-<li><a class="reference internal" href="#applying-traits-externally">1.7.1.1. Applying traits externally</a></li>
-<li><a class="reference internal" href="#trait-conflict-resolution">1.7.1.2. Trait conflict resolution</a></li>
-<li><a class="reference internal" href="#trait-node-values">1.7.1.3. Trait node values</a></li>
+<li><a class="reference internal" href="#scope-of-member-traits">1.7.1.1. Scope of member traits</a></li>
+<li><a class="reference internal" href="#applying-traits-externally">1.7.1.2. Applying traits externally</a></li>
+<li><a class="reference internal" href="#trait-conflict-resolution">1.7.1.3. Trait conflict resolution</a></li>
+<li><a class="reference internal" href="#trait-node-values">1.7.1.4. Trait node values</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#defining-traits">1.7.2. Defining traits</a><ul>
-<li><a class="reference internal" href="#trait-trait">1.7.2.1. <code class="docutils literal notranslate"><span class="pre">trait</span></code> trait</a></li>
-<li><a class="reference internal" href="#annotation-traits">1.7.2.2. Annotation traits</a></li>
-<li><a class="reference internal" href="#breaking-change-rules">1.7.2.3. Breaking change rules</a></li>
+<li><a class="reference internal" href="#prelude-traits">1.7.2.1. Prelude traits</a></li>
+<li><a class="reference internal" href="#references-to-traits">1.7.2.2. References to traits</a></li>
+<li><a class="reference internal" href="#trait-trait">1.7.2.3. <code class="docutils literal notranslate"><span class="pre">trait</span></code> trait</a><ul>
+<li><a class="reference internal" href="#trait-properties">1.7.2.3.1. Trait properties</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#annotation-traits">1.7.2.4. Annotation traits</a></li>
+<li><a class="reference internal" href="#breaking-change-rules">1.7.2.5. Breaking change rules</a><ul>
+<li><a class="reference internal" href="#referring-to-list-members">1.7.2.5.1. Referring to list members</a></li>
+<li><a class="reference internal" href="#referring-to-map-members">1.7.2.5.2. Referring to map members</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

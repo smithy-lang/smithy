@@ -477,14 +477,36 @@ that can be thrown by an operation. Uniqueness is required
 case-insensitively because many model transformations (like code generation)
 change the casing and inflection of shape names to make artifacts more
 idiomatic.</p>
-<p class="rubric">Shape types allowed to conflict in a closure</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">Resources and operations can only be bound once. An operation or resource
+MUST NOT be bound to multiple shapes within the closure of a service. This
+constraint allows services to discern between operations and resources
+using only their shape name rather than a fully-qualified path from the
+service to the shape.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Undeclared operation inputs and outputs are not a part of the service
+closure. <a class="reference internal" href="model.html#unit-type"><span class="std std-ref">smithy.api#Unit</span></a> is the shape that is implicitly
+targeted by operation inputs and outputs when they are not explicitly
+declared. This does not, however, add <code class="docutils literal notranslate"><span class="pre">smithy.api#Unit</span></code> to the service's
+closure, and does not require renaming to avoid conflicts with other shapes
+named <code class="docutils literal notranslate"><span class="pre">Unit</span></code>. Unions in the service closure with members targeting
+<code class="docutils literal notranslate"><span class="pre">smithy.api#Unit</span></code>, however, will cause <code class="docutils literal notranslate"><span class="pre">smithy.api#Unit</span></code> to be a part
+of the service closure.</p>
+</div>
+<div class="section" id="shape-types-allowed-to-conflict-in-a-closure">
+<h4><span class="section-number">4.1.3.1. </span>Shape types allowed to conflict in a closure<a class="headerlink" href="#shape-types-allowed-to-conflict-in-a-closure" title="Permalink to this headline">#</a></h4>
 <p><a class="reference internal" href="simple-types.html#simple-types"><span class="std std-ref">Simple types</span></a> and <a class="reference internal" href="aggregate-types.html#list"><span class="std std-ref">lists</span></a> of compatible simple
 types are allowed to conflict because a conflict for these type would rarely
 have an impact on generated artifacts. These kinds of conflicts are only
 allowed if both conflicting shapes are the same type and have the exact same
 traits. In the case of a list, a conflict is only allowed if the members
 of the conflicting shapes target compatible shapes.</p>
-<p class="rubric">Disambiguating shapes with <code class="docutils literal notranslate"><span class="pre">rename</span></code></p>
+</div>
+<div class="section" id="disambiguating-shapes-with-rename">
+<h4><span class="section-number">4.1.3.2. </span>Disambiguating shapes with <code class="docutils literal notranslate"><span class="pre">rename</span></code><a class="headerlink" href="#disambiguating-shapes-with-rename" title="Permalink to this headline">#</a></h4>
 <p>The <code class="docutils literal notranslate"><span class="pre">rename</span></code> property of a service is used to disambiguate conflicting
 shape names found in the closure of a service. The <code class="docutils literal notranslate"><span class="pre">rename</span></code> property is
 essentially a <a class="reference external" href="https://martinfowler.com/bliki/BoundedContext.html">context map</a> used to ensure that the service still presents
@@ -527,19 +549,7 @@ the conflicting shapes.</p>
 <span class="kd">structure </span><span class="nc">Widget</span><span class="w"> </span>{}
 </pre></div>
 </div>
-<p class="rubric">Resources and operations can be bound once</p>
-<p>An operation or resource MUST NOT be bound to multiple shapes within the
-closure of a service. This constraint allows services to discern between
-operations and resources using only their shape name rather than a
-fully-qualified path from the service to the shape.</p>
-<p class="rubric">Undeclared operation inputs and outputs are not a
-part of the service closure</p>
-<p><a class="reference internal" href="model.html#unit-type"><span class="std std-ref">smithy.api#Unit</span></a> is the shape that is implicitly targeted by
-operation inputs and outputs when they are not explicitly declared. This does
-not, however, add <code class="docutils literal notranslate"><span class="pre">smithy.api#Unit</span></code> to the service's closure, and does not
-require renaming to avoid conflicts with other shapes named <code class="docutils literal notranslate"><span class="pre">Unit</span></code>. Unions in
-the service closure with members targeting <code class="docutils literal notranslate"><span class="pre">smithy.api#Unit</span></code>, however, will
-cause <code class="docutils literal notranslate"><span class="pre">smithy.api#Unit</span></code> to be a part of the service closure.</p>
+</div>
 </div>
 </div>
 <div class="section" id="operation">
@@ -818,7 +828,8 @@ define an <code class="docutils literal notranslate"><span class="pre">identifie
 <span id="binding-identifiers"></span><h4><span class="section-number">4.3.1.1. </span>Binding identifiers to operations<a class="headerlink" href="#binding-identifiers-to-operations" title="Permalink to this headline">#</a></h4>
 <p><em>Identifier bindings</em> indicate which top-level members of the input or output
 structure of an operation provide values for the identifiers of a resource.</p>
-<p class="rubric">Identifier binding validation</p>
+<div class="section" id="identifier-binding-validation">
+<h5><span class="section-number">4.3.1.1.1. </span>Identifier binding validation<a class="headerlink" href="#identifier-binding-validation" title="Permalink to this headline">#</a></h5>
 <ul class="simple">
 <li>Child resources MUST provide identifier bindings for all of its parent's
 identifiers.</li>
@@ -840,6 +851,7 @@ or when bound to the <a class="reference internal" href="#list-lifecycle"><span 
 lifecycle operations. A collection operation MUST omit one or more identifiers
 of the resource it is bound to, but MUST bind all identifiers of any parent
 resource.</p>
+</div>
 </div>
 <div class="section" id="implicit-identifier-bindings">
 <span id="id9"></span><h4><span class="section-number">4.3.1.2. </span>Implicit identifier bindings<a class="headerlink" href="#implicit-identifier-bindings" title="Permalink to this headline">#</a></h4>
@@ -1036,7 +1048,8 @@ but resource property modeling is being added to your Smithy model.</p>
 members, use the <a class="reference internal" href="resource-traits.html#nested-properties-trait"><span class="std std-ref">nestedProperties trait</span></a> on a member to designate its
 target structure shape as the root to form property bindings. No adjacent
 members can form property bindings when this trait is applied.</p>
-<p class="rubric">Resource property binding validation</p>
+<div class="section" id="resource-property-binding-validation">
+<h5><span class="section-number">4.3.2.1.1. </span>Resource property binding validation<a class="headerlink" href="#resource-property-binding-validation" title="Permalink to this headline">#</a></h5>
 <ul class="simple">
 <li>All top-level input or output members must bind to a resource property unless
 marked with <a class="reference internal" href="resource-traits.html#notproperty-trait"><span class="std std-ref">notProperty trait</span></a> or another trait with it applied, or one
@@ -1052,6 +1065,7 @@ target shape are invalid.</li>
 <li>Members marked with a <a class="reference internal" href="resource-traits.html#property-trait"><span class="std std-ref">property trait</span></a> using a name that does not map to
 a declared resource property are invalid.</li>
 </ul>
+</div>
 </div>
 </div>
 <div class="section" id="resource-lifecycle-operations">
@@ -1103,7 +1117,8 @@ provided by the client.</p>
 }
 </pre></div>
 </div>
-<p class="rubric">Put semantics</p>
+<div class="section" id="put-semantics">
+<h5><span class="section-number">4.3.3.1.1. </span>Put semantics<a class="headerlink" href="#put-semantics" title="Permalink to this headline">#</a></h5>
 <p>The semantics of a <code class="docutils literal notranslate"><span class="pre">put</span></code> lifecycle operation are similar to the semantics
 of a HTTP PUT method as described in <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc7231.html#section-4.3.4"><strong>section 4.3.4 of [RFC7231]</strong></a>:</p>
 <blockquote>
@@ -1112,6 +1127,7 @@ created or replaced ...</div></blockquote>
 <p>The <a class="reference internal" href="resource-traits.html#noreplace-trait"><span class="std std-ref">noReplace trait</span></a> can be applied to resources that define a
 <code class="docutils literal notranslate"><span class="pre">put</span></code> lifecycle operation to indicate that a resource cannot be
 replaced using the <code class="docutils literal notranslate"><span class="pre">put</span></code> operation.</p>
+</div>
 </div>
 <div class="section" id="create-lifecycle">
 <span id="id12"></span><h4><span class="section-number">4.3.3.2. </span>Create lifecycle<a class="headerlink" href="#create-lifecycle" title="Permalink to this headline">#</a></h4>
@@ -1322,23 +1338,36 @@ being listed.</li>
 <li><a class="reference internal" href="#service">4.1. Service</a><ul>
 <li><a class="reference internal" href="#service-operations">4.1.1. Service operations</a></li>
 <li><a class="reference internal" href="#service-resources">4.1.2. Service resources</a></li>
-<li><a class="reference internal" href="#service-closure">4.1.3. Service closure</a></li>
+<li><a class="reference internal" href="#service-closure">4.1.3. Service closure</a><ul>
+<li><a class="reference internal" href="#shape-types-allowed-to-conflict-in-a-closure">4.1.3.1. Shape types allowed to conflict in a closure</a></li>
+<li><a class="reference internal" href="#disambiguating-shapes-with-rename">4.1.3.2. Disambiguating shapes with <code class="docutils literal notranslate"><span class="pre">rename</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#operation">4.2. Operation</a></li>
 <li><a class="reference internal" href="#resource">4.3. Resource</a><ul>
 <li><a class="reference internal" href="#resource-identifiers">4.3.1. Resource Identifiers</a><ul>
-<li><a class="reference internal" href="#binding-identifiers-to-operations">4.3.1.1. Binding identifiers to operations</a></li>
+<li><a class="reference internal" href="#binding-identifiers-to-operations">4.3.1.1. Binding identifiers to operations</a><ul>
+<li><a class="reference internal" href="#identifier-binding-validation">4.3.1.1.1. Identifier binding validation</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#implicit-identifier-bindings">4.3.1.2. Implicit identifier bindings</a></li>
 <li><a class="reference internal" href="#explicit-identifier-bindings">4.3.1.3. Explicit identifier bindings</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#resource-properties">4.3.2. Resource Properties</a><ul>
-<li><a class="reference internal" href="#binding-members-to-properties">4.3.2.1. Binding members to properties</a></li>
+<li><a class="reference internal" href="#binding-members-to-properties">4.3.2.1. Binding members to properties</a><ul>
+<li><a class="reference internal" href="#resource-property-binding-validation">4.3.2.1.1. Resource property binding validation</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#resource-lifecycle-operations">4.3.3. Resource lifecycle operations</a><ul>
-<li><a class="reference internal" href="#put-lifecycle">4.3.3.1. Put lifecycle</a></li>
+<li><a class="reference internal" href="#put-lifecycle">4.3.3.1. Put lifecycle</a><ul>
+<li><a class="reference internal" href="#put-semantics">4.3.3.1.1. Put semantics</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#create-lifecycle">4.3.3.2. Create lifecycle</a></li>
 <li><a class="reference internal" href="#read-lifecycle">4.3.3.3. Read lifecycle</a></li>
 <li><a class="reference internal" href="#update-lifecycle">4.3.3.4. Update lifecycle</a></li>

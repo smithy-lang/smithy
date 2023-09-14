@@ -62,7 +62,8 @@ Features
 FAQ
 ===
 
-.. rubric:: Why did you develop Smithy?
+Why did you develop Smithy?
+---------------------------
 
 Smithy is based on an interface definition language that has been widely used
 within Amazon and AWS for over a decade. We decided to release Smithy publicly
@@ -71,19 +72,22 @@ years of experience with building tens of thousands of services. By releasing
 the Smithy specification and tooling, we also hope to make it easier for
 developers to maintain open source AWS SDKs.
 
-.. rubric:: Does Smithy only work with AWS?
+Does Smithy only work with AWS?
+-------------------------------
 
 No. Smithy can be used with any kind of service. All AWS-specific metadata in
 Smithy is implemented as decoupled packages.
 
-.. rubric:: Why not just use an existing IDL?
+Why not just use an existing IDL?
+---------------------------------
 
 At AWS, we rely heavily on metadata, code generation, service frameworks,
 client libraries, and automated policy enforcement. Existing IDLs available
 outside of AWS were not extensible enough to meet our needs and not
 compatible with our existing services.
 
-.. rubric:: How is Smithy different than other IDLs and frameworks?
+How is Smithy different than other IDLs and frameworks?
+-------------------------------------------------------
 
 * Smithy is built for code generation and tools. Smithy models were designed
   for the purpose of generating code for multiple programming languages. For
@@ -108,7 +112,8 @@ compatible with our existing services.
   like maintaining an internal and external version of a model and providing
   beta models to customers as part of a private beta.
 
-.. rubric:: What does protocol-agnostic mean?
+What does protocol-agnostic mean?
+---------------------------------
 
 Protocol-agnostic means that the model is an abstraction that specifies the
 rules and semantics of how a client and server communicate. The transport and
@@ -118,14 +123,16 @@ evolve their serialization format (e.g., move from text to binary), their
 connection type (e.g., move from HTTP/1 to HTTP/2), or launch entirely new
 capabilities.
 
-.. rubric:: What is the main difference between Smithy and OpenAPI?
+What is the main difference between Smithy and OpenAPI?
+-------------------------------------------------------
 
 The primary difference between Smithy and OpenAPI is that Smithy is
 protocol-agnostic, allowing Smithy to describe a broader range of services,
 metadata, and capabilities. Smithy can be used alongside OpenAPI by
 :ref:`converting Smithy models to OpenAPI <smithy-to-openapi>`.
 
-.. rubric:: What can Smithy do today?
+What can Smithy do today?
+-------------------------
 
 See https://github.com/smithy-lang/awesome-smithy.
 

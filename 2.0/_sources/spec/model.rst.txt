@@ -160,7 +160,8 @@ a model validator:
 
 .. _merging-metadata:
 
-.. rubric:: Metadata conflicts
+Metadata conflicts
+==================
 
 When a conflict occurs between top-level metadata key-value pairs,
 the following conflict resolution logic is used:
@@ -250,7 +251,8 @@ The following example defines a :ref:`trait <traits>` using a node value:
     @length(min: 1, max: 10)
     string MyString
 
-.. rubric:: Node value types
+Node value types
+================
 
 Node values have the same data model as JSON; they consist of the following
 kinds of values:
@@ -619,7 +621,8 @@ immediately precede a shape. The following example applies the
 * Refer to the :ref:`JSON AST specification <json-ast>` for a
   description of how traits are applied in the JSON AST.
 
-.. rubric:: Scope of member traits
+Scope of member traits
+----------------------
 
 Traits that target :ref:`members <member>` apply only in the context of
 the member shape and do not affect the shape targeted by the member. Traits
@@ -813,10 +816,10 @@ target from traits and how their values are defined in
         one of the member names of the union shape, and the value MUST be
         compatible with the corresponding shape.
 
-.. rubric:: Constraint traits
+.. important::
 
-Trait values MUST be compatible with the :ref:`required-trait` and any
-associated :doc:`constraint traits <constraint-traits>`.
+    Trait values MUST be compatible with the :ref:`required-trait` and any
+    associated :doc:`constraint traits <constraint-traits>`.
 
 
 .. _trait-shapes:
@@ -881,13 +884,15 @@ The following example defines two custom traits: ``beta`` and
         ipsum: "lorem and ipsum are both required values.")
     string StringShape
 
-.. rubric:: Prelude traits
+Prelude traits
+--------------
 
 When using the IDL, built-in traits defined in the Smithy
 :ref:`prelude <prelude>` namespace, ``smithy.api``, are automatically
 available in every Smithy model and namespace through relative shape IDs.
 
-.. rubric:: References to traits
+References to traits
+--------------------
 
 The only valid reference to a trait is through applying a trait to a
 shape. Members and references within a model MUST NOT target shapes.
@@ -910,7 +915,8 @@ Trait selector
 Value type
     ``structure``
 
-.. rubric:: Trait properties
+Trait properties
+^^^^^^^^^^^^^^^^
 
 ``smithy.api#trait`` is a structure that supports the following members:
 
@@ -1117,7 +1123,8 @@ Is changed to:
 Then the change to the ``foo`` member from "a" to "b" is backward
 incompatible, as is the removal of the ``baz`` member.
 
-.. rubric:: Referring to list members
+Referring to list members
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The JSON pointer can path into the members of a list using a ``member``
 segment.
@@ -1161,7 +1168,8 @@ Is changed to:
 Then the change to the second value of the ``names`` member is
 backward incompatible because it changed from ``Luke`` to ``Chewy``.
 
-.. rubric:: Referring to map members
+Referring to map members
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 Members of a map shape can be referenced in a JSON pointer using
 ``key`` and ``value``.

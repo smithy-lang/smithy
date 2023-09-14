@@ -378,22 +378,29 @@ rich information for model transformations.</p>
 </div>
 <div class="section" id="faq">
 <h2>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline">#</a></h2>
-<p class="rubric">Why did you develop Smithy?</p>
+<div class="section" id="why-did-you-develop-smithy">
+<h3>Why did you develop Smithy?<a class="headerlink" href="#why-did-you-develop-smithy" title="Permalink to this headline">#</a></h3>
 <p>Smithy is based on an interface definition language that has been widely used
 within Amazon and AWS for over a decade. We decided to release Smithy publicly
 to let other developers use Smithy for their own services and benefit from our
 years of experience with building tens of thousands of services. By releasing
 the Smithy specification and tooling, we also hope to make it easier for
 developers to maintain open source AWS SDKs.</p>
-<p class="rubric">Does Smithy only work with AWS?</p>
+</div>
+<div class="section" id="does-smithy-only-work-with-aws">
+<h3>Does Smithy only work with AWS?<a class="headerlink" href="#does-smithy-only-work-with-aws" title="Permalink to this headline">#</a></h3>
 <p>No. Smithy can be used with any kind of service. All AWS-specific metadata in
 Smithy is implemented as decoupled packages.</p>
-<p class="rubric">Why not just use an existing IDL?</p>
+</div>
+<div class="section" id="why-not-just-use-an-existing-idl">
+<h3>Why not just use an existing IDL?<a class="headerlink" href="#why-not-just-use-an-existing-idl" title="Permalink to this headline">#</a></h3>
 <p>At AWS, we rely heavily on metadata, code generation, service frameworks,
 client libraries, and automated policy enforcement. Existing IDLs available
 outside of AWS were not extensible enough to meet our needs and not
 compatible with our existing services.</p>
-<p class="rubric">How is Smithy different than other IDLs and frameworks?</p>
+</div>
+<div class="section" id="how-is-smithy-different-than-other-idls-and-frameworks">
+<h3>How is Smithy different than other IDLs and frameworks?<a class="headerlink" href="#how-is-smithy-different-than-other-idls-and-frameworks" title="Permalink to this headline">#</a></h3>
 <ul class="simple">
 <li>Smithy is built for code generation and tools. Smithy models were designed
 for the purpose of generating code for multiple programming languages. For
@@ -418,7 +425,9 @@ who a particular build of a model is intended for. This allows for use cases
 like maintaining an internal and external version of a model and providing
 beta models to customers as part of a private beta.</li>
 </ul>
-<p class="rubric">What does protocol-agnostic mean?</p>
+</div>
+<div class="section" id="what-does-protocol-agnostic-mean">
+<h3>What does protocol-agnostic mean?<a class="headerlink" href="#what-does-protocol-agnostic-mean" title="Permalink to this headline">#</a></h3>
 <p>Protocol-agnostic means that the model is an abstraction that specifies the
 rules and semantics of how a client and server communicate. The transport and
 serialization format of a service is left as an implementation detail,
@@ -426,13 +435,18 @@ allowing them to evolve over time. For example, a service owner may wish to
 evolve their serialization format (e.g., move from text to binary), their
 connection type (e.g., move from HTTP/1 to HTTP/2), or launch entirely new
 capabilities.</p>
-<p class="rubric">What is the main difference between Smithy and OpenAPI?</p>
+</div>
+<div class="section" id="what-is-the-main-difference-between-smithy-and-openapi">
+<h3>What is the main difference between Smithy and OpenAPI?<a class="headerlink" href="#what-is-the-main-difference-between-smithy-and-openapi" title="Permalink to this headline">#</a></h3>
 <p>The primary difference between Smithy and OpenAPI is that Smithy is
 protocol-agnostic, allowing Smithy to describe a broader range of services,
 metadata, and capabilities. Smithy can be used alongside OpenAPI by
 <a class="reference internal" href="guides/converting-to-openapi.html#smithy-to-openapi"><span class="std std-ref">converting Smithy models to OpenAPI</span></a>.</p>
-<p class="rubric">What can Smithy do today?</p>
+</div>
+<div class="section" id="what-can-smithy-do-today">
+<h3>What can Smithy do today?<a class="headerlink" href="#what-can-smithy-do-today" title="Permalink to this headline">#</a></h3>
 <p>See <a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">https://github.com/smithy-lang/awesome-smithy</a>.</p>
+</div>
 </div>
 <div class="section" id="read-more">
 <h2>Read more<a class="headerlink" href="#read-more" title="Permalink to this headline">#</a></h2>

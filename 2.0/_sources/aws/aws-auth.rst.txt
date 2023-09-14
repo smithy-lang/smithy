@@ -35,6 +35,12 @@ Trait value
             NOT be empty. This value SHOULD match the ``arnNamespace`` property
             of the :ref:`aws.api#service-trait`.
 
+If a request contains the ``Authorization`` header or a query string parameter
+with the name of ``X-Amz-Algorithm`` containing the value ``AWS4-HMAC-SHA256``,
+the request will undergo authentication and be rejected if it fails. Otherwise,
+if the :ref:`optionalAuth-trait` is applied, the service shall operate on the
+unauthenticated request.
+
 .. code-block:: smithy
 
     $version: "2"

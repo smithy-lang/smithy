@@ -61,7 +61,7 @@ The configuration file accepts the following properties:
         projection. Plugins are a mapping of :ref:`plugin IDs <plugin-id>` to
         plugin-specific configuration objects.
     * - ignoreMissingPlugins
-      - ``bool``
+      - ``boolean``
       - If a plugin can't be found, Smithy will by default fail the build. This
         setting can be set to ``true`` to allow the build to progress even if
         a plugin can't be found on the classpath.

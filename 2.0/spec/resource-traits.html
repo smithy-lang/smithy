@@ -509,7 +509,8 @@ resources and how to dereference the location of a resource.</dd>
 </dd>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">Reference</span></code> structures</dd>
 </dl>
-<p class="rubric"><code class="docutils literal notranslate"><span class="pre">Reference</span></code> structure</p>
+<div class="section" id="reference-structure">
+<h3><span class="section-number">10.5.1. </span><code class="docutils literal notranslate"><span class="pre">Reference</span></code> structure<a class="headerlink" href="#reference-structure" title="Permalink to this headline">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">references</span></code> trait is a list of <code class="docutils literal notranslate"><span class="pre">Reference</span></code> structures that contain
 the following members:</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -566,7 +567,9 @@ this value SHOULD contain either a <a class="reference external" href="https://w
 </tbody>
 </table>
 </div>
-<p class="rubric">Runtime resolution of references</p>
+</div>
+<div class="section" id="runtime-resolution-of-references">
+<h3><span class="section-number">10.5.2. </span>Runtime resolution of references<a class="headerlink" href="#runtime-resolution-of-references" title="Permalink to this headline">#</a></h3>
 <p>References MAY NOT be resolvable at runtime in the following circumstances:</p>
 <ol class="arabic simple">
 <li>The members that make up the <code class="docutils literal notranslate"><span class="pre">ids</span></code> are not present in a structure at
@@ -574,7 +577,9 @@ runtime (e.g., a member is not marked as <a class="reference internal" href="typ
 <li>The targeted resource and/or service shape is not part of the model</li>
 <li>The reference is bound to a specific service that is unknown to the tool</li>
 </ol>
-<p class="rubric">Implicit identifier mappings example</p>
+</div>
+<div class="section" id="implicit-identifier-mappings-example">
+<h3><span class="section-number">10.5.3. </span>Implicit identifier mappings example<a class="headerlink" href="#implicit-identifier-mappings-example" title="Permalink to this headline">#</a></h3>
 <p>The following example creates a reference to a <code class="docutils literal notranslate"><span class="pre">HistoricalForecast</span></code> resource
 (a resource that requires the &quot;forecastId&quot; and &quot;historicalId&quot; identifiers):</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
@@ -598,7 +603,9 @@ runtime (e.g., a member is not marked as <a class="reference internal" href="typ
 explicitly mapped to structure members. This is because the targeted structure
 contains members with names that match the names of the identifiers of the
 <code class="docutils literal notranslate"><span class="pre">HistoricalForecast</span></code> resource.</p>
-<p class="rubric">Explicit identifier mappings example</p>
+</div>
+<div class="section" id="explicit-identifier-mappings-example">
+<h3><span class="section-number">10.5.4. </span>Explicit identifier mappings example<a class="headerlink" href="#explicit-identifier-mappings-example" title="Permalink to this headline">#</a></h3>
 <p>Explicit mappings between identifier names and structure member names can be
 defined if needed. For example:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
@@ -619,7 +626,9 @@ defined if needed. For example:</p>
 }
 </pre></div>
 </div>
-<p class="rubric">Additional examples</p>
+</div>
+<div class="section" id="additional-examples">
+<h3><span class="section-number">10.5.5. </span>Additional examples<a class="headerlink" href="#additional-examples" title="Permalink to this headline">#</a></h3>
 <p>The following example defines several references:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@references</span>([
 <span class="w">    </span>{<span class="py">resource</span><span class="p">:</span><span class="w"> </span><span class="vc">Forecast</span>}
@@ -650,7 +659,9 @@ defined if needed. For example:</p>
 }
 </pre></div>
 </div>
-<p class="rubric">References on string shapes</p>
+</div>
+<div class="section" id="references-on-string-shapes">
+<h3><span class="section-number">10.5.6. </span>References on string shapes<a class="headerlink" href="#references-on-string-shapes" title="Permalink to this headline">#</a></h3>
 <p>A reference can be formed on a string shape for resources that have one
 identifier. References applied to a string shape MUST omit the &quot;ids&quot;
 property in the reference.</p>
@@ -664,8 +675,9 @@ property in the reference.</p>
 <span class="kd">string </span><span class="nc">SimpleResourceReference</span>
 </pre></div>
 </div>
+</div>
 <div class="section" id="implicit-ids">
-<span id="id5"></span><h3><span class="section-number">10.5.1. </span>Implicit ids<a class="headerlink" href="#implicit-ids" title="Permalink to this headline">#</a></h3>
+<span id="id5"></span><h3><span class="section-number">10.5.7. </span>Implicit ids<a class="headerlink" href="#implicit-ids" title="Permalink to this headline">#</a></h3>
 <p>The &quot;ids&quot; property of a reference MAY be omitted in any of the following
 conditions:</p>
 <ol class="arabic simple">
@@ -790,7 +802,13 @@ identifier.</p>
 <li><a class="reference internal" href="#noreplace-trait">10.3. <code class="docutils literal notranslate"><span class="pre">noReplace</span></code> trait</a></li>
 <li><a class="reference internal" href="#property-trait">10.4. <code class="docutils literal notranslate"><span class="pre">property</span></code> trait</a></li>
 <li><a class="reference internal" href="#references-trait">10.5. <code class="docutils literal notranslate"><span class="pre">references</span></code> trait</a><ul>
-<li><a class="reference internal" href="#implicit-ids">10.5.1. Implicit ids</a></li>
+<li><a class="reference internal" href="#reference-structure">10.5.1. <code class="docutils literal notranslate"><span class="pre">Reference</span></code> structure</a></li>
+<li><a class="reference internal" href="#runtime-resolution-of-references">10.5.2. Runtime resolution of references</a></li>
+<li><a class="reference internal" href="#implicit-identifier-mappings-example">10.5.3. Implicit identifier mappings example</a></li>
+<li><a class="reference internal" href="#explicit-identifier-mappings-example">10.5.4. Explicit identifier mappings example</a></li>
+<li><a class="reference internal" href="#additional-examples">10.5.5. Additional examples</a></li>
+<li><a class="reference internal" href="#references-on-string-shapes">10.5.6. References on string shapes</a></li>
+<li><a class="reference internal" href="#implicit-ids">10.5.7. Implicit ids</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#resourceidentifier-trait">10.6. <code class="docutils literal notranslate"><span class="pre">resourceIdentifier</span></code> trait</a></li>
