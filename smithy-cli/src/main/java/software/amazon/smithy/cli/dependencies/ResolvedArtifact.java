@@ -20,16 +20,12 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Objects;
-import org.eclipse.aether.internal.impl.checksum.Sha1ChecksumAlgorithmFactory;
-import org.eclipse.aether.spi.connector.checksum.ChecksumAlgorithmFactory;
-import org.eclipse.aether.spi.connector.checksum.ChecksumAlgorithmHelper;
 import org.eclipse.aether.util.ChecksumUtils;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.IoUtils;
 
 /**
  * An artifact resolved from a repository that provides the path on disk where the artifact
@@ -38,10 +34,7 @@ import software.amazon.smithy.utils.ListUtils;
 public final class ResolvedArtifact implements ToNode {
     private static final String SHA_SUM_MEMBER_NAME = "sha1";
     private static final String PATH_MEMBER_NAME = "path";
-    private static final String SUM_ALGORITHM_NAME = "SHA-1";
-    private static final List<ChecksumAlgorithmFactory> ALGORITHMS = ListUtils.of(
-            new Sha1ChecksumAlgorithmFactory());
-
+    private static final String CHECKSUM_FILE_EXTENSION = ".sha1";
     private final Path path;
     private final String coordinates;
     private final String groupId;
@@ -70,12 +63,12 @@ public final class ResolvedArtifact implements ToNode {
 
     private static String getOrComputeSha(Path path) {
         File artifactFile = path.toFile();
-        File checksumFile = new File(artifactFile.getParent(), artifactFile.getName() + ".sha1");
+        File checksumFile = new File(artifactFile.getParent(), artifactFile.getName() + CHECKSUM_FILE_EXTENSION);
         try {
             if (checksumFile.exists()) {
                 return ChecksumUtils.read(checksumFile);
             } else {
-                return ChecksumAlgorithmHelper.calculate(artifactFile, ALGORITHMS).get(SUM_ALGORITHM_NAME);
+                return IoUtils.computeSha1(path);
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
