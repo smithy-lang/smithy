@@ -141,7 +141,7 @@ public final class MavenDependencyResolver implements DependencyResolver {
         for (ArtifactResult result : results) {
             Artifact artifact = result.getArtifact();
             artifacts.add(new ResolvedArtifact(artifact.getFile().toPath(), artifact.getGroupId(),
-                                               artifact.getArtifactId(), artifact.getVersion()));
+                    artifact.getArtifactId(), artifact.getVersion()));
         }
         return artifacts;
     }
