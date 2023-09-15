@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,7 +18,6 @@ import java.util.List;
 import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.build.model.MavenRepository;
-import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.utils.IoUtils;
 import software.amazon.smithy.utils.ListUtils;
 
@@ -183,12 +181,5 @@ public class FileCacheResolverTest {
         public List<ResolvedArtifact> resolve() {
             return artifacts;
         }
-    }
-
-    private static Node getNodeForPath(Path path) {
-        return Node.objectNodeBuilder()
-                .withMember("path", path.toString())
-                .withMember("sha1", "sum")
-                .build();
     }
 }
