@@ -43,11 +43,7 @@ public final class ResolvedArtifact implements ToNode {
     private final String shaSum;
 
     public ResolvedArtifact(Path path, String groupId, String artifactId, String version) {
-        this(path, groupId, artifactId, version, null);
-    }
-
-    ResolvedArtifact(Path path, String groupId, String artifactId, String version, String shaSum) {
-        this(path, groupId + ':' + artifactId + ':' + version, groupId, artifactId, version, shaSum);
+        this(path, groupId + ':' + artifactId + ':' + version, groupId, artifactId, version, null);
     }
 
     private ResolvedArtifact(Path path, String coordinates, String groupId, String artifactId,
@@ -76,22 +72,30 @@ public final class ResolvedArtifact implements ToNode {
     }
 
     /**
-     * Creates a resolved artifact from a JSON node and Maven coordinates string.
+     * Creates a resolved artifact from a file path and Maven coordinates string.
      *
+     * @param location    Location of the artifact.
      * @param coordinates Maven coordinates (e.g., group:artifact:version).
-     * @param node Node containing the resolved artifact data.
      * @return Returns the created artifact.
      * @throws DependencyResolverException if the provided coordinates are invalid.
      */
-    public static ResolvedArtifact fromNode(String coordinates, Node node) {
-        String[] parts = coordinates.split(":");
-        if (parts.length != 3) {
-            throw new DependencyResolverException("Invalid Maven coordinates: " + coordinates);
-        }
-        ObjectNode objectNode = node.expectObjectNode();
-        Path location = Paths.get(objectNode.expectMember(PATH_MEMBER_NAME).expectStringNode().getValue());
-        String shaSum = objectNode.expectMember(SHA_SUM_MEMBER_NAME).expectStringNode().getValue();
+    public static ResolvedArtifact fromCoordinates(Path location, String coordinates) {
+        String[] parts = parseCoordinates(coordinates);
+        return new ResolvedArtifact(location, coordinates, parts[0], parts[1], parts[2], null);
+    }
 
+    /**
+     * Creates a resolved artifact from a Maven coordinates string and Node.
+     *
+     * @param coordinates Maven coordinates (e.g., group:artifact:version).
+     * @param node Node containing the resolved artifact data.
+     * @return Returns the created artifact
+     */
+    public static ResolvedArtifact fromCoordinateNode(String coordinates, Node node) {
+        String[] parts = parseCoordinates(coordinates);
+        ObjectNode objectNode = node.expectObjectNode();
+        String shaSum = objectNode.expectMember(SHA_SUM_MEMBER_NAME).expectStringNode().getValue();
+        Path location = Paths.get(objectNode.expectMember(PATH_MEMBER_NAME).expectStringNode().getValue());
         return new ResolvedArtifact(location, coordinates, parts[0], parts[1], parts[2], shaSum);
     }
 
@@ -177,5 +181,13 @@ public final class ResolvedArtifact implements ToNode {
                 .withMember(PATH_MEMBER_NAME, path.toString())
                 .withMember(SHA_SUM_MEMBER_NAME, shaSum)
                 .build();
+    }
+
+    private static String[] parseCoordinates(String coordinates) {
+        String[] parts = coordinates.split(":");
+        if (parts.length != 3) {
+            throw new DependencyResolverException("Invalid Maven coordinates: " + coordinates);
+        }
+        return parts;
     }
 }

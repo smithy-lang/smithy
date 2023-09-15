@@ -126,7 +126,7 @@ public final class FileCacheResolver implements DependencyResolver {
         ObjectNode artifactNode = node.expectObjectMember("artifacts");
         List<ResolvedArtifact> result = new ArrayList<>(artifactNode.getStringMap().size());
         for (Map.Entry<String, Node> entry : artifactNode.getStringMap().entrySet()) {
-            ResolvedArtifact artifact = ResolvedArtifact.fromNode(entry.getKey(), entry.getValue());
+            ResolvedArtifact artifact = ResolvedArtifact.fromCoordinateNode(entry.getKey(), entry.getValue());
             long lastModifiedOfArtifact = artifact.getLastModified();
             // Invalidate the cache if the JAR file was updated since the cache was created.
             if (lastModifiedOfArtifact == 0 || lastModifiedOfArtifact > cacheLastModifiedMillis) {
