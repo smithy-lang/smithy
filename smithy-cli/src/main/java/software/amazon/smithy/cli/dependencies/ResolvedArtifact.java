@@ -25,7 +25,6 @@ import org.eclipse.aether.util.ChecksumUtils;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.utils.IoUtils;
 
 /**
  * An artifact resolved from a repository that provides the path on disk where the artifact
@@ -64,7 +63,7 @@ public final class ResolvedArtifact implements ToNode {
             if (checksumFile.exists()) {
                 return ChecksumUtils.read(checksumFile);
             } else {
-                return IoUtils.computeSha1(path);
+                return DependencyUtils.computeSha1(path);
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
