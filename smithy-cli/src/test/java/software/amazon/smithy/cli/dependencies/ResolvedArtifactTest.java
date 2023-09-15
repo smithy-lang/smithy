@@ -65,7 +65,7 @@ public class ResolvedArtifactTest {
         assertThat(artifact.getGroupId(), equalTo("com.foo"));
         assertThat(artifact.getArtifactId(), equalTo("baz-bam"));
         assertThat(artifact.getVersion(), equalTo("1.2.0"));
-        assertThat(artifact.getShaSum(), equalTo("f00bf06ec9df73964c0cf09667cf970d33d515c5"));
+        assertThat(artifact.getShaSum(), equalTo("bbe99d58c301c90f0ea9354275468f3c84de710e"));
     }
 
 
