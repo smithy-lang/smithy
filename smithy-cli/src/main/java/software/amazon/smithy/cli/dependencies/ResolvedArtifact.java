@@ -142,7 +142,7 @@ public final class ResolvedArtifact implements ToNode {
     }
 
     /**
-     * @return Get the sha256 digest of the artifact.
+     * @return Get the sha1 digest of the artifact.
      */
     public String getShaSum() {
         return shaSum;

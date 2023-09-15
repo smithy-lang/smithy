@@ -87,7 +87,7 @@ public final class MavenDependencyResolver implements DependencyResolver {
             cacheLocation = Paths.get(userHome, ".m2", "repository").toString();
             LOGGER.fine("Set default Maven local cache location to ~/.m2/repository");
         }
-        
+
         LocalRepository local = new LocalRepository(cacheLocation);
         session.setLocalRepositoryManager(repositorySystem.newLocalRepositoryManager(session, local));
     }
