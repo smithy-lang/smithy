@@ -194,6 +194,7 @@ perform updates on or examine the state of a resource.
         identifiers: { cityId: CityId }
         properties: { coordinates: CityCoordinates }
         read: GetCity
+        list: ListCities
         resources: [Forecast]
     }
 
