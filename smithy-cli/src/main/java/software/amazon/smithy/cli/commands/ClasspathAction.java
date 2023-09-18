@@ -133,29 +133,23 @@ class ClasspathAction implements CommandAction {
                 lastModified,
                 delegate);
 
-        Set<MavenRepository> repositories = DependencyUtils.getConfiguredMavenRepos(smithyBuildConfig);
-        for (MavenRepository repository: repositories) {
-            resolver.addRepository(repository);
-        }
+        Set<MavenRepository> repositories = ConfigurationUtils.getConfiguredMavenRepos(smithyBuildConfig);
+        repositories.forEach(resolver::addRepository);
+
         // Use the pinned lockfile dependencies if a lockfile exists otherwise use the configured dependencies
-        Optional<LockFile> lockFileOptional = DependencyUtils.loadLockfile();
+        Optional<LockFile> lockFileOptional = LockFile.load();
         if (lockFileOptional.isPresent()) {
-            if (lockFileOptional.get().getConfigHash() != DependencyUtils.configHash(maven.getDependencies(),
-                    repositories)
-            ) {
+            LockFile lockFile = lockFileOptional.get();
+            if (lockFile.getConfigHash() != ConfigurationUtils.configHash(maven.getDependencies(), repositories)) {
                 throw new CliError(
                         "`smithy-lock.json` does not match configured dependencies. "
                                 + "Re-lock dependencies using the `lock` command or revert changes.");
             }
-            LOGGER.fine(() -> "Lockfile found. Using pinned dependencies: "
+            LOGGER.fine(() -> "`smithy-lock.json` found. Using locked dependencies: "
                     + lockFileOptional.get().getDependencyCoordinateSet());
-            for (String pinnedDep: lockFileOptional.get().getDependencyCoordinateSet()) {
-                resolver.addDependency(pinnedDep);
-            }
+            lockFile.getDependencyCoordinateSet().forEach(resolver::addDependency);
         } else {
-            for (String dep: maven.getDependencies()) {
-                resolver.addDependency(dep);
-            }
+            maven.getDependencies().forEach(resolver::addDependency);
         }
 
         List<ResolvedArtifact> artifacts = resolver.resolve();

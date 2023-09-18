@@ -57,26 +57,22 @@ final class LockCommand implements Command {
         DependencyResolver baseResolver = dependencyResolverFactory.create(smithyBuildConfig, env);
         DependencyResolver resolver = new FilterCliVersionResolver(SmithyCli.getVersion(), baseResolver);
 
-        Set<MavenRepository> repositories = DependencyUtils.getConfiguredMavenRepos(smithyBuildConfig);
+        Set<MavenRepository> repositories = ConfigurationUtils.getConfiguredMavenRepos(smithyBuildConfig);
         Set<String> dependencies = smithyBuildConfig.getMaven()
                 .map(MavenConfig::getDependencies)
                 .orElse(Collections.emptySet());
-        for (String dep: dependencies) {
-            resolver.addDependency(dep);
-        }
-        for (MavenRepository repository: repositories) {
-            resolver.addRepository(repository);
-        }
+        dependencies.forEach(resolver::addDependency);
+        repositories.forEach(resolver::addRepository);
 
         List<ResolvedArtifact> resolvedArtifacts = resolver.resolve();
         LOGGER.fine(() -> "Resolved artifacts with Maven: " + resolvedArtifacts);
         LockFile lock = LockFile.builder()
-                .configHash(DependencyUtils.configHash(dependencies, repositories))
+                .configHash(ConfigurationUtils.configHash(dependencies, repositories))
                 .artifacts(resolvedArtifacts)
                 .repositories(repositories)
                 .build();
         LOGGER.fine(() -> "Saving resolved artifacts to lockfile.");
-        DependencyUtils.saveLockFile(lock);
+        lock.save();
 
         return 0;
     }

@@ -69,7 +69,7 @@ public class LockCommandTest {
                 // Confirm lockfile detected in path and used
                 RunResult validateResult = IntegUtils.run(root, ListUtils.of("validate", "--debug"), env);
                 assertThat(validateResult.getExitCode(), equalTo(0));
-                assertThat(validateResult.getOutput(), containsString("Lockfile found. Using pinned dependencies: "));
+                assertThat(validateResult.getOutput(), containsString("`smithy-lock.json` found. Using locked dependencies: "));
             });
         } finally {
             if(mockServer!=null) {
