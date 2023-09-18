@@ -56,6 +56,20 @@ public final class ResolvedArtifact implements ToNode {
         this.shaSum = shaSum != null ? shaSum : getOrComputeSha(path);
     }
 
+    private static String getOrComputeSha(Path path) {
+        File artifactFile = path.toFile();
+        File checksumFile = new File(artifactFile.getParent(), artifactFile.getName() + CHECKSUM_FILE_EXTENSION);
+        try {
+            if (checksumFile.exists()) {
+                return ChecksumUtils.read(checksumFile);
+            } else {
+                return DependencyUtils.computeSha1(path);
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
     /**
      * Creates a resolved artifact from a file path and Maven coordinates string.
      *
@@ -166,20 +180,6 @@ public final class ResolvedArtifact implements ToNode {
                 .withMember(PATH_MEMBER_NAME, path.toString())
                 .withMember(SHA_SUM_MEMBER_NAME, shaSum)
                 .build();
-    }
-
-    private static String getOrComputeSha(Path path) {
-        File artifactFile = path.toFile();
-        File checksumFile = new File(artifactFile.getParent(), artifactFile.getName() + CHECKSUM_FILE_EXTENSION);
-        try {
-            if (checksumFile.exists()) {
-                return ChecksumUtils.read(checksumFile);
-            } else {
-                return DependencyUtils.computeSha1(path);
-            }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
     }
 
     private static String[] parseCoordinates(String coordinates) {
