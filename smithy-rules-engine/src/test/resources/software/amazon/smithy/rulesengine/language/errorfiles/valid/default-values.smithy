@@ -8,6 +8,7 @@ use smithy.rules#endpointTests
 
 @clientContextParams(
     bar: {type: "string", documentation: "a client string parameter"}
+    baz: {type: "string", documentation: "another client string parameter"}
 )
 @endpointRuleSet({
     version: "1.0",
@@ -15,6 +16,12 @@ use smithy.rules#endpointTests
         bar: {
             type: "string",
             documentation: "docs"
+        }
+        baz: {
+            type: "string",
+            documentation: "docs"
+            required: true
+            default: "baz"
         },
         endpoint: {
             type: "string",
@@ -38,7 +45,7 @@ use smithy.rules#endpointTests
                 }
             ],
             "endpoint": {
-                "url": "https://example.com"
+                "url": "https://example.com/{baz}"
             },
             "type": "endpoint"
         },
@@ -65,7 +72,24 @@ use smithy.rules#endpointTests
             }],
             "expect": {
                 "endpoint": {
-                    "url": "https://example.com"
+                    "url": "https://example.com/baz"
+                }
+            }
+        },
+        {
+            "params": {
+                "bar": "a b",
+                "baz": "BIG"
+            }
+            "operationInputs": [{
+                "operationName": "GetThing",
+                "builtInParams": {
+                    "SDK::Endpoint": "https://custom.example.com"
+                }
+            }],
+            "expect": {
+                "endpoint": {
+                    "url": "https://example.com/BIG"
                 }
             }
         },
