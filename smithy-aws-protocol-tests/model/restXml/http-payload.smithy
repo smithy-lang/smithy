@@ -573,7 +573,6 @@ apply HttpPayloadWithUnion @httpRequestTests([
         body: "",
         headers: {
             "Content-Type": "application/xml",
-            "Content-Length": "0"
         },
         params: {}
     }
