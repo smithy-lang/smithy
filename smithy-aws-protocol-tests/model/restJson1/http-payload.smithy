@@ -308,9 +308,6 @@ apply HttpPayloadWithUnion @httpRequestTests([
         method: "PUT",
         uri: "/HttpPayloadWithUnion",
         body: "",
-        headers: {
-            "Content-Length": "0"
-        },
         params: {}
     }
 ])
