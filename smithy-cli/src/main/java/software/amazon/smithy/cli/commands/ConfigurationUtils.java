@@ -15,6 +15,8 @@ import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.cli.EnvironmentVariable;
 
 final class ConfigurationUtils {
+    private static final int FNV_OFFSET_BIAS = 0x811c9dc5;
+    private static final int FNV_PRIME = 0x1000193;
     private static final Logger LOGGER = Logger.getLogger(ConfigurationUtils.class.getName());
     private static final MavenRepository CENTRAL = MavenRepository.builder()
             .url("https://repo.maven.apache.org/maven2")
@@ -68,11 +70,19 @@ final class ConfigurationUtils {
     public static int configHash(Set<String> artifacts, Set<MavenRepository> repositories) {
         int result = 0;
         for (String artifact : artifacts) {
-            result = 31 * result + artifact.hashCode();
+            result = 31 * result + getFnvHash(artifact);
         }
         for (MavenRepository repo : repositories) {
-            result = 31 * result + repo.getUrl().hashCode();
+            result = 31 * result + getFnvHash(repo.getUrl());
         }
         return result;
+    }
+
+    private static int getFnvHash(CharSequence text) {
+        int hashCode = FNV_OFFSET_BIAS;
+        for (int i = 0; i < text.length(); i++) {
+            hashCode = (hashCode ^ text.charAt(i)) * FNV_PRIME;
+        }
+        return hashCode;
     }
 }
