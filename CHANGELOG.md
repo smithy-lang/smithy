@@ -1,5 +1,21 @@
 # Smithy Changelog
 
+## 1.39.0 (2023-09-20)
+
+### Features
+
+* Refactored `smithy-rules-engine` significantly in an effort to improve validation, separate 
+  AWS and non-AWS concerns, add a specification, and more. General notes are provided in 
+  individual commit messages. The format of the rules documents have not changed, meaning a 
+  successful migration to the refactored codebase will involve no changes to code generated 
+  for an SDK client ([#1855](https://github.com/smithy-lang/smithy/pull/1855))
+* Added `Sha1` checksum to `ResolvedArtifacts` ([#1979](https://github.com/smithy-lang/smithy/pull/1979))
+* Relaxed `Content-Length` in unset union payloads protocol tests ([#1984](https://github.com/smithy-lang/smithy/pull/1984))
+
+### Documentation
+
+* Updated example by keeping operation list from previous examples ([#1981](https://github.com/smithy-lang/smithy/pull/1981))
+
 ## 1.38.0 (2023-09-14)
 
 ### Features
