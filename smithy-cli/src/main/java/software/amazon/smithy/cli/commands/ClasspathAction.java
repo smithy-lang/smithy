@@ -146,7 +146,7 @@ class ClasspathAction implements CommandAction {
                                 + "Re-lock dependencies using the `lock` command or revert changes.");
             }
             LOGGER.fine(() -> "`smithy-lock.json` found. Using locked dependencies: "
-                    + lockFileOptional.get().getDependencyCoordinateSet());
+                    + lockFile.getDependencyCoordinateSet());
             lockFile.getDependencyCoordinateSet().forEach(resolver::addDependency);
         } else {
             maven.getDependencies().forEach(resolver::addDependency);

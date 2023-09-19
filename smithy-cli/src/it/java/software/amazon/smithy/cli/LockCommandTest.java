@@ -72,7 +72,7 @@ public class LockCommandTest {
                 assertThat(validateResult.getOutput(), containsString("`smithy-lock.json` found. Using locked dependencies: "));
             });
         } finally {
-            if(mockServer!=null) {
+            if (mockServer!=null) {
                 mockServer.stop();
             }
         }
@@ -111,12 +111,11 @@ public class LockCommandTest {
 
             IntegUtils.runWithEmptyCache("lockfile-used", ListUtils.of("validate", "--debug"),
                     Collections.emptyMap(), result -> {
-                        System.out.println(result.getOutput());
                         assertThat(result.getExitCode(), equalTo(0));
                         assertThat(result.getOutput(), containsString("software.amazon.smithy.cli.dependencies.DependencyResolver - Resolved Maven dependencies: [com.example:artifact:jar:1.1.0"));
                     });
         } finally {
-            if(mockServer!=null) {
+            if (mockServer!=null) {
                 mockServer.stop();
             }
         }

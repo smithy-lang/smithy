@@ -59,7 +59,7 @@ public class MavenResolverMultipleReposTest {
                         assertThat(result.getOutput(), containsString("software.amazon.smithy.cli.dependencies.DependencyResolver - Resolved Maven dependencies: [com.example:artifact:jar:1.0.0-20230724.184336-2"));
                     });
         } finally {
-            if(mockServer!=null) {
+            if (mockServer!=null) {
                 mockServer.stop();
             }
         }
