@@ -11,6 +11,7 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.transform.ModelTransformer;
+import software.amazon.smithy.utils.ListUtils;
 
 public class CleanEndpointTestOperationInputTest {
     private static final ShapeId SERVICE_ID = ShapeId.from("smithy.example#ExampleService");
@@ -56,5 +57,29 @@ public class CleanEndpointTestOperationInputTest {
         EndpointTestsTrait trait = transformedService.expectTrait(EndpointTestsTrait.class);
         assertEquals(1, trait.getTestCases().size());
         assertTrue(trait.getTestCases().get(0).getOperationInputs().isEmpty());
+    }
+
+    @Test
+    public void retainsTraitIfAllTestsRemoved() {
+        ServiceShape serviceShape = model.expectShape(SERVICE_ID, ServiceShape.class);
+        EndpointTestsTrait replacementTrait = serviceShape.expectTrait(EndpointTestsTrait.class);
+
+        // Hack out the test case without operation input.
+        ModelTransformer modelTransformer = ModelTransformer.create();
+        replacementTrait = replacementTrait.toBuilder().removeTestCase(replacementTrait.getTestCases().get(0)).build();
+        Model transformed = modelTransformer.replaceShapes(model, ListUtils.of(
+                serviceShape.toBuilder().addTrait(replacementTrait).build()));
+
+        // Then do the filtering.
+        transformed = modelTransformer.filterShapes(transformed, shape -> !shape.getId().equals(GET_THING));
+
+        assertFalse(transformed.getShape(GET_THING).isPresent());
+        assertTrue(transformed.getShape(SERVICE_ID).isPresent());
+
+        ServiceShape transformedService = transformed.expectShape(SERVICE_ID, ServiceShape.class);
+        assertTrue(transformedService.hasTrait(EndpointTestsTrait.class));
+
+        EndpointTestsTrait trait = transformedService.expectTrait(EndpointTestsTrait.class);
+        assertEquals(0, trait.getTestCases().size());
     }
 }
