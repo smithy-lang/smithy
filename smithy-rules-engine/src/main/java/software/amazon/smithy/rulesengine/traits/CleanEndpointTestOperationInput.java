@@ -40,6 +40,10 @@ public class CleanEndpointTestOperationInput implements ModelTransformerPlugin {
         Set<Shape> result = new HashSet<>();
         for (ServiceShape serviceShape : model.getServiceShapesWithTrait(EndpointTestsTrait.class)) {
             EndpointTestsTrait trait = serviceShape.expectTrait(EndpointTestsTrait.class);
+            if (trait.getTestCases().isEmpty()) {
+                continue;
+            }
+
             List<EndpointTestCase> updatedTestCases = new ArrayList<>(trait.getTestCases());
             // Check each input to each test case and remove entries from the list.
             for (EndpointTestCase testCase : trait.getTestCases()) {
@@ -50,10 +54,8 @@ public class CleanEndpointTestOperationInput implements ModelTransformerPlugin {
                 }
             }
 
-            // Update the shape if the trait has changed, removing if no cases are left.
-            if (updatedTestCases.isEmpty()) {
-                result.add(serviceShape.toBuilder().removeTrait(EndpointTestsTrait.ID).build());
-            } else if (updatedTestCases.size() != trait.getTestCases().size()) {
+            // Update the shape if the trait has changed.
+            if (updatedTestCases.size() != trait.getTestCases().size()) {
                 result.add(serviceShape.toBuilder()
                         .addTrait(trait.toBuilder().testCases(updatedTestCases).build())
                         .build());
