@@ -22,7 +22,7 @@ structure Integers {
     invalidTargetMin: MinOne,
 
     @default(0)
-    invalidTagetMax: MaxNegativeOne,
+    invalidTargetMax: MaxNegativeOne,
 
     @default(0)
     invalidMinWithMax: MinAndMax,
