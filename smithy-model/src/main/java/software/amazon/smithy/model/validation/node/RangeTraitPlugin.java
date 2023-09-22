@@ -30,6 +30,7 @@ import software.amazon.smithy.model.validation.Severity;
 class RangeTraitPlugin implements NodeValidatorPlugin {
     private static final String MEMBER = "Member";
     private static final String TARGET = "Target";
+    private static final String INVALID_RANGE = "InvalidRange";
 
     @Override
     public final void apply(Shape shape, Node value, Context context, Emitter emitter) {
@@ -56,14 +57,16 @@ class RangeTraitPlugin implements NodeValidatorPlugin {
                 emitter.accept(node, getSeverity(context), String.format(
                         "Value provided for `%s` must be greater than or equal to %s, but found \"%s\"",
                         shape.getId(), trait.getMin().get(), node.getValue()),
-                        shape.isMemberShape() ? MEMBER : TARGET);
+                        shape.isMemberShape() ? MEMBER : TARGET,
+                        INVALID_RANGE);
             }
 
             if (trait.getMax().isPresent() && value.equals(NonNumericFloat.POSITIVE_INFINITY)) {
                 emitter.accept(node, getSeverity(context), String.format(
                         "Value provided for `%s` must be less than or equal to %s, but found \"%s\"",
                         shape.getId(), trait.getMax().get(), node.getValue()),
-                        shape.isMemberShape() ? MEMBER : TARGET);
+                        shape.isMemberShape() ? MEMBER : TARGET,
+                        INVALID_RANGE);
             }
         });
     }
@@ -75,7 +78,8 @@ class RangeTraitPlugin implements NodeValidatorPlugin {
                     emitter.accept(node, getSeverity(node, context), String.format(
                                            "Value provided for `%s` must be greater than or equal to %s, but found %s",
                                            shape.getId(), min, decimal),
-                                   shape.isMemberShape() ? MEMBER : TARGET);
+                                   shape.isMemberShape() ? MEMBER : TARGET,
+                                   INVALID_RANGE);
                 }
             });
         });
@@ -86,7 +90,8 @@ class RangeTraitPlugin implements NodeValidatorPlugin {
                     emitter.accept(node, getSeverity(node, context), String.format(
                                            "Value provided for `%s` must be less than or equal to %s, but found %s",
                                            shape.getId(), max, decimal),
-                                   shape.isMemberShape() ? MEMBER : TARGET);
+                                   shape.isMemberShape() ? MEMBER : TARGET,
+                                   INVALID_RANGE);
                 }
             });
         });
