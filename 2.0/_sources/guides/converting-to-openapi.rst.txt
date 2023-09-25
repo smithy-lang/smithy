@@ -1882,7 +1882,7 @@ Next, you need to create and configure an ``OpenApiConverter``:
     OpenApi result = converter.convert(myModel);
 
 The conversion process is highly extensible through
-``software.amazon.smithy.openapi.fromsmithy.CoreExtension``
+``software.amazon.smithy.openapi.fromsmithy.Smithy2OpenApiExtension``
 `service providers`_. See the Javadocs for more information.
 
 .. _OpenAPI: https://github.com/OAI/OpenAPI-Specification
