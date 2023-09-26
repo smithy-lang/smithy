@@ -1,6 +1,13 @@
 # Smithy Changelog
 
-## 1.39.0 (2023-09-20)
+## 1.39.1 (2023-09-26)
+
+### Bug Fixes
+
+* Fix several issues with validating `authSchemes` configurations for endpoints in the
+  `smithy-rules-engine` package for both AWS and non-AWS issues. ([#1990](https://github.com/smithy-lang/smithy/pull/1990))
+
+## 1.39.0 (2023-09-25)
 
 ### Features
 
