@@ -63,6 +63,7 @@ jobs:
           repository: 'smithy-lang/homebrew-tap'
           path: 'homebrew-tap'
           ref: 'main'
+          token: ${{ secrets.PR_TOKEN }}
       - name: Update version
         run: |
           version="${GITHUB_REF##*/}"
