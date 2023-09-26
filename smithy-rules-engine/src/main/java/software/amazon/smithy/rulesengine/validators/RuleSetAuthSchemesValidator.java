@@ -6,15 +6,16 @@
 package software.amazon.smithy.rulesengine.validators;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -60,37 +61,65 @@ public final class RuleSetAuthSchemesValidator extends AbstractValidator {
                 BiFunction<FromSourceLocation, String, ValidationEvent> emitter = getEventEmitter();
                 Optional<List<Literal>> authSchemeList = authSchemes.asTupleLiteral();
                 if (!authSchemeList.isPresent()) {
-                    return Stream.of(emitter.apply(authSchemes.getSourceLocation(),
+                    return Stream.of(emitter.apply(authSchemes,
                             String.format("Expected `authSchemes` to be a list, found: `%s`", authSchemes)));
                 }
-                for (Literal authScheme : authSchemeList.get()) {
-                    Optional<Map<Identifier, Literal>> authSchemeMap = authScheme.asRecordLiteral();
+
+                Set<String> authSchemeNames = new HashSet<>();
+                Set<String> duplicateAuthSchemeNames = new HashSet<>();
+                for (Literal authSchemeEntry : authSchemeList.get()) {
+                    Optional<Map<Identifier, Literal>> authSchemeMap = authSchemeEntry.asRecordLiteral();
                     if (authSchemeMap.isPresent()) {
-                        events.addAll(validateAuthScheme(authSchemeMap.get(), authScheme.getSourceLocation()));
+                        // Validate the name property so that we can also check that they're unique.
+                        Map<Identifier, Literal> authScheme = authSchemeMap.get();
+                        Optional<ValidationEvent> event = validateAuthSchemeName(authScheme, authSchemeEntry);
+                        if (event.isPresent()) {
+                            events.add(event.get());
+                            continue;
+                        }
+                        String schemeName = authScheme.get(NAME).asStringLiteral().get().expectLiteral();
+                        if (!authSchemeNames.add(schemeName)) {
+                            duplicateAuthSchemeNames.add(schemeName);
+                        }
+
+                        events.addAll(validateAuthScheme(schemeName, authScheme, authSchemeEntry));
                     } else {
-                        events.add(emitter.apply(authSchemes.getSourceLocation(),
+                        events.add(emitter.apply(authSchemes,
                                 String.format("Expected `authSchemes` to be a list of objects, but found: `%s`",
-                                        authScheme)));
+                                        authSchemeEntry)));
                     }
+                }
+
+                // Emit events for each duplicated auth scheme name.
+                for (String duplicateAuthSchemeName : duplicateAuthSchemeNames) {
+                    events.add(emitter.apply(authSchemes, String.format("Found duplicate `name` of `%s` in the "
+                            + "`authSchemes` list", duplicateAuthSchemeName)));
                 }
             }
 
             return events.stream();
         }
 
-        private List<ValidationEvent> validateAuthScheme(
+        private Optional<ValidationEvent> validateAuthSchemeName(
                 Map<Identifier, Literal> authScheme,
-                SourceLocation sourceLocation
+                FromSourceLocation sourceLocation
         ) {
-            BiFunction<FromSourceLocation, String, ValidationEvent> emitter = getEventEmitter();
-            if (!authScheme.containsKey(NAME)) {
-                return ListUtils.of(emitter.apply(sourceLocation,
-                        String.format("Expected `authSchemes` to have a `name` key but it did not: `%s`", authScheme)));
+            if (!authScheme.containsKey(NAME) || !authScheme.get(NAME).asStringLiteral().isPresent()) {
+                return Optional.of(error(serviceShape, sourceLocation,
+                        String.format("Expected `authSchemes` to have a `name` key with a string value but it did not: "
+                                + "`%s`", authScheme)));
             }
+            return Optional.empty();
+        }
 
+        private List<ValidationEvent> validateAuthScheme(
+                String schemeName,
+                Map<Identifier, Literal> authScheme,
+                FromSourceLocation sourceLocation
+        ) {
             List<ValidationEvent> events = new ArrayList<>();
-            Literal name = authScheme.get(NAME);
-            String schemeName = name.asStringLiteral().get().expectLiteral();
+
+            BiFunction<FromSourceLocation, String, ValidationEvent> emitter = getEventEmitter();
 
             boolean validatedAuth = false;
             for (AuthSchemeValidator authSchemeValidator : EndpointRuleSet.getAuthSchemeValidators()) {
@@ -103,7 +132,8 @@ public final class RuleSetAuthSchemesValidator extends AbstractValidator {
             if (validatedAuth) {
                 return events;
             }
-            return ListUtils.of(emitter.apply(name, String.format("Unexpected auth scheme: `%s`", schemeName)));
+            return ListUtils.of(warning(serviceShape, String.format("Did not find a validator for the `%s` "
+                    + "auth scheme", schemeName)));
         }
 
         private BiFunction<FromSourceLocation, String, ValidationEvent> getEventEmitter() {

@@ -1,0 +1,10 @@
+[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#endpointRuleSet | UnstableTrait
+[ERROR] example#FizzBuzz: Unexpected type for auth property `signingName`, found `1` but expected a string value | RuleSetAuthSchemes
+[ERROR] example#FizzBuzz: Unexpected type for auth property `signingRegion`, found `1` but expected a string value | RuleSetAuthSchemes
+[ERROR] example#FizzBuzz: Unexpected type for auth property `disableDoubleEncoding`, found `1` but expected a boolean value | RuleSetAuthSchemes
+[ERROR] example#FizzBuzz: Unexpected type for auth property `disableNormalizePath`, found `1` but expected a boolean value | RuleSetAuthSchemes
+[ERROR] example#FizzBuzz: Unexpected type for auth property `signingName`, found `1` but expected a string value | RuleSetAuthSchemes
+[ERROR] example#FizzBuzz: Unexpected type for auth property `signingRegionSet`, found `1` but expected an array<string> value | RuleSetAuthSchemes
+[ERROR] example#FizzBuzz: Unexpected type for auth property `disableDoubleEncoding`, found `1` but expected a boolean value | RuleSetAuthSchemes
+[ERROR] example#FizzBuzz: Unexpected type for auth property `disableNormalizePath`, found `1` but expected a boolean value | RuleSetAuthSchemes
+[ERROR] example#FizzBuzz: The `signingRegionSet` property must not be an empty list. | RuleSetAuthSchemes

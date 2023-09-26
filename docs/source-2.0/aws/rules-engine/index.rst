@@ -14,3 +14,4 @@ configuration options.
 
     built-ins
     library-functions
+    auth-schemes

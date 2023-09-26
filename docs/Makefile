@@ -16,7 +16,7 @@ html1:
 html2:
 	@$(SPHINXBUILD) -M html "source-2.0" "build/2.0" $(SPHINXOPTS) -W --keep-going -n $(O)
 
-html: html1 html2 merge-versions
+html: html2 html1 merge-versions
 
 merge-versions:
 	mkdir -p build/html

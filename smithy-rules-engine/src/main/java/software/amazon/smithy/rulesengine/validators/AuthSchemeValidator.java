@@ -10,14 +10,15 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import software.amazon.smithy.model.FromSourceLocation;
-import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.literal.Literal;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
  * Validates an authentication scheme after passing a predicate check.
  */
+@SmithyUnstableApi
 public interface AuthSchemeValidator extends Predicate<String> {
     /**
      * Validates that the provided {@code authScheme} matches required modeling behavior,
@@ -30,6 +31,6 @@ public interface AuthSchemeValidator extends Predicate<String> {
      */
     List<ValidationEvent> validateScheme(
             Map<Identifier, Literal> authScheme,
-            SourceLocation sourceLocation,
+            FromSourceLocation sourceLocation,
             BiFunction<FromSourceLocation, String, ValidationEvent> emitter);
 }
