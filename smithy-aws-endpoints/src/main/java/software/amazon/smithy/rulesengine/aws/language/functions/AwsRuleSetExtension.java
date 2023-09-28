@@ -22,6 +22,8 @@ public final class AwsRuleSetExtension implements EndpointRuleSetExtension {
                 AwsBuiltIns.DUALSTACK,
                 AwsBuiltIns.FIPS,
                 AwsBuiltIns.REGION,
+                AwsBuiltIns.ACCOUNT_ID,
+                AwsBuiltIns.CREDENTIAL_SCOPE,
                 AwsBuiltIns.S3_ACCELERATE,
                 AwsBuiltIns.S3_DISABLE_MRAP,
                 AwsBuiltIns.S3_FORCE_PATH_STYLE,
