@@ -271,6 +271,7 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../aws/rules-engine/index.html">AWS rules engine extensions</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../aws/rules-engine/built-ins.html">AWS rules engine built-ins</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aws/rules-engine/library-functions.html">AWS rules engine library functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aws/rules-engine/auth-schemes.html">AWS rules engine authentication scheme validators</a></li>
 </ul>
 </li>
 </ul>
@@ -641,7 +642,7 @@ of rule conditions to that point.</p>
 <p>An endpoint MAY return a set of endpoint properties using the <code class="docutils literal notranslate"><span class="pre">properties</span></code>
 field. This can be used to provide a grab-bag set of metadata associated with
 an endpoint that an endpoint resolver implementation MAY use. For example, the
-<code class="docutils literal notranslate"><span class="pre">authSchemes</span></code> property is used to specify the priority listed order of
+<code class="docutils literal notranslate"><span class="pre">authSchemes</span></code> property is used to specify the priority ordered list of
 authentication schemes and their configuration supported by the endpoint.
 Properties MAY contain arbitrary nested maps and arrays of strings and
 booleans.</p>
@@ -649,6 +650,33 @@ booleans.</p>
 <p class="first admonition-title">Note</p>
 <p class="last">To prevent ambiguity, the endpoint properties map MUST NOT contain
 reference or function objects. Properties MAY contain <a class="reference internal" href="#rules-engine-endpoint-rule-set-template-string"><span class="std std-ref">template string</span></a></p>
+</div>
+<div class="section" id="endpoint-authschemes-list-property">
+<span id="rules-engine-endpoint-rule-set-endpoint-authschemes"></span><h4>Endpoint <code class="docutils literal notranslate"><span class="pre">authSchemes</span></code> list property<a class="headerlink" href="#endpoint-authschemes-list-property" title="Permalink to this headline">#</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">authSchemes</span></code> property of an endpoint is used to specify the priority
+ordered list of authentication schemes and their configuration supported by the
+endpoint. The property is a list of configuration objects that MUST contain at
+least a <code class="docutils literal notranslate"><span class="pre">name</span></code> property and MAY contain additional properties. Each
+configuration object MUST have a unique value for its <code class="docutils literal notranslate"><span class="pre">name</span></code> property within
+the list of configuration objects within a given <code class="docutils literal notranslate"><span class="pre">authSchemes</span></code> property.</p>
+<p>If an <code class="docutils literal notranslate"><span class="pre">authSchemes</span></code> property is present on an <a class="reference internal" href="#endpoint-object">Endpoint object</a>, clients
+MUST resolve an authentication scheme to use via the following process:</p>
+<ol class="arabic simple">
+<li>Iterate through configuration objects in the <code class="docutils literal notranslate"><span class="pre">authSchemes</span></code> property.</li>
+<li>If the <code class="docutils literal notranslate"><span class="pre">name</span></code> property in a configuration object contains a supported
+authentication scheme, resolve this scheme.</li>
+<li>If the <code class="docutils literal notranslate"><span class="pre">name</span></code> is unknown or unsupported, ignore it and continue iterating.</li>
+<li>If the list has been fully iterated and no scheme has been resolved, clients
+MUST return an error.</li>
+</ol>
+<div class="section" id="adding-authschemes-configuration-validators">
+<span id="rules-engine-standard-library-adding-authscheme-validators"></span><h5>Adding <code class="docutils literal notranslate"><span class="pre">authSchemes</span></code> configuration validators<a class="headerlink" href="#adding-authschemes-configuration-validators" title="Permalink to this headline">#</a></h5>
+<p>Extensions to the rules engine can provide additional validators for
+<code class="docutils literal notranslate"><span class="pre">authSchemes</span></code> configuration objects. No validators are provided by default.</p>
+<p>The rules engine is highly extensible through
+<code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.rulesengine.language.EndpointRuleSetExtension</span></code>
+<a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">service providers</a>. See the <a class="reference external" href="https://smithy.io/javadoc/1.39.1/software/amazon/smithy/rulesengine/language/EndpointRuleSetExtension.html">Javadocs</a> for more information.</p>
+</div>
 </div>
 </div>
 <div class="section" id="error-rule-object">
@@ -1108,7 +1136,13 @@ JSON object, and <code class="docutils literal notranslate"><span class="pre">fo
 <li><a class="reference internal" href="#parameter-object">Parameter object</a></li>
 <li><a class="reference internal" href="#deprecated-object">Deprecated object</a></li>
 <li><a class="reference internal" href="#endpoint-rule-object">Endpoint rule object</a></li>
-<li><a class="reference internal" href="#endpoint-object">Endpoint object</a></li>
+<li><a class="reference internal" href="#endpoint-object">Endpoint object</a><ul>
+<li><a class="reference internal" href="#endpoint-authschemes-list-property">Endpoint <code class="docutils literal notranslate"><span class="pre">authSchemes</span></code> list property</a><ul>
+<li><a class="reference internal" href="#adding-authschemes-configuration-validators">Adding <code class="docutils literal notranslate"><span class="pre">authSchemes</span></code> configuration validators</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#error-rule-object">Error rule object</a></li>
 <li><a class="reference internal" href="#tree-rule-object">Tree rule object</a></li>
 <li><a class="reference internal" href="#condition-object">Condition object</a></li>

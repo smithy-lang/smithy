@@ -290,7 +290,7 @@ of rule conditions to that point.
 An endpoint MAY return a set of endpoint properties using the ``properties``
 field. This can be used to provide a grab-bag set of metadata associated with
 an endpoint that an endpoint resolver implementation MAY use. For example, the
-``authSchemes`` property is used to specify the priority listed order of
+``authSchemes`` property is used to specify the priority ordered list of
 authentication schemes and their configuration supported by the endpoint.
 Properties MAY contain arbitrary nested maps and arrays of strings and
 booleans.
@@ -298,6 +298,40 @@ booleans.
 .. note::
     To prevent ambiguity, the endpoint properties map MUST NOT contain
     reference or function objects. Properties MAY contain :ref:`template string <rules-engine-endpoint-rule-set-template-string>`
+
+.. _rules-engine-endpoint-rule-set-endpoint-authschemes:
+
+Endpoint ``authSchemes`` list property
+--------------------------------------
+
+The ``authSchemes`` property of an endpoint is used to specify the priority
+ordered list of authentication schemes and their configuration supported by the
+endpoint. The property is a list of configuration objects that MUST contain at
+least a ``name`` property and MAY contain additional properties. Each
+configuration object MUST have a unique value for its ``name`` property within
+the list of configuration objects within a given ``authSchemes`` property.
+
+If an ``authSchemes`` property is present on an `Endpoint object`_, clients
+MUST resolve an authentication scheme to use via the following process:
+
+#. Iterate through configuration objects in the ``authSchemes`` property.
+#. If the ``name`` property in a configuration object contains a supported
+   authentication scheme, resolve this scheme.
+#. If the ``name`` is unknown or unsupported, ignore it and continue iterating.
+#. If the list has been fully iterated and no scheme has been resolved, clients
+   MUST return an error.
+
+.. _rules-engine-standard-library-adding-authscheme-validators:
+
+Adding ``authSchemes`` configuration validators
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Extensions to the rules engine can provide additional validators for
+``authSchemes`` configuration objects. No validators are provided by default.
+
+The rules engine is highly extensible through
+``software.amazon.smithy.rulesengine.language.EndpointRuleSetExtension``
+`service providers`_. See the `Javadocs`_ for more information.
 
 
 .. _rules-engine-endpoint-rule-set-error-rule:
@@ -686,3 +720,6 @@ The following two expressions are equivalent:
             "{partResult#name}"
         ]
     }
+
+.. _Javadocs: https://smithy.io/javadoc/__smithy_version__/software/amazon/smithy/rulesengine/language/EndpointRuleSetExtension.html
+.. _service providers: https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html
