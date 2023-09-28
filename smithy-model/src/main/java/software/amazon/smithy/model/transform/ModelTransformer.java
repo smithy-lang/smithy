@@ -665,5 +665,16 @@ public final class ModelTransformer {
      */
     public Model removeInvalidDefaults(Model model) {
         return new RemoveInvalidDefaults().transform(this, model);
+
+    }
+
+    /**
+     * Deconflicts errors that share a status code.
+     *
+     * @param model Model to transform.
+     * @return Returns the transformed model.
+     */
+    public Model deconflictErrorsWithSharedStatusCode(Model model, ServiceShape forService) {
+        return new DeconflictErrorsWithSharedStatusCode(forService).transform(this, model);
     }
 }
