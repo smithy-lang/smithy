@@ -2,6 +2,7 @@ package software.amazon.smithy.cli;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.model.HttpRequest;
 import org.mockserver.model.HttpResponse;
@@ -14,6 +15,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockserver.integration.ClientAndServer.startClientAndServer;
 
+@Isolated
 public class MavenResolverMultipleReposTest {
 
     @Test
@@ -57,13 +59,13 @@ public class MavenResolverMultipleReposTest {
                         assertThat(result.getOutput(), containsString("software.amazon.smithy.cli.dependencies.DependencyResolver - Resolved Maven dependencies: [com.example:artifact:jar:1.0.0-20230724.184336-2"));
                     });
         } finally {
-            if(mockServer!=null) {
+            if (mockServer!=null) {
                 mockServer.stop();
             }
         }
     }
 
-    private void mockArtifactAndSha(ClientAndServer mockServer, String path, String contents) {
+    public static void mockArtifactAndSha(ClientAndServer mockServer, String path, String contents) {
         mockSuccess(
             mockServer,
             path,

@@ -15,7 +15,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 final class DependencyUtils {
-    private DependencyUtils() {}
+    private DependencyUtils() {
+        // Utility Class should not be instantiated
+    }
 
     /**
      * Computes the sha1 digest of a file.

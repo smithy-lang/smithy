@@ -87,11 +87,6 @@ final class BuildCommand implements Command {
         private String plugin;
 
         @Override
-        public boolean testOption(String name) {
-            return false;
-        }
-
-        @Override
         public Consumer<String> testParameter(String name) {
             switch (name) {
                 case "--projection":

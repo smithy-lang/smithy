@@ -101,7 +101,7 @@ public class MavenResolverTest {
                         assertThat(result.getOutput(), containsString("HttpAuthenticator - Authentication succeeded"));
                     });
         } finally {
-            if(mockServer!=null) {
+            if (mockServer!=null) {
                 mockServer.stop();
             }
         }

@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -41,11 +42,7 @@ import software.amazon.smithy.cli.dependencies.ResolvedArtifact;
  * A {@code CommandAction} that runs a wrapped action within a custom classpath.
  */
 class ClasspathAction implements CommandAction {
-
     private static final Logger LOGGER = Logger.getLogger(ClasspathAction.class.getName());
-    private static final MavenRepository CENTRAL = MavenRepository.builder()
-            .url("https://repo.maven.apache.org/maven2")
-            .build();
     private final DependencyResolver.Factory dependencyResolverFactory;
     private final CommandActionWithConfig action;
 
@@ -133,42 +130,39 @@ class ClasspathAction implements CommandAction {
         long lastModified = smithyBuildConfig.getLastModifiedInMillis();
         DependencyResolver delegate = new FilterCliVersionResolver(SmithyCli.getVersion(), baseResolver);
         DependencyResolver resolver = new FileCacheResolver(getCacheFile(buildOptions, smithyBuildConfig),
-                                                            lastModified,
-                                                            delegate);
-        addConfiguredMavenRepos(smithyBuildConfig, resolver);
-        maven.getDependencies().forEach(resolver::addDependency);
+                lastModified,
+                delegate);
+
+        Set<MavenRepository> repositories = ConfigurationUtils.getConfiguredMavenRepos(smithyBuildConfig);
+        repositories.forEach(resolver::addRepository);
+
+        // Use the pinned lockfile dependencies if a lockfile exists otherwise use the configured dependencies
+        Optional<LockFile> lockFileOptional = LockFile.load();
+        if (lockFileOptional.isPresent()) {
+            LockFile lockFile = lockFileOptional.get();
+            if (lockFile.getConfigHash() != ConfigurationUtils.configHash(maven.getDependencies(), repositories)) {
+                throw new CliError(
+                        "`smithy-lock.json` does not match configured dependencies. "
+                                + "Re-lock dependencies using the `lock` command or revert changes.");
+            }
+            LOGGER.fine(() -> "`smithy-lock.json` found. Using locked dependencies: "
+                    + lockFile.getDependencyCoordinateSet());
+            lockFile.getDependencyCoordinateSet().forEach(resolver::addDependency);
+        } else {
+            maven.getDependencies().forEach(resolver::addDependency);
+        }
+
         List<ResolvedArtifact> artifacts = resolver.resolve();
         LOGGER.fine(() -> "Classpath resolved with Maven: " + artifacts);
 
+        // Ensure resolved artifacts match pinned artifacts
+        lockFileOptional.ifPresent(lockFile -> lockFile.validateArtifacts(artifacts));
         List<Path> result = new ArrayList<>(artifacts.size());
         for (ResolvedArtifact artifact : artifacts) {
             result.add(artifact.getPath());
         }
 
         return result;
-    }
-
-    private static void addConfiguredMavenRepos(SmithyBuildConfig config, DependencyResolver resolver) {
-        // Environment variables take precedence over config files.
-        String envRepos = EnvironmentVariable.SMITHY_MAVEN_REPOS.get();
-        if (envRepos != null) {
-            for (String repo : envRepos.split("\\|")) {
-                resolver.addRepository(MavenRepository.builder().url(repo.trim()).build());
-            }
-        }
-
-        Set<MavenRepository> configuredRepos = config.getMaven()
-                .map(MavenConfig::getRepositories)
-                .orElse(Collections.emptySet());
-
-        if (!configuredRepos.isEmpty()) {
-            configuredRepos.forEach(resolver::addRepository);
-        } else if (envRepos == null) {
-            LOGGER.finest(() -> String.format("maven.repositories is not defined in smithy-build.json and the %s "
-                                              + "environment variable is not set. Defaulting to Maven Central.",
-                                              EnvironmentVariable.SMITHY_MAVEN_REPOS));
-            resolver.addRepository(CENTRAL);
-        }
     }
 
     private File getCacheFile(BuildOptions buildOptions, SmithyBuildConfig config) {
