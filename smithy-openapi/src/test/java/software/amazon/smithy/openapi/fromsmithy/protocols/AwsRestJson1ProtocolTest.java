@@ -288,4 +288,29 @@ public class AwsRestJson1ProtocolTest {
             Node.assertEquals(result, expectedNode);
         }
     }
+
+    @Test
+    public void combinesErrorsWithSameStatusCode() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("error-code-collision-test.smithy"))
+                .discoverModels()
+                .assemble()
+                .unwrap();
+        OpenApiConfig config = new OpenApiConfig();
+        config.setService(ShapeId.from("example#Example"));
+        config.setOnErrorStatusConflict(OpenApiConfig.ErrorStatusConflictHandlingStrategy.ONE_OF);
+        ObjectNode result = OpenApiConverter.create()
+                .config(config)
+                .convertToNode(model);
+        InputStream openApiStream = getClass()
+                .getResourceAsStream("error-code-collision-test-use-oneof.openapi.json");
+
+        if (openApiStream == null) {
+            throw new RuntimeException("OpenAPI model not found for test case: "
+                    + "error-code-collision-test-use-properties.openapi.json");
+        } else {
+            Node expectedNode = Node.parse(IoUtils.toUtf8String(openApiStream));
+            Node.assertEquals(result, expectedNode);
+        }
+    }
 }

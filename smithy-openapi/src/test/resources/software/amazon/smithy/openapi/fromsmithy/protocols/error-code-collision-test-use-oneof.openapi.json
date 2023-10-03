@@ -1,0 +1,272 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Example",
+    "version": "2006-03-01"
+  },
+  "paths": {
+    "/time": {
+      "get": {
+        "operationId": "GetCurrentTime",
+        "responses": {
+          "200": {
+            "description": "GetCurrentTime 200 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCurrentTimeResponseContent"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "GetCurrentTime404Error 404 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCurrentTime404ErrorResponseContent"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "GetCurrentTime429Error 429 response",
+            "headers": {
+              "error1-header": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "error2-header": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCurrentTime429ErrorResponseContent"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Error1": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ]
+      },
+      "Error2": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "message2": {
+            "type": "string"
+          },
+          "message3": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ]
+      },
+      "Error3": {
+        "type": "object",
+        "properties": {
+          "message24": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message24"
+        ]
+      },
+      "Error4": {
+        "type": "object",
+        "properties": {
+          "message365": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message365"
+        ]
+      },
+      "Error5": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ]
+      },
+      "Error6": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ]
+      },
+      "Error7": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ]
+      },
+      "Error8": {
+        "type": "object",
+        "properties": {
+          "message2": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message2"
+        ]
+      },
+      "GetCurrentTime404ErrorResponseContent": {
+        "oneOf": [
+          {
+            "type": "object",
+            "title": "Error7",
+            "properties": {
+              "Error7": {
+                "$ref": "#/components/schemas/Error7"
+              }
+            },
+            "required": [
+              "Error7"
+            ]
+          },
+          {
+            "type": "object",
+            "title": "Error8",
+            "properties": {
+              "Error8": {
+                "$ref": "#/components/schemas/Error8"
+              }
+            },
+            "required": [
+              "Error8"
+            ]
+          }
+        ]
+      },
+      "GetCurrentTime429ErrorResponseContent": {
+        "oneOf": [
+          {
+            "type": "object",
+            "title": "Error1",
+            "properties": {
+              "Error1": {
+                "$ref": "#/components/schemas/Error1"
+              }
+            },
+            "required": [
+              "Error1"
+            ]
+          },
+          {
+            "type": "object",
+            "title": "Error2",
+            "properties": {
+              "Error2": {
+                "$ref": "#/components/schemas/Error2"
+              }
+            },
+            "required": [
+              "Error2"
+            ]
+          },
+          {
+            "type": "object",
+            "title": "Error3",
+            "properties": {
+              "Error3": {
+                "$ref": "#/components/schemas/Error3"
+              }
+            },
+            "required": [
+              "Error3"
+            ]
+          },
+          {
+            "type": "object",
+            "title": "Error4",
+            "properties": {
+              "Error4": {
+                "$ref": "#/components/schemas/Error4"
+              }
+            },
+            "required": [
+              "Error4"
+            ]
+          },
+          {
+            "type": "object",
+            "title": "Error5",
+            "properties": {
+              "Error5": {
+                "$ref": "#/components/schemas/Error5"
+              }
+            },
+            "required": [
+              "Error5"
+            ]
+          },
+          {
+            "type": "object",
+            "title": "Error6",
+            "properties": {
+              "Error6": {
+                "$ref": "#/components/schemas/Error6"
+              }
+            },
+            "required": [
+              "Error6"
+            ]
+          }
+        ]
+      },
+      "GetCurrentTimeResponseContent": {
+        "type": "object",
+        "properties": {
+          "time": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "required": [
+          "time"
+        ]
+      }
+    }
+  }
+}
