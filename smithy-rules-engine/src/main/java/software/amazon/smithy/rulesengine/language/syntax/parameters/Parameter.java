@@ -123,6 +123,11 @@ public final class Parameter extends SyntaxElement implements ToSmithyBuilder<Pa
         return "{" + name + "}";
     }
 
+    @Override
+    public String template() {
+        return getTemplate();
+    }
+
     /**
      * Gets if the parameter is required or not.
      *
