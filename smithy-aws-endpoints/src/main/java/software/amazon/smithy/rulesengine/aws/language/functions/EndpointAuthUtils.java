@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import software.amazon.smithy.model.FromSourceLocation;
+import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
@@ -163,6 +164,48 @@ public final class EndpointAuthUtils {
 
             // Validate shared Sigv4 properties.
             events.addAll(SigV4SchemeValidator.validateOptionalSharedProperties(authScheme, emitter));
+            return events;
+        }
+    }
+
+    static final class SigV4SubSchemeValidator implements AuthSchemeValidator {
+        SigV4SubSchemeValidator() {}
+
+        @Override
+        public boolean test(String name) {
+            return name.startsWith("sigv4-");
+        }
+
+        @Override
+        public List<ValidationEvent> validateScheme(
+                Map<Identifier, Literal> authScheme,
+                FromSourceLocation sourceLocation,
+                BiFunction<FromSourceLocation, String, ValidationEvent> emitter
+        ) {
+            List<ValidationEvent> events = hasAllKeys(emitter, authScheme,
+                    ListUtils.of(RuleSetAuthSchemesValidator.NAME, ID_SIGNING_NAME), sourceLocation);
+            validateStringProperty(emitter, authScheme, ID_SIGNING_NAME).ifPresent(events::add);
+
+            // Events are emitted by default as ERROR, but we want to make this viable with acknowledgement.
+            ValidationEvent event = emitter.apply(sourceLocation,
+                    "Requirements for `sigv4-` auth sub-scheme validation may change.");
+            events.add(event.toBuilder().severity(Severity.DANGER).build());
+
+            return events;
+        }
+
+        private List<ValidationEvent> hasAllKeys(
+                BiFunction<FromSourceLocation, String, ValidationEvent> emitter,
+                Map<Identifier, Literal> authScheme,
+                List<Identifier> requiredKeys,
+                FromSourceLocation sourceLocation
+        ) {
+            List<ValidationEvent> events = new ArrayList<>();
+            for (Identifier key : requiredKeys) {
+                if (!authScheme.containsKey(key)) {
+                    emitter.apply(sourceLocation, String.format("Missing key: `%s`", key));
+                }
+            }
             return events;
         }
     }
