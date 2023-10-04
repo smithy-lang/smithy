@@ -45,7 +45,7 @@ public class RuleSetAwsBuiltInValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
         for (Parameter parameter : ruleSet.getParameters()) {
             if (parameter.isBuiltIn()) {
-                validateBuiltIn(serviceShape, parameter.getBuiltIn().get(), parameter, "RuleSet")
+                validateBuiltIn(serviceShape, parameter.getBuiltIn().get(), parameter, "BuiltIn")
                         .ifPresent(events::add);
             }
         }
