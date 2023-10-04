@@ -6,7 +6,6 @@
 package software.amazon.smithy.rulesengine.aws.validators;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -19,6 +18,7 @@ import software.amazon.smithy.rulesengine.aws.language.functions.AwsBuiltIns;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SetUtils;
 
 
@@ -45,7 +45,7 @@ public class RuleSetAwsBuiltInValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
         for (Parameter parameter : ruleSet.getParameters()) {
             if (parameter.isBuiltIn()) {
-                validateBuiltIn(serviceShape, parameter.getBuiltIn().get(), parameter, "BuiltIn")
+                validateBuiltIn(serviceShape, parameter.getBuiltIn().get(), parameter, "RuleSet")
                         .ifPresent(events::add);
             }
         }
@@ -58,11 +58,13 @@ public class RuleSetAwsBuiltInValidator extends AbstractValidator {
             FromSourceLocation source,
             String... eventIdSuffixes
     ) {
-        if (ADDITIONAL_APPROVAL_BUILT_INS.contains(builtInName) || builtInName.equals("AccountId")) {
+        if (ADDITIONAL_APPROVAL_BUILT_INS.contains(builtInName)) {
+            List<String> suffixes = new ArrayList(ListUtils.of(eventIdSuffixes));
+            suffixes.add(builtInName);
             return Optional.of(danger(serviceShape, source, String.format(
                             "The `%s` built-in used requires additional consideration of the rules that use it.",
                             builtInName),
-                    String.join(".", Arrays.asList(eventIdSuffixes))));
+                    String.join(".", suffixes)));
         }
         return Optional.empty();
     }
