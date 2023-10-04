@@ -281,6 +281,15 @@ bound to the ``linkId`` rule set parameter:
     }
 
 
+.. important::
+
+    If a member marked with the ``@contextParam`` trait is also marked as
+    :ref:`required <required-trait>`, clients MUST NOT send requests if the
+    parameter is unset, empty, or exclusively whitespace characters. This
+    ensures that servers can reliably dispatch to operations based on these
+    parameters.
+
+
 .. _rules-engine-parameters-built-ins:
 
 Rules engine built-ins
