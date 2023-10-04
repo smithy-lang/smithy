@@ -28,8 +28,8 @@ import software.amazon.smithy.utils.SetUtils;
 public class RuleSetAwsBuiltInValidator extends AbstractValidator {
 
     private static final Set<String> ADDITIONAL_APPROVAL_BUILT_INS = SetUtils.of(
-            AwsBuiltIns.ACCOUNT_ID.getName().toString(),
-            AwsBuiltIns.CREDENTIAL_SCOPE.getName().toString());
+            AwsBuiltIns.ACCOUNT_ID.getBuiltIn().get(),
+            AwsBuiltIns.CREDENTIAL_SCOPE.getBuiltIn().get());
 
     @Override
     public List<ValidationEvent> validate(Model model) {
@@ -58,7 +58,7 @@ public class RuleSetAwsBuiltInValidator extends AbstractValidator {
             FromSourceLocation source,
             String... eventIdSuffixes
     ) {
-        if (ADDITIONAL_APPROVAL_BUILT_INS.contains(builtInName)) {
+        if (ADDITIONAL_APPROVAL_BUILT_INS.contains(builtInName) || builtInName.equals("AccountId")) {
             return Optional.of(danger(serviceShape, source, String.format(
                             "The `%s` built-in used requires additional consideration of the rules that use it.",
                             builtInName),
