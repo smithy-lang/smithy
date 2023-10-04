@@ -44,6 +44,7 @@ public final class AwsRuleSetExtension implements EndpointRuleSetExtension {
         return ListUtils.of(
                 new EndpointAuthUtils.SigV4SchemeValidator(),
                 new EndpointAuthUtils.SigV4aSchemeValidator(),
+                new EndpointAuthUtils.SigV4SubSchemeValidator(),
                 new EndpointAuthUtils.BetaSchemeValidator());
     }
 }
