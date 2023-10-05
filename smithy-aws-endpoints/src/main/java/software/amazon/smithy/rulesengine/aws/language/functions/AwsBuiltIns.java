@@ -54,6 +54,28 @@ public final class AwsBuiltIns {
                     .build();
 
     /**
+     * Built-in parameter representing the AccountId.
+     */
+    public static final Parameter ACCOUNT_ID =
+            Parameter.builder()
+                    .name("AccountId")
+                    .type(ParameterType.STRING)
+                    .builtIn("AWS::Auth::AccountId")
+                    .documentation("The AWS AccountId used for the request.")
+                    .build();
+
+    /**
+     * Built-in parameter representing the Credential Scope.
+     */
+    public static final Parameter CREDENTIAL_SCOPE =
+            Parameter.builder()
+                    .name("CredentialScope")
+                    .type(ParameterType.STRING)
+                    .builtIn("AWS::Auth::CredentialScope")
+                    .documentation("The AWS Credential Scope used for the request.")
+                    .build();
+
+    /**
      * This MUST only be used by the S3 rules.
      */
     public static final Parameter S3_ACCELERATE =

@@ -68,6 +68,25 @@ Description
 Type
     ``boolean``
 
+.. _rules-engine-aws-built-ins-account-id:
+
+``AWS::Auth::AccountId`` built-in
+=================================
+
+Description
+    The AWS AccountId.
+Type
+    ``string``
+
+.. _rules-engine-aws-built-ins-credential-scope:
+
+``AWS::Auth::CredentialScope`` built-in
+=======================================
+
+Description
+    The AWS Credential Scope.
+Type
+    ``string``
 
 .. _rules-engine-aws-built-ins-s3-accelerate:
 
