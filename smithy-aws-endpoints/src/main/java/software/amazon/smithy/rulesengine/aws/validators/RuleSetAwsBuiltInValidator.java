@@ -25,8 +25,7 @@ import software.amazon.smithy.utils.SetUtils;
  * Validator that AWS built-ins used in RuleSet parameters are supported.
  */
 public class RuleSetAwsBuiltInValidator extends AbstractValidator {
-
-    private static final Set<String> ADDITIONAL_APPROVAL_BUILT_INS = SetUtils.of(
+    private static final Set<String> ADDITIONAL_CONSIDERATION_BUILT_INS = SetUtils.of(
             AwsBuiltIns.ACCOUNT_ID.getBuiltIn().get(),
             AwsBuiltIns.CREDENTIAL_SCOPE.getBuiltIn().get());
     private static final String ADDITIONAL_CONSIDERATION_MESSAGE = "The `%s` built-in used requires additional "
@@ -46,8 +45,7 @@ public class RuleSetAwsBuiltInValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
         for (Parameter parameter : ruleSet.getParameters()) {
             if (parameter.isBuiltIn()) {
-                validateBuiltIn(serviceShape, parameter.getBuiltIn().get(), parameter)
-                        .ifPresent(events::add);
+                validateBuiltIn(serviceShape, parameter.getBuiltIn().get(), parameter).ifPresent(events::add);
             }
         }
         return events;
@@ -58,8 +56,7 @@ public class RuleSetAwsBuiltInValidator extends AbstractValidator {
             String builtInName,
             FromSourceLocation source
     ) {
-        if (ADDITIONAL_APPROVAL_BUILT_INS.contains(builtInName)) {
-
+        if (ADDITIONAL_CONSIDERATION_BUILT_INS.contains(builtInName)) {
             return Optional.of(danger(
                     serviceShape, source,
                     String.format(ADDITIONAL_CONSIDERATION_MESSAGE, builtInName),
