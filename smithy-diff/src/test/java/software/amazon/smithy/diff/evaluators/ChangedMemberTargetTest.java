@@ -22,6 +22,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.diff.ModelDiff;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -38,17 +39,21 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public class ChangedMemberTargetTest {
     @Test
     public void detectsIncompatibleTypeChanges() {
+        SourceLocation source = new SourceLocation("a.smithy", 2, 3);
         Shape shape1 = StringShape.builder().id("foo.baz#String").build();
         MemberShape member1 = MemberShape.builder().id("foo.baz#List$member").target(shape1.getId()).build();
         ListShape list1 = ListShape.builder().id("foo.baz#List").member(member1).build();
         Shape shape2 = TimestampShape.builder().id("foo.baz#Timestamp").build();
-        MemberShape member2 = MemberShape.builder().id("foo.baz#List$member").target(shape2.getId()).build();
+        MemberShape member2 = MemberShape.builder().id("foo.baz#List$member").target(shape2.getId()).source(source)
+                .build();
         ListShape list2 = ListShape.builder().id("foo.baz#List").member(member2).build();
         Model modelA = Model.assembler().addShapes(shape1, shape2, member1, list1).assemble().unwrap();
         Model modelB = Model.assembler().addShapes(shape1, shape2, member2, list2).assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
         assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, "ChangedMemberTarget").get(0).getSourceLocation(),
+                equalTo(source));
         assertThat(TestHelper.findEvents(events, member2.getId()).size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, Severity.ERROR).size(), equalTo(1));
     }
@@ -152,7 +157,7 @@ public class ChangedMemberTargetTest {
 
     @Test
     public void detectsTraitAddedToMemberTarget() {
-                StringShape shape1 = StringShape.builder().id("foo.baz#String1").build();
+        StringShape shape1 = StringShape.builder().id("foo.baz#String1").build();
         MemberShape member1 = MemberShape.builder().id("foo.baz#List$member").target(shape1.getId()).build();
         ListShape list1 = ListShape.builder().id("foo.baz#List").member(member1).build();
 

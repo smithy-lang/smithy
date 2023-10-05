@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import software.amazon.smithy.diff.ChangedShape;
 import software.amazon.smithy.diff.Differences;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
@@ -85,6 +86,7 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
                                 .severity(Severity.ERROR)
                                 .message(String.format("Enum value `%s` was removed", definition.getValue()))
                                 .shape(change.getNewShape())
+                                .sourceLocation(oldTrait.getSourceLocation())
                                 .id(getEventId() + REMOVED + enumIndex)
                                 .build()
                 );
@@ -101,6 +103,7 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
                                             newValue.getName().orElse(null),
                                             definition.getValue()))
                                     .shape(change.getNewShape())
+                                    .sourceLocation(change.getNewShape().getSourceLocation())
                                     .id(getEventId() + NAME_CHANGED + enumIndex)
                                     .build()
                     );
@@ -120,12 +123,19 @@ public final class ChangedEnumTrait extends AbstractDiffEvaluator {
                                             + "can cause compatibility issues when ordinal values are used for "
                                             + "iteration, serialization, etc.", definition.getValue()))
                                     .shape(change.getNewShape())
+                                    .sourceLocation(oldTrait.getSourceLocation())
                                     .id(getEventId() + ORDER_CHANGED + newPosition)
                                     .build()
                     );
                     oldEndPosition++;
                 } else {
-                    events.add(note(change.getNewShape(), String.format(
+                    SourceLocation appendedSource = newTrait.getSourceLocation();
+                    // If the new trait is synthetic, its source will always be N/A.
+                    // Fall back to the shape's location.
+                    if (newTrait.isSynthetic()) {
+                        appendedSource = change.getNewShape().getSourceLocation();
+                    }
+                    events.add(note(change.getNewShape(), appendedSource, String.format(
                             "Enum value `%s` was appended", definition.getValue())));
                 }
             }

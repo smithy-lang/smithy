@@ -24,6 +24,7 @@ import java.util.function.Consumer;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import software.amazon.smithy.model.SourceException;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.EnumDefinition;
@@ -516,6 +517,11 @@ public final class EnumShape extends StringShape {
             }
             members(NamedMemberUtils.flattenMixins(members.get(), getMixins(), getId(), getSourceLocation()));
             return (Builder) super.flattenMixins();
+        }
+
+        @Override
+        public Builder source(SourceLocation source) {
+            return (Builder) super.source(source);
         }
     }
 }

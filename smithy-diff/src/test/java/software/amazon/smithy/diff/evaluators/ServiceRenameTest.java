@@ -24,6 +24,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.diff.ModelDiff;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.validation.Severity;
@@ -48,6 +49,7 @@ public class ServiceRenameTest {
 
     @Test
     public void detectsRenameRemoved() {
+        SourceLocation source = new SourceLocation("foo.smithy");
         ServiceShape service1 = service.toBuilder()
                 .putRename(operation.getId(), "O1")
                 .build();
@@ -57,6 +59,7 @@ public class ServiceRenameTest {
 
         ServiceShape service2 = service.toBuilder()
                 .clearRename()
+                .source(source)
                 .build();
         Model modelB = modelA.toBuilder().addShape(service2).build();
 
@@ -64,10 +67,12 @@ public class ServiceRenameTest {
         assertThat(TestHelper.findEvents(events, "ServiceRename").size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, service2.getId()).size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, Severity.ERROR).size(), equalTo(1));
+        assertThat(events.get(0).getSourceLocation(), equalTo(source));
     }
 
     @Test
     public void detectsRenameChange() {
+        SourceLocation source = new SourceLocation("foo.smithy");
         ServiceShape service1 = service.toBuilder()
                 .putRename(operation.getId(), "O1")
                 .build();
@@ -77,6 +82,7 @@ public class ServiceRenameTest {
 
         ServiceShape service2 = service.toBuilder()
                 .putRename(operation.getId(), "O2")
+                .source(source)
                 .build();
         Model modelB = modelA.toBuilder().addShape(service2).build();
 
@@ -84,16 +90,19 @@ public class ServiceRenameTest {
         assertThat(TestHelper.findEvents(events, "ServiceRename").size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, service2.getId()).size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, Severity.ERROR).size(), equalTo(1));
+        assertThat(events.get(0).getSourceLocation(), equalTo(source));
     }
 
     @Test
     public void detectsRenameAdded() {
+        SourceLocation source = new SourceLocation("foo.smithy");
         Model modelA = Model.builder()
                 .addShapes(operation, service)
                 .build();
 
         ServiceShape service2 = service.toBuilder()
                 .putRename(operation.getId(), "O2")
+                .source(source)
                 .build();
         Model modelB = modelA.toBuilder().addShape(service2).build();
 
@@ -102,6 +111,7 @@ public class ServiceRenameTest {
         assertThat(TestHelper.findEvents(events, "ServiceRename").size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, service2.getId()).size(), equalTo(1));
         assertThat(TestHelper.findEvents(events, Severity.ERROR).size(), equalTo(1));
+        assertThat(events.get(0).getSourceLocation(), equalTo(source));
     }
 
     @Test

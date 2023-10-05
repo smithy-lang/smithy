@@ -153,7 +153,11 @@ public class ModifiedTraitTest {
 
         assertThat(events, hasSize(3));
         assertThat(events.stream().filter(e -> e.getSeverity() == Severity.WARNING).count(), equalTo(1L));
+        assertThat(events.stream().filter(e -> e.getSourceLocation().getFilename().endsWith("a.smithy")).count(),
+                equalTo(1L));
         assertThat(events.stream().filter(e -> e.getSeverity() == Severity.NOTE).count(), equalTo(2L));
+        assertThat(events.stream().filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy")).count(),
+                equalTo(2L));
 
         assertThat(messages, containsInAnyOrder(
                 "Changed trait `smithy.example#b` from \"hello\" to \"hello!\"",
@@ -178,6 +182,8 @@ public class ModifiedTraitTest {
         assertThat(events, hasSize(2));
         assertThat(events.stream().filter(e -> e.getSeverity() == Severity.ERROR).count(), equalTo(1L));
         assertThat(events.stream().filter(e -> e.getSeverity() == Severity.WARNING).count(), equalTo(1L));
+        assertThat(events.stream().filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy")).count(),
+                equalTo(2L));
 
         assertThat(messages, containsInAnyOrder(
                 "Added trait contents to `smithy.example#aTrait` at path `/bar` with value \"no\"",
@@ -199,6 +205,10 @@ public class ModifiedTraitTest {
         List<String> messages = events.stream().map(ValidationEvent::getMessage).collect(Collectors.toList());
 
         assertThat(events, hasSize(4));
+        assertThat(events.stream().filter(e -> e.getMessage().contains("Removed"))
+                .filter(e -> e.getSourceLocation().getFilename().endsWith("a.smithy")).count(), equalTo(2L));
+        assertThat(events.stream().filter(e -> !e.getMessage().contains("Removed"))
+                .filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy")).count(), equalTo(2L));
         assertThat(messages, containsInAnyOrder(
                 "Changed trait contents of `smithy.example#aTrait` at path `/foo/1` from \"b\" to \"B\"",
                 "Added trait contents to `smithy.example#aTrait` at path `/foo/3` with value \"4\"",
@@ -222,6 +232,10 @@ public class ModifiedTraitTest {
         List<String> messages = events.stream().map(ValidationEvent::getMessage).collect(Collectors.toList());
 
         assertThat(events, hasSize(4));
+        assertThat(events.stream().filter(e -> e.getMessage().contains("Removed"))
+                .filter(e -> e.getSourceLocation().getFilename().endsWith("a.smithy")).count(), equalTo(2L));
+        assertThat(events.stream().filter(e -> !e.getMessage().contains("Removed"))
+                .filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy")).count(), equalTo(2L));
         assertThat(messages, containsInAnyOrder(
                 "Changed trait contents of `smithy.example#aTrait` at path `/foo/1` from \"b\" to \"B\"",
                 "Added trait contents to `smithy.example#aTrait` at path `/foo/3` with value \"4\"",
@@ -244,6 +258,10 @@ public class ModifiedTraitTest {
         List<String> messages = events.stream().map(ValidationEvent::getMessage).collect(Collectors.toList());
 
         assertThat(events, hasSize(4));
+        assertThat(events.stream().filter(e -> e.getMessage().contains("Removed"))
+                .filter(e -> e.getSourceLocation().getFilename().endsWith("a.smithy")).count(), equalTo(2L));
+        assertThat(events.stream().filter(e -> !e.getMessage().contains("Removed"))
+                .filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy")).count(), equalTo(2L));
         assertThat(messages, containsInAnyOrder(
                 "Changed trait contents of `smithy.example#aTrait` at path `/foo/bam` from \"b\" to \"B\"",
                 "Removed trait contents from `smithy.example#aTrait` at path `/foo`. Removed value: {\n    \"baz\": \"1\",\n    \"bam\": \"2\",\n    \"boo\": \"3\"\n}",
@@ -266,6 +284,8 @@ public class ModifiedTraitTest {
         List<String> messages = events.stream().map(ValidationEvent::getMessage).collect(Collectors.toList());
 
         assertThat(events, hasSize(2));
+        assertThat(events.stream().filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy")).count(),
+                equalTo(2L));
         assertThat(messages, containsInAnyOrder(
                 "Changed trait contents of `smithy.example#aTrait` at path `/baz/foo` from \"a\" to \"b\"",
                 "Changed trait contents of `smithy.example#aTrait` at path `/baz/baz` from \"a\" to \"b\""
@@ -286,6 +306,10 @@ public class ModifiedTraitTest {
         List<String> messages = events.stream().map(ValidationEvent::getMessage).collect(Collectors.toList());
 
         assertThat(events, hasSize(12));
+        assertThat(events.stream().filter(e -> e.getMessage().contains("Removed"))
+                .filter(e -> e.getSourceLocation().getFilename().endsWith("a.smithy")).count(), equalTo(3L));
+        assertThat(events.stream().filter(e -> e.getMessage().contains("Changed") || e.getMessage().contains("Added"))
+                .filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy")).count(), equalTo(9L));
         assertThat(messages, containsInAnyOrder(
                 "Added trait contents to `smithy.example#aTrait` at path `/a` with value \"a\"",
                 "Removed trait contents from `smithy.example#aTrait` at path `/b`. Removed value: \"a\"",
