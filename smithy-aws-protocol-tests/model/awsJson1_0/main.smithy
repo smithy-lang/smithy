@@ -30,6 +30,10 @@ service JsonRpc10 {
         HostWithPathOperation,
 
         // requestCompression trait tests
-        PutWithContentEncoding
+        PutWithContentEncoding,
+
+        OperationWithDefaults,
+        OperationWithRequiredMembers,
+        OperationWithNestedStructure
     ]
 }
