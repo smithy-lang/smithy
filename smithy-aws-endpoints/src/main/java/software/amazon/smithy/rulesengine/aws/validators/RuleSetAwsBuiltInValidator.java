@@ -18,7 +18,6 @@ import software.amazon.smithy.rulesengine.aws.language.functions.AwsBuiltIns;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.traits.EndpointRuleSetTrait;
-import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SetUtils;
 
 
@@ -30,6 +29,8 @@ public class RuleSetAwsBuiltInValidator extends AbstractValidator {
     private static final Set<String> ADDITIONAL_APPROVAL_BUILT_INS = SetUtils.of(
             AwsBuiltIns.ACCOUNT_ID.getBuiltIn().get(),
             AwsBuiltIns.CREDENTIAL_SCOPE.getBuiltIn().get());
+    private static final String ADDITIONAL_CONSIDERATION_MESSAGE = "The `%s` built-in used requires additional "
+           + "consideration of the rules that use it.";
 
     @Override
     public List<ValidationEvent> validate(Model model) {
@@ -45,7 +46,7 @@ public class RuleSetAwsBuiltInValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
         for (Parameter parameter : ruleSet.getParameters()) {
             if (parameter.isBuiltIn()) {
-                validateBuiltIn(serviceShape, parameter.getBuiltIn().get(), parameter, "RuleSet")
+                validateBuiltIn(serviceShape, parameter.getBuiltIn().get(), parameter)
                         .ifPresent(events::add);
             }
         }
@@ -55,16 +56,14 @@ public class RuleSetAwsBuiltInValidator extends AbstractValidator {
     private Optional<ValidationEvent> validateBuiltIn(
             ServiceShape serviceShape,
             String builtInName,
-            FromSourceLocation source,
-            String... eventIdSuffixes
+            FromSourceLocation source
     ) {
         if (ADDITIONAL_APPROVAL_BUILT_INS.contains(builtInName)) {
-            List<String> suffixes = new ArrayList(ListUtils.of(eventIdSuffixes));
-            suffixes.add(builtInName);
-            return Optional.of(danger(serviceShape, source, String.format(
-                            "The `%s` built-in used requires additional consideration of the rules that use it.",
-                            builtInName),
-                    String.join(".", suffixes)));
+
+            return Optional.of(danger(
+                    serviceShape, source,
+                    String.format(ADDITIONAL_CONSIDERATION_MESSAGE, builtInName),
+                    builtInName));
         }
         return Optional.empty();
     }
