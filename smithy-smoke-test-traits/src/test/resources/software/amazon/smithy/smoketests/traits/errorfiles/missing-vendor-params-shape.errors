@@ -1,0 +1,2 @@
+[DANGER] -: Syntactic shape ID `MissingVendorParamsShape` does not resolve to a valid shape ID: `smithy.example#MissingVendorParamsShape`. Did you mean to quote this string? Are you missing a model file? | SyntacticShapeIdTarget
+[ERROR] -: Shape not found in model: smithy.example#MissingVendorParamsShape | Model

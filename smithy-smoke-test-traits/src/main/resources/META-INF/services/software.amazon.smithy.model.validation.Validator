@@ -1,0 +1,2 @@
+software.amazon.smithy.smoketests.traits.SmokeTestCaseValidator
+software.amazon.smithy.smoketests.traits.UniqueSmokeTestCaseIdValidator
