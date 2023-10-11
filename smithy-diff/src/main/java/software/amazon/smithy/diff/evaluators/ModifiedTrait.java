@@ -273,6 +273,7 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                                                          .id(getValidationEventId(this, trait))
                                                          .severity(severity)
                                                          .shape(shape)
+                                                         .sourceLocation(left.getSourceLocation())
                                                          .message(message)
                                                          .build());
             }

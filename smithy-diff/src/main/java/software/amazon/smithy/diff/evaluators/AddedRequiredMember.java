@@ -52,7 +52,7 @@ public class AddedRequiredMember extends AbstractDiffEvaluator {
     private ValidationEvent emit(MemberShape memberShape) {
         return ValidationEvent.builder()
                 .id(getEventId())
-                .shapeId(memberShape.getId())
+                .shape(memberShape)
                 .message("Adding a new member with the `required` trait "
                         + "but not the `default` trait is backwards-incompatible.")
                 .severity(Severity.ERROR)

@@ -5,6 +5,7 @@ import software.amazon.smithy.diff.ModelDiff;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.DefaultTrait;
@@ -20,8 +21,15 @@ public class AddedRequiredMemberTest {
         StringShape s = StringShape.builder().id("smithy.example#Str").build();
         StructureShape a = StructureShape.builder().id("smithy.example#A")
                 .build();
+        SourceLocation source = new SourceLocation("main.smithy", 1, 2);
+        MemberShape member = MemberShape.builder()
+                .id(a.getId().withMember("foo"))
+                .target(s.getId())
+                .addTrait(new RequiredTrait())
+                .source(source)
+                .build();
         StructureShape b = StructureShape.builder().id("smithy.example#A")
-                .addMember("foo", s.getId(), b2 -> b2.addTrait(new RequiredTrait()))
+                .addMember(member)
                 .build();
         Model model1 = Model.builder().addShapes(s, a).build();
         Model model2 = Model.builder().addShapes(s, b).build();
@@ -34,6 +42,8 @@ public class AddedRequiredMemberTest {
         assertThat(TestHelper.findEvents(result.getDiffEvents(), "AddedRequiredMember").get(0).getMessage(),
                 equalTo("Adding a new member with the `required` trait " +
                         "but not the `default` trait is backwards-incompatible."));
+        assertThat(TestHelper.findEvents(result.getDiffEvents(), "AddedRequiredMember").get(0).getSourceLocation(),
+                equalTo(source));
     }
 
     @Test
