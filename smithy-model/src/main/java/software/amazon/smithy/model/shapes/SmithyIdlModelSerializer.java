@@ -647,7 +647,11 @@ public final class SmithyIdlModelSerializer {
             codeWriter.writeOptionalIdList("operations", shape.getIntroducedOperations());
             codeWriter.writeOptionalIdList("collectionOperations", shape.getCollectionOperations());
             codeWriter.writeOptionalIdList("resources", shape.getIntroducedResources());
-
+            if (shape.hasProperties()) {
+              codeWriter.openBlock("properties: {");
+              shape.getProperties().forEach((name, shapeId) -> codeWriter.write("$L: $I", name, shapeId));
+              codeWriter.closeBlock("}");
+            }
             codeWriter.closeBlock("}");
             codeWriter.write("");
             return null;
