@@ -16,6 +16,9 @@ service MyService {
     ]
 }
 
+resource EmptyResource {
+}
+
 resource MyResource {
     identifiers: {
         id: String
