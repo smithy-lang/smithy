@@ -1,6 +1,6 @@
 $version: "2.0"
 
-namespace aws.protocoltests.restXml
+namespace aws.protocoltests.restxml
 
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
