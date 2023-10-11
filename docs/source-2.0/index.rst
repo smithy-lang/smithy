@@ -157,4 +157,5 @@ Read more
 
     Source code <https://github.com/smithy-lang/smithy>
     Awesome Smithy <https://github.com/smithy-lang/awesome-smithy>
+    Smithy Examples <https://github.com/smithy-lang/smithy-examples>
     1.0 Documentation <https://smithy.io/1.0/>
