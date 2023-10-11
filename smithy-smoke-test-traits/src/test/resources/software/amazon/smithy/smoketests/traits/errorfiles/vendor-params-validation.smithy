@@ -40,7 +40,16 @@ use smithy.test#smokeTests
         expect: {
             success: {}
         }
-    }
+    },
+    {
+        id: "missing_vendor_params_shape",
+        vendorParams: {
+            foo: "bar"
+        },
+        expect: {
+            success: {}
+        }
+    },
 ])
 operation SayHello {
     input := {}

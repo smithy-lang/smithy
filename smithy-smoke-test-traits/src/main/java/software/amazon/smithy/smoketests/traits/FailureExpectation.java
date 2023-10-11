@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -23,7 +23,9 @@ import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 /**
- * Defines a failure expectation of a smoke test case.
+ * Defines the expected failure of a service call for a smoke test case.
+ *
+ * <p>This can be any error response, or a specific error response.
  */
 public final class FailureExpectation implements ToNode {
     private static final String ERROR_ID = "errorId";
@@ -34,18 +36,28 @@ public final class FailureExpectation implements ToNode {
         this.errorId = errorId;
     }
 
+    /**
+     * @return Creates a failure expectation that the service call will result
+     * in any error response.
+     */
     public static FailureExpectation anyError() {
         return new FailureExpectation(null);
     }
 
+    /**
+     * @param errorId Shape ID of the expected error.
+     * @return Creates a failure expectation that the service call will result
+     * in an error matching the given shape ID.
+     */
     public static FailureExpectation errorWithId(ShapeId errorId) {
         return new FailureExpectation(errorId);
     }
 
     /**
-     * Gets the ID of the expected error shape. If present, it indicates
-     * the call should throw a matching error. Otherwise, the call should
-     * throw any error.
+     * Gets the ID of the expected error shape.
+     *
+     * <p>If present, it indicates the call should throw a matching error.
+     * Otherwise, the call should throw any error.
      *
      * @return The ID of the expected error shape.
      */

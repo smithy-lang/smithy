@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -49,29 +49,36 @@ public class SmokeTestCaseValidator extends AbstractValidator {
             SmokeTestsTrait trait = shape.expectTrait(SmokeTestsTrait.class);
             List<SmokeTestCase> testCases = trait.getTestCases();
 
-            for (int i = 0; i < testCases.size(); i++) {
-                SmokeTestCase testCase = testCases.get(i);
-
+            for (SmokeTestCase testCase : testCases) {
                 // Validate vendor params shape
-                Optional<ShapeId> vendorParamsShapeOptional = testCase.getVendorParamsShape();
+                Optional<ShapeId> vendorParamsShapeIdOptional = testCase.getVendorParamsShape();
                 Optional<ObjectNode> vendorParamsOptional = testCase.getVendorParams();
-                if (vendorParamsShapeOptional.isPresent()) {
+                if (vendorParamsShapeIdOptional.isPresent()) {
                     if (!vendorParamsOptional.isPresent()) {
-                        events.add(warning(shape, trait,
-                                "Smoke test case defined a `vendorParamsShape` but no `vendorParams`"));
+                        events.add(warning(shape, trait, String.format(
+                                "Smoke test case with ID `%s` defined a `vendorParamsShape` but no `vendorParams`",
+                                testCase.getId())));
                     } else {
-                        Shape vendorParamsShape = model.expectShape(vendorParamsShapeOptional.get());
-                        NodeValidationVisitor vendorParamsValidator = createVisitor(vendorParamsOptional.get(), model,
-                                shape, i, ".vendorParams");
-                        events.addAll(vendorParamsShape.accept(vendorParamsValidator));
+                        Optional<Shape> vendorParamsShapeOptional = model.getShape(vendorParamsShapeIdOptional.get());
+                        if (vendorParamsShapeOptional.isPresent()) {
+                            Shape vendorParamsShape = vendorParamsShapeOptional.get();
+                            NodeValidationVisitor vendorParamsValidator = createVisitor(vendorParamsOptional.get(),
+                                    model, shape, testCase.getId(), ".vendorParams");
+                            events.addAll(vendorParamsShape.accept(vendorParamsValidator));
+                        }
+
                     }
+                } else if (vendorParamsOptional.isPresent()) {
+                    events.add(warning(shape, trait, String.format(
+                            "Smoke test case with ID `%s` defined `vendorParams` but no `vendorParamsShape`",
+                            testCase.getId())));
                 }
 
                 // Validate input params
                 StructureShape input = operationIndex.expectInputShape(shape);
                 if (input != null && testCase.getParams().isPresent()) {
-                    NodeValidationVisitor paramsValidator = createVisitor(testCase.getParams().get(), model, shape, i,
-                            ".params");
+                    NodeValidationVisitor paramsValidator = createVisitor(testCase.getParams().get(), model, shape,
+                            testCase.getId(), ".params");
                     events.addAll(input.accept(paramsValidator));
                 } else if (testCase.getParams().isPresent()) {
                     events.add(error(shape, trait, String.format(
@@ -89,14 +96,14 @@ public class SmokeTestCaseValidator extends AbstractValidator {
             ObjectNode node,
             Model model,
             Shape shape,
-            int position,
+            String caseId,
             String contextSuffix
     ) {
         return NodeValidationVisitor.builder()
                 .model(model)
                 .eventShapeId(shape.getId())
                 .value(node)
-                .startingContext(SmokeTestsTrait.ID + "." + position + contextSuffix)
+                .startingContext(SmokeTestsTrait.ID + "." + caseId + contextSuffix)
                 .eventId(getName())
                 .timestampValidationStrategy(TimestampValidationStrategy.EPOCH_SECONDS)
                 .allowOptionalNull(true)

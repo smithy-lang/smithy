@@ -75,10 +75,7 @@ structure FailureExpectation {
     /// Indicates that the call is expected to throw a specific type of error
     /// matching the targeted shape. If not specified, the error can be of
     /// any type.
-    @idRef(
-        failWhenMissing: true
-        selector: "[trait|error]"
-    )
+    @idRef(failWhenMissing: true, selector: "[trait|error]")
     errorId: String
 }
 
@@ -87,5 +84,6 @@ list TagList {
     member: Tag
 }
 
+@private
 @pattern("^[A-Za-z][A-Za-z0-9_\\-]+$")
 string Tag

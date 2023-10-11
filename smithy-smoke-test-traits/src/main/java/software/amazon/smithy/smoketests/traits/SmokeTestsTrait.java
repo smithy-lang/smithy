@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -25,7 +25,8 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.ListUtils;
 
 /**
- * Defines smoke tests.
+ * Defines a set of test cases to send to a live service to ensure that
+ * a client can connect to the service and get the right kind of response.
  */
 public final class SmokeTestsTrait extends AbstractTrait {
     public static final ShapeId ID = ShapeId.from("smithy.test#smokeTests");
@@ -56,6 +57,9 @@ public final class SmokeTestsTrait extends AbstractTrait {
         }
     }
 
+    /**
+     * @return The smoke test cases to perform on the operation.
+     */
     public List<SmokeTestCase> getTestCases() {
         return this.testCases;
     }
