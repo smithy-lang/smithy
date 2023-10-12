@@ -202,9 +202,9 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
                 return false;
             }
             Example example = (Example) o;
-            return allowConstraintErrors == example.allowConstraintErrors && Objects.equals(title, example.title) &&
-                    Objects.equals(documentation, example.documentation) && Objects.equals(input, example.input) &&
-                    Objects.equals(output, example.output) && Objects.equals(error, example.error);
+            return allowConstraintErrors == example.allowConstraintErrors && Objects.equals(title, example.title)
+                    && Objects.equals(documentation, example.documentation) && Objects.equals(input, example.input)
+                    && Objects.equals(output, example.output) && Objects.equals(error, example.error);
         }
 
         @Override
