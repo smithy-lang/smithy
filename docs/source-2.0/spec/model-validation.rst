@@ -182,6 +182,7 @@ Suppressions are created using the :ref:`suppress-trait` and
 :ref:`suppressions metadata <suppressions-metadata>`.
 
 
+.. smithy-trait:: smithy.api#suppress
 .. _suppress-trait:
 
 ``suppress`` trait

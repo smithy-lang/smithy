@@ -516,6 +516,7 @@ The following example defines a :ref:`map <map>` shape that MAY contain
     }
 
 
+.. smithy-trait:: smithy.api#mixin
 .. _mixin-trait:
 
 ``mixin`` trait
