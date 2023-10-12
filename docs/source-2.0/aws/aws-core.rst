@@ -1209,6 +1209,7 @@ trait.
 
 
 .. smithy-trait:: aws.api#tagEnabled
+.. _tagEnabled-trait:
 
 ----------------------------
 ``aws.api#tagEnabled`` trait
@@ -1379,6 +1380,7 @@ through the operates attached to the service.
 
 
 .. smithy-trait:: aws.api#taggable
+.. _taggable-trait:
 
 --------------------------
 ``aws.api#taggable`` trait
