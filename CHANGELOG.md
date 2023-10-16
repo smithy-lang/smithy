@@ -1,5 +1,27 @@
 # Smithy Changelog
 
+## 1.40.0 (2023-10-16)
+
+### Features
+
+* Added new protocol tests for the `restXml` protocol, which assert request/response behaviors for string payloads. ([#2007](https://github.com/smithy-lang/smithy/pull/2007))
+* Added new package, `smithy-smoke-test-traits`, which defines the traits for smoke tests. This package contains the smithy model definitions of said traits, their java implementations, and unit tests. ([#2005](https://github.com/smithy-lang/smithy/pull/2005))
+* Added auth-scheme validator that runs for SigV4 sub-schemes as part of the AWS rule-set in `smithy-rules-engine`. ([#2000](https://github.com/smithy-lang/smithy/pull/2000))
+* Added `AccountId` and `CredentialScope` parameters for AWS-specific endpoint rules in `smithy-rules-engine`. ([#1993](https://github.com/smithy-lang/smithy/pull/1993))
+
+### Documentation
+
+* Added traits anchors for a few traits that were previously missing. ([#2008](https://github.com/smithy-lang/smithy/pull/2008))
+* Added `Smithy Examples` embedding to the [smithy.io](https://smithy.io) sidebar under `Project`. ([#2006](https://github.com/smithy-lang/smithy/pull/2006))
+* Added important notice for the `@contextParam` trait to clarify expected behavior of clients when `@required` is used on the same member.([#1999](https://github.com/smithy-lang/smithy/pull/1999))
+
+### Bug Fixes
+
+* Fixed missing source-locations in emitted events by `smithy-diff`. Previously, `N/A` would be displayed instead of the real location. ([#2001](https://github.com/smithy-lang/smithy/pull/2001))
+* Added missing method override in `smithy-rules-engine`. ([#1998](https://github.com/smithy-lang/smithy/pull/1998))
+* Fixed bug where properties of resource shapes were not being serialized in the IDL serializer. ([#1996](https://github.com/smithy-lang/smithy/pull/1996))
+* Fixed an issue with OpenAPI conversion not allowing multiple errors for a single status code with an opt-in that uses `oneOf` to de-conflict the errors. ([#1995](https://github.com/smithy-lang/smithy/pull/1995))
+
 ## 1.39.1 (2023-09-26)
 
 ### Bug Fixes
