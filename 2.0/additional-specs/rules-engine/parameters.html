@@ -289,6 +289,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy-examples">Smithy Examples</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
 </ul>
 
@@ -596,6 +597,14 @@ bound to the <code class="docutils literal notranslate"><span class="pre">linkId
 }
 </pre></div>
 </div>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">If a member marked with the <code class="docutils literal notranslate"><span class="pre">&#64;contextParam</span></code> trait is also marked as
+<a class="reference internal" href="../../spec/type-refinement-traits.html#required-trait"><span class="std std-ref">required</span></a>, clients MUST NOT send requests if the
+parameter is unset, empty, or exclusively whitespace characters. This
+ensures that servers can reliably dispatch to operations based on these
+parameters.</p>
+</div>
 </div>
 </div>
 <div class="section" id="rules-engine-built-ins">
@@ -632,7 +641,7 @@ two colon <code class="docutils literal notranslate"><span class="pre">:</span><
 add the <a class="reference internal" href="../../aws/rules-engine/built-ins.html#rules-engine-aws-built-ins"><span class="std std-ref">AWS rules engine built-ins</span></a>.</p>
 <p>The rules engine is highly extensible through
 <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.rulesengine.language.EndpointRuleSetExtension</span></code>
-<a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">service providers</a>. See the <a class="reference external" href="https://smithy.io/javadoc/1.39.1/software/amazon/smithy/rulesengine/language/EndpointRuleSetExtension.html">Javadocs</a> for more information.</p>
+<a class="reference external" href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">service providers</a>. See the <a class="reference external" href="https://smithy.io/javadoc/1.40.0/software/amazon/smithy/rulesengine/language/EndpointRuleSetExtension.html">Javadocs</a> for more information.</p>
 </div>
 </div>
 </div>
