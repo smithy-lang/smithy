@@ -38,7 +38,7 @@ public enum RelationshipType {
      * A resource relationship exists between a service or resource and the
      * resources bound through the "resources" property.
      */
-    RESOURCE("resource", RelationshipDirection.DIRECTED),
+    RESOURCE("resource", RelationshipDirection.DIRECTED, RelationshipCardinality.MANY),
 
     /**
      * An operation relationship exists between a service and the operations
@@ -46,21 +46,21 @@ public enum RelationshipType {
      * resource and the operations bound to the resource in the
      * "operations", "collectionOperations", and lifecycle properties.
      */
-    OPERATION("operation", RelationshipDirection.DIRECTED),
+    OPERATION("operation", RelationshipDirection.DIRECTED, RelationshipCardinality.MANY),
 
     /**
      * A collection operation relationship exists between a resource and the
      * operations bound to the resource in the "collectionOperations", "create",
      * and "list" properties.
      */
-    COLLECTION_OPERATION("collectionOperation", RelationshipDirection.DIRECTED),
+    COLLECTION_OPERATION("collectionOperation", RelationshipDirection.DIRECTED, RelationshipCardinality.MANY),
 
     /**
      * An instance operation relationship exists between a resource and the
      * operations bound to the resource in the "Operations", "put", "read",
      * "update", and "delete" properties.
      */
-    INSTANCE_OPERATION("instanceOperation", RelationshipDirection.DIRECTED),
+    INSTANCE_OPERATION("instanceOperation", RelationshipDirection.DIRECTED, RelationshipCardinality.MANY),
 
     /**
      * A BINDING relationship exists between the following shapes:
@@ -75,142 +75,142 @@ public enum RelationshipType {
      * The subject of the relationship is that shape that was bound, and the
      * target is the shape that declared the binding.
      */
-    BOUND("bound", RelationshipDirection.INVERTED),
+    BOUND("bound", RelationshipDirection.INVERTED, RelationshipCardinality.MANY),
 
     /**
      * Relationships that exist between a resource and the put lifecycle
      * operation.
      */
-    PUT("put", RelationshipDirection.DIRECTED),
+    PUT("put", RelationshipDirection.DIRECTED, RelationshipCardinality.ONE),
 
     /**
      * Relationships that exist between a resource and the create lifecycle
      * operation.
      */
-    CREATE("create", RelationshipDirection.DIRECTED),
+    CREATE("create", RelationshipDirection.DIRECTED, RelationshipCardinality.ONE),
 
     /**
      * Relationships that exist between a resource and the get lifecycle
      * operation.
      */
-    READ("read", RelationshipDirection.DIRECTED),
+    READ("read", RelationshipDirection.DIRECTED, RelationshipCardinality.ONE),
 
     /**
      * Relationships that exist between a resource and the update lifecycle
      * operation.
      */
-    UPDATE("update", RelationshipDirection.DIRECTED),
+    UPDATE("update", RelationshipDirection.DIRECTED, RelationshipCardinality.ONE),
 
     /**
      * Relationships that exist between a resource and the delete lifecycle
      * operation.
      */
-    DELETE("delete", RelationshipDirection.DIRECTED),
+    DELETE("delete", RelationshipDirection.DIRECTED, RelationshipCardinality.ONE),
 
     /**
      * Relationships that exist between a resource and the list lifecycle
      * operation.
      */
-    LIST("list", RelationshipDirection.DIRECTED),
+    LIST("list", RelationshipDirection.DIRECTED, RelationshipCardinality.ONE),
 
     /**
      * Relationships that exist between a {@link ResourceShape member} and
      * the shapes that are referenced by its identifiers property.
      */
-    IDENTIFIER("identifier", RelationshipDirection.DIRECTED),
+    IDENTIFIER("identifier", RelationshipDirection.DIRECTED, RelationshipCardinality.MANY),
 
     /**
      * Relationships that exist between a {@link ResourceShape member} and
      * the shapes that are referenced by its properties property.
      */
-    PROPERTY("property", RelationshipDirection.DIRECTED),
+    PROPERTY("property", RelationshipDirection.DIRECTED, RelationshipCardinality.MANY),
 
     /**
      * Relationships exist on {@link MemberShape member} shapes. The subject
      * of the relationship is the member shape, and the neighbor is the
      * aggregate shape that contains the member.
      */
-    MEMBER_CONTAINER(null, RelationshipDirection.INVERTED),
+    MEMBER_CONTAINER(null, RelationshipDirection.INVERTED, RelationshipCardinality.ONE),
 
     /**
      * Relationships exist on {@link MemberShape member} shapes. The subject
      * of the relationship is the member shape, and the neighbor is the shape
      * that the member targets.
      */
-    MEMBER_TARGET(null, RelationshipDirection.DIRECTED),
+    MEMBER_TARGET(null, RelationshipDirection.DIRECTED, RelationshipCardinality.ONE),
 
     /**
      * Relationships that exist on {@link OperationShape operation} shapes.
      * They reference {@link StructureShape structure} shapes that are used
      * as input.
      */
-    INPUT("input", RelationshipDirection.DIRECTED),
+    INPUT("input", RelationshipDirection.DIRECTED, RelationshipCardinality.ONE),
 
     /**
      * Relationships that exist on {@link OperationShape operation} shapes.
      * They reference {@link StructureShape structure} shapes that are used
      * as output.
      */
-    OUTPUT("output", RelationshipDirection.DIRECTED),
+    OUTPUT("output", RelationshipDirection.DIRECTED, RelationshipCardinality.ONE),
 
     /**
      * Relationships that exist on {@link OperationShape operation} shapes.
      * They reference {@link StructureShape structure} shapes that can be
      * returned from the operation.
      */
-    ERROR("error", RelationshipDirection.DIRECTED),
+    ERROR("error", RelationshipDirection.DIRECTED, RelationshipCardinality.MANY),
 
     /**
      * Relationships that exist on {@link EnumShape enum} shapes to their
      * {@link MemberShape member shapes}.
      */
-    ENUM_MEMBER("member", RelationshipDirection.DIRECTED),
+    ENUM_MEMBER("member", RelationshipDirection.DIRECTED, RelationshipCardinality.MANY_NAMED),
 
     /**
      * Relationships that exist on {@link IntEnumShape intEnum} shapes to their
      * {@link MemberShape member shapes}.
      */
-    INT_ENUM_MEMBER("member", RelationshipDirection.DIRECTED),
+    INT_ENUM_MEMBER("member", RelationshipDirection.DIRECTED, RelationshipCardinality.MANY_NAMED),
 
     /**
      * Relationships that exist on {@link ListShape list} shapes to their
      * {@link MemberShape member shapes}.
      */
-    LIST_MEMBER("member", RelationshipDirection.DIRECTED),
+    LIST_MEMBER("member", RelationshipDirection.DIRECTED, RelationshipCardinality.MANY_NAMED),
 
     /**
      * Relationships that exist on {@link SetShape set} shapes to their
      * {@link MemberShape member shapes}.
      */
     @Deprecated
-    SET_MEMBER("member", RelationshipDirection.DIRECTED),
+    SET_MEMBER("member", RelationshipDirection.DIRECTED, RelationshipCardinality.MANY_NAMED),
 
     /**
      * Relationships that exist on {@link MapShape map} shapes. They reference
      * {@link MemberShape member} shapes that define the key type for the map.
      */
-    MAP_KEY("member", RelationshipDirection.DIRECTED),
+    MAP_KEY("member", RelationshipDirection.DIRECTED, RelationshipCardinality.MANY_NAMED),
 
     /**
      * Relationships that exist on {@link MapShape map} shapes. They
      * reference {@link MemberShape member} shapes that define the value type
      * for the map.
      */
-    MAP_VALUE("member", RelationshipDirection.DIRECTED),
+    MAP_VALUE("member", RelationshipDirection.DIRECTED, RelationshipCardinality.MANY_NAMED),
 
     /**
      * Relationships that exist on {@link StructureShape structure} shapes.
      * They reference {@link MemberShape member} shapes that define the
      * attributes of a structure.
      */
-    STRUCTURE_MEMBER("member", RelationshipDirection.DIRECTED),
+    STRUCTURE_MEMBER("member", RelationshipDirection.DIRECTED, RelationshipCardinality.MANY_NAMED),
 
     /**
      * Relationships that exist on {@link UnionShape union}
      * shapes. They reference the {@link MemberShape member} shapes that define
      * the members of the union.
      */
-    UNION_MEMBER("member", RelationshipDirection.DIRECTED),
+    UNION_MEMBER("member", RelationshipDirection.DIRECTED, RelationshipCardinality.MANY_NAMED),
 
     /**
      * Relationships that exist between a shape and traits bound to the
@@ -222,20 +222,22 @@ public enum RelationshipType {
      * with {@link NeighborProvider#withTraitRelationships(Model, NeighborProvider)}
      * in order to yield trait relationships.
      */
-    TRAIT("trait", RelationshipDirection.DIRECTED),
+    TRAIT("trait", RelationshipDirection.DIRECTED, RelationshipCardinality.MANY),
 
     /**
      * Relationship that exists between a structure or union and a mixin applied
      * to the shape.
      */
-    MIXIN("mixin", RelationshipDirection.DIRECTED);
+    MIXIN("mixin", RelationshipDirection.DIRECTED, RelationshipCardinality.MANY);
 
     private String selectorLabel;
     private RelationshipDirection direction;
+    private RelationshipCardinality cardinality;
 
-    RelationshipType(String selectorLabel, RelationshipDirection direction) {
+    RelationshipType(String selectorLabel, RelationshipDirection direction, RelationshipCardinality cardinality) {
         this.selectorLabel = selectorLabel;
         this.direction = direction;
+        this.cardinality = cardinality;
     }
 
     /**
@@ -265,5 +267,9 @@ public enum RelationshipType {
      */
     public RelationshipDirection getDirection() {
         return direction;
+    }
+
+    public RelationshipCardinality getCardinality() {
+        return cardinality;
     }
 }
