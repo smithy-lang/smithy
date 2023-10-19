@@ -7,6 +7,7 @@ AWS integrations
 
     aws-core
     aws-auth
+    aws-endpoints-region
     aws-iam
     amazon-apigateway
     aws-cloudformation
