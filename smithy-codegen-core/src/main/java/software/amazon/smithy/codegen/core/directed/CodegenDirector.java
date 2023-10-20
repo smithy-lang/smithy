@@ -36,6 +36,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -74,6 +75,7 @@ public final class CodegenDirector<
     private ShapeId service;
     private Model model;
     private S settings;
+    private ObjectNode integrationSettings = Node.objectNode();
     private FileManifest fileManifest;
     private Supplier<Iterable<I>> integrationFinder;
     private DirectedCodegen<C, S, I> directedCodegen;
@@ -159,6 +161,9 @@ public final class CodegenDirector<
      * You will need to manually deserialize your settings if using types that
      * are not supported by Smithy's {@link NodeMapper}.
      *
+     * <p>This will also set {@link #integrationSettings} if the {@code integrations}
+     * key is present.
+     *
      * @param settingsType Settings type to deserialize into.
      * @param settingsNode Settings node value to deserialize.
      * @return Returns the deserialized settings as this is needed to provide a service shape ID.
@@ -167,7 +172,45 @@ public final class CodegenDirector<
         LOGGER.fine(() -> "Loading codegen settings from node value: " + settingsNode.getSourceLocation());
         S deserialized = new NodeMapper().deserialize(settingsNode, settingsType);
         settings(deserialized);
+        settingsNode.asObjectNode()
+            .flatMap(node -> node.getObjectMember("integrations"))
+            .ifPresent(this::integrationSettings);
         return deserialized;
+    }
+
+    /**
+     * Sets the settings node to be passed to integrations.
+     *
+     * <p>Generators MUST set this with the {@code integrations} key from their
+     * plugin settings.
+     *
+     * <pre>{@code
+     * {
+     *     "version": "1.0",
+     *     "projections": {
+     *         "codegen-projection": {
+     *             "plugins": {
+     *                 "code-generator": {
+     *                     "service": "com.example#DocumentedService",
+     *                     "integrations": {
+     *                         "my-integration": {
+     *                             "example-setting": "foo"
+     *                         }
+     *                     }
+     *                 }
+     *             }
+     *         }
+     *     }
+     * }
+     * }</pre>
+     *
+     * <p>In this example, the value of the {@code integrations} key is what must
+     * be passed to this method.
+     *
+     * @param integrationSettings Settings used to configure integrations.
+     */
+    public void integrationSettings(ObjectNode integrationSettings) {
+        this.integrationSettings = Objects.requireNonNull(integrationSettings);
     }
 
     /**
@@ -366,7 +409,10 @@ public final class CodegenDirector<
     private List<I> findIntegrations() {
         LOGGER.fine(() -> "Finding integration implementations of " + integrationClass.getName());
         List<I> integrations = SmithyIntegration.sort(integrationFinder.get());
-        integrations.forEach(i -> LOGGER.finest(() -> "Found integration " + i.getClass().getCanonicalName()));
+        integrations.forEach(i -> {
+            LOGGER.finest(() -> "Found integration " + i.getClass().getCanonicalName());
+            i.configure(settings, integrationSettings);
+        });
         return integrations;
     }
 
