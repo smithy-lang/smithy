@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.utils.AbstractCodeWriter;
 import software.amazon.smithy.utils.CodeInterceptor;
 import software.amazon.smithy.utils.CodeSection;
@@ -71,6 +72,50 @@ public interface SmithyIntegration<S, W extends SymbolWriter<W, ?>, C extends Co
     }
 
     /**
+     * Configures the integration.
+     *
+     * <p>This provides access to both the parsed settings for the generator and
+     * an unparsed {@link ObjectNode} containing settings for all integrations.
+     * Integrations SHOULD put all of their settings inside a nested object so
+     * that they don't experience conflicts with other integrations.
+     *
+     * <p>The following {@code smithy-build.json} file contains an example of how
+     * this configuration will be set.
+     *
+     * <pre>{@code
+     * {
+     *     "version": "1.0",
+     *     "projections": {
+     *         "codegen-projection": {
+     *             "plugins": {
+     *                 "code-generator": {
+     *                     "service": "com.example#DocumentedService",
+     *                     "integrations": {
+     *                         "my-integration": {
+     *                             "example-setting": "foo"
+     *                         }
+     *                     }
+     *                 }
+     *             }
+     *         }
+     *     }
+     * }
+     * }</pre>
+     *
+     * <p>In this example, everything under the key {@code integrations} will be
+     * provided as the {@code rawSettings} value and the {@code my-integration} key
+     * represents the settings for a particular integration.
+     *
+     * <p>Integrations SHOULD use modeled traits as much as possible to drive
+     * configuration. This is intended for configuration that doesn't make sense
+     * as a trait, such as configuring a documentation theme.
+     *
+     * @param settings Settings used to generate code.
+     * @param integrationSettings Settings used to configure integrations.
+     */
+    default void configure(S settings, ObjectNode integrationSettings) {}
+
+    /**
      * Gets the names of integrations that this integration must come before.
      *
      * <p>Dependencies are soft. Dependencies on integration names that cannot be found
@@ -103,7 +148,7 @@ public interface SmithyIntegration<S, W extends SymbolWriter<W, ?>, C extends Co
      * <p>By default, this method will return the given {@code model} as-is.
      *
      * @param model Model being generated.
-     * @param settings Setting used to generate code.
+     * @param settings Settings used to generate code.
      * @return Returns the updated model.
      */
     default Model preprocessModel(Model model, S settings) {
@@ -122,7 +167,7 @@ public interface SmithyIntegration<S, W extends SymbolWriter<W, ?>, C extends Co
      * <p>This integration method should be called only after {@link #preprocessModel}.
      *
      * @param model Model being generated.
-     * @param settings Setting used to generate.
+     * @param settings Settings used to generate.
      * @param symbolProvider The original {@code SymbolProvider}.
      * @return The decorated {@code SymbolProvider}.
      */
