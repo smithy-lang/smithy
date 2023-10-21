@@ -18,12 +18,15 @@ package software.amazon.smithy.model.validation.validators;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
+
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.Relationship;
 import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.PrivateTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -50,25 +53,28 @@ public final class PrivateAccessValidator extends AbstractValidator {
         String namespace = shape.getId().getNamespace();
         for (Relationship rel : relationships) {
             if (!rel.getShape().getId().getNamespace().equals(namespace)) {
-                ValidationEvent privateAccessValidationEvent = getPrivateAccessValidationEvent(rel);
-                events.add(privateAccessValidationEvent);
+                Optional<ValidationEvent> optPrivateAccessValidationEvent = getPrivateAccessValidationEvent(rel);
+                optPrivateAccessValidationEvent.ifPresent(events::add);
             }
         }
     }
 
-    private ValidationEvent getPrivateAccessValidationEvent(Relationship relationship) {
-        String message = String.format(
+    private Optional<ValidationEvent> getPrivateAccessValidationEvent(Relationship relationship) {
+        Optional<ShapeId> optNeighborShapeId = relationship.getNeighborShape().map(Shape::getId);
+        Optional<String> optMessage = optNeighborShapeId.map(neighborId -> String.format(
                 "This shape has an invalid %s relationship that targets a private shape, `%s`, in another namespace.",
                 relationship.getRelationshipType().toString().toLowerCase(Locale.US),
-                relationship.getNeighborShape().get().getId());
+                neighborId));
 
         // For now, emit a warning for trait relationships instead of an error. This is because private access on trait
         // relationships was not being validated in the past, so emitting a warning maintains backward compatibility.
         // This will be upgraded to an error in the future.
-        if (relationship.getRelationshipType().equals(RelationshipType.TRAIT)) {
-            return warning(relationship.getShape(), message);
-        } else {
-            return error(relationship.getShape(), message);
-        }
+        return optMessage.map(message -> {
+            if (relationship.getRelationshipType().equals(RelationshipType.TRAIT)) {
+                return warning(relationship.getShape(), message);
+            } else {
+                return error(relationship.getShape(), message);
+            }
+        });
     }
 }
