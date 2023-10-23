@@ -53,28 +53,26 @@ public final class PrivateAccessValidator extends AbstractValidator {
         String namespace = shape.getId().getNamespace();
         for (Relationship rel : relationships) {
             if (!rel.getShape().getId().getNamespace().equals(namespace)) {
-                Optional<ValidationEvent> optPrivateAccessValidationEvent = getPrivateAccessValidationEvent(rel);
-                optPrivateAccessValidationEvent.ifPresent(events::add);
+                events.add(getPrivateAccessValidationEvent(rel));
             }
         }
     }
 
-    private Optional<ValidationEvent> getPrivateAccessValidationEvent(Relationship relationship) {
-        Optional<ShapeId> optNeighborShapeId = relationship.getNeighborShape().map(Shape::getId);
-        Optional<String> optMessage = optNeighborShapeId.map(neighborId -> String.format(
+    private ValidationEvent getPrivateAccessValidationEvent(Relationship relationship) {
+        ShapeId neighborId = relationship.expectNeighborShape().getId();
+        String message = String.format(
                 "This shape has an invalid %s relationship that targets a private shape, `%s`, in another namespace.",
                 relationship.getRelationshipType().toString().toLowerCase(Locale.US),
-                neighborId));
+                neighborId
+        );
 
         // For now, emit a warning for trait relationships instead of an error. This is because private access on trait
         // relationships was not being validated in the past, so emitting a warning maintains backward compatibility.
         // This will be upgraded to an error in the future.
-        return optMessage.map(message -> {
-            if (relationship.getRelationshipType().equals(RelationshipType.TRAIT)) {
-                return warning(relationship.getShape(), message);
-            } else {
-                return error(relationship.getShape(), message);
-            }
-        });
+        if (relationship.getRelationshipType().equals(RelationshipType.TRAIT)) {
+            return warning(relationship.getShape(), message);
+        } else {
+            return error(relationship.getShape(), message);
+        }
     }
 }
