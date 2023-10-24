@@ -12,6 +12,11 @@ public class CapturingIntegration implements TestIntegration {
     public ObjectNode integrationSettings = Node.objectNode();
 
     @Override
+    public String name() {
+        return "capturing-integration";
+    }
+
+    @Override
     public void configure(TestSettings settings, ObjectNode integrationSettings) {
         this.integrationSettings = integrationSettings;
     }

@@ -145,6 +145,8 @@ public final class CodegenDirector<
     /**
      * Sets the required settings object used for code generation.
      *
+     * <p>{@link #integrationSettings} MUST also be set.
+     *
      * @param settings Settings object.
      */
     public void settings(S settings) {
@@ -205,7 +207,8 @@ public final class CodegenDirector<
      * }</pre>
      *
      * <p>In this example, the value of the {@code integrations} key is what must
-     * be passed to this method.
+     * be passed to this method. The value of the {@code my-integration} key will
+     * then be provided to an integration with the name {@code my-integration}.
      *
      * @param integrationSettings Settings used to configure integrations.
      */
@@ -411,7 +414,7 @@ public final class CodegenDirector<
         List<I> integrations = SmithyIntegration.sort(integrationFinder.get());
         integrations.forEach(i -> {
             LOGGER.finest(() -> "Found integration " + i.getClass().getCanonicalName());
-            i.configure(settings, integrationSettings);
+            i.configure(settings, integrationSettings.getObjectMember(i.name()).orElse(Node.objectNode()));
         });
         return integrations;
     }
