@@ -360,9 +360,11 @@ public class CodegenDirectorTest {
             .unwrap();
 
         ObjectNode integrationSettings = Node.objectNode().withMember("spam", "eggs");
+        ObjectNode allIntegrationSettings = Node.objectNode()
+                .withMember("capturing-integration", integrationSettings);
         ObjectNode settings = Node.objectNode()
             .withMember("foo", "hi")
-            .withMember("integrations", integrationSettings);
+            .withMember("integrations", allIntegrationSettings);
         runner.settings(TestSettings.class, settings);
         runner.directedCodegen(testDirected);
         runner.fileManifest(manifest);

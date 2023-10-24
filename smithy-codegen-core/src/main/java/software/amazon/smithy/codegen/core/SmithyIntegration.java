@@ -75,9 +75,8 @@ public interface SmithyIntegration<S, W extends SymbolWriter<W, ?>, C extends Co
      * Configures the integration.
      *
      * <p>This provides access to both the parsed settings for the generator and
-     * an unparsed {@link ObjectNode} containing settings for all integrations.
-     * Integrations SHOULD put all of their settings inside a nested object so
-     * that they don't experience conflicts with other integrations.
+     * an unparsed {@link ObjectNode} containing settings for this particular
+     * integration.
      *
      * <p>The following {@code smithy-build.json} file contains an example of how
      * this configuration will be set.
@@ -102,9 +101,9 @@ public interface SmithyIntegration<S, W extends SymbolWriter<W, ?>, C extends Co
      * }
      * }</pre>
      *
-     * <p>In this example, everything under the key {@code integrations} will be
-     * provided as the {@code rawSettings} value and the {@code my-integration} key
-     * represents the settings for a particular integration.
+     * <p>In this example, an integration whose {@link #name} is {@code my-integration}
+     * Would receive the extra settings from the key of the same name within the
+     * {@code integrations} node.
      *
      * <p>Integrations SHOULD use modeled traits as much as possible to drive
      * configuration. This is intended for configuration that doesn't make sense
