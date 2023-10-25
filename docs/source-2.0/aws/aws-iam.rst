@@ -221,9 +221,46 @@ Condition keys in IAM policies can be evaluated with `condition operators`_.
 Summary
     Declares that the condition keys of a resource should not be inferred.
 Trait selector
-    ``resource``
+    ``:test(service, resource)``
 Value type
     Annotation trait
+
+When a service is marked with the ``aws.iam#disableConditionKeyInference``
+trait, all the resources bound to the service will not have condition
+keys automatically inferred from its identifiers and the identifiers
+of its ancestors.
+
+The following example shows resources ``MyResource1`` and ``MyResource2``
+have had condition key inference disabled because they are bound to a
+service marked with ``aws.iam#disableConditionKeyInference`` trait.
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.api#service
+    use aws.iam#disableConditionKeyInference
+
+    @service(sdkId: "My Value", arnNamespace: "myservice")
+    @disableConditionKeyInference
+    service MyService {
+        version: "2017-02-11"
+        resources: [MyResource1, MyResource2]
+    }
+
+    resource MyResource1 {
+        identifiers: {
+            foo: String
+        }
+    }
+
+    resource MyResource2 {
+        identifiers: {
+            foo: String
+        }
+    }
 
 A resource marked with the ``aws.iam#disableConditionKeyInference`` trait will
 not have its condition keys automatically inferred from its identifiers and

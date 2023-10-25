@@ -22,16 +22,11 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.validation.Severity;
-import software.amazon.smithy.model.validation.ValidatedResult;
-import software.amazon.smithy.model.validation.ValidationEvent;
 
 public class ConditionKeysIndexTest {
     @Test
@@ -64,5 +59,68 @@ public class ConditionKeysIndexTest {
                 "This is Foo");
         assertThat(index.getDefinedConditionKeys(service, ShapeId.from("smithy.example#GetResource2")).keySet(),
                 is(empty()));
+    }
+
+    @Test
+    public void disableConditionKeyInferenceForResources() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("disable-condition-key-inference-for-resources.smithy"))
+                .discoverModels(getClass().getClassLoader())
+                .assemble()
+                .unwrap();
+
+        ShapeId service = ShapeId.from("smithy.example#MyService");
+
+        ConditionKeysIndex index = ConditionKeysIndex.of(model);
+
+        assertThat(index.getConditionKeyNames(service),
+                containsInAnyOrder("my:service", "aws:operation1", "resource:1", "myservice:Resource1Id1"));
+
+        // Verify inference key myservice:Resource2Id2 does not exist
+        assertThat(index.getConditionKeyNames(service), not(contains("myservice:Resource2Id2")));
+
+        assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#Resource1")),
+                containsInAnyOrder("resource:1", "myservice:Resource1Id1"));
+
+        assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#Resource1")),
+                not(contains("myservice:Resource2Id2")));
+
+        assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#Resource2")),
+                containsInAnyOrder("resource:1", "myservice:Resource1Id1"));
+
+        assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#Resource2")),
+                not(contains("myservice:Resource2Id2")));
+    }
+
+    @Test
+    public void disableConditionKeyInferenceForService() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("disable-condition-key-inference-for-service.smithy"))
+                .discoverModels(getClass().getClassLoader())
+                .assemble()
+                .unwrap();
+
+        ShapeId service = ShapeId.from("smithy.example#MyService");
+
+        ConditionKeysIndex index = ConditionKeysIndex.of(model);
+
+        assertThat(index.getConditionKeyNames(service),
+                containsInAnyOrder("my:service", "aws:operation1", "resource:1"));
+
+        // Verify inference key myservice:Resource1Id1 AND myservice:Resource2Id2 do not exist
+        assertThat(index.getConditionKeyNames(service),
+                not(contains("myservice:Resource1Id1", "myservice:Resource2Id2")));
+
+        assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#Resource1")),
+                not(contains("myservice:Resource1Id1", "myservice:Resource2Id2")));
+
+        assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#Resource1")),
+                contains("resource:1"));
+
+        assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#Resource2")),
+                contains("resource:1"));
+
+        assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#Resource2")),
+                not(contains("myservice:Resource1Id1", "myservice:Resource2Id2")));
     }
 }
