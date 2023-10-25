@@ -41,9 +41,9 @@
             "type": "structure",
             "traits": {
                 "smithy.api#trait": {
-                    "selector": "resource"
+                    "selector": ":test(service, resource)"
                 },
-                "smithy.api#documentation": "Disables the automatic inference of condition keys of a resource."
+                "smithy.api#documentation": "Disables the automatic inference of condition keys of service's resources or a specific resource."
             }
         },
         "aws.iam#requiredActions": {

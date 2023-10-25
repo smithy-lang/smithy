@@ -64,14 +64,14 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
                 service.getResources().stream()
                         .flatMap(id -> OptionalUtils.stream(model.getShape(id)))
                         .forEach(resource -> {
-                            compute(model, service.getId(), arnRoot, resource, null);
+                            compute(model, service, arnRoot, resource, null);
                         });
 
                 // Compute the keys of operations of the service.
                 service.getOperations().stream()
                         .flatMap(id -> OptionalUtils.stream(model.getShape(id)))
                         .forEach(operation -> {
-                            compute(model, service.getId(), arnRoot, operation, null);
+                            compute(model, service, arnRoot, operation, null);
                         });
             });
         });
@@ -153,7 +153,7 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
 
     private void compute(
             Model model,
-            ShapeId service,
+            ServiceShape service,
             String arnRoot,
             Shape subject,
             ResourceShape parent
@@ -163,21 +163,24 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
 
     private void compute(
             Model model,
-            ShapeId service,
+            ServiceShape service,
             String arnRoot,
             Shape subject,
             ResourceShape parent,
             Set<String> parentDefinitions
     ) {
         Set<String> definitions = new HashSet<>(parentDefinitions);
-        resourceConditionKeys.get(service).put(subject.getId(), definitions);
+        resourceConditionKeys.get(service.getId()).put(subject.getId(), definitions);
         subject.getTrait(ConditionKeysTrait.class).ifPresent(trait -> definitions.addAll(trait.getValues()));
 
         // Continue recursing into resources and computing keys.
         subject.asResourceShape().ifPresent(resource -> {
+            boolean disableConditionKeyInference = resource.hasTrait(DisableConditionKeyInferenceTrait.class)
+                        || service.hasTrait(DisableConditionKeyInferenceTrait.class);
+
             // Add any inferred resource identifiers to the resource and to the service-wide definitions.
-            Map<String, String> childIdentifiers = !resource.hasTrait(DisableConditionKeyInferenceTrait.class)
-                    ? inferChildResourceIdentifiers(model, service, arnRoot, resource, parent)
+            Map<String, String> childIdentifiers = !disableConditionKeyInference
+                    ? inferChildResourceIdentifiers(model, service.getId(), arnRoot, resource, parent)
                     : MapUtils.of();
 
             // Compute the keys of each child operation, passing no keys.
