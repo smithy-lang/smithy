@@ -1151,61 +1151,50 @@ The table below lists the labeled directed relationships from each shape.
       - Description
     * - service
       - operation
-      - Each operation that is bound to a service.
+      - Each operation bound to a service.
     * - service
       - resource
-      - Each resource that is bound to a service.
+      - Each resource bound to a service.
     * - service
       - error
-      - Each error structure referenced by the service (if present).
+      - Each error structure referenced by the service.
     * - resource
       - identifier
-      - The identifier referenced by the resource (if specified).
+      - Each identifier shape of a resource.
     * - resource
-      - operation
-      - Each operation that is bound to a resource through the
-        "operations", "create", "put", "read", "update", "delete", and "list"
-        properties.
-    * - resource
-      - instanceOperation
-      - Each operation that is bound to a resource through the
-        "operations", "put", "read", "update", and "delete" properties.
-    * - resource
-      - collectionOperation
-      - Each operation that is bound to a resource through the
-        "collectionOperations", "create", and "list" properties.
+      - property
+      - Each property shape of a resource.
     * - resource
       - resource
-      - Each resource that is bound to a resource.
+      - Each resource bound to a resource.
+    * - resource
+      - operation
+      - Each operation bound to a resource through the "operations" property.
+    * - resource
+      - collectionOperation
+      - Each operation bound to a resource through the "collectionOperations"
+        property.
     * - resource
       - create
-      - The operation referenced by the :ref:`create-lifecycle` property of
-        a resource (if present).
+      - The operation defined as the :ref:`create-lifecycle` of a resource.
     * - resource
       - read
-      - The operation referenced by the :ref:`read-lifecycle` property of
-        a resource (if present).
+      - The operation defined as the :ref:`read-lifecycle` of a resource.
     * - resource
       - update
-      - The operation referenced by the :ref:`update-lifecycle` property of
-        a resource (if present).
+      - The operation defined as the :ref:`update-lifecycle` of a resource.
     * - resource
       - delete
-      - The operation referenced by the :ref:`delete-lifecycle` property of
-        a resource (if present).
+      - The operation defined as the :ref:`delete-lifecycle` of a resource.
     * - resource
       - list
-      - The operation referenced by the :ref:`list-lifecycle` property of
-        a resource (if present).
+      - The operation defined as the :ref:`list-lifecycle` of a resource.
     * - resource
-      - bound
-      - The service or resource to which the resource is bound.
-    * - operation
-      - bound
-      - The service or resource to which the operation is bound.
+      - put
+      - The operation defined as the :ref:`put-lifecycle` of a resource.
     * - operation
       - input
-      - The input structure of the operation (if present).
+      - The input structure of an operation.
 
         .. note::
 
@@ -1214,7 +1203,7 @@ The table below lists the labeled directed relationships from each shape.
 
     * - operation
       - output
-      - The output structure of the operation (if present).
+      - The output structure of an operation.
 
         .. note::
 
@@ -1223,23 +1212,25 @@ The table below lists the labeled directed relationships from each shape.
 
     * - operation
       - error
-      - Each error structure referenced by the operation (if present).
+      - Each error structure of an operation.
     * - list
       - member
-      - The :ref:`member` of the list. Note that this is not the shape targeted
-        by the member.
+      - The :ref:`member <member>` of a list.
     * - map
       - member
-      - The key and value members of the map. Note that these are not the
-        shapes targeted by the member.
+      - The key and value members of a map.
     * - structure
       - member
-      - Each structure member. Note that these are not the shapes targeted by
-        the members.
+      - Each structure member.
     * - union
       - member
-      - Each union member. Note that these are not the shapes targeted by
-        the members.
+      - Each union member.
+    * - enum
+      - member
+      - Each enum member.
+    * - intEnum
+      - member
+      - Each intEnum member.
     * - member
       -
       - The shape targeted by the member. Note that member targets have no
@@ -1249,13 +1240,13 @@ The table below lists the labeled directed relationships from each shape.
       - Each trait applied to a shape. The neighbor shape is the shape that
         defines the trait. This kind of relationship is only traversed if the
         ``trait`` relationship is explicitly stated as a desired directed
-        neighbor relationship type.
+        neighbor relationship type (for example, ``-[trait]->``).
 
-.. important::
+.. note::
 
-    Implementations MUST tolerate parsing unknown relationship types. When
-    evaluated, the directed traversal of unknown relationship types yields
-    no shapes.
+    Implementations MAY tolerate parsing unknown relationship types. When
+    evaluated, the traversal of unknown relationship types SHOULD yield
+    nothing.
 
 
 Functions
@@ -1300,7 +1291,7 @@ no documentation:
 
 .. code-block:: none
 
-    :test(-[bound, resource]->)
+    :test(resource >)
     :not([trait|documentation])
 
 

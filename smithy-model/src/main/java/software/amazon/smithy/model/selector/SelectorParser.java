@@ -108,7 +108,7 @@ final class SelectorParser extends SimpleParser {
                 }
             case '>': // forward undirected neighbor
                 skip();
-                return NeighborSelector.forward(Collections.emptyList());
+                return NeighborSelector.FORWARD;
             case '<': // reverse [un]directed neighbor
                 skip();
                 if (peek() == '-') { // reverse directed neighbor (<-[X, Y, Z]-)
@@ -116,7 +116,7 @@ final class SelectorParser extends SimpleParser {
                     expect('[');
                     return parseSelectorDirectedReverseNeighbor();
                 } else { // reverse undirected neighbor (<)
-                    return NeighborSelector.reverse(Collections.emptyList());
+                    return NeighborSelector.REVERSE;
                 }
             case '~': // ~>
                 skip();
