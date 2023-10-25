@@ -105,6 +105,32 @@
         "us-isob-east-1": {},
         "aws-iso-b-global": {}
       }
+    },
+    {
+      "id" : "aws-iso-e",
+      "outputs" : {
+        "dnsSuffix" : "cloud.adc-e.uk",
+        "dualStackDnsSuffix" : "cloud.adc-e.uk",
+        "implicitGlobalRegion" : "eu-isoe-west-1",
+        "name" : "aws-iso-e",
+        "supportsDualStack" : false,
+        "supportsFIPS" : true
+      },
+      "regionRegex" : "^eu\\-isoe\\-\\w+\\-\\d+$",
+      "regions" : { }
+    },
+    {
+      "id" : "aws-iso-f",
+      "outputs" : {
+        "dnsSuffix" : "csp.hci.ic.gov",
+        "dualStackDnsSuffix" : "csp.hci.ic.gov",
+        "implicitGlobalRegion" : "us-isof-south-1",
+        "name" : "aws-iso-f",
+        "supportsDualStack" : false,
+        "supportsFIPS" : true
+      },
+      "regionRegex" : "^us\\-isof\\-\\w+\\-\\d+$",
+      "regions" : { }
     }
   ]
 }
