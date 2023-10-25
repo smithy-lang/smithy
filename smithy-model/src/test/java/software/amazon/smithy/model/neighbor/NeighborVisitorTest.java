@@ -300,9 +300,7 @@ public class NeighborVisitorTest {
 
         assertThat(relationships, containsInAnyOrder(
                 Relationship.create(service, RelationshipType.RESOURCE, resourceShape),
-                Relationship.create(service, RelationshipType.OPERATION, operationShape),
-                Relationship.create(resourceShape, RelationshipType.BOUND, service),
-                Relationship.create(operationShape, RelationshipType.BOUND, service)));
+                Relationship.create(service, RelationshipType.OPERATION, operationShape)));
     }
 
     @Test
@@ -381,8 +379,6 @@ public class NeighborVisitorTest {
         List<Relationship> relationships = resource.accept(neighborVisitor);
 
         assertThat(relationships, containsInAnyOrder(
-                Relationship.create(parent, RelationshipType.RESOURCE, resource),
-                Relationship.create(resource, RelationshipType.BOUND, parent),
                 Relationship.create(resource, RelationshipType.IDENTIFIER, identifier),
                 Relationship.create(resource, RelationshipType.PROPERTY, property),
                 Relationship.create(resource, RelationshipType.CREATE, createOperation),
@@ -391,34 +387,9 @@ public class NeighborVisitorTest {
                 Relationship.create(resource, RelationshipType.DELETE, deleteOperation),
                 Relationship.create(resource, RelationshipType.LIST, listOperation),
                 Relationship.create(resource, RelationshipType.PUT, putOperation),
-                Relationship.create(resource, RelationshipType.COLLECTION_OPERATION, createOperation),
-                Relationship.create(resource, RelationshipType.COLLECTION_OPERATION, listOperation),
                 Relationship.create(resource, RelationshipType.COLLECTION_OPERATION, collectionOperation),
-                Relationship.create(resource, RelationshipType.INSTANCE_OPERATION, getOperation),
-                Relationship.create(resource, RelationshipType.INSTANCE_OPERATION, updateOperation),
-                Relationship.create(resource, RelationshipType.INSTANCE_OPERATION, deleteOperation),
-                Relationship.create(resource, RelationshipType.INSTANCE_OPERATION, namedOperation),
-                Relationship.create(resource, RelationshipType.INSTANCE_OPERATION, putOperation),
-                Relationship.create(resource, RelationshipType.OPERATION, createOperation),
-                Relationship.create(resource, RelationshipType.OPERATION, getOperation),
-                Relationship.create(resource, RelationshipType.OPERATION, updateOperation),
-                Relationship.create(resource, RelationshipType.OPERATION, deleteOperation),
-                Relationship.create(resource, RelationshipType.OPERATION, listOperation),
                 Relationship.create(resource, RelationshipType.OPERATION, namedOperation),
-                Relationship.create(resource, RelationshipType.OPERATION, putOperation),
-                Relationship.create(resource, RelationshipType.OPERATION, collectionOperation),
-                Relationship.create(resource, RelationshipType.RESOURCE, child1),
-
-                Relationship.create(namedOperation, RelationshipType.BOUND, resource),
-                Relationship.create(createOperation, RelationshipType.BOUND, resource),
-                Relationship.create(getOperation, RelationshipType.BOUND, resource),
-                Relationship.create(updateOperation, RelationshipType.BOUND, resource),
-                Relationship.create(deleteOperation, RelationshipType.BOUND, resource),
-                Relationship.create(listOperation, RelationshipType.BOUND, resource),
-                Relationship.create(putOperation, RelationshipType.BOUND, resource),
-                Relationship.create(collectionOperation, RelationshipType.BOUND, resource),
-
-                Relationship.create(child1, RelationshipType.BOUND, resource)
+                Relationship.create(resource, RelationshipType.RESOURCE, child1)
         ));
     }
 

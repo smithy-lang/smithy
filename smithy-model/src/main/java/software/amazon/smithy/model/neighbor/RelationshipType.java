@@ -29,6 +29,7 @@ import software.amazon.smithy.model.shapes.SetShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Defines the relationship types between neighboring shapes.
@@ -50,31 +51,16 @@ public enum RelationshipType {
 
     /**
      * A collection operation relationship exists between a resource and the
-     * operations bound to the resource in the "collectionOperations", "create",
-     * and "list" properties.
+     * operations bound to the resource in the "collectionOperations" property.
      */
     COLLECTION_OPERATION("collectionOperation", RelationshipDirection.DIRECTED),
 
-    /**
-     * An instance operation relationship exists between a resource and the
-     * operations bound to the resource in the "Operations", "put", "read",
-     * "update", and "delete" properties.
-     */
+    @Deprecated
+    @SmithyInternalApi
     INSTANCE_OPERATION("instanceOperation", RelationshipDirection.DIRECTED),
 
-    /**
-     * A BINDING relationship exists between the following shapes:
-     *
-     * <ul>
-     *     <li>Between an operation and the service or resource that the
-     *     operation is bound to (through operations or a lifecycle).</li>
-     *     <li>Between a resource and the resource or service that the
-     *     resource is bound to in the "resources" property.</li>
-     * </ul>
-     *
-     * The subject of the relationship is that shape that was bound, and the
-     * target is the shape that declared the binding.
-     */
+    @Deprecated
+    @SmithyInternalApi
     BOUND("bound", RelationshipDirection.INVERTED),
 
     /**
@@ -265,5 +251,69 @@ public enum RelationshipType {
      */
     public RelationshipDirection getDirection() {
         return direction;
+    }
+
+    /**
+     * Checks if the given relationship connects a container shape to a member.
+     *
+     * @return Returns true if a member.
+     */
+    public boolean isMemberBinding() {
+        switch (this) {
+            case STRUCTURE_MEMBER:
+            case UNION_MEMBER:
+            case LIST_MEMBER:
+            case SET_MEMBER:
+            case MAP_KEY:
+            case MAP_VALUE:
+            case INT_ENUM_MEMBER:
+            case ENUM_MEMBER:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Checks if the binding is to an operation (create|read|update|delete|put|list|operation|collectionOperation).
+     *
+     * @return Returns true if the binding is for any kind of operation binding.
+     */
+    public boolean isOperationBinding() {
+        return isInstanceOperationBinding() || isCollectionOperationBinding();
+    }
+
+    /**
+     * Returns true if relationship connects a resource to an instance operation.
+     *
+     * @return True if an instance operation.
+     */
+    public boolean isInstanceOperationBinding() {
+        switch (this) {
+            case OPERATION:
+            case READ:
+            case UPDATE:
+            case DELETE:
+            case PUT:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Returns true if relationship connects a resource to a collection operation.
+     *
+     * @return True if a collection operation.
+     */
+    public boolean isCollectionOperationBinding() {
+        switch (this) {
+            case COLLECTION_OPERATION:
+            case CREATE:
+            case LIST:
+                return true;
+            default:
+                return false;
+        }
     }
 }

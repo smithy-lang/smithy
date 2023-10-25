@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.Relationship;
+import software.amazon.smithy.model.neighbor.RelationshipDirection;
 import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.Shape;
 
@@ -134,19 +135,8 @@ final class MarkAndSweep {
                     // other shapes, not references to this shape that the shape
                     // contains (like members).
                     .filter(rel -> {
-                        switch (rel.getRelationshipType()) {
-                            case MEMBER_CONTAINER:
-                            case LIST_MEMBER:
-                            case STRUCTURE_MEMBER:
-                            case SET_MEMBER:
-                            case UNION_MEMBER:
-                            case MAP_KEY:
-                            case MAP_VALUE:
-                            case BOUND:
-                                return false;
-                            default:
-                                return true;
-                        }
+                        RelationshipType type = rel.getRelationshipType();
+                        return type.getDirection() == RelationshipDirection.DIRECTED && !type.isMemberBinding();
                     })
                     // Don't allow recursive member references to exclude themselves.
                     // This check ensures that recursive member references don't exclude

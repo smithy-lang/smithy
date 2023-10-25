@@ -53,7 +53,6 @@
 [DANGER] ns.foo#Map$value: Selector capture matched selector: > | valid-neighbor-only
 [DANGER] ns.foo#Map$value: Selector capture matched selector: member | member
 [DANGER] ns.foo#MyService: Selector capture matched selector: :not(:is([trait|error], simpleType)) | not
-[DANGER] ns.foo#MyService: Selector capture matched selector: > | valid-neighbor-only
 [DANGER] ns.foo#MyService: Selector capture matched selector: [service|version^=2017] | serviceVersion
 [DANGER] ns.foo#MyResource: Selector capture matched selector: :not(:is([trait|error], simpleType)) | not
 [DANGER] ns.foo#MyResource: Selector capture matched selector: > | valid-neighbor-only
