@@ -194,6 +194,25 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
         }
 
         @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            Example example = (Example) o;
+            return allowConstraintErrors == example.allowConstraintErrors && Objects.equals(title, example.title)
+                    && Objects.equals(documentation, example.documentation) && Objects.equals(input, example.input)
+                    && Objects.equals(output, example.output) && Objects.equals(error, example.error);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(title, documentation, input, output, error, allowConstraintErrors);
+        }
+
+        @Override
         public Builder toBuilder() {
             return new Builder().documentation(documentation).title(title).input(input).output(output).error(error)
                     .allowConstraintErrors(allowConstraintErrors);
