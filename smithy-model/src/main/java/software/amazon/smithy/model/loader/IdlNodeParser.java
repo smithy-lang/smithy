@@ -74,7 +74,7 @@ final class IdlNodeParser {
                 return result;
             case IDENTIFIER:
                 String shapeId = loader.internString(IdlShapeIdParser.expectAndSkipShapeId(tokenizer));
-                return parseIdentifier(loader, shapeId, location);
+                return createIdentifier(loader, shapeId, location);
             case NUMBER:
                 Number number = tokenizer.getCurrentTokenNumberValue();
                 tokenizer.next();
@@ -95,10 +95,10 @@ final class IdlNodeParser {
      * @param location   Source location to assign to the identifier.
      * @return Returns the parsed identifier.
      */
-    static Node parseIdentifier(IdlModelLoader loader, String identifier, SourceLocation location) {
+    static Node createIdentifier(IdlModelLoader loader, String identifier, SourceLocation location) {
         Keyword keyword = Keyword.from(identifier);
         return keyword == null
-               ? parseSyntacticShapeId(loader, identifier, location)
+               ? createSyntacticShapeId(loader, identifier, location)
                : keyword.createNode(location);
     }
 
@@ -138,7 +138,7 @@ final class IdlNodeParser {
         }
     }
 
-    private static Node parseSyntacticShapeId(
+    private static Node createSyntacticShapeId(
             IdlModelLoader loader,
             String identifier,
             SourceLocation location

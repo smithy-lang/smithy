@@ -193,17 +193,28 @@ final class IdlTraitParser {
                 }
             case IDENTIFIER:
             default:
-                String identifier = loader.internString(tokenizer.getCurrentTokenLexeme());
-                tokenizer.next();
+                // Handle: `foo`, `foo$bar`, `foo.bar#baz`, `foo.bar#baz$bam`, `foo: bam`
+                String identifier = loader.internString(IdlShapeIdParser.expectAndSkipShapeId(tokenizer));
                 tokenizer.skipWsAndDocs();
-                if (tokenizer.getCurrentToken() == IdlToken.COLON) {
+                if (tokenizer.getCurrentToken() == IdlToken.RPAREN || isItDefinitelyShapeId(identifier)) {
+                    return IdlNodeParser.createIdentifier(loader, identifier, location);
+                } else {
+                    tokenizer.expect(IdlToken.COLON);
                     tokenizer.next();
                     tokenizer.skipWsAndDocs();
                     return parseStructuredTrait(loader, new StringNode(identifier, location));
-                } else {
-                    return IdlNodeParser.parseIdentifier(loader, identifier, location);
                 }
         }
+    }
+
+    private static boolean isItDefinitelyShapeId(String identifier) {
+        for (int i = 0; i < identifier.length(); i++) {
+            char c = identifier.charAt(i);
+            if (c == '.' || c == '$' || c == '#') {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static ObjectNode parseStructuredTrait(IdlModelLoader loader, StringNode firstKey) {
