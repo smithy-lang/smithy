@@ -1,4 +1,4 @@
-// Syntax error at line 4, column 30: Expected RPAREN(')') but found DOT('.') | Model
+// Syntax error at line 4, column 42: Expected RPAREN(')') but found COLON(':') | Model
 namespace smithy.example
 
 @externalDocumentation(smithy.example#foo: "bar")
