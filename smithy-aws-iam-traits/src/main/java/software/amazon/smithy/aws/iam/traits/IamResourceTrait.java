@@ -33,10 +33,12 @@ public final class IamResourceTrait extends AbstractTrait
     public static final ShapeId ID = ShapeId.from("aws.iam#iamResource");
 
     public final String name;
+    public final String relativeDocumentation;
 
     private IamResourceTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
         name = builder.name;
+        relativeDocumentation = builder.relativeDocumentation;
     }
 
     /**
@@ -46,6 +48,16 @@ public final class IamResourceTrait extends AbstractTrait
      */
     public Optional<String> getName() {
         return Optional.of(name);
+    }
+
+    /**
+     * Get the relative URL path that defines more information about the resource
+     * within a set of IAM-related documentation.
+     *
+     * @return A relative URL to the documentation page.
+     */
+    public Optional<String> getRelativeDocumentation() {
+        return Optional.ofNullable(relativeDocumentation);
     }
 
     public static Builder builder() {
@@ -80,6 +92,7 @@ public final class IamResourceTrait extends AbstractTrait
 
     public static final class Builder extends AbstractTraitBuilder<IamResourceTrait, Builder> {
         private String name;
+        private String relativeDocumentation;
 
         private Builder() {}
 
@@ -90,6 +103,11 @@ public final class IamResourceTrait extends AbstractTrait
 
         public Builder name(String name) {
             this.name = name;
+            return this;
+        }
+
+        public Builder relativeDocumentation(String relativeDocumentation) {
+            this.relativeDocumentation = relativeDocumentation;
             return this;
         }
     }

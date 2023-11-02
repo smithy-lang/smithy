@@ -53,6 +53,9 @@ public class ConditionKeysIndexTest {
         assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#GetResource2")), is(empty()));
 
         // Defined context keys are assembled from the names and mapped with the definitions.
+        assertEquals(index.getDefinedConditionKeys(service).get("foo:baz").getDocumentation().get(), "Foo baz");
+        assertEquals(index.getDefinedConditionKeys(service).get("foo:baz").getRelativeDocumentation().get(),
+            "condition-keys.html");
         assertThat(index.getDefinedConditionKeys(service).get("myservice:Resource1Id1").getDocumentation(),
                 not(Optional.empty()));
         assertEquals(index.getDefinedConditionKeys(service).get("myservice:ResourceTwoId2").getDocumentation().get(),

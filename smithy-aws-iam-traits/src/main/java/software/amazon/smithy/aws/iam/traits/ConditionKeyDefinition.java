@@ -28,15 +28,18 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
     private static final String TYPE = "type";
     private static final String DOCUMENTATION = "documentation";
     private static final String EXTERNAL_DOCUMENTATION = "externalDocumentation";
+    private static final String RELATIVE_DOCUMENTATION = "relativeDocumentation";
 
     private final String type;
     private final String documentation;
     private final String externalDocumentation;
+    private final String relativeDocumentation;
 
     private ConditionKeyDefinition(Builder builder) {
         type = SmithyBuilder.requiredState(TYPE, builder.type);
         documentation = builder.documentation;
         externalDocumentation = builder.externalDocumentation;
+        relativeDocumentation = builder.relativeDocumentation;
     }
 
     public static Builder builder() {
@@ -51,6 +54,8 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
                 .ifPresent(builder::documentation);
         objectNode.getStringMember(EXTERNAL_DOCUMENTATION).map(StringNode::getValue)
                 .ifPresent(builder::externalDocumentation);
+        objectNode.getStringMember(RELATIVE_DOCUMENTATION).map(StringNode::getValue)
+                .ifPresent(builder::relativeDocumentation);
 
         return builder.build();
     }
@@ -76,11 +81,22 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
         return Optional.ofNullable(externalDocumentation);
     }
 
+    /**
+     * Get the relative URL path that defines more information about the condition key
+     * within a set of IAM-related documentation.
+     *
+     * @return A relative URL to the documentation page.
+     */
+    public Optional<String> getRelativeDocumentation() {
+        return Optional.ofNullable(relativeDocumentation);
+    }
+
     @Override
     public SmithyBuilder<ConditionKeyDefinition> toBuilder() {
         return builder()
                 .documentation(documentation)
                 .externalDocumentation(externalDocumentation)
+                .relativeDocumentation(relativeDocumentation)
                 .type(type);
     }
 
@@ -90,6 +106,7 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
                 .withMember(TYPE, Node.from(type))
                 .withOptionalMember(DOCUMENTATION, getDocumentation().map(Node::from))
                 .withOptionalMember(EXTERNAL_DOCUMENTATION, getExternalDocumentation().map(Node::from))
+                .withOptionalMember(RELATIVE_DOCUMENTATION, getRelativeDocumentation().map(Node::from))
                 .build();
     }
 
@@ -104,18 +121,20 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
         ConditionKeyDefinition that = (ConditionKeyDefinition) o;
         return Objects.equals(type, that.type)
                && Objects.equals(documentation, that.documentation)
-               && Objects.equals(externalDocumentation, that.externalDocumentation);
+               && Objects.equals(externalDocumentation, that.externalDocumentation)
+               && Objects.equals(relativeDocumentation, that.relativeDocumentation);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, documentation, externalDocumentation);
+        return Objects.hash(type, documentation, externalDocumentation, relativeDocumentation);
     }
 
     public static final class Builder implements SmithyBuilder<ConditionKeyDefinition> {
         private String type;
         private String documentation;
         private String externalDocumentation;
+        private String relativeDocumentation;
 
         @Override
         public ConditionKeyDefinition build() {
@@ -134,6 +153,11 @@ public final class ConditionKeyDefinition implements ToNode, ToSmithyBuilder<Con
 
         public Builder externalDocumentation(String externalDocumentation) {
             this.externalDocumentation = externalDocumentation;
+            return this;
+        }
+
+        public Builder relativeDocumentation(String relativeDocumentation) {
+            this.relativeDocumentation = relativeDocumentation;
             return this;
         }
     }

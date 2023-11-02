@@ -10,7 +10,10 @@ service MyService {
     resources: [SuperResource]
 }
 
-@aws.iam#iamResource(name: "super")
+@aws.iam#iamResource(
+    name: "super",
+    relativeDocumentation: "API-Super.html"
+)
 @arn(template: "super/{id1}")
 resource SuperResource {
     identifiers: {
