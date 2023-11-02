@@ -39,6 +39,10 @@ structure disableConditionKeyInference {}
 structure iamResource {
     /// The name of the resource in AWS IAM.
     name: String
+
+    ///  A relative URL path that defines more information about the resource
+    ///  within a set of IAM-related documentation.
+    relativeDocumentation: String
 }
 
 /// Other actions that the invoker must be authorized to perform when executing the targeted operation.
@@ -63,14 +67,18 @@ list supportedPrincipalTypes {
 /// A defined condition key to appear within a service in addition to inferred and global condition keys.
 @private
 structure ConditionKeyDefinition {
+    @required
+    type: ConditionKeyType
+
     /// Defines documentation about the condition key.
     documentation: String
 
     /// A valid URL that defines more information about the condition key.
     externalDocumentation: String
 
-    @required
-    type: ConditionKeyType
+    ///  A relative URL path that defines more information about the condition key
+    ///  within a set of IAM-related documentation.
+    relativeDocumentation: String
 }
 
 /// The IAM policy type of the value that will supplied for this context key

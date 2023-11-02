@@ -139,6 +139,10 @@ Each condition key structure supports the following members:
     * - externalDocumentation
       - ``string``
       - A valid URL that defines more information about the condition key.
+    * - relativeDocumentation
+      - ``string``
+      - A relative URL path that defines more information about the condition key
+        within a set of IAM-related documentation.
 
 .. code-block:: smithy
 
@@ -410,6 +414,10 @@ members:
     * - name
       - ``string``
       - The name of the resource in AWS IAM.
+    * - relativeDocumentation
+      - ``string``
+      - A relative URL path that defines more information about the resource
+        within a set of IAM-related documentation.
 
 The following example defines a simple resource with a name in AWS IAM that
 deviates from the :ref:`shape name of the shape ID <shape-id>` of the resource.

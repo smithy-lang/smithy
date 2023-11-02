@@ -36,5 +36,6 @@ public class IamResourceTraitTest {
 
         assertTrue(superResource.hasTrait(IamResourceTrait.class));
         assertEquals(superResource.expectTrait(IamResourceTrait.class).getName().get(), "super");
+        assertEquals(superResource.expectTrait(IamResourceTrait.class).getRelativeDocumentation().get(), "API-Super.html");
     }
 }
