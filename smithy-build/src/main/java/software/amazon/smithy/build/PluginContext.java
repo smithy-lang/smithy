@@ -254,16 +254,17 @@ public final class PluginContext implements ToSmithyBuilder<PluginContext> {
 
     @Override
     public Builder toBuilder() {
-        return builder()
-                .projection(projectionName, projection)
+        Builder builder =  builder()
                 .model(model)
-                .originalModel(originalModel)
                 .events(events)
                 .settings(settings)
                 .fileManifest(fileManifest)
                 .pluginClassLoader(pluginClassLoader)
                 .sources(sources)
                 .artifactName(artifactName);
+        getProjection().ifPresent(config -> builder.projection(projectionName, config));
+        getOriginalModel().ifPresent(builder::originalModel);
+        return builder;
     }
 
     /**
