@@ -207,6 +207,13 @@ public class NodeValidationVisitorTest {
                 {"ns.foo#List", "[10]", new String[] {"0: Expected string value for string shape, `ns.foo#String`; found number value, `10`"}},
                 {"ns.foo#List", "10", new String[] {"Expected array value for list shape, `ns.foo#List`; found number value, `10`"}},
 
+                // unique list
+                {"ns.foo#UniqueList", "[\"a\"]", null},
+                {"ns.foo#UniqueList", "[\"a\", \"b\"]", null},
+                {"ns.foo#UniqueList", "[\"a\", \"a\"]", new String[] {"Value provided for `ns.foo#UniqueList` must have unique items, but the following items had multiple entries: [`a`]"}},
+                {"ns.foo#UniqueList", "[\"a\", \"a\", \"a\"]", new String[] {"Value provided for `ns.foo#UniqueList` must have unique items, but the following items had multiple entries: [`a`]"}},
+                {"ns.foo#UniqueList", "[\"a\", \"a\", \"b\", \"b\"]", new String[] {"Value provided for `ns.foo#UniqueList` must have unique items, but the following items had multiple entries: [`a`, `b`]"}},
+
                 // map
                 {"ns.foo#Map", "{\"a\":[\"b\"]}", null},
                 {"ns.foo#Map", "{\"a\":[\"b\"], \"c\":[\"d\"]}", null},
