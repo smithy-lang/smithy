@@ -64,7 +64,8 @@ public interface NodeValidatorPlugin {
                 new PatternTraitPlugin(),
                 new RangeTraitPlugin(),
                 new StringEnumPlugin(),
-                new StringLengthPlugin());
+                new StringLengthPlugin(),
+                new UniqueItemsPlugin());
     }
 
     /**

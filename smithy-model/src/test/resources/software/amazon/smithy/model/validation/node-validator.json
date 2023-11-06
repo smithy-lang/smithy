@@ -133,6 +133,15 @@
                 }
             }
         },
+        "ns.foo#UniqueList": {
+            "type": "list",
+            "member": {
+                "target": "ns.foo#String"
+            },
+            "traits": {
+                "smithy.api#uniqueItems": {}
+            }
+        },
         "ns.foo#String": {
             "type": "string"
         },
