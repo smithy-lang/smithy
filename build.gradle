@@ -24,7 +24,8 @@ plugins {
     id "com.github.spotbugs" version "4.7.1"
     id "io.codearte.nexus-staging" version "0.30.0"
     id "me.champeau.jmh" version "0.7.1"
-    id 'com.github.johnrengelman.shadow' version "7.1.2"
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id "org.jreleaser" version "1.9.0"
 }
 
 ext {
@@ -38,6 +39,14 @@ allprojects {
     group = "software.amazon.smithy"
     version = libraryVersion
 }
+
+// Only using JReleaser based on a flag allows going back to the old
+// release process if necessary. We can remove this later.
+def useJreleaser = project.hasProperty("useJreleaser")
+
+// JReleaser publishes artifacts from a local staging repository, rather than maven local.
+// https://jreleaser.org/guide/latest/examples/maven/staging-artifacts.html#_gradle
+def stagingDirectory = rootProject.layout.buildDirectory.dir("staging")
 
 subprojects {
     apply plugin: "java-library"
@@ -127,14 +136,23 @@ subprojects {
 
     publishing {
         repositories {
-            mavenCentral {
-                url = uri("https://aws.oss.sonatype.org/service/local/staging/deploy/maven2/")
-                if (project.hasProperty("sonatypeUser")) {
-                    credentials {
-                        username = project.property("sonatypeUser")
-                        password = project.property("sonatypePassword")
-                    }
+            // JReleaser's `publish` task publishes to all repositories, so only configure one.
+            if (useJreleaser) {
+                maven {
+                    name = "localStaging"
+                    url = stagingDirectory
                 }
+            } else {
+               mavenCentral {
+                   name = "sonatypeNexus"
+                   url = uri("https://aws.oss.sonatype.org/service/local/staging/deploy/maven2/")
+                   if (project.hasProperty("sonatypeUser")) {
+                       credentials {
+                           username = project.property("sonatypeUser")
+                           password = project.property("sonatypePassword")
+                       }
+                   }
+               }
             }
         }
 
@@ -271,6 +289,53 @@ allprojects {
     }
 }
 
+if (useJreleaser) {
+    jreleaser {
+        dryrun = false
+
+        // Used for creating a tagged release, uploading files and generating changelog.
+        // In the future we can set this up to push release tags to GitHub, but for now it's
+        // set up to do nothing.
+        // https://jreleaser.org/guide/latest/reference/release/index.html
+        release {
+            generic {
+                enabled = true
+                skipRelease = true
+            }
+        }
+
+        // Used to announce a release to configured announcers.
+        // https://jreleaser.org/guide/latest/reference/announce/index.html
+        announce {
+            active = "NEVER"
+        }
+
+        // Signing configuration.
+        // https://jreleaser.org/guide/latest/reference/signing.html
+        signing {
+            active = "ALWAYS"
+            armored = true
+        }
+
+        // Configuration for deploying to Maven Central.
+        // https://jreleaser.org/guide/latest/examples/maven/maven-central.html#_gradle
+        deploy {
+            maven {
+                nexus2 {
+                    'maven-central' {
+                        active = "ALWAYS"
+                        url = "https://aws.oss.sonatype.org/service/local"
+                        snapshotUrl = "https://aws.oss.sonatype.org/content/repositories/snapshots"
+                        closeRepository = false
+                        releaseRepository = false
+                        stagingRepository(stagingDirectory.get().toString())
+                    }
+                }
+            }
+        }
+    }
+}
+
 /*
  * Sonatype Staging Finalization
  * ====================================================
@@ -280,7 +345,7 @@ allprojects {
  * validated. This configuration is for the root project because
  * it operates at the "group" level.
  */
-if (project.hasProperty("sonatypeUser") && project.hasProperty("sonatypePassword")) {
+if (!useJreleaser && project.hasProperty("sonatypeUser") && project.hasProperty("sonatypePassword")) {
     apply plugin: "io.codearte.nexus-staging"
     nexusStaging {
         packageGroup = "software.amazon"
