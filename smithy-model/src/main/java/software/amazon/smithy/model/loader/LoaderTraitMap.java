@@ -21,9 +21,11 @@ import static software.amazon.smithy.model.validation.Validator.MODEL_ERROR;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
@@ -47,6 +49,7 @@ final class LoaderTraitMap {
     private final List<ValidationEvent> events;
     private final boolean allowUnknownTraits;
     private final Map<ShapeId, Map<ShapeId, Trait>> unclaimed = new HashMap<>();
+    private final Set<ShapeId> claimed = new HashSet<>();
 
     LoaderTraitMap(TraitFactory traitFactory, List<ValidationEvent> events, boolean allowUnknownTraits) {
         this.traitFactory = traitFactory;
@@ -147,12 +150,19 @@ final class LoaderTraitMap {
     // Traits can be applied to synthesized members inherited from mixins. Applying these traits is deferred until
     // the point in which mixin members are synthesized into shapes.
     Map<ShapeId, Trait> claimTraitsForShape(ShapeId id) {
-        return unclaimed.containsKey(id) ? unclaimed.remove(id) : Collections.emptyMap();
+        if (!unclaimed.containsKey(id)) {
+            return Collections.emptyMap();
+        }
+        claimed.add(id);
+        return unclaimed.get(id);
     }
 
     // Emit events if any traits were applied to shapes that weren't found in the model.
     void emitUnclaimedTraits() {
         for (Map.Entry<ShapeId, Map<ShapeId, Trait>> entry : unclaimed.entrySet()) {
+            if (claimed.contains(entry.getKey())) {
+                continue;
+            }
             for (Map.Entry<ShapeId, Trait> traitEntry : entry.getValue().entrySet()) {
                 events.add(ValidationEvent.builder()
                         .id(Validator.MODEL_ERROR)
