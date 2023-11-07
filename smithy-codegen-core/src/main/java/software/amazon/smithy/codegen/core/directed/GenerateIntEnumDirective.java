@@ -16,6 +16,8 @@
 package software.amazon.smithy.codegen.core.directed;
 
 import software.amazon.smithy.codegen.core.CodegenContext;
+import software.amazon.smithy.model.node.ExpectationNotMetException;
+import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 
@@ -30,5 +32,10 @@ public final class GenerateIntEnumDirective<C extends CodegenContext<S, ?, ?>, S
 
     GenerateIntEnumDirective(C context, ServiceShape service, Shape shape) {
         super(context, service, shape);
+    }
+
+    public IntEnumShape expectIntEnumShape() {
+        return shape().asIntEnumShape().orElseThrow(() -> new ExpectationNotMetException(
+                "Expected an IntEnum shape, but found " + shape(), shape()));
     }
 }
