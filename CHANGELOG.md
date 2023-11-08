@@ -4,6 +4,7 @@
 
 ### Features
 
+* Added new trait for defining IAM actions, which consolidates and therefore deprecates several older IAM traits. ([#2034](https://github.com/smithy-lang/smithy/pull/2034)) 
 * Added convenience method, `expectIntEnumShape`, to `GenerateIntEnumDirective` to get an `IntEnumShape` ([#2033](https://github.com/smithy-lang/smithy/pull/2033))
 * Added plugin to `NodeValidationVisitor` to ensure collections with `@uniqueItems` trait have unique-ness enforced. ([#2031](https://github.com/smithy-lang/smithy/pull/2031))
 * Added new member to `@aws.iam#iamResource` and `@aws.iam#defineConditionKeys` traits for defining a relative URL path of documentation. ([#2027](https://github.com/smithy-lang/smithy/pull/2027))
