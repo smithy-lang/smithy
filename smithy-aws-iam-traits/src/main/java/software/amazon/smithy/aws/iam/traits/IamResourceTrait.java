@@ -32,13 +32,15 @@ public final class IamResourceTrait extends AbstractTrait
         implements ToSmithyBuilder<IamResourceTrait> {
     public static final ShapeId ID = ShapeId.from("aws.iam#iamResource");
 
-    public final String name;
-    public final String relativeDocumentation;
+    private final String name;
+    private final String relativeDocumentation;
+    private final boolean disableConditionKeyInheritance;
 
     private IamResourceTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
         name = builder.name;
         relativeDocumentation = builder.relativeDocumentation;
+        disableConditionKeyInheritance = builder.disableConditionKeyInheritance;
     }
 
     /**
@@ -47,7 +49,7 @@ public final class IamResourceTrait extends AbstractTrait
      * @return Returns the name.
      */
     public Optional<String> getName() {
-        return Optional.of(name);
+        return Optional.ofNullable(name);
     }
 
     /**
@@ -58,6 +60,16 @@ public final class IamResourceTrait extends AbstractTrait
      */
     public Optional<String> getRelativeDocumentation() {
         return Optional.ofNullable(relativeDocumentation);
+    }
+
+    /**
+     * Gets if this IAM resource's condition keys are decoupled from
+     * those of its parent resource(s).
+     *
+     * @return Returns true if condition key inheritance is disabled.
+     */
+    public boolean isDisableConditionKeyInheritance() {
+        return disableConditionKeyInheritance;
     }
 
     public static Builder builder() {
@@ -93,6 +105,7 @@ public final class IamResourceTrait extends AbstractTrait
     public static final class Builder extends AbstractTraitBuilder<IamResourceTrait, Builder> {
         private String name;
         private String relativeDocumentation;
+        private boolean disableConditionKeyInheritance;
 
         private Builder() {}
 
@@ -108,6 +121,11 @@ public final class IamResourceTrait extends AbstractTrait
 
         public Builder relativeDocumentation(String relativeDocumentation) {
             this.relativeDocumentation = relativeDocumentation;
+            return this;
+        }
+
+        public Builder disableConditionKeyInheritance(boolean disableConditionKeyInheritance) {
+            this.disableConditionKeyInheritance = disableConditionKeyInheritance;
             return this;
         }
     }

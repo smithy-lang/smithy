@@ -16,6 +16,7 @@
 package software.amazon.smithy.aws.iam.traits;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -37,5 +38,6 @@ public class IamResourceTraitTest {
         assertTrue(superResource.hasTrait(IamResourceTrait.class));
         assertEquals(superResource.expectTrait(IamResourceTrait.class).getName().get(), "super");
         assertEquals(superResource.expectTrait(IamResourceTrait.class).getRelativeDocumentation().get(), "API-Super.html");
+        assertFalse(superResource.expectTrait(IamResourceTrait.class).isDisableConditionKeyInheritance());
     }
 }

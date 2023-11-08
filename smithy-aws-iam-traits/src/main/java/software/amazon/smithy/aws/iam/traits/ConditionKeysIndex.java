@@ -169,7 +169,12 @@ public final class ConditionKeysIndex implements KnowledgeIndex {
             ResourceShape parent,
             Set<String> parentDefinitions
     ) {
-        Set<String> definitions = new HashSet<>(parentDefinitions);
+        Set<String> definitions = new HashSet<>();
+        if (!subject.hasTrait(IamResourceTrait.ID)
+                || !subject.expectTrait(IamResourceTrait.class).isDisableConditionKeyInheritance()
+        ) {
+            definitions.addAll(parentDefinitions);
+        }
         resourceConditionKeys.get(service.getId()).put(subject.getId(), definitions);
         subject.getTrait(ConditionKeysTrait.class).ifPresent(trait -> definitions.addAll(trait.getValues()));
 

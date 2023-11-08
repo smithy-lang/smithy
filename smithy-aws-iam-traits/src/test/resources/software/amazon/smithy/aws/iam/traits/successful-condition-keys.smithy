@@ -1,8 +1,15 @@
 $version: "1.0"
 namespace smithy.example
 
-@aws.api#service(sdkId: "My")
-@aws.iam#defineConditionKeys(
+use aws.api#arnReference
+use aws.api#service
+use aws.iam#conditionKeys
+use aws.iam#defineConditionKeys
+use aws.iam#disableConditionKeyInference
+use aws.iam#iamResource
+
+@service(sdkId: "My")
+@defineConditionKeys(
   "foo:baz": {
     type: "String",
     documentation: "Foo baz",
@@ -15,18 +22,18 @@ service MyService {
   resources: [Resource1]
 }
 
-@aws.iam#conditionKeys(["aws:accountId", "foo:baz"])
+@conditionKeys(["aws:accountId", "foo:baz"])
 operation Operation1 {}
 
-@aws.iam#conditionKeys(["aws:accountId", "foo:baz"])
+@conditionKeys(["aws:accountId", "foo:baz"])
 resource Resource1 {
   identifiers: {
     id1: ArnString,
   },
-  resources: [Resource2]
+  resources: [Resource2, Resource3, Resource4]
 }
 
-@aws.iam#iamResource(name: "ResourceTwo")
+@iamResource(name: "ResourceTwo")
 resource Resource2 {
   identifiers: {
     id1: ArnString,
@@ -34,6 +41,27 @@ resource Resource2 {
   },
   read: GetResource2,
   list: ListResource2,
+}
+
+@disableConditionKeyInference
+@iamResource(disableConditionKeyInheritance: true)
+resource Resource3 {
+  identifiers: {
+    id1: ArnString
+    id2: FooString
+    id3: String
+  }
+}
+
+@disableConditionKeyInference
+@iamResource(disableConditionKeyInheritance: true)
+@conditionKeys(["foo:baz"])
+resource Resource4 {
+  identifiers: {
+    id1: ArnString
+    id2: FooString
+    id4: String
+  }
 }
 
 @readonly
@@ -65,5 +93,5 @@ structure ListResource2Input {
 
 structure ListResource2Output {}
 
-@aws.api#arnReference(type: "ec2:Instance")
+@arnReference(type: "ec2:Instance")
 string ArnString
