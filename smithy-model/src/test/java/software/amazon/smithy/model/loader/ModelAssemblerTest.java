@@ -1341,4 +1341,31 @@ public class ModelAssemblerTest {
         assertThat(result.getValidationEvents(Severity.ERROR).get(0).getMessage(),
                    equalTo("Error creating trait `smithy.foo#baz`: Oops!"));
     }
+
+    @Test
+    public void resolvesDuplicateTraitApplicationsToDuplicateMixedInMembers() throws Exception {
+        String model = IoUtils.readUtf8File(Paths.get(getClass().getResource("mixins/apply-to-mixed-member.json").toURI()));
+        // Should be able to de-conflict the apply statements when the same model is loaded multiple times.
+        // See https://github.com/smithy-lang/smithy/issues/2004
+        Model.assembler()
+                .addUnparsedModel("test.json", model)
+                .addUnparsedModel("test2.json", model)
+                .addUnparsedModel("test3.json", model)
+                .assemble()
+                .unwrap();
+    }
+
+    @Test
+    public void resolvesDuplicateTraitApplicationsToSameMixedInMember() throws Exception {
+        String modelToApplyTo = IoUtils.readUtf8File(Paths.get(getClass().getResource("mixins/mixed-member.smithy").toURI()));
+        String modelWithApply = IoUtils.readUtf8File(Paths.get(getClass().getResource("mixins/member-apply-other-namespace.smithy").toURI()));
+        // Should be able to load when you have multiple identical apply statements to the same mixed in member.
+        // See https://github.com/smithy-lang/smithy/issues/2004
+        Model.assembler()
+                .addUnparsedModel("mixed-member.smithy", modelToApplyTo)
+                .addUnparsedModel("member-apply-1.smithy", modelWithApply)
+                .addUnparsedModel("member-apply-2.smithy", modelWithApply)
+                .assemble()
+                .unwrap();
+    }
 }
