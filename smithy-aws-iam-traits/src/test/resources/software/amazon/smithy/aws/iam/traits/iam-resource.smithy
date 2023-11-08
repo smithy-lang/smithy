@@ -1,31 +1,34 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace smithy.example
 
 use aws.api#arn
+use aws.api#service
+use aws.iam#iamResource
 
-@aws.api#service(sdkId: "My")
+@service(sdkId: "My")
 service MyService {
-    version: "2020-07-02",
+    version: "2020-07-02"
     resources: [SuperResource]
 }
 
-@aws.iam#iamResource(
-    name: "super",
+@iamResource(
+    name: "super"
     relativeDocumentation: "API-Super.html"
+    disableConditionKeyInheritance: false
 )
 @arn(template: "super/{id1}")
 resource SuperResource {
     identifiers: {
-        id1: String,
-    },
+        id1: String
+    }
     read: GetResource
 }
 
 @readonly
 operation GetResource {
-    input: GetResourceInput,
-    output: GetResourceOutput,
+    input: GetResourceInput
+    output: GetResourceOutput
 }
 
 structure GetResourceInput {
@@ -34,9 +37,9 @@ structure GetResourceInput {
 }
 
 structure GetResourceOutput {
-    super: Super,
+    super: Super
 }
 
 structure Super {
-    id1: String,
+    id1: String
 }

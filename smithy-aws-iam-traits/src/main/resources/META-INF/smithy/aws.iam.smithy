@@ -25,7 +25,7 @@ list conditionKeys {
 string conditionKeyValue
 
 /// Defines the set of condition keys that appear within a service in addition to
-///  inferred and global condition keys.
+/// inferred and global condition keys.
 @trait(selector: "service")
 map defineConditionKeys {
     key: IamIdentifier
@@ -65,9 +65,13 @@ structure iamResource {
     /// The name of the resource in AWS IAM.
     name: String
 
-    ///  A relative URL path that defines more information about the resource
-    ///  within a set of IAM-related documentation.
+    /// A relative URL path that defines more information about the resource
+    /// within a set of IAM-related documentation.
     relativeDocumentation: String
+
+    /// When set to `true`, decouples this IAM resource's condition keys from
+    /// those of its parent resource(s).
+    disableConditionKeyInheritance: Boolean
 }
 
 /// Other actions that the invoker must be authorized to perform when executing the targeted operation.
@@ -112,8 +116,8 @@ structure ConditionKeyDefinition {
     /// A valid URL that defines more information about the condition key.
     externalDocumentation: String
 
-    ///  A relative URL path that defines more information about the condition key
-    ///  within a set of IAM-related documentation.
+    /// A relative URL path that defines more information about the condition key
+    /// within a set of IAM-related documentation.
     relativeDocumentation: String
 }
 

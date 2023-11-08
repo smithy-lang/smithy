@@ -100,6 +100,12 @@ members:
       - ``string``
       - A relative URL path that defines more information about the resource
         within a set of IAM-related documentation.
+    * - disableConditionKeyInheritance
+      - ``boolean``
+      - When set to ``true``, decouples this IAM resource's condition keys from
+        those of its parent resource(s). This can be used in combination with
+        the :ref:`aws.iam#conditionKeys-trait` trait to isolate a resource's
+        condition keys from those of its parent(s).
 
 The following example defines a simple resource with a name in AWS IAM that
 deviates from the :ref:`shape name of the shape ID <shape-id>` of the resource.
@@ -751,11 +757,24 @@ Given the following model,
     resource MyResource {
         identifiers: {foo: String}
         operations: [MyOperation]
-        resources: [MyInnerResource]
+        resources: [MyInnerResource, MyDetachedResource, MyCustomResource]
     }
 
     @iamResource(name: "InnerResource")
     resource MyInnerResource {
+        identifiers: {yum: String}
+    }
+
+    @disableConditionKeyInference
+    @iamResource(disableConditionKeyInheritance: true)
+    resource MyDetachedResource {
+        identifiers: {yum: String}
+    }
+
+    @disableConditionKeyInference
+    @iamResource(disableConditionKeyInheritance: true)
+    @conditionKeys(["aws:region"])
+    resource MyCustomResource {
         identifiers: {yum: String}
     }
 
@@ -779,6 +798,11 @@ The computed condition keys for the service are:
           * ``myservice:MyResourceFoo``
           * ``otherservice:Bar``
           * ``myservice:InnerResourceYum``
+    * - ``MyDetachedResource``
+      - None
+    * - ``MyCustomResource``
+      -
+          * ``aws:region``
     * - ``MyOperation``
       -
           * ``aws:region``

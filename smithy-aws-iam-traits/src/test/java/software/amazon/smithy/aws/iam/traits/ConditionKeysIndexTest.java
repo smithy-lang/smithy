@@ -49,6 +49,11 @@ public class ConditionKeysIndexTest {
         assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#Resource2")),
                 containsInAnyOrder("aws:accountId", "foo:baz",
                         "myservice:Resource1Id1", "myservice:ResourceTwoId2"));
+        // This resource has inheritance disabled.
+        assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#Resource3")), empty());
+        // This resource has inheritance disabled and an explicit list provided.
+        assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#Resource4")),
+                contains("foo:baz"));
         // Note that while this operation binds identifiers, it contains no unique ConditionKeys to bind.
         assertThat(index.getConditionKeyNames(service, ShapeId.from("smithy.example#GetResource2")), is(empty()));
 
