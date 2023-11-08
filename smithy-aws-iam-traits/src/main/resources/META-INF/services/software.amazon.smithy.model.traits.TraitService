@@ -4,6 +4,7 @@ software.amazon.smithy.aws.iam.traits.DefineConditionKeysTrait$Provider
 software.amazon.smithy.aws.iam.traits.DisableConditionKeyInferenceTrait$Provider
 software.amazon.smithy.aws.iam.traits.RequiredActionsTrait$Provider
 software.amazon.smithy.aws.iam.traits.SupportedPrincipalTypesTrait$Provider
+software.amazon.smithy.aws.iam.traits.IamActionTrait$Provider
 software.amazon.smithy.aws.iam.traits.IamResourceTrait$Provider
 software.amazon.smithy.aws.iam.traits.ActionNameTrait$Provider
 software.amazon.smithy.aws.iam.traits.ServiceResolvedConditionKeysTrait$Provider

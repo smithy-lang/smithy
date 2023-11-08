@@ -17,12 +17,283 @@ policies for resources in a service. Condition keys for services defined in
 Smithy are automatically inferred. These can be disabled or augmented. For
 more information, see :ref:`deriving-condition-keys`.
 
+
+.. smithy-trait:: aws.iam#supportedPrincipalTypes
+.. _aws.iam#supportedPrincipalTypes-trait:
+
+-----------------------------------------
+``aws.iam#supportedPrincipalTypes`` trait
+-----------------------------------------
+
+Summary
+    The `IAM principal types`_ that can use the service or operation.
+Trait selector
+    ``:test(service, operation)``
+Value type
+    ``list<string>`` where each string is an IAM principal type: ``Root``,
+    ``IAMUser``, ``IAMRole``, or ``FederatedUser``.
+
+Operations that are not annotated with the ``supportedPrincipalTypes`` trait
+inherit the ``supportedPrincipalTypes`` of the service they are bound to.
+
+The following example defines two operations:
+
+* ``OperationA`` defines an explicit list of the `IAM principal types`_ it
+  supports using the ``supportedPrincipalTypes`` trait.
+* ``OperationB`` is not annotated with the ``supportedPrincipalTypes`` trait,
+  so the `IAM principal types`_ supported by this operation are the principal
+  types applied to the service.
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.iam#supportedPrincipalTypes
+
+    @supportedPrincipalTypes(["Root", "IAMUser", "IAMRole", "FederatedUser"])
+    service MyService {
+        version: "2020-07-02"
+        operations: [OperationA, OperationB]
+    }
+
+    @supportedPrincipalTypes(["Root"])
+    operation OperationA {}
+
+    operation OperationB {}
+
+
+.. _aws-iam_traits-resources:
+
+---------------
+Resource traits
+---------------
+
+.. smithy-trait:: aws.iam#iamResource
+.. _aws.iam#iamResource-trait:
+
+``aws.iam#iamResource`` trait
+=============================
+
+Summary
+    Indicates properties of a Smithy resource in AWS IAM.
+Trait selector
+    ``resource``
+Value type
+    ``structure``
+
+The ``aws.iam#iamResource`` trait is a structure that supports the following
+members:
+
+.. list-table::
+    :header-rows: 1
+    :widths:  10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - name
+      - ``string``
+      - The name of the resource in AWS IAM.
+    * - relativeDocumentation
+      - ``string``
+      - A relative URL path that defines more information about the resource
+        within a set of IAM-related documentation.
+
+The following example defines a simple resource with a name in AWS IAM that
+deviates from the :ref:`shape name of the shape ID <shape-id>` of the resource.
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.iam#iamResource
+
+    @iamResource(name: "super")
+    resource SuperResource {
+        identifiers: {
+            superId: String,
+        }
+    }
+
+
+.. _aws-iam_traits-actions:
+
+-------------
+Action traits
+-------------
+
+.. smithy-trait:: aws.iam#iamAction
+.. _aws.iam#iamAction-trait:
+
+``aws.iam#iamAction`` trait
+===========================
+
+Summary
+    Indicates properties of a Smithy operation in AWS IAM.
+Trait selector
+    ``operation``
+Value type
+    ``structure``
+
+The ``aws.iam#iamAction`` trait is a structure that supports the following
+members:
+
+.. list-table::
+    :header-rows: 1
+    :widths:  10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - name
+      - ``string``
+      - The name of the resource in AWS IAM.
+    * - documentation
+      - ``string``
+      - A brief description of what granting the user permission to invoke an
+        operation would entail.
+    * - relativeDocumentation
+      - ``string``
+      - A relative URL path that defines more information about the operation
+        within a set of IAM-related documentation.
+    * - requiredActions
+      - ``list<string>`` where each string value is the name of another action.
+      - The list of actions that the invoker must be authorized to perform when
+        executing the targeted operation.
+    * - resources
+      - `ActionResources object`_
+      - The resources an IAM action can be authorized against.
+    * - createsResources
+      - ``list<string>`` where each string value is the name of a resource.
+      - The list of resources that performing this IAM action will create. If
+        this member is present, all inferred created resources are ignored.
+
+The following example defines a simple operation with a name in AWS IAM that
+deviates from the :ref:`shape name of the shape ID <shape-id>` of the operation.
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.iam#iamAction
+
+    @iamAction(name: "PutEvent")
+    operation OperationA {}
+
+
+.. _aws.iam#iamAction-trait-ActionResources:
+
+``ActionResources`` object
+--------------------------
+
+The ``ActionResources`` object is a container for information on the resources
+that an IAM action may be authorized against. The ``ActionResources`` object
+contains the following properties:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - required
+      - ``map`` of resource name to `ActionResource object`_
+      - Resources that will always be authorized against for functionality of
+        the IAM action. If this member is present, all inferred required
+        resources are ignored.
+    * - optional
+      - ``map`` of resource name to `ActionResource object`_
+      - Resources that will be authorized against based on optional behavior of
+        the IAM action. If this member is present, all inferred optional
+        resources are ignored.
+
+        For example, an action may create an instance that can optionally be
+        configured based on a snapshot that would be authorized against. Most
+        actions do not need this property.
+
+
+.. _aws.iam#iamAction-trait-ActionResource:
+
+``ActionResource`` object
+-------------------------
+
+The ``ActionResource`` object is a container for information about a resource
+that an IAM action can be authorized against. The ``ActionResource`` object
+contains the following properties:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - conditionKeys
+      - ``list<string>``
+      - The condition keys used for authorizing against this resource.
+
+
+.. smithy-trait:: aws.iam#actionName
+.. _aws.iam#actionName-trait:
+
+``aws.iam#actionName`` trait
+============================
+
+.. danger::
+    This trait is deprecated. The ``name`` property of the
+    :ref:`aws.iam#iamAction-trait` should be used instead.
+
+Summary
+    Provides a custom IAM action name.
+Trait selector
+    ``operation``
+Value type
+    ``string``
+
+Operations not annotated with the ``actionName`` trait, default to the
+:ref:`shape name of the shape ID <shape-id>` of the targeted operation.
+
+The following example defines two operations:
+
+* ``OperationA`` is not annotated with the ``actionName`` trait, and
+  resolves the action name of ``OperationA``.
+* ``OperationB`` has the ``actionName`` trait, so has the action
+  name ``OverridingActionName``.
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.iam#actionName
+
+    service MyService {
+        version: "2020-07-02"
+        operations: [OperationA, OperationB]
+    }
+
+    operation OperationA {}
+
+    @actionName("OverridingActionName")
+    operation OperationB {}
+
 .. smithy-trait:: aws.iam#actionPermissionDescription
 .. _aws.iam#actionPermissionDescription-trait:
 
----------------------------------------------
 ``aws.iam#actionPermissionDescription`` trait
----------------------------------------------
+=============================================
+
+.. danger::
+    This trait is deprecated. The ``documentation`` property of the
+    :ref:`aws.iam#iamAction-trait` should be used instead.
 
 Summary
     A brief description of what granting the user permission to invoke an
@@ -43,27 +314,31 @@ Value type
     @actionPermissionDescription("This will allow the user to Foo.")
     operation FooOperation {}
 
-.. smithy-trait:: aws.iam#conditionKeys
-.. _aws.iam#conditionKeys-trait:
 
--------------------------------
-``aws.iam#conditionKeys`` trait
--------------------------------
+.. smithy-trait:: aws.iam#requiredActions
+.. _aws.iam#requiredActions-trait:
+
+``aws.iam#requiredActions`` trait
+=================================
+
+.. danger::
+    This trait is deprecated. The ``requiredActions`` property of the
+    :ref:`aws.iam#iamAction-trait` should be used instead.
 
 Summary
-    Applies condition keys, by name, to a resource or operation.
+    Other actions that the invoker must be authorized to perform when
+    executing the targeted operation.
 Trait selector
-    ``:test(resource, operation)``
+    ``operation``
 Value type
-    ``list<string>``
+    ``list<string>`` where each string value references other actions
+    required for the service to authorize.
 
-Condition keys derived automatically can be applied to a resource or operation
-explicitly. Condition keys applied this way MUST be either inferred or
-explicitly defined via the :ref:`aws.iam#defineConditionKeys-trait` trait.
-
-The following example's ``MyResource`` resource has the
-``myservice:MyResourceFoo`` and  ``otherservice:Bar`` condition keys. The
-``MyOperation`` operation has the ``aws:region`` condition key.
+Defines the actions, in addition to the targeted operation, that a user must
+be authorized to execute in order invoke an operation. The following example
+indicates that, in order to invoke the ``MyOperation`` operation, the invoker
+must also be authorized to execute the ``otherservice:OtherOperation``
+operation for it to complete successfully.
 
 .. code-block:: smithy
 
@@ -72,37 +347,34 @@ The following example's ``MyResource`` resource has the
     namespace smithy.example
 
     use aws.api#service
-    use aws.iam#definedContextKeys
-    use aws.iam#conditionKeys
+    use aws.iam#requiredActions
 
     @service(sdkId: "My Value", arnNamespace: "myservice")
-    @defineConditionKeys("otherservice:Bar": { type: "String" })
     service MyService {
         version: "2017-02-11"
         resources: [MyResource]
     }
 
-    @conditionKeys(["otherservice:Bar"])
     resource MyResource {
         identifiers: {foo: String}
         operations: [MyOperation]
     }
 
-    @conditionKeys(["aws:region"])
+    @requiredActions(["otherservice:OtherOperation"])
     operation MyOperation {}
 
-.. note::
 
-    Condition keys that refer to global ``"aws:*"`` keys can be referenced
-    without being defined on the service.
+.. _aws-iam_traits-condition-keys:
 
+--------------------
+Condition key traits
+--------------------
 
 .. smithy-trait:: aws.iam#defineConditionKeys
 .. _aws.iam#defineConditionKeys-trait:
 
--------------------------------------
 ``aws.iam#defineConditionKeys`` trait
--------------------------------------
+=====================================
 
 Summary
     Defines the set of condition keys that appear within a service in
@@ -174,7 +446,7 @@ Each condition key structure supports the following members:
 .. _condition-key-types:
 
 Condition Key Types
-===================
+-------------------
 
 The following table describes the available types a condition key can have.
 Condition keys in IAM policies can be evaluated with `condition operators`_.
@@ -215,12 +487,64 @@ Condition keys in IAM policies can be evaluated with `condition operators`_.
       - An unordered list of String types.
 
 
+.. smithy-trait:: aws.iam#conditionKeys
+.. _aws.iam#conditionKeys-trait:
+
+``aws.iam#conditionKeys`` trait
+===============================
+
+Summary
+    Applies condition keys, by name, to a resource or operation.
+Trait selector
+    ``:test(resource, operation)``
+Value type
+    ``list<string>``
+
+Condition keys derived automatically can be applied to a resource or operation
+explicitly. Condition keys applied this way MUST be either inferred or
+explicitly defined via the :ref:`aws.iam#defineConditionKeys-trait` trait.
+
+The following example's ``MyResource`` resource has the
+``myservice:MyResourceFoo`` and  ``otherservice:Bar`` condition keys. The
+``MyOperation`` operation has the ``aws:region`` condition key.
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.api#service
+    use aws.iam#definedContextKeys
+    use aws.iam#conditionKeys
+
+    @service(sdkId: "My Value", arnNamespace: "myservice")
+    @defineConditionKeys("otherservice:Bar": { type: "String" })
+    service MyService {
+        version: "2017-02-11"
+        resources: [MyResource]
+    }
+
+    @conditionKeys(["otherservice:Bar"])
+    resource MyResource {
+        identifiers: {foo: String}
+        operations: [MyOperation]
+    }
+
+    @conditionKeys(["aws:region"])
+    operation MyOperation {}
+
+.. note::
+
+    Condition keys that refer to global ``"aws:*"`` keys can be referenced
+    without being defined on the service.
+
+
 .. smithy-trait:: aws.iam#disableConditionKeyInference
 .. _aws.iam#disableConditionKeyInference-trait:
 
-----------------------------------------------
 ``aws.iam#disableConditionKeyInference`` trait
-----------------------------------------------
+==============================================
 
 Summary
     Declares that the condition keys of a resource should not be inferred.
@@ -296,195 +620,11 @@ condition key inference disabled.
         }
     }
 
-.. smithy-trait:: aws.iam#requiredActions
-.. _aws.iam#requiredActions-trait:
-
----------------------------------
-``aws.iam#requiredActions`` trait
----------------------------------
-
-Summary
-    Other actions that the invoker must be authorized to perform when
-    executing the targeted operation.
-Trait selector
-    ``operation``
-Value type
-    ``list<string>`` where each string value references condition keys
-    defined in the closure of the service.
-
-Defines the actions, in addition to the targeted operation, that a user must
-be authorized to execute in order invoke an operation. The following example
-indicates that, in order to invoke the ``MyOperation`` operation, the invoker
-must also be authorized to execute the ``otherservice:OtherOperation``
-operation for it to complete successfully.
-
-.. code-block:: smithy
-
-    $version: "2"
-
-    namespace smithy.example
-
-    use aws.api#service
-    use aws.iam#requiredActions
-
-    @service(sdkId: "My Value", arnNamespace: "myservice")
-    service MyService {
-        version: "2017-02-11"
-        resources: [MyResource]
-    }
-
-    resource MyResource {
-        identifiers: {foo: String}
-        operations: [MyOperation]
-    }
-
-    @requiredActions(["otherservice:OtherOperation"])
-    operation MyOperation {}
-
-.. smithy-trait:: aws.iam#supportedPrincipalTypes
-.. _aws.iam#supportedPrincipalTypes-trait:
-
------------------------------------------
-``aws.iam#supportedPrincipalTypes`` trait
------------------------------------------
-
-Summary
-    The `IAM principal types`_ that can use the service or operation.
-Trait selector
-    ``:test(service, operation)``
-Value type
-    ``list<string>`` where each string is an IAM principal type: ``Root``,
-    ``IAMUser``, ``IAMRole``, or ``FederatedUser``.
-
-Operations that are not annotated with the ``supportedPrincipalTypes`` trait
-inherit the ``supportedPrincipalTypes`` of the service they are bound to.
-
-The following example defines two operations:
-
-* OperationA defines an explicit list of the IAM principal types it supports
-  using the ``supportedPrincipalTypes`` trait.
-* OperationB is not annotated with the ``supportedPrincipalTypes`` trait, so
-  the IAM principal types supported by this operation are the principal types
-  applied to the service.
-
-.. code-block:: smithy
-
-    $version: "2"
-
-    namespace smithy.example
-
-    use aws.iam#supportedPrincipalTypes
-
-    @supportedPrincipalTypes(["Root", "IAMUser", "IAMRole", "FederatedUser"])
-    service MyService {
-        version: "2020-07-02"
-        operations: [OperationA, OperationB]
-    }
-
-    @supportedPrincipalTypes(["Root"])
-    operation OperationA {}
-
-    operation OperationB {}
-
-
-.. smithy-trait:: aws.iam#iamResource
-.. _aws.iam#iamResource-trait:
-
------------------------------
-``aws.iam#iamResource`` trait
------------------------------
-
-Summary
-    Indicates properties of a Smithy resource in AWS IAM.
-Trait selector
-    ``resource``
-Value type
-    ``structure``
-
-The ``aws.iam#iamResource`` trait is a structure that supports the following
-members:
-
-.. list-table::
-    :header-rows: 1
-    :widths:  10 20 70
-
-    * - Property
-      - Type
-      - Description
-    * - name
-      - ``string``
-      - The name of the resource in AWS IAM.
-    * - relativeDocumentation
-      - ``string``
-      - A relative URL path that defines more information about the resource
-        within a set of IAM-related documentation.
-
-The following example defines a simple resource with a name in AWS IAM that
-deviates from the :ref:`shape name of the shape ID <shape-id>` of the resource.
-
-.. code-block:: smithy
-
-    $version: "2"
-
-    namespace smithy.example
-
-    use aws.iam#iamResource
-
-    @iamResource(name: "super")
-    resource SuperResource {
-        identifiers: {
-            superId: String,
-        }
-    }
-
-.. smithy-trait:: aws.iam#actionName
-.. _aws.iam#actionName-trait:
-
-----------------------------
-``aws.iam#actionName`` trait
-----------------------------
-
-Summary
-    Provides a custom IAM action name.
-Trait selector
-    ``operation``
-Value type
-    ``string``
-
-Operations not annotated with the ``actionName`` trait, default to the
-:ref:`shape name of the shape ID <shape-id>` of the targeted operation.
-
-The following example defines two operations:
-
-* ``OperationA`` is not annotated with the ``actionName`` trait, and
-  resolves the action name of ``OperationA``.
-* ``OperationB`` has the ``actionName`` trait, so has the action
-  name ``OverridingActionName``.
-
-.. code-block:: smithy
-
-    $version: "2"
-
-    namespace smithy.example
-
-    use aws.iam#actionName
-
-    service MyService {
-        version: "2020-07-02"
-        operations: [OperationA, OperationB]
-    }
-
-    operation OperationA {}
-
-    @actionName("OverridingActionName")
-    operation OperationB {}
-
 .. smithy-trait:: aws.iam#serviceResolvedConditionKeys
 .. _aws.iam#serviceResolvedConditionKeys-trait:
 
-----------------------------------------------
 ``aws.iam#serviceResolvedConditionKeys`` trait
-----------------------------------------------
+==============================================
 
 Summary
     Specifies the list of IAM condition keys which must be resolved by the
@@ -524,9 +664,8 @@ The following example defines two service-specific condition keys:
 .. smithy-trait:: aws.iam#conditionKeyValue
 .. _aws.iam#conditionKeyValue-trait:
 
------------------------------------
 ``aws.iam#conditionKeyValue`` trait
------------------------------------
+===================================
 
 Summary
     Uses the associated member’s value for the specified condition key.
@@ -572,9 +711,8 @@ explicitly binds ``ActionContextKey1`` to the field ``key``.
 
 .. _deriving-condition-keys:
 
------------------------
 Deriving Condition Keys
------------------------
+=======================
 
 Smithy will automatically derive condition key information for a service, as
 well as its resources and operations.

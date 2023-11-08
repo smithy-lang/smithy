@@ -3,11 +3,13 @@ $version: "2.0"
 namespace aws.iam
 
 /// Provides a custom IAM action name. By default, the action name is the same as the operation name.
+@deprecated(since: "2023-11-10", message: "Use the `name` member of the `aws.iam#iamAction` trait instead.")
 @trait(selector: "operation")
 string actionName
 
 /// A brief description of what granting the user permission to invoke an operation would entail.
 /// This description should begin with something similar to 'Enables the user to...' or 'Grants permission to...'
+@deprecated(since: "2023-11-10", message: "Use the `documentation` member of the `aws.iam#iamAction` trait instead.")
 @trait(selector: "operation")
 string actionPermissionDescription
 
@@ -34,6 +36,29 @@ map defineConditionKeys {
 @trait(selector: ":test(service, resource)")
 structure disableConditionKeyInference {}
 
+/// Indicates properties of a Smithy operation as an IAM action.
+@trait(selector: "operation")
+structure iamAction {
+    /// The name of the action in AWS IAM.
+    name: String
+
+    /// A brief description of what granting the user permission to invoke an operation would entail.
+    /// This description should begin with something similar to 'Enables the user to...' or 'Grants permission to...'
+    documentation: String
+
+    /// A relative URL path that defines more information about the action within a set of IAM-related documentation.
+    relativeDocumentation: String
+
+    /// Other actions that the invoker must be authorized to perform when executing the targeted operation.
+    requiredActions: RequiredActionsList
+
+    /// The resources an IAM action can be authorized against.
+    resources: ActionResources
+
+    /// The resources that performing this IAM action will create.
+    createsResources: ResourceNameList
+}
+
 /// Indicates properties of a Smithy resource in AWS IAM.
 @trait(selector: "resource")
 structure iamResource {
@@ -46,6 +71,7 @@ structure iamResource {
 }
 
 /// Other actions that the invoker must be authorized to perform when executing the targeted operation.
+@deprecated(since: "2023-11-10", message: "Use the `requiredActions` member of the `aws.iam#iamAction` trait instead.")
 @trait(selector: "operation")
 list requiredActions {
     member: IamIdentifier
@@ -64,6 +90,16 @@ list supportedPrincipalTypes {
     member: PrincipalType
 }
 
+/// A container for information on the resources that an IAM action may be authorized against.
+@private
+structure ActionResources {
+    /// Resources that will always be authorized against for functionality of the IAM action.
+    required: ActionResourceMap
+
+    /// Resources that will be authorized against based on optional behavior of the IAM action.
+    optional: ActionResourceMap
+}
+
 /// A defined condition key to appear within a service in addition to inferred and global condition keys.
 @private
 structure ConditionKeyDefinition {
@@ -79,6 +115,37 @@ structure ConditionKeyDefinition {
     ///  A relative URL path that defines more information about the condition key
     ///  within a set of IAM-related documentation.
     relativeDocumentation: String
+}
+
+/// Contains information about a resource an IAM action can be authorized against.
+@private
+structure ActionResource {
+    /// The condition keys used for authorizing against this resource.
+    conditionKeys: ConditionKeysList
+}
+
+@private
+map ActionResourceMap {
+    key: ResourceName
+    value: ActionResource
+}
+
+@private
+@uniqueItems
+list ConditionKeysList {
+    member: String
+}
+
+@private
+@uniqueItems
+list RequiredActionsList {
+    member: IamIdentifier
+}
+
+@private
+@uniqueItems
+list ResourceNameList {
+    member: ResourceName
 }
 
 /// The IAM policy type of the value that will supplied for this context key
@@ -130,6 +197,9 @@ enum ConditionKeyType {
 @pattern("^([A-Za-z0-9][A-Za-z0-9-\\.]{0,62}:[^:]+)$")
 @private
 string IamIdentifier
+
+@private
+string ResourceName
 
 /// An IAM policy principal type.
 @private

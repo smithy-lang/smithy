@@ -1,0 +1,3 @@
+[ERROR] smithy.example#Foo: Operation has the `name` property of the `@aws.iam#iamAction` trait set and the deprecated `@aws.iam#actionName` trait applied. | IamAction.ConflictingProperty.name
+[ERROR] smithy.example#Foo: Operation has the `documentation` property of the `@aws.iam#iamAction` trait set and the deprecated `@aws.iam#actionPermissionDescription` trait applied. | IamAction.ConflictingProperty.documentation
+[ERROR] smithy.example#Foo: Operation has the `requiredActions` property of the `@aws.iam#iamAction` trait set and the deprecated `@aws.iam#requiredActions` trait applied. | IamAction.ConflictingProperty.requiredActions
