@@ -1,0 +1,1 @@
+[DANGER] smithy.example#Foo: Operation has the following resource names defined as both required and optional: [bap] | IamAction.Resources.DuplicateEntries
