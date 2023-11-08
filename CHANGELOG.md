@@ -13,7 +13,7 @@
 * Enabled `aws.iam#disableConditionKeyInference` trait to be applicable to service shapes. ([#2019](https://github.com/smithy-lang/smithy/pull/2019))
 * Updated `partitions.json` with two new entries, `aws-iso-e` and `aws-iso-f` to be consistent with SDKs. ([#2018](https://github.com/smithy-lang/smithy/pull/2018))
 * Added event-id subparts to `ClientEndpointDiscoveryValidator` to clarify validation events. ([#2017](https://github.com/smithy-lang/smithy/pull/2017))
-* Added configuration for integrations in `smithy-build.json`. ([#2014](https://github.com/smithy-lang/smithy/pull/2014))
+* Added configuration for plugin integrations in `smithy-build.json`. ([#2014](https://github.com/smithy-lang/smithy/pull/2014))
 * Added protocol tests for verifying behavior of default values in the `awsJson1_1` protocol. ([#2002](https://github.com/smithy-lang/smithy/pull/2002))
 * Added several new traits for modelling declarative endpoints. ([#1987](https://github.com/smithy-lang/smithy/pull/1987))
 
