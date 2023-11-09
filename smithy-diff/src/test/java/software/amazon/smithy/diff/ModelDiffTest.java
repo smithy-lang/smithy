@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.StringShape;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
@@ -77,7 +78,7 @@ public class ModelDiffTest {
     @Test
     public void findsBreakingChanges() {
         Model oldModel = Model.builder()
-                .addShape(StringShape.builder().id("smithy.example#Str").build())
+                .addShape(StructureShape.builder().id("smithy.example#Str").build())
                 .build();
         Model newModel = Model.builder().build();
         ModelDiff.Result result = ModelDiff.builder().oldModel(oldModel).newModel(newModel).compare();

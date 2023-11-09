@@ -19,11 +19,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 import software.amazon.smithy.diff.Differences;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.PrivateTrait;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
 /**
- * Creates an ERROR event when a non-private shape is removed.
+ * Creates an ERROR event when a non-private non-scalar shape is removed.
+ * Creates a NOTE event when a non-private scalar shape is removed.
  */
 public final class RemovedShape extends AbstractDiffEvaluator {
     @Override
@@ -31,7 +33,9 @@ public final class RemovedShape extends AbstractDiffEvaluator {
         return differences.removedShapes()
                 .filter(shape -> !shape.hasTrait(PrivateTrait.class))
                 .filter(shape -> !isMemberOfRemovedShape(shape, differences))
-                .map(shape -> error(shape, String.format("Removed %s `%s`", shape.getType(), shape.getId())))
+                .map(shape -> isScalarType(shape)
+                        ? note(shape, String.format("Removed %s `%s`", shape.getType(), shape.getId()))
+                        : error(shape, String.format("Removed %s `%s`", shape.getType(), shape.getId())))
                 .collect(Collectors.toList());
     }
 
@@ -39,5 +43,20 @@ public final class RemovedShape extends AbstractDiffEvaluator {
         return shape.asMemberShape()
                 .filter(member -> !differences.getNewModel().getShapeIds().contains(member.getContainer()))
                 .isPresent();
+    }
+
+    private boolean isScalarType(Shape shape) {
+        return shape.isIntegerShape()
+            || shape.isBigDecimalShape()
+            || shape.isBigIntegerShape()
+            || shape.isBlobShape()
+            || shape.isBooleanShape()
+            || shape.isByteShape()
+            || shape.isDoubleShape()
+            || shape.isFloatShape()
+            || shape.isShortShape()
+            || shape.isTimestampShape()
+            || shape.isLongShape()
+            || (shape.isStringShape() && !shape.hasTrait(EnumTrait.class));
     }
 }
