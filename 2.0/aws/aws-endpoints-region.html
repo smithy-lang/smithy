@@ -1,0 +1,837 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="AWS IAM traits" href="aws-iam.html" /><link rel="prev" title="AWS Authentication Traits" href="aws-auth.html" />
+
+    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+        <title>AWS Declarative Endpoint Traits - Smithy 2.0</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --admonition-font-size: 100%;
+  --admonition-title-font-size: 100%;
+  --color-brand-primary: #C44536;
+  --color-brand-content: #00808b;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+      }
+    }
+  }
+</style><script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
+<script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Smithy 2.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/smithy.svg" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick start</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../spec/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../spec/model.html">1. The Smithy model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/simple-types.html">2. Simple types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/aggregate-types.html">3. Aggregate types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/service-types.html">4. Service types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/mixins.html">5. Mixins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/constraint-traits.html">6. Constraint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/type-refinement-traits.html">7. Type refinement traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/documentation-traits.html">8. Documentation traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/behavior-traits.html">9. Behavior traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/resource-traits.html">10. Resource traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/authentication-traits.html">11. Authentication traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/protocol-traits.html">12. Serialization and Protocol traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/streaming.html">13. Streaming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/http-bindings.html">14. HTTP bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/endpoint-traits.html">15. Endpoint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/selectors.html">16. Selectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/model-validation.html">17. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/idl.html">18. Smithy IDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/json-ast.html">19. JSON AST</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../trait-index.html">Trait index</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../guides/index.html">Guides</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/smithy-cli/index.html">The Smithy CLI</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../guides/smithy-cli/cli_installation.html">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-models/build-config.html">smithy-build</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/using-code-generation/index.html">Using Code Generation</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../guides/using-code-generation/update-model.html">Updating the Smithy Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/using-code-generation/generating-a-client.html">Generating a client</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/model-linters.html">Model linters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/model-validation-examples.html">Model Validation Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/style-guide.html">Style Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/migrating-idl-1-to-2.html">Smithy IDL 1.0 to 2.0 Migration Guide</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/building-codegen/index.html">Creating a Smithy Code Generator</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/overview-and-concepts.html">Overview and Concepts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/mapping-shapes-to-languages.html">Mapping Smithy Shapes to Your Language</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/creating-codegen-repo.html">Creating a Codegen Repo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/configuring-the-generator.html">Configuring the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/implementing-the-generator.html">Implementing the Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/making-codegen-pluggable.html">Making Codegen Pluggable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/generating-code.html">Generating Code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/decoupling-codegen-with-symbols.html">Decoupling Codegen with Symbols</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guides/building-codegen/using-the-semantic-model.html">Using the Semantic Model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../additional-specs/index.html">Additional specs</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../additional-specs/waiters.html">Waiters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/rules-engine/index.html">Rules engine</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../additional-specs/rules-engine/specification.html">Rules engine specification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../additional-specs/rules-engine/parameters.html">Rules engine parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../additional-specs/rules-engine/standard-library.html">Rules engine standard library</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">AWS integrations</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="aws-core.html">AWS Core Specification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-auth.html">AWS Authentication Traits</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">AWS Declarative Endpoint Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-iam.html">AWS IAM traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amazon-apigateway.html">Amazon API Gateway traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-cloudformation.html">AWS CloudFormation Traits</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="protocols/index.html">AWS Protocols</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="protocols/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="protocols/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="protocols/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="protocols/aws-restxml-protocol.html">AWS restXml protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="protocols/aws-query-protocol.html">AWS query protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="protocols/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="rules-engine/index.html">AWS rules engine extensions</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="rules-engine/built-ins.html">AWS rules engine built-ins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rules-engine/library-functions.html">AWS rules engine library functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rules-engine/auth-schemes.html">AWS rules engine authentication scheme validators</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/awesome-smithy">Awesome Smithy</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy-examples">Smithy Examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/1.0/">1.0 Documentation</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-2.0/aws/aws-endpoints-region.rst" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <div class="section" id="aws-declarative-endpoint-traits">
+<span id="aws-endpoints"></span><h1>AWS Declarative Endpoint Traits<a class="headerlink" href="#aws-declarative-endpoint-traits" title="Permalink to this headline">#</a></h1>
+<p>This document defines AWS declarative endpoint traits.</p>
+<div class="section" id="aws-endpoints-overview">
+<span id="id1"></span><h2>AWS Endpoints Overview<a class="headerlink" href="#aws-endpoints-overview" title="Permalink to this headline">#</a></h2>
+<p>An endpoint is used to connect programmatically to an AWS service. An endpoint is the URL of the
+entry point for an AWS web service.</p>
+<p>Most AWS services are regional: they offer regional endpoints and the service's resources are independent
+of similar resources in other regions.</p>
+<dl class="docutils" id="aws-endpoints-region">
+<dt>Region</dt><dd>Each <a class="reference external" href="https://docs.aws.amazon.com/whitepapers/latest/aws-fault-isolation-boundaries/regions.html">region</a>
+consists of multiple availability zones within a single geographic area. Regions themselves are isolated
+and independent from other regions.</dd>
+</dl>
+<dl class="docutils" id="aws-partition">
+<dt>Partition</dt><dd>AWS groups regions into
+<a class="reference external" href="https://docs.aws.amazon.com/whitepapers/latest/aws-fault-isolation-boundaries/partitions.html">partitions</a>.
+Every region is in exactly one partition and each partition has one or more regions.
+AWS commercial Regions are in the <code class="docutils literal notranslate"><span class="pre">aws</span></code> partition, Regions in China are in the <code class="docutils literal notranslate"><span class="pre">aws-cn</span></code> partition,
+and AWS GovCloud Regions are in the <code class="docutils literal notranslate"><span class="pre">aws-us-gov</span></code> partition.</dd>
+</dl>
+<dl class="docutils" id="fips-endpoints">
+<dt>FIPS Endpoints</dt><dd>Some AWS services have endpoints that support Federal Information Processing Standard (FIPS) 140-2.
+For a list of FIPS endpoints, see
+<a class="reference external" href="http://aws.amazon.com/compliance/fips/#FIPS_Endpoints_by_Service">FIPS endpoints by Service</a>.</dd>
+</dl>
+<dl class="docutils" id="dualstack-endpoints">
+<dt>Dual stack Endpoints</dt><dd>Some AWS services offer dual stack endpoints, so that you can access them using either IPv4 or IPv6 requests.
+For a list of services that support dual stack endpoints, see <a class="reference external" href="https://docs.aws.amazon.com/vpc/latest/userguide/aws-ipv6-support.html">AWS services that support IPv6</a>.</dd>
+</dl>
+</div>
+<div class="section" id="aws-endpoints-endpointsmodifier-trait">
+<span id="aws-endpoints-endpointsmodifier-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.endpoints#endpointsModifier</span></code> trait<a class="headerlink" href="#aws-endpoints-endpointsmodifier-trait" title="Permalink to this headline">#</a></h2>
+<dl class="docutils">
+<dt>Summary</dt><dd>A meta-trait that marks a trait as an endpoint modifier.  Traits that are marked with this trait are
+applied to service shapes or operation shapes to indicate how a client can resolve
+endpoints for that service or operation.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">[trait|trait]</span></code></dd>
+<dt>Value type</dt><dd>Annotation trait</dd>
+</dl>
+<p>The following example defines a service with <code class="docutils literal notranslate"><span class="pre">standardRegionalEndpoints</span></code> modified by
+the hypothetical <code class="docutils literal notranslate"><span class="pre">fooExample</span></code> endpoint modifier.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">use </span><span class="nc">aws.endpoints#endpointsModifier</span>
+<span class="kd">use </span><span class="nc">aws.endpoints#standardRegionalEndpoints</span>
+
+<span class="nt">@endpointsModifier</span>
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)
+<span class="kd">structure </span><span class="nc">fooExample</span><span class="w"> </span>{}
+
+<span class="nt">@standardRegionalEndpoints</span>
+<span class="nt">@fooExample</span>
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-02&quot;</span>
+}
+</pre></div>
+</div>
+<p>Because endpoint modification definitions are just specialized shapes, they
+can also support configuration settings.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">use </span><span class="nc">aws.endpoints#endpointsModifier</span>
+<span class="kd">use </span><span class="nc">aws.endpoints#standardRegionalEndpoints</span>
+
+<span class="nt">@endpointsModifier</span>
+<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)
+<span class="kd">structure </span><span class="nc">endpointSuffix</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">suffix</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+
+<span class="nt">@standardRegionalEndpoints</span>
+<span class="nt">@endpointSuffix</span>(<span class="vc">suffix</span><span class="p">=</span><span class="s2">&quot;-suffix&quot;</span>)
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-02&quot;</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="aws-endpoints-standardregionalendpoints-trait">
+<span id="aws-endpoints-standardregionalendpoints-trait"></span><span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.endpoints#standardRegionalEndpoints</span></code> trait<a class="headerlink" href="#aws-endpoints-standardregionalendpoints-trait" title="Permalink to this headline">#</a></h2>
+<dl class="docutils">
+<dt>Summary</dt><dd><p>An <a class="reference internal" href="#aws-endpoints-endpointsmodifier-trait"><span class="std std-ref">endpoints modifier trait</span></a>
+that indicates that a service's endpoints should be resolved using the standard AWS regional
+patterns:</p>
+<ul class="simple">
+<li>Default: <code class="docutils literal notranslate"><span class="pre">{service}.{region}.{dnsSuffix}</span></code></li>
+<li>Fips: <code class="docutils literal notranslate"><span class="pre">{service}-fips.{region}.{dnsSuffix}</span></code></li>
+<li>Dualstack: <code class="docutils literal notranslate"><span class="pre">{service}.{region}.{dualStackDnsSuffix}</span></code></li>
+<li>Fips/Dualstack: <code class="docutils literal notranslate"><span class="pre">{service}-fips.{region}.{dualStackDnsSuffix}</span></code></li>
+</ul>
+</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
+<dt>Trait value</dt><dd>A <code class="docutils literal notranslate"><span class="pre">structure</span></code> with the following properties:</dd>
+</dl>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="30%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>partitionSpecialCases</td>
+<td><code class="docutils literal notranslate"><span class="pre">map</span></code> of partition to <a class="reference internal" href="#partitionspecialcase-object">PartitionSpecialCase object</a></td>
+<td>A map of partition to partition special cases - endpoints for a partition that do not follow the
+standard patterns.</td>
+</tr>
+<tr class="row-odd"><td>regionSpecialCases</td>
+<td><code class="docutils literal notranslate"><span class="pre">map</span></code> of region to <a class="reference internal" href="#regionspecialcase-object">RegionSpecialCase object</a></td>
+<td>A map of region to regional special cases - endpoints for a region that do not follow the
+standard patterns.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="docutils">
+<dt>Conflicts with</dt><dd><a class="reference internal" href="#aws-endpoints-standardpartitionalendpoints-trait"><span class="std std-ref">aws.endpoints#standardPartitionalEndpoints trait</span></a></dd>
+</dl>
+<p>Most AWS services are regionalized and are strongly encouraged to follow
+the standard endpoint patterns defined above for consistency, and to
+ensure that endpoints are forwards compatible, and that SDK updates are
+not required when the service launches in a new region or partition.</p>
+<p>The following example defines a service that uses the standard regional endpoints:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">use </span><span class="nc">aws.endpoints#standardRegionalEndpoints</span>
+
+<span class="nt">@standardRegionalEndpoints</span>
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-02&quot;</span>
+}
+</pre></div>
+</div>
+<p>While services are strongly encouraged to follow standard endpoint patterns,
+there are occasional exceptions and special cases.  The following example defines
+a service that uses standard regional endpoints, but uses a non-standard pattern for
+FIPS endpoints in US GovCloud:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@standardRegionalEndpoints</span>(
+<span class="w">    </span><span class="py">partitionSpecialCases</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="vc">aws-us-gov</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">            </span>{
+<span class="w">                </span><span class="py">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice.{region}.{dnsSuffix}&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="py">fips</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">            </span>}
+<span class="w">        </span>]
+<span class="w">    </span>}
+)
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-02&quot;</span>
+}
+</pre></div>
+</div>
+<div class="section" id="partitionspecialcase-object">
+<h3><code class="docutils literal notranslate"><span class="pre">PartitionSpecialCase</span></code> object<a class="headerlink" href="#partitionspecialcase-object" title="Permalink to this headline">#</a></h3>
+<p>A <code class="docutils literal notranslate"><span class="pre">PartitionSpecialCase</span></code> defines the endpoint pattern to apply for all regional endpoints
+in the given partition. A PartitionSpecialCase object contains the following properties:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="30%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property name</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>endpoint</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. The special-cased endpoint template.</td>
+</tr>
+<tr class="row-odd"><td>dualStack</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>When <code class="docutils literal notranslate"><span class="pre">true</span></code> the special case will apply to dualstack endpoint variants.</td>
+</tr>
+<tr class="row-even"><td>fips</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>When <code class="docutils literal notranslate"><span class="pre">true</span></code> the special case will apply to fips endpoint variants.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="regionspecialcase-object">
+<h3><code class="docutils literal notranslate"><span class="pre">RegionSpecialCase</span></code> object<a class="headerlink" href="#regionspecialcase-object" title="Permalink to this headline">#</a></h3>
+<p>A <code class="docutils literal notranslate"><span class="pre">RegionSpecialCase</span></code> object contains the following properties:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="30%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property name</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>endpoint</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. The special-cased endpoint template.</td>
+</tr>
+<tr class="row-odd"><td>dualStack</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>When <code class="docutils literal notranslate"><span class="pre">true</span></code> the special case will apply to dualstack endpoint variants.</td>
+</tr>
+<tr class="row-even"><td>fips</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>When <code class="docutils literal notranslate"><span class="pre">true</span></code> the special case will apply to fips endpoint variants.</td>
+</tr>
+<tr class="row-odd"><td>signingRegion</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Overrides the signingRegion used for this region.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="aws-endpoints-standardpartitionalendpoints-trait">
+<span id="aws-endpoints-standardpartitionalendpoints-trait"></span><span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.endpoints#standardPartitionalEndpoints</span></code> trait<a class="headerlink" href="#aws-endpoints-standardpartitionalendpoints-trait" title="Permalink to this headline">#</a></h2>
+<dl class="docutils">
+<dt>Summary</dt><dd>An <a class="reference internal" href="#aws-endpoints-endpointsmodifier-trait"><span class="std std-ref">endpoints modifier trait</span></a>
+that indicates that a service is
+<a class="reference external" href="https://docs.aws.amazon.com/whitepapers/latest/aws-fault-isolation-boundaries/global-services.html#global-services-that-are-unique-by-partition">partitional</a>
+and a single endpoint should be resolved per partition.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
+<dt>Trait value</dt><dd>A <code class="docutils literal notranslate"><span class="pre">structure</span></code> with the following properties:</dd>
+</dl>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="30%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>endpointPatternType</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong> The pattern type to use for the partition endpoint.  This value can be set to <code class="docutils literal notranslate"><span class="pre">service_dnsSuffix</span></code> to
+use the <code class="docutils literal notranslate"><span class="pre">{service}.{dnsSuffix}</span></code> pattern or <code class="docutils literal notranslate"><span class="pre">service_region_dnsSuffix</span></code> to use
+<code class="docutils literal notranslate"><span class="pre">{service}.{region}.{dnsSuffix}</span></code>.</td>
+</tr>
+<tr class="row-odd"><td>partitionEndpointSpecialCases</td>
+<td><code class="docutils literal notranslate"><span class="pre">map</span></code> of partition to <a class="reference internal" href="#partitionendpointspecialcase-object">PartitionEndpointSpecialCase object</a></td>
+<td>A map of partition to partition endpoint special cases - partitions that do not follow the
+service's standard patterns or are located in a region other than the partition's
+<code class="docutils literal notranslate"><span class="pre">defaultGlobalRegion</span></code>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="docutils">
+<dt>Conflicts with</dt><dd><a class="reference internal" href="#aws-endpoints-standardregionalendpoints-trait"><span class="std std-ref">aws.endpoints#standardRegionalEndpoints trait</span></a></dd>
+</dl>
+<p>Partitional services (also known as &quot;global&quot; services) resolve a single endpoint per partition.
+That single endpoint is located in the partition's <code class="docutils literal notranslate"><span class="pre">defaultGlobalRegion</span></code>. Partitional
+services should follow one of two standard patterns:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">service_dnsSuffix</span></code>: <code class="docutils literal notranslate"><span class="pre">{service}.{dnsSuffix}</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">service_region_dnsSuffix</span></code>: <code class="docutils literal notranslate"><span class="pre">{service}.{region}.{dnsSuffix}</span></code></li>
+</ul>
+<p>The following example defines a partitional service that uses <code class="docutils literal notranslate"><span class="pre">{service}.{dnsSuffix}</span></code>:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">use </span><span class="nc">aws.endpoints#standardPartitionalEndpoints</span>
+
+<span class="nt">@standardPartitionalEndpoints</span>(<span class="py">endpointPatternType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service_dnsSuffix&quot;</span>)
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-02&quot;</span>
+}
+</pre></div>
+</div>
+<p>Services should follow the standard patterns; however, occasionally there are special cases.
+The following example defines a partitional service that uses a special case pattern in
+the <code class="docutils literal notranslate"><span class="pre">aws</span></code> partition and uses a non-standard global region in the <code class="docutils literal notranslate"><span class="pre">aws-cn</span></code> partition:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@standardPartitionalEndpoints</span>(
+<span class="w">    </span><span class="py">endpointPatternType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service_dnsSuffix&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">partitionEndpointSpecialCases</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">aws</span><span class="p">:</span><span class="w"> </span>[{<span class="py">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice.global.amazonaws.com&quot;</span>}]<span class="p">,</span>
+<span class="w">        </span><span class="vc">aws-cn</span><span class="p">:</span><span class="w"> </span>[{<span class="py">region</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cn-north-1&quot;</span>}]
+<span class="w">    </span>}
+)
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-02&quot;</span>
+}
+</pre></div>
+</div>
+<div class="section" id="partitionendpointspecialcase-object">
+<h3><code class="docutils literal notranslate"><span class="pre">PartitionEndpointSpecialCase</span></code> object<a class="headerlink" href="#partitionendpointspecialcase-object" title="Permalink to this headline">#</a></h3>
+<p>A <code class="docutils literal notranslate"><span class="pre">PartitionEndpointSpecialCase</span></code> object contains the following properties:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="30%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property name</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>endpoint</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>The special-cased endpoint template.</td>
+</tr>
+<tr class="row-odd"><td>region</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Override the <code class="docutils literal notranslate"><span class="pre">defaultGlobalRegion</span></code> used in this partition.</td>
+</tr>
+<tr class="row-even"><td>dualStack</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>When <code class="docutils literal notranslate"><span class="pre">true</span></code> the special case will apply to dualstack endpoint variants.</td>
+</tr>
+<tr class="row-odd"><td>fips</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>When <code class="docutils literal notranslate"><span class="pre">true</span></code> the special case will apply to fips endpoint variants.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="aws-endpoints-dualstackonlyendpoints-trait">
+<span id="aws-endpoints-dualstackonlyendpoints-trait"></span><span id="id5"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.endpoints#dualStackOnlyEndpoints</span></code> trait<a class="headerlink" href="#aws-endpoints-dualstackonlyendpoints-trait" title="Permalink to this headline">#</a></h2>
+<dl class="docutils">
+<dt>Summary</dt><dd>An <a class="reference internal" href="#aws-endpoints-endpointsmodifier-trait"><span class="std std-ref">endpoints modifier trait</span></a>
+that indicates that a service has only
+<a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/rande.html#dual-stack-endpoints">dual stack endpoints</a>,
+does not support IPV4 only endpoints, and should not have the <code class="docutils literal notranslate"><span class="pre">useDualStackEndpoint</span></code> endpoint parameter.
+Dual stack endpoints support IPV4 and IPV6.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
+<dt>Trait value</dt><dd>Annotation trait</dd>
+</dl>
+<p>Adding the <code class="docutils literal notranslate"><span class="pre">dualStackOnlyEndpoints</span></code> trait to a service modifies the generation of endpoints from
+<a class="reference internal" href="#aws-endpoints-standardregionalendpoints-trait"><span class="std std-ref">aws.endpoints#standardRegionalEndpoints trait</span></a> or <a class="reference internal" href="#aws-endpoints-standardpartitionalendpoints-trait"><span class="std std-ref">aws.endpoints#standardPartitionalEndpoints trait</span></a>,
+removes the <code class="docutils literal notranslate"><span class="pre">useDualStackEndpoint</span></code> parameter, and defaults the behavior to dual stack for
+all partitions that support it.</p>
+<p>The following example specifies a service that uses standard regional endpoint patterns and
+is dual stack only:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@standardRegionalEndpoints</span>
+<span class="nt">@dualStackOnlyEndpoints</span>
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-02&quot;</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="aws-endpoints-rulesbasedendpoints-trait">
+<span id="aws-endpoints-rulesbasedendpoints-trait"></span><span id="id6"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.endpoints#rulesBasedEndpoints</span></code> trait<a class="headerlink" href="#aws-endpoints-rulesbasedendpoints-trait" title="Permalink to this headline">#</a></h2>
+<dl class="docutils">
+<dt>Summary</dt><dd>An <a class="reference internal" href="#aws-endpoints-endpointsmodifier-trait"><span class="std std-ref">endpoints modifier trait</span></a>
+that indicates that a service has hand written endpoint rules.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
+<dt>Trait value</dt><dd>Annotation trait</dd>
+</dl>
+<p>Services marked with the <code class="docutils literal notranslate"><span class="pre">rulesBasedEndpoints</span></code> trait have hand written endpoint rules that
+extend or replace their standard generated endpoint rules through an external mechanism.
+This trait marks the presence of hand written rules, which are added to the model by a transformer,
+but does not specify their behavior.</p>
+<p>A service with <code class="docutils literal notranslate"><span class="pre">rulesBasedEndpoints</span></code> may extend the functionality of
+endpoint behavior described in the model through other
+<a class="reference internal" href="#aws-endpoints-endpointsmodifier-trait"><span class="std std-ref">endpoints modifier traits</span></a>
+by modifying the generated <a class="reference internal" href="../additional-specs/rules-engine/specification.html#smithy-rules-endpointruleset-trait"><span class="std std-ref">EndpointRuleSet</span></a>.
+The following example specifies a service that has standard regional endpoints extended with hand written rules:</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@standardRegionalEndpoints</span>
+<span class="nt">@rulesBasedEndpoints</span>
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-02&quot;</span>
+}
+</pre></div>
+</div>
+</div>
+</div>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="aws-iam.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">AWS IAM traits</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="aws-auth.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">AWS Authentication Traits</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Amazon Web Services
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">AWS Declarative Endpoint Traits</a><ul>
+<li><a class="reference internal" href="#aws-endpoints-overview">AWS Endpoints Overview</a></li>
+<li><a class="reference internal" href="#aws-endpoints-endpointsmodifier-trait"><code class="docutils literal notranslate"><span class="pre">aws.endpoints#endpointsModifier</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-endpoints-standardregionalendpoints-trait"><code class="docutils literal notranslate"><span class="pre">aws.endpoints#standardRegionalEndpoints</span></code> trait</a><ul>
+<li><a class="reference internal" href="#partitionspecialcase-object"><code class="docutils literal notranslate"><span class="pre">PartitionSpecialCase</span></code> object</a></li>
+<li><a class="reference internal" href="#regionspecialcase-object"><code class="docutils literal notranslate"><span class="pre">RegionSpecialCase</span></code> object</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#aws-endpoints-standardpartitionalendpoints-trait"><code class="docutils literal notranslate"><span class="pre">aws.endpoints#standardPartitionalEndpoints</span></code> trait</a><ul>
+<li><a class="reference internal" href="#partitionendpointspecialcase-object"><code class="docutils literal notranslate"><span class="pre">PartitionEndpointSpecialCase</span></code> object</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#aws-endpoints-dualstackonlyendpoints-trait"><code class="docutils literal notranslate"><span class="pre">aws.endpoints#dualStackOnlyEndpoints</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-endpoints-rulesbasedendpoints-trait"><code class="docutils literal notranslate"><span class="pre">aws.endpoints#rulesBasedEndpoints</span></code> trait</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/scripts/furo.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/tabs.js"></script>
+    </body>
+</html>

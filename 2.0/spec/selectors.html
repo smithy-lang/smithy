@@ -50,7 +50,8 @@
       }
     }
   }
-</style></head>
+</style><script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
+<script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script></head>
   <body>
     
     <script>
@@ -249,6 +250,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../aws/index.html">AWS integrations</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../aws/aws-core.html">AWS Core Specification</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../aws/aws-auth.html">AWS Authentication Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../aws/aws-endpoints-region.html">AWS Declarative Endpoint Traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../aws/aws-iam.html">AWS IAM traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../aws/aws-cloudformation.html">AWS CloudFormation Traits</a></li>
@@ -1218,9 +1220,8 @@ a shape.</p>
 <div class="section" id="forward-undirected-neighbor">
 <h3><span class="section-number">16.7.1. </span>Forward undirected neighbor<a class="headerlink" href="#forward-undirected-neighbor" title="Permalink to this headline">#</a></h3>
 <p>A <a class="reference internal" href="#grammar-token-selectors-SelectorForwardUndirectedNeighbor"><code class="xref std std-token docutils literal notranslate"><span class="pre">forward</span> <span class="pre">undirected</span> <span class="pre">neighbor</span></code></a>
-(<code class="docutils literal notranslate"><span class="pre">&gt;</span></code>) yields every shape that is connected to the current shape. For
-example, the following selector matches the key and value members of
-every map:</p>
+(<code class="docutils literal notranslate"><span class="pre">&gt;</span></code>) yields every shape referred to by the current shape. For example, the
+following selector matches the key and value members of every map:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>map &gt; member
 </pre></div>
 </div>
@@ -1234,7 +1235,7 @@ selector yields strings that are targeted by list members:</p>
 <h3><span class="section-number">16.7.2. </span>Forward directed neighbors<a class="headerlink" href="#forward-directed-neighbors" title="Permalink to this headline">#</a></h3>
 <p>The forward undirected neighbor selector (<code class="docutils literal notranslate"><span class="pre">&gt;</span></code>) is an <em>undirected</em> edge
 traversal. Sometimes, a directed edge traversal is necessary. For example,
-the following selector matches the &quot;bound&quot;, &quot;input&quot;, &quot;output&quot;, and &quot;error&quot;
+the following selector matches the &quot;input&quot;, &quot;output&quot;, &quot;error&quot;, and &quot;mixin&quot;
 relationships of each operation:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>operation &gt; *
 </pre></div>
@@ -1346,80 +1347,64 @@ to any shapes:</p>
 <tbody valign="top">
 <tr class="row-even"><td>service</td>
 <td>operation</td>
-<td>Each operation that is bound to a service.</td>
+<td>Each operation bound to a service.</td>
 </tr>
 <tr class="row-odd"><td>service</td>
 <td>resource</td>
-<td>Each resource that is bound to a service.</td>
+<td>Each resource bound to a service.</td>
 </tr>
 <tr class="row-even"><td>service</td>
 <td>error</td>
-<td>Each error structure referenced by the service (if present).</td>
+<td>Each error structure referenced by the service.</td>
 </tr>
 <tr class="row-odd"><td>resource</td>
 <td>identifier</td>
-<td>An identifier referenced by the resource (if specified).</td>
+<td>Each identifier shape of a resource.</td>
 </tr>
 <tr class="row-even"><td>resource</td>
 <td>property</td>
-<td>A property referenced by the resource.</td>
+<td>Each property shape of a resource.</td>
 </tr>
 <tr class="row-odd"><td>resource</td>
-<td>operation</td>
-<td>Each operation that is bound to a resource through the
-&quot;operations&quot;, &quot;create&quot;, &quot;put&quot;, &quot;read&quot;, &quot;update&quot;, &quot;delete&quot;, and &quot;list&quot;
-properties.</td>
+<td>resource</td>
+<td>Each resource bound to a resource.</td>
 </tr>
 <tr class="row-even"><td>resource</td>
-<td>instanceOperation</td>
-<td>Each operation that is bound to a resource through the
-&quot;operations&quot;, &quot;put&quot;, &quot;read&quot;, &quot;update&quot;, and &quot;delete&quot; properties.</td>
+<td>operation</td>
+<td>Each operation bound to a resource through the &quot;operations&quot; property.</td>
 </tr>
 <tr class="row-odd"><td>resource</td>
 <td>collectionOperation</td>
-<td>Each operation that is bound to a resource through the
-&quot;collectionOperations&quot;, &quot;create&quot;, and &quot;list&quot; properties.</td>
+<td>Each operation bound to a resource through the &quot;collectionOperations&quot;
+property.</td>
 </tr>
 <tr class="row-even"><td>resource</td>
-<td>resource</td>
-<td>Each resource that is bound to a resource.</td>
-</tr>
-<tr class="row-odd"><td>resource</td>
 <td>create</td>
-<td>The operation referenced by the <a class="reference internal" href="service-types.html#create-lifecycle"><span class="std std-ref">Create lifecycle</span></a> property of
-a resource (if present).</td>
+<td>The operation defined as the <a class="reference internal" href="service-types.html#create-lifecycle"><span class="std std-ref">Create lifecycle</span></a> of a resource.</td>
 </tr>
-<tr class="row-even"><td>resource</td>
+<tr class="row-odd"><td>resource</td>
 <td>read</td>
-<td>The operation referenced by the <a class="reference internal" href="service-types.html#read-lifecycle"><span class="std std-ref">Read lifecycle</span></a> property of
-a resource (if present).</td>
+<td>The operation defined as the <a class="reference internal" href="service-types.html#read-lifecycle"><span class="std std-ref">Read lifecycle</span></a> of a resource.</td>
 </tr>
-<tr class="row-odd"><td>resource</td>
+<tr class="row-even"><td>resource</td>
 <td>update</td>
-<td>The operation referenced by the <a class="reference internal" href="service-types.html#update-lifecycle"><span class="std std-ref">Update lifecycle</span></a> property of
-a resource (if present).</td>
-</tr>
-<tr class="row-even"><td>resource</td>
-<td>delete</td>
-<td>The operation referenced by the <a class="reference internal" href="service-types.html#delete-lifecycle"><span class="std std-ref">Delete lifecycle</span></a> property of
-a resource (if present).</td>
+<td>The operation defined as the <a class="reference internal" href="service-types.html#update-lifecycle"><span class="std std-ref">Update lifecycle</span></a> of a resource.</td>
 </tr>
 <tr class="row-odd"><td>resource</td>
-<td>list</td>
-<td>The operation referenced by the <a class="reference internal" href="service-types.html#list-lifecycle"><span class="std std-ref">List lifecycle</span></a> property of
-a resource (if present).</td>
+<td>delete</td>
+<td>The operation defined as the <a class="reference internal" href="service-types.html#delete-lifecycle"><span class="std std-ref">Delete lifecycle</span></a> of a resource.</td>
 </tr>
 <tr class="row-even"><td>resource</td>
-<td>bound</td>
-<td>The service or resource to which the resource is bound.</td>
+<td>list</td>
+<td>The operation defined as the <a class="reference internal" href="service-types.html#list-lifecycle"><span class="std std-ref">List lifecycle</span></a> of a resource.</td>
 </tr>
-<tr class="row-odd"><td>operation</td>
-<td>bound</td>
-<td>The service or resource to which the operation is bound.</td>
+<tr class="row-odd"><td>resource</td>
+<td>put</td>
+<td>The operation defined as the <a class="reference internal" href="service-types.html#put-lifecycle"><span class="std std-ref">Put lifecycle</span></a> of a resource.</td>
 </tr>
 <tr class="row-even"><td>operation</td>
 <td>input</td>
-<td><p class="first">The input structure of the operation (if present).</p>
+<td><p class="first">The input structure of an operation.</p>
 <div class="last admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><a class="reference internal" href="model.html#unit-type"><span class="std std-ref">smithy.api#Unit</span></a> is considered &quot;not present&quot;
@@ -1429,7 +1414,7 @@ for this relationship, and will not be yielded.</p>
 </tr>
 <tr class="row-odd"><td>operation</td>
 <td>output</td>
-<td><p class="first">The output structure of the operation (if present).</p>
+<td><p class="first">The output structure of an operation.</p>
 <div class="last admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><a class="reference internal" href="model.html#unit-type"><span class="std std-ref">smithy.api#Unit</span></a> is considered &quot;not present&quot;
@@ -1439,27 +1424,31 @@ for this relationship, and will not be yielded.</p>
 </tr>
 <tr class="row-even"><td>operation</td>
 <td>error</td>
-<td>Each error structure referenced by the operation (if present).</td>
+<td>Each error structure of an operation.</td>
 </tr>
 <tr class="row-odd"><td>list</td>
 <td>member</td>
-<td>The <a class="reference internal" href="model.html#member"><span class="std std-ref">Member shapes</span></a> of the list, including if it was inherited from a
-mixin. Note that this is not the shape targeted by the member.</td>
+<td>The <a class="reference internal" href="model.html#member"><span class="std std-ref">member</span></a> of a list.</td>
 </tr>
 <tr class="row-even"><td>map</td>
 <td>member</td>
-<td>The key and value members of the map, including those inherited from
-mixins. Note that these are not the shapes targeted by the member.</td>
+<td>The key and value members of a map.</td>
 </tr>
 <tr class="row-odd"><td>structure</td>
 <td>member</td>
-<td>Each structure member, including members inherited from mixins. Note
-that these are not the shapes targeted by the members.</td>
+<td>Each structure member.</td>
 </tr>
 <tr class="row-even"><td>union</td>
 <td>member</td>
-<td>Each union member, including members inherited from mixins. Note that
-these are not the shapes targeted by the members.</td>
+<td>Each union member.</td>
+</tr>
+<tr class="row-odd"><td>enum</td>
+<td>member</td>
+<td>Each enum member.</td>
+</tr>
+<tr class="row-even"><td>intEnum</td>
+<td>member</td>
+<td>Each intEnum member.</td>
 </tr>
 <tr class="row-odd"><td>member</td>
 <td>&#160;</td>
@@ -1471,7 +1460,7 @@ relationship name.</td>
 <td>Each trait applied to a shape. The neighbor shape is the shape that
 defines the trait. This kind of relationship is only traversed if the
 <code class="docutils literal notranslate"><span class="pre">trait</span></code> relationship is explicitly stated as a desired directed
-neighbor relationship type.</td>
+neighbor relationship type (for example, <code class="docutils literal notranslate"><span class="pre">-[trait]-&gt;</span></code>).</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">*</span></code></td>
 <td>mixin</td>
@@ -1479,18 +1468,18 @@ neighbor relationship type.</td>
 <div class="last admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">A normal <code class="docutils literal notranslate"><span class="pre">member</span></code> relationship exists from a given shape to all
-its inherited mixin members.</p>
+its mixed in members.</p>
 </div>
 </td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="admonition important">
-<p class="first admonition-title">Important</p>
-<p class="last">Implementations MUST tolerate parsing unknown relationship types. When
-evaluated, the directed traversal of unknown relationship types yields
-no shapes.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Implementations MAY tolerate parsing unknown relationship types. When
+evaluated, the traversal of unknown relationship types SHOULD yield
+nothing.</p>
 </div>
 </div>
 </div>
@@ -1522,8 +1511,7 @@ of list shapes:</p>
 <p>The following selector matches shapes that are bound to a resource
 (for example, identifiers, operations, child resources) and have
 no documentation:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>:test(-[bound, resource]-&gt;)
-:not([trait|documentation])
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>:test(&lt; resource) :not([trait|documentation])
 </pre></div>
 </div>
 </div>

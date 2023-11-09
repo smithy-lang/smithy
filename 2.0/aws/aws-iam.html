@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Amazon API Gateway traits" href="amazon-apigateway.html" /><link rel="prev" title="AWS Authentication Traits" href="aws-auth.html" />
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Amazon API Gateway traits" href="amazon-apigateway.html" /><link rel="prev" title="AWS Declarative Endpoint Traits" href="aws-endpoints-region.html" />
 
     <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
         <title>AWS IAM traits - Smithy 2.0</title>
@@ -50,7 +50,8 @@
       }
     }
   }
-</style></head>
+</style><script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
+<script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script></head>
   <body>
     
     <script>
@@ -249,6 +250,7 @@
 <li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">AWS integrations</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="aws-core.html">AWS Core Specification</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aws-auth.html">AWS Authentication Traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws-endpoints-region.html">AWS Declarative Endpoint Traits</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">AWS IAM traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="amazon-apigateway.html">Amazon API Gateway traits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aws-cloudformation.html">AWS CloudFormation Traits</a></li>
@@ -345,8 +347,286 @@ with other <a class="reference external" href="https://docs.aws.amazon.com/IAM/l
 policies for resources in a service. Condition keys for services defined in
 Smithy are automatically inferred. These can be disabled or augmented. For
 more information, see <a class="reference internal" href="#deriving-condition-keys"><span class="std std-ref">Deriving Condition Keys</span></a>.</p>
+<div class="section" id="aws-iam-supportedprincipaltypes-trait">
+<span id="aws-iam-supportedprincipaltypes-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#supportedPrincipalTypes</span></code> trait<a class="headerlink" href="#aws-iam-supportedprincipaltypes-trait" title="Permalink to this headline">#</a></h2>
+<dl class="docutils">
+<dt>Summary</dt><dd>The <a class="reference external" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html">IAM principal types</a> that can use the service or operation.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">operation)</span></code></dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code> where each string is an IAM principal type: <code class="docutils literal notranslate"><span class="pre">Root</span></code>,
+<code class="docutils literal notranslate"><span class="pre">IAMUser</span></code>, <code class="docutils literal notranslate"><span class="pre">IAMRole</span></code>, or <code class="docutils literal notranslate"><span class="pre">FederatedUser</span></code>.</dd>
+</dl>
+<p>Operations that are not annotated with the <code class="docutils literal notranslate"><span class="pre">supportedPrincipalTypes</span></code> trait
+inherit the <code class="docutils literal notranslate"><span class="pre">supportedPrincipalTypes</span></code> of the service they are bound to.</p>
+<p>The following example defines two operations:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">OperationA</span></code> defines an explicit list of the <a class="reference external" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html">IAM principal types</a> it
+supports using the <code class="docutils literal notranslate"><span class="pre">supportedPrincipalTypes</span></code> trait.</li>
+<li><code class="docutils literal notranslate"><span class="pre">OperationB</span></code> is not annotated with the <code class="docutils literal notranslate"><span class="pre">supportedPrincipalTypes</span></code> trait,
+so the <a class="reference external" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html">IAM principal types</a> supported by this operation are the principal
+types applied to the service.</li>
+</ul>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">use </span><span class="nc">aws.iam#supportedPrincipalTypes</span>
+
+<span class="nt">@supportedPrincipalTypes</span>([<span class="s2">&quot;Root&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;IAMUser&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;IAMRole&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;FederatedUser&quot;</span>])
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-07-02&quot;</span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationB</span>]
+}
+
+<span class="nt">@supportedPrincipalTypes</span>([<span class="s2">&quot;Root&quot;</span>])
+<span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{}
+
+<span class="kd">operation </span><span class="nc">OperationB</span><span class="w"> </span>{}
+</pre></div>
+</div>
+</div>
+<div class="section" id="resource-traits">
+<span id="aws-iam-traits-resources"></span><h2>Resource traits<a class="headerlink" href="#resource-traits" title="Permalink to this headline">#</a></h2>
+<div class="section" id="aws-iam-iamresource-trait">
+<span id="aws-iam-iamresource-trait"></span><span id="id3"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#iamResource</span></code> trait<a class="headerlink" href="#aws-iam-iamresource-trait" title="Permalink to this headline">#</a></h3>
+<dl class="docutils">
+<dt>Summary</dt><dd>Indicates properties of a Smithy resource in AWS IAM.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">resource</span></code></dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">aws.iam#iamResource</span></code> trait is a structure that supports the following
+members:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>name</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>The name of the resource in AWS IAM.</td>
+</tr>
+<tr class="row-odd"><td>relativeDocumentation</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>A relative URL path that defines more information about the resource
+within a set of IAM-related documentation.</td>
+</tr>
+<tr class="row-even"><td>disableConditionKeyInheritance</td>
+<td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
+<td>When set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, decouples this IAM resource's condition keys from
+those of its parent resource(s). This can be used in combination with
+the <a class="reference internal" href="#aws-iam-conditionkeys-trait"><span class="std std-ref">aws.iam#conditionKeys trait</span></a> trait to isolate a resource's
+condition keys from those of its parent(s).</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The following example defines a simple resource with a name in AWS IAM that
+deviates from the <a class="reference internal" href="../spec/model.html#shape-id"><span class="std std-ref">shape name of the shape ID</span></a> of the resource.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">use </span><span class="nc">aws.iam#iamResource</span>
+
+<span class="nt">@iamResource</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;super&quot;</span>)
+<span class="kd">resource </span><span class="nc">SuperResource</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">superId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span>}
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="action-traits">
+<span id="aws-iam-traits-actions"></span><h2>Action traits<a class="headerlink" href="#action-traits" title="Permalink to this headline">#</a></h2>
+<div class="section" id="aws-iam-iamaction-trait">
+<span id="aws-iam-iamaction-trait"></span><span id="id4"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#iamAction</span></code> trait<a class="headerlink" href="#aws-iam-iamaction-trait" title="Permalink to this headline">#</a></h3>
+<dl class="docutils">
+<dt>Summary</dt><dd>Indicates properties of a Smithy operation in AWS IAM.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">aws.iam#iamAction</span></code> trait is a structure that supports the following
+members:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>name</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>The name of the resource in AWS IAM.</td>
+</tr>
+<tr class="row-odd"><td>documentation</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>A brief description of what granting the user permission to invoke an
+operation would entail.</td>
+</tr>
+<tr class="row-even"><td>relativeDocumentation</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>A relative URL path that defines more information about the operation
+within a set of IAM-related documentation.</td>
+</tr>
+<tr class="row-odd"><td>requiredActions</td>
+<td><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code> where each string value is the name of another action.</td>
+<td>The list of actions that the invoker must be authorized to perform when
+executing the targeted operation.</td>
+</tr>
+<tr class="row-even"><td>resources</td>
+<td><a class="reference internal" href="#actionresources-object">ActionResources object</a></td>
+<td>The resources an IAM action can be authorized against.</td>
+</tr>
+<tr class="row-odd"><td>createsResources</td>
+<td><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code> where each string value is the name of a resource.</td>
+<td>The list of resources that performing this IAM action will create. If
+this member is present, all inferred created resources are ignored.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The following example defines a simple operation with a name in AWS IAM that
+deviates from the <a class="reference internal" href="../spec/model.html#shape-id"><span class="std std-ref">shape name of the shape ID</span></a> of the operation.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">use </span><span class="nc">aws.iam#iamAction</span>
+
+<span class="nt">@iamAction</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PutEvent&quot;</span>)
+<span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{}
+</pre></div>
+</div>
+<div class="section" id="actionresources-object">
+<span id="aws-iam-iamaction-trait-actionresources"></span><h4><code class="docutils literal notranslate"><span class="pre">ActionResources</span></code> object<a class="headerlink" href="#actionresources-object" title="Permalink to this headline">#</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">ActionResources</span></code> object is a container for information on the resources
+that an IAM action may be authorized against. The <code class="docutils literal notranslate"><span class="pre">ActionResources</span></code> object
+contains the following properties:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>required</td>
+<td><code class="docutils literal notranslate"><span class="pre">map</span></code> of resource name to <a class="reference internal" href="#actionresource-object">ActionResource object</a></td>
+<td>Resources that will always be authorized against for functionality of
+the IAM action. If this member is present, all inferred required
+resources are ignored.</td>
+</tr>
+<tr class="row-odd"><td>optional</td>
+<td><code class="docutils literal notranslate"><span class="pre">map</span></code> of resource name to <a class="reference internal" href="#actionresource-object">ActionResource object</a></td>
+<td><p class="first">Resources that will be authorized against based on optional behavior of
+the IAM action. If this member is present, all inferred optional
+resources are ignored.</p>
+<p class="last">For example, an action may create an instance that can optionally be
+configured based on a snapshot that would be authorized against. Most
+actions do not need this property.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="actionresource-object">
+<span id="aws-iam-iamaction-trait-actionresource"></span><h4><code class="docutils literal notranslate"><span class="pre">ActionResource</span></code> object<a class="headerlink" href="#actionresource-object" title="Permalink to this headline">#</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">ActionResource</span></code> object is a container for information about a resource
+that an IAM action can be authorized against. The <code class="docutils literal notranslate"><span class="pre">ActionResource</span></code> object
+contains the following properties:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>conditionKeys</td>
+<td><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></td>
+<td>The condition keys used for authorizing against this resource.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="aws-iam-actionname-trait">
+<span id="aws-iam-actionname-trait"></span><span id="id5"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#actionName</span></code> trait<a class="headerlink" href="#aws-iam-actionname-trait" title="Permalink to this headline">#</a></h3>
+<div class="admonition danger">
+<p class="first admonition-title">Danger</p>
+<p class="last">This trait is deprecated. The <code class="docutils literal notranslate"><span class="pre">name</span></code> property of the
+<a class="reference internal" href="#aws-iam-iamaction-trait"><span class="std std-ref">aws.iam#iamAction trait</span></a> should be used instead.</p>
+</div>
+<dl class="docutils">
+<dt>Summary</dt><dd>Provides a custom IAM action name.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
+</dl>
+<p>Operations not annotated with the <code class="docutils literal notranslate"><span class="pre">actionName</span></code> trait, default to the
+<a class="reference internal" href="../spec/model.html#shape-id"><span class="std std-ref">shape name of the shape ID</span></a> of the targeted operation.</p>
+<p>The following example defines two operations:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">OperationA</span></code> is not annotated with the <code class="docutils literal notranslate"><span class="pre">actionName</span></code> trait, and
+resolves the action name of <code class="docutils literal notranslate"><span class="pre">OperationA</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">OperationB</span></code> has the <code class="docutils literal notranslate"><span class="pre">actionName</span></code> trait, so has the action
+name <code class="docutils literal notranslate"><span class="pre">OverridingActionName</span></code>.</li>
+</ul>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">use </span><span class="nc">aws.iam#actionName</span>
+
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-07-02&quot;</span>
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationB</span>]
+}
+
+<span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{}
+
+<span class="nt">@actionName</span>(<span class="s2">&quot;OverridingActionName&quot;</span>)
+<span class="kd">operation </span><span class="nc">OperationB</span><span class="w"> </span>{}
+</pre></div>
+</div>
+</div>
 <div class="section" id="aws-iam-actionpermissiondescription-trait">
-<span id="aws-iam-actionpermissiondescription-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#actionPermissionDescription</span></code> trait<a class="headerlink" href="#aws-iam-actionpermissiondescription-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-iam-actionpermissiondescription-trait"></span><span id="id6"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#actionPermissionDescription</span></code> trait<a class="headerlink" href="#aws-iam-actionpermissiondescription-trait" title="Permalink to this headline">#</a></h3>
+<div class="admonition danger">
+<p class="first admonition-title">Danger</p>
+<p class="last">This trait is deprecated. The <code class="docutils literal notranslate"><span class="pre">documentation</span></code> property of the
+<a class="reference internal" href="#aws-iam-iamaction-trait"><span class="std std-ref">aws.iam#iamAction trait</span></a> should be used instead.</p>
+</div>
 <dl class="docutils">
 <dt>Summary</dt><dd>A brief description of what granting the user permission to invoke an
 operation would entail.</dd>
@@ -364,52 +644,53 @@ operation would entail.</dd>
 </pre></div>
 </div>
 </div>
-<div class="section" id="aws-iam-conditionkeys-trait">
-<span id="aws-iam-conditionkeys-trait"></span><span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeys</span></code> trait<a class="headerlink" href="#aws-iam-conditionkeys-trait" title="Permalink to this headline">#</a></h2>
+<div class="section" id="aws-iam-requiredactions-trait">
+<span id="aws-iam-requiredactions-trait"></span><span id="id7"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#requiredActions</span></code> trait<a class="headerlink" href="#aws-iam-requiredactions-trait" title="Permalink to this headline">#</a></h3>
+<div class="admonition danger">
+<p class="first admonition-title">Danger</p>
+<p class="last">This trait is deprecated. The <code class="docutils literal notranslate"><span class="pre">requiredActions</span></code> property of the
+<a class="reference internal" href="#aws-iam-iamaction-trait"><span class="std std-ref">aws.iam#iamAction trait</span></a> should be used instead.</p>
+</div>
 <dl class="docutils">
-<dt>Summary</dt><dd>Applies condition keys, by name, to a resource or operation.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:test(resource,</span> <span class="pre">operation)</span></code></dd>
-<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></dd>
+<dt>Summary</dt><dd>Other actions that the invoker must be authorized to perform when
+executing the targeted operation.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code> where each string value references other actions
+required for the service to authorize.</dd>
 </dl>
-<p>Condition keys derived automatically can be applied to a resource or operation
-explicitly. Condition keys applied this way MUST be either inferred or
-explicitly defined via the <a class="reference internal" href="#aws-iam-defineconditionkeys-trait"><span class="std std-ref">aws.iam#defineConditionKeys trait</span></a> trait.</p>
-<p>The following example's <code class="docutils literal notranslate"><span class="pre">MyResource</span></code> resource has the
-<code class="docutils literal notranslate"><span class="pre">myservice:MyResourceFoo</span></code> and  <code class="docutils literal notranslate"><span class="pre">otherservice:Bar</span></code> condition keys. The
-<code class="docutils literal notranslate"><span class="pre">MyOperation</span></code> operation has the <code class="docutils literal notranslate"><span class="pre">aws:region</span></code> condition key.</p>
+<p>Defines the actions, in addition to the targeted operation, that a user must
+be authorized to execute in order invoke an operation. The following example
+indicates that, in order to invoke the <code class="docutils literal notranslate"><span class="pre">MyOperation</span></code> operation, the invoker
+must also be authorized to execute the <code class="docutils literal notranslate"><span class="pre">otherservice:OtherOperation</span></code>
+operation for it to complete successfully.</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
 
 <span class="kd">namespace </span><span class="nc">smithy.example</span>
 
 <span class="kd">use </span><span class="nc">aws.api#service</span>
-<span class="kd">use </span><span class="nc">aws.iam#definedContextKeys</span>
-<span class="kd">use </span><span class="nc">aws.iam#conditionKeys</span>
+<span class="kd">use </span><span class="nc">aws.iam#requiredActions</span>
 
 <span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)
-<span class="nt">@defineConditionKeys</span>(<span class="s2">&quot;otherservice:Bar&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>})
 <span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
 <span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]
 }
 
-<span class="nt">@conditionKeys</span>([<span class="s2">&quot;otherservice:Bar&quot;</span>])
 <span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyOperation</span>]
 }
 
-<span class="nt">@conditionKeys</span>([<span class="s2">&quot;aws:region&quot;</span>])
+<span class="nt">@requiredActions</span>([<span class="s2">&quot;otherservice:OtherOperation&quot;</span>])
 <span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{}
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Condition keys that refer to global <code class="docutils literal notranslate"><span class="pre">&quot;aws:*&quot;</span></code> keys can be referenced
-without being defined on the service.</p>
 </div>
 </div>
+<div class="section" id="condition-key-traits">
+<span id="aws-iam-traits-condition-keys"></span><h2>Condition key traits<a class="headerlink" href="#condition-key-traits" title="Permalink to this headline">#</a></h2>
 <div class="section" id="aws-iam-defineconditionkeys-trait">
-<span id="aws-iam-defineconditionkeys-trait"></span><span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#defineConditionKeys</span></code> trait<a class="headerlink" href="#aws-iam-defineconditionkeys-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-iam-defineconditionkeys-trait"></span><span id="id8"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#defineConditionKeys</span></code> trait<a class="headerlink" href="#aws-iam-defineconditionkeys-trait" title="Permalink to this headline">#</a></h3>
 <dl class="docutils">
 <dt>Summary</dt><dd>Defines the set of condition keys that appear within a service in
 addition to inferred and global condition keys.</dd>
@@ -452,6 +733,11 @@ for more information.</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td>A valid URL that defines more information about the condition key.</td>
 </tr>
+<tr class="row-odd"><td>relativeDocumentation</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>A relative URL path that defines more information about the condition key
+within a set of IAM-related documentation.</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -481,7 +767,7 @@ for more information.</td>
 defined on the service.</p>
 </div>
 <div class="section" id="condition-key-types">
-<span id="id5"></span><h3>Condition Key Types<a class="headerlink" href="#condition-key-types" title="Permalink to this headline">#</a></h3>
+<span id="id9"></span><h4>Condition Key Types<a class="headerlink" href="#condition-key-types" title="Permalink to this headline">#</a></h4>
 <p>The following table describes the available types a condition key can have.
 Condition keys in IAM policies can be evaluated with <a class="reference external" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition_operators.html">condition operators</a>.</p>
 <div class="table-wrapper colwidths-given docutils container">
@@ -543,13 +829,91 @@ Condition keys in IAM policies can be evaluated with <a class="reference externa
 </div>
 </div>
 </div>
+<div class="section" id="aws-iam-conditionkeys-trait">
+<span id="aws-iam-conditionkeys-trait"></span><span id="id10"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeys</span></code> trait<a class="headerlink" href="#aws-iam-conditionkeys-trait" title="Permalink to this headline">#</a></h3>
+<dl class="docutils">
+<dt>Summary</dt><dd>Applies condition keys, by name, to a resource or operation.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:test(resource,</span> <span class="pre">operation)</span></code></dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code></dd>
+</dl>
+<p>Condition keys derived automatically can be applied to a resource or operation
+explicitly. Condition keys applied this way MUST be either inferred or
+explicitly defined via the <a class="reference internal" href="#aws-iam-defineconditionkeys-trait"><span class="std std-ref">aws.iam#defineConditionKeys trait</span></a> trait.</p>
+<p>The following example's <code class="docutils literal notranslate"><span class="pre">MyResource</span></code> resource has the
+<code class="docutils literal notranslate"><span class="pre">myservice:MyResourceFoo</span></code> and  <code class="docutils literal notranslate"><span class="pre">otherservice:Bar</span></code> condition keys. The
+<code class="docutils literal notranslate"><span class="pre">MyOperation</span></code> operation has the <code class="docutils literal notranslate"><span class="pre">aws:region</span></code> condition key.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">use </span><span class="nc">aws.api#service</span>
+<span class="kd">use </span><span class="nc">aws.iam#definedContextKeys</span>
+<span class="kd">use </span><span class="nc">aws.iam#conditionKeys</span>
+
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)
+<span class="nt">@defineConditionKeys</span>(<span class="s2">&quot;otherservice:Bar&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"> </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;String&quot;</span><span class="w"> </span>})
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]
+}
+
+<span class="nt">@conditionKeys</span>([<span class="s2">&quot;otherservice:Bar&quot;</span>])
+<span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}
+<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyOperation</span>]
+}
+
+<span class="nt">@conditionKeys</span>([<span class="s2">&quot;aws:region&quot;</span>])
+<span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{}
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Condition keys that refer to global <code class="docutils literal notranslate"><span class="pre">&quot;aws:*&quot;</span></code> keys can be referenced
+without being defined on the service.</p>
+</div>
+</div>
 <div class="section" id="aws-iam-disableconditionkeyinference-trait">
-<span id="aws-iam-disableconditionkeyinference-trait"></span><span id="id6"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#disableConditionKeyInference</span></code> trait<a class="headerlink" href="#aws-iam-disableconditionkeyinference-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-iam-disableconditionkeyinference-trait"></span><span id="id11"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#disableConditionKeyInference</span></code> trait<a class="headerlink" href="#aws-iam-disableconditionkeyinference-trait" title="Permalink to this headline">#</a></h3>
 <dl class="docutils">
 <dt>Summary</dt><dd>Declares that the condition keys of a resource should not be inferred.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">resource</span></code></dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">resource)</span></code></dd>
 <dt>Value type</dt><dd>Annotation trait</dd>
 </dl>
+<p>When a service is marked with the <code class="docutils literal notranslate"><span class="pre">aws.iam#disableConditionKeyInference</span></code>
+trait, all the resources bound to the service will not have condition
+keys automatically inferred from its identifiers and the identifiers
+of its ancestors.</p>
+<p>The following example shows resources <code class="docutils literal notranslate"><span class="pre">MyResource1</span></code> and <code class="docutils literal notranslate"><span class="pre">MyResource2</span></code>
+have had condition key inference disabled because they are bound to a
+service marked with <code class="docutils literal notranslate"><span class="pre">aws.iam#disableConditionKeyInference</span></code> trait.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">use </span><span class="nc">aws.api#service</span>
+<span class="kd">use </span><span class="nc">aws.iam#disableConditionKeyInference</span>
+
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)
+<span class="nt">@disableConditionKeyInference</span>
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource1</span><span class="p">,</span><span class="w"> </span><span class="vc">MyResource2</span>]
+}
+
+<span class="kd">resource </span><span class="nc">MyResource1</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span>}
+}
+
+<span class="kd">resource </span><span class="nc">MyResource2</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span>}
+}
+</pre></div>
+</div>
 <p>A resource marked with the <code class="docutils literal notranslate"><span class="pre">aws.iam#disableConditionKeyInference</span></code> trait will
 not have its condition keys automatically inferred from its identifiers and
 the identifiers of its ancestors (if present.)</p>
@@ -578,163 +942,8 @@ condition key inference disabled.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="aws-iam-requiredactions-trait">
-<span id="aws-iam-requiredactions-trait"></span><span id="id7"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#requiredActions</span></code> trait<a class="headerlink" href="#aws-iam-requiredactions-trait" title="Permalink to this headline">#</a></h2>
-<dl class="docutils">
-<dt>Summary</dt><dd>Other actions that the invoker must be authorized to perform when
-executing the targeted operation.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
-<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code> where each string value references condition keys
-defined in the closure of the service.</dd>
-</dl>
-<p>Defines the actions, in addition to the targeted operation, that a user must
-be authorized to execute in order invoke an operation. The following example
-indicates that, in order to invoke the <code class="docutils literal notranslate"><span class="pre">MyOperation</span></code> operation, the invoker
-must also be authorized to execute the <code class="docutils literal notranslate"><span class="pre">otherservice:OtherOperation</span></code>
-operation for it to complete successfully.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
-
-<span class="kd">namespace </span><span class="nc">smithy.example</span>
-
-<span class="kd">use </span><span class="nc">aws.api#service</span>
-<span class="kd">use </span><span class="nc">aws.iam#requiredActions</span>
-
-<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Value&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">arnNamespace</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice&quot;</span>)
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyResource</span>]
-}
-
-<span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyOperation</span>]
-}
-
-<span class="nt">@requiredActions</span>([<span class="s2">&quot;otherservice:OtherOperation&quot;</span>])
-<span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{}
-</pre></div>
-</div>
-</div>
-<div class="section" id="aws-iam-supportedprincipaltypes-trait">
-<span id="aws-iam-supportedprincipaltypes-trait"></span><span id="id8"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#supportedPrincipalTypes</span></code> trait<a class="headerlink" href="#aws-iam-supportedprincipaltypes-trait" title="Permalink to this headline">#</a></h2>
-<dl class="docutils">
-<dt>Summary</dt><dd>The <a class="reference external" href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html">IAM principal types</a> that can use the service or operation.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">operation)</span></code></dd>
-<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">list&lt;string&gt;</span></code> where each string is an IAM principal type: <code class="docutils literal notranslate"><span class="pre">Root</span></code>,
-<code class="docutils literal notranslate"><span class="pre">IAMUser</span></code>, <code class="docutils literal notranslate"><span class="pre">IAMRole</span></code>, or <code class="docutils literal notranslate"><span class="pre">FederatedUser</span></code>.</dd>
-</dl>
-<p>Operations that are not annotated with the <code class="docutils literal notranslate"><span class="pre">supportedPrincipalTypes</span></code> trait
-inherit the <code class="docutils literal notranslate"><span class="pre">supportedPrincipalTypes</span></code> of the service they are bound to.</p>
-<p>The following example defines two operations:</p>
-<ul class="simple">
-<li>OperationA defines an explicit list of the IAM principal types it supports
-using the <code class="docutils literal notranslate"><span class="pre">supportedPrincipalTypes</span></code> trait.</li>
-<li>OperationB is not annotated with the <code class="docutils literal notranslate"><span class="pre">supportedPrincipalTypes</span></code> trait, so
-the IAM principal types supported by this operation are the principal types
-applied to the service.</li>
-</ul>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
-
-<span class="kd">namespace </span><span class="nc">smithy.example</span>
-
-<span class="kd">use </span><span class="nc">aws.iam#supportedPrincipalTypes</span>
-
-<span class="nt">@supportedPrincipalTypes</span>([<span class="s2">&quot;Root&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;IAMUser&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;IAMRole&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;FederatedUser&quot;</span>])
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-07-02&quot;</span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationB</span>]
-}
-
-<span class="nt">@supportedPrincipalTypes</span>([<span class="s2">&quot;Root&quot;</span>])
-<span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{}
-
-<span class="kd">operation </span><span class="nc">OperationB</span><span class="w"> </span>{}
-</pre></div>
-</div>
-</div>
-<div class="section" id="aws-iam-iamresource-trait">
-<span id="aws-iam-iamresource-trait"></span><span id="id9"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#iamResource</span></code> trait<a class="headerlink" href="#aws-iam-iamresource-trait" title="Permalink to this headline">#</a></h2>
-<dl class="docutils">
-<dt>Summary</dt><dd>Indicates properties of a Smithy resource in AWS IAM.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">resource</span></code></dd>
-<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
-</dl>
-<p>The <code class="docutils literal notranslate"><span class="pre">aws.iam#iamResource</span></code> trait is a structure that supports the following
-members:</p>
-<div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
-<colgroup>
-<col width="10%" />
-<col width="20%" />
-<col width="70%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>name</td>
-<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>The name of the resource in AWS IAM.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>The following example defines a simple resource with a name in AWS IAM that
-deviates from the <a class="reference internal" href="../spec/model.html#shape-id"><span class="std std-ref">shape name of the shape ID</span></a> of the resource.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
-
-<span class="kd">namespace </span><span class="nc">smithy.example</span>
-
-<span class="kd">use </span><span class="nc">aws.iam#iamResource</span>
-
-<span class="nt">@iamResource</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;super&quot;</span>)
-<span class="kd">resource </span><span class="nc">SuperResource</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">superId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
-<span class="w">    </span>}
-}
-</pre></div>
-</div>
-</div>
-<div class="section" id="aws-iam-actionname-trait">
-<span id="aws-iam-actionname-trait"></span><span id="id10"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#actionName</span></code> trait<a class="headerlink" href="#aws-iam-actionname-trait" title="Permalink to this headline">#</a></h2>
-<dl class="docutils">
-<dt>Summary</dt><dd>Provides a custom IAM action name.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
-<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
-</dl>
-<p>Operations not annotated with the <code class="docutils literal notranslate"><span class="pre">actionName</span></code> trait, default to the
-<a class="reference internal" href="../spec/model.html#shape-id"><span class="std std-ref">shape name of the shape ID</span></a> of the targeted operation.</p>
-<p>The following example defines two operations:</p>
-<ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">OperationA</span></code> is not annotated with the <code class="docutils literal notranslate"><span class="pre">actionName</span></code> trait, and
-resolves the action name of <code class="docutils literal notranslate"><span class="pre">OperationA</span></code>.</li>
-<li><code class="docutils literal notranslate"><span class="pre">OperationB</span></code> has the <code class="docutils literal notranslate"><span class="pre">actionName</span></code> trait, so has the action
-name <code class="docutils literal notranslate"><span class="pre">OverridingActionName</span></code>.</li>
-</ul>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
-
-<span class="kd">namespace </span><span class="nc">smithy.example</span>
-
-<span class="kd">use </span><span class="nc">aws.iam#actionName</span>
-
-<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-07-02&quot;</span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span><span class="p">,</span><span class="w"> </span><span class="vc">OperationB</span>]
-}
-
-<span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{}
-
-<span class="nt">@actionName</span>(<span class="s2">&quot;OverridingActionName&quot;</span>)
-<span class="kd">operation </span><span class="nc">OperationB</span><span class="w"> </span>{}
-</pre></div>
-</div>
-</div>
 <div class="section" id="aws-iam-serviceresolvedconditionkeys-trait">
-<span id="aws-iam-serviceresolvedconditionkeys-trait"></span><span id="id11"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#serviceResolvedConditionKeys</span></code> trait<a class="headerlink" href="#aws-iam-serviceresolvedconditionkeys-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-iam-serviceresolvedconditionkeys-trait"></span><span id="id12"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#serviceResolvedConditionKeys</span></code> trait<a class="headerlink" href="#aws-iam-serviceresolvedconditionkeys-trait" title="Permalink to this headline">#</a></h3>
 <dl class="docutils">
 <dt>Summary</dt><dd>Specifies the list of IAM condition keys which must be resolved by the
 service, as opposed to the value being pulled from the request.</dd>
@@ -767,7 +976,7 @@ with the <code class="docutils literal notranslate"><span class="pre">serviceRes
 </div>
 </div>
 <div class="section" id="aws-iam-conditionkeyvalue-trait">
-<span id="aws-iam-conditionkeyvalue-trait"></span><span id="id12"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeyValue</span></code> trait<a class="headerlink" href="#aws-iam-conditionkeyvalue-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-iam-conditionkeyvalue-trait"></span><span id="id13"></span><h3><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeyValue</span></code> trait<a class="headerlink" href="#aws-iam-conditionkeyvalue-trait" title="Permalink to this headline">#</a></h3>
 <dl class="docutils">
 <dt>Summary</dt><dd>Uses the associated member’s value for the specified condition key.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">member</span></code></dd>
@@ -806,7 +1015,7 @@ explicitly binds <code class="docutils literal notranslate"><span class="pre">Ac
 </div>
 </div>
 <div class="section" id="deriving-condition-keys">
-<span id="id13"></span><h2>Deriving Condition Keys<a class="headerlink" href="#deriving-condition-keys" title="Permalink to this headline">#</a></h2>
+<span id="id14"></span><h3>Deriving Condition Keys<a class="headerlink" href="#deriving-condition-keys" title="Permalink to this headline">#</a></h3>
 <p>Smithy will automatically derive condition key information for a service, as
 well as its resources and operations.</p>
 <p>A resource's condition keys include those that are inferred from their
@@ -838,11 +1047,24 @@ trait.</p>
 <span class="kd">resource </span><span class="nc">MyResource</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}
 <span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyOperation</span>]
-<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyInnerResource</span>]
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">MyInnerResource</span><span class="p">,</span><span class="w"> </span><span class="vc">MyDetachedResource</span><span class="p">,</span><span class="w"> </span><span class="vc">MyCustomResource</span>]
 }
 
 <span class="nt">@iamResource</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;InnerResource&quot;</span>)
 <span class="kd">resource </span><span class="nc">MyInnerResource</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">yum</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}
+}
+
+<span class="nt">@disableConditionKeyInference</span>
+<span class="nt">@iamResource</span>(<span class="py">disableConditionKeyInheritance</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>)
+<span class="kd">resource </span><span class="nc">MyDetachedResource</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">yum</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}
+}
+
+<span class="nt">@disableConditionKeyInference</span>
+<span class="nt">@iamResource</span>(<span class="py">disableConditionKeyInheritance</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>)
+<span class="nt">@conditionKeys</span>([<span class="s2">&quot;aws:region&quot;</span>])
+<span class="kd">resource </span><span class="nc">MyCustomResource</span><span class="w"> </span>{
 <span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{<span class="py">yum</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>}
 }
 
@@ -878,6 +1100,15 @@ trait.</p>
 </ul>
 </td>
 </tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">MyDetachedResource</span></code></td>
+<td>None</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">MyCustomResource</span></code></td>
+<td><ul class="first last simple">
+<li><code class="docutils literal notranslate"><span class="pre">aws:region</span></code></li>
+</ul>
+</td>
+</tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">MyOperation</span></code></td>
 <td><ul class="first last simple">
 <li><code class="docutils literal notranslate"><span class="pre">aws:region</span></code></li>
@@ -886,6 +1117,7 @@ trait.</p>
 </tr>
 </tbody>
 </table>
+</div>
 </div>
 </div>
 </div>
@@ -904,14 +1136,14 @@ trait.</p>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="aws-auth.html">
+          <a class="prev-page" href="aws-endpoints-region.html">
               <svg><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">AWS Authentication Traits</div>
+                <div class="title">AWS Declarative Endpoint Traits</div>
                 
               </div>
             </a>
@@ -953,20 +1185,34 @@ trait.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">AWS IAM traits</a><ul>
+<li><a class="reference internal" href="#aws-iam-supportedprincipaltypes-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#supportedPrincipalTypes</span></code> trait</a></li>
+<li><a class="reference internal" href="#resource-traits">Resource traits</a><ul>
+<li><a class="reference internal" href="#aws-iam-iamresource-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#iamResource</span></code> trait</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#action-traits">Action traits</a><ul>
+<li><a class="reference internal" href="#aws-iam-iamaction-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#iamAction</span></code> trait</a><ul>
+<li><a class="reference internal" href="#actionresources-object"><code class="docutils literal notranslate"><span class="pre">ActionResources</span></code> object</a></li>
+<li><a class="reference internal" href="#actionresource-object"><code class="docutils literal notranslate"><span class="pre">ActionResource</span></code> object</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#aws-iam-actionname-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#actionName</span></code> trait</a></li>
 <li><a class="reference internal" href="#aws-iam-actionpermissiondescription-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#actionPermissionDescription</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-iam-conditionkeys-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeys</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-iam-requiredactions-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#requiredActions</span></code> trait</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#condition-key-traits">Condition key traits</a><ul>
 <li><a class="reference internal" href="#aws-iam-defineconditionkeys-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#defineConditionKeys</span></code> trait</a><ul>
 <li><a class="reference internal" href="#condition-key-types">Condition Key Types</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#aws-iam-conditionkeys-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeys</span></code> trait</a></li>
 <li><a class="reference internal" href="#aws-iam-disableconditionkeyinference-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#disableConditionKeyInference</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-iam-requiredactions-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#requiredActions</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-iam-supportedprincipaltypes-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#supportedPrincipalTypes</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-iam-iamresource-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#iamResource</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-iam-actionname-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#actionName</span></code> trait</a></li>
 <li><a class="reference internal" href="#aws-iam-serviceresolvedconditionkeys-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#serviceResolvedConditionKeys</span></code> trait</a></li>
 <li><a class="reference internal" href="#aws-iam-conditionkeyvalue-trait"><code class="docutils literal notranslate"><span class="pre">aws.iam#conditionKeyValue</span></code> trait</a></li>
 <li><a class="reference internal" href="#deriving-condition-keys">Deriving Condition Keys</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
