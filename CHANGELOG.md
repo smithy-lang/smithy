@@ -1,5 +1,37 @@
 # Smithy Changelog
 
+## 1.41.0 (2023-11-08)
+
+### Features
+
+* Added new member to `@aws.iam#iamResource` for disabling condition key inheritance. ([#2036](https://github.com/smithy-lang/smithy/pull/2036))
+* Added new trait for defining IAM actions, which consolidates and deprecates several older IAM traits. ([#2034](https://github.com/smithy-lang/smithy/pull/2034)) 
+* Added convenience method, `expectIntEnumShape`, to `GenerateIntEnumDirective` to get an `IntEnumShape` ([#2033](https://github.com/smithy-lang/smithy/pull/2033))
+* Added plugin to `NodeValidationVisitor` to ensure collections with `@uniqueItems` trait have unique-ness enforced. ([#2031](https://github.com/smithy-lang/smithy/pull/2031))
+* Added new member to `@aws.iam#iamResource` and `@aws.iam#defineConditionKeys` traits for defining a relative URL path of documentation. ([#2027](https://github.com/smithy-lang/smithy/pull/2027))
+* Migrated IAM traits JSON file to IDL file in `smithy-aws-iam-traits`. ([#2026](https://github.com/smithy-lang/smithy/pull/2026))
+* Added protocol test for verifying behavior when handling unknown union members in the `restJson1` protocol. ([#2022](https://github.com/smithy-lang/smithy/pull/2022))
+* Enabled `aws.iam#disableConditionKeyInference` trait to be applicable to service shapes. ([#2019](https://github.com/smithy-lang/smithy/pull/2019))
+* Updated `partitions.json` with two new entries, `aws-iso-e` and `aws-iso-f` to be consistent with SDKs. ([#2018](https://github.com/smithy-lang/smithy/pull/2018))
+* Added event-id subparts to `ClientEndpointDiscoveryValidator` to clarify validation events. ([#2017](https://github.com/smithy-lang/smithy/pull/2017))
+* Added configuration for plugin integrations in `smithy-build.json`. ([#2014](https://github.com/smithy-lang/smithy/pull/2014))
+* Added protocol tests for verifying behavior of default values in the `awsJson1_1` protocol. ([#2002](https://github.com/smithy-lang/smithy/pull/2002))
+* Added several new traits for modelling declarative endpoints. ([#1987](https://github.com/smithy-lang/smithy/pull/1987))
+
+### Documentation
+
+* Added basic website analytics so that engagement can be measured. ([#2025](https://github.com/smithy-lang/smithy/pull/2025))
+* Added documentation for new traits added for declarative endpoints. ([#2013](https://github.com/smithy-lang/smithy/pull/2013))
+
+### Bug Fixes
+
+* Fixed handling and deconflicting of duplicate apply statements targetting mixed-in members ([#2030](https://github.com/smithy-lang/smithy/pull/2030))
+* Fixed an NPE in the `PluginContext.toBuilder` method in `PluginContext`. ([#2028](https://github.com/smithy-lang/smithy/pull/2028))
+* Fixed a trait parse error for shape IDs. [#2023](https://github.com/smithy-lang/smithy/pull/2023))
+* Fixed several major issues with how neighbors and model graph traversal was implemented. ([#2020](https://github.com/smithy-lang/smithy/pull/2020))
+* Added expect-check to mitigate NSE exception in `PrivateAccessValidator`. ([#2015](https://github.com/smithy-lang/smithy/pull/2015))
+* Fixed equality of `@examples` traits by overriding the `equals` method in `ExampleTrait`. ([#2009](https://github.com/smithy-lang/smithy/pull/2009))
+
 ## 1.40.0 (2023-10-16)
 
 ### Features
