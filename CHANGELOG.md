@@ -4,6 +4,7 @@
 
 ### Features
 
+* Added new member to `@aws.iam#iamResource` for disabling condition key inheritance. ([#2036](https://github.com/smithy-lang/smithy/pull/2036))
 * Added new trait for defining IAM actions, which consolidates and deprecates several older IAM traits. ([#2034](https://github.com/smithy-lang/smithy/pull/2034)) 
 * Added convenience method, `expectIntEnumShape`, to `GenerateIntEnumDirective` to get an `IntEnumShape` ([#2033](https://github.com/smithy-lang/smithy/pull/2033))
 * Added plugin to `NodeValidationVisitor` to ensure collections with `@uniqueItems` trait have unique-ness enforced. ([#2031](https://github.com/smithy-lang/smithy/pull/2031))
