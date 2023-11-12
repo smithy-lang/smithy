@@ -79,7 +79,9 @@ final class TokenTreeLeaf implements TokenTree {
         if (token.getErrorMessage() != null) {
             return token.getIdlToken() + "(" + token.getErrorMessage() + ')';
         } else {
-            return token.getIdlToken().getDebug(token.getLexeme());
+            return token.getIdlToken().getDebug(token.getLexeme())
+                    + " (" + getStartLine() + ", " + getStartColumn() + ")"
+                    + " - (" + getEndLine() + ", " + getEndColumn() + ")";
         }
     }
 
