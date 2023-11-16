@@ -29,7 +29,7 @@ public final class EndpointModifierIndex implements KnowledgeIndex {
         for (ServiceShape serviceShape : model.getServiceShapes()) {
             Map<ShapeId, Trait> result = new TreeMap<>();
             for (Trait trait : serviceShape.getAllTraits().values()) {
-                Shape traitShape = model.getShape(trait.toShapeId()).get();
+                Shape traitShape = model.expectShape(trait.toShapeId());
                 if (traitShape.hasTrait(EndpointModifierTrait.ID)) {
                     result.put(trait.toShapeId(), trait);
                 }
@@ -49,6 +49,6 @@ public final class EndpointModifierIndex implements KnowledgeIndex {
      * @return Map of endpoint modifier trait ID to the trait
      */
     public Map<ShapeId, Trait> getEndpointModifierTraits(ToShapeId toShapeId) {
-        return endpointModifierTraits.get(toShapeId);
+        return endpointModifierTraits.get(toShapeId.toShapeId());
     }
 }

@@ -24,6 +24,8 @@ class EndpointModifierIndexTest {
         EndpointModifierIndex index = new EndpointModifierIndex(model);
 
         assertEquals(index.getEndpointModifierTraits(service1).size(), 1);
+        // Assert this works if you pass in the shape as well.
+        assertEquals(index.getEndpointModifierTraits(model.expectShape(service1)).size(), 1);
         assertInstanceOf(StandardRegionalEndpointsTrait.class,
                 index.getEndpointModifierTraits(service1).get(StandardRegionalEndpointsTrait.ID));
 
