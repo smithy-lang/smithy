@@ -1,5 +1,21 @@
 # Smithy Changelog
 
+## 1.41.1 (2023-11-16)
+
+### Features
+
+* Added support for `sdkId`s with a single character ([#2043](https://github.com/smithy-lang/smithy/pull/2043))
+
+### Bug Fixes
+
+* Fixed `toShapeId` call in `EndpointModifierIndex`  ([#2044](https://github.com/smithy-lang/smithy/pull/2044))
+* Fixed removal of applied non-prelude meta traits ([#2042](https://github.com/smithy-lang/smithy/pull/2042))
+* Fixed `recommended` trait provider to avoid discarding `reason` ([#2041](https://github.com/smithy-lang/smithy/pull/2041))
+
+### Documentation
+
+* Updated the javadoc of `ValidatedResult.unwrap` to note that `DANGER` events also throw a validation event ([#2040](https://github.com/smithy-lang/smithy/pull/2040))
+
 ## 1.41.0 (2023-11-08)
 
 ### Features
