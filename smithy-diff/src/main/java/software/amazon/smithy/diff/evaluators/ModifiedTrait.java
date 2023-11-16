@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import software.amazon.smithy.diff.Differences;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
@@ -107,32 +108,60 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
         Map<ShapeId, List<DiffStrategy>> strategies = computeDiffStrategies(differences.getNewModel());
         List<ValidationEvent> events = new ArrayList<>();
 
-        differences.changedShapes().forEach(changedShape -> {
-            changedShape.getTraitDifferences().forEach((traitId, oldTraitNewTraitPair) -> {
-                Trait oldTrait = oldTraitNewTraitPair.left;
-                Trait newTrait = oldTraitNewTraitPair.right;
-                // Do not emit for the box trait because it is added and removed for backward compatibility.
-                if (!IGNORED_TRAITS.contains(traitId)) {
-                    // If we don't know about the trait, warn on any change to it.
-                    List<DiffStrategy> diffStrategies = strategies.computeIfAbsent(traitId,
-                            t -> ListUtils.of(new DiffStrategy(DiffType.CONST, Severity.WARNING)));
-
-                    for (DiffStrategy strategy : diffStrategies) {
-                        List<ValidationEvent> diffEvents = strategy.diffType.validate(
-                                differences.getNewModel(),
-                                "",
-                                changedShape.getNewShape(),
-                                traitId,
-                                oldTrait == null ? null : oldTrait.toNode(),
-                                newTrait == null ? null : newTrait.toNode(),
-                                strategy.severity);
-                        events.addAll(diffEvents);
-                    }
-                }
+        // Check for trait diffs on new shapes
+        differences.addedShapes().forEach(shape -> {
+            shape.getAllTraits().forEach((traitId, trait) -> {
+                events.addAll(getDiffEvents(
+                        differences.getNewModel(),
+                        shape,
+                        traitId,
+                        null,
+                        trait,
+                        strategies
+                ));
             });
         });
 
+        // Check for trait diffs on existing shapes
+        differences.changedShapes().forEach(changedShape ->
+                changedShape.getTraitDifferences().forEach((traitId, traitPair) -> {
+                    events.addAll(getDiffEvents(
+                            differences.getNewModel(),
+                            changedShape.getNewShape(),
+                            traitId,
+                            traitPair.getLeft(),
+                            traitPair.getRight(),
+                            strategies
+                    ));
+                })
+        );
+
         return events;
+    }
+
+    private List<ValidationEvent> getDiffEvents(
+            Model model,
+            Shape shape,
+            ShapeId traitId,
+            Trait oldTrait,
+            Trait newTrait,
+            Map<ShapeId, List<DiffStrategy>> strategies
+            ) {
+        if (IGNORED_TRAITS.contains(traitId)) {
+            return Collections.emptyList();
+        }
+
+        return strategies.computeIfAbsent(traitId,
+                        t -> ListUtils.of(new DiffStrategy(DiffType.CONST, Severity.WARNING))).stream()
+                .flatMap(strategy -> strategy.diffType.validate(
+                        model,
+                        "",
+                        shape,
+                        traitId,
+                        oldTrait == null ? null : oldTrait.toNode(),
+                        newTrait == null ? null : newTrait.toNode(),
+                        strategy.severity).stream())
+                .collect(Collectors.toList());
     }
 
     private static Map<ShapeId, List<DiffStrategy>> computeDiffStrategies(Model model) {

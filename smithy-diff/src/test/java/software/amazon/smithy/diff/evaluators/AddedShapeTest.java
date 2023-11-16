@@ -149,6 +149,6 @@ public class AddedShapeTest {
         assertThat(TestHelper.findEvents(events, "AddedShape").size(), equalTo(1));
         assertThat(enumShapeB.getMember("BAR").isPresent(), equalTo(true));
         assertThat(TestHelper.findEvents(events, enumShapeB.getMember("BAR").get().toShapeId()).size(),
-                equalTo(1));
+                equalTo(2));
     }
 }

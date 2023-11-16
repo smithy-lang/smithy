@@ -20,6 +20,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
 
 import java.util.Arrays;
@@ -343,5 +344,20 @@ public class ModifiedTraitTest {
                         .build()));
 
         assertThat(TestHelper.findEvents(ModelDiff.compare(oldModel, newModel), "ModifiedTrait"), empty());
+    }
+
+    @Test
+    public void findDifferencesInTraitAdditionInNewOperation() {
+        Model oldModel = Model.assembler()
+                .addImport(getClass().getResource("added-operation-old.smithy"))
+                .assemble()
+                .unwrap();
+        Model newModel = Model.assembler()
+                .discoverModels()
+                .addImport(getClass().getResource("added-operation-new.smithy"))
+                .assemble()
+                .unwrap();
+
+        assertThat(TestHelper.findEvents(ModelDiff.compare(oldModel, newModel), "ModifiedTrait").size(), greaterThan(0));
     }
 }
