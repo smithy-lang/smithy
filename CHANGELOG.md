@@ -4,7 +4,7 @@
 
 ### Features
 
-* Added support for service ids names with single character ([#2043](https://github.com/smithy-lang/smithy/pull/2043))
+* Added support for `sdkId`s with a single character ([#2043](https://github.com/smithy-lang/smithy/pull/2043))
 
 ### Bug Fixes
 
