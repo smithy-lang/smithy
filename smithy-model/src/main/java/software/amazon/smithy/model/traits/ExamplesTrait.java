@@ -268,7 +268,6 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
                 return this;
             }
         }
-
     }
 
     public static final class ErrorExample implements ToNode, ToSmithyBuilder<ErrorExample> {
