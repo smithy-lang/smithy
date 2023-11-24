@@ -210,6 +210,27 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
                 return this;
             }
         }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(title, documentation, input, output, error);
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (other == this) {
+                return true;
+            }
+            if (other == null || other.getClass() != this.getClass()) {
+                return false;
+            }
+            Example otherExample = (Example) other;
+            return title.equals(otherExample.title)
+                   && Objects.equals(documentation, otherExample.documentation)
+                   && Objects.equals(input, otherExample.input)
+                   && Objects.equals(output, otherExample.output)
+                   && Objects.equals(error, otherExample.error);
+        }
     }
 
     public static final class ErrorExample implements ToNode, ToSmithyBuilder<ErrorExample> {
@@ -278,6 +299,23 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
                 this.content = content;
                 return this;
             }
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(shapeId, content);
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (other == this) {
+                return true;
+            }
+            if (other == null || other.getClass() != this.getClass()) {
+                return false;
+            }
+            ErrorExample otherExample = (ErrorExample) other;
+            return shapeId.equals(otherExample.shapeId) && content.equals(otherExample.content);
         }
     }
 
