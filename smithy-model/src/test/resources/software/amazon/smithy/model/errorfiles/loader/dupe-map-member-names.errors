@@ -1,1 +1,1 @@
-[ERROR] -: Parse error at line 7, column 5 near `key`: Expected: '}', but found 'k' | Model
+[ERROR] com.foo#Map: Syntax error at line 7, column 5: Duplicate member of `com.foo#Map`: 'key' | Model

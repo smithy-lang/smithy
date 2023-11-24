@@ -1,0 +1,1 @@
+[WARNING] ns.foo#BazService: The service `ns.foo#BazService` is configured to use endpoint discovery, but has no operations bound with the `aws.api#clientDiscoveredEndpoint` trait. | ClientEndpointDiscovery.NoOperations

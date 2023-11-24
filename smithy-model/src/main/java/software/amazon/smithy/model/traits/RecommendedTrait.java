@@ -86,7 +86,7 @@ public final class RecommendedTrait extends AbstractTrait implements ToSmithyBui
         public RecommendedTrait createTrait(ShapeId target, Node value) {
             Builder builder = builder().sourceLocation(value.getSourceLocation());
             value.expectObjectNode().getStringMember("reason", builder::reason);
-            RecommendedTrait result = builder().build();
+            RecommendedTrait result = builder.build();
             result.setNodeCache(value);
             return result;
         }

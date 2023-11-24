@@ -1,0 +1,3 @@
+[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#endpointRuleSet | UnstableTrait
+[DANGER] example#FizzBuzz: The `AWS::Auth::AccountId` built-in used requires additional consideration of the rules that use it. | RuleSetAwsBuiltIn.AWS::Auth::AccountId
+[DANGER] example#FizzBuzz: The `AWS::Auth::CredentialScope` built-in used requires additional consideration of the rules that use it. | RuleSetAwsBuiltIn.AWS::Auth::CredentialScope

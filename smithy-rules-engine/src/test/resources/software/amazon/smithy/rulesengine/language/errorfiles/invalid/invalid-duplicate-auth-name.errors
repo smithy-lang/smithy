@@ -1,0 +1,5 @@
+[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#clientContextParams | UnstableTrait
+[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#endpointRuleSet | UnstableTrait
+[WARNING] example#FizzBuzz: Did not find a validator for the `duplicate` auth scheme | RuleSetAuthSchemes
+[WARNING] example#FizzBuzz: Did not find a validator for the `duplicate` auth scheme | RuleSetAuthSchemes
+[ERROR] example#FizzBuzz: Found duplicate `name` of `duplicate` in the `authSchemes` list | RuleSetAuthSchemes

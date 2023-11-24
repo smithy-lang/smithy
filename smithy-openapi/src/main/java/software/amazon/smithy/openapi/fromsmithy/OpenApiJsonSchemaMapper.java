@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import software.amazon.smithy.jsonschema.JsonSchemaConfig;
 import software.amazon.smithy.jsonschema.JsonSchemaMapper;
+import software.amazon.smithy.jsonschema.JsonSchemaMapperContext;
 import software.amazon.smithy.jsonschema.Schema;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
@@ -33,9 +33,9 @@ import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.openapi.OpenApiConfig;
+import software.amazon.smithy.openapi.OpenApiUtils;
 import software.amazon.smithy.openapi.model.ExternalDocumentation;
 import software.amazon.smithy.utils.MapUtils;
-import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Applies OpenAPI extensions to a {@link Schema} using configuration settings
@@ -46,13 +46,13 @@ import software.amazon.smithy.utils.SetUtils;
  */
 public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
 
-    /** See https://swagger.io/docs/specification/data-models/keywords/. */
-    private static final Set<String> UNSUPPORTED_KEYWORD_DIRECTIVES = SetUtils.of(
-            "propertyNames",
-            "contentMediaType");
-
     @Override
-    public Schema.Builder updateSchema(Shape shape, Schema.Builder builder, JsonSchemaConfig config) {
+    public Schema.Builder updateSchema(JsonSchemaMapperContext context, Schema.Builder builder) {
+        Shape shape = context.getShape();
+        OpenApiUtils.getSpecificationExtensionsMap(context.getModel(), shape).entrySet()
+            .forEach(entry -> builder.putExtension(entry.getKey(), entry.getValue()));
+
+        JsonSchemaConfig config = context.getConfig();
         getResolvedExternalDocs(shape, config)
                 .map(ExternalDocumentation::toNode)
                 .ifPresent(docs -> builder.putExtension("externalDocs", docs));
@@ -62,7 +62,8 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
         }
 
         boolean useOpenApiIntegerType = config instanceof OpenApiConfig
-                && ((OpenApiConfig) config).getUseIntegerType();
+                && ((OpenApiConfig) config).getUseIntegerType()
+                && !((OpenApiConfig) config).getDisableIntegerFormat();
 
         // Don't overwrite an existing format setting.
         if (!builder.getFormat().isPresent()) {
@@ -92,7 +93,10 @@ public final class OpenApiJsonSchemaMapper implements JsonSchemaMapper {
         }
 
         // Remove unsupported JSON Schema keywords.
-        UNSUPPORTED_KEYWORD_DIRECTIVES.forEach(builder::disableProperty);
+        if (config instanceof OpenApiConfig) {
+            OpenApiConfig openApiConfig = (OpenApiConfig) config;
+            openApiConfig.getVersion().getUnsupportedKeywords().forEach(builder::disableProperty);
+        }
 
         return builder;
     }

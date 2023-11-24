@@ -1,0 +1,5 @@
+[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#endpointRuleSet | UnstableTrait
+[WARNING] example#GetAnotherResourceInput$ResourceId: This shape applies a trait that is unstable: smithy.rules#contextParam | UnstableTrait
+[WARNING] example#GetResourceInput$ResourceId: This shape applies a trait that is unstable: smithy.rules#contextParam | UnstableTrait
+[ERROR] example#FizzBuzz: Type mismatch for parameter `ParameterBar` | RuleSetParameter.RuleSet.TypeMismatch
+[ERROR] example#GetResourceInput$ResourceId: Inconsistent type for `ParameterBar` parameter | RuleSetParameter.ContextParam.InconsistentType

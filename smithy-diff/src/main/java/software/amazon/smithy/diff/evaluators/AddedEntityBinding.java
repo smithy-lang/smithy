@@ -23,6 +23,7 @@ import software.amazon.smithy.diff.ChangedShape;
 import software.amazon.smithy.diff.Differences;
 import software.amazon.smithy.model.shapes.EntityShape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -37,6 +38,8 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public final class AddedEntityBinding extends AbstractDiffEvaluator {
     private static final String ADDED_RESOURCE = "AddedResourceBinding";
     private static final String ADDED_OPERATION = "AddedOperationBinding";
+    private static final String TO_RESOURCE = ".ToResource.";
+    private static final String TO_SERVICE = ".ToService.";
 
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
@@ -59,15 +62,16 @@ public final class AddedEntityBinding extends AbstractDiffEvaluator {
         return added;
     }
 
-    private ValidationEvent createAddedEvent(String eventId, EntityShape entity, ShapeId addedShape) {
-        String descriptor = eventId.equals(ADDED_RESOURCE) ? "Resource" : "Operation";
+    private ValidationEvent createAddedEvent(String typeOfAddition, EntityShape parentEntity, ShapeId childShape) {
+        String childType = typeOfAddition.equals(ADDED_RESOURCE) ? "Resource" : "Operation";
+        String typeOfParentShape = ShapeType.RESOURCE.equals(parentEntity.getType()) ? TO_RESOURCE : TO_SERVICE;
         String message = String.format(
                 "%s binding of `%s` was added to the %s shape, `%s`",
-                descriptor, addedShape, entity.getType(), entity.getId());
+                childType, childShape, parentEntity.getType(), parentEntity.getId());
         return ValidationEvent.builder()
-                .id(eventId)
+                .id(typeOfAddition + typeOfParentShape + childShape.getName())
                 .severity(Severity.NOTE)
-                .shape(entity)
+                .shape(parentEntity)
                 .message(message)
                 .build();
     }

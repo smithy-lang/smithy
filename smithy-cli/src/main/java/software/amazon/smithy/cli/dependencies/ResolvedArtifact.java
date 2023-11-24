@@ -15,30 +15,59 @@
 
 package software.amazon.smithy.cli.dependencies;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
+import org.eclipse.aether.util.ChecksumUtils;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.node.ToNode;
 
 /**
  * An artifact resolved from a repository that provides the path on disk where the artifact
  * was downloaded, and the coordinates of the artifact.
  */
-public final class ResolvedArtifact {
+public final class ResolvedArtifact implements ToNode {
+    private static final String SHA_SUM_MEMBER_NAME = "sha1";
+    private static final String PATH_MEMBER_NAME = "path";
+    private static final String CHECKSUM_FILE_EXTENSION = ".sha1";
     private final Path path;
     private final String coordinates;
     private final String groupId;
     private final String artifactId;
     private final String version;
+    private final String shaSum;
 
     public ResolvedArtifact(Path path, String groupId, String artifactId, String version) {
-        this(path, groupId + ':' + artifactId + ':' + version, groupId, artifactId, version);
+        this(path, groupId + ':' + artifactId + ':' + version, groupId, artifactId, version, null);
     }
 
-    private ResolvedArtifact(Path path, String coordinates, String groupId, String artifactId, String version) {
+    private ResolvedArtifact(Path path, String coordinates, String groupId, String artifactId,
+                             String version, String shaSum
+    ) {
         this.coordinates = Objects.requireNonNull(coordinates);
         this.path = Objects.requireNonNull(path);
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
+        this.shaSum = shaSum != null ? shaSum : getOrComputeSha(path);
+    }
+
+    private static String getOrComputeSha(Path path) {
+        File artifactFile = path.toFile();
+        File checksumFile = new File(artifactFile.getParent(), artifactFile.getName() + CHECKSUM_FILE_EXTENSION);
+        try {
+            if (checksumFile.exists()) {
+                return ChecksumUtils.read(checksumFile);
+            } else {
+                return DependencyUtils.computeSha1(path);
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     /**
@@ -50,11 +79,23 @@ public final class ResolvedArtifact {
      * @throws DependencyResolverException if the provided coordinates are invalid.
      */
     public static ResolvedArtifact fromCoordinates(Path location, String coordinates) {
-        String[] parts = coordinates.split(":");
-        if (parts.length != 3) {
-            throw new DependencyResolverException("Invalid Maven coordinates: " + coordinates);
-        }
-        return new ResolvedArtifact(location, coordinates, parts[0], parts[1], parts[2]);
+        String[] parts = parseCoordinates(coordinates);
+        return new ResolvedArtifact(location, coordinates, parts[0], parts[1], parts[2], null);
+    }
+
+    /**
+     * Creates a resolved artifact from a Maven coordinates string and Node.
+     *
+     * @param coordinates Maven coordinates (e.g., group:artifact:version).
+     * @param node Node containing the resolved artifact data.
+     * @return Returns the created artifact
+     */
+    public static ResolvedArtifact fromCoordinateNode(String coordinates, Node node) {
+        String[] parts = parseCoordinates(coordinates);
+        ObjectNode objectNode = node.expectObjectNode();
+        String shaSum = objectNode.expectMember(SHA_SUM_MEMBER_NAME).expectStringNode().getValue();
+        Path location = Paths.get(objectNode.expectMember(PATH_MEMBER_NAME).expectStringNode().getValue());
+        return new ResolvedArtifact(location, coordinates, parts[0], parts[1], parts[2], shaSum);
     }
 
     /**
@@ -96,14 +137,28 @@ public final class ResolvedArtifact {
         return version;
     }
 
+    /**
+     * @return Get the sha1 digest of the artifact.
+     */
+    public String getShaSum() {
+        return shaSum;
+    }
+
+    /**
+     * @return Get the last time the artifact was modified.
+     */
+    public long getLastModified() {
+        return path.toFile().lastModified();
+    }
+
     @Override
     public String toString() {
-        return "{path=" + path + ", coordinates='" + coordinates + "'}";
+        return "{path=" + path + ", coordinates='" + coordinates + ", sha1='" + shaSum + "'}";
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(coordinates, path);
+        return Objects.hash(coordinates, path, shaSum);
     }
 
     @Override
@@ -114,6 +169,24 @@ public final class ResolvedArtifact {
             return false;
         }
         ResolvedArtifact artifact = (ResolvedArtifact) o;
-        return path.equals(artifact.path) && coordinates.equals(artifact.coordinates);
+        return path.equals(artifact.path)
+                && shaSum.equals(artifact.shaSum)
+                && coordinates.equals(artifact.coordinates);
+    }
+
+    @Override
+    public Node toNode() {
+        return Node.objectNodeBuilder()
+                .withMember(PATH_MEMBER_NAME, path.toString())
+                .withMember(SHA_SUM_MEMBER_NAME, shaSum)
+                .build();
+    }
+
+    private static String[] parseCoordinates(String coordinates) {
+        String[] parts = coordinates.split(":");
+        if (parts.length != 3) {
+            throw new DependencyResolverException("Invalid Maven coordinates: " + coordinates);
+        }
+        return parts;
     }
 }

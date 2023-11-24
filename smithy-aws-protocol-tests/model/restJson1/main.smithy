@@ -58,6 +58,7 @@ service RestJson {
         HttpPayloadWithStructure,
         HttpEnumPayload,
         HttpStringPayload,
+        HttpPayloadWithUnion,
 
         // @httpResponseCode tests
         HttpResponseCode,
@@ -142,5 +143,8 @@ service RestJson {
         // client-only timestamp parsing tests
         DatetimeOffsets,
         FractionalSeconds,
+
+        // requestCompression trait tests
+        PutWithContentEncoding
     ]
 }

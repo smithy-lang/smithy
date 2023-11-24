@@ -62,4 +62,18 @@ public class SmithyCommandTest {
         assertThat(result.code(), equalTo(0));
         assertThat(result.stdout(), containsString("Builds"));
     }
+
+    @Test
+    public void supportsTopLevelVersion() {
+        CliUtils.Result result = CliUtils.runSmithy("--version");
+
+        assertThat(result.code(), equalTo(0));
+    }
+
+    @Test
+    public void doesNotAllowVersionArgumentToSubcommands() {
+        CliUtils.Result result = CliUtils.runSmithy("validate", "--version");
+
+        assertThat(result.code(), equalTo(1));
+    }
 }

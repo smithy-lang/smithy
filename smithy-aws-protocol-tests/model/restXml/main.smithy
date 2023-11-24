@@ -50,6 +50,9 @@ service RestXml {
         HttpPayloadTraits,
         HttpPayloadTraitsWithMediaType,
         HttpPayloadWithStructure,
+        HttpEnumPayload,
+        HttpStringPayload,
+        HttpPayloadWithUnion,
         HttpPayloadWithXmlName,
         BodyWithXmlName,
         HttpPayloadWithMemberXmlName,
@@ -80,6 +83,7 @@ service RestXml {
         FlattenedXmlMap,
         FlattenedXmlMapWithXmlName,
         FlattenedXmlMapWithXmlNamespace,
+        XmlMapWithXmlNamespace,
 
         // @xmlAttribute tests
         XmlAttributes,
@@ -96,5 +100,8 @@ service RestXml {
         // client-only timestamp parsing tests
         DatetimeOffsets,
         FractionalSeconds,
+
+        // requestCompression trait tests
+        PutWithContentEncoding
     ]
 }

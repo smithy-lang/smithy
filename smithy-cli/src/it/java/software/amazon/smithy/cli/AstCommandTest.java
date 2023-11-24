@@ -34,20 +34,27 @@ public class AstCommandTest {
     }
 
     @Test
-    public void convertsSyntacticallyCorrectModels() {
-        IntegUtils.run("invalid-model", ListUtils.of("ast"), result -> {
-            assertThat(result.getExitCode(), equalTo(0));
-            assertThat(result.getOutput(), containsString("\"smithy\""));
-            assertThat(result.getOutput(), not(containsString("WARNING")));
-        });
-    }
-
-    @Test
-    public void showsErrorsForSyntacticallyIncorrectModels() {
+    public void showsErrorsForInvalidModels() {
         IntegUtils.run("model-with-syntax-error", ListUtils.of("ast"), result -> {
             assertThat(result.getExitCode(), equalTo(1));
             assertThat(result.getOutput(), containsString("ERROR"));
             assertThat(result.getOutput(), containsString("bar // <- invalid syntax"));
+        });
+    }
+
+    @Test
+    public void doesNotFlattenModelsWithoutFlattenOption() {
+        IntegUtils.run("model-with-mixins", ListUtils.of("ast"), result -> {
+            assertThat(result.getExitCode(), equalTo(0));
+            assertThat(result.getOutput(), containsString("\"smithy.api#mixin\": {}"));
+        });
+    }
+
+    @Test
+    public void flattensModelsWithFlattenOption() {
+        IntegUtils.run("model-with-mixins", ListUtils.of("ast", "--flatten"), result -> {
+            assertThat(result.getExitCode(), equalTo(0));
+            assertThat(result.getOutput(), not(containsString("\"smithy.api#mixin\": {}")));
         });
     }
 }

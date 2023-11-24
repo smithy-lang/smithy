@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.cli;
 
+import java.util.StringJoiner;
+
 /**
  * Colors and styles for use with {@link AnsiColorFormatter} or {@link CliPrinter}.
  *
@@ -67,6 +69,14 @@ public interface Style {
 
     String getAnsiColorCode();
 
+    static Style of(Style... styles) {
+        if (styles.length == 1) {
+            return styles[0];
+        } else {
+            return new Multi(styles);
+        }
+    }
+
     final class Constant implements Style {
         private final String ansiColorCode;
 
@@ -74,8 +84,30 @@ public interface Style {
             this.ansiColorCode = ansiColorCode;
         }
 
+        @Override
         public String getAnsiColorCode() {
             return ansiColorCode;
+        }
+    }
+
+    final class Multi implements Style {
+        private final String ansiStyle;
+
+        public Multi(Style... styles) {
+            if (styles.length == 1) {
+                ansiStyle = styles[0].getAnsiColorCode();
+            } else {
+                StringJoiner joiner = new StringJoiner(";");
+                for (Style style : styles) {
+                    joiner.add(style.getAnsiColorCode());
+                }
+                ansiStyle = joiner.toString();
+            }
+        }
+
+        @Override
+        public String getAnsiColorCode() {
+            return ansiStyle;
         }
     }
 }

@@ -9,7 +9,9 @@
                 }
             },
             "traits": {
-                "smithy.api#trait": {}
+                "smithy.api#trait": {},
+                "ns.foo#meta": {},
+                "ns.foo#threeMeta": {}
             }
         },
         "ns.foo#quux": {
@@ -17,6 +19,41 @@
             "members": {
                 "member": {
                     "target": "ns.foo#QuuxTraitShapeMember"
+                }
+            },
+            "traits": {
+                "smithy.api#trait": {}
+            }
+        },
+        "ns.foo#meta": {
+            "type": "structure",
+            "members": {
+                "member": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#trait": {},
+                "ns.foo#tooMeta": {},
+                "ns.foo#threeMeta": {}
+            }
+        },
+        "ns.foo#tooMeta": {
+            "type": "structure",
+            "members": {
+                "member": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#trait": {}
+            }
+        },
+        "ns.foo#threeMeta": {
+            "type": "structure",
+            "members": {
+                "member": {
+                    "target": "smithy.api#String"
                 }
             },
             "traits": {

@@ -108,7 +108,7 @@ final class SelectorParser extends SimpleParser {
                 }
             case '>': // forward undirected neighbor
                 skip();
-                return NeighborSelector.forward(Collections.emptyList());
+                return NeighborSelector.FORWARD;
             case '<': // reverse [un]directed neighbor
                 skip();
                 if (peek() == '-') { // reverse directed neighbor (<-[X, Y, Z]-)
@@ -116,7 +116,7 @@ final class SelectorParser extends SimpleParser {
                     expect('[');
                     return parseSelectorDirectedReverseNeighbor();
                 } else { // reverse undirected neighbor (<)
-                    return NeighborSelector.reverse(Collections.emptyList());
+                    return NeighborSelector.REVERSE;
                 }
             case '~': // ~>
                 skip();
@@ -157,7 +157,7 @@ final class SelectorParser extends SimpleParser {
 
     @Override
     public SelectorSyntaxException syntax(String message) {
-        return new SelectorSyntaxException(message, expression(), position(), line(), column());
+        return new SelectorSyntaxException(message, input().toString(), position(), line(), column());
     }
 
     private InternalSelector parseVariable() {
@@ -232,7 +232,7 @@ final class SelectorParser extends SimpleParser {
                 if (selectors.size() != 1) {
                     throw new SelectorSyntaxException(
                             "The :not function requires a single selector argument",
-                            expression(), functionPosition, line(), column());
+                            input().toString(), functionPosition, line(), column());
                 }
                 return new NotSelector(selectors.get(0));
             case "test":
@@ -243,14 +243,14 @@ final class SelectorParser extends SimpleParser {
                 if (selectors.size() != 1) {
                     throw new SelectorSyntaxException(
                             "The :in function requires a single selector argument",
-                            expression(), functionPosition, line(), column());
+                            input().toString(), functionPosition, line(), column());
                 }
                 return new InSelector(selectors.get(0));
             case "root":
                 if (selectors.size() != 1) {
                     throw new SelectorSyntaxException(
                             "The :root function requires a single selector argument",
-                            expression(), functionPosition, line(), column());
+                            input().toString(), functionPosition, line(), column());
                 }
                 InternalSelector root = new RootSelector(selectors.get(0), roots.size());
                 roots.add(selectors.get(0));
@@ -259,15 +259,15 @@ final class SelectorParser extends SimpleParser {
                 if (selectors.size() > 2) {
                     throw new SelectorSyntaxException(
                             "The :topdown function accepts 1 or 2 selectors, but found " + selectors.size(),
-                            expression(), functionPosition, line(), column());
+                            input().toString(), functionPosition, line(), column());
                 }
                 return new TopDownSelector(selectors);
             case "each":
-                LOGGER.warning("The `:each` selector function has been renamed to `:is`: " + expression());
+                LOGGER.warning("The `:each` selector function has been renamed to `:is`: " + input());
                 return IsSelector.of(selectors);
             default:
                 LOGGER.warning(String.format("Unknown function name `%s` found in selector: %s",
-                                             name, expression()));
+                                             name, input()));
                 return (context, shape, next) -> InternalSelector.Response.CONTINUE;
         }
     }

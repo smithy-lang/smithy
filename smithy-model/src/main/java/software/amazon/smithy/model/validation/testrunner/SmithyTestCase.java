@@ -15,6 +15,9 @@
 
 package software.amazon.smithy.model.validation.testrunner;
 
+import static java.lang.String.format;
+
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -132,13 +135,19 @@ public final class SmithyTestCase {
         if (actual.getSuppressionReason().isPresent()) {
             normalizedActualMessage += " (" + actual.getSuppressionReason().get() + ")";
         }
+        normalizedActualMessage = normalizeMessage(normalizedActualMessage);
 
-        String comparedMessage = expected.getMessage().replace("\n", "\\n").replace("\r", "\\n");
+        String comparedMessage = normalizeMessage(expected.getMessage());
         return expected.getSeverity() == actual.getSeverity()
                && actual.containsId(expected.getId())
                && expected.getShapeId().equals(actual.getShapeId())
                // Normalize new lines.
                && normalizedActualMessage.startsWith(comparedMessage);
+    }
+
+    // Newlines in persisted validation events are escaped.
+    private static String normalizeMessage(String message) {
+        return message.replace("\n", "\\n").replace("\r", "\\n");
     }
 
     private boolean isModelDeprecationEvent(ValidationEvent event) {
@@ -158,16 +167,19 @@ public final class SmithyTestCase {
 
     private static List<ValidationEvent> loadExpectedEvents(String errorsFileLocation) {
         String contents = IoUtils.readUtf8File(errorsFileLocation);
+        String fileName = Objects.requireNonNull(Paths.get(errorsFileLocation).getFileName()).toString();
         return Arrays.stream(contents.split(System.lineSeparator()))
                 .filter(line -> !line.trim().isEmpty())
-                .map(SmithyTestCase::parseValidationEvent)
+                .map(line -> parseValidationEvent(line, fileName))
                 .collect(Collectors.toList());
     }
 
-    static ValidationEvent parseValidationEvent(String event) {
+    static ValidationEvent parseValidationEvent(String event, String fileName) {
         Matcher matcher = EVENT_PATTERN.matcher(event);
         if (!matcher.find()) {
-            throw new IllegalArgumentException("Invalid validation event: " + event);
+            throw new IllegalArgumentException(format("Invalid validation event in file `%s`, the following event did "
+                    + "not match the expected regular expression `%s`: %s",
+                    fileName, EVENT_PATTERN.pattern(), event));
         }
 
         // Construct a dummy source location since we don't validate it.

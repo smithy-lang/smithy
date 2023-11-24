@@ -9,6 +9,7 @@ software.amazon.smithy.model.validation.validators.ExamplesTraitValidator
 software.amazon.smithy.model.validation.validators.ExclusiveStructureMemberTraitValidator
 software.amazon.smithy.model.validation.validators.HostLabelTraitValidator
 software.amazon.smithy.model.validation.validators.HttpApiKeyAuthTraitValidator
+software.amazon.smithy.model.validation.validators.HttpBindingTraitIgnoredValidator
 software.amazon.smithy.model.validation.validators.HttpBindingsMissingValidator
 software.amazon.smithy.model.validation.validators.HttpHeaderTraitValidator
 software.amazon.smithy.model.validation.validators.HttpLabelTraitValidator
@@ -23,7 +24,6 @@ software.amazon.smithy.model.validation.validators.HttpUriFormatValidator
 software.amazon.smithy.model.validation.validators.JsonNameValidator
 software.amazon.smithy.model.validation.validators.LengthTraitValidator
 software.amazon.smithy.model.validation.validators.MediaTypeValidator
-software.amazon.smithy.model.validation.validators.MixinValidator
 software.amazon.smithy.model.validation.validators.NoInlineDocumentSupportValidator
 software.amazon.smithy.model.validation.validators.OperationValidator
 software.amazon.smithy.model.validation.validators.PaginatedTraitValidator
@@ -31,11 +31,13 @@ software.amazon.smithy.model.validation.validators.PatternTraitValidator
 software.amazon.smithy.model.validation.validators.PrivateAccessValidator
 software.amazon.smithy.model.validation.validators.RangeTraitValidator
 software.amazon.smithy.model.validation.validators.ReferencesTraitValidator
+software.amazon.smithy.model.validation.validators.RequestCompressionTraitValidator
 software.amazon.smithy.model.validation.validators.ResourceCycleValidator
 software.amazon.smithy.model.validation.validators.ResourceIdentifierBindingValidator
 software.amazon.smithy.model.validation.validators.ResourceIdentifierValidator
 software.amazon.smithy.model.validation.validators.ResourceLifecycleValidator
 software.amazon.smithy.model.validation.validators.ResourceOperationInputOutputValidator
+software.amazon.smithy.model.validation.validators.ServiceAuthDefinitionsValidator
 software.amazon.smithy.model.validation.validators.ServiceValidator
 software.amazon.smithy.model.validation.validators.SetValidator
 software.amazon.smithy.model.validation.validators.ShapeIdConflictValidator

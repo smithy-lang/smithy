@@ -1605,4 +1605,21 @@ public final class StringUtils {
 
         return -1;
     }
+
+    /**
+     * Indents each line in the provided string by the provided number of spaces.
+     *
+     * @param string the string to indent.
+     * @param spaces the number of spaces.
+     * @return the indented string.
+     */
+    public static String indent(String string, int spaces) {
+        StringBuilder indentBuilder = new StringBuilder(spaces + 2);
+        for (int i = 0; i < spaces; ++i) {
+            indentBuilder.append(" ");
+        }
+        String indent = indentBuilder.toString();
+
+        return stripEnd(indent + string.replace(System.lineSeparator(), System.lineSeparator() + indent), " ");
+    }
 }

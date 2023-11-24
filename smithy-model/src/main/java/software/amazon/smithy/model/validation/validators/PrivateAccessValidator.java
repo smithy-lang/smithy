@@ -24,6 +24,7 @@ import software.amazon.smithy.model.neighbor.NeighborProvider;
 import software.amazon.smithy.model.neighbor.Relationship;
 import software.amazon.smithy.model.neighbor.RelationshipType;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.PrivateTrait;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
@@ -50,17 +51,18 @@ public final class PrivateAccessValidator extends AbstractValidator {
         String namespace = shape.getId().getNamespace();
         for (Relationship rel : relationships) {
             if (!rel.getShape().getId().getNamespace().equals(namespace)) {
-                ValidationEvent privateAccessValidationEvent = getPrivateAccessValidationEvent(rel);
-                events.add(privateAccessValidationEvent);
+                events.add(getPrivateAccessValidationEvent(rel));
             }
         }
     }
 
     private ValidationEvent getPrivateAccessValidationEvent(Relationship relationship) {
+        ShapeId neighborId = relationship.expectNeighborShape().getId();
         String message = String.format(
                 "This shape has an invalid %s relationship that targets a private shape, `%s`, in another namespace.",
                 relationship.getRelationshipType().toString().toLowerCase(Locale.US),
-                relationship.getNeighborShape().get().getId());
+                neighborId
+        );
 
         // For now, emit a warning for trait relationships instead of an error. This is because private access on trait
         // relationships was not being validated in the past, so emitting a warning maintains backward compatibility.

@@ -23,6 +23,7 @@ import software.amazon.smithy.diff.ChangedShape;
 import software.amazon.smithy.diff.Differences;
 import software.amazon.smithy.model.shapes.EntityShape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.shapes.ShapeType;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
 
@@ -37,6 +38,8 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 public final class RemovedEntityBinding extends AbstractDiffEvaluator {
     private static final String REMOVED_RESOURCE = "RemovedResourceBinding";
     private static final String REMOVED_OPERATION = "RemovedOperationBinding";
+    private static final String FROM_RESOURCE = ".FromResource.";
+    private static final String FROM_SERVICE = ".FromService.";
 
     @Override
     public List<ValidationEvent> evaluate(Differences differences) {
@@ -59,15 +62,16 @@ public final class RemovedEntityBinding extends AbstractDiffEvaluator {
         return removed;
     }
 
-    private ValidationEvent createRemovedEvent(String eventId, EntityShape entity, ShapeId removedShape) {
-        String descriptor = eventId.equals(REMOVED_RESOURCE) ? "Resource" : "Operation";
+    private ValidationEvent createRemovedEvent(String typeOfRemoval, EntityShape parentEntity, ShapeId childShape) {
+        String childType = typeOfRemoval.equals(REMOVED_RESOURCE) ? "Resource" : "Operation";
+        String typeOfParentShape = ShapeType.RESOURCE.equals(parentEntity.getType()) ? FROM_RESOURCE : FROM_SERVICE;
         String message = String.format(
                 "%s binding of `%s` was removed from %s shape, `%s`",
-                descriptor, removedShape, entity.getType(), entity.getId());
+                childType, childShape, parentEntity.getType(), parentEntity.getId());
         return ValidationEvent.builder()
-                .id(eventId)
+                .id(typeOfRemoval + typeOfParentShape + childShape.getName())
                 .severity(Severity.ERROR)
-                .shape(entity)
+                .shape(parentEntity)
                 .message(message)
                 .build();
     }

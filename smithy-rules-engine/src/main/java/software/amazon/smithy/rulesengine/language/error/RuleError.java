@@ -1,16 +1,6 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package software.amazon.smithy.rulesengine.language.error;
@@ -24,40 +14,79 @@ import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
- * An exception that can be thrown when rule-set is invalid. Used for providing meaningful contextual
- * information when an invalid rule-set is encountered.
+ * An exception that can be thrown when a rule-set is invalid.
+ *
+ * <p>Used for providing meaningful contextual information when
+ * an invalid rule-set is encountered.
  */
 @SmithyUnstableApi
 public final class RuleError extends RuntimeException {
     private final List<Pair<String, SourceLocation>> contexts = new ArrayList<>();
     private final SourceException root;
 
+    /**
+     * Constructs a new RuleError from the source exception.
+     * @param root the exception this rule error is based on.
+     */
     public RuleError(SourceException root) {
         super(root);
         this.root = root;
     }
 
-    public static <T> T context(String message, Runnable f) throws RuleError {
-        return RuleError.context(message, SourceLocation.none(), () -> {
-            f.run();
-            return null;
-        });
+    /**
+     * Evaluates the runnable and creates a RuleError with the provided context if there's an error.
+     *
+     * @param message a message representing the context for this runnable statement's evaluation.
+     * @param runnable a runnable to evaluate a statement in the current context.
+     */
+    public static void context(String message, Runnable runnable) {
+        context(message, SourceLocation.none(), runnable);
     }
 
-    public static <T> T context(String message, Evaluator<T> f) throws RuleError {
-        return RuleError.context(message, SourceLocation.none(), f);
+    /**
+     * Evaluates the runnable and creates a RuleError with the provided context if there's an error.
+     *
+     * @param <T> the type of the value returned by the runnable.
+     * @param message a message representing the context for this runnable statement's evaluation.
+     * @param runnable a runnable to evaluate a statement in the current context.
+     * @return the value returned by the runnable.
+     * @throws RuleError when the rule being evaluated in the context fails.
+     */
+    public static <T> T context(String message, Evaluator<T> runnable) throws RuleError {
+        return context(message, SourceLocation.none(), runnable);
     }
 
-    public static void context(String message, FromSourceLocation sourceLocation, Runnable f) {
+    /**
+     * Evaluates the runnable and creates a RuleError with the provided context if there's an error.
+     *
+     * @param message a message representing the context for this runnable statement's evaluation.
+     * @param sourceLocation the source location for this runnable statement's evaluation.
+     * @param runnable a runnable to evaluate a statement in the current context.
+     */
+    public static void context(String message, FromSourceLocation sourceLocation, Runnable runnable) {
         context(message, sourceLocation, () -> {
-            f.run();
+            runnable.run();
             return null;
         });
     }
 
-    public static <T> T context(String message, FromSourceLocation sourceLocation, Evaluator<T> f) throws RuleError {
+    /**
+     * Evaluates the runnable and creates a RuleError with the provided context if there's an error.
+     *
+     * @param <T> the type of the value returned by the runnable.
+     * @param message a message representing the context for this runnable statement's evaluation.
+     * @param sourceLocation the source location for this runnable statement's evaluation.
+     * @param runnable a runnable to evaluate a statement in the current context.
+     * @return the value returned by the runnable.
+     * @throws RuleError when the rule being evaluated in the context fails.
+     */
+    public static <T> T context(
+            String message,
+            FromSourceLocation sourceLocation,
+            Evaluator<T> runnable
+    ) throws RuleError {
         try {
-            return f.call();
+            return runnable.call();
         } catch (SourceException ex) {
             throw new RuleError(ex).withContext(message, sourceLocation.getSourceLocation());
         } catch (RuleError ex) {
@@ -71,8 +100,15 @@ public final class RuleError extends RuntimeException {
         }
     }
 
-    public RuleError withContext(String context, SourceLocation loc) {
-        this.contexts.add(Pair.of(context, loc));
+    /**
+     * Sets a piece of context on this error.
+     *
+     * @param context the context to add to the error.
+     * @param location the source location of the context being added.
+     * @return returns this error with the added context.
+     */
+    public RuleError withContext(String context, SourceLocation location) {
+        this.contexts.add(Pair.of(context, location));
         return this;
     }
 
@@ -80,27 +116,26 @@ public final class RuleError extends RuntimeException {
     public String toString() {
         StringBuilder message = new StringBuilder();
         SourceLocation lastLoc = SourceLocation.none();
-        for (int i = contexts.size() - 1; i > 0; i--) {
+        for (int i = contexts.size() - 1; i >= 0; i--) {
             Pair<String, SourceLocation> context = contexts.get(i);
             message.append(context.left);
-            message.append("\n");
+            message.append(System.lineSeparator());
             if (context.right != SourceLocation.NONE && context.right != lastLoc) {
                 message.append("  at ")
                         .append(context.right.getSourceLocation().getFilename())
                         .append(":")
                         .append(context.right.getSourceLocation().getLine())
-                        .append("\n");
+                        .append(System.lineSeparator());
                 lastLoc = context.right;
             }
         }
 
-        if (root.getSourceLocation() != SourceLocation.none() && root.getSourceLocation() != lastLoc) {
-            message.append("  at ")
-                    .append(root.getSourceLocation().getFilename())
-                    .append(":").append(root.getSourceLocation().getLine())
-                    .append("\n");
-        }
         message.append(root.getMessageWithoutLocation());
+        if (root.getSourceLocation() != SourceLocation.none() && root.getSourceLocation() != lastLoc) {
+            message.append(System.lineSeparator()).append("  at ")
+                    .append(root.getSourceLocation().getFilename())
+                    .append(":").append(root.getSourceLocation().getLine());
+        }
         return message.toString();
     }
 

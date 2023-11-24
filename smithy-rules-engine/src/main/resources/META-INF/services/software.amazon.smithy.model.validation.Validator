@@ -1,1 +1,8 @@
+software.amazon.smithy.rulesengine.traits.EndpointTestsTraitValidator
 software.amazon.smithy.rulesengine.traits.StaticContextParamsTraitValidator
+software.amazon.smithy.rulesengine.validators.RuleSetAuthSchemesValidator
+software.amazon.smithy.rulesengine.validators.RuleSetBuiltInValidator
+software.amazon.smithy.rulesengine.validators.RuleSetUriValidator
+software.amazon.smithy.rulesengine.validators.RuleSetParamMissingDocsValidator
+software.amazon.smithy.rulesengine.validators.RuleSetParameterValidator
+software.amazon.smithy.rulesengine.validators.RuleSetTestCaseValidator

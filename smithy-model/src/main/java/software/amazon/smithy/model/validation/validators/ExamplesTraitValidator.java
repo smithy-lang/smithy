@@ -47,14 +47,20 @@ public final class ExamplesTraitValidator extends AbstractValidator {
         List<ExamplesTrait.Example> examples = trait.getExamples();
 
         for (ExamplesTrait.Example example : examples) {
-            model.getShape(shape.getInputShape()).ifPresent(input -> {
-                NodeValidationVisitor validator = createVisitor(
-                        "input", example.getInput(), model, shape, example);
-                events.addAll(input.accept(validator));
-            });
-
             boolean isOutputDefined = example.getOutput().isPresent();
             boolean isErrorDefined = example.getError().isPresent();
+
+            model.getShape(shape.getInputShape()).ifPresent(input -> {
+                NodeValidationVisitor validator;
+                if (example.getAllowConstraintErrors() && !isErrorDefined) {
+                    events.add(error(shape, trait, String.format(
+                            "Example: `%s` has allowConstraintErrors enabled, so error must be defined.",
+                            example.getTitle())));
+                }
+                validator = createVisitor("input", example.getInput(), model, shape, example);
+                List<ValidationEvent> inputValidationEvents = input.accept(validator);
+                events.addAll(inputValidationEvents);
+            });
 
             if (isOutputDefined && isErrorDefined) {
                 events.add(error(shape, trait, String.format(
@@ -91,12 +97,15 @@ public final class ExamplesTraitValidator extends AbstractValidator {
             Shape shape,
             ExamplesTrait.Example example
     ) {
-        return NodeValidationVisitor.builder()
+        NodeValidationVisitor.Builder builder = NodeValidationVisitor.builder()
                 .model(model)
                 .eventShapeId(shape.getId())
                 .value(value)
                 .startingContext("Example " + name + " of `" + example.getTitle() + "`")
-                .eventId(getName())
-                .build();
+                .eventId(getName());
+        if (example.getAllowConstraintErrors()) {
+            builder.addFeature(NodeValidationVisitor.Feature.ALLOW_CONSTRAINT_ERRORS);
+        }
+        return builder.build();
     }
 }

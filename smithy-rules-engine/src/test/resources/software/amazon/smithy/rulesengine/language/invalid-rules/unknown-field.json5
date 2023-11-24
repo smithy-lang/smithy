@@ -1,15 +1,16 @@
 // when parsing endpoint ruleset
 // while typechecking
-//   at invalid-rules/unknown-field.json5:23
+//   at invalid-rules/unknown-field.json5:24
 // while typechecking the endpoint
-//   at invalid-rules/unknown-field.json5:35
+//   at invalid-rules/unknown-field.json5:36
 // while checking the URL
+//   at invalid-rules/unknown-field.json5:37
 // while typechecking "{partitionResult#nme}.amazonaws.com"
 // while typechecking the template `"{partitionResult#nme}.amazonaws.com"`
-//   at invalid-rules/unknown-field.json5:36
 // while checking {partitionResult#nme}
 // while typechecking partitionResult#nme
-// {name=String, dnsSuffix=String, dualStackDnsSuffix=String, supportsDualStack=Bool, supportsFIPS=Bool} does not contain field nme
+// while resolving nme in {scheme=StringType, authority=StringType, path=StringType, normalizedPath=StringType, isIp=BooleanType}
+// {scheme=StringType, authority=StringType, path=StringType, normalizedPath=StringType, isIp=BooleanType} does not contain field nme
 {
   "version": "1.2",
   "parameters": {
@@ -23,7 +24,7 @@
     {
       "conditions": [
         {
-          "fn": "aws.partition",
+          "fn": "parseURL",
           "argv": [
             {
               "ref": "region"

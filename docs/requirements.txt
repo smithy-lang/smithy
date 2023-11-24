@@ -1,9 +1,10 @@
 sphinx>=4.2.0,<4.3.0
-pygments==2.12.0
+pygments==2.15.0
 furo==2022.6.21
 
 # Used by new docs.
 sphinx-inline-tabs==2022.1.2b11
+Sphinx-Substitution-Extensions==2022.2.16
 
 # Use by old docs.
 sphinx-tabs==3.2.0

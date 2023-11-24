@@ -1,0 +1,19 @@
+{
+    "definitions": {
+        "Foo": {
+            "type": "object",
+            "properties": {
+                "bar": {
+                    "$ref": "#/definitions/TestIntEnum"
+                }
+            }
+        },
+        "TestIntEnum": {
+            "type": "number",
+            "enum": [
+                1,
+                2
+            ]
+        }
+    }
+}

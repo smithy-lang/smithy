@@ -53,7 +53,7 @@ The ``http`` trait is a structure that supports the following members:
     * - code
       - ``integer``
       - The HTTP status code of a successful response. Defaults to ``200`` if
-        not provided. The provided value SHOULD be between 100 and 599, and
+        not provided. The provided value SHOULD be between 200 and 299, and
         it MUST be between 100 and 999. Status codes that do not allow a body
         like 204 and 205 SHOULD bind all output members to locations other than
         the body of the response.
@@ -707,13 +707,9 @@ the body of the response.
 Summary
     Binds a single structure member to the body of an HTTP message.
 Trait selector
-    .. code-block:: none
+    ``structure > member``
 
-        structure > :test(member > :test(string, blob, structure, union, document, list, set, map))
-
-    The ``httpPayload`` trait can be applied to ``structure`` members that
-    target a ``string``, ``blob``, ``structure``, ``union``, ``document``,
-    ``set``, ``map``, or ``list``.
+    *Any structure member*
 Value type
     Annotation trait.
 Conflicts with
@@ -777,10 +773,9 @@ or :ref:`httpPrefixHeaders-trait`.
 
 #. When a string or blob member is referenced, the raw value is serialized
    as the body of the message.
-#. When a :ref:`structure <structure>`, :ref:`union <union>`, :ref:`list <list>`,
-   :ref:`set <set>`, :ref:`map <map>`, or document type is targeted,
-   the shape value is serialized as a :ref:`protocol-specific <protocolDefinition-trait>`
-   document that is sent as the body of the message.
+#. When any other type of member is referenced, the shape value is serialized
+   as a :ref:`protocol-specific <protocolDefinition-trait>` value that is sent
+   as the body of the message.
 
 
 .. smithy-trait:: smithy.api#httpPrefixHeaders

@@ -8,6 +8,7 @@ Smithy provides a customizable validation system that can be used by
 API designers and organizations to ensure that their APIs adhere to their
 own standards and best practices.
 
+
 ------------
 Introduction
 ------------
@@ -181,6 +182,7 @@ Suppressions are created using the :ref:`suppress-trait` and
 :ref:`suppressions metadata <suppressions-metadata>`.
 
 
+.. smithy-trait:: smithy.api#suppress
 .. _suppress-trait:
 
 ``suppress`` trait
@@ -228,7 +230,7 @@ following properties:
       - Description
     * - id
       - ``string``
-      - **Required**. The validation event ID to suppress.
+      - **Required**. The hierarchical validation event ID to suppress.
     * - namespace
       - ``string``
       - **Required**. The validation event is only suppressed if it matches the
@@ -312,6 +314,57 @@ specific. Further, a suppression ID of "ABC" does not match an event ID of
     * - ``Abc.Foo.Bar``
       - ``Foo.Bar``
       - No
+
+
+------------------
+Severity overrides
+------------------
+
+The ``severityOverrides`` metadata property is used to elevate the severity
+of non-suppressed validation events. This property contains an array of
+severity override objects that support the following properties:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 20 20 60
+
+    * - Property
+      - Type
+      - Description
+    * - id
+      - ``string``
+      - **Required**. The hierarchical validation event ID to elevate.
+    * - namespace
+      - ``string``
+      - **Required**. The validation event is only elevated if it matches the
+        supplied namespace. A value of ``*`` can be provided to match any namespace.
+    * - severity
+      - ``string``
+      - Defines the :ref:`severity <severity-definition>` to elevate matching
+        events to. This value can only be set to ``WARNING`` or ``DANGER``.
+
+The following example elevates the events of ``SomeValidator`` to ``DANGER``
+in any namespace, and ``OtherValidator`` is elevated to ``WARNING`` but only
+for events emitted for shapes in the ``smithy.example`` namespace:
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    metadata severityOverrides = [
+        {
+            namespace: "*"
+            id: "SomeValidator"
+            severity: "DANGER"
+        }
+        {
+            namespace: "smithy.example"
+            id: "OtherValidator"
+            severity: "WARNING"
+        }
+    ]
+
+    namespace smithy.example
 
 
 -------------------

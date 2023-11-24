@@ -53,6 +53,45 @@
                                 "bat": "baz"
                             }
                         }
+                    },
+                    {
+                        "title": "Testing 4",
+                        "input": {
+                            "foo": "baz"
+                        },
+                        "output": {
+                            "bam": "value3"
+                        },
+                        "allowConstraintErrors": true
+                    },
+                    {
+                        "title": "Testing 5",
+                        "input": {
+                            "blobMin": "a",
+                            "blobMax": "abcdef",
+                            "mapMin": {
+                                "a": "b"
+                            },
+                            "mapMax": {
+                                "a": "b",
+                                "b": "c"
+                            },
+                            "pattern": "123",
+                            "rangeMin": 1,
+                            "rangeMax": 10,
+                            "rangeNaN": "NaN",
+                            "rangeNegativeInfinity": "-Infinity",
+                            "rangePositiveInfinity": "Infinity",
+                            "stringMin": "a",
+                            "stringMax": "abcdef"
+                        },
+                        "error": {
+                            "shapeId": "ns.foo#OperationError",
+                            "content": {
+                                "bat": "baz"
+                            }
+                        },
+                        "allowConstraintErrors": true
                     }
                 ]
             }
@@ -79,6 +118,101 @@
                 },
                 "baz": {
                     "target": "ns.foo#String"
+                },
+                "blobMin": {
+                    "target": "ns.foo#Blob",
+                    "traits": {
+                        "smithy.api#length": {
+                            "min": 3
+                        }
+                    }
+                },
+                "blobMax": {
+                    "target": "ns.foo#Blob",
+                    "traits": {
+                        "smithy.api#length": {
+                            "max": 3
+                        }
+                    }
+                },
+                "mapMin": {
+                    "target": "ns.foo#Map",
+                    "traits": {
+                        "smithy.api#length": {
+                            "min": 3
+                        }
+                    }
+                },
+                "mapMax": {
+                    "target": "ns.foo#Map",
+                    "traits": {
+                        "smithy.api#length": {
+                            "max": 1
+                        }
+                    }
+                },
+                "pattern": {
+                    "target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#pattern": "^[a-z]$"
+                    }
+                },
+                "rangeMin": {
+                    "target": "ns.foo#Integer",
+                    "traits": {
+                        "smithy.api#range": {
+                            "min": 2
+                        }
+                    }
+                },
+                "rangeMax": {
+                    "target": "ns.foo#Integer",
+                    "traits": {
+                        "smithy.api#range": {
+                            "max": 8
+                        }
+                    }
+                },
+                "rangeNaN": {
+                    "target": "ns.foo#Float",
+                    "traits": {
+                        "smithy.api#range": {
+                            "min": 1,
+                            "max": 2
+                        }
+                    }
+                },
+                "rangeNegativeInfinity": {
+                    "target": "ns.foo#Float",
+                    "traits": {
+                        "smithy.api#range": {
+                            "min": 1
+                        }
+                    }
+                },
+                "rangePositiveInfinity": {
+                    "target": "ns.foo#Float",
+                    "traits": {
+                        "smithy.api#range": {
+                            "max": 2
+                        }
+                    }
+                },
+                "stringMin": {
+                    "target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#length": {
+                            "min": 3
+                        }
+                    }
+                },
+                "stringMax": {
+                    "target": "ns.foo#String",
+                    "traits": {
+                        "smithy.api#length": {
+                            "max": 3
+                        }
+                    }
                 }
             },
             "traits": {
@@ -127,6 +261,24 @@
         },
         "ns.foo#String": {
             "type": "string"
+        },
+        "ns.foo#Blob": {
+            "type": "blob"
+        },
+        "ns.foo#Map": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String"
+            },
+            "value": {
+                "target": "smithy.api#String"
+            }
+        },
+        "ns.foo#Integer": {
+            "type": "integer"
+        },
+        "ns.foo#Float": {
+            "type": "float"
         }
     }
 }

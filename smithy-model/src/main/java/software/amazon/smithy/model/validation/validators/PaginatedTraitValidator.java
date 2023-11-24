@@ -45,19 +45,21 @@ import software.amazon.smithy.utils.SetUtils;
  *      operation's properties are optionally merged with a service's.</li>
  *     <li>The items property, if set, must reference a list or map
  *      output member.</li>
- *     <li>The pageSize property, if set, must reference an optional integer
- *      input member.</li>
- *     <li>The inputToken property must reference an optional string input
- *      member.</li>
- *     <li>The outputToken property must reference an optional string output
- *      member.</li>
- *     <li>The pageSize property, if set, must reference an optional input
- *      member that targets an integer.</li>
+ *     <li>The pageSize property, if set, should reference an optional integer
+ *      input member. It may, but should not reference an optional byte, short,
+ *      or long.</li>
+ *     <li>The inputToken property should reference an optional string input
+ *      member. It may, but should not reference an optional map.</li>
+ *     <li>The outputToken property should reference an optional string output
+ *      member. It may, but should not reference an optional map.</li>
  * </ul>
  */
 public final class PaginatedTraitValidator extends AbstractValidator {
     private static final Set<ShapeType> ITEM_SHAPES = SetUtils.of(ShapeType.LIST, ShapeType.MAP);
-    private static final Set<ShapeType> PAGE_SHAPES = SetUtils.of(ShapeType.INTEGER);
+    private static final Set<ShapeType> PAGE_SHAPES = SetUtils.of(ShapeType.BYTE, ShapeType.INTEGER,
+            ShapeType.LONG, ShapeType.SHORT);
+    private static final Set<ShapeType> DANGER_PAGE_SHAPES = SetUtils.of(ShapeType.BYTE, ShapeType.LONG,
+            ShapeType.SHORT);
     private static final Set<ShapeType> TOKEN_SHAPES = SetUtils.of(ShapeType.STRING, ShapeType.MAP);
     private static final Set<ShapeType> DANGER_TOKEN_SHAPES = SetUtils.of(ShapeType.MAP);
     private static final Pattern PATH_PATTERN = Pattern.compile("\\.");
@@ -167,14 +169,14 @@ public final class PaginatedTraitValidator extends AbstractValidator {
                 events.add(error(operation, trait, String.format(
                         "%spaginated trait `%s` member `%s` targets a %s shape, but must target one of "
                                 + "the following: [%s]",
-                        prefix, validator.propertyName(), member.getId().getName(), target.getType(),
+                        prefix, validator.propertyName(), member.getId().getMember().get(), target.getType(),
                         ValidationUtils.tickedList(validator.validTargets()))));
             }
             if (validator.dangerTargets().contains(target.getType())) {
                 Set<ShapeType> preferredTargets = new TreeSet<>(validator.validTargets());
                 preferredTargets.removeAll(validator.dangerTargets());
                 String traitName = validator.propertyName();
-                String memberName = member.getId().getName();
+                String memberName = member.getId().getMember().get();
                 String targetType = target.getType().toString();
                 events.add(danger(operation, trait, String.format(
                             "%spaginated trait `%s` member `%s` targets a %s shape, but this is not recommended. "
@@ -317,6 +319,10 @@ public final class PaginatedTraitValidator extends AbstractValidator {
 
         Set<ShapeType> validTargets() {
             return PAGE_SHAPES;
+        }
+
+        Set<ShapeType> dangerTargets() {
+            return DANGER_PAGE_SHAPES;
         }
 
         Optional<String> getMemberPath(OperationIndex opIndex, OperationShape operation, PaginatedTrait trait) {

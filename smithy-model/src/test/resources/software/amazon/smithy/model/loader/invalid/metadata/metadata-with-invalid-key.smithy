@@ -1,2 +1,2 @@
-// Parse error at line 2, column 13 near `.b`: Expected: '=', but found '.'
+// Syntax error at line 2, column 13: Expected EQUAL('=') but found DOT('.') | Model
 metadata foo.bar = "baz"

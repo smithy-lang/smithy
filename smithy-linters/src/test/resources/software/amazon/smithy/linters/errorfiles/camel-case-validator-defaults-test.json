@@ -72,6 +72,21 @@
                 "smithy.api#trait": {}
             }
         },
+        "ns.baz#MyList": {
+            "type": "list",
+            "member": {
+                "target": "ns.foo#Foo"
+            }
+        },
+        "ns.baz#MyMap": {
+            "type": "map",
+            "key": {
+                "target": "ns.foo#Foo"
+            },
+            "value": {
+                "target": "ns.foo#Foo"
+            }
+        },
         "ns.foo#Foo": {
             "type": "string"
         },
@@ -104,6 +119,12 @@
                 },
                 "snake_case": {
                     "target": "ns.foo#snake_case"
+                },
+                "List": {
+                    "target": "ns.baz#MyList"
+                },
+                "Map": {
+                    "target": "ns.baz#MyMap"
                 }
             }
         },

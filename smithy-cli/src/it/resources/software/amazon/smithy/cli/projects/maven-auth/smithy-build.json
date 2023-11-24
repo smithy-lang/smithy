@@ -3,7 +3,8 @@
     "maven": {
         "repositories": [
             {
-                "url": "https://localhost:1234/maven/not/there",
+                // Use HTTP instead of HTTPS because we're running a mock server during tests
+                "url": "http://localhost:1234/maven/not/there",
                 "httpCredentials": "xxx:yyy"
             }
         ],

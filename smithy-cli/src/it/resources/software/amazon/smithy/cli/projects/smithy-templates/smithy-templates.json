@@ -1,0 +1,34 @@
+{
+    "name": "Smithy-Examples",
+    "templates": {
+        "quickstart-cli": {
+            "documentation": "Smithy Quickstart example weather service.",
+            "path": "getting-started-example/weather-service"
+        },
+        "included-file-json": {
+            "documentation": "Smithy Quickstart example with json file included.",
+            "path": "getting-started-example/included-file-json",
+            "include": [ "getting-started-example/common/smithy-build.json" ]
+        },
+        "included-files-gradle": {
+            "documentation": "Smithy Quickstart example with gradle files included.",
+            "path": "getting-started-example/included-files-gradle",
+            "include": [
+                "getting-started-example/common-gradle-configs/gradle",
+                "getting-started-example/common-gradle-configs/gradlew",
+                "getting-started-example/common-gradle-configs/gradle.properties"
+            ]
+        },
+        "bad-template-path": {
+            "documentation": "Template with incorrect path. Should throw error.",
+            "path": "getting-started-example/does-not-exist"
+        },
+        "bad-include-path": {
+            "documentation": "Template with incorrect include path. Should throw error.",
+            "path": "getting-started-example/included-files-gradle",
+            "include": [
+                "getting-started-example/does-not-exist"
+            ]
+        }
+    }
+}

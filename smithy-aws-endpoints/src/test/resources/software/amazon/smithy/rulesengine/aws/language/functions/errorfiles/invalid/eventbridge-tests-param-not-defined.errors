@@ -1,0 +1,4 @@
+[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#endpointRuleSet | UnstableTrait
+[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#endpointTests | UnstableTrait
+[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#clientContextParams | UnstableTrait
+[ERROR] example#FizzBuzz: Test parameter `notDefined` is not defined in ruleset | RuleSetParameter.TestCase.Undefined

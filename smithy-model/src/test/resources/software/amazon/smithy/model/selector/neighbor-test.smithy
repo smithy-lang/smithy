@@ -21,6 +21,7 @@ service MyService1 {
 service MyService2 {
     version: "2020-01-01",
     operations: [Operation],
+    resources: [MyResource]
 }
 
 operation Operation {
@@ -41,3 +42,14 @@ structure Output {
 structure Error {
   foo: smithy.api#String,
 }
+
+resource MyResource {
+    read: GetMyResource
+    delete: DeleteMyResource
+}
+
+@readonly
+operation GetMyResource {}
+
+@idempotent
+operation DeleteMyResource {}

@@ -1,1 +1,1 @@
-[ERROR] com.foo#Struct: Parse error at line 7, column 8 near `: `: Duplicate member of com.foo#Struct: 'foo' | Model
+[ERROR] com.foo#Struct: Syntax error at line 7, column 5: Duplicate member of `com.foo#Struct`: 'foo' | Model

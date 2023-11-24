@@ -28,5 +28,12 @@ service JsonRpc10 {
 
         // custom endpoints with paths
         HostWithPathOperation,
+
+        // requestCompression trait tests
+        PutWithContentEncoding,
+
+        OperationWithDefaults,
+        OperationWithRequiredMembers,
+        OperationWithNestedStructure
     ]
 }

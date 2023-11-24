@@ -60,6 +60,7 @@ public final class ApiGatewayConfig {
     private ApiType apiGatewayType = ApiType.REST;
     private boolean disableCloudFormationSubstitution;
     private Set<String> additionalAllowedCorsHeaders = Collections.emptySet();
+    private ApiGatewayDefaults apiGatewayDefaults;
 
     /**
      * @return Returns true if CloudFormation substitutions are disabled.
@@ -119,5 +120,13 @@ public final class ApiGatewayConfig {
      */
     public void setAdditionalAllowedCorsHeaders(Collection<String> additionalAllowedCorsHeaders) {
         this.additionalAllowedCorsHeaders = SetUtils.caseInsensitiveCopyOf(additionalAllowedCorsHeaders);
+    }
+
+    public ApiGatewayDefaults getApiGatewayDefaults() {
+        return this.apiGatewayDefaults;
+    }
+
+    public void setApiGatewayDefaults(ApiGatewayDefaults apiGatewayDefaults) {
+        this.apiGatewayDefaults = apiGatewayDefaults;
     }
 }

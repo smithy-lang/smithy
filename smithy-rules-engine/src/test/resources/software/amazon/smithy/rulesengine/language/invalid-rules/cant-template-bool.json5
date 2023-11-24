@@ -1,13 +1,14 @@
 // when parsing endpoint ruleset
 // while typechecking
-//   at invalid-rules/cant-template-bool.json5:20
+//   at invalid-rules/cant-template-bool.json5:21
 // while typechecking the endpoint
-//   at invalid-rules/cant-template-bool.json5:22
+//   at invalid-rules/cant-template-bool.json5:23
 // while checking the URL
+//   at invalid-rules/cant-template-bool.json5:24
 // while typechecking "{enabled}.amazonaws.com"
 // while typechecking the template `"{enabled}.amazonaws.com"`
-//   at invalid-rules/cant-template-bool.json5:23
-// Expected string but found Bool
+// while checking {enabled}
+// Expected string but found BooleanType
 {
   "version": "1.2",
   "parameters": {

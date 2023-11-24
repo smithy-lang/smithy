@@ -34,6 +34,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -47,12 +48,16 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.build.model.ProjectionConfig;
 import software.amazon.smithy.build.model.SmithyBuildConfig;
 import software.amazon.smithy.build.model.TransformConfig;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.SourceException;
 import software.amazon.smithy.model.SourceLocation;
+import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -266,6 +271,62 @@ public class SmithyBuildTest {
         });
 
         assertThat(e.getMessage(), containsString("Unable to find a plugin for `unknown1`"));
+    }
+
+    @Test
+    public void defersFailureUntilAfterAllPluginsApplied() throws Exception {
+        SmithyBuildConfig config = SmithyBuildConfig.builder()
+                .load(Paths.get(getClass().getResource("defers-failure.json").toURI()))
+                .outputDirectory(outputDirectory.toString())
+                .build();
+
+        RuntimeException canned = new RuntimeException("broken");
+
+        // "broken" will run before "test1Serial" because of natural ordering
+        Map<String, SmithyBuildPlugin> plugins = new HashMap<>();
+        plugins.put("broken", new SmithyBuildPlugin() {
+            @Override
+            public String getName() {
+                        return "broken";
+                    }
+            @Override
+            public void execute(PluginContext context) {
+                        throw canned;
+                    }
+        });
+        plugins.put("test1Serial", new Test1SerialPlugin());
+
+        Function<String, Optional<SmithyBuildPlugin>> factory = SmithyBuildPlugin.createServiceFactory();
+        Function<String, Optional<SmithyBuildPlugin>> composed = name -> OptionalUtils.or(
+                Optional.ofNullable(plugins.get(name)), () -> factory.apply(name));
+
+        // Because the build will fail, we need a way to access the file manifests
+        List<FileManifest> manifests = new ArrayList<>();
+        Function<Path, FileManifest> fileManifestFactory = pluginBaseDir -> {
+            FileManifest fileManifest = new MockManifest(pluginBaseDir);
+            manifests.add(fileManifest);
+            return fileManifest;
+        };
+
+        SmithyBuild builder = new SmithyBuild()
+                .pluginFactory(composed)
+                .fileManifestFactory(fileManifestFactory)
+                .config(config);
+
+        SmithyBuildException e = Assertions.assertThrows(SmithyBuildException.class, builder::build);
+
+        // "broken" plugin produces the error that causes the build to fail
+        assertThat(e.getMessage(), containsString("java.lang.RuntimeException: broken"));
+        assertThat(e.getSuppressed(), equalTo(new Throwable[]{canned}));
+
+        List<Path> files = manifests.stream()
+                .flatMap(fm -> fm.getFiles().stream())
+                .collect(Collectors.toList());
+        assertThat(files, containsInAnyOrder(
+                outputDirectory.resolve("source/sources/manifest"),
+                outputDirectory.resolve("source/model/model.json"),
+                outputDirectory.resolve("source/build-info/smithy-build-info.json"),
+                outputDirectory.resolve("source/test1Serial/hello1Serial")));
     }
 
     @Test
@@ -841,5 +902,51 @@ public class SmithyBuildTest {
         assertThat(e.getMessage(), containsString("Multiple plugins use the same artifact name 'foo' in "
                                                   + "the 'source' projection"));
     }
-}
 
+    @ParameterizedTest
+    @MethodSource("unrecognizedModelPaths")
+    public void ignoreUnrecognizedModels(List<Path> models) throws URISyntaxException {
+        ModelAssembler assembler = Model.assembler();
+        for (Path path : models) {
+            assembler.addImport(path);
+        }
+        Model model = assembler.assemble().unwrap();
+
+        SmithyBuild builder = new SmithyBuild().model(model).fileManifestFactory(MockManifest::new);
+        models.forEach(builder::registerSources);
+
+        // Apply multiple projections to ensure that sources are filtered even in projections.
+        builder.config(SmithyBuildConfig.builder()
+                               .load(Paths.get(getClass().getResource("apply-multiple-projections.json").toURI()))
+                               .outputDirectory("/foo")
+                               .build());
+
+        SmithyBuildResult results = builder.build();
+        assertTrue(results.getProjectionResult("source").isPresent());
+        assertTrue(results.getProjectionResult("a").isPresent());
+
+        ProjectionResult sourceResult = results.getProjectionResult("source").get();
+        MockManifest sourceManifest = (MockManifest) sourceResult.getPluginManifest("sources").get();
+        String sourceSourcesManifestText = sourceManifest.getFileString("manifest").get();
+
+        assertThat(sourceSourcesManifestText, containsString("a.smithy"));
+        assertThat(sourceSourcesManifestText, not(containsString("foo.md")));
+
+        ProjectionResult aResult = results.getProjectionResult("source").get();
+        MockManifest aManifest = (MockManifest) aResult.getPluginManifest("sources").get();
+        String aSourcesManifestText = aManifest.getFileString("manifest").get();
+
+        assertThat(aSourcesManifestText, not(containsString("foo.md")));
+    }
+
+    public static List<Arguments> unrecognizedModelPaths() throws URISyntaxException {
+        Path rootPath = Paths.get(SmithyBuildTest.class.getResource("plugins/sources-ignores-unrecognized-files")
+                                          .toURI());
+        return ListUtils.of(
+            // Test that crawling the directory works.
+            Arguments.of(ListUtils.of(rootPath)),
+            // Test that passing explicit files works too.
+            Arguments.of(ListUtils.of(rootPath.resolve("a.smithy"), rootPath.resolve("foo.md")))
+        );
+    }
+}

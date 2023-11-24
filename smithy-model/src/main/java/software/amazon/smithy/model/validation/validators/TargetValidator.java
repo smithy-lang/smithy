@@ -53,6 +53,8 @@ public final class TargetValidator extends AbstractValidator {
     private static final Set<ShapeType> INVALID_MEMBER_TARGETS = SetUtils.of(
             ShapeType.SERVICE, ShapeType.RESOURCE, ShapeType.OPERATION, ShapeType.MEMBER);
 
+    private static final String UNRESOLVED_SHAPE_PART = "UnresolvedShape";
+
     // Relationship types listed here are checked to see if a shape refers to a deprecated shape.
     private static final Map<RelationshipType, String> RELATIONSHIP_TYPE_DEPRECATION_MAPPINGS = MapUtils.of(
             RelationshipType.MEMBER_TARGET, "Member targets a deprecated shape",
@@ -236,7 +238,8 @@ public final class TargetValidator extends AbstractValidator {
         if (rel.getRelationshipType() == RelationshipType.MEMBER_TARGET) {
             // Don't show the relationship type for invalid member targets.
             return error(shape, String.format(
-                    "member shape targets an unresolved shape `%s`%s", rel.getNeighborShapeId(), suggestionText));
+                    "member shape targets an unresolved shape `%s`%s", rel.getNeighborShapeId(), suggestionText),
+                         UNRESOLVED_SHAPE_PART);
         } else {
             // Use "a" or "an" depending on if the relationship starts with a vowel.
             String indefiniteArticle = isUppercaseVowel(rel.getRelationshipType().toString().charAt(0))
@@ -248,7 +251,7 @@ public final class TargetValidator extends AbstractValidator {
                     indefiniteArticle,
                     rel.getRelationshipType().toString().toLowerCase(Locale.US),
                     rel.getNeighborShapeId(),
-                    suggestionText));
+                    suggestionText), UNRESOLVED_SHAPE_PART);
         }
     }
 

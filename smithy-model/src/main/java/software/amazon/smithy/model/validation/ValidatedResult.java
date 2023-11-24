@@ -121,11 +121,11 @@ public final class ValidatedResult<T> {
     }
 
     /**
-     * Get the result, but throw if there are any ERROR events or if the
+     * Get the result, but throw if there are any ERROR or DANGER events or if the
      * result is empty.
      *
      * @return Returns the result.
-     * @throws ValidatedResultException if there are any ERROR events.
+     * @throws ValidatedResultException if there are any ERROR or DANGER events.
      * @throws IllegalStateException if there is no result.
      */
     public T unwrap() {

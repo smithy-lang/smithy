@@ -211,7 +211,30 @@ public class JsonSchemaConverterTest {
     public void canAddCustomSchemaMapper() {
         Shape struct = StructureShape.builder().id("smithy.example#Foo").build();
         Model model = Model.builder().addShape(struct).build();
-        JsonSchemaMapper mapper = (shape, builder, conf) -> builder.putExtension("Hi", Node.from("There"));
+        class CustomMapper implements JsonSchemaMapper {
+            @Override
+            public Schema.Builder updateSchema(Shape shape, Schema.Builder builder, JsonSchemaConfig conf) {
+                return builder.putExtension("Hi", Node.from("There"));
+            }
+        }
+        JsonSchemaMapper mapper = new CustomMapper();
+        SchemaDocument doc = JsonSchemaConverter.builder().addMapper(mapper).model(model).build().convert();
+
+        assertTrue(doc.getDefinition("#/definitions/Foo").isPresent());
+        assertTrue(doc.getDefinition("#/definitions/Foo").get().getExtension("Hi").isPresent());
+    }
+
+    @Test
+    public void canAddCustomSchemaMapperContextMethod() {
+        Shape struct = StructureShape.builder().id("smithy.example#Foo").build();
+        Model model = Model.builder().addShape(struct).build();
+        class CustomMapper implements JsonSchemaMapper {
+            @Override
+            public Schema.Builder updateSchema(JsonSchemaMapperContext context, Schema.Builder builder) {
+                return builder.putExtension("Hi", Node.from("There"));
+            }
+        }
+        JsonSchemaMapper mapper = new CustomMapper();
         SchemaDocument doc = JsonSchemaConverter.builder().addMapper(mapper).model(model).build().convert();
 
         assertTrue(doc.getDefinition("#/definitions/Foo").isPresent());
@@ -689,7 +712,7 @@ public class JsonSchemaConverterTest {
     }
 
     @Test
-    public void appliesDefaults() {
+    public void appliesDefaultsByDefault() {
         Model model = Model.assembler()
                 .addImport(getClass().getResource("default-values.smithy"))
                 .assemble()
@@ -701,6 +724,60 @@ public class JsonSchemaConverterTest {
 
         Node expected = Node.parse(
                 IoUtils.toUtf8String(getClass().getResourceAsStream("default-values.jsonschema.v07.json")));
+        Node.assertEquals(document.toNode(), expected);
+    }
+
+    @Test
+    public void defaultsCanBeDisabled() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("default-values.smithy"))
+                .assemble()
+                .unwrap();
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setDisableDefaultValues(true);
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .config(config)
+                .model(model)
+                .build()
+                .convert();
+
+        Node expected = Node.parse(
+                IoUtils.toUtf8String(getClass().getResourceAsStream("default-values-disabled.jsonschema.v07.json")));
+        Node.assertEquals(document.toNode(), expected);
+    }
+
+    @Test
+    public void supportsIntEnumsByDefault() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("int-enums.smithy"))
+                .assemble()
+                .unwrap();
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .model(model)
+                .build()
+                .convert();
+
+        Node expected = Node.parse(
+                IoUtils.toUtf8String(getClass().getResourceAsStream("int-enums.jsonschema.v07.json")));
+        Node.assertEquals(document.toNode(), expected);
+    }
+
+    @Test
+    public void intEnumsCanBeDisabled() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("int-enums.smithy"))
+                .assemble()
+                .unwrap();
+        JsonSchemaConfig config = new JsonSchemaConfig();
+        config.setDisableIntEnums(true);
+        SchemaDocument document = JsonSchemaConverter.builder()
+                .config(config)
+                .model(model)
+                .build()
+                .convert();
+
+        Node expected = Node.parse(
+                IoUtils.toUtf8String(getClass().getResourceAsStream("int-enums-disabled.jsonschema.v07.json")));
         Node.assertEquals(document.toNode(), expected);
     }
 }

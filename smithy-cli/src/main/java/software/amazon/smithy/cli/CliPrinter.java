@@ -15,65 +15,43 @@
 
 package software.amazon.smithy.cli;
 
-import java.io.BufferedWriter;
 import java.io.Flushable;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
  * Handles text output of the CLI.
  */
-@FunctionalInterface
-public interface CliPrinter extends Flushable {
+public interface CliPrinter extends Appendable, Flushable {
 
-    /**
-     * Prints text to the writer.
-     *
-     * @param text Text to write.
-     */
-    void print(String text);
+    @Override
+    CliPrinter append(char c);
+
+    @Override
+    default CliPrinter append(CharSequence csq) {
+        return append(csq, 0, csq.length());
+    }
+
+    @Override
+    CliPrinter append(CharSequence csq, int start, int end);
 
     /**
      * Prints text to the writer and appends a new line.
      *
      * @param text Text to print.
      */
-    default void println(String text) {
-        print(text + System.lineSeparator());
+    default CliPrinter println(String text) {
+        return append(text + System.lineSeparator());
     }
 
     /**
      * Flushes any buffers in the printer.
      */
     default void flush() {}
-
-    /**
-     * Create a new CliPrinter from a PrintWriter.
-     *
-     * @param printWriter PrintWriter to write to.
-     * @return Returns the created CliPrinter.
-     */
-    static CliPrinter fromPrintWriter(PrintWriter printWriter) {
-        return new CliPrinter() {
-            @Override
-            public void println(String text) {
-                printWriter.println(text);
-            }
-
-            @Override
-            public void print(String text) {
-                printWriter.print(text);
-            }
-
-            @Override
-            public void flush() {
-                printWriter.flush();
-            }
-        };
-    }
 
     /**
      * Create a new CliPrinter from an OutputStream.
@@ -83,7 +61,47 @@ public interface CliPrinter extends Flushable {
      */
     static CliPrinter fromOutputStream(OutputStream stream) {
         Charset charset = StandardCharsets.UTF_8;
-        PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(stream, charset)), false);
-        return fromPrintWriter(writer);
+        OutputStreamWriter writer = new OutputStreamWriter(stream, charset);
+
+        return new CliPrinter() {
+            @Override
+            public CliPrinter append(char c) {
+                try {
+                    writer.append(c);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+                return this;
+            }
+
+            @Override
+            public CliPrinter append(CharSequence csq) {
+                try {
+                    writer.append(csq);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+                return this;
+            }
+
+            @Override
+            public CliPrinter append(CharSequence csq, int start, int end) {
+                try {
+                    writer.append(csq, start, end);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+                return this;
+            }
+
+            @Override
+            public void flush() {
+                try {
+                    writer.flush();
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            }
+        };
     }
 }

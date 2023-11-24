@@ -34,3 +34,6 @@ build/
 */out/
 */*/out/
 /wrapper
+
+# Smithy
+.smithy.lsp.log

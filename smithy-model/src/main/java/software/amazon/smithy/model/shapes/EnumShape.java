@@ -24,11 +24,13 @@ import java.util.function.Consumer;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import software.amazon.smithy.model.SourceException;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.EnumValueTrait;
+import software.amazon.smithy.model.traits.InternalTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
@@ -47,6 +49,15 @@ public final class EnumShape extends StringShape {
         super(builder);
         members = NamedMemberUtils.computeMixinMembers(
                 builder.getMixins(), builder.members, getId(), getSourceLocation());
+        validateMemberShapeIds();
+        if (members.size() < 1) {
+            throw new SourceException("enum shapes must have at least one member", getSourceLocation());
+        }
+    }
+
+    private EnumShape(Builder builder, Map<String, MemberShape> members) {
+        super(builder);
+        this.members = members;
         validateMemberShapeIds();
         if (members.size() < 1) {
             throw new SourceException("enum shapes must have at least one member", getSourceLocation());
@@ -199,6 +210,12 @@ public final class EnumShape extends StringShape {
     /**
      * Converts an enum definition to the equivalent enum member shape.
      *
+     * <p>If an enum definition is marked as deprecated, the DeprecatedTrait
+     * is applied to the converted enum member shape.
+     *
+     * <p>If an enum definition has an "internal" tag, the InternalTrait is
+     * applied to the converted enum member shape.
+     *
      * @param parentId The {@link ShapeId} of the enum shape.
      * @param synthesizeName Whether to synthesize a name if possible.
      * @return An optional member shape representing the enum definition,
@@ -232,6 +249,9 @@ public final class EnumShape extends StringShape {
             }
             if (definition.isDeprecated()) {
                 builder.addTrait(DeprecatedTrait.builder().build());
+            }
+            if (definition.hasTag("internal")) {
+                builder.addTrait(new InternalTrait());
             }
 
             return Optional.of(builder.build());
@@ -281,8 +301,11 @@ public final class EnumShape extends StringShape {
 
         @Override
         public EnumShape build() {
-            addSyntheticEnumTrait();
-            return new EnumShape(this);
+            // Collect members from enum and mixins
+            Map<String, MemberShape> aggregatedMembers =
+                NamedMemberUtils.computeMixinMembers(getMixins(), members, getId(), getSourceLocation());
+            addSyntheticEnumTrait(aggregatedMembers.values());
+            return new EnumShape(this, aggregatedMembers);
         }
 
         /**
@@ -292,10 +315,10 @@ public final class EnumShape extends StringShape {
          * the enum trait, without having to manually add the trait or risk that it
          * gets serialized.
          */
-        private void addSyntheticEnumTrait() {
+        private void addSyntheticEnumTrait(Collection<MemberShape> memberShapes) {
             SyntheticEnumTrait.Builder builder = SyntheticEnumTrait.builder();
             builder.sourceLocation(getSourceLocation());
-            for (MemberShape member : members.get().values()) {
+            for (MemberShape member : memberShapes) {
                 try {
                     builder.addEnum(EnumShape.enumDefinitionFromMember(member));
                 } catch (IllegalStateException e) {
@@ -494,6 +517,11 @@ public final class EnumShape extends StringShape {
             }
             members(NamedMemberUtils.flattenMixins(members.get(), getMixins(), getId(), getSourceLocation()));
             return (Builder) super.flattenMixins();
+        }
+
+        @Override
+        public Builder source(SourceLocation source) {
+            return (Builder) super.source(source);
         }
     }
 }

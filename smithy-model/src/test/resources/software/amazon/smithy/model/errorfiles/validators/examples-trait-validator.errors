@@ -6,3 +6,17 @@
 [WARNING] ns.foo#Operation: Example output of `Testing 2`: Invalid structure member `additional` found for `ns.foo#OperationOutput` | ExamplesTrait
 [ERROR] ns.foo#Operation: Example output of `Testing 2`: Missing required structure member `bam` for `ns.foo#OperationOutput` | ExamplesTrait
 [WARNING] ns.foo#Operation: Example error of `Testing 1`: Invalid structure member `extra` found for `ns.foo#OperationError` | ExamplesTrait
+[ERROR] ns.foo#Operation: Example: `Testing 4` has allowConstraintErrors enabled, so error must be defined. | ExamplesTrait
+[WARNING] ns.foo#Operation: Example input of `Testing 5`.blobMin: Value provided for `ns.foo#OperationInput$blobMin` must have at least 3 bytes, but the provided value only has 1 bytes | ExamplesTrait
+[WARNING] ns.foo#Operation: Example input of `Testing 5`.blobMax: Value provided for `ns.foo#OperationInput$blobMax` must have no more than 3 bytes, but the provided value has 6 bytes | ExamplesTrait
+[WARNING] ns.foo#Operation: Example input of `Testing 5`: Missing required structure member `foo` for `ns.foo#OperationInput` | ExamplesTrait
+[WARNING] ns.foo#Operation: Example input of `Testing 5`.mapMin: Value provided for `ns.foo#OperationInput$mapMin` must have at least 3 entries, but the provided value only has 1 entries | ExamplesTrait
+[WARNING] ns.foo#Operation: Example input of `Testing 5`.mapMax: Value provided for `ns.foo#OperationInput$mapMax` must have no more than 1 entries, but the provided value has 2 entries | ExamplesTrait
+[WARNING] ns.foo#Operation: Example input of `Testing 5`.pattern: String value provided for `ns.foo#OperationInput$pattern` must match regular expression: ^[a-z]$ | ExamplesTrait
+[WARNING] ns.foo#Operation: Example input of `Testing 5`.rangeMin: Value provided for `ns.foo#OperationInput$rangeMin` must be greater than or equal to 2, but found 1 | ExamplesTrait.Member
+[WARNING] ns.foo#Operation: Example input of `Testing 5`.rangeMax: Value provided for `ns.foo#OperationInput$rangeMax` must be less than or equal to 8, but found 10 | ExamplesTrait.Member
+[WARNING] ns.foo#Operation: Example input of `Testing 5`.rangeNaN: Value provided for `ns.foo#OperationInput$rangeNaN` must be a number because the `smithy.api#range` trait is applied, but found "NaN" | ExamplesTrait
+[WARNING] ns.foo#Operation: Example input of `Testing 5`.rangeNegativeInfinity: Value provided for `ns.foo#OperationInput$rangeNegativeInfinity` must be greater than or equal to 1, but found "-Infinity" | ExamplesTrait.Member
+[WARNING] ns.foo#Operation: Example input of `Testing 5`.rangePositiveInfinity: Value provided for `ns.foo#OperationInput$rangePositiveInfinity` must be less than or equal to 2, but found "Infinity" | ExamplesTrait.Member
+[WARNING] ns.foo#Operation: Example input of `Testing 5`.stringMin: String value provided for `ns.foo#OperationInput$stringMin` must be >= 3 characters, but the provided value is only 1 characters. | ExamplesTrait
+[WARNING] ns.foo#Operation: Example input of `Testing 5`.stringMax: String value provided for `ns.foo#OperationInput$stringMax` must be <= 3 characters, but the provided value is 6 characters. | ExamplesTrait

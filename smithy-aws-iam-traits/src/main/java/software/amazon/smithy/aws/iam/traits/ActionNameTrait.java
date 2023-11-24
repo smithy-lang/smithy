@@ -14,11 +14,11 @@ public final class ActionNameTrait extends StringTrait {
 
     public static final ShapeId ID = ShapeId.from("aws.iam#actionName");
 
-    private ActionNameTrait(String action) {
+    public ActionNameTrait(String action) {
         super(ID, action, SourceLocation.NONE);
     }
 
-    private ActionNameTrait(String action, FromSourceLocation sourceLocation) {
+    public ActionNameTrait(String action, FromSourceLocation sourceLocation) {
         super(ID, action, sourceLocation);
     }
 

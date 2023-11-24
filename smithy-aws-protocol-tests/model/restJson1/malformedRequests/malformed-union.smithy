@@ -15,14 +15,14 @@ apply MalformedUnion @httpMalformedRequestTests([
     {
         id: "RestJsonMalformedUnionMultipleFieldsSet",
         documentation: """
-        When the union has multiple fields set, the response should be a 400
-        SerializationException.""",
+            When the union has multiple fields set, the response should be a 400
+            SerializationException.""",
         protocol: restJson1,
         request: {
             method: "POST",
             uri: "/MalformedUnion",
             body: """
-            { "union" : { "int": 2, "string": "three" } }""",
+                { "union" : { "int": 2, "string": "three" } }""",
             headers: {
                 "content-type": "application/json"
             }
@@ -37,8 +37,8 @@ apply MalformedUnion @httpMalformedRequestTests([
     {
         id: "RestJsonMalformedUnionKnownAndUnknownFieldsSet",
         documentation: """
-        When the union has multiple fields set, even when only one is modeled,
-        the response should be a 400 SerializationException.""",
+            When the union has multiple fields set, even when only one is modeled,
+            the response should be a 400 SerializationException.""",
         protocol: restJson1,
         request: {
             method: "POST",
@@ -59,14 +59,14 @@ apply MalformedUnion @httpMalformedRequestTests([
     {
         id: "RestJsonMalformedUnionNoFieldsSet",
         documentation: """
-        When the union has no fields set, the response should be a 400
-        SerializationException.""",
+            When the union has no fields set, the response should be a 400
+            SerializationException.""",
         protocol: restJson1,
         request: {
             method: "POST",
             uri: "/MalformedUnion",
             body: """
-            { "union" : { "int": null } }""",
+                { "union" : { "int": null } }""",
             headers: {
                 "content-type": "application/json"
             }
@@ -81,14 +81,14 @@ apply MalformedUnion @httpMalformedRequestTests([
     {
         id: "RestJsonMalformedUnionValueIsArray",
         documentation: """
-        When the union value is actually an array, the response should be a 400
-        SerializationException.""",
+            When the union value is actually an array, the response should be a 400
+            SerializationException.""",
         protocol: restJson1,
         request: {
             method: "POST",
             uri: "/MalformedUnion",
             body: """
-            { "union" : ["int"] }""",
+                { "union" : ["int"] }""",
             headers: {
                 "content-type": "application/json"
             }
@@ -99,7 +99,33 @@ apply MalformedUnion @httpMalformedRequestTests([
                 "x-amzn-errortype": "SerializationException"
             }
         }
-    },
+    }
+    {
+        id: "RestJsonMalformedUnionUnknownMember",
+        documentation: """
+            When an unknown union member is received, the response should be a 400
+            SerializationException."""
+        protocol: restJson1
+        request: {
+            method: "POST"
+            uri: "/MalformedUnion"
+            body: """
+                {
+                    "union": {
+                        "unknown": "hello"
+                    }
+                }""",
+            headers: {
+                "content-type": "application/json"
+            }
+        }
+        response: {
+            code: 400
+            headers: {
+                "x-amzn-errortype": "SerializationException"
+            }
+        }
+    }
 ])
 
 structure MalformedUnionInput {
@@ -111,4 +137,3 @@ union SimpleUnion {
 
     string: String
 }
-

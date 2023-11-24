@@ -82,4 +82,16 @@ public class PluginContextTest {
         assertThat(context.getSources(), equalTo(context2.getSources()));
         assertThat(context.getEvents(), equalTo(context2.getEvents()));
     }
+
+    @Test
+    public void roundTripsDefaults() {
+        PluginContext before = PluginContext.builder()
+                .model(Model.builder().build())
+                .fileManifest(new MockManifest())
+                .build();
+        PluginContext after = before.toBuilder().build();
+        assertThat(before.getModel(), equalTo(after.getModel()));
+        assertThat(before.getFileManifest(), equalTo(after.getFileManifest()));
+        assertThat(before.getProjectionName(), equalTo(after.getProjectionName()));
+    }
 }

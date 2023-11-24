@@ -15,12 +15,10 @@
 
 package software.amazon.smithy.cli.commands;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.Collection;
 import java.util.Iterator;
-import software.amazon.smithy.cli.ColorFormatter;
-import software.amazon.smithy.cli.Style;
+import software.amazon.smithy.cli.ColorBuffer;
+import software.amazon.smithy.cli.ColorTheme;
 import software.amazon.smithy.model.loader.sourcecontext.SourceContextLoader;
 
 /**
@@ -28,13 +26,11 @@ import software.amazon.smithy.model.loader.sourcecontext.SourceContextLoader;
  */
 final class CodeFormatter {
 
-    private final Appendable writer;
-    private final ColorFormatter colors;
+    private final ColorBuffer writer;
     private final int maxWidth;
 
-    CodeFormatter(Appendable writer, ColorFormatter colors, int maxWidth) {
+    CodeFormatter(ColorBuffer writer, int maxWidth) {
         this.writer = writer;
-        this.colors = colors;
         this.maxWidth = maxWidth;
     }
 
@@ -46,89 +42,67 @@ final class CodeFormatter {
         // Determine the string length of the biggest number to pad the line gutter correctly.
         int numberLength = findLongestNumber(lines);
 
-        try {
-            Iterator<SourceContextLoader.Line> lineIterator = lines.iterator();
-            int lastLine = -1;
+        Iterator<SourceContextLoader.Line> lineIterator = lines.iterator();
+        int lastLine = -1;
 
-            while (lineIterator.hasNext()) {
-                SourceContextLoader.Line line = lineIterator.next();
+        while (lineIterator.hasNext()) {
+            SourceContextLoader.Line line = lineIterator.next();
 
-                if (line.getLineNumber() != lastLine + 1 && lastLine != -1) {
-                    writeColumnAndContent(numberLength, -1, "");
-                }
-
-                writeColumnAndContent(numberLength, line.getLineNumber(), line.getContent());
-
-                if (line.getLineNumber() == cursorLine) {
-                    writePointer(numberLength, cursorColumn);
-                }
-
-                lastLine = line.getLineNumber();
+            if (line.getLineNumber() != lastLine + 1 && lastLine != -1) {
+                writeColumnAndContent(numberLength, -1, "");
             }
 
-            writer.append(System.lineSeparator());
-        } catch (IOException e) {
-            throw new UncheckedIOException("Error write source code: " + e.getMessage(), e);
-        }
-    }
+            writeColumnAndContent(numberLength, line.getLineNumber(), line.getContent());
 
-    private void writeColumnAndContent(int numberLength, int lineNumber, CharSequence content) throws IOException {
-        if (lineNumber == -1) {
-            colors.style(writer, w -> {
-                try {
-                    for (int i = 0; i < numberLength; i++) {
-                        w.append("·");
-                    }
-                    w.append("|");
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-            }, Style.BRIGHT_BLACK);
-        } else {
-            colors.style(writer, w -> {
-                try {
-                    String lineString = String.valueOf(lineNumber);
-                    int thisLineLength = lineString.length();
-                    writer.append(lineString);
-                    // Write the appropriate amount of padding.
-                    for (int i = 0; i < numberLength - thisLineLength; i++) {
-                        writer.append(' ');
-                    }
-                    colors.style(writer, "| ", Style.BRIGHT_BLACK);
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-            }, Style.BRIGHT_BLACK);
-        }
+            if (line.getLineNumber() == cursorLine) {
+                writePointer(numberLength, cursorColumn);
+            }
 
-        if (content.length() > 0) {
-            writeStringWithMaxWidth(content, numberLength);
+            lastLine = line.getLineNumber();
         }
 
         writer.append(System.lineSeparator());
     }
 
-    private void writePointer(int numberLength, int cursorColumn) {
-        colors.style(writer, w -> {
-            try {
-                for (int j = 0; j < numberLength; j++) {
-                    writer.append(' ');
+    private void writeColumnAndContent(int numberLength, int lineNumber, CharSequence content) {
+        writer.style(w -> {
+            if (lineNumber == -1) {
+                for (int i = 0; i < numberLength; i++) {
+                    writer.append("·");
                 }
                 writer.append("|");
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
+            } else {
+                String lineString = String.valueOf(lineNumber);
+                int thisLineLength = lineString.length();
+                writer.append(lineString);
+                // Write the appropriate amount of padding.
+                for (int i = 0; i < numberLength - thisLineLength; i++) {
+                    writer.append(' ');
+                }
+                writer.append("| ");
             }
-        }, Style.BRIGHT_BLACK);
+        }, ColorTheme.MUTED);
 
-        try {
-            for (int j = 0; j < cursorColumn; j++) {
-                writer.append(' ');
-            }
-            colors.style(writer, "^", Style.RED);
-            writer.append(System.lineSeparator());
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+        if (content.length() > 0) {
+            writeStringWithMaxWidth(content, numberLength);
         }
+
+        writer.println();
+    }
+
+    private void writePointer(int numberLength, int cursorColumn) {
+        writer.style(w -> {
+            for (int j = 0; j < numberLength; j++) {
+                w.append(' ');
+            }
+            w.append("|");
+        }, ColorTheme.MUTED);
+
+        for (int j = 0; j < cursorColumn; j++) {
+            writer.append(' ');
+        }
+        writer.print("^", ColorTheme.ERROR);
+        writer.println();
     }
 
     private int findLongestNumber(Collection<SourceContextLoader.Line> lines) {
@@ -139,7 +113,7 @@ final class CodeFormatter {
         return String.valueOf(maxLineNumber).length();
     }
 
-    private void writeStringWithMaxWidth(CharSequence line, int offsetSize) throws IOException {
+    private void writeStringWithMaxWidth(CharSequence line, int offsetSize) {
         int allowedSize = maxWidth - offsetSize;
         writer.append(line, 0, Math.min(line.length(), allowedSize));
         if (line.length() >= allowedSize) {

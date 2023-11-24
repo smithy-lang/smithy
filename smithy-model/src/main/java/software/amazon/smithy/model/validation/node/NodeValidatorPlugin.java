@@ -19,11 +19,13 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.selector.Selector;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.validation.NodeValidationVisitor;
 import software.amazon.smithy.model.validation.Severity;
@@ -37,6 +39,7 @@ import software.amazon.smithy.utils.SmithyInternalApi;
  */
 @SmithyInternalApi
 public interface NodeValidatorPlugin {
+     String[] EMPTY_STRING_ARRAY = new String[0];
 
     /**
      * Applies the plugin to the given shape, node value, and model.
@@ -61,7 +64,8 @@ public interface NodeValidatorPlugin {
                 new PatternTraitPlugin(),
                 new RangeTraitPlugin(),
                 new StringEnumPlugin(),
-                new StringLengthPlugin());
+                new StringLengthPlugin(),
+                new UniqueItemsPlugin());
     }
 
     /**
@@ -71,6 +75,7 @@ public interface NodeValidatorPlugin {
     final class Context {
         private final Model model;
         private final Set<NodeValidationVisitor.Feature> features;
+        private MemberShape referringMember;
 
         // Use an LRU cache to ensure the Selector cache doesn't grow too large
         // when given bad inputs.
@@ -120,15 +125,30 @@ public interface NodeValidatorPlugin {
         public boolean hasFeature(NodeValidationVisitor.Feature feature) {
             return features.contains(feature);
         }
+
+        public void setReferringMember(MemberShape referringMember) {
+            this.referringMember = referringMember;
+        }
+
+        public Optional<MemberShape> getReferringMember() {
+            return Optional.ofNullable(referringMember);
+        }
     }
 
     @SmithyInternalApi
     @FunctionalInterface
     interface Emitter {
-        void accept(FromSourceLocation sourceLocation, Severity severity, String message);
+        void accept(FromSourceLocation sourceLocation,
+                    Severity severity,
+                    String message,
+                    String... additionalEventIdParts);
 
         default void accept(FromSourceLocation sourceLocation, String message) {
-            accept(sourceLocation, Severity.ERROR, message);
+            accept(sourceLocation, Severity.ERROR, message, EMPTY_STRING_ARRAY);
+        }
+
+        default void accept(FromSourceLocation sourceLocation, Severity severity, String message) {
+            accept(sourceLocation, severity, message, EMPTY_STRING_ARRAY);
         }
     }
 }

@@ -1,6 +1,7 @@
 // when parsing endpoint ruleset
-//   at invalid-rules/wrong-default-type.json5:7
-// Invalid type for field "default": Type must match parameter type. Expected String, found Bool.
+// while typechecking par RegionName
+//   at invalid-rules/wrong-default-type.json5:8
+// Invalid type for field "default": Type must match parameter type. Expected `StringType`, found `BooleanType`.
 {
   "version": "1.2",
   "parameters": {

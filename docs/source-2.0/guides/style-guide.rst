@@ -173,7 +173,16 @@ Naming
 Shape names
 -----------
 
-Shape names use a strict form of UpperCamelCase (e.g., "XmlRequest", "FooId").
+* Shape names use a strict form of UpperCamelCase (e.g., "XmlRequest", "FooId").
+* Numeric shapes should use descriptive names, including units of measurement
+  (e.g., prefer "SizeInMb" over "Size").
+* Enums should use a singular noun (e.g., prefer "Suit" over "Suits").
+* Lists should use plural names (e.g., prefer "Users" over "UserList").
+* Operations should follow the format of "VerbNoun" (e.g., "UpdateUser").
+* Resources should use a singular noun (e.g., use "User" over "Users").
+* Services should be named after the name of a service, omitting the word
+  "Service" and branding when possible (e.g., prefer "S3" over
+  "AmazonS3Service").
 
 
 Member names

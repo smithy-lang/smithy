@@ -93,6 +93,8 @@ The following changes to a structure are not backward-compatible:
    with the :ref:`clientOptional-trait`.
 #. Removing the :ref:`clientOptional-trait` from a member that is marked as
    ``required``.
+#. Adding or updating :ref:`constraint traits <constraint-traits>`
+   that further restricts the allowed values of a member.
 
 
 Booleans and API evolution
@@ -100,8 +102,8 @@ Booleans and API evolution
 
 A boolean shape is often used to model state flags; however, consider whether
 or not the state of a resource is actually binary. If other states can be
-added in the future, it is often better to use a string shape with an
-:ref:`enum-trait` or a union shape.
+added in the future, it is often better to use a :ref:`enum shape <enum>`
+or a :ref:`union shape <union>`.
 
 
 Updating unions
@@ -145,6 +147,6 @@ The following changes to trait definitions are backward compatible:
 Using Smithy Diff
 =================
 
-`Smithy Diff <https://github.com/awslabs/smithy/tree/main/smithy-diff>`_ is a
+`Smithy Diff <https://github.com/smithy-lang/smithy/tree/main/smithy-diff>`_ is a
 tool used to compare two Smithy models to check for backward compatibility
 issues. Smithy Diff can be run via a Java library or via the Smithy CLI.

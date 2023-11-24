@@ -1,6 +1,8 @@
 // when parsing endpoint ruleset
-//   at invalid-rules/missing-isset.json5:17
+// while parsing rule
+//   at invalid-rules/missing-isset.json5:16
 // Expected an object with possible properties of `headers`, `properties`, `url`, but found additional properties: `authParams`, `authSchemes`
+//   at invalid-rules/missing-isset.json5:19
 {
   "version": "1.2",
   "parameters": {

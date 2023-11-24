@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.model.loader;
 
+import static java.lang.String.format;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +30,8 @@ import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.Validator;
 
 final class LoaderUtils {
+
+    static final String BAD_DOCUMENTATION_COMMENT = "Model.BadDocumentationComment";
 
     private LoaderUtils() {}
 
@@ -106,5 +110,53 @@ final class LoaderUtils {
             }
         }
         return false;
+    }
+
+    static ValidationEvent emitBadDocComment(SourceLocation location, String comments) {
+        String message = "Found documentation comments ('///') attached to nothing. Documentation comments must "
+                         + "appear on their own lines, directly before shapes and members, and before any traits.";
+        if (comments != null) {
+            message += " The invalid comments were: " + comments;
+        }
+        return ValidationEvent.builder()
+                .id(BAD_DOCUMENTATION_COMMENT)
+                .severity(Severity.WARNING)
+                .message(message)
+                .sourceLocation(location)
+                .build();
+    }
+
+    static String idlExpectMessage(IdlTokenizer tokenizer, IdlToken... tokens) {
+        StringBuilder result = new StringBuilder();
+        IdlToken current = tokenizer.getCurrentToken();
+        if (current == IdlToken.ERROR) {
+            result.append(tokenizer.getCurrentTokenError());
+        } else if (tokens.length == 1) {
+            result.append("Expected ")
+                    .append(tokens[0].getDebug())
+                    .append(" but found ")
+                    .append(current.getDebug(tokenizer.getCurrentTokenLexeme()));
+        } else {
+            result.append("Expected one of ");
+            for (IdlToken token : tokens) {
+                result.append(token.getDebug()).append(", ");
+            }
+            result.delete(result.length() - 2, result.length());
+            result.append("; but found ").append(current.getDebug(tokenizer.getCurrentTokenLexeme()));
+        }
+        return result.toString();
+    }
+
+    static ModelSyntaxException idlSyntaxError(String message, SourceLocation location) {
+        return idlSyntaxError(null, message, location);
+    }
+
+    static ModelSyntaxException idlSyntaxError(ShapeId shape, String message, SourceLocation location) {
+        return ModelSyntaxException.builder()
+                .message(format("Syntax error at line %d, column %d: %s",
+                                location.getLine(), location.getColumn(), message))
+                .sourceLocation(location)
+                .shapeId(shape)
+                .build();
     }
 }

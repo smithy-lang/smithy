@@ -1,11 +1,16 @@
 package software.amazon.smithy.model.validation;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.node.Node;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ExamplesTrait;
 import software.amazon.smithy.model.validation.validators.ExamplesTraitValidator;
+import software.amazon.smithy.utils.ListUtils;
 
 public class ExamplesTraitValidatorTest {
     // There was an NPE previously due to the input/output values

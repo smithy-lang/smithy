@@ -57,4 +57,4 @@
 1.0/guides/evolving-models.rst guides/evolving-models.rst
 1.0/guides/migrating-idl-1-to-2.rst guides/migrating-idl-1-to-2.rst
 1.0/guides/style-guide.rst guides/style-guide.rst
-implementations.rst https://smithy.io/implementations.html
+implementations.rst https://github.com/smithy-lang/awesome-smithy

@@ -17,6 +17,7 @@ package software.amazon.smithy.jsonschema;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
@@ -25,6 +26,8 @@ import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.model.node.ArrayNode;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SetUtils;
 
@@ -206,5 +209,19 @@ public class SchemaTest {
 
         assertThat(schema.getProperties().keySet(), contains("bar"));
         assertThat(schema.getRequired(), contains("bar"));
+    }
+
+    @Test
+    public void mergesEnumValuesWhenConvertingToNode() {
+        Schema schema = Schema.builder()
+                .enumValues(ListUtils.of("foo", "bar"))
+                .intEnumValues(ListUtils.of(1, 2))
+                .build();
+        ArrayNode node = schema.toNode().asObjectNode().get().expectArrayMember("enum");
+        assertThat(node.getElements(), containsInAnyOrder(
+                Node.from("foo"),
+                Node.from("bar"),
+                Node.from(1),
+                Node.from(2)));
     }
 }

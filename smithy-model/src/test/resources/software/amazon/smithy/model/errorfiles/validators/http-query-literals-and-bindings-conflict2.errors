@@ -1,0 +1,1 @@
+[ERROR] smithy.example#OperationOneInput: `httpQuery` name `code` conflicts with the `http` trait of the `smithy.example#OperationOne` operation: `/example?code=bar` | HttpQueryTrait

@@ -1,0 +1,1 @@
+[ERROR] com.foo#RequestCompressionOperation: The `requestCompression` trait can only be applied to operations which do not have input members that target shapes with both the `streaming` and `requiresLength` traits applied, but found member `com.foo#RequestCompressionOperationInput$member` targeting `com.foo#StreamingBlob` | RequestCompressionTrait

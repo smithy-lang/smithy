@@ -27,6 +27,8 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.ValidationEventDecorator;
+import software.amazon.smithy.model.validation.suppressions.ModelBasedEventDecorator;
 import software.amazon.smithy.utils.SmithyBuilder;
 
 /**
@@ -280,8 +282,17 @@ public final class ModelDiff {
             List<DiffEvaluator> evaluators = new ArrayList<>();
             ServiceLoader.load(DiffEvaluator.class, classLoader).forEach(evaluators::add);
             Differences differences = Differences.detect(oldModel, newModel);
+
+            // Applies suppressions and elevates event severities.
+            ValidationEventDecorator decoratorResult = new ModelBasedEventDecorator()
+                    .createDecorator(newModel)
+                    .getResult()
+                    .orElse(ValidationEventDecorator.IDENTITY);
+
             List<ValidationEvent> diffEvents = evaluators.parallelStream()
                     .flatMap(evaluator -> evaluator.evaluate(differences).stream())
+                    // No need to call canDecorate first since that method will always return true in any code path.
+                    .map(decoratorResult::decorate)
                     .collect(Collectors.toList());
 
             return new Result(differences, diffEvents, oldModelEvents, newModelEvents);

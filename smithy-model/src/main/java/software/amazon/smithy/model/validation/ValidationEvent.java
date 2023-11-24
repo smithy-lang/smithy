@@ -48,6 +48,7 @@ public final class ValidationEvent
     private final Severity severity;
     private final ShapeId shapeId;
     private final String suppressionReason;
+    private final String hint;
     private int hash;
 
     private ValidationEvent(Builder builder) {
@@ -61,6 +62,7 @@ public final class ValidationEvent
         this.eventId = SmithyBuilder.requiredState("id", builder.eventId);
         this.shapeId = builder.shapeId;
         this.suppressionReason = builder.suppressionReason;
+        this.hint = builder.hint;
     }
 
     public static Builder builder() {
@@ -141,6 +143,7 @@ public final class ValidationEvent
         builder.eventId = eventId;
         builder.shapeId = shapeId;
         builder.suppressionReason = suppressionReason;
+        builder.hint = hint;
         return builder;
     }
 
@@ -158,14 +161,15 @@ public final class ValidationEvent
                 && severity.equals(other.severity)
                 && eventId.equals(other.eventId)
                 && getShapeId().equals(other.getShapeId())
-                && getSuppressionReason().equals(other.getSuppressionReason());
+                && getSuppressionReason().equals(other.getSuppressionReason())
+                && getHint().equals(other.getHint());
     }
 
     @Override
     public int hashCode() {
         int result = hash;
         if (result == 0) {
-            result = Objects.hash(eventId, shapeId, severity, sourceLocation, message, suppressionReason);
+            result = Objects.hash(eventId, shapeId, severity, sourceLocation, message, suppressionReason, hint);
             hash = result;
         }
         return result;
@@ -184,6 +188,7 @@ public final class ValidationEvent
                 .withOptionalMember("shapeId", getShapeId().map(Object::toString).map(Node::from))
                 .withMember("message", Node.from(getMessage()))
                 .withOptionalMember("suppressionReason", getSuppressionReason().map(Node::from))
+                .withOptionalMember("hint", getHint().map(Node::from))
                 .withMember("filename", Node.from(getSourceLocation().getFilename()))
                 .withMember("line", Node.from(getSourceLocation().getLine()))
                 .withMember("column", Node.from(getSourceLocation().getColumn()))
@@ -205,6 +210,7 @@ public final class ValidationEvent
                 .expectMember("severity", Severity::fromNode, builder::severity)
                 .expectStringMember("message", builder::message)
                 .getStringMember("suppressionReason", builder::suppressionReason)
+                .getStringMember("hint", builder::hint)
                 .getMember("shapeId", ShapeId::fromNode, builder::shapeId);
         return builder.build();
     }
@@ -295,6 +301,15 @@ public final class ValidationEvent
     }
 
     /**
+     * Get an optional hint that adds more detail about how to fix a specific issue.
+     *
+     * @return Returns the hint if available.
+     */
+    public Optional<String> getHint() {
+        return Optional.ofNullable(hint);
+    }
+
+    /**
      * Builds ValidationEvent values.
      */
     public static final class Builder implements SmithyBuilder<ValidationEvent> {
@@ -305,6 +320,7 @@ public final class ValidationEvent
         private String eventId;
         private ShapeId shapeId;
         private String suppressionReason;
+        private String hint;
 
         private Builder() {}
 
@@ -399,6 +415,17 @@ public final class ValidationEvent
          */
         public Builder suppressionReason(String eventSuppressionReason) {
             suppressionReason = eventSuppressionReason;
+            return this;
+        }
+
+        /**
+         * Sets an optional hint adding more detail about how to fix a specific issue.
+         *
+         * @param hint Hint to set
+         * @return Returns the builder.
+         */
+        public Builder hint(String hint) {
+            this.hint = hint;
             return this;
         }
 

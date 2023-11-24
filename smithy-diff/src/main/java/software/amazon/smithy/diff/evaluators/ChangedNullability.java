@@ -16,12 +16,16 @@
 package software.amazon.smithy.diff.evaluators;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Stream;
 import software.amazon.smithy.diff.ChangedShape;
 import software.amazon.smithy.diff.Differences;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.knowledge.NullableIndex;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -45,7 +49,7 @@ public class ChangedNullability extends AbstractDiffEvaluator {
     public List<ValidationEvent> evaluate(Differences differences) {
         NullableIndex oldIndex = NullableIndex.of(differences.getOldModel());
         NullableIndex newIndex = NullableIndex.of(differences.getNewModel());
-        List<ValidationEvent> events = new ArrayList<>();
+        Set<ValidationEvent> events = new HashSet<>();
 
         Stream.concat(
             // Get members that changed.
@@ -63,7 +67,7 @@ public class ChangedNullability extends AbstractDiffEvaluator {
             }
         });
 
-        return events;
+        return new ArrayList<>(events);
     }
 
     private Stream<ChangedShape<MemberShape>> changedInputMembers(Differences differences) {
@@ -82,7 +86,7 @@ public class ChangedNullability extends AbstractDiffEvaluator {
             Differences differences,
             ChangedShape<MemberShape> change,
             boolean wasNullable,
-            List<ValidationEvent> events
+            Collection<ValidationEvent> events
     ) {
         MemberShape oldMember = change.getOldShape();
         MemberShape newMember = change.getNewShape();
@@ -93,33 +97,36 @@ public class ChangedNullability extends AbstractDiffEvaluator {
         boolean oldHasInput = hasInputTrait(differences.getOldModel(), oldMember);
         boolean newHasInput = hasInputTrait(differences.getNewModel(), newMember);
         ShapeId shape = change.getShapeId();
+        SourceLocation oldMemberSourceLocation = oldMember.getSourceLocation();
         Shape newTarget = differences.getNewModel().expectShape(newMember.getTarget());
-        int currentEventSize = events.size();
+        List<ValidationEvent> eventsToAdd = new ArrayList<>();
+        SourceLocation newMemberContainerSource = differences.getNewModel().expectShape(newMember.getContainer())
+                .getSourceLocation();
 
         if (oldHasInput && !newHasInput) {
             // If there was an input trait before, but not now, then the nullability must have
             // changed from nullable to non-nullable.
-            events.add(emit(Severity.ERROR, "RemovedInputTrait", shape, message,
+            eventsToAdd.add(emit(Severity.ERROR, "RemovedInputTrait", shape, newMemberContainerSource, message,
                             "The @input trait was removed from " + newMember.getContainer()));
         } else if (!oldHasInput && newHasInput) {
             // If there was no input trait before, but there is now, then the nullability must have
             // changed from non-nullable to nullable.
-            events.add(emit(Severity.DANGER, "AddedInputTrait", shape, message,
+            eventsToAdd.add(emit(Severity.DANGER, "AddedInputTrait", shape, newMemberContainerSource, message,
                             "The @input trait was added to " + newMember.getContainer()));
         } else if (!newHasInput) {
-            // Can't add nullable to a preexisting required member.
+            // Can't add clientOptional to a preexisting required member.
             if (change.isTraitAdded(ClientOptionalTrait.ID) && change.isTraitInBoth(RequiredTrait.ID)) {
-                events.add(emit(Severity.ERROR, "AddedNullableTrait", shape, message,
-                                "The @nullable trait was added to a @required member."));
+                eventsToAdd.add(emit(Severity.ERROR, "AddedClientOptionalTrait", shape, oldMemberSourceLocation,
+                        message, "The @clientOptional trait was added to a @required member."));
             }
-            // Can't add required to a member unless the member is marked as nullable.
+            // Can't add required to a member unless the member is marked as @clientOptional or part of @input.
             if (change.isTraitAdded(RequiredTrait.ID) && !newMember.hasTrait(ClientOptionalTrait.ID)) {
-                events.add(emit(Severity.ERROR, "AddedRequiredTrait", shape, message,
-                                "The @required trait was added to a member that is not marked as @nullable."));
+                eventsToAdd.add(emit(Severity.ERROR, "AddedRequiredTrait", shape, oldMemberSourceLocation, message,
+                                "The @required trait was added to a member."));
             }
             // Can't add the default trait to a member unless the member was previously required.
             if (change.isTraitAdded(DefaultTrait.ID) && !change.isTraitRemoved(RequiredTrait.ID)) {
-                events.add(emit(Severity.ERROR, "AddedDefaultTrait", shape, message,
+                eventsToAdd.add(emit(Severity.ERROR, "AddedDefaultTrait", shape, oldMemberSourceLocation, message,
                                 "The @default trait was added to a member that was not previously @required."));
             }
             // Can only remove the required trait if the member was nullable or replaced by the default trait.
@@ -127,22 +134,25 @@ public class ChangedNullability extends AbstractDiffEvaluator {
                     && !newMember.hasTrait(DefaultTrait.ID)
                     && !oldMember.hasTrait(ClientOptionalTrait.ID)) {
                 if (newTarget.isStructureShape() || newTarget.isUnionShape()) {
-                    events.add(emit(Severity.WARNING, "RemovedRequiredTrait.StructureOrUnion", shape, message,
-                                    "The @required trait was removed from a member that targets a "
-                                    + newTarget.getType() + ". This is backward compatible in generators that "
-                                    + "always treat structures and unions as optional (e.g., AWS generators)"));
+                    eventsToAdd.add(emit(Severity.WARNING, "RemovedRequiredTrait.StructureOrUnion", shape,
+                                    oldMemberSourceLocation, message, "The @required trait was removed from a member "
+                                    + "that targets a " + newTarget.getType() + ". This is backward compatible in "
+                                    + "generators that always treat structures and unions as optional "
+                                    + "(e.g., AWS generators)"));
                 } else {
-                    events.add(emit(Severity.ERROR, "RemovedRequiredTrait", shape, message,
-                                    "The @required trait was removed and not replaced with the @default trait and "
-                                    + "@addedDefault trait."));
+                    eventsToAdd.add(emit(Severity.ERROR, "RemovedRequiredTrait", shape, oldMemberSourceLocation,
+                                    message, "The @required trait was removed and not replaced with the @default "
+                                    + "trait and @addedDefault trait."));
                 }
             }
         }
 
         // If not specific event was emitted, emit a generic event.
-        if (events.size() == currentEventSize) {
-            events.add(emit(Severity.ERROR, null, shape, null, message));
+        if (eventsToAdd.isEmpty()) {
+            eventsToAdd.add(emit(Severity.ERROR, null, shape, oldMemberSourceLocation, null, message));
         }
+
+        events.addAll(eventsToAdd);
     }
 
     private boolean hasInputTrait(Model model, MemberShape member) {
@@ -153,6 +163,7 @@ public class ChangedNullability extends AbstractDiffEvaluator {
             Severity severity,
             String eventIdSuffix,
             ShapeId shape,
+            SourceLocation sourceLocation,
             String prefixMessage,
             String message
     ) {
@@ -161,9 +172,9 @@ public class ChangedNullability extends AbstractDiffEvaluator {
         return ValidationEvent.builder()
                 .id(actualId)
                 .shapeId(shape)
+                .sourceLocation(sourceLocation)
                 .message(actualMessage)
                 .severity(severity)
-                .message(message)
                 .build();
     }
 }

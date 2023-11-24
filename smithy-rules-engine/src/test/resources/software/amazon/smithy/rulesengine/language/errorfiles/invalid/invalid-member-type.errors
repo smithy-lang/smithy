@@ -1,0 +1,3 @@
+[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#endpointRuleSet | UnstableTrait
+[WARNING] example#GetResourceInput$ResourceId: This shape applies a trait that is unstable: smithy.rules#contextParam | UnstableTrait
+[ERROR] example#GetResourceInput$ResourceId: Unsupported type `(integer: `example#IntResourceId`)` for `ParameterBar` parameter | RuleSetParameter.ContextParam.UnsupportedType

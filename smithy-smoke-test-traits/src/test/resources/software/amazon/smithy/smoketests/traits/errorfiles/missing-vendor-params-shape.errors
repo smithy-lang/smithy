@@ -1,0 +1,2 @@
+[DANGER] -: Syntactic shape ID `MissingVendorParamsShape` does not resolve to a valid shape ID: `smithy.example#MissingVendorParamsShape`. Did you mean to quote this string? Are you missing a model file? | SyntacticShapeIdTarget
+[ERROR] smithy.example#SayHello: Error validating trait `smithy.test#smokeTests`.0.vendorParamsShape: Shape ID `smithy.example#MissingVendorParamsShape` was not found in the model | TraitValue

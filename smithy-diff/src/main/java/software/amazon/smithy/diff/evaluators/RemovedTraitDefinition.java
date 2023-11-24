@@ -34,6 +34,7 @@ public final class RemovedTraitDefinition extends AbstractDiffEvaluator {
                         .id(getEventId())
                         .severity(Severity.ERROR)
                         .shape(shape)
+                        .sourceLocation(shape.expectTrait(TraitDefinition.class).getSourceLocation())
                         .message(String.format("Trait definition `%s` was removed", shape.getId()))
                         .build())
                 .collect(Collectors.toList());

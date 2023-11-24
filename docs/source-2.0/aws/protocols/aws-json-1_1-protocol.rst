@@ -22,7 +22,7 @@ Trait selector
 Value type
     Structure
 See
-    `Protocol tests <https://github.com/awslabs/smithy/tree/__smithy_version__/smithy-aws-protocol-tests/model/awsJson1_1>`_
+    `Protocol tests <https://github.com/smithy-lang/smithy/tree/__smithy_version__/smithy-aws-protocol-tests/model/awsJson1_1>`_
 
 ``aws.protocols#awsJson1_1`` is a structure that supports the following
 members:
@@ -125,7 +125,7 @@ The following example defines a service that requires the use of
 .. |quoted shape name| replace:: ``awsJson1_1``
 .. |protocol content type| replace:: ``application/x-amz-json-1.1``
 .. |protocol error type contents| replace:: :token:`shape name <smithy:Identifier>`
-.. |protocol test link| replace:: https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/awsJson1_1
+.. |protocol test link| replace:: https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/awsJson1_1
 .. include:: aws-json.rst.template
 .. include:: error-rename.rst.template
 

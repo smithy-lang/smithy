@@ -13,6 +13,7 @@ start with ``smithy.*`` where "*" is anything other than ``api``.
     http-protocol-compliance-tests
     waiters
     mqtt
+    rules-engine/index
 
 .. seealso::
 

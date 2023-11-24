@@ -1,0 +1,5 @@
+software.amazon.smithy.rulesengine.aws.traits.EndpointModifierTrait$Provider
+software.amazon.smithy.rulesengine.aws.traits.DualStackOnlyEndpointsTrait$Provider
+software.amazon.smithy.rulesengine.aws.traits.RuleBasedEndpointsTrait$Provider
+software.amazon.smithy.rulesengine.aws.traits.StandardRegionalEndpointsTrait$Provider
+software.amazon.smithy.rulesengine.aws.traits.StandardPartitionalEndpointsTrait$Provider

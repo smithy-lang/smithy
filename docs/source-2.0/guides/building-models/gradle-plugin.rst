@@ -1,3 +1,5 @@
+.. _smithy-gradle-plugin:
+
 ====================
 Smithy Gradle Plugin
 ====================

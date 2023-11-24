@@ -1,0 +1,53 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "com.amazon.example#ListFoos": {
+            "type": "operation",
+            "input": {
+                "target": "com.amazon.example#ListFoosInput"
+            },
+            "output": {
+                "target": "com.amazon.example#ListFoosOutput"
+            },
+            "traits": {
+                "smithy.api#http": {
+                    "code": 200,
+                    "method": "GET",
+                    "uri": "/test"
+                },
+                "smithy.api#readonly": {}
+            }
+        },
+        "com.amazon.example#ListFoosInput": {
+            "type": "structure",
+            "mixins": [
+                {
+                    "target": "com.amazon.example#MyMixin"
+                }
+            ],
+            "members": {},
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "com.amazon.example#ListFoosOutput": {
+            "type": "structure",
+            "mixins": [
+                {
+                    "target": "com.amazon.example#MyMixin"
+                }
+            ],
+            "members": {},
+            "traits": {
+                "smithy.api#output": {}
+            }
+        },
+        "com.amazon.example#MyMixin": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        }
+    }
+}

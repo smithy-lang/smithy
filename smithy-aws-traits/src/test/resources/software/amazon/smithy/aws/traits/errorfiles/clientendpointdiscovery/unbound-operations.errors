@@ -1,0 +1,2 @@
+[ERROR] ns.foo#GetObject: The operation `ns.foo#GetObject` is marked with `aws.api#clientDiscoveredEndpoint` and is bound to the service `ns.foo#BarService` but does not have the required error `ns.foo#InvalidEndpointError`. | ClientEndpointDiscovery
+[ERROR] ns.foo#BarService: The operation `ns.foo#DescribeEndpoints` must be bound to the service `(service: `ns.foo#BarService`)` to use it as the endpoint operation. | ClientEndpointDiscovery.UnboundOperation.DescribeEndpoints

@@ -170,7 +170,27 @@ case-insensitively because many model transformations (like code generation)
 change the casing and inflection of shape names to make artifacts more
 idiomatic.
 
-.. rubric:: Shape types allowed to conflict in a closure
+.. important::
+
+    Resources and operations can only be bound once. An operation or resource
+    MUST NOT be bound to multiple shapes within the closure of a service. This
+    constraint allows services to discern between operations and resources
+    using only their shape name rather than a fully-qualified path from the
+    service to the shape.
+
+.. note::
+
+    Undeclared operation inputs and outputs are not a part of the service
+    closure. :ref:`smithy.api#Unit <unit-type>` is the shape that is implicitly
+    targeted by operation inputs and outputs when they are not explicitly
+    declared. This does not, however, add ``smithy.api#Unit`` to the service's
+    closure, and does not require renaming to avoid conflicts with other shapes
+    named ``Unit``. Unions in the service closure with members targeting
+    ``smithy.api#Unit``, however, will cause ``smithy.api#Unit`` to be a part
+    of the service closure.
+
+Shape types allowed to conflict in a closure
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :ref:`Simple types <simple-types>` and :ref:`lists <list>` of compatible simple
 types are allowed to conflict because a conflict for these type would rarely
@@ -179,7 +199,8 @@ allowed if both conflicting shapes are the same type and have the exact same
 traits. In the case of a list, a conflict is only allowed if the members
 of the conflicting shapes target compatible shapes.
 
-.. rubric:: Disambiguating shapes with ``rename``
+Disambiguating shapes with ``rename``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``rename`` property of a service is used to disambiguate conflicting
 shape names found in the closure of a service. The ``rename`` property is
@@ -225,23 +246,6 @@ the conflicting shapes.
     }
 
     structure Widget {}
-
-.. rubric:: Resources and operations can be bound once
-
-An operation or resource MUST NOT be bound to multiple shapes within the
-closure of a service. This constraint allows services to discern between
-operations and resources using only their shape name rather than a
-fully-qualified path from the service to the shape.
-
-.. rubric:: Undeclared operation inputs and outputs are not a
-            part of the service closure
-
-:ref:`smithy.api#Unit <unit-type>` is the shape that is implicitly targeted by
-operation inputs and outputs when they are not explicitly declared. This does
-not, however, add ``smithy.api#Unit`` to the service's closure, and does not
-require renaming to avoid conflicts with other shapes named ``Unit``. Unions in
-the service closure with members targeting ``smithy.api#Unit``, however, will
-cause ``smithy.api#Unit`` to be a part of the service closure.
 
 
 ..  _operation:
@@ -519,7 +523,8 @@ Binding identifiers to operations
 *Identifier bindings* indicate which top-level members of the input or output
 structure of an operation provide values for the identifiers of a resource.
 
-.. rubric:: Identifier binding validation
+Identifier binding validation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - Child resources MUST provide identifier bindings for all of its parent's
   identifiers.
@@ -774,7 +779,8 @@ members, use the :ref:`nested-properties-trait` on a member to designate its
 target structure shape as the root to form property bindings. No adjacent
 members can form property bindings when this trait is applied.
 
-.. rubric:: Resource property binding validation
+Resource property binding validation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - All top-level input or output members must bind to a resource property unless
   marked with :ref:`notProperty-trait` or another trait with it applied, or one
@@ -852,7 +858,8 @@ The following example defines the ``PutForecast`` operation.
         chanceOfRain: Float
     }
 
-.. rubric:: Put semantics
+Put semantics
+^^^^^^^^^^^^^
 
 The semantics of a ``put`` lifecycle operation are similar to the semantics
 of a HTTP PUT method as described in :rfc:`section 4.3.4 of [RFC7231] <7231#section-4.3.4>`:

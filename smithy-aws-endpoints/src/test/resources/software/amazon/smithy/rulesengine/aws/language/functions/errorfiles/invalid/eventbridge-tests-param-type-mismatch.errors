@@ -1,0 +1,5 @@
+[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#endpointRuleSet | UnstableTrait
+[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#endpointTests | UnstableTrait
+[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#clientContextParams | UnstableTrait
+[ERROR] example#FizzBuzz: Type mismatch for parameter `useFIPSEndpoint`, `Boolean` expected | RuleSetParameter.TestCase.TypeMismatch
+[ERROR] example#FizzBuzz: Expected `BooleanType` but was `StringType` with value: `true` | RuleSetTestCase

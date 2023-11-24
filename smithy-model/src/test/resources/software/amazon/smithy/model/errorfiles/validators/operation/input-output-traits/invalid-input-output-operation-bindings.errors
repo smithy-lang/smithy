@@ -1,2 +1,2 @@
-[ERROR] smithy.example#GetFoo: Operation input cannot target structures marked with the @output trait | OperationInputOutputMisuse
-[ERROR] smithy.example#GetFoo: Operation output cannot target structures marked with the @input trait | OperationInputOutputMisuse
+[ERROR] smithy.example#GetFoo: Operation `input` cannot target structures marked with the `@output` trait: `smithy.example#GetFooOutput` | OperationInputOutputMisuse
+[ERROR] smithy.example#GetFoo: Operation `output` cannot target structures marked with the `@input` trait: `smithy.example#GetFooInput` | OperationInputOutputMisuse

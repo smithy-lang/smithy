@@ -515,6 +515,10 @@ public final class ModelTransformer {
      *
      * <p>A member will be created on the shape for each entry in the {@link EnumTrait}.
      *
+     * <p>When the enum definition from the enum trait has been marked as deprecated, or
+     * tagged as "internal", the corresponding enum shape member will be marked with the
+     * DeprecatedTrait or InternalTrait accordingly.
+     *
      * @param model Model to transform.
      * @param synthesizeEnumNames Whether enums without names should have names synthesized if possible.
      * @return Returns the transformed model.
@@ -651,5 +655,26 @@ public final class ModelTransformer {
      */
     public Model downgradeToV1(Model model) {
         return new DowngradeToV1().transform(this, model);
+    }
+
+    /**
+     * Remove default traits if the default conflicts with the range trait of the shape.
+     *
+     * @param model Model to transform.
+     * @return Returns the transformed model.
+     */
+    public Model removeInvalidDefaults(Model model) {
+        return new RemoveInvalidDefaults().transform(this, model);
+
+    }
+
+    /**
+     * Deconflicts errors that share a status code.
+     *
+     * @param model Model to transform.
+     * @return Returns the transformed model.
+     */
+    public Model deconflictErrorsWithSharedStatusCode(Model model, ServiceShape forService) {
+        return new DeconflictErrorsWithSharedStatusCode(forService).transform(this, model);
     }
 }

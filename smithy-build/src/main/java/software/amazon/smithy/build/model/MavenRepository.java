@@ -26,10 +26,12 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
 
     private final String url;
     private final String httpCredentials;
+    private final String id;
 
     public MavenRepository(Builder builder) {
         this.url = SmithyBuilder.requiredState("url", builder.url);
         this.httpCredentials = builder.httpCredentials;
+        this.id = builder.id;
     }
 
     public static Builder builder() {
@@ -41,12 +43,17 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
         node.expectObjectNode()
                 .warnIfAdditionalProperties(Arrays.asList("url", "httpCredentials"))
                 .expectStringMember("url", builder::url)
-                .getStringMember("httpCredentials", builder::httpCredentials);
+                .getStringMember("httpCredentials", builder::httpCredentials)
+                .getStringMember("id", builder::id);
         return builder.build();
     }
 
     public String getUrl() {
         return url;
+    }
+
+    public Optional<String> getId() {
+        return Optional.ofNullable(id);
     }
 
     public Optional<String> getHttpCredentials() {
@@ -55,12 +62,12 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
 
     @Override
     public Builder toBuilder() {
-        return builder().url(url).httpCredentials(httpCredentials);
+        return builder().id(id).url(url).httpCredentials(httpCredentials);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(url, httpCredentials);
+        return Objects.hash(id, url, httpCredentials);
     }
 
     @Override
@@ -71,12 +78,16 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
             return false;
         }
         MavenRepository mavenRepo = (MavenRepository) o;
-        return Objects.equals(url, mavenRepo.url) && Objects.equals(httpCredentials, mavenRepo.httpCredentials);
+        return
+            Objects.equals(id, mavenRepo.id)
+                && Objects.equals(url, mavenRepo.url)
+                && Objects.equals(httpCredentials, mavenRepo.httpCredentials);
     }
 
     public static final class Builder implements SmithyBuilder<MavenRepository> {
         private String url;
         private String httpCredentials;
+        private String id;
 
         private Builder() {}
 
@@ -87,6 +98,11 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
 
         public Builder url(String url) {
             this.url = url;
+            return this;
+        }
+
+        public Builder id(String id) {
+            this.id = id;
             return this;
         }
 

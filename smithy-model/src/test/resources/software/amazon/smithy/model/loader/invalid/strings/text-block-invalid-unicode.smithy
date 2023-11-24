@@ -1,4 +1,4 @@
-// Parse error at line 5, column 11 near `)\n`: Invalid unclosed unicode escape found in string
+// Syntax error at line 4, column 16: Error parsing text block: Invalid unclosed unicode escape found in string | Model
 namespace smithy.example
 
 @documentation("""

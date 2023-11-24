@@ -1,19 +1,11 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package software.amazon.smithy.rulesengine.language.syntax.rule;
+
+import static software.amazon.smithy.rulesengine.language.RulesComponentBuilder.javaLocation;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -23,14 +15,13 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.rulesengine.IntoSelf;
-import software.amazon.smithy.rulesengine.language.eval.Scope;
-import software.amazon.smithy.rulesengine.language.eval.Type;
-import software.amazon.smithy.rulesengine.language.eval.TypeCheck;
+import software.amazon.smithy.rulesengine.language.evaluation.Scope;
+import software.amazon.smithy.rulesengine.language.evaluation.TypeCheck;
+import software.amazon.smithy.rulesengine.language.evaluation.type.Type;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
-import software.amazon.smithy.rulesengine.language.syntax.expr.Expression;
-import software.amazon.smithy.rulesengine.language.syntax.fn.FunctionNode;
-import software.amazon.smithy.rulesengine.language.util.SourceLocationUtils;
+import software.amazon.smithy.rulesengine.language.syntax.SyntaxElement;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.Expression;
+import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
@@ -39,14 +30,23 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  * Can assign the results of functions to new parameters within the current scope.
  */
 @SmithyUnstableApi
-public final class Condition implements TypeCheck, FromSourceLocation, ToNode, IntoSelf<Condition> {
+public final class Condition extends SyntaxElement implements TypeCheck, FromSourceLocation, ToNode {
     public static final String ASSIGN = "assign";
-    private final Expression fn;
+    private final Expression function;
     private final Identifier result;
 
     private Condition(Builder builder) {
         this.result = builder.result;
-        this.fn = SmithyBuilder.requiredState("fn", builder.fn);
+        this.function = SmithyBuilder.requiredState("fn", builder.fn);
+    }
+
+    /**
+     * Builder to create a {@link Condition} instance.
+     *
+     * @return returns a new Builder.
+     */
+    public static Builder builder() {
+        return new Condition.Builder();
     }
 
     /**
@@ -56,39 +56,21 @@ public final class Condition implements TypeCheck, FromSourceLocation, ToNode, I
      * @return the condition instance.
      */
     public static Condition fromNode(Node node) {
-        ObjectNode on = node.expectObjectNode("condition must be an object node");
-        Expression fn = FunctionNode.fromNode(on).validate();
-        Optional<Identifier> result = on.getStringMember(ASSIGN).map(Identifier::of);
         Builder builder = new Builder();
-        result.ifPresent(builder::result);
-        builder.fn(fn);
+        ObjectNode objectNode = node.expectObjectNode("condition must be an object node");
+
+        builder.fn(FunctionNode.fromNode(objectNode).createFunction());
+        // This needs to go directly through the node to maintain source locations.
+        if (objectNode.containsMember(ASSIGN)) {
+            builder.result(Identifier.of(objectNode.expectStringMember(ASSIGN)));
+        }
+
         return builder.build();
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Condition condition = (Condition) o;
-        return Objects.equals(fn, condition.fn) && Objects.equals(result, condition.result);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(fn, result);
-    }
-
-    public Expression getFn() {
-        return fn;
-    }
-
-    @Override
     public SourceLocation getSourceLocation() {
-        return fn.getSourceLocation();
+        return function.getSourceLocation();
     }
 
     /**
@@ -100,52 +82,91 @@ public final class Condition implements TypeCheck, FromSourceLocation, ToNode, I
         return Optional.ofNullable(result);
     }
 
-    @Override
-    public Type typeCheck(Scope<Type> scope) {
-        Type conditionType = fn.typeCheck(scope);
-        // If the condition is validated, then the expression must be a truthy type
-        getResult().ifPresent(resultName -> {
-            scope.getDeclaration(resultName).ifPresent(entry -> {
-                throw new SourceException(String.format("Invalid shadowing of `%s` (first declared on line %s)",
-                        resultName, entry.getKey().getSourceLocation().getLine()), resultName);
-            });
-            scope.insert(resultName, conditionType.provenTruthy());
-        });
-        return conditionType;
+    /**
+     * Gets the function used to express this condition.
+     *
+     * @return the function for this condition.
+     */
+    public Expression getFunction() {
+        return function;
     }
 
+    @Override
+    public Builder toConditionBuilder() {
+        return toBuilder();
+    }
 
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        this.getResult().ifPresent(res -> sb.append(res).append(" = "));
-        sb.append(this.fn);
-        return sb.toString();
+    public Condition toCondition() {
+        return this;
+    }
+
+    @Override
+    public Expression toExpression() {
+        if (result == null) {
+            throw new RuntimeException("Cannot generate expression from a condition without a result");
+        }
+        return Expression.getReference(result, javaLocation());
+    }
+
+    public Builder toBuilder() {
+        return builder()
+                .fn(function)
+                .result(result);
+    }
+
+    @Override
+    public Type typeCheck(Scope<Type> scope) {
+        Type conditionType = function.typeCheck(scope);
+        // If the condition is validated, then the expression must be a truthy type
+        if (result != null) {
+            scope.getDeclaration(result).ifPresent(entry -> {
+                throw new SourceException(String.format("Invalid shadowing of `%s` (first declared on line %s)",
+                        result, entry.getKey().getSourceLocation().getLine()), result);
+            });
+            scope.insert(result, conditionType.provenTruthy());
+        }
+        return conditionType;
     }
 
     @Override
     public Node toNode() {
-        ObjectNode.Builder conditionNode = fn.toNode().expectObjectNode().toBuilder();
+        ObjectNode.Builder conditionNode = function.toNode().expectObjectNode().toBuilder();
         if (result != null) {
             conditionNode.withMember(ASSIGN, result.getName());
         }
         return conditionNode.build();
     }
 
-    /**
-     * Converts this condition to an expression reference if the condition has a result assignment. Otherwise throws
-     * an exception.
-     *
-     * @return the result as a reference expression.
-     */
-    public Expression toExpression() {
-        if (this.getResult().isPresent()) {
-            return Expression.reference(this.getResult().get(), SourceLocationUtils.javaLocation());
-        } else {
-            throw new RuntimeException("Cannot generate expression from a condition without a result");
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
         }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Condition condition = (Condition) o;
+        return Objects.equals(function, condition.function) && Objects.equals(result, condition.result);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(function, result);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        if (result != null) {
+            sb.append(result).append(" = ");
+        }
+        return sb.append(function).toString();
+    }
+
+    /**
+     * A builder used to create a {@link Condition} class.
+     */
     public static class Builder implements SmithyBuilder<Condition> {
         private Expression fn;
         private Identifier result;
@@ -168,6 +189,5 @@ public final class Condition implements TypeCheck, FromSourceLocation, ToNode, I
         public Condition build() {
             return new Condition(this);
         }
-
     }
 }

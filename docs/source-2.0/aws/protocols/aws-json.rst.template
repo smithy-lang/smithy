@@ -20,6 +20,9 @@ that affect serialization:
         the hostPrefix of an endpoint trait.
     * - :ref:`timestampFormat <timestampFormat-trait>`
       - Defines a custom timestamp serialization format.
+    * - :ref:`requestCompression <requestCompression-trait>`
+      - Indicates that an operation supports compressing requests from clients
+        to services.
 
 
 ------------------
@@ -129,6 +132,7 @@ to convert each shape type:
     * - ``union``
       - JSON object. A union is serialized identically as a ``structure``
         shape, but only a single member can be set to a non-null value.
+        Deserializers MUST ignore an unrecognized ``__type`` member if present.
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~

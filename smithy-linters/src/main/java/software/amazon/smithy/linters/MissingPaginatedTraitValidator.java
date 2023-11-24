@@ -62,9 +62,11 @@ public final class MissingPaginatedTraitValidator extends AbstractValidator {
     private static final Set<String> DEFAULT_VERBS_REQUIRE = SetUtils.of("list", "search");
     private static final Set<String> DEFAULT_VERBS_SUGGEST = SetUtils.of("describe", "get");
     private static final Set<String> DEFAULT_INPUT_MEMBERS = SetUtils.of(
-            "maxresults", "pagesize", "limit", "nexttoken", "pagetoken", "token");
+            "maxresults", "maxitems", "pagesize", "limit",
+            "nexttoken", "pagetoken", "token", "marker");
     private static final Set<String> DEFAULT_OUTPUT_MEMBERS = SetUtils.of(
-            "nexttoken", "pagetoken", "token", "marker", "nextpage");
+            "nexttoken", "pagetoken", "token", "marker", "nextpage", "nextpagetoken", "position", "nextmarker",
+            "paginationtoken", "nextpagemarker");
 
     public static final class Config {
         private Set<String> verbsRequirePagination = DEFAULT_VERBS_REQUIRE;

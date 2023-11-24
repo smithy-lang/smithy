@@ -45,25 +45,6 @@ public interface Command {
     String getSummary();
 
     /**
-     * Gets the long description of the command.
-     *
-     * @param colors Color formatter to use for styling help.
-     * @return Returns the long description.
-     */
-    default String getDocumentation(ColorFormatter colors) {
-        return "";
-    }
-
-    /**
-     * Prints help output.
-     *
-     * @param arguments Arguments that have been parsed so far.
-     * @param colors Color formatter to use.
-     * @param printer Where to write help.
-     */
-    void printHelp(Arguments arguments, ColorFormatter colors, CliPrinter printer);
-
-    /**
      * Executes the command using the provided arguments.
      *
      * @param arguments CLI arguments.
@@ -103,6 +84,11 @@ public interface Command {
 
         public ClassLoader classLoader() {
             return classLoader == null ? getClass().getClassLoader() : classLoader;
+        }
+
+        public void flush() {
+            stderr.flush();
+            stdout.flush();
         }
 
         public Env withClassLoader(ClassLoader classLoader) {

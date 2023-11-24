@@ -193,8 +193,10 @@ public final class CamelCaseValidator extends AbstractValidator {
         for (MemberShape memberShape : memberShapes) {
             // Exclude members of enums from CamelCase validation,
             // as they're intended to be CAPS_SNAKE.
+            // Also exclude list and map members as their names are constant.
             Shape container = model.expectShape(memberShape.getContainer());
-            if (!container.isEnumShape() && !container.isIntEnumShape()) {
+            if (!container.isEnumShape() && !container.isIntEnumShape()
+                    && !container.isListShape() && !container.isMapShape()) {
                 if (MemberNameHandling.UPPER.getRegex().matcher(memberShape.getMemberName()).find()) {
                     upperCamelMemberNamesCount++;
                 } else {

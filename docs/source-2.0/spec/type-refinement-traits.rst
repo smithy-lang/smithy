@@ -89,6 +89,9 @@ value requirement of a targeted shape.
     * The ``@default`` trait on root-level shapes has no impact when targeted by
       any other shape than a structure member.
     * The ``@default`` trait on root-level shapes cannot be set to ``null``.
+    * The :ref:`clientOptional-trait` applied to a member marked with the
+      ``default`` trait causes non-authoritative generators to ignore the
+      ``default`` trait.
 
 
 Default value constraints
@@ -142,12 +145,18 @@ of a member because they are using different versions of the same model.
 Default value serialization
 ---------------------------
 
-1. All default values SHOULD be serialized. This ensures that messages are
-   unambiguous so that messages do not change during deserialization if the
+1. Implementations that ignore ``default`` traits do not assume a default
+   value for a member. For example, non-authoritative implementations
+   will ignore the ``default`` trait when a member is marked with the
+   :ref:`clientOptional-trait`. These implementations would serialize any
+   explicitly given value, even if it happens to be the default value.
+2. All effective default values SHOULD be serialized. This ensures that
+   messages are unambiguous and do not change during deserialization if the
    default value for a member changes after the message was serialized.
-2. To avoid information disclosure, implementations MAY choose to not serialize
-   a default values if the member is marked with the :ref:`internal-trait`.
-3. A member that is both ``@default`` and ``@required`` MUST be serialized.
+3. To avoid information disclosure, implementations MAY choose to not serialize
+   a default value if the member is marked with the :ref:`internal-trait`.
+4. A member marked ``@required`` MUST be serialized, including members that
+   have a default.
 
 
 .. smithy-trait:: smithy.api#addedDefault
@@ -411,7 +420,8 @@ The following example defines an ``@input`` structure:
         name: String
     }
 
-.. rubric:: ``@input`` structure constraints
+``@input`` structure constraints
+--------------------------------
 
 Structure shapes marked with the ``@input`` trait MUST adhere to the
 following constraints:
@@ -426,7 +436,8 @@ following constraints:
 These constraints allow tooling to specialize operation input shapes in
 ways that would otherwise require complex model transformations.
 
-.. rubric:: Impact on backward compatibility
+Impact on backward compatibility
+--------------------------------
 
 Required members of a structure marked with the ``@input`` trait are implicitly
 considered :ref:`clientOptional <clientOptional-trait>`. It is backward
@@ -452,6 +463,9 @@ Value type
     Annotation trait.
 Conflicts with
     :ref:`input-trait`, :ref:`error-trait`
+
+``@output`` structure constraints
+---------------------------------
 
 Structure shapes marked with the ``@output`` trait MUST adhere to the
 following constraints:
@@ -502,6 +516,7 @@ The following example defines a :ref:`map <map>` shape that MAY contain
     }
 
 
+.. smithy-trait:: smithy.api#mixin
 .. _mixin-trait:
 
 ``mixin`` trait

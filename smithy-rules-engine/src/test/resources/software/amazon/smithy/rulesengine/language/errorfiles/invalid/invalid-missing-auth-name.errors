@@ -1,0 +1,3 @@
+[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#clientContextParams | UnstableTrait
+[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: smithy.rules#endpointRuleSet | UnstableTrait
+[ERROR] example#FizzBuzz: Expected `authSchemes` to have a `name` key with a string value but it did not: `{}` | RuleSetAuthSchemes

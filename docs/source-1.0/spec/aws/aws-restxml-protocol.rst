@@ -150,9 +150,8 @@ that affect serialization:
       - Binds a top-level operation input structure member to a label in
         the hostPrefix of an endpoint trait.
     * - :ref:`http <http-trait>`
-      - Configures the HTTP bindings of an operation. An operation that
-        does not define the ``http`` trait is ineligible for use with
-        this protocol.
+      - Configures the HTTP bindings of an operation. An operation bound to a
+        service with this protocol applied MUST have the ``http`` trait applied.
     * - :ref:`httpError <httpError-trait>`
       - A ``client`` error has a default status code of ``400``, and a
         ``server`` error has a default status code of ``500``. The
@@ -189,6 +188,9 @@ that affect serialization:
         for the targeted shape.
     * - :ref:`timestampFormat <timestampFormat-trait>`
       - Defines a custom timestamp serialization format.
+    * - :ref:`requestCompression <requestCompression-trait>`
+      - Indicates that an operation supports compressing requests from clients
+        to services.
 
 .. important::
 
@@ -308,7 +310,7 @@ Protocol compliance tests
 -------------------------
 
 A full compliance test suite is provided and SHALL be considered a normative
-reference: https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/restXml
+reference: https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/restXml
 
 These compliance tests define a model that is used to define test cases and
 the expected serialized HTTP requests and responses for each case.

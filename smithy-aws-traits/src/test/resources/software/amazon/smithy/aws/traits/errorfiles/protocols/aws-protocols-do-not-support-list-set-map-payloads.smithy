@@ -13,7 +13,10 @@ use smithy.api#httpPayload
 @restJson1
 service InvalidExample {
     version: "2020-12-29",
-    operations: [InvalidBindingOperation],
+    operations: [
+        InvalidBindingOperation,
+        InvalidSimpleBindingOperation
+    ],
 }
 
 @http(method: "POST", uri: "/invalid-payload")
@@ -39,6 +42,31 @@ structure InvalidBindingOperationOutput {
 structure InvalidBindingError {
     @httpPayload
     setBinding: StringSet
+}
+
+@http(method: "POST", uri: "/invalid-simple-payload")
+operation InvalidSimpleBindingOperation {
+    input: InvalidSimpleBindingOperationInput,
+    output: InvalidSimpleBindingOperationOutput,
+    errors: [InvalidSimpleBindingError],
+}
+
+@input
+structure InvalidSimpleBindingOperationInput {
+    @httpPayload
+    booleanBinding: Boolean,
+}
+
+@output
+structure InvalidSimpleBindingOperationOutput {
+    @httpPayload
+    integerBinding: Integer,
+}
+
+@error("client")
+structure InvalidSimpleBindingError {
+    @httpPayload
+    doubleBinding: Double
 }
 
 list StringList {

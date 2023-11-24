@@ -1,39 +1,25 @@
 /*
- * Copyright 2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package software.amazon.smithy.rulesengine.analysis;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Set;
 import java.util.stream.Stream;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
-import software.amazon.smithy.rulesengine.language.eval.RuleEvaluator;
-import software.amazon.smithy.rulesengine.language.eval.Value;
+import software.amazon.smithy.rulesengine.language.TraversingVisitor;
+import software.amazon.smithy.rulesengine.language.evaluation.RuleEvaluator;
+import software.amazon.smithy.rulesengine.language.evaluation.value.Value;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.rule.Condition;
-import software.amazon.smithy.rulesengine.language.syntax.rule.Rule;
-import software.amazon.smithy.rulesengine.language.util.PathFinder;
-import software.amazon.smithy.rulesengine.language.util.StringUtils;
-import software.amazon.smithy.rulesengine.language.visit.TraversingVisitor;
 import software.amazon.smithy.rulesengine.traits.EndpointTestCase;
+import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -46,7 +32,7 @@ public final class CoverageChecker {
 
     public CoverageChecker(EndpointRuleSet ruleSet) {
         this.ruleSet = ruleSet;
-        this.checkerCore = new CoverageCheckerCore();
+        checkerCore = new CoverageCheckerCore();
     }
 
     /**
@@ -55,7 +41,7 @@ public final class CoverageChecker {
      * @param input the map parameters and inputs to test coverage.
      */
     public void evaluateInput(Map<Identifier, Value> input) {
-        this.checkerCore.evaluateRuleSet(ruleSet, input);
+        checkerCore.evaluateRuleSet(ruleSet, input);
     }
 
     /**
@@ -64,184 +50,108 @@ public final class CoverageChecker {
      * @param testCase the test case to evaluate.
      */
     public void evaluateTestCase(EndpointTestCase testCase) {
-        HashMap<Identifier, Value> map = new HashMap<>();
-        testCase.getParams().getStringMap().forEach((s, node) -> map.put(Identifier.of(s), Value.fromNode(node)));
-        this.checkerCore.evaluateRuleSet(ruleSet, map);
+        Map<Identifier, Value> map = new LinkedHashMap<>();
+        for (Map.Entry<String, Node> entry : testCase.getParams().getStringMap().entrySet()) {
+            map.put(Identifier.of(entry.getKey()), Value.fromNode(entry.getValue()));
+        }
+        checkerCore.evaluateRuleSet(ruleSet, map);
     }
 
     /**
-     * Analyze and provides the coverage results for the rule-set.
+     * Analyze coverage for the rule-set, providing results when coverage is found.
      *
-     * @return stream of {@link CoverageResult}.
+     * @return returns a stream of {@link CoverageResult}.
      */
     public Stream<CoverageResult> checkCoverage() {
-        Stream<Condition> conditions = new CollectConditions().visitRuleset(ruleSet);
-        return coverageForConditions(conditions);
+        return new CollectConditions().visitRuleset(ruleSet).distinct().flatMap(this::getConditionCoverage);
     }
 
-    /**
-     * Analyze and provides the coverage results for a specific rule.
-     *
-     * @return stream of {@link CoverageResult}.
-     */
-    public Stream<CoverageResult> checkCoverageFromRule(Rule rule) {
-        Stream<Condition> conditions = rule.accept(new CollectConditions());
-        return coverageForConditions(conditions);
-
-    }
-
-    private Stream<CoverageResult> coverageForConditions(Stream<Condition> conditions) {
-        return conditions.distinct().flatMap(condition -> {
-            Wrapper<Condition> w = new Wrapper<>(condition);
-            ArrayList<BranchResult> conditionResults = checkerCore.conditionResults.getOrDefault(w, new ArrayList<>());
-            List<Boolean> branches = conditionResults.stream()
-                    .map(c -> c.result)
-                    .distinct()
-                    .collect(Collectors.toList());
-            if (branches.size() == 1) {
-                return Stream.of(new CoverageResult(condition, !branches.get(0), conditionResults.stream()
-                        .map(c -> c.context.input)
-                        .collect(Collectors.toList())));
-            } else if (branches.size() == 0) {
-                return Stream.of(new CoverageResult(condition, false, Collections.emptyList()),
-                        new CoverageResult(condition, true, Collections.emptyList()));
-            } else {
-                return Stream.empty();
-            }
-        });
-    }
-
-    private static class Wrapper<T> {
-        private final T inner;
-
-        Wrapper(T inner) {
-            this.inner = inner;
+    private Stream<CoverageResult> getConditionCoverage(Condition condition) {
+        Set<Boolean> conditionResults = checkerCore.getResult(condition);
+        if (conditionResults.size() == 1) {
+            return Stream.of(new CoverageResult(condition, !conditionResults.iterator().next()));
         }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(inner);
+        if (conditionResults.size() == 0) {
+            return Stream.of(new CoverageResult(condition, false), new CoverageResult(condition, true));
         }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-            Wrapper<?> wrapper = (Wrapper<?>) o;
-            return inner.equals(wrapper.inner);
-        }
+        return Stream.empty();
     }
 
-    public static class BranchResult {
-        private final boolean result;
-        private final CoverageCheckerCore.Context context;
+    private static class CoverageCheckerCore extends RuleEvaluator {
+        // Sets are used to contain results, as coverage is only concerned with both
+        // having coverage or no happening at all for the condition in question.
+        private final Map<Condition, Set<Boolean>> results = new LinkedHashMap<>();
 
-        public BranchResult(boolean result, CoverageCheckerCore.Context context) {
-            this.result = result;
-            this.context = context;
-        }
-    }
-
-    static class CoverageCheckerCore extends RuleEvaluator {
-        HashMap<Wrapper<Condition>, ArrayList<BranchResult>> conditionResults = new HashMap<>();
-        Context context = null;
-
-        @Override
-        public Value evaluateRuleSet(EndpointRuleSet ruleset, Map<Identifier, Value> parameterArguments) {
-            try {
-                context = new Context(parameterArguments);
-                return super.evaluateRuleSet(ruleset, parameterArguments);
-            } finally {
-                context = null;
-            }
+        private Set<Boolean> getResult(Condition condition) {
+            return results.getOrDefault(condition, SetUtils.of());
         }
 
         @Override
         public Value evaluateCondition(Condition condition) {
-            assert context != null;
-            Value result = super.evaluateCondition(condition);
-            Wrapper<Condition> cond = new Wrapper<>(condition);
-            ArrayList<BranchResult> list = conditionResults.getOrDefault(cond, new ArrayList<>());
-            if (result.isNone() || result.equals(Value.bool(false))) {
-                list.add(new BranchResult(false, context));
-            } else {
-                list.add(new BranchResult(true, context));
-            }
-            conditionResults.put(cond, list);
-            return result;
-        }
+            // evaluateRuleSet needs to be called first. This class is inner private
+            // and ensures this, so we don't need to worry about that at this point.
+            Value conditionResult = super.evaluateCondition(condition);
+            boolean result = !(conditionResult.isEmpty() || conditionResult.equals(Value.booleanValue(false)));
 
-        static class Context {
-            private final Map<Identifier, Value> input;
+            Set<Boolean> resultSet = results.getOrDefault(condition, new HashSet<>());
+            resultSet.add(result);
+            results.put(condition, resultSet);
 
-            Context(Map<Identifier, Value> input) {
-                this.input = input;
-            }
+            return conditionResult;
         }
     }
 
-    static class CollectConditions extends TraversingVisitor<Condition> {
+    private static class CollectConditions extends TraversingVisitor<Condition> {
         @Override
         public Stream<Condition> visitConditions(List<Condition> conditions) {
             return conditions.stream();
         }
     }
 
+    /**
+     * A container for a specific condition's coverage result.
+     */
     public static class CoverageResult {
         private final Condition condition;
         private final boolean result;
-        private final List<Map<Identifier, Value>> otherUsages;
 
-        public CoverageResult(Condition condition, boolean result, List<Map<Identifier, Value>> otherUsages) {
+        /**
+         * Constructs a new coverage result container for the given condition and result.
+         *
+         * @param condition the condition being covered.
+         * @param result if the condition is covered by test cases or not.
+         */
+        public CoverageResult(Condition condition, boolean result) {
             this.condition = condition;
             this.result = result;
-            this.otherUsages = otherUsages;
         }
 
-        public Condition condition() {
+        /**
+         * Gets the condition that is covered.
+         *
+         * @return the condition being covered.
+         */
+        public Condition getCondition() {
             return condition;
         }
 
-        public boolean result() {
+        /**
+         * Gets if the condition is covered or not.
+         *
+         * @return returns true if the condition is covered, false otherwise.
+         */
+        public boolean getResult() {
             return result;
         }
 
-        public List<Map<Identifier, Value>> otherUsages() {
-            return otherUsages;
-        }
-
+        /**
+         * Pretty prints this CoverageResult.
+         *
+         * @return A pretty representation of the condition and result.
+         */
         public String pretty() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("leaf: ").append(pretty(condition));
-            return sb.toString();
-        }
-
-        private String pretty(Condition condition) {
-            return new StringBuilder()
-                    .append(condition)
-                    .append("(")
-                    .append(condition.getSourceLocation().getFilename())
-                    .append(":")
-                    .append(condition.getSourceLocation().getLine())
-                    .append(")")
-                    .toString();
-        }
-
-        public String prettyWithPath(EndpointRuleSet ruleset) {
-            PathFinder.Path path = PathFinder.findPath(ruleset, condition).orElseThrow(NoSuchElementException::new);
-            StringBuilder sb = new StringBuilder();
-            sb.append(pretty()).append("\n");
-            for (List<Condition> cond : path.negated()) {
-                sb.append(StringUtils.indent(String.format("!%s", cond.toString()), 2));
-            }
-            for (Condition cond : path.positive()) {
-                sb.append(StringUtils.indent(cond.toString(), 2));
-            }
-            return sb.toString();
+            return "leaf: " + condition + "(" + condition.getSourceLocation().getFilename() + ":"
+                    + condition.getSourceLocation().getLine() + ")";
         }
     }
 }

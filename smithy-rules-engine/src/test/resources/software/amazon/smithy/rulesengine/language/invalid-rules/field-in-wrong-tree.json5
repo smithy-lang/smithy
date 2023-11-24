@@ -1,15 +1,16 @@
 // when parsing endpoint ruleset
 // while typechecking
-//   at invalid-rules/field-in-wrong-tree.json5:41
+//   at invalid-rules/field-in-wrong-tree.json5:42
 // while typechecking the endpoint
-//   at invalid-rules/field-in-wrong-tree.json5:43
+//   at invalid-rules/field-in-wrong-tree.json5:44
 // while checking the URL
+//   at invalid-rules/field-in-wrong-tree.json5:45
 // while typechecking "{partitionResult#name}.amazonaws.com"
 // while typechecking the template `"{partitionResult#name}.amazonaws.com"`
-//   at invalid-rules/field-in-wrong-tree.json5:44
 // while checking {partitionResult#name}
 // while typechecking partitionResult#name
 // while typechecking partitionResult
+// while resolving the type of reference partitionResult
 // No field named partitionResult
 {
   "version": "1.2",
@@ -24,7 +25,7 @@
     {
       "conditions": [
         {
-          "fn": "aws.partition",
+          "fn": "parseURL",
           "argv": [
             {
               "ref": "region"
@@ -34,7 +35,7 @@
         }
       ],
       "endpoint": {
-        "url": "{partitionResult#name}.amazonaws.com"
+        "url": "{partitionResult#scheme}://amazonaws.com"
       },
       "type": "endpoint"
     },

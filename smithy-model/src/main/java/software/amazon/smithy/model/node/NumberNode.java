@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -31,13 +31,46 @@ import software.amazon.smithy.model.SourceLocation;
  */
 public final class NumberNode extends Node {
 
-    private final Number value;
+    private final BigDecimal value;
+    private final Number originalValue;
     private final String stringCache;
+    private boolean isNaN;
+    private boolean isPositiveInfinity;
+    private boolean isNegativeInfinity;
 
     public NumberNode(Number value, SourceLocation sourceLocation) {
         super(sourceLocation);
-        this.value = Objects.requireNonNull(value);
+        originalValue = value;
         stringCache = value.toString();
+        this.value = toBigDecimal(originalValue);
+    }
+
+    private BigDecimal toBigDecimal(Number value) {
+        if (value instanceof BigDecimal) {
+            return (BigDecimal) value;
+        } else if (value instanceof Integer || value instanceof Long || value instanceof Short
+                   || value instanceof Byte) {
+            return BigDecimal.valueOf(value.longValue());
+        } else if (value instanceof Float || value instanceof Double) {
+            double d = value.doubleValue();
+            if (Double.isNaN(d)) {
+                isNaN = true;
+                return null;
+            } else if (Double.isInfinite(d)) {
+                if (stringCache.startsWith("-")) {
+                    isNegativeInfinity = true;
+                } else {
+                    isPositiveInfinity = true;
+                }
+                return null;
+            } else {
+                return BigDecimal.valueOf(d);
+            }
+        } else if (value instanceof BigInteger) {
+            return new BigDecimal((BigInteger) value);
+        } else {
+            return new BigDecimal(stringCache);
+        }
     }
 
     /**
@@ -46,16 +79,34 @@ public final class NumberNode extends Node {
      * @return Returns a number.
      */
     public Number getValue() {
-        return value;
+        return originalValue;
     }
 
     /**
-     * Returns true if the node contains a natural number.
+     * Gets the number value as a BigDecimal if possible.
      *
-     * @return Returns true if the node contains a natural number.
+     * <p>NaN and infinite numbers will return an empty Optional.
+     *
+     * @return Returns the BigDecimal value of the wrapped number.
      */
+    public Optional<BigDecimal> asBigDecimal() {
+        return Optional.ofNullable(value);
+    }
+
+    @Deprecated
     public boolean isNaturalNumber() {
         return !isFloatingPointNumber();
+    }
+
+    /**
+     * Check the value is negative, including negative infinity.
+     *
+     * <p>Any number >= 0, +Infinity, and NaN return false.
+     *
+     * @return Return true if negative.
+     */
+    public boolean isNegative() {
+        return isNegativeInfinity || (value != null && value.compareTo(BigDecimal.ZERO) < 0);
     }
 
     /**
@@ -64,10 +115,25 @@ public final class NumberNode extends Node {
      * @return Returns true if the node contains a floating point number.
      */
     public boolean isFloatingPointNumber() {
-        return value instanceof Float
-                || value instanceof Double
-                || value instanceof BigDecimal
-                || stringCache.contains(".");
+        return value == null || value.scale() > 0 || toString().contains(".");
+    }
+
+    /**
+     * Returns true if the number is a floating point NaN.
+     *
+     * @return Return true if NaN.
+     */
+    public boolean isNaN() {
+        return isNaN;
+    }
+
+    /**
+     * Returns true if the number is infinite.
+     *
+     * @return Return true if infinite.
+     */
+    public boolean isInfinite() {
+        return isPositiveInfinity || isNegativeInfinity;
     }
 
     @Override
@@ -112,24 +178,22 @@ public final class NumberNode extends Node {
      * @return Returns true if set to zero.
      */
     public boolean isZero() {
-        // Do a cheap test based on the serialized value of the number first.
-        // This test covers byte, short, integer, and long.
-        if (toString().equals("0") || toString().equals("0.0")) {
-            return true;
-        } else if (value instanceof BigDecimal) {
-            return value.equals(BigDecimal.ZERO);
-        } else if (value instanceof BigInteger) {
-            return value.equals(BigInteger.ZERO);
-        } else if (value instanceof Float) {
-            return value.floatValue() == 0f;
-        } else {
-            return value.doubleValue() == 0d;
-        }
+        return value != null && value.compareTo(BigDecimal.ZERO) == 0;
     }
 
     @Override
     public boolean equals(Object other) {
-        return other instanceof NumberNode && stringCache.equals(((NumberNode) other).stringCache);
+        if (!(other instanceof NumberNode)) {
+            return false;
+        } else if (other == this) {
+            return true;
+        } else {
+            NumberNode o = (NumberNode) other;
+            return isNaN == o.isNaN
+                   && isPositiveInfinity == o.isPositiveInfinity
+                   && isNegativeInfinity == o.isNegativeInfinity
+                   && Objects.equals(value, o.value);
+        }
     }
 
     @Override

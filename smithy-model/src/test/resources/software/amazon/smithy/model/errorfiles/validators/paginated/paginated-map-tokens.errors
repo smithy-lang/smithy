@@ -1,2 +1,2 @@
-[DANGER] ns.foo#MapTokens: paginated trait `inputToken` member `MapTokensInput` targets a map shape, but this is not recommended. One of [`string`] SHOULD be targeted. | PaginatedTrait.WrongShapeType.inputToken
-[DANGER] ns.foo#MapTokens: paginated trait `outputToken` member `MapTokensOutput` targets a map shape, but this is not recommended. One of [`string`] SHOULD be targeted. | PaginatedTrait.WrongShapeType.outputToken
+[DANGER] ns.foo#MapTokens: paginated trait `inputToken` member `nextToken` targets a map shape, but this is not recommended. One of [`string`] SHOULD be targeted. | PaginatedTrait.WrongShapeType.inputToken
+[DANGER] ns.foo#MapTokens: paginated trait `outputToken` member `nextToken` targets a map shape, but this is not recommended. One of [`string`] SHOULD be targeted. | PaginatedTrait.WrongShapeType.outputToken
