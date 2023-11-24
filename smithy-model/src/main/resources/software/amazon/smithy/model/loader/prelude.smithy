@@ -246,8 +246,7 @@ structure authDefinition {
     traits: TraitShapeIdList
 }
 
-/// Enables HTTP Basic Authentication as defined in RFC 2617 on a service
-/// or operation.
+/// HTTP Basic Authentication as defined in [RFC 2617](https://tools.ietf.org/html/rfc2617.html).
 @trait(
     selector: "service"
     breakingChanges: [
@@ -258,8 +257,7 @@ structure authDefinition {
 @externalDocumentation("RFC 2617": "https://tools.ietf.org/html/rfc2617.html")
 structure httpBasicAuth {}
 
-/// Enables HTTP Digest Authentication as defined in RFC 2617 on a service
-/// or operation.
+/// HTTP Digest Authentication as defined in [RFC 2617](https://tools.ietf.org/html/rfc2617.html).
 @trait(
     selector: "service"
     breakingChanges: [
@@ -270,8 +268,7 @@ structure httpBasicAuth {}
 @externalDocumentation("RFC 2617": "https://tools.ietf.org/html/rfc2617.html")
 structure httpDigestAuth {}
 
-/// Enables HTTP Bearer Authentication as defined in RFC 6750 on a service
-/// or operation.
+/// HTTP Bearer Authentication as defined in [RFC 6750](https://tools.ietf.org/html/rfc6750.html).
 @trait(
     selector: "service"
     breakingChanges: [

@@ -14,11 +14,11 @@ structure cognitoUserPools {
     providerArns: StringList
 }
 
-/// Signature Version 4 is the process to add authentication information to
-/// AWS requests sent by HTTP. For security, most requests to AWS must be
-/// signed with an access key, which consists of an access key ID and secret
-/// access key. These two keys are commonly referred to as your security
-/// credentials.
+/// [Signature Version 4](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html)
+/// is the process to add authentication information to AWS requests sent by HTTP. For
+/// security, most requests to AWS must be signed with an access key, which consists
+/// of an access key ID and secret access key. These two keys are commonly referred to
+/// as your security credentials.
 @authDefinition(traits: [unsignedPayload])
 @externalDocumentation(
     Reference: "https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html"
