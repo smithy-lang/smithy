@@ -360,11 +360,28 @@ public class ModelInteropTransformerTest {
                                                 + "@default(0)\n"
                                                 + "integer PrimitiveInteger\n"
                                                 + "\n"
+                                                + "intEnum BoxedIntEnum {\n"
+                                                + "    ONE = 1\n"
+                                                + "}\n"
+                                                + "\n"
+                                                + "@default(1)\n"
+                                                + "intEnum BoxedIntEnumWithDefault {\n"
+                                                + "    ONE = 1\n"
+                                                + "}\n"
+                                                + "\n"
+                                                + "@default(0)\n"
+                                                + "intEnum PrimitiveIntEnum {\n"
+                                                + "    ZERO = 0\n"
+                                                + "}\n"
+                                                + "\n"
                                                 + "structure Foo {\n"
                                                 + "    DefaultString: DefaultString = \"\"\n"
                                                 + "    BoxedInteger: BoxedInteger\n"
                                                 + "    PrimitiveInteger: PrimitiveInteger = 0\n"
                                                 + "    BoxedIntegerWithDefault: BoxedIntegerWithDefault = 1\n"
+                                                + "    BoxedIntEnum: BoxedIntEnum\n"
+                                                + "    BoxedIntEnumWithDefault: BoxedIntEnumWithDefault = 1\n"
+                                                + "    PrimitiveIntEnum: PrimitiveIntEnum = 0\n"
                                                 +"}\n")
                 .assemble()
                 .unwrap();
@@ -385,10 +402,19 @@ public class ModelInteropTransformerTest {
         ShapeId fooBoxedInteger = ShapeId.from("smithy.example#Foo$BoxedInteger");
 
         ShapeId boxedIntegerWithDefault = ShapeId.from("smithy.example#BoxedIntegerWithDefault");
-        ShapeId fooBoxedIntegerWithDefault = ShapeId.from("smithy.example#BoxedIntegerWithDefault");
+        ShapeId fooBoxedIntegerWithDefault = ShapeId.from("smithy.example#Foo$BoxedIntegerWithDefault");
 
         ShapeId primitiveInteger = ShapeId.from("smithy.example#PrimitiveInteger");
         ShapeId fooPrimitiveInteger = ShapeId.from("smithy.example#Foo$PrimitiveInteger");
+
+        ShapeId boxedIntEnum = ShapeId.from("smithy.example#BoxedIntEnum");
+        ShapeId fooBoxedIntEnum = ShapeId.from("smithy.example#Foo$BoxedIntEnum");
+
+        ShapeId boxedIntEnumWithDefault = ShapeId.from("smithy.example#BoxedIntEnumWithDefault");
+        ShapeId fooBoxedIntEnumWithDefault = ShapeId.from("smithy.example#Foo$BoxedIntEnumWithDefault");
+
+        ShapeId primitiveIntEnum = ShapeId.from("smithy.example#PrimitiveIntEnum");
+        ShapeId fooPrimitiveIntEnum = ShapeId.from("smithy.example#Foo$PrimitiveIntEnum");
 
         // Do not box strings for v1 compatibility.
         assertThat(model.expectShape(defaultString).hasTrait(BoxTrait.class), is(false));
@@ -404,7 +430,7 @@ public class ModelInteropTransformerTest {
 
         // Add box to BoxedIntegerWithDefault because it has a default that isn't the v1 zero value.
         assertThat(model.expectShape(boxedIntegerWithDefault).hasTrait(BoxTrait.class), is(true));
-        assertThat(model.expectShape(fooBoxedIntegerWithDefault).hasTrait(BoxTrait.class), is(true)); // no need to box the member too
+        assertThat(model.expectShape(fooBoxedIntegerWithDefault).hasTrait(BoxTrait.class), is(false)); // no need to box the member too
         assertThat(model.expectShape(boxedIntegerWithDefault).hasTrait(DefaultTrait.class), is(true));
         assertThat(model.expectShape(fooBoxedIntegerWithDefault).hasTrait(DefaultTrait.class), is(true));
 
@@ -413,6 +439,24 @@ public class ModelInteropTransformerTest {
         assertThat(model.expectShape(fooPrimitiveInteger).hasTrait(BoxTrait.class), is(false));
         assertThat(model.expectShape(primitiveInteger).hasTrait(DefaultTrait.class), is(true));
         assertThat(model.expectShape(fooPrimitiveInteger).hasTrait(DefaultTrait.class), is(true));
+
+        // Add box to BoxedIntEnum because it has no default trait.
+        assertThat(model.expectShape(boxedIntEnum).hasTrait(BoxTrait.class), is(true));
+        assertThat(model.expectShape(fooBoxedIntEnum).hasTrait(BoxTrait.class), is(false)); // no need to box the member too
+        assertThat(model.expectShape(boxedIntEnum).hasTrait(DefaultTrait.class), is(false));
+        assertThat(model.expectShape(fooBoxedIntEnum).hasTrait(DefaultTrait.class), is(false));
+
+        // Add box to BoxedIntEnumWithDefault because it has a default that isn't the v1 zero value.
+        assertThat(model.expectShape(boxedIntEnumWithDefault).hasTrait(BoxTrait.class), is(true));
+        assertThat(model.expectShape(fooBoxedIntEnumWithDefault).hasTrait(BoxTrait.class), is(false)); // no need to box the member too
+        assertThat(model.expectShape(boxedIntEnumWithDefault).hasTrait(DefaultTrait.class), is(true));
+        assertThat(model.expectShape(fooBoxedIntEnumWithDefault).hasTrait(DefaultTrait.class), is(true));
+
+        // No box trait on PrimitiveIntEnum because it has a zero value default.
+        assertThat(model.expectShape(primitiveIntEnum).hasTrait(BoxTrait.class), is(false));
+        assertThat(model.expectShape(fooPrimitiveIntEnum).hasTrait(BoxTrait.class), is(false));
+        assertThat(model.expectShape(primitiveIntEnum).hasTrait(DefaultTrait.class), is(true));
+        assertThat(model.expectShape(fooPrimitiveIntEnum).hasTrait(DefaultTrait.class), is(true));
     }
 
     @Test
