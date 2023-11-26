@@ -2,7 +2,10 @@
     "smithy": "1.0",
     "shapes": {
         "smithy.example#IntEnum": {
-            "type": "integer"
+            "type": "integer",
+            "traits": {
+                "smithy.api#box": {}
+            }
         },
         "smithy.example#StringEnum": {
             "type": "string",
