@@ -51,15 +51,15 @@ structure HttpConfiguration {
 @protocolDefinition(
     noInlineDocumentSupport: true
     traits: [
+        timestampFormat
+        cors
+        endpoint
+        hostLabel
         awsQueryError
         xmlAttribute
         xmlFlattened
         xmlName
         xmlNamespace
-        timestampFormat
-        cors
-        endpoint
-        hostLabel
     ]
 )
 @trait(selector: "service [trait|xmlNamespace]")
@@ -92,15 +92,15 @@ structure awsQueryCompatible {}
 @protocolDefinition(
     noInlineDocumentSupport: true
     traits: [
+        timestampFormat
+        cors
+        endpoint
+        hostLabel
         ec2QueryName
         xmlAttribute
         xmlFlattened
         xmlName
         xmlNamespace
-        timestampFormat
-        cors
-        endpoint
-        hostLabel
     ]
 )
 @trait(selector: "service [trait|xmlNamespace]")
@@ -135,6 +135,7 @@ structure httpChecksum {
 /// A RESTful protocol that sends JSON in structured payloads.
 @protocolDefinition(
     traits: [
+        timestampFormat
         cors
         endpoint
         hostLabel
@@ -148,7 +149,6 @@ structure httpChecksum {
         httpQueryParams
         httpResponseCode
         jsonName
-        timestampFormat
     ]
 )
 @trait(selector: "service")
@@ -159,6 +159,7 @@ structure restJson1 with [HttpConfiguration] {}
 @protocolDefinition(
     noInlineDocumentSupport: true
     traits: [
+        timestampFormat
         cors
         endpoint
         hostLabel
