@@ -292,9 +292,10 @@ disableHandlerPermissionGeneration (``boolean``)
     Sets whether to disable generating ``handler`` ``permission`` lists for
     Resource Schemas. By default, handler permissions lists are automatically
     added to schemas based on :ref:`lifecycle-operations` and permissions
-    listed in the :ref:`aws.iam#requiredActions-trait` on the operation. See
-    `the handlers section`_ in the CloudFormation Resource Schemas
-    documentation for more information.
+    listed in the :ref:`requiredActions property of the aws.iam#iamAction
+    trait <aws.iam#iamAction-trait>` on the operation. See `the handlers
+    section`_ in the CloudFormation Resource Schemas documentation for more
+    information.
 
     .. code-block:: json
 
@@ -312,7 +313,8 @@ disableHandlerPermissionGeneration (``boolean``)
     CloudFormation Resource Schema handlers determine what provisioning actions
     can be performed for the resource. The handlers utilized by CloudFormation
     align with some :ref:`lifecycle-operations`. These operations can also
-    define other permission actions required to invoke them with the :ref:`aws.iam#requiredActions-trait`.
+    define other permission actions required to invoke them with the :ref:`requiredActions
+    property of the aws.iam#iamAction trait <aws.iam#iamAction-trait>`
 
     When handler permission generation is enabled, all the actions required to
     invoke the operations related to the handler, including the actions for the

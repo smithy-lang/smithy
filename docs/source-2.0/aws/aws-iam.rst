@@ -18,12 +18,17 @@ Smithy are automatically inferred. These can be disabled or augmented. For
 more information, see :ref:`deriving-condition-keys`.
 
 
+.. _aws-iam_traits-principal:
+
+----------------
+Principal traits
+----------------
+
 .. smithy-trait:: aws.iam#supportedPrincipalTypes
 .. _aws.iam#supportedPrincipalTypes-trait:
 
------------------------------------------
 ``aws.iam#supportedPrincipalTypes`` trait
------------------------------------------
+=========================================
 
 Summary
     The `IAM principal types`_ that can use the service or operation.
@@ -62,68 +67,6 @@ The following example defines two operations:
     operation OperationA {}
 
     operation OperationB {}
-
-
-.. _aws-iam_traits-resources:
-
----------------
-Resource traits
----------------
-
-.. smithy-trait:: aws.iam#iamResource
-.. _aws.iam#iamResource-trait:
-
-``aws.iam#iamResource`` trait
-=============================
-
-Summary
-    Indicates properties of a Smithy resource in AWS IAM.
-Trait selector
-    ``resource``
-Value type
-    ``structure``
-
-The ``aws.iam#iamResource`` trait is a structure that supports the following
-members:
-
-.. list-table::
-    :header-rows: 1
-    :widths:  10 20 70
-
-    * - Property
-      - Type
-      - Description
-    * - name
-      - ``string``
-      - The name of the resource in AWS IAM.
-    * - relativeDocumentation
-      - ``string``
-      - A relative URL path that defines more information about the resource
-        within a set of IAM-related documentation.
-    * - disableConditionKeyInheritance
-      - ``boolean``
-      - When set to ``true``, decouples this IAM resource's condition keys from
-        those of its parent resource(s). This can be used in combination with
-        the :ref:`aws.iam#conditionKeys-trait` trait to isolate a resource's
-        condition keys from those of its parent(s).
-
-The following example defines a simple resource with a name in AWS IAM that
-deviates from the :ref:`shape name of the shape ID <shape-id>` of the resource.
-
-.. code-block:: smithy
-
-    $version: "2"
-
-    namespace smithy.example
-
-    use aws.iam#iamResource
-
-    @iamResource(name: "super")
-    resource SuperResource {
-        identifiers: {
-            superId: String,
-        }
-    }
 
 
 .. _aws-iam_traits-actions:
@@ -246,11 +189,16 @@ contains the following properties:
       - The condition keys used for authorizing against this resource.
 
 
+.. _aws-iam_traits-actions-deprecated-traits:
+
+Deprecated action traits
+========================
+
 .. smithy-trait:: aws.iam#actionName
 .. _aws.iam#actionName-trait:
 
 ``aws.iam#actionName`` trait
-============================
+----------------------------
 
 .. danger::
     This trait is deprecated. The ``name`` property of the
@@ -295,7 +243,7 @@ The following example defines two operations:
 .. _aws.iam#actionPermissionDescription-trait:
 
 ``aws.iam#actionPermissionDescription`` trait
-=============================================
+---------------------------------------------
 
 .. danger::
     This trait is deprecated. The ``documentation`` property of the
@@ -325,7 +273,7 @@ Value type
 .. _aws.iam#requiredActions-trait:
 
 ``aws.iam#requiredActions`` trait
-=================================
+---------------------------------
 
 .. danger::
     This trait is deprecated. The ``requiredActions`` property of the
@@ -369,6 +317,68 @@ operation for it to complete successfully.
     @requiredActions(["otherservice:OtherOperation"])
     operation MyOperation {}
 
+.. _aws-iam_traits-resources:
+
+---------------
+Resource Traits
+---------------
+
+.. smithy-trait:: aws.iam#iamResource
+.. _aws.iam#iamResource-trait:
+
+``aws.iam#iamResource`` trait
+=============================
+
+Summary
+    Indicates properties of a Smithy resource in AWS IAM.
+Trait selector
+    ``resource``
+Value type
+    ``structure``
+
+The ``aws.iam#iamResource`` trait is a structure that supports the following
+members:
+
+.. list-table::
+    :header-rows: 1
+    :widths:  10 20 70
+
+    * - Property
+      - Type
+      - Description
+    * - name
+      - ``string``
+      - The name of the resource in AWS IAM.
+    * - relativeDocumentation
+      - ``string``
+      - A relative URL path that defines more information about the resource
+        within a set of IAM-related documentation.
+    * - disableConditionKeyInheritance
+      - ``boolean``
+      - When set to ``true``, decouples this IAM resource's condition keys from
+        those of its parent resource(s). This can be used in combination with
+        the :ref:`aws.iam#conditionKeys-trait` trait to isolate a resource's
+        condition keys from those of its parent(s).
+
+The following example defines a simple resource with a name in AWS IAM that
+deviates from the :ref:`shape name of the shape ID <shape-id>` of the resource.
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.iam#iamResource
+
+    @iamResource(name: "super")
+    resource SuperResource {
+        identifiers: {
+            superId: String,
+        }
+    }
+
+
 
 .. _aws-iam_traits-condition-keys:
 
@@ -384,7 +394,8 @@ Condition key traits
 
 Summary
     Defines the set of condition keys that appear within a service in
-    addition to inferred and global condition keys.
+    addition to :ref:`inferred <deriving-condition-keys>` and global condition
+    keys.
 Trait selector
     ``service``
 Value type
@@ -433,7 +444,7 @@ Each condition key structure supports the following members:
 
     @service(sdkId: "My Value", arnNamespace: "myservice")
     @defineConditionKeys(
-        "otherservice:Bar": {
+        "myservice:Bar": {
             type: "String"
             documentation: "The Bar string"
             externalDocumentation: "http://example.com"
@@ -448,49 +459,6 @@ Each condition key structure supports the following members:
     Condition keys that refer to global ``"aws:*"`` keys are allowed to not be
     defined on the service.
 
-
-.. _condition-key-types:
-
-Condition Key Types
--------------------
-
-The following table describes the available types a condition key can have.
-Condition keys in IAM policies can be evaluated with `condition operators`_.
-
-.. list-table::
-    :header-rows: 1
-    :widths: 20 80
-
-    * - Type
-      - Description
-    * - ``ARN``
-      - A String type that contains an `Amazon Resource Name (ARN)`_.
-    * - ``Binary``
-      - A String type that contains base-64 encoded binary data.
-    * - ``Bool``
-      - A general boolean type.
-    * - ``Date``
-      - A String type that conforms to the ``datetime`` profile of `ISO 8601`_.
-    * - ``IPAddress``
-      - A String type that conforms to :rfc:`4632`.
-    * - ``Numeric``
-      - A general type for integers and floats.
-    * - ``String``
-      - A general string type.
-    * - ``ArrayOfARN``
-      - An unordered list of ARN types.
-    * - ``ArrayOfBinary``
-      - An unordered list of Binary types.
-    * - ``ArrayOfBool``
-      - An unordered list of Bool types.
-    * - ``ArrayOfDate``
-      - An unordered list of Date types.
-    * - ``ArrayOfIPAddress``
-      - An unordered list of IPAddress types.
-    * - ``ArrayOfNumeric``
-      - An unordered list of Numeric types.
-    * - ``ArrayOfString``
-      - An unordered list of String types.
 
 
 .. smithy-trait:: aws.iam#conditionKeys
@@ -507,11 +475,11 @@ Value type
     ``list<string>``
 
 Condition keys derived automatically can be applied to a resource or operation
-explicitly. Condition keys applied this way MUST be either inferred or
-explicitly defined via the :ref:`aws.iam#defineConditionKeys-trait` trait.
+explicitly. Condition keys applied this way MUST be either :ref:`inferred <deriving-condition-keys>`
+or explicitly defined via the :ref:`aws.iam#defineConditionKeys-trait` trait.
 
 The following example's ``MyResource`` resource has the
-``myservice:MyResourceFoo`` and  ``otherservice:Bar`` condition keys. The
+``myservice:MyResourceFoo`` and  ``myservice:Bar`` condition keys. The
 ``MyOperation`` operation has the ``aws:region`` condition key.
 
 .. code-block:: smithy
@@ -525,13 +493,13 @@ The following example's ``MyResource`` resource has the
     use aws.iam#conditionKeys
 
     @service(sdkId: "My Value", arnNamespace: "myservice")
-    @defineConditionKeys("otherservice:Bar": { type: "String" })
+    @defineConditionKeys("myservice:Bar": { type: "String" })
     service MyService {
         version: "2017-02-11"
         resources: [MyResource]
     }
 
-    @conditionKeys(["otherservice:Bar"])
+    @conditionKeys(["myservice:Bar"])
     resource MyResource {
         identifiers: {foo: String}
         operations: [MyOperation]
@@ -546,85 +514,6 @@ The following example's ``MyResource`` resource has the
     without being defined on the service.
 
 
-.. smithy-trait:: aws.iam#disableConditionKeyInference
-.. _aws.iam#disableConditionKeyInference-trait:
-
-``aws.iam#disableConditionKeyInference`` trait
-==============================================
-
-Summary
-    Declares that the condition keys of a resource should not be inferred.
-Trait selector
-    ``:test(service, resource)``
-Value type
-    Annotation trait
-
-When a service is marked with the ``aws.iam#disableConditionKeyInference``
-trait, all the resources bound to the service will not have condition
-keys automatically inferred from its identifiers and the identifiers
-of its ancestors.
-
-The following example shows resources ``MyResource1`` and ``MyResource2``
-have had condition key inference disabled because they are bound to a
-service marked with ``aws.iam#disableConditionKeyInference`` trait.
-
-.. code-block:: smithy
-
-    $version: "2"
-
-    namespace smithy.example
-
-    use aws.api#service
-    use aws.iam#disableConditionKeyInference
-
-    @service(sdkId: "My Value", arnNamespace: "myservice")
-    @disableConditionKeyInference
-    service MyService {
-        version: "2017-02-11"
-        resources: [MyResource1, MyResource2]
-    }
-
-    resource MyResource1 {
-        identifiers: {
-            foo: String
-        }
-    }
-
-    resource MyResource2 {
-        identifiers: {
-            foo: String
-        }
-    }
-
-A resource marked with the ``aws.iam#disableConditionKeyInference`` trait will
-not have its condition keys automatically inferred from its identifiers and
-the identifiers of its ancestors (if present.)
-
-The following example shows a resource, ``MyResource``, that has had its
-condition key inference disabled.
-
-.. code-block:: smithy
-
-    $version: "2"
-
-    namespace smithy.example
-
-    use aws.api#service
-    use aws.iam#disableConditionKeyInference
-
-    @service(sdkId: "My Value", arnNamespace: "myservice")
-    service MyService {
-        version: "2017-02-11"
-        resources: [MyResource]
-    }
-
-    @disableConditionKeyInference
-    resource MyResource {
-        identifiers: {
-            foo: String
-            bar: String
-        }
-    }
 
 .. smithy-trait:: aws.iam#serviceResolvedConditionKeys
 .. _aws.iam#serviceResolvedConditionKeys-trait:
@@ -642,8 +531,8 @@ Value type
 
 All condition keys defined with the ``serviceResolvedConditionKeys`` trait
 MUST also be defined via the :ref:`aws.iam#defineConditionKeys-trait` trait.
-Derived resource condition keys MUST NOT be included
-with the ``serviceResolvedConditionKeys`` trait.
+:ref:`Inferred resource condition keys <deriving-condition-keys>` MUST NOT be
+included with the ``serviceResolvedConditionKeys`` trait.
 
 The following example defines two service-specific condition keys:
 
@@ -715,9 +604,134 @@ explicitly binds ``ActionContextKey1`` to the field ``key``.
     }
 
 
+.. smithy-trait:: aws.iam#disableConditionKeyInference
+.. _aws.iam#disableConditionKeyInference-trait:
+
+``aws.iam#disableConditionKeyInference`` trait
+==============================================
+
+Summary
+    Declares that the condition keys of a resource should not be
+    :ref:`inferred <deriving-condition-keys>`.
+Trait selector
+    ``:test(service, resource)``
+Value type
+    Annotation trait
+
+When a service is marked with the ``aws.iam#disableConditionKeyInference``
+trait, all the resources bound to the service will not have condition
+keys automatically inferred from its identifiers and the identifiers
+of its ancestors.
+
+The following example shows resources ``MyResource1`` and ``MyResource2``
+have had condition key inference disabled because they are bound to a
+service marked with ``aws.iam#disableConditionKeyInference`` trait.
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.api#service
+    use aws.iam#disableConditionKeyInference
+
+    @service(sdkId: "My Value", arnNamespace: "myservice")
+    @disableConditionKeyInference
+    service MyService {
+        version: "2017-02-11"
+        resources: [MyResource1, MyResource2]
+    }
+
+    resource MyResource1 {
+        identifiers: {
+            foo: String
+        }
+    }
+
+    resource MyResource2 {
+        identifiers: {
+            foo: String
+        }
+    }
+
+A resource marked with the ``aws.iam#disableConditionKeyInference`` trait will
+not have its condition keys automatically inferred from its identifiers and
+the identifiers of its ancestors. if present.
+
+The following example shows a resource, ``MyResource``, that has condition key
+inference disabled.
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace smithy.example
+
+    use aws.api#service
+    use aws.iam#disableConditionKeyInference
+
+    @service(sdkId: "My Value", arnNamespace: "myservice")
+    service MyService {
+        version: "2017-02-11"
+        resources: [MyResource]
+    }
+
+    @disableConditionKeyInference
+    resource MyResource {
+        identifiers: {
+            foo: String
+            bar: String
+        }
+    }
+
+
+.. _condition-key-types:
+
+Condition Key Types
+=======================
+
+The following table describes the available types a condition key can have.
+Condition keys in IAM policies can be evaluated with `condition operators`_.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 20 80
+
+    * - Type
+      - Description
+    * - ``ARN``
+      - A String type that contains an `Amazon Resource Name (ARN)`_.
+    * - ``Binary``
+      - A String type that contains base-64 encoded binary data.
+    * - ``Bool``
+      - A general boolean type.
+    * - ``Date``
+      - A String type that conforms to the ``datetime`` profile of `ISO 8601`_.
+    * - ``IPAddress``
+      - A String type that conforms to :rfc:`4632`.
+    * - ``Numeric``
+      - A general type for integers and floats.
+    * - ``String``
+      - A general string type.
+    * - ``ArrayOfARN``
+      - An unordered list of ARN types.
+    * - ``ArrayOfBinary``
+      - An unordered list of Binary types.
+    * - ``ArrayOfBool``
+      - An unordered list of Bool types.
+    * - ``ArrayOfDate``
+      - An unordered list of Date types.
+    * - ``ArrayOfIPAddress``
+      - An unordered list of IPAddress types.
+    * - ``ArrayOfNumeric``
+      - An unordered list of Numeric types.
+    * - ``ArrayOfString``
+      - An unordered list of String types.
+
 .. _deriving-condition-keys:
 
-Deriving Condition Keys
+Deriving condition keys
 =======================
 
 Smithy will automatically derive condition key information for a service, as
@@ -747,13 +761,13 @@ Given the following model,
     use aws.iam#iamResource
 
     @service(sdkId: "My Value", arnNamespace: "myservice")
-    @defineConditionKeys("otherservice:Bar": { type: "String" })
+    @defineConditionKeys("myservice:Bar": { type: "String" })
     service MyService {
         version: "2017-02-11"
         resources: [MyResource]
     }
 
-    @conditionKeys(["otherservice:Bar"])
+    @conditionKeys(["myservice:Bar"])
     resource MyResource {
         identifiers: {foo: String}
         operations: [MyOperation]
@@ -792,11 +806,11 @@ The computed condition keys for the service are:
     * - ``MyResource``
       -
           * ``myservice:MyResourceFoo``
-          * ``otherservice:Bar``
+          * ``myservice:Bar``
     * - ``InnerResource``
       -
           * ``myservice:MyResourceFoo``
-          * ``otherservice:Bar``
+          * ``myservice:Bar``
           * ``myservice:InnerResourceYum``
     * - ``MyDetachedResource``
       - None
@@ -806,7 +820,6 @@ The computed condition keys for the service are:
     * - ``MyOperation``
       -
           * ``aws:region``
-
 
 .. _AWS Identity and Access Management: https://aws.amazon.com/iam/
 .. _Condition keys: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html
