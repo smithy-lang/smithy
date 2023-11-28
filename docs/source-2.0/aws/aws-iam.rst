@@ -21,7 +21,7 @@ more information, see :ref:`deriving-condition-keys`.
 .. _aws-iam_traits-principal:
 
 ----------------
-Principal Traits
+Principal traits
 ----------------
 
 .. smithy-trait:: aws.iam#supportedPrincipalTypes
@@ -72,7 +72,7 @@ The following example defines two operations:
 .. _aws-iam_traits-actions:
 
 -------------
-Action Traits
+Action traits
 -------------
 
 .. smithy-trait:: aws.iam#iamAction
@@ -378,12 +378,8 @@ deviates from the :ref:`shape name of the shape ID <shape-id>` of the resource.
 .. _aws-iam_traits-condition-keys:
 
 --------------------
-Condition Key Traits
+Condition key traits
 --------------------
-
-
-
-
 
 .. smithy-trait:: aws.iam#defineConditionKeys
 .. _aws.iam#defineConditionKeys-trait:
@@ -647,7 +643,7 @@ Condition keys in IAM policies can be evaluated with `condition operators`_.
 
 .. _deriving-condition-keys:
 
-Deriving Condition Keys
+Deriving condition keys
 =======================
 
 Smithy will automatically derive condition key information for a service, as
