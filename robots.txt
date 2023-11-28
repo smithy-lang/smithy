@@ -1,0 +1,3 @@
+# Block all crawlers from accessing the 1.0 docs
+User-agent: *
+Disallow: /1.0/
