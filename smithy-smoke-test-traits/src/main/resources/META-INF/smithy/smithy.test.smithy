@@ -62,7 +62,7 @@ structure SmokeTestCase {
 /// The different kinds of expectations that can be made for a test case.
 @private
 union Expectation {
-    /// Indicates that the call is expeted to not throw an error. No other
+    /// Indicates that the call is expected to not throw an error. No other
     /// assertions are made about the response.
     success: Unit
 

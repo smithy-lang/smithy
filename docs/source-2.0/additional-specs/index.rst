@@ -11,6 +11,7 @@ start with ``smithy.*`` where "*" is anything other than ``api``.
     :caption: smithy.* specifications
 
     http-protocol-compliance-tests
+    smoke-tests
     waiters
     mqtt
     rules-engine/index
