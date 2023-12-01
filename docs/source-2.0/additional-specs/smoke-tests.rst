@@ -85,7 +85,7 @@ A structure defining a smoke test case.
         configuration files on disk, or other means to influence the
         serialization formats used by clients or servers.
 
-        If a ``vendorParamsShape`` is set, these parameters MUST be compatible
+        If ``vendorParamsShape`` is set, these parameters MUST be compatible
         with that shape's definition.
     * - vendorParamsShape
       - ``string``
