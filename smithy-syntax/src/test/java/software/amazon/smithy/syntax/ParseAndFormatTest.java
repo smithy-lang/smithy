@@ -14,6 +14,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.IdlTokenizer;
+import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.utils.IoUtils;
 
 // A parameterized test that finds models in corpus, parses them, skipping files that end with ".formatted.smithy".
@@ -32,9 +33,19 @@ public class ParseAndFormatTest {
         }
 
         // Ensure that the tests can be parsed by smithy-model too.
-        Model.assembler().addImport(filename).disableValidation().assemble().unwrap();
+        Model.assembler()
+                .addImport(filename)
+                .putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true)
+                .disableValidation()
+                .assemble()
+                .unwrap();
         if (!formattedFile.equals(filename)) {
-            Model.assembler().addImport(formattedFile).disableValidation().assemble().unwrap();
+            Model.assembler()
+                    .addImport(formattedFile)
+                    .putProperty(ModelAssembler.ALLOW_UNKNOWN_TRAITS, true)
+                    .disableValidation()
+                    .assemble()
+                    .unwrap();
         }
 
         String model = IoUtils.readUtf8File(filename);

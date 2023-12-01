@@ -24,3 +24,9 @@ Lorem ipsum dolor.
 """
 )
 string Baz
+
+@documentation("""
+    This is the documentation for Bux.
+    Lorem ipsum dolor.
+""")
+string Bux

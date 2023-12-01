@@ -33,12 +33,12 @@ operation GetTime2 {
 }
 
 resource Sprocket1 {
-    identifiers: {username: String}
+    identifiers: { username: String }
 }
 
 @http(method: "X", uri: "/foo", code: 200)
 resource Sprocket2 {
-    identifiers: {username: String, id: String, otherId: String}
+    identifiers: { username: String, id: String, otherId: String }
     collectionOperations: [
         SomeOperation
     ]
@@ -54,7 +54,7 @@ structure SomeOperationFoo {}
 
 @http(method: "X", uri: "/foo3", code: 200)
 resource Sprocket3 {
-    identifiers: {username: String, id: String, otherId: String}
+    identifiers: { username: String, id: String, otherId: String }
     // It's empty, so on a single line.
     collectionOperations: []
 }

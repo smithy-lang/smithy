@@ -2,7 +2,7 @@
 // newline.
 $version: "2.0"
 $foo: 100
-$baz: {abc: 123}
+$baz: { abc: 123 }
 
 $bar: {
     aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1"
