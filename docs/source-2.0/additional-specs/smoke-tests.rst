@@ -54,7 +54,7 @@ The ``smokeTests`` trait is a list of :ref:`SmokeTestCase <SmokeTestCase-struct>
 SmokeTestCase
 =============
 
-A structure defining a single smoke test case.
+A structure defining a smoke test case.
 
 .. list-table::
     :header-rows: 1
