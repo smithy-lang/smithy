@@ -5,9 +5,9 @@ Smoke Tests
 ===========
 
 Smoke tests are small, simple tests intended to uncover large issues by ensuring
-basic functionality works as expected. In Smithy, these tests are used to make
+core functionality works as expected. In Smithy, these tests are used to make
 sure clients can successfully make a request to a live service, and that the
-service responds as expected.
+service responds with the right kind of response.
 
 
 --------
@@ -23,11 +23,9 @@ request from the client.
     client can successfully connect to a service and get the right kind of
     response.
 
-This trait can be used by client and service developers to make sure their clients
-can successfully connect to the service, and the service responds as expected. The
-trait can be used by client code generators to generate test cases that are run on
-the generated client against a service to ensure that this basic functionality is
-working, and continues to work as the client and service evolve.
+This trait can be used by client code generators to generate test cases that test
+generated clients against live services to ensure core functionality is working,
+and continues to work as the client and service evolve.
 
 .. smithy-trait:: smithy.test#smokeTests
 .. _smokeTests-trait:
@@ -39,7 +37,7 @@ smokeTests
 Summary
     The ``smokeTests`` trait is used to define a set of test cases to send
     to a live service to ensure that a client can successfully connect to
-    a service and get the right kind of response.
+    a service and receives the right kind of response.
 Trait selector
     .. code-block:: none
 
@@ -77,7 +75,7 @@ A structure defining a smoke test case.
 
         Parameter values that contain binary data MUST be defined using values
         that can be represented in plain text as the plain text representation
-        (for example, use "foo" and not "Zm9vCg==").
+        (for example, use ``"foo"`` and not ``"Zm9vCg=="``).
     * - vendorParams
       - ``document``
       - Defines vendor-specific parameters that are used to influence the
@@ -89,15 +87,15 @@ A structure defining a smoke test case.
         with that shape's definition.
     * - vendorParamsShape
       - ``string``
-      - A shape to be used to validate the ``vendorParams`` member contents.
+      - The ID of the shape that should be used to validate the ``vendorParams``
+        member contents.
 
         If set, the parameters in ``vendorParams`` MUST be compatible with this
         shape's definition.
     * - expect
       - :ref:`Expectation <Expectation-union>`
-      - **Required**. Defines the response that is expected from the service
-        call. This can be either a successful response, an error message, or
-        a specific error response.
+      - **Required**. Defines the kind of response that is expected from the
+        service call.
     * - tags
       - ``[string]``
       - Attaches a list of tags that can be used to categorize and group
@@ -110,7 +108,7 @@ Expectation
 -----------
 
 A union describing the different kinds of expectations that can be made for a
-test case. As it is a union, exactly one member must be set.
+test case. Exactly one member must be set.
 
 .. list-table::
     :header-rows: 1
@@ -179,15 +177,12 @@ and return a successful response otherwise.
         ]
     )
     operation Foo {
-        input: FooInput
+        input := {
+            bar: String
+        }
         errors: [
             InvalidMessageError
         ]
-    }
-
-    @input
-    structure FooInput {
-        bar: String
     }
 
     @error("client")
