@@ -352,7 +352,7 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
                 return false;
             }
             ErrorExample otherExample = (ErrorExample) other;
-            return shapeId.equals(otherExample.shapeId) && content.equals(otherExample.content);
+            return Objects.equals(shapeId, otherExample.shapeId) && Objects.equals(content, otherExample.content);
         }
     }
 
