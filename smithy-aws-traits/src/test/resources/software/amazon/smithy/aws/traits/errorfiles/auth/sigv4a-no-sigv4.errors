@@ -1,0 +1,1 @@
+[ERROR] smithy.example#InvalidService: Trait `aws.auth#sigv4a` cannot be applied to `smithy.example#InvalidService`. This trait may only be applied to shapes that match the following selector: service[trait|aws.auth#sigv4] | TraitTarget

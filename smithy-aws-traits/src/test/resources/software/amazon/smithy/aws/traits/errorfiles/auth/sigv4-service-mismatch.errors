@@ -1,0 +1,1 @@
+[WARNING] smithy.example#InvalidService: Value for `aws.api#service$arnNamespace` "invalidservice" and value for `aws.auth#sigv4$name` "signingname" SHOULD match. | SigV4Traits

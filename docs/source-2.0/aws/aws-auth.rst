@@ -33,7 +33,8 @@ Trait value
           - **Required**. The signature version 4 service signing name to use
             in the `credential scope`_ when signing requests. This value MUST
             NOT be empty. This value SHOULD match the ``arnNamespace`` property
-            of the :ref:`aws.api#service-trait`.
+            of the :ref:`aws.api#service-trait` if present and the ``name``
+            property of the :ref:`aws.auth#sigv4a-trait` if present.
 
 If a request contains the ``Authorization`` header or a query string parameter
 with the name of ``X-Amz-Algorithm`` containing the value ``AWS4-HMAC-SHA256``,
@@ -53,6 +54,65 @@ unauthenticated request.
 
     @service(sdkId: "Some Value")
     @sigv4(name: "foobaz")
+    @restJson1
+    service FooBaz {
+        version: "2018-03-17"
+    }
+
+
+.. smithy-trait:: aws.auth#sigv4a
+.. _aws.auth#sigv4a-trait:
+
+-------------------------
+``aws.auth#sigv4a`` trait
+-------------------------
+
+Trait summary
+    The ``aws.auth#sigv4a`` trait adds support for AWS Signature Version 4
+    Asymmetric (SigV4A), an extension of `AWS signature version 4`_ (SigV4), to
+    a service.
+Trait selector
+    ``service[trait|aws.auth#sigv4]``
+Trait value
+    An ``object`` that supports the following properties:
+
+    .. list-table::
+        :header-rows: 1
+        :widths: 10 20 70
+
+        * - Property
+          - Type
+          - Description
+        * - name
+          - ``string``
+          - **Required**. The signature version 4a service signing name to use
+            in the `credential scope`_ when signing requests. This value MUST
+            NOT be empty. This value SHOULD match the ``arnNamespace`` property
+            of the :ref:`aws.api#service-trait` if present and the ``name``
+            property of the :ref:`aws.auth#sigv4-trait`.
+
+SigV4A is nearly identical to SigV4, but also uses public-private keys and
+asymmetric cryptographic signatures for every request. Most notably, SigV4A
+supports signatures for multi-region API requests.
+
+.. code-block:: smithy
+
+    $version: "2"
+
+    namespace aws.fooBaz
+
+    use aws.api#service
+    use aws.auth#sigv4
+    use aws.auth#sigv4a
+    use aws.protocols#restJson1
+
+    // This service is an AWS service that prioritizes SigV4A
+    // authentication before SigV4 authentication.
+    // Note that services that support SigV4A MUST support SigV4.
+    @service(sdkId: "Some Value")
+    @auth([sigv4a, sigv4])
+    @sigv4(name: "foobaz")
+    @sigv4a(name: "foobaz")
     @restJson1
     service FooBaz {
         version: "2018-03-17"
