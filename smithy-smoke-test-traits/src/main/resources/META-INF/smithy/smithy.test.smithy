@@ -28,7 +28,7 @@ structure SmokeTestCase {
     ///
     /// Parameter values that contain binary data MUST be defined using values
     /// that can be represented in plain text as the plain text representation
-    /// (for example, use "foo" and not "Zm9vCg==").
+    /// (for example, use `"foo"` and not `"Zm9vCg=="`).
     params: Document
 
     /// Defines vendor-specific parameters that are used to influence the
@@ -40,16 +40,15 @@ structure SmokeTestCase {
     /// that shape's definition.
     vendorParams: Document
 
-    /// A shape to be used to validate the `vendorParams` member contents.
+    /// The ID of the shape that should be used to validate the `vendorParams`
+    /// member contents.
     ///
     /// If set, the parameters in `vendorParams` MUST be compatible with this
     /// shape's definition.
     @idRef(failWhenMissing: true)
     vendorParamsShape: String
 
-    /// Defines the response that is expected from the service call. This can
-    /// be either a successful response, an error message, or a specific error
-    /// response.
+    /// Defines the kind of response that is expected from the service call.
     @required
     expect: Expectation
 
@@ -62,7 +61,7 @@ structure SmokeTestCase {
 /// The different kinds of expectations that can be made for a test case.
 @private
 union Expectation {
-    /// Indicates that the call is expeted to not throw an error. No other
+    /// Indicates that the call is expected to not throw an error. No other
     /// assertions are made about the response.
     success: Unit
 

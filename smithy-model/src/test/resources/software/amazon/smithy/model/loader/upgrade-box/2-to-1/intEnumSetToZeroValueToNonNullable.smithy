@@ -1,11 +1,11 @@
-// {"v1-box": false, "v1-client-zero-value": false, "v2": false}
+// {"v1-box": true, "v1-client-zero-value": false, "v2": false}
+// V1 style box checks will think this member is nullable because it
+// targets a shape with the box trait.
 $version: "2.0"
 
 namespace smithy.example
 
 structure Foo {
-    // V1 models treat intEnum as normal integers, so they just see a default zero value, hence this is
-    // non-nullable in v1 and v2.
     intEnumSetToZeroValueToNonNullable: MyIntEnum = 0
 }
 
