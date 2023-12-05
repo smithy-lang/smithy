@@ -17,6 +17,7 @@ package software.amazon.smithy.model.traits;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -27,6 +28,8 @@ import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.ExamplesTrait.ErrorExample;
+import software.amazon.smithy.model.traits.ExamplesTrait.Example;
 
 public class ExamplesTraitTest {
     @Test
@@ -81,4 +84,24 @@ public class ExamplesTraitTest {
         assertFalse(serialized.get(1).get().asObjectNode().get().getMember("allowConstraintErrors").isPresent());
         assertTrue(serialized.get(2).get().asObjectNode().get().getMember("allowConstraintErrors").isPresent());
     }
+
+    @Test
+    public void exampleEqualsWorks() {
+        ObjectNode input = Node.objectNode().withMember("a", Node.from("b"));
+        ObjectNode output = Node.objectNode().withMember("c", Node.from("d"));
+        ErrorExample errorExample1 = ErrorExample.builder().shapeId(ShapeId.from("smithy.example#FooError")).content(Node.objectNode()
+                .withMember("e", Node.from("f"))).build();
+        ErrorExample errorExample2 = ErrorExample.builder().shapeId(ShapeId.from("smithy.example#FooError")).content(Node.objectNode()
+                .withMember("e", Node.from("f"))).build();
+        ErrorExample errorExample3 = ErrorExample.builder().shapeId(ShapeId.from("smithy.example#FooError")).content(Node.objectNode()
+                .withMember("g", Node.from("h"))).build();
+        Example example1 = Example.builder().title("foo").documentation("docs").input(input).output(output).error(errorExample1).build();
+        Example example2 = Example.builder().title("foo").documentation("docs").input(input).output(output).error(errorExample2).build();
+        Example example3 = Example.builder().title("foo").documentation("docs").input(input).output(output).error(errorExample3).build();
+        assertThat(errorExample1, equalTo(errorExample2));
+        assertThat(errorExample1, not(equalTo(errorExample3)));
+        assertThat(example1, equalTo(example2));
+        assertThat(example1, not(equalTo(example3)));
+    }
+
 }

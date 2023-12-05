@@ -337,6 +337,23 @@ public final class ExamplesTrait extends AbstractTrait implements ToSmithyBuilde
                 return this;
             }
         }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(shapeId, content);
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (other == this) {
+                return true;
+            }
+            if (other == null || other.getClass() != this.getClass()) {
+                return false;
+            }
+            ErrorExample otherExample = (ErrorExample) other;
+            return Objects.equals(shapeId, otherExample.shapeId) && Objects.equals(content, otherExample.content);
+        }
     }
 
     public static final class Provider implements TraitService {
