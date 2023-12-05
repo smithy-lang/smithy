@@ -174,6 +174,8 @@ that affect serialization:
       - Binds a top-level input structure member to a query string parameter.
     * - :ref:`httpQueryParams <httpQueryParams-trait>`
       - Binds a map of key-value pairs to query string parameters.
+    * - :ref:`httpChecksumRequired <httpChecksumRequired-trait>`
+      - Indicates that requests MUST send a checksum.
     * - :ref:`jsonName <jsonName-trait>`
       - By default, the JSON property names used in serialized structures are
         the same as a structure member name. The ``jsonName`` trait changes
