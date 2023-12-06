@@ -1,6 +1,8 @@
 // This file defines test cases that serialize maps in XML payloads.
 
 $version: "2.0"
+$operationInputSuffix: "Request"
+$operationOutputSuffix: "Response"
 
 namespace aws.protocoltests.restxml
 
@@ -13,8 +15,12 @@ use smithy.test#httpResponseTests
 /// The example tests basic map serialization.
 @http(uri: "/XmlMaps", method: "POST")
 operation XmlMaps {
-    input: XmlMapsInputOutput,
-    output: XmlMapsInputOutput
+    input := {
+        myMap: XmlMapsInputOutputMap
+    }
+    output := {
+        myMap: XmlMapsInputOutputMap
+    }
 }
 
 apply XmlMaps @httpRequestTests([
@@ -25,7 +31,7 @@ apply XmlMaps @httpRequestTests([
         method: "POST",
         uri: "/XmlMaps",
         body: """
-              <XmlMapsInputOutput>
+              <XmlMapsRequest>
                   <myMap>
                       <entry>
                           <key>foo</key>
@@ -40,7 +46,7 @@ apply XmlMaps @httpRequestTests([
                           </value>
                       </entry>
                   </myMap>
-              </XmlMapsInputOutput>
+              </XmlMapsRequest>
               """,
         bodyMediaType: "application/xml",
         headers: {
@@ -66,7 +72,7 @@ apply XmlMaps @httpResponseTests([
         protocol: restXml,
         code: 200,
         body: """
-              <XmlMapsInputOutput>
+              <XmlMapsRequest>
                   <myMap>
                       <entry>
                           <key>foo</key>
@@ -81,7 +87,7 @@ apply XmlMaps @httpResponseTests([
                           </value>
                       </entry>
                   </myMap>
-              </XmlMapsInputOutput>
+              </XmlMapsRequest>
               """,
         bodyMediaType: "application/xml",
         headers: {
@@ -103,8 +109,12 @@ apply XmlMaps @httpResponseTests([
 @http(uri: "/XmlEmptyMaps", method: "POST")
 @tags(["client-only"])
 operation XmlEmptyMaps {
-    input: XmlMapsInputOutput,
-    output: XmlMapsInputOutput
+    input := {
+        myMap: XmlMapsInputOutputMap
+    }
+    output := {
+        myMap: XmlMapsInputOutputMap
+    }
 }
 
 apply XmlEmptyMaps @httpRequestTests([
@@ -115,9 +125,9 @@ apply XmlEmptyMaps @httpRequestTests([
         method: "POST",
         uri: "/XmlEmptyMaps",
         body: """
-              <XmlMapsInputOutput>
+              <XmlEmptyMapsRequest>
                   <myMap></myMap>
-              </XmlMapsInputOutput>
+              </XmlEmptyMapsRequest>
               """,
         bodyMediaType: "application/xml",
         headers: {
@@ -137,9 +147,9 @@ apply XmlEmptyMaps @httpResponseTests([
         protocol: restXml,
         code: 200,
         body: """
-              <XmlMapsInputOutput>
+              <XmlEmptyMapsResponse>
                   <myMap></myMap>
-              </XmlMapsInputOutput>
+              </XmlEmptyMapsResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {
@@ -156,9 +166,9 @@ apply XmlEmptyMaps @httpResponseTests([
         protocol: restXml,
         code: 200,
         body: """
-              <XmlMapsInputOutput>
+              <XmlEmptyMapsResponse>
                   <myMap/>
-              </XmlMapsInputOutput>
+              </XmlEmptyMapsResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {
@@ -171,10 +181,6 @@ apply XmlEmptyMaps @httpResponseTests([
     }
 ])
 
-structure XmlMapsInputOutput {
-    myMap: XmlMapsInputOutputMap,
-}
-
 map XmlMapsInputOutputMap {
     key: String,
     value: GreetingStruct
@@ -183,8 +189,12 @@ map XmlMapsInputOutputMap {
 // This example tests maps with @xmlName on members.
 @http(uri: "/XmlMapsXmlName", method: "POST")
 operation XmlMapsXmlName {
-    input: XmlMapsXmlNameInputOutput,
-    output: XmlMapsXmlNameInputOutput
+    input := {
+        myMap: XmlMapsXmlNameInputOutputMap
+    }
+    output := {
+        myMap: XmlMapsXmlNameInputOutputMap
+    }
 }
 
 apply XmlMapsXmlName @httpRequestTests([
@@ -195,7 +205,7 @@ apply XmlMapsXmlName @httpRequestTests([
         method: "POST",
         uri: "/XmlMapsXmlName",
         body: """
-              <XmlMapsXmlNameInputOutput>
+              <XmlMapsXmlNameRequest>
                   <myMap>
                       <entry>
                           <Attribute>foo</Attribute>
@@ -210,7 +220,7 @@ apply XmlMapsXmlName @httpRequestTests([
                           </Setting>
                       </entry>
                   </myMap>
-              </XmlMapsXmlNameInputOutput>
+              </XmlMapsXmlNameRequest>
               """,
         bodyMediaType: "application/xml",
         headers: {
@@ -236,7 +246,7 @@ apply XmlMapsXmlName @httpResponseTests([
         protocol: restXml,
         code: 200,
         body: """
-              <XmlMapsXmlNameInputOutput>
+              <XmlMapsXmlNameResponse>
                   <myMap>
                       <entry>
                           <Attribute>foo</Attribute>
@@ -251,7 +261,7 @@ apply XmlMapsXmlName @httpResponseTests([
                           </Setting>
                       </entry>
                   </myMap>
-              </XmlMapsXmlNameInputOutput>
+              </XmlMapsXmlNameResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {
@@ -270,10 +280,6 @@ apply XmlMapsXmlName @httpResponseTests([
     }
 ])
 
-structure XmlMapsXmlNameInputOutput {
-    myMap: XmlMapsXmlNameInputOutputMap,
-}
-
 map XmlMapsXmlNameInputOutputMap {
     @xmlName("Attribute")
     key: String,
@@ -285,8 +291,14 @@ map XmlMapsXmlNameInputOutputMap {
 /// Flattened maps
 @http(uri: "/FlattenedXmlMap", method: "POST")
 operation FlattenedXmlMap {
-    input: FlattenedXmlMapInputOutput,
-    output: FlattenedXmlMapInputOutput
+    input := {
+        @xmlFlattened
+        myMap: FooEnumMap
+    }
+    output := {
+        @xmlFlattened
+        myMap: FooEnumMap
+    }
 }
 
 apply FlattenedXmlMap @httpRequestTests([
@@ -297,7 +309,7 @@ apply FlattenedXmlMap @httpRequestTests([
         method: "POST",
         uri: "/FlattenedXmlMap",
         body: """
-              <FlattenedXmlMapInputOutput>
+              <FlattenedXmlMapRequest>
                   <myMap>
                       <key>foo</key>
                       <value>Foo</value>
@@ -306,7 +318,7 @@ apply FlattenedXmlMap @httpRequestTests([
                       <key>baz</key>
                       <value>Baz</value>
                   </myMap>
-              </FlattenedXmlMapInputOutput>""",
+              </FlattenedXmlMapRequest>""",
         bodyMediaType: "application/xml",
         headers: {
             "Content-Type": "application/xml"
@@ -327,7 +339,7 @@ apply FlattenedXmlMap @httpResponseTests([
         protocol: restXml,
         code: 200,
         body: """
-              <FlattenedXmlMapInputOutput>
+              <FlattenedXmlMapResponse>
                   <myMap>
                       <key>foo</key>
                       <value>Foo</value>
@@ -336,7 +348,7 @@ apply FlattenedXmlMap @httpResponseTests([
                       <key>baz</key>
                       <value>Baz</value>
                   </myMap>
-              </FlattenedXmlMapInputOutput>""",
+              </FlattenedXmlMapResponse>""",
         bodyMediaType: "application/xml",
         headers: {
             "Content-Type": "application/xml"
@@ -350,16 +362,19 @@ apply FlattenedXmlMap @httpResponseTests([
     }
 ])
 
-structure FlattenedXmlMapInputOutput {
-    @xmlFlattened
-    myMap: FooEnumMap,
-}
-
 /// Flattened maps with @xmlName
 @http(uri: "/FlattenedXmlMapWithXmlName", method: "POST")
 operation FlattenedXmlMapWithXmlName {
-    input: FlattenedXmlMapWithXmlNameInputOutput,
-    output: FlattenedXmlMapWithXmlNameInputOutput
+    input := {
+        @xmlFlattened
+        @xmlName("KVP")
+        myMap: FlattenedXmlMapWithXmlNameInputOutputMap,
+    }
+    output := {
+        @xmlFlattened
+        @xmlName("KVP")
+        myMap: FlattenedXmlMapWithXmlNameInputOutputMap
+    }
 }
 
 apply FlattenedXmlMapWithXmlName @httpRequestTests([
@@ -370,7 +385,7 @@ apply FlattenedXmlMapWithXmlName @httpRequestTests([
         method: "POST",
         uri: "/FlattenedXmlMapWithXmlName",
         body: """
-              <FlattenedXmlMapWithXmlNameInputOutput>
+              <FlattenedXmlMapWithXmlNameRequest>
                   <KVP>
                       <K>a</K>
                       <V>A</V>
@@ -379,7 +394,7 @@ apply FlattenedXmlMapWithXmlName @httpRequestTests([
                       <K>b</K>
                       <V>B</V>
                   </KVP>
-              </FlattenedXmlMapWithXmlNameInputOutput>""",
+              </FlattenedXmlMapWithXmlNameRequest>""",
         bodyMediaType: "application/xml",
         headers: {
             "Content-Type": "application/xml"
@@ -400,7 +415,7 @@ apply FlattenedXmlMapWithXmlName @httpResponseTests([
         protocol: restXml,
         code: 200,
         body: """
-              <FlattenedXmlMapWithXmlNameInputOutput>
+              <FlattenedXmlMapWithXmlNameResponse>
                   <KVP>
                       <K>a</K>
                       <V>A</V>
@@ -409,7 +424,7 @@ apply FlattenedXmlMapWithXmlName @httpResponseTests([
                       <K>b</K>
                       <V>B</V>
                   </KVP>
-              </FlattenedXmlMapWithXmlNameInputOutput>""",
+              </FlattenedXmlMapWithXmlNameResponse>""",
         bodyMediaType: "application/xml",
         headers: {
             "Content-Type": "application/xml"
@@ -422,12 +437,6 @@ apply FlattenedXmlMapWithXmlName @httpResponseTests([
         }
     }
 ])
-
-structure FlattenedXmlMapWithXmlNameInputOutput {
-    @xmlFlattened
-    @xmlName("KVP")
-    myMap: FlattenedXmlMapWithXmlNameInputOutputMap,
-}
 
 map FlattenedXmlMapWithXmlNameInputOutputMap {
     @xmlName("K")
@@ -492,10 +501,11 @@ map FlattenedXmlMapWithXmlNamespaceOutputMap {
 
 @http(uri: "/NestedXmlMaps", method: "POST")
 operation NestedXmlMaps {
-    input: NestedXmlMapsInputOutput,
-    output: NestedXmlMapsInputOutput,
+    input := with [NestedXmlMapsInputOutput] {}
+    output := with [NestedXmlMapsInputOutput] {}
 }
 
+@mixin
 structure NestedXmlMapsInputOutput {
     nestedMap: NestedMap,
 
@@ -516,7 +526,7 @@ apply NestedXmlMaps @httpRequestTests([
         method: "POST",
         uri: "/NestedXmlMaps",
         body: """
-            <NestedXmlMapsInputOutput>
+            <NestedXmlMapsRequest>
                 <nestedMap>
                     <entry>
                         <key>foo</key>
@@ -528,7 +538,7 @@ apply NestedXmlMaps @httpRequestTests([
                         </value>
                     </entry>
                 </nestedMap>
-            </NestedXmlMapsInputOutput>""",
+            </NestedXmlMapsRequest>""",
         bodyMediaType: "application/xml",
         headers: {
             "Content-Type": "application/xml",
@@ -550,7 +560,7 @@ apply NestedXmlMaps @httpRequestTests([
         method: "POST",
         uri: "/NestedXmlMaps",
         body: """
-            <NestedXmlMapsInputOutput>
+            <NestedXmlMapsRequest>
                 <flatNestedMap>
                     <key>foo</key>
                     <value>
@@ -560,7 +570,7 @@ apply NestedXmlMaps @httpRequestTests([
                         </entry>
                     </value>
                 </flatNestedMap>
-            </NestedXmlMapsInputOutput>""",
+            </NestedXmlMapsRequest>""",
         bodyMediaType: "application/xml",
         headers: {
             "Content-Type": "application/xml",
@@ -582,7 +592,7 @@ apply NestedXmlMaps @httpResponseTests([
         protocol: restXml,
         code: 200,
         body: """
-            <NestedXmlMapsInputOutput>
+            <NestedXmlMapsResponse>
                 <nestedMap>
                     <entry>
                         <key>foo</key>
@@ -594,7 +604,7 @@ apply NestedXmlMaps @httpResponseTests([
                         </value>
                     </entry>
                 </nestedMap>
-            </NestedXmlMapsInputOutput>""",
+            </NestedXmlMapsResponse>""",
         bodyMediaType: "application/xml",
         headers: {
             "Content-Type": "application/xml",
@@ -615,7 +625,7 @@ apply NestedXmlMaps @httpResponseTests([
         protocol: restXml,
         code: 200,
         body: """
-            <NestedXmlMapsInputOutput>
+            <NestedXmlMapsResponse>
                 <flatNestedMap>
                     <key>foo</key>
                     <value>
@@ -625,7 +635,7 @@ apply NestedXmlMaps @httpResponseTests([
                         </entry>
                     </value>
                 </flatNestedMap>
-            </NestedXmlMapsInputOutput>""",
+            </NestedXmlMapsResponse>""",
         bodyMediaType: "application/xml",
         headers: {
             "Content-Type": "application/xml",
@@ -643,8 +653,8 @@ apply NestedXmlMaps @httpResponseTests([
 /// Maps with @xmlNamespace and @xmlName
 @http(uri: "/XmlMapWithXmlNamespace", method: "POST")
 operation XmlMapWithXmlNamespace {
-    input: XmlMapWithXmlNamespaceInputOutput
-    output: XmlMapWithXmlNamespaceInputOutput
+    input := with [XmlMapWithXmlNamespaceInputOutput] {}
+    output := with [XmlMapWithXmlNamespaceInputOutput] {}
 }
 
 apply XmlMapWithXmlNamespace @httpRequestTests([
@@ -655,7 +665,7 @@ apply XmlMapWithXmlNamespace @httpRequestTests([
         method: "POST",
         uri: "/XmlMapWithXmlNamespace",
         body: """
-              <XmlMapWithXmlNamespaceInputOutput>
+              <XmlMapWithXmlNamespaceRequest>
                   <KVP xmlns="https://the-member.example.com">
                       <entry>
                           <K xmlns="https://the-key.example.com">a</K>
@@ -666,7 +676,7 @@ apply XmlMapWithXmlNamespace @httpRequestTests([
                           <V xmlns="https://the-value.example.com">B</V>
                       </entry>
                   </KVP>
-              </XmlMapWithXmlNamespaceInputOutput>""",
+              </XmlMapWithXmlNamespaceRequest>""",
         bodyMediaType: "application/xml",
         headers: {
             "Content-Type": "application/xml"
@@ -687,7 +697,7 @@ apply XmlMapWithXmlNamespace @httpResponseTests([
         protocol: restXml,
         code: 200,
         body: """
-              <XmlMapWithXmlNamespaceInputOutput>
+              <XmlMapWithXmlNamespaceResponse>
                   <KVP xmlns="https://the-member.example.com">
                       <entry>
                           <K xmlns="https://the-key.example.com">a</K>
@@ -698,7 +708,7 @@ apply XmlMapWithXmlNamespace @httpResponseTests([
                           <V xmlns="https://the-value.example.com">B</V>
                       </entry>
                   </KVP>
-              </XmlMapWithXmlNamespaceInputOutput>""",
+              </XmlMapWithXmlNamespaceResponse>""",
         bodyMediaType: "application/xml",
         headers: {
             "Content-Type": "application/xml"
@@ -712,6 +722,7 @@ apply XmlMapWithXmlNamespace @httpResponseTests([
     }
 ])
 
+@mixin
 structure XmlMapWithXmlNamespaceInputOutput {
     @xmlName("KVP")
     @xmlNamespace(uri: "https://the-member.example.com")

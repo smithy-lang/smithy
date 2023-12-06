@@ -1,6 +1,8 @@
 // This file defines test cases that serialize XML attributes.
 
 $version: "2.0"
+$operationInputSuffix: "Request"
+$operationOutputSuffix: "Response"
 
 namespace aws.protocoltests.restxml
 
@@ -12,8 +14,8 @@ use smithy.test#httpResponseTests
 @idempotent
 @http(uri: "/XmlAttributes", method: "PUT")
 operation XmlAttributes {
-    input: XmlAttributesInputOutput,
-    output: XmlAttributesInputOutput
+    input := with [XmlAttributesInputOutput] {}
+    output := with [XmlAttributesInputOutput] {}
 }
 
 apply XmlAttributes @httpRequestTests([
@@ -24,9 +26,9 @@ apply XmlAttributes @httpRequestTests([
         method: "PUT",
         uri: "/XmlAttributes",
         body: """
-              <XmlAttributesInputOutput test="test">
+              <XmlAttributesRequest test="test">
                   <foo>hi</foo>
-              </XmlAttributesInputOutput>
+              </XmlAttributesRequest>
               """,
         bodyMediaType: "application/xml",
         headers: {
@@ -44,9 +46,9 @@ apply XmlAttributes @httpRequestTests([
         method: "PUT",
         uri: "/XmlAttributes",
         body: """
-              <XmlAttributesInputOutput test="&lt;test&amp;mock&gt;">
+              <XmlAttributesRequest test="&lt;test&amp;mock&gt;">
                   <foo>hi</foo>
-              </XmlAttributesInputOutput>
+              </XmlAttributesRequest>
               """,
         bodyMediaType: "application/xml",
         headers: {
@@ -66,9 +68,9 @@ apply XmlAttributes @httpResponseTests([
         protocol: restXml,
         code: 200,
         body: """
-              <XmlAttributesInputOutput test="test">
+              <XmlAttributesResponse test="test">
                   <foo>hi</foo>
-              </XmlAttributesInputOutput>
+              </XmlAttributesResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {
@@ -81,6 +83,7 @@ apply XmlAttributes @httpResponseTests([
     }
 ])
 
+@mixin
 structure XmlAttributesInputOutput {
     foo: String,
 
@@ -93,8 +96,14 @@ structure XmlAttributesInputOutput {
 @idempotent
 @http(uri: "/XmlAttributesOnPayload", method: "PUT")
 operation XmlAttributesOnPayload {
-    input: XmlAttributesOnPayloadInputOutput,
-    output: XmlAttributesOnPayloadInputOutput
+    input := {
+        @httpPayload
+        payload: XmlAttributesPayloadRequest
+    }
+    output := {
+        @httpPayload
+        payload: XmlAttributesPayloadResponse
+    }
 }
 
 apply XmlAttributesOnPayload @httpRequestTests([
@@ -105,9 +114,9 @@ apply XmlAttributesOnPayload @httpRequestTests([
         method: "PUT",
         uri: "/XmlAttributesOnPayload",
         body: """
-              <XmlAttributesInputOutput test="test">
+              <XmlAttributesPayloadRequest test="test">
                   <foo>hi</foo>
-              </XmlAttributesInputOutput>
+              </XmlAttributesPayloadRequest>
               """,
         bodyMediaType: "application/xml",
         headers: {
@@ -129,9 +138,9 @@ apply XmlAttributesOnPayload @httpResponseTests([
         protocol: restXml,
         code: 200,
         body: """
-              <XmlAttributesInputOutput test="test">
+              <XmlAttributesPayloadResponse test="test">
                   <foo>hi</foo>
-              </XmlAttributesInputOutput>
+              </XmlAttributesPayloadResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {
@@ -146,7 +155,6 @@ apply XmlAttributesOnPayload @httpResponseTests([
     }
 ])
 
-structure XmlAttributesOnPayloadInputOutput {
-    @httpPayload
-    payload: XmlAttributesInputOutput
-}
+structure XmlAttributesPayloadRequest with [XmlAttributesInputOutput] {}
+
+structure XmlAttributesPayloadResponse with [XmlAttributesInputOutput] {}
