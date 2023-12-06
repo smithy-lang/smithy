@@ -1,5 +1,22 @@
 # Smithy Changelog
 
+## 1.42.0 (2023-12-07)
+
+### Features
+
+* Added the `@aws.auth#sigv4a` auth trait. ([#2032](https://github.com/smithy-lang/smithy/pull/2032))
+* Added the `timestampFormat` and `httpChecksumRequired` traits to protocols. ([#2054](https://github.com/smithy-lang/smithy/pull/2054), [#2061](https://github.com/smithy-lang/smithy/pull/2061))
+
+### Bug Fixes
+
+* Fixed conversion of root `intEnum` shape to IDL 1.0 when the shape doesn't have a default value of 0. ([#2053](https://github.com/smithy-lang/smithy/pull/2053))
+* Fixed equality of `@examples` traits by overriding the `equals` method in `ExampleTrait.ErrorExample`. ([#2052](https://github.com/smithy-lang/smithy/pull/2052))
+
+### Documentation
+
+* Updated documentation for auth traits. ([#2051](https://github.com/smithy-lang/smithy/pull/2051))
+* Added documentation for smoke tests. ([#2057](https://github.com/smithy-lang/smithy/pull/2057))
+
 ## 1.41.1 (2023-11-16)
 
 ### Features
