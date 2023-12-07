@@ -1,310 +1,93 @@
-<!doctype html>
-<html class="no-js" lang="en">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Evolving Models" href="evolving-models.html" /><link rel="prev" title="smithy-build" href="building-models/build-config.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
-        <title>Model linters - Smithy 1.0</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Model linters &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../_static/bootstrap-reboot.css" type="text/css" />
     
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
+    <link rel="stylesheet" href="../../_static/custom-tabs.css" type="text/css" />
+
     
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/tabs.js"></script>
+    <script type="text/javascript" src="../../_static/smithy.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Evolving Models" href="evolving-models.html" />
+    <link rel="prev" title="smithy-build" href="building-models/build-config.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="smithy-version" content="1.0">
 
-
-<style>
-  body {
-    --color-code-background: #f8f8f8;
-  --color-code-foreground: black;
-  --admonition-font-size: 100%;
-  --admonition-title-font-size: 100%;
-  --color-brand-primary: #C44536;
-  --color-brand-content: #00808b;
-  --color-announcement-background: #711818de;
-  --color-announcement-text: #fff;
-  
-  }
-  @media not print {
-    body[data-theme="dark"] {
-      --color-code-background: #282828;
-  --color-code-foreground: #dddddd;
-  --color-brand-primary: #ed9d13;
-  --color-brand-content: #58d3ff;
-  --color-announcement-background: #711818de;
-  --color-announcement-text: #fff;
-  
-    }
-    @media (prefers-color-scheme: dark) {
-      body:not([data-theme="light"]) {
-        --color-code-background: #282828;
-  --color-code-foreground: #dddddd;
-  --color-brand-primary: #ed9d13;
-  --color-brand-content: #58d3ff;
-  --color-announcement-background: #711818de;
-  --color-announcement-text: #fff;
-  
-      }
-    }
-  }
-</style><script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
-<script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script></head>
-  <body>
-    
-    <script>
-      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
-    </script>
-    
-
-<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-  <symbol id="svg-toc" viewBox="0 0 24 24">
-    <title>Contents</title>
-    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
-      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
-    </svg>
-  </symbol>
-  <symbol id="svg-menu" viewBox="0 0 24 24">
-    <title>Menu</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
-      <line x1="3" y1="12" x2="21" y2="12"></line>
-      <line x1="3" y1="6" x2="21" y2="6"></line>
-      <line x1="3" y1="18" x2="21" y2="18"></line>
-    </svg>
-  </symbol>
-  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
-    <title>Expand</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
-      <polyline points="9 18 15 12 9 6"></polyline>
-    </svg>
-  </symbol>
-  <symbol id="svg-sun" viewBox="0 0 24 24">
-    <title>Light mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
-      <circle cx="12" cy="12" r="5"></circle>
-      <line x1="12" y1="1" x2="12" y2="3"></line>
-      <line x1="12" y1="21" x2="12" y2="23"></line>
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-      <line x1="1" y1="12" x2="3" y2="12"></line>
-      <line x1="21" y1="12" x2="23" y2="12"></line>
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-    </svg>
-  </symbol>
-  <symbol id="svg-moon" viewBox="0 0 24 24">
-    <title>Dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
-    </svg>
-  </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
-    </svg>
-  </symbol>
-</svg>
-
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
-
-<div class="announcement">
-  <aside class="announcement-content">
-     <strong>⚠️ You are viewing version 1.0.</strong><br/>
-Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2.0/</a>. 
-  </aside>
-</div>
-
-<div class="page">
-  <header class="mobile-header">
-    <div class="header-left">
-      <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
-      </label>
-    </div>
-    <div class="header-center">
-      <a href="../index.html"><div class="brand">Smithy 1.0</div></a>
-    </div>
-    <div class="header-right">
-      <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-        </button>
-      </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-      </label>
-    </div>
-  </header>
-  <aside class="sidebar-drawer">
-    <div class="sidebar-container">
-      
-      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../index.html">
-  
-  <div class="sidebar-logo-container">
-    <img class="sidebar-logo" src="../_static/smithy.svg" alt="Logo"/>
-  </div>
-  
-  
-</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
-  <input type="hidden" name="check_keywords" value="yes">
-  <input type="hidden" name="area" value="default">
-</form>
-<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick start</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../spec/index.html">Specifications</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../spec/core/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../spec/core/model.html">1. The Smithy model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/core/prelude-model.html">2. Prelude model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/core/constraint-traits.html">3. Constraint traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/core/documentation-traits.html">4. Documentation traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/core/type-refinement-traits.html">5. Type refinement traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/core/protocol-traits.html">6. Protocol traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/core/auth-traits.html">7. Authentication traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/core/behavior-traits.html">8. Behavior traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/core/resource-traits.html">9. Resource traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/core/stream-traits.html">10. Streaming Traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/core/http-traits.html">11. HTTP binding traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/core/xml-traits.html">12. XML binding traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/core/endpoint-traits.html">13. Endpoint Traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/core/selectors.html">14. Selectors</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/core/model-validation.html">15. Model validation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/core/idl.html">16. Smithy IDL</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/core/json-ast.html">17. JSON AST</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../spec/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spec/waiters.html">Waiters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spec/mqtt.html">MQTT Protocol Bindings</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../spec/aws/index.html">AWS specifications</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../spec/aws/aws-core.html">AWS Core Specification</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/aws/aws-auth.html">AWS Authentication Traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/aws/aws-iam.html">AWS IAM traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/aws/aws-cloudformation.html">AWS CloudFormation traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/aws/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/aws/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/aws/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/aws/aws-restxml-protocol.html">AWS restXml protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/aws/aws-query-protocol.html">AWS query protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../spec/aws/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../spec/aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../spec/aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../spec/aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../spec/aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../spec/aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Smithy Guides</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2 has-children"><a class="reference internal" href="building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
-<li class="toctree-l3"><a class="reference internal" href="building-models/build-config.html">smithy-build</a></li>
-</ul>
-</li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Model linters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="evolving-models.html">Evolving Models</a></li>
-<li class="toctree-l2"><a class="reference internal" href="style-guide.html">Style Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
-</ul>
-</li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Implementations</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/implementations.html">Implementations</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
-</ul>
-</li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Project links</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/">2.0 Documentation</a></li>
-</ul>
-
-</div>
-</div>
-
-      </div>
-      
-    </div>
-  </aside>
-  <div class="main">
-    <div class="content">
-      <div class="article-container">
-        <a href="#" class="back-to-top muted-link">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
-          </svg>
-          <span>Back to top</span>
-        </a>
-        <div class="content-icon-container">
-          <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-1.0/guides/model-linters.rst" title="Edit this page">
-    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
-      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
-    </svg>
-    <span class="visually-hidden">Edit this page</span>
-  </a>
-</div><div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-            </button>
-          </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-          </label>
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
+                </a>
+                <span class="version-text">1.0</span>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../spec/index.html">Specifications</a></li>
+                <li class="site-page"><a href="index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
         </div>
-        <article role="main">
-          <div class="section" id="model-linters">
-<h1>Model linters<a class="headerlink" href="#model-linters" title="Permalink to this headline">#</a></h1>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article class="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="index.html" accesskey="U">Smithy Guides</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="model-linters">
+<h1><a href="#model-linters">Model linters</a></h1>
 <p>This guide describes how to apply optional linters to a Smithy model.</p>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title">Table of contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#linting-overview" id="id10">Linting overview</a></li>
+<li><a class="reference internal" href="#linters-in-smithy-linters" id="id11">Linters in <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code></a><ul>
+<li><a class="reference internal" href="#abbreviationname" id="id12">AbbreviationName</a></li>
+<li><a class="reference internal" href="#camelcase" id="id13">CamelCase</a></li>
+<li><a class="reference internal" href="#noninclusiveterms" id="id14">NoninclusiveTerms</a></li>
+<li><a class="reference internal" href="#reservedwords" id="id15">ReservedWords</a></li>
+<li><a class="reference internal" href="#standardoperationverb" id="id16">StandardOperationVerb</a></li>
+<li><a class="reference internal" href="#repeatedshapename" id="id17">RepeatedShapeName</a></li>
+<li><a class="reference internal" href="#inputoutputstructurereuse" id="id18">InputOutputStructureReuse</a></li>
+<li><a class="reference internal" href="#missingpaginatedtrait" id="id19">MissingPaginatedTrait</a></li>
+<li><a class="reference internal" href="#shouldhaveusedtimestamp" id="id20">ShouldHaveUsedTimestamp</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#writing-custom-validators" id="id21">Writing custom validators</a></li>
+<li><a class="reference internal" href="#writing-custom-linters" id="id22">Writing custom Linters</a></li>
+</ul>
+</div>
 <div class="section" id="linting-overview">
-<h2>Linting overview<a class="headerlink" href="#linting-overview" title="Permalink to this headline">#</a></h2>
+<h2><a href="#linting-overview">Linting overview</a></h2>
 <p>A <em>linter</em> is a special kind of <a class="reference internal" href="../spec/core/model-validation.html#validation"><span class="std std-ref">model validator</span></a>
 that is configurable. Linter implementations are found in code. The
 <a class="reference external" href="https://search.maven.org/artifact/software.amazon.smithy/smithy-linters">smithy-linters</a> package in Maven Central contains several linters that
@@ -312,9 +95,9 @@ can be used to apply additional validation to Smithy models.</p>
 <p>The following example adds <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code> as a Gradle dependency
 to a <code class="docutils literal notranslate"><span class="pre">build.gradle.kts</span></code> file:</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-S290bGlu" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-S290bGlu" name="S290bGlu" role="tab" tabindex="0">Kotlin</button></div><div aria-labelledby="tab-0-S290bGlu" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-S290bGlu" name="S290bGlu" role="tabpanel" tabindex="0"><div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.41.1&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.41.1&quot;</span><span class="p">)</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-S290bGlu" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-S290bGlu" name="S290bGlu" role="tab" tabindex="0">Kotlin</button></div><div aria-labelledby="tab-0-S290bGlu" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-S290bGlu" name="S290bGlu" role="tabpanel" tabindex="0"><div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span> <span class="p">{</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-model:1.21.0&quot;</span><span class="p">)</span>
+    <span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-linters:1.21.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -324,10 +107,10 @@ defined in the package and registered using <a class="reference external" href="
 use in Smithy models.</p>
 </div>
 <div class="section" id="linters-in-smithy-linters">
-<h2>Linters in <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code><a class="headerlink" href="#linters-in-smithy-linters" title="Permalink to this headline">#</a></h2>
+<h2><a href="#linters-in-smithy-linters">Linters in <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code></a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code> package defines the following linters.</p>
 <div class="section" id="abbreviationname">
-<span id="id1"></span><h3>AbbreviationName<a class="headerlink" href="#abbreviationname" title="Permalink to this headline">#</a></h3>
+<span id="id1"></span><h3><a href="#abbreviationname">AbbreviationName</a></h3>
 <p>Validates that shape names and member names do not represent abbreviations
 with all uppercase letters. For example, instead of using &quot;XMLRequest&quot; or
 &quot;instanceID&quot;, this validator recommends using &quot;XmlRequest&quot; and &quot;instanceId&quot;.</p>
@@ -338,8 +121,7 @@ in tooling. For example, a tool that generates code in Python might wish
 to represent camelCase words using snake_case; utilizing strict camel
 casing makes it easier to split words apart.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
-<dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<dt>Configuration</dt><dd><table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -359,20 +141,19 @@ letters. Defaults to an empty list.</td>
 </tr>
 </tbody>
 </table>
-</div>
 </dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
 
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[
-<span class="w">    </span>{<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AbbreviationName&quot;</span>}
-]
+<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">    </span>{<span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;AbbreviationName&quot;</span>}<span class="w"></span>
+]<span class="w"></span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="camelcase">
-<span id="id2"></span><h3>CamelCase<a class="headerlink" href="#camelcase" title="Permalink to this headline">#</a></h3>
+<span id="id2"></span><h3><a href="#camelcase">CamelCase</a></h3>
 <p>Validates that shape names and member names adhere to a consistent style of
 camel casing. By default, this validator will ensure that shape names use
 UpperCamelCase, trait shape names use lowerCamelCase, and that member names
@@ -382,8 +163,7 @@ use lowerCamelCase.</p>
 model and can lead to consistent naming in code generated from Smithy
 models.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
-<dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<dt>Configuration</dt><dd><table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -403,20 +183,19 @@ models.</dd>
 </tr>
 </tbody>
 </table>
-</div>
 </dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
 
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[
-<span class="w">    </span>{<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CamelCase&quot;</span>}
-]
+<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">    </span>{<span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;CamelCase&quot;</span>}<span class="w"></span>
+]<span class="w"></span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="noninclusiveterms">
-<span id="id3"></span><h3>NoninclusiveTerms<a class="headerlink" href="#noninclusiveterms" title="Permalink to this headline">#</a></h3>
+<span id="id3"></span><h3><a href="#noninclusiveterms">NoninclusiveTerms</a></h3>
 <p>Validates that all text content in a model (i.e. shape names, member names,
 documentation, trait values, etc.) does not contain words that perpetuate cultural
 biases. This validator has a built-in set of bias terms that are commonly found
@@ -436,8 +215,7 @@ are not only inclusive, but more clearly communicate meaning. Words like
 allowList and denyList much more clearly indicate that something is
 allowed or denied.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">WARNING</span></code></dd>
-<dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<dt>Configuration</dt><dd><table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -464,27 +242,26 @@ This property is not required and defaults to false.</td>
 </tr>
 </tbody>
 </table>
-</div>
 </dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
 
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[{
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NoninclusiveTerms&quot;</span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">excludeDefaults</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">        </span><span class="py">terms</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">            </span><span class="py">mankind</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;humankind&quot;</span>]<span class="p">,</span>
-<span class="w">            </span><span class="py">mailman</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;mail carrier&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;postal worker&quot;</span>]
-<span class="w">        </span>}
-<span class="w">    </span>}
-}]
+<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[{<span class="w"></span>
+<span class="w">    </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;NoninclusiveTerms&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nl">configuration:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">excludeDefaults:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">terms:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="nl">mankind:</span><span class="w"> </span>[<span class="s2">&quot;humankind&quot;</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="nl">mailman:</span><span class="w"> </span>[<span class="s2">&quot;mail carrier&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;postal worker&quot;</span>]<span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}]<span class="w"></span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="reservedwords">
-<span id="id4"></span><h3>ReservedWords<a class="headerlink" href="#reservedwords" title="Permalink to this headline">#</a></h3>
+<span id="id4"></span><h3><a href="#reservedwords">ReservedWords</a></h3>
 <p>Validates that shape names and member names do not match a configured set of
 reserved words.</p>
 <p>Reserved words are compared in a case-insensitive manner via substring match
@@ -499,7 +276,6 @@ code-names, from appearing in public artifacts.</dd>
 <dt>Default Severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
 <dt>Configuration</dt><dd><p>A single key, <code class="docutils literal notranslate"><span class="pre">reserved</span></code>, is <strong>Required</strong> in the configuration. Its
 value is a list of objects with the following properties:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
@@ -536,35 +312,33 @@ evaluated instead of the shape name.</p>
 </tr>
 </tbody>
 </table>
-</div>
 </dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
 
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[{
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FooReservedWords&quot;</span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ReservedWords&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">reserved</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">            </span>{
-<span class="w">                </span><span class="py">words</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Codename&quot;</span>]<span class="p">,</span>
-<span class="w">                </span><span class="py">reason</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This is the internal project name.&quot;</span><span class="p">,</span>
-<span class="w">            </span>}<span class="p">,</span>
-<span class="w">        </span>]
-<span class="w">    </span>}
-}]
+<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[{<span class="w"></span>
+<span class="w">    </span><span class="nl">id:</span><span class="w"> </span><span class="s2">&quot;FooReservedWords&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;ReservedWords&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">configuration:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">reserved:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">            </span>{<span class="w"></span>
+<span class="w">                </span><span class="nl">words:</span><span class="w"> </span>[<span class="s2">&quot;Codename&quot;</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="nl">reason:</span><span class="w"> </span><span class="s2">&quot;This is the internal project name.&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">        </span>]<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}]<span class="w"></span>
 </pre></div>
 </div>
 <div class="section" id="wildcards-in-reservedwords">
-<span id="reserved-words-wildcards"></span><h4>Wildcards in ReservedWords<a class="headerlink" href="#wildcards-in-reservedwords" title="Permalink to this headline">#</a></h4>
+<span id="reserved-words-wildcards"></span><h4><a href="#wildcards-in-reservedwords">Wildcards in ReservedWords</a></h4>
 <p>The ReservedWords validator allows leading and trailing wildcard characters to
 be specified.</p>
 <ul>
 <li><p class="first">Using both a leading and trailing wildcard indicates that shape or member
 names match when case-insensitively <strong>containing</strong> the word. The following
 table shows matches for a reserved word of <code class="docutils literal notranslate"><span class="pre">*codename*</span></code>:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="75%" />
@@ -590,12 +364,10 @@ table shows matches for a reserved word of <code class="docutils literal notrans
 </tr>
 </tbody>
 </table>
-</div>
 </li>
 <li><p class="first">Using a leading wildcard indicates that shape or member names match when
 case-insensitively <strong>ending with</strong> the word. The following table shows
 matches for a reserved word of <code class="docutils literal notranslate"><span class="pre">*codename</span></code>:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="75%" />
@@ -621,12 +393,10 @@ matches for a reserved word of <code class="docutils literal notranslate"><span 
 </tr>
 </tbody>
 </table>
-</div>
 </li>
 <li><p class="first">Using a trailing wildcard indicates that shape or member names match when
 case-insensitively <strong>starting with</strong> the word. The following table shows
 matches for a reserved word of <code class="docutils literal notranslate"><span class="pre">codename*</span></code>:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="75%" />
@@ -652,12 +422,10 @@ matches for a reserved word of <code class="docutils literal notranslate"><span 
 </tr>
 </tbody>
 </table>
-</div>
 </li>
 <li><p class="first">Using no wildcards indicates that shape or member names match when
 case-insensitively <strong>the same as</strong> the word. The following table shows
 matches for a reserved word of <code class="docutils literal notranslate"><span class="pre">codename</span></code>:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="75%" />
@@ -683,13 +451,12 @@ matches for a reserved word of <code class="docutils literal notranslate"><span 
 </tr>
 </tbody>
 </table>
-</div>
 </li>
 </ul>
 </div>
 </div>
 <div class="section" id="standardoperationverb">
-<span id="id5"></span><h3>StandardOperationVerb<a class="headerlink" href="#standardoperationverb" title="Permalink to this headline">#</a></h3>
+<span id="id5"></span><h3><a href="#standardoperationverb">StandardOperationVerb</a></h3>
 <p>Looks at each operation shape name and determines if the first word in the
 operation shape name is one of the defined standard verbs or if it is a verb
 that has better alternatives.</p>
@@ -702,8 +469,7 @@ in order for this validator to properly function.</p>
 <dt>Rationale</dt><dd>Using consistent verbs for operation shape names helps consumers of the
 API to more easily understand the semantics of an operation.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
-<dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<dt>Configuration</dt><dd><table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -735,7 +501,6 @@ verbs to use instead.</td>
 </tr>
 </tbody>
 </table>
-</div>
 </dd>
 </dl>
 <div class="admonition note">
@@ -744,24 +509,24 @@ verbs to use instead.</td>
 be provided.</p>
 </div>
 <p>Example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
 
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[{
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;StandardOperationVerb&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">verbs</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Register&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Deregister&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Associate&quot;</span>]<span class="p">,</span>
-<span class="w">        </span><span class="py">prefixes</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Batch&quot;</span>]<span class="p">,</span>
-<span class="w">        </span><span class="py">suggestAlternatives</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">            </span><span class="s2">&quot;Make&quot;</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Create&quot;</span>]<span class="p">,</span>
-<span class="w">            </span><span class="s2">&quot;Transition&quot;</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Update&quot;</span>]<span class="p">,</span>
-<span class="w">        </span>}
-<span class="w">    </span>}
-}]
+<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[{<span class="w"></span>
+<span class="w">    </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;StandardOperationVerb&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">configuration:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">verbs:</span><span class="w"> </span>[<span class="s2">&quot;Register&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Deregister&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Associate&quot;</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">prefixes:</span><span class="w"> </span>[<span class="s2">&quot;Batch&quot;</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">suggestAlternatives:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;Make&quot;</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Create&quot;</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="s2">&quot;Transition&quot;</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;Update&quot;</span>]<span class="p">,</span><span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+}]<span class="w"></span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="repeatedshapename">
-<span id="stutteredshapename"></span><span id="id6"></span><h3>RepeatedShapeName<a class="headerlink" href="#repeatedshapename" title="Permalink to this headline">#</a></h3>
+<span id="stutteredshapename"></span><span id="id6"></span><h3><a href="#repeatedshapename">RepeatedShapeName</a></h3>
 <p>Validates that <a class="reference internal" href="../spec/core/model.html#structure"><span class="std std-ref">Structure</span></a> member names and <a class="reference internal" href="../spec/core/model.html#union"><span class="std std-ref">Union</span></a> member
 names do not case-insensitively repeat their container shape names.</p>
 <p>As an example, if a structure named &quot;Table&quot; contained a member named
@@ -770,8 +535,7 @@ names do not case-insensitively repeat their container shape names.</p>
 <dt>Rationale</dt><dd>Repeating a shape name in the members of identifier of the shape is
 redundant.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">WARNING</span></code></dd>
-<dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<dt>Configuration</dt><dd><table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -791,12 +555,11 @@ is case-insensitively identical to the containing shape's name.</td>
 </tr>
 </tbody>
 </table>
-</div>
 </dd>
 </dl>
 </div>
 <div class="section" id="inputoutputstructurereuse">
-<span id="id7"></span><h3>InputOutputStructureReuse<a class="headerlink" href="#inputoutputstructurereuse" title="Permalink to this headline">#</a></h3>
+<span id="id7"></span><h3><a href="#inputoutputstructurereuse">InputOutputStructureReuse</a></h3>
 <p>Validates that every operation defines a dedicated input and output shape
 marked with the <a class="reference internal" href="../spec/core/type-refinement-traits.html#input-trait"><span class="std std-ref">input trait</span></a> and <a class="reference internal" href="../spec/core/type-refinement-traits.html#output-trait"><span class="std std-ref">output trait</span></a>.</p>
 <dl class="docutils">
@@ -817,7 +580,7 @@ operations together.</li>
 </dl>
 </div>
 <div class="section" id="missingpaginatedtrait">
-<span id="id8"></span><h3>MissingPaginatedTrait<a class="headerlink" href="#missingpaginatedtrait" title="Permalink to this headline">#</a></h3>
+<span id="id8"></span><h3><a href="#missingpaginatedtrait">MissingPaginatedTrait</a></h3>
 <p>Checks for operations that look like they should be paginated but do not
 have the <a class="reference internal" href="../spec/core/behavior-traits.html#paginated-trait"><span class="std std-ref">paginated trait</span></a>.</p>
 <dl class="docutils">
@@ -825,8 +588,7 @@ have the <a class="reference internal" href="../spec/core/behavior-traits.html#p
 data helps to maintain a predictable SLA and helps to prevent operational
 issues in the future.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
-<dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<dt>Configuration</dt><dd><table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -872,18 +634,17 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">[&quot;
 </tr>
 </tbody>
 </table>
-</div>
 </dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[
-<span class="w">    </span>{<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MissingPaginatedTrait&quot;</span>}
-]
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">    </span>{<span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;MissingPaginatedTrait&quot;</span>}<span class="w"></span>
+]<span class="w"></span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="shouldhaveusedtimestamp">
-<span id="id9"></span><h3>ShouldHaveUsedTimestamp<a class="headerlink" href="#shouldhaveusedtimestamp" title="Permalink to this headline">#</a></h3>
+<span id="id9"></span><h3><a href="#shouldhaveusedtimestamp">ShouldHaveUsedTimestamp</a></h3>
 <p>Looks for shapes that likely represent time, but that do not use a
 timestamp shape.</p>
 <p>The ShouldHaveUsedTimestamp validator checks the following names:</p>
@@ -912,8 +673,7 @@ contain the same two words, &quot;foo&quot; and &quot;bar&quot;.</p>
 <dt>Rationale</dt><dd>Smithy tooling can convert timestamp shapes into idiomatic language types
 that make them easier to work with in client tooling.</dd>
 <dt>Default severity</dt><dd><code class="docutils literal notranslate"><span class="pre">DANGER</span></code></dd>
-<dt>Configuration</dt><dd><div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
+<dt>Configuration</dt><dd><table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
 <col width="20%" />
@@ -933,13 +693,12 @@ represent time.</td>
 </tr>
 </tbody>
 </table>
-</div>
 </dd>
 </dl>
 </div>
 </div>
 <div class="section" id="writing-custom-validators">
-<h2>Writing custom validators<a class="headerlink" href="#writing-custom-validators" title="Permalink to this headline">#</a></h2>
+<h2><a href="#writing-custom-validators">Writing custom validators</a></h2>
 <p>Custom validators can be written in Java to apply more advanced model validation.
 Writing a custom validator involves writing an implementation of a
 Smithy validator in Java, creating a JAR, and making the JAR available on the
@@ -949,23 +708,23 @@ classpath.</p>
 validators should extend from <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.model.validation.AbstractValidator</span></code>.</p>
 <p>The following linter emits a <code class="docutils literal notranslate"><span class="pre">ValidationEvent</span></code> for every shape in the
 model that is not documented.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span><span class="w"> </span><span class="nn">com.example.mypackage</span><span class="p">;</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nn">com.example.mypackage</span><span class="p">;</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.stream.Collectors</span><span class="p">;</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.Model</span><span class="p">;</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.traits.DocumentationTrait</span><span class="p">;</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.validation.AbstractValidator</span><span class="p">;</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.validation.ValidationEvent</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.util.List</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.util.stream.Collectors</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.model.Model</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.model.traits.DocumentationTrait</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.model.validation.AbstractValidator</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.model.validation.ValidationEvent</span><span class="p">;</span>
 
-<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">DocumentationValidator</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">AbstractValidator</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nd">@Override</span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">ValidationEvent</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">shapes</span><span class="p">()</span>
-<span class="w">                </span><span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">!</span><span class="n">shape</span><span class="p">.</span><span class="na">hasTrait</span><span class="p">(</span><span class="n">DocumentationTrait</span><span class="p">.</span><span class="na">class</span><span class="p">))</span>
-<span class="w">                </span><span class="p">.</span><span class="na">map</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">error</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;This shape is not documented!&quot;</span><span class="p">))</span>
-<span class="w">                </span><span class="p">.</span><span class="na">collect</span><span class="p">(</span><span class="n">Collectors</span><span class="p">.</span><span class="na">toList</span><span class="p">());</span>
-<span class="w">    </span><span class="p">}</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">DocumentationValidator</span> <span class="kd">extends</span> <span class="n">AbstractValidator</span> <span class="p">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">ValidationEvent</span><span class="o">&gt;</span> <span class="nf">validate</span><span class="p">(</span><span class="n">Model</span> <span class="n">model</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">model</span><span class="p">.</span><span class="na">shapes</span><span class="p">()</span>
+                <span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">shape</span> <span class="o">-&gt;</span> <span class="o">!</span><span class="n">shape</span><span class="p">.</span><span class="na">hasTrait</span><span class="p">(</span><span class="n">DocumentationTrait</span><span class="p">.</span><span class="na">class</span><span class="p">))</span>
+                <span class="p">.</span><span class="na">map</span><span class="p">(</span><span class="n">shape</span> <span class="o">-&gt;</span> <span class="n">error</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="s">&quot;This shape is not documented!&quot;</span><span class="p">))</span>
+                <span class="p">.</span><span class="na">collect</span><span class="p">(</span><span class="n">Collectors</span><span class="p">.</span><span class="na">toList</span><span class="p">());</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -981,7 +740,7 @@ the custom validator is automatically applied to a model each time the
 model is loaded.</p>
 </div>
 <div class="section" id="writing-custom-linters">
-<h2>Writing custom Linters<a class="headerlink" href="#writing-custom-linters" title="Permalink to this headline">#</a></h2>
+<h2><a href="#writing-custom-linters">Writing custom Linters</a></h2>
 <p>Like custom validators, custom linters can be written in Java to apply more
 advanced model validation.</p>
 <p>Custom linters are implementations of the
@@ -990,83 +749,83 @@ linters are configurable, they are created using an implementation of the
 <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.model.validation.ValidatorService</span></code> interface.</p>
 <p>The following validator emits a <code class="docutils literal notranslate"><span class="pre">ValidationEvent</span></code> for every shape in the
 model that has documentation that contains a forbidden string.</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span><span class="w"> </span><span class="nn">com.example.mypackage</span><span class="p">;</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nn">com.example.mypackage</span><span class="p">;</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.Optional</span><span class="p">;</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.stream.Collectors</span><span class="p">;</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.stream.Stream</span><span class="p">;</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.Model</span><span class="p">;</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.node.NodeMapper</span><span class="p">;</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.shapes.Shape</span><span class="p">;</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.traits.DocumentationTrait</span><span class="p">;</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.validation.AbstractValidator</span><span class="p">;</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.validation.ValidationEvent</span><span class="p">;</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.validation.ValidatorService</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.util.List</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Optional</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.util.stream.Collectors</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.util.stream.Stream</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.model.Model</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.model.node.NodeMapper</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.model.shapes.Shape</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.model.traits.DocumentationTrait</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.model.validation.AbstractValidator</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.model.validation.ValidationEvent</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">software.amazon.smithy.model.validation.ValidatorService</span><span class="p">;</span>
 
-<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">ForbiddenDocumentationValidator</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">AbstractValidator</span><span class="w"> </span><span class="p">{</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ForbiddenDocumentationValidator</span> <span class="kd">extends</span> <span class="n">AbstractValidator</span> <span class="p">{</span>
 
-<span class="w">    </span><span class="cm">/**</span>
+    <span class="cm">/**</span>
 <span class="cm">     * ForbiddenDocumentation configuration settings.</span>
 <span class="cm">     */</span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Config</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="kd">private</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">forbid</span><span class="p">;</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">Config</span> <span class="p">{</span>
+        <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">forbid</span><span class="p">;</span>
 
-<span class="w">        </span><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">getForbid</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">forbid</span><span class="p">;</span>
-<span class="w">        </span><span class="p">}</span>
+        <span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">getForbid</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="n">forbid</span><span class="p">;</span>
+        <span class="p">}</span>
 
-<span class="w">        </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setForbid</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">forbid</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="k">this</span><span class="p">.</span><span class="na">forbid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">forbid</span><span class="p">;</span>
-<span class="w">        </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setForbid</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">forbid</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="na">forbid</span> <span class="o">=</span> <span class="n">forbid</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 
-<span class="w">    </span><span class="c1">// Does the actual work of converting metadata found in a Smithy</span>
-<span class="w">    </span><span class="c1">// model into an actual implementation of a Validator.</span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Provider</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">ValidatorService</span><span class="p">.</span><span class="na">Provider</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="kd">public</span><span class="w"> </span><span class="nf">Provider</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="kd">super</span><span class="p">(</span><span class="n">ForbiddenDocumentationValidator</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="n">configuration</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="c1">// Deserialize the Node value into the Config POJO.</span>
-<span class="w">                </span><span class="n">NodeMapper</span><span class="w"> </span><span class="n">mapper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">NodeMapper</span><span class="p">();</span>
-<span class="w">                </span><span class="n">ForbiddenDocumentationValidator</span><span class="p">.</span><span class="na">Config</span><span class="w"> </span><span class="n">config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mapper</span><span class="p">.</span><span class="na">deserialize</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span><span class="w"> </span><span class="n">Config</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
-<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ForbiddenDocumentationValidator</span><span class="p">(</span><span class="n">config</span><span class="p">);</span>
-<span class="w">            </span><span class="p">});</span>
-<span class="w">        </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
+    <span class="c1">// Does the actual work of converting metadata found in a Smithy</span>
+    <span class="c1">// model into an actual implementation of a Validator.</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">Provider</span> <span class="kd">extends</span> <span class="n">ValidatorService</span><span class="p">.</span><span class="na">Provider</span> <span class="p">{</span>
+        <span class="kd">public</span> <span class="nf">Provider</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">super</span><span class="p">(</span><span class="n">ForbiddenDocumentationValidator</span><span class="p">.</span><span class="na">class</span><span class="p">,</span> <span class="n">configuration</span> <span class="o">-&gt;</span> <span class="p">{</span>
+                <span class="c1">// Deserialize the Node value into the Config POJO.</span>
+                <span class="n">NodeMapper</span> <span class="n">mapper</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NodeMapper</span><span class="p">();</span>
+                <span class="n">ForbiddenDocumentationValidator</span><span class="p">.</span><span class="na">Config</span> <span class="n">config</span> <span class="o">=</span> <span class="n">mapper</span><span class="p">.</span><span class="na">deserialize</span><span class="p">(</span><span class="n">configuration</span><span class="p">,</span> <span class="n">Config</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+                <span class="k">return</span> <span class="k">new</span> <span class="n">ForbiddenDocumentationValidator</span><span class="p">(</span><span class="n">config</span><span class="p">);</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 
-<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">forbid</span><span class="p">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">forbid</span><span class="p">;</span>
 
-<span class="w">    </span><span class="c1">// The constructor is private since the validator is only intended to</span>
-<span class="w">    </span><span class="c1">// be created when loading a model via the Provider class.</span>
-<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="nf">ForbiddenDocumentationValidator</span><span class="p">(</span><span class="n">Config</span><span class="w"> </span><span class="n">config</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">forbid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="na">forbid</span><span class="p">;</span>
-<span class="w">    </span><span class="p">}</span>
+    <span class="c1">// The constructor is private since the validator is only intended to</span>
+    <span class="c1">// be created when loading a model via the Provider class.</span>
+    <span class="kd">private</span> <span class="nf">ForbiddenDocumentationValidator</span><span class="p">(</span><span class="n">Config</span> <span class="n">config</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="na">forbid</span> <span class="o">=</span> <span class="n">config</span><span class="p">.</span><span class="na">forbid</span><span class="p">;</span>
+    <span class="p">}</span>
 
-<span class="w">    </span><span class="nd">@Override</span>
-<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">ValidationEvent</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="c1">// Find every shape that violates the linter and return a list</span>
-<span class="w">        </span><span class="c1">// of ValidationEvents.</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="na">shapes</span><span class="p">()</span>
-<span class="w">                </span><span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">hasTrait</span><span class="p">(</span><span class="n">DocumentationTrait</span><span class="p">.</span><span class="na">class</span><span class="p">))</span>
-<span class="w">                </span><span class="p">.</span><span class="na">flatMap</span><span class="p">(</span><span class="n">shape</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">validateShape</span><span class="p">(</span><span class="n">shape</span><span class="p">).</span><span class="na">map</span><span class="p">(</span><span class="n">Stream</span><span class="p">::</span><span class="n">of</span><span class="p">).</span><span class="na">orElseGet</span><span class="p">(</span><span class="n">Stream</span><span class="p">::</span><span class="n">empty</span><span class="p">))</span>
-<span class="w">                </span><span class="p">.</span><span class="na">collect</span><span class="p">(</span><span class="n">Collectors</span><span class="p">.</span><span class="na">toList</span><span class="p">());</span>
-<span class="w">    </span><span class="p">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">ValidationEvent</span><span class="o">&gt;</span> <span class="nf">validate</span><span class="p">(</span><span class="n">Model</span> <span class="n">model</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Find every shape that violates the linter and return a list</span>
+        <span class="c1">// of ValidationEvents.</span>
+        <span class="k">return</span> <span class="n">model</span><span class="p">.</span><span class="na">shapes</span><span class="p">()</span>
+                <span class="p">.</span><span class="na">filter</span><span class="p">(</span><span class="n">shape</span> <span class="o">-&gt;</span> <span class="n">shape</span><span class="p">.</span><span class="na">hasTrait</span><span class="p">(</span><span class="n">DocumentationTrait</span><span class="p">.</span><span class="na">class</span><span class="p">))</span>
+                <span class="p">.</span><span class="na">flatMap</span><span class="p">(</span><span class="n">shape</span> <span class="o">-&gt;</span> <span class="n">validateShape</span><span class="p">(</span><span class="n">shape</span><span class="p">).</span><span class="na">map</span><span class="p">(</span><span class="n">Stream</span><span class="p">::</span><span class="n">of</span><span class="p">).</span><span class="na">orElseGet</span><span class="p">(</span><span class="n">Stream</span><span class="p">::</span><span class="n">empty</span><span class="p">))</span>
+                <span class="p">.</span><span class="na">collect</span><span class="p">(</span><span class="n">Collectors</span><span class="p">.</span><span class="na">toList</span><span class="p">());</span>
+    <span class="p">}</span>
 
-<span class="w">    </span><span class="kd">private</span><span class="w"> </span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">ValidationEvent</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">validateShape</span><span class="p">(</span><span class="n">Shape</span><span class="w"> </span><span class="n">shape</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="c1">// Grab the trait by type.</span>
-<span class="w">        </span><span class="n">DocumentationTrait</span><span class="w"> </span><span class="n">trait</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shape</span><span class="p">.</span><span class="na">expectTrait</span><span class="p">(</span><span class="n">DocumentationTrait</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
-<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">docString</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">trait</span><span class="p">.</span><span class="na">getValue</span><span class="p">();</span>
+    <span class="kd">private</span> <span class="n">Optional</span><span class="o">&lt;</span><span class="n">ValidationEvent</span><span class="o">&gt;</span> <span class="nf">validateShape</span><span class="p">(</span><span class="n">Shape</span> <span class="n">shape</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Grab the trait by type.</span>
+        <span class="n">DocumentationTrait</span> <span class="n">trait</span> <span class="o">=</span> <span class="n">shape</span><span class="p">.</span><span class="na">expectTrait</span><span class="p">(</span><span class="n">DocumentationTrait</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+        <span class="n">String</span> <span class="n">docString</span> <span class="o">=</span> <span class="n">trait</span><span class="p">.</span><span class="na">getValue</span><span class="p">();</span>
 
-<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">forbid</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">docString</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">text</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="c1">// Emit an event that points at the location of the trait</span>
-<span class="w">                </span><span class="c1">// and associates the warning with the shape.</span>
-<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">Optional</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">warning</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span><span class="w"> </span><span class="n">trait</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Documentation uses forbidden text: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">text</span><span class="p">));</span>
-<span class="w">            </span><span class="p">}</span>
-<span class="w">        </span><span class="p">}</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">String</span> <span class="n">text</span> <span class="p">:</span> <span class="n">forbid</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">docString</span><span class="p">.</span><span class="na">contains</span><span class="p">(</span><span class="n">text</span><span class="p">))</span> <span class="p">{</span>
+                <span class="c1">// Emit an event that points at the location of the trait</span>
+                <span class="c1">// and associates the warning with the shape.</span>
+                <span class="k">return</span> <span class="n">Optional</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">warning</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">trait</span><span class="p">,</span> <span class="s">&quot;Documentation uses forbidden text: &quot;</span> <span class="o">+</span> <span class="n">text</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
 
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Optional</span><span class="p">.</span><span class="na">empty</span><span class="p">();</span>
-<span class="w">    </span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">Optional</span><span class="p">.</span><span class="na">empty</span><span class="p">();</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1080,16 +839,16 @@ Java package:</p>
 <p>When added to the classpath (typically as a dependency of a published JAR),
 the custom validator is available to be used as a validator. The following
 example warns each time the word &quot;meow&quot; appears in documentation:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
 
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[
-<span class="w">    </span>{
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ForbiddenDocumentation&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">            </span><span class="py">forbid</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;meow&quot;</span>]
-<span class="w">        </span>}
-<span class="w">    </span>}
-]
+<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;ForbiddenDocumentation&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">configuration:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="nl">forbid:</span><span class="w"> </span>[<span class="s2">&quot;meow&quot;</span>]<span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+]<span class="w"></span>
 </pre></div>
 </div>
 <div class="admonition tip">
@@ -1097,86 +856,45 @@ example warns each time the word &quot;meow&quot; appears in documentation:</p>
 <p>The <a class="reference internal" href="../spec/core/model-validation.html#emiteachselector"><span class="std std-ref">EmitEachSelector</span></a> can get you pretty far without needing to
 write any Java code. For example, the above linter can be implemented
 using the following Smithy model:</p>
-<div class="last highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<div class="last highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
 
-<span class="kd">metadata </span><span class="nc">validators </span><span class="nd">=</span><span class="w"> </span>[
-<span class="w">    </span>{
-<span class="w">        </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ForbiddenDocumentation&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Documentation uses forbidden text&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="py">configuration</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">            </span><span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[trait|documentation*=&#39;meow&#39;]&quot;</span>
-<span class="w">        </span>}
-<span class="w">    </span>}
-]
+<span class="kd">metadata</span><span class="nc"> validators </span><span class="nd">=</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">    </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;EmitEachSelector&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">id:</span><span class="w"> </span><span class="s2">&quot;ForbiddenDocumentation&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">message:</span><span class="w"> </span><span class="s2">&quot;Documentation uses forbidden text&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">configuration:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">            </span><span class="nl">selector:</span><span class="w"> </span><span class="s2">&quot;[trait|documentation*=&#39;meow&#39;]&quot;</span><span class="w"></span>
+<span class="w">        </span>}<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+]<span class="w"></span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
 
-        </article>
-      </div>
-      <footer>
-        
-        <div class="related-pages">
-          <a class="next-page" href="evolving-models.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">Evolving Models</div>
-              </div>
-              <svg><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="building-models/build-config.html">
-              <svg><use href="#svg-arrow-right"></use></svg>
-              <div class="page-info">
-                <div class="context">
-                  <span>Previous</span>
-                </div>
-                
-                <div class="title">smithy-build</div>
-                
-              </div>
-            </a>
-        </div>
-        <div class="bottom-of-page">
-          <div class="left-details">
-            <div class="copyright">
-                Copyright &#169; 2022, Amazon Web Services
-            </div>
-            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-            
-            <a href="https://github.com/pradyunsg/furo">Furo</a>
-            
-          </div>
-          <div class="right-details">
-            <div class="icons">
-              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
-                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
-                </svg>
-            </a>
-              
-            </div>
-          </div>
-        </div>
-        
-      </footer>
-    </div>
-    <aside class="toc-drawer">
-      
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            Contents
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
+
+                    
+                    <section class="relations">
+                        
+                        <a href="building-models/build-config.html" title="previous chapter" class="previous-page clearfix hidden-xs">← smithy-build</a>
+                        
+                        <a href="evolving-models.html" title="next chapter" class="next-page clearfix">Evolving Models →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="building-models/build-config.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
+                                
+                                <a href="evolving-models.html" title="next chapter" class="next-page clearfix">Next →</a>
+                            </section>
+                            
+                            <ul>
 <li><a class="reference internal" href="#">Model linters</a><ul>
 <li><a class="reference internal" href="#linting-overview">Linting overview</a></li>
 <li><a class="reference internal" href="#linters-in-smithy-linters">Linters in <code class="docutils literal notranslate"><span class="pre">smithy-linters</span></code></a><ul>
@@ -1200,20 +918,18 @@ using the following Smithy model:</p>
 </li>
 </ul>
 
-          </div>
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2021, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
         </div>
-      </div>
-      
-      
-    </aside>
-  </div>
-</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/scripts/furo.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/tabs.js"></script>
-    </body>
+    </div>
+</footer>
+  </body>
 </html>

@@ -1,307 +1,69 @@
-<!doctype html>
-<html class="no-js" lang="en">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="AWS specifications" href="aws/index.html" /><link rel="prev" title="Waiters" href="waiters.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
-        <title>MQTT Protocol Bindings - Smithy 1.0</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MQTT Protocol Bindings &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../_static/bootstrap-reboot.css" type="text/css" />
     
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
+    <link rel="stylesheet" href="../../_static/custom-tabs.css" type="text/css" />
+
     
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/smithy.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="AWS specifications" href="aws/index.html" />
+    <link rel="prev" title="Waiters" href="waiters.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="smithy-version" content="1.0">
 
-
-<style>
-  body {
-    --color-code-background: #f8f8f8;
-  --color-code-foreground: black;
-  --admonition-font-size: 100%;
-  --admonition-title-font-size: 100%;
-  --color-brand-primary: #C44536;
-  --color-brand-content: #00808b;
-  --color-announcement-background: #711818de;
-  --color-announcement-text: #fff;
-  
-  }
-  @media not print {
-    body[data-theme="dark"] {
-      --color-code-background: #282828;
-  --color-code-foreground: #dddddd;
-  --color-brand-primary: #ed9d13;
-  --color-brand-content: #58d3ff;
-  --color-announcement-background: #711818de;
-  --color-announcement-text: #fff;
-  
-    }
-    @media (prefers-color-scheme: dark) {
-      body:not([data-theme="light"]) {
-        --color-code-background: #282828;
-  --color-code-foreground: #dddddd;
-  --color-brand-primary: #ed9d13;
-  --color-brand-content: #58d3ff;
-  --color-announcement-background: #711818de;
-  --color-announcement-text: #fff;
-  
-      }
-    }
-  }
-</style><script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
-<script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script></head>
-  <body>
-    
-    <script>
-      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
-    </script>
-    
-
-<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-  <symbol id="svg-toc" viewBox="0 0 24 24">
-    <title>Contents</title>
-    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
-      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
-    </svg>
-  </symbol>
-  <symbol id="svg-menu" viewBox="0 0 24 24">
-    <title>Menu</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
-      <line x1="3" y1="12" x2="21" y2="12"></line>
-      <line x1="3" y1="6" x2="21" y2="6"></line>
-      <line x1="3" y1="18" x2="21" y2="18"></line>
-    </svg>
-  </symbol>
-  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
-    <title>Expand</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
-      <polyline points="9 18 15 12 9 6"></polyline>
-    </svg>
-  </symbol>
-  <symbol id="svg-sun" viewBox="0 0 24 24">
-    <title>Light mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
-      <circle cx="12" cy="12" r="5"></circle>
-      <line x1="12" y1="1" x2="12" y2="3"></line>
-      <line x1="12" y1="21" x2="12" y2="23"></line>
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-      <line x1="1" y1="12" x2="3" y2="12"></line>
-      <line x1="21" y1="12" x2="23" y2="12"></line>
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-    </svg>
-  </symbol>
-  <symbol id="svg-moon" viewBox="0 0 24 24">
-    <title>Dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
-    </svg>
-  </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
-    </svg>
-  </symbol>
-</svg>
-
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
-
-<div class="announcement">
-  <aside class="announcement-content">
-     <strong>⚠️ You are viewing version 1.0.</strong><br/>
-Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2.0/</a>. 
-  </aside>
-</div>
-
-<div class="page">
-  <header class="mobile-header">
-    <div class="header-left">
-      <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
-      </label>
-    </div>
-    <div class="header-center">
-      <a href="../index.html"><div class="brand">Smithy 1.0</div></a>
-    </div>
-    <div class="header-right">
-      <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-        </button>
-      </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-      </label>
-    </div>
-  </header>
-  <aside class="sidebar-drawer">
-    <div class="sidebar-container">
-      
-      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../index.html">
-  
-  <div class="sidebar-logo-container">
-    <img class="sidebar-logo" src="../_static/smithy.svg" alt="Logo"/>
-  </div>
-  
-  
-</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
-  <input type="hidden" name="check_keywords" value="yes">
-  <input type="hidden" name="area" value="default">
-</form>
-<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick start</a></li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Specifications</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2 has-children"><a class="reference internal" href="core/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="core/model.html">1. The Smithy model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/prelude-model.html">2. Prelude model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/constraint-traits.html">3. Constraint traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/documentation-traits.html">4. Documentation traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/type-refinement-traits.html">5. Type refinement traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/protocol-traits.html">6. Protocol traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/auth-traits.html">7. Authentication traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/behavior-traits.html">8. Behavior traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/resource-traits.html">9. Resource traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/stream-traits.html">10. Streaming Traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/http-traits.html">11. HTTP binding traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/xml-traits.html">12. XML binding traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/endpoint-traits.html">13. Endpoint Traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/selectors.html">14. Selectors</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/model-validation.html">15. Model validation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/idl.html">16. Smithy IDL</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/json-ast.html">17. JSON AST</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="waiters.html">Waiters</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">MQTT Protocol Bindings</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="aws/index.html">AWS specifications</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="aws/aws-core.html">AWS Core Specification</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws/aws-auth.html">AWS Authentication Traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws/aws-iam.html">AWS IAM traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws/aws-cloudformation.html">AWS CloudFormation traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws/aws-restxml-protocol.html">AWS restXml protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws/aws-query-protocol.html">AWS query protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../guides/index.html">Smithy Guides</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../guides/building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../guides/building-models/build-config.html">smithy-build</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../guides/model-linters.html">Model linters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guides/evolving-models.html">Evolving Models</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guides/style-guide.html">Style Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guides/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guides/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
-</ul>
-</li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Implementations</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/implementations.html">Implementations</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
-</ul>
-</li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Project links</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/">2.0 Documentation</a></li>
-</ul>
-
-</div>
-</div>
-
-      </div>
-      
-    </div>
-  </aside>
-  <div class="main">
-    <div class="content">
-      <div class="article-container">
-        <a href="#" class="back-to-top muted-link">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
-          </svg>
-          <span>Back to top</span>
-        </a>
-        <div class="content-icon-container">
-          <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-1.0/spec/mqtt.rst" title="Edit this page">
-    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
-      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
-    </svg>
-    <span class="visually-hidden">Edit this page</span>
-  </a>
-</div><div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-            </button>
-          </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-          </label>
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
+                </a>
+                <span class="version-text">1.0</span>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="index.html">Specifications</a></li>
+                <li class="site-page"><a href="../guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
         </div>
-        <article role="main">
-          <div class="section" id="mqtt-protocol-bindings">
-<span id="mqtt-bindings"></span><h1>MQTT Protocol Bindings<a class="headerlink" href="#mqtt-protocol-bindings" title="Permalink to this headline">#</a></h1>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article class="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="index.html" accesskey="U">Specifications</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="mqtt-protocol-bindings">
+<span id="mqtt-bindings"></span><h1><a href="#mqtt-protocol-bindings">MQTT Protocol Bindings</a></h1>
 <p>This document defines traits that bind Smithy operations, inputs, and
 outputs to the <a class="reference external" href="https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html">MQTT</a>
 messaging transport protocol. In addition to traits, it defines the
@@ -312,8 +74,32 @@ Smithy models with MQTT metadata.</p>
 <p class="last">The MQTT traits defined in this specification are still evolving and
 subject to change.</p>
 </div>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title">Table of contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#introduction" id="id5">Introduction</a><ul>
+<li><a class="reference internal" href="#mqtt-overview" id="id6">MQTT overview</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mqtt-topic-templates" id="id7">MQTT topic templates</a></li>
+<li><a class="reference internal" href="#smithy-mqtt-publish-trait" id="id8"><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#publish</span></code> trait</a><ul>
+<li><a class="reference internal" href="#publish-validation" id="id9">Publish validation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#smithy-mqtt-subscribe-trait" id="id10"><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#subscribe</span></code> trait</a><ul>
+<li><a class="reference internal" href="#subscribe-validation" id="id11">Subscribe validation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#smithy-mqtt-topiclabel-trait" id="id12"><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#topicLabel</span></code> trait</a><ul>
+<li><a class="reference internal" href="#label-serialization" id="id13">Label serialization</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#topic-conflicts" id="id14">Topic conflicts</a></li>
+<li><a class="reference internal" href="#model-definition" id="id15">Model definition</a></li>
+</ul>
+</div>
 <div class="section" id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">#</a></h2>
+<h2><a href="#introduction">Introduction</a></h2>
 <p>Smithy is a protocol-agnostic model format that abstracts the transmission
 and serialization of operations, their inputs, and outputs. This abstraction
 allows MQTT services to be modeled in Smithy using MQTT protocol binding
@@ -323,7 +109,7 @@ The MQTT protocol binding traits defined in this document do not define the
 serialization format of complex payloads; the serialization format of complex
 payloads is protocol-specific.</p>
 <div class="section" id="mqtt-overview">
-<h3>MQTT overview<a class="headerlink" href="#mqtt-overview" title="Permalink to this headline">#</a></h3>
+<h3><a href="#mqtt-overview">MQTT overview</a></h3>
 <p>MQTT is a stateful protocol in which zero or more clients establish
 long-lived sessions with a server that acts as a message broker between
 them. Clients subscribe to topics and publish and receive messages. All
@@ -346,7 +132,7 @@ clients that connect to a service that utilizes MQTT protocol bindings.</p>
 </div>
 </div>
 <div class="section" id="mqtt-topic-templates">
-<span id="id1"></span><h2>MQTT topic templates<a class="headerlink" href="#mqtt-topic-templates" title="Permalink to this headline">#</a></h2>
+<span id="id1"></span><h2><a href="#mqtt-topic-templates">MQTT topic templates</a></h2>
 <p>An <em>MQTT topic template</em> declares an MQTT topic to be used for a given
 operation and to bind components of the topic to fields in the operations's
 input structure. The <a class="reference internal" href="#smithy-mqtt-publish-trait"><span class="std std-ref">smithy.mqtt#publish trait</span></a> and
@@ -362,27 +148,27 @@ are substituted into the topic template at runtime to resolve the actual
 MQTT topic.</p>
 <p>The following example defines a publish operation with two labels, <code class="docutils literal notranslate"><span class="pre">{first}</span></code>
 and <code class="docutils literal notranslate"><span class="pre">{second}</span></code>, in the MQTT topic template:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use </span><span class="nc">smithy.mqtt#publish</span>
-<span class="kd">use </span><span class="nc">smithy.mqtt#topicLabel</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> smithy.mqtt#publish</span><span class="w"></span>
+<span class="kd">use</span><span class="nc"> smithy.mqtt#topicLabel</span><span class="w"></span>
 
-<span class="nt">@publish</span>(<span class="s2">&quot;{first}/{second}&quot;</span>)
-<span class="kd">operation </span><span class="nc">ExampleOperation</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ExampleOperationInput</span><span class="p">,</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">Unit</span>
-}
+<span class="nd">@publish</span>(<span class="s2">&quot;{first}/{second}&quot;</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> ExampleOperation</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">ExampleOperationInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">Unit</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">ExampleOperationInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="nt">@topicLabel</span>
-<span class="w">    </span><span class="py">first</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="nd">@input</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> ExampleOperationInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@topicLabel</span><span class="w"></span>
+<span class="w">    </span><span class="nl">first:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="nt">@topicLabel</span>
-<span class="w">    </span><span class="py">second</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@topicLabel</span><span class="w"></span>
+<span class="w">    </span><span class="nl">second:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
-}
+<span class="w">    </span><span class="nl">message:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <p>MQTT topic templates MUST adhere to the following constraints:</p>
@@ -405,7 +191,7 @@ in the topic template.</li>
 </ul>
 </div>
 <div class="section" id="smithy-mqtt-publish-trait">
-<span id="smithy-mqtt-publish-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#publish</span></code> trait<a class="headerlink" href="#smithy-mqtt-publish-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-mqtt-publish-trait"></span><span id="id2"></span><h2><a href="#smithy-mqtt-publish-trait"><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#publish</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Trait summary</dt><dd>Binds an operation to send a PUBLISH control packet via the MQTT protocol.</dd>
 <dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>operation:not(-[output]-&gt; * &gt; member)
@@ -425,26 +211,26 @@ member name.</dd>
 come together to form the protocol-specific payload of the PUBLISH message.</p>
 <p>The following example defines an operation that publishes messages to the
 <code class="docutils literal notranslate"><span class="pre">foo/{bar}</span></code> topic:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">use </span><span class="nc">smithy.mqtt#publish</span>
-<span class="kd">use </span><span class="nc">smithy.mqtt#topicLabel</span>
+<span class="kd">use</span><span class="nc"> smithy.mqtt#publish</span><span class="w"></span>
+<span class="kd">use</span><span class="nc"> smithy.mqtt#topicLabel</span><span class="w"></span>
 
-<span class="nt">@publish</span>(<span class="s2">&quot;foo/{bar}&quot;</span>)
-<span class="kd">operation </span><span class="nc">PostFoo</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PostFooInput</span><span class="p">,</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">Unit</span>
-}
+<span class="nd">@publish</span>(<span class="s2">&quot;foo/{bar}&quot;</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> PostFoo</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">PostFooInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">Unit</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">PostFooInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="nt">@topicLabel</span>
-<span class="w">    </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="nd">@input</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> PostFooInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@topicLabel</span><span class="w"></span>
+<span class="w">    </span><span class="nl">bar:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-<span class="w">    </span><span class="py">someValue</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
-<span class="w">    </span><span class="py">anotherValue</span><span class="p">:</span><span class="w"> </span><span class="vc">Boolean</span><span class="p">,</span>
-}
+<span class="w">    </span><span class="nl">someValue:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">anotherValue:</span><span class="w"> </span><span class="vc">Boolean</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <p>The &quot;bar&quot; member of the above <code class="docutils literal notranslate"><span class="pre">PostFoo</span></code> operation is marked with the
@@ -453,7 +239,7 @@ value for the &quot;{bar}&quot; label of the MQTT topic template. The &quot;mess
 &quot;anotherValue&quot; members come together to form a protocol-specific document
 that is sent in the payload of the message.</p>
 <div class="section" id="publish-validation">
-<h3>Publish validation<a class="headerlink" href="#publish-validation" title="Permalink to this headline">#</a></h3>
+<h3><a href="#publish-validation">Publish validation</a></h3>
 <ul class="simple">
 <li>Publish operations MUST NOT have output with members.</li>
 <li>Publish operations MUST NOT utilize input event streams.</li>
@@ -464,7 +250,7 @@ the resolved MQTT topics of subscribe operations.</li>
 </div>
 </div>
 <div class="section" id="smithy-mqtt-subscribe-trait">
-<span id="smithy-mqtt-subscribe-trait"></span><span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#subscribe</span></code> trait<a class="headerlink" href="#smithy-mqtt-subscribe-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-mqtt-subscribe-trait"></span><span id="id3"></span><h2><a href="#smithy-mqtt-subscribe-trait"><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#subscribe</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Trait summary</dt><dd>Binds an operation to send one or more SUBSCRIBE control packets
 via the MQTT protocol.</dd>
@@ -496,39 +282,39 @@ payload to be sent as the payload of a message.</p>
 </div>
 <p>The following example operation subscribes to the <code class="docutils literal notranslate"><span class="pre">events/{id}</span></code>
 topic using an <a class="reference internal" href="core/stream-traits.html#event-streams"><span class="std std-ref">event stream</span></a>:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use </span><span class="nc">smithy.mqtt#subscribe</span>
-<span class="kd">use </span><span class="nc">smithy.mqtt#topicLabel</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> smithy.mqtt#subscribe</span><span class="w"></span>
+<span class="kd">use</span><span class="nc"> smithy.mqtt#topicLabel</span><span class="w"></span>
 
-<span class="nt">@subscribe</span>(<span class="s2">&quot;events/{id}&quot;</span>)
-<span class="kd">operation </span><span class="nc">SubscribeForEvents</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">SubscribeForEventsInput</span><span class="p">,</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">SubscribeForEventsOutput</span>
-}
+<span class="nd">@subscribe</span>(<span class="s2">&quot;events/{id}&quot;</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> SubscribeForEvents</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">SubscribeForEventsInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">SubscribeForEventsOutput</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">SubscribeForEventsInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="nt">@topicLabel</span>
-<span class="w">    </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
-}
+<span class="nd">@input</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> SubscribeForEventsInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@topicLabel</span><span class="w"></span>
+<span class="w">    </span><span class="nl">id:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@output</span>
-<span class="kd">structure </span><span class="nc">SubscribeForEventsOutput</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">events</span><span class="p">:</span><span class="w"> </span><span class="vc">EventStream</span><span class="p">,</span>
-}
+<span class="nd">@output</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> SubscribeForEventsOutput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">events:</span><span class="w"> </span><span class="vc">EventStream</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@streaming</span>
-<span class="kd">union </span><span class="nc">EventStream</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">Event</span><span class="p">,</span>
-}
+<span class="nd">@streaming</span><span class="w"></span>
+<span class="kd">union</span><span class="nc"> EventStream</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">message:</span><span class="w"> </span><span class="vc">Event</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">structure </span><span class="nc">Event</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
-}
+<span class="kd">structure</span><span class="nc"> Event</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">message:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <div class="section" id="subscribe-validation">
-<h3>Subscribe validation<a class="headerlink" href="#subscribe-validation" title="Permalink to this headline">#</a></h3>
+<h3><a href="#subscribe-validation">Subscribe validation</a></h3>
 <ul class="simple">
 <li>Subscribe operations MUST NOT define event streams with an
 <a class="reference internal" href="core/stream-traits.html#initial-response"><span class="std std-ref">initial-response</span></a>; only a single member can appear
@@ -545,7 +331,7 @@ custom headers to messages.</li>
 </div>
 </div>
 <div class="section" id="smithy-mqtt-topiclabel-trait">
-<span id="smithy-mqtt-topiclabel-trait"></span><span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#topicLabel</span></code> trait<a class="headerlink" href="#smithy-mqtt-topiclabel-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-mqtt-topiclabel-trait"></span><span id="id4"></span><h2><a href="#smithy-mqtt-topiclabel-trait"><code class="docutils literal notranslate"><span class="pre">smithy.mqtt#topicLabel</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Trait summary</dt><dd>Binds a structure member to an <a class="reference internal" href="#mqtt-topic-label"><span class="std std-ref">MQTT topic label</span></a>.</dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">member[trait|required]</span> <span class="pre">:test(&gt;</span> <span class="pre">:test(string,</span> <span class="pre">byte,</span> <span class="pre">short,</span> <span class="pre">integer,</span> <span class="pre">long,</span> <span class="pre">boolean,</span> <span class="pre">timestamp))</span></code></p>
@@ -562,7 +348,7 @@ case-sensitive member name that is marked with the <code class="docutils literal
 trait, marked with the <code class="docutils literal notranslate"><span class="pre">required</span></code> trait, and targets a string, byte, short,
 integer, long, boolean, or timestamp shape.</p>
 <div class="section" id="label-serialization">
-<h3>Label serialization<a class="headerlink" href="#label-serialization" title="Permalink to this headline">#</a></h3>
+<h3><a href="#label-serialization">Label serialization</a></h3>
 <p>The value of the member is substituted into an MQTT topic template using the
 following serialization:</p>
 <ul class="simple">
@@ -576,7 +362,7 @@ in <span class="target" id="index-0"></span><a class="rfc reference external" hr
 </div>
 </div>
 <div class="section" id="topic-conflicts">
-<h2>Topic conflicts<a class="headerlink" href="#topic-conflicts" title="Permalink to this headline">#</a></h2>
+<h2><a href="#topic-conflicts">Topic conflicts</a></h2>
 <p>MQTT topics in Smithy are fully-typed; MQTT topics modeled in Smithy are
 associated with exactly one shape that defines the payload that can be
 published to a topic. Multiple operations and events in a model MAY resolve
@@ -592,7 +378,6 @@ same number of levels.</li>
 <li>The topic payloads target different shapes.</li>
 </ul>
 <p>The following table provides examples of when topics do and do not conflict:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="40%" />
@@ -641,102 +426,60 @@ same number of levels.</li>
 </tbody>
 </table>
 </div>
-</div>
 <div class="section" id="model-definition">
-<h2>Model definition<a class="headerlink" href="#model-definition" title="Permalink to this headline">#</a></h2>
+<h2><a href="#model-definition">Model definition</a></h2>
 <p>The following Smithy model defines the traits and shapes used to define
 MQTT protocol bindings.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="nc"> &quot;1.0&quot;</span><span class="w"></span>
 
-<span class="kd">namespace </span><span class="nc">smithy.mqtt</span>
+<span class="kd">namespace</span><span class="nc"> smithy.mqtt</span><span class="w"></span>
 
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)
-<span class="nt">@protocolDefinition</span>
-<span class="kd">structure </span><span class="nc">mqttJson</span><span class="w"> </span>{}
+<span class="nd">@trait</span>(<span class="nl">selector:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)<span class="w"></span>
+<span class="nd">@protocolDefinition</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> mqttJson</span><span class="w"> </span>{}<span class="w"></span>
 
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation:not(-[output]-&gt; * &gt; member)&quot;</span><span class="p">,</span>
-<span class="w">       </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;smithy.mqtt#subscribe&quot;</span>])
-<span class="nt">@tags</span>([<span class="s2">&quot;diff.error.const&quot;</span>])
-<span class="c">// Matches one or more characters that are not &quot;#&quot; or &quot;+&quot;.</span>
-<span class="nt">@pattern</span>(<span class="s2">&quot;^[^#+]+$&quot;</span>)
-<span class="kd">string </span><span class="nc">publish</span>
+<span class="nd">@trait</span>(<span class="nl">selector:</span><span class="w"> </span><span class="s2">&quot;operation:not(-[output]-&gt; * &gt; member)&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">       </span><span class="nl">conflicts:</span><span class="w"> </span>[<span class="s2">&quot;smithy.mqtt#subscribe&quot;</span>])<span class="w"></span>
+<span class="nd">@tags</span>([<span class="s2">&quot;diff.error.const&quot;</span>])<span class="w"></span>
+<span class="c">// Matches one or more characters that are not &quot;#&quot; or &quot;+&quot;.</span><span class="w"></span>
+<span class="nd">@pattern</span>(<span class="s2">&quot;^[^#+]+$&quot;</span>)<span class="w"></span>
+<span class="kd">string</span><span class="nc"> publish</span><span class="w"></span>
 
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation:test(-[output]-&gt; structure &gt; member &gt; union[trait|streaming])&quot;</span><span class="p">,</span>
-<span class="w">       </span><span class="py">conflicts</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;smithy.mqtt#publish&quot;</span>])
-<span class="nt">@tags</span>([<span class="s2">&quot;diff.error.const&quot;</span>])
-<span class="c">// Matches one or more characters that are not &quot;#&quot; or &quot;+&quot;.</span>
-<span class="nt">@pattern</span>(<span class="s2">&quot;^[^#+]+$&quot;</span>)
-<span class="kd">string </span><span class="nc">subscribe</span>
+<span class="nd">@trait</span>(<span class="nl">selector:</span><span class="w"> </span><span class="s2">&quot;operation:test(-[output]-&gt; structure &gt; member &gt; union[trait|streaming])&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">       </span><span class="nl">conflicts:</span><span class="w"> </span>[<span class="s2">&quot;smithy.mqtt#publish&quot;</span>])<span class="w"></span>
+<span class="nd">@tags</span>([<span class="s2">&quot;diff.error.const&quot;</span>])<span class="w"></span>
+<span class="c">// Matches one or more characters that are not &quot;#&quot; or &quot;+&quot;.</span><span class="w"></span>
+<span class="nd">@pattern</span>(<span class="s2">&quot;^[^#+]+$&quot;</span>)<span class="w"></span>
+<span class="kd">string</span><span class="nc"> subscribe</span><span class="w"></span>
 
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;member[trait|required] :test(&gt; :test(string, byte, short, integer, long, boolean, timestamp))&quot;</span>)
-<span class="kd">structure </span><span class="nc">topicLabel</span><span class="w"> </span>{}
+<span class="nd">@trait</span>(<span class="nl">selector:</span><span class="w"> </span><span class="s2">&quot;member[trait|required] :test(&gt; :test(string, byte, short, integer, long, boolean, timestamp))&quot;</span>)<span class="w"></span>
+<span class="kd">structure</span><span class="nc"> topicLabel</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
 </div>
 </div>
 
-        </article>
-      </div>
-      <footer>
-        
-        <div class="related-pages">
-          <a class="next-page" href="aws/index.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">AWS specifications</div>
-              </div>
-              <svg><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="waiters.html">
-              <svg><use href="#svg-arrow-right"></use></svg>
-              <div class="page-info">
-                <div class="context">
-                  <span>Previous</span>
-                </div>
-                
-                <div class="title">Waiters</div>
-                
-              </div>
-            </a>
-        </div>
-        <div class="bottom-of-page">
-          <div class="left-details">
-            <div class="copyright">
-                Copyright &#169; 2022, Amazon Web Services
-            </div>
-            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-            
-            <a href="https://github.com/pradyunsg/furo">Furo</a>
-            
-          </div>
-          <div class="right-details">
-            <div class="icons">
-              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
-                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
-                </svg>
-            </a>
-              
-            </div>
-          </div>
-        </div>
-        
-      </footer>
-    </div>
-    <aside class="toc-drawer">
-      
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            Contents
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
+
+                    
+                    <section class="relations">
+                        
+                        <a href="waiters.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Waiters</a>
+                        
+                        <a href="aws/index.html" title="next chapter" class="next-page clearfix">AWS specifications →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="waiters.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
+                                
+                                <a href="aws/index.html" title="next chapter" class="next-page clearfix">Next →</a>
+                            </section>
+                            
+                            <ul>
 <li><a class="reference internal" href="#">MQTT Protocol Bindings</a><ul>
 <li><a class="reference internal" href="#introduction">Introduction</a><ul>
 <li><a class="reference internal" href="#mqtt-overview">MQTT overview</a></li>
@@ -761,19 +504,18 @@ MQTT protocol bindings.</p>
 </li>
 </ul>
 
-          </div>
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2021, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
         </div>
-      </div>
-      
-      
-    </aside>
-  </div>
-</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/scripts/furo.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    </body>
+    </div>
+</footer>
+  </body>
 </html>

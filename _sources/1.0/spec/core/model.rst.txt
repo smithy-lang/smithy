@@ -458,7 +458,7 @@ reference other shapes using :ref:`members <member>`.
     * - :ref:`list`
       - Ordered collection of homogeneous values
     * - :ref:`set`
-      - (Deprecated) Ordered collection of unique homogeneous values
+      - Ordered collection of unique homogeneous values
     * - :ref:`map`
       - Map data structure that maps string keys to homogeneous values
     * - :ref:`structure`
@@ -565,19 +565,10 @@ example is ``smithy.example#MyList$member``.
 Set
 ===
 
-.. danger::
-
-    Sets are deprecated. Use a list with the :ref:`uniqueItems-trait` instead.
-
 The :dfn:`set` type represents an ordered collection of unique values. A set
-shape requires a single member named ``member``. Sets are implicitly considered
-to be marked with the :ref:`uniqueItems-trait`, and as such MUST NOT transitively
-contain floats, doubles, or documents.
-
-.. important::
-
-    Sets are considered sub-type of lists; any place a list is accepted, a set
-    is accepted.
+shape requires a single member named ``member``, and the member MUST target
+either a string, blob, byte, short, integer, long, bigInteger, or bigDecimal
+shape. The targeted shape MUST NOT be marked with the :ref:`streaming-trait`.
 
 Sets are defined in the IDL using a :ref:`set_statement <idl-set>`. The
 following example defines a set of strings:
@@ -623,14 +614,11 @@ The shape ID of the member of a set is the set shape ID followed by
 ``$member``. For example, the shape ID of the set member in the above
 example is ``smithy.example#StringSet$member``.
 
-.. rubric:: Use insertion order
+.. rubric:: Language support for insertion ordered sets
 
-Implementations SHOULD use insertion ordered sets to ensure that clients and
-servers both agree on element ordering so that error messages about specific
-items in a set are actionable by clients. If a client and server don't agree
-on ordering, then pointing to where a validation error occurs becomes very
-challenging. Programming languages that do not support insertion ordered sets
-SHOULD store the values of a set in a list.
+Not all programming languages support an insertion ordered set data
+structure. Such languages SHOULD store the values of a set data
+structure in a list and rely on validation to ensure uniqueness.
 
 
 .. _map:
@@ -979,12 +967,8 @@ Smithy allows recursive shape definitions with the following limitations:
    that shapes that are typically impossible to define in various programming
    languages are not defined in Smithy models (for example, you can't define
    a recursive list in Java ``List<List<List....``).
-2. To ensure a value can be provided for a structure, recursive member
-   relationship from a structure back to itself MUST NOT be made up of all
-   :ref:`required <required-trait>` structure members.
-3. To ensure a value can be provided for a union, recursive unions MUST
-   contain at least one path through its members that is not recursive
-   or steps through a list, set, map, or optional structure member.
+2. A structure cannot contain a cyclical set of members marked with the
+   :ref:`required-trait` that refers back to itself.
 
 The following recursive shape definition is **valid**:
 

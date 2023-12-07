@@ -1,307 +1,69 @@
-<!doctype html>
-<html class="no-js" lang="en">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="MQTT Protocol Bindings" href="mqtt.html" /><link rel="prev" title="HTTP Protocol Compliance Tests" href="http-protocol-compliance-tests.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
-        <title>Waiters - Smithy 1.0</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Waiters &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../_static/bootstrap-reboot.css" type="text/css" />
     
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
+    <link rel="stylesheet" href="../../_static/custom-tabs.css" type="text/css" />
+
     
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/smithy.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="MQTT Protocol Bindings" href="mqtt.html" />
+    <link rel="prev" title="HTTP Protocol Compliance Tests" href="http-protocol-compliance-tests.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="smithy-version" content="1.0">
 
-
-<style>
-  body {
-    --color-code-background: #f8f8f8;
-  --color-code-foreground: black;
-  --admonition-font-size: 100%;
-  --admonition-title-font-size: 100%;
-  --color-brand-primary: #C44536;
-  --color-brand-content: #00808b;
-  --color-announcement-background: #711818de;
-  --color-announcement-text: #fff;
-  
-  }
-  @media not print {
-    body[data-theme="dark"] {
-      --color-code-background: #282828;
-  --color-code-foreground: #dddddd;
-  --color-brand-primary: #ed9d13;
-  --color-brand-content: #58d3ff;
-  --color-announcement-background: #711818de;
-  --color-announcement-text: #fff;
-  
-    }
-    @media (prefers-color-scheme: dark) {
-      body:not([data-theme="light"]) {
-        --color-code-background: #282828;
-  --color-code-foreground: #dddddd;
-  --color-brand-primary: #ed9d13;
-  --color-brand-content: #58d3ff;
-  --color-announcement-background: #711818de;
-  --color-announcement-text: #fff;
-  
-      }
-    }
-  }
-</style><script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
-<script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script></head>
-  <body>
-    
-    <script>
-      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
-    </script>
-    
-
-<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-  <symbol id="svg-toc" viewBox="0 0 24 24">
-    <title>Contents</title>
-    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
-      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
-    </svg>
-  </symbol>
-  <symbol id="svg-menu" viewBox="0 0 24 24">
-    <title>Menu</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
-      <line x1="3" y1="12" x2="21" y2="12"></line>
-      <line x1="3" y1="6" x2="21" y2="6"></line>
-      <line x1="3" y1="18" x2="21" y2="18"></line>
-    </svg>
-  </symbol>
-  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
-    <title>Expand</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
-      <polyline points="9 18 15 12 9 6"></polyline>
-    </svg>
-  </symbol>
-  <symbol id="svg-sun" viewBox="0 0 24 24">
-    <title>Light mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
-      <circle cx="12" cy="12" r="5"></circle>
-      <line x1="12" y1="1" x2="12" y2="3"></line>
-      <line x1="12" y1="21" x2="12" y2="23"></line>
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-      <line x1="1" y1="12" x2="3" y2="12"></line>
-      <line x1="21" y1="12" x2="23" y2="12"></line>
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-    </svg>
-  </symbol>
-  <symbol id="svg-moon" viewBox="0 0 24 24">
-    <title>Dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
-    </svg>
-  </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
-    </svg>
-  </symbol>
-</svg>
-
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
-
-<div class="announcement">
-  <aside class="announcement-content">
-     <strong>⚠️ You are viewing version 1.0.</strong><br/>
-Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2.0/</a>. 
-  </aside>
-</div>
-
-<div class="page">
-  <header class="mobile-header">
-    <div class="header-left">
-      <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
-      </label>
-    </div>
-    <div class="header-center">
-      <a href="../index.html"><div class="brand">Smithy 1.0</div></a>
-    </div>
-    <div class="header-right">
-      <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-        </button>
-      </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-      </label>
-    </div>
-  </header>
-  <aside class="sidebar-drawer">
-    <div class="sidebar-container">
-      
-      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../index.html">
-  
-  <div class="sidebar-logo-container">
-    <img class="sidebar-logo" src="../_static/smithy.svg" alt="Logo"/>
-  </div>
-  
-  
-</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
-  <input type="hidden" name="check_keywords" value="yes">
-  <input type="hidden" name="area" value="default">
-</form>
-<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick start</a></li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Specifications</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2 has-children"><a class="reference internal" href="core/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="core/model.html">1. The Smithy model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/prelude-model.html">2. Prelude model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/constraint-traits.html">3. Constraint traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/documentation-traits.html">4. Documentation traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/type-refinement-traits.html">5. Type refinement traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/protocol-traits.html">6. Protocol traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/auth-traits.html">7. Authentication traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/behavior-traits.html">8. Behavior traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/resource-traits.html">9. Resource traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/stream-traits.html">10. Streaming Traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/http-traits.html">11. HTTP binding traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/xml-traits.html">12. XML binding traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/endpoint-traits.html">13. Endpoint Traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/selectors.html">14. Selectors</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/model-validation.html">15. Model validation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/idl.html">16. Smithy IDL</a></li>
-<li class="toctree-l3"><a class="reference internal" href="core/json-ast.html">17. JSON AST</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Waiters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mqtt.html">MQTT Protocol Bindings</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="aws/index.html">AWS specifications</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="aws/aws-core.html">AWS Core Specification</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws/aws-auth.html">AWS Authentication Traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws/aws-iam.html">AWS IAM traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws/aws-cloudformation.html">AWS CloudFormation traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws/aws-restxml-protocol.html">AWS restXml protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws/aws-query-protocol.html">AWS query protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../guides/index.html">Smithy Guides</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../guides/building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../guides/building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../guides/building-models/build-config.html">smithy-build</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../guides/model-linters.html">Model linters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guides/evolving-models.html">Evolving Models</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guides/style-guide.html">Style Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guides/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guides/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
-</ul>
-</li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Implementations</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/implementations.html">Implementations</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
-</ul>
-</li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Project links</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/">2.0 Documentation</a></li>
-</ul>
-
-</div>
-</div>
-
-      </div>
-      
-    </div>
-  </aside>
-  <div class="main">
-    <div class="content">
-      <div class="article-container">
-        <a href="#" class="back-to-top muted-link">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
-          </svg>
-          <span>Back to top</span>
-        </a>
-        <div class="content-icon-container">
-          <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-1.0/spec/waiters.rst" title="Edit this page">
-    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
-      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
-    </svg>
-    <span class="visually-hidden">Edit this page</span>
-  </a>
-</div><div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-            </button>
-          </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-          </label>
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
+                </a>
+                <span class="version-text">1.0</span>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="index.html">Specifications</a></li>
+                <li class="site-page"><a href="../guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
         </div>
-        <article role="main">
-          <div class="section" id="waiters">
-<span id="id1"></span><h1>Waiters<a class="headerlink" href="#waiters" title="Permalink to this headline">#</a></h1>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article class="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="index.html" accesskey="U">Specifications</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="waiters">
+<span id="id1"></span><h1><a href="#waiters">Waiters</a></h1>
 <p>Waiters are a client-side abstraction used to poll a resource until a desired
 state is reached, or until it is determined that the resource will never
 enter into the desired state. This is a common task when working with
@@ -313,15 +75,15 @@ customer code and onto service teams who know their service best.</p>
 <p>For example, waiters can be used in code to turn the workflow of waiting
 for an Amazon EC2 instance to be terminated into something like the
 following client pseudocode:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">InstanceTerminatedWaiter</span><span class="w"> </span><span class="n">waiter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">InstanceTerminatedWaiter</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
-<span class="w">        </span><span class="p">.</span><span class="na">client</span><span class="p">(</span><span class="n">myClient</span><span class="p">)</span>
-<span class="w">        </span><span class="p">.</span><span class="na">instanceIds</span><span class="p">(</span><span class="n">Collections</span><span class="p">.</span><span class="na">singletonList</span><span class="p">(</span><span class="s">&quot;i-foo&quot;</span><span class="p">))</span>
-<span class="w">        </span><span class="p">.</span><span class="na">totalAllowedWaitTime</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">MINUTES</span><span class="p">)</span>
-<span class="w">        </span><span class="p">.</span><span class="na">wait</span><span class="p">();</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">InstanceTerminatedWaiter</span> <span class="n">waiter</span> <span class="o">=</span> <span class="n">InstanceTerminatedWaiter</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+        <span class="p">.</span><span class="na">client</span><span class="p">(</span><span class="n">myClient</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">instanceIds</span><span class="p">(</span><span class="n">Collections</span><span class="p">.</span><span class="na">singletonList</span><span class="p">(</span><span class="s">&quot;i-foo&quot;</span><span class="p">))</span>
+        <span class="p">.</span><span class="na">totalAllowedWaitTime</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">Duration</span><span class="p">.</span><span class="na">MINUTES</span><span class="p">)</span>
+        <span class="p">.</span><span class="na">wait</span><span class="p">();</span>
 </pre></div>
 </div>
 <div class="section" id="smithy-waiters-waitable-trait">
-<span id="smithy-waiters-waitable-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">smithy.waiters#waitable</span></code> trait<a class="headerlink" href="#smithy-waiters-waitable-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-waiters-waitable-trait"></span><span id="id2"></span><h2><a href="#smithy-waiters-waitable-trait"><code class="docutils literal notranslate"><span class="pre">smithy.waiters#waitable</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that an operation has various named &quot;waiters&quot; that can be used
 to poll a resource until it enters a desired state.</dd>
@@ -333,34 +95,34 @@ to poll a resource until it enters a desired state.</dd>
 </dl>
 <p>The following example defines a waiter that waits until an Amazon S3 bucket
 exists:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">com.amazonaws.s3</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> com.amazonaws.s3</span><span class="w"></span>
 
-<span class="hll"><span class="kd">use </span><span class="nc">smithy.waiters#waitable</span>
+<span class="hll"><span class="kd">use</span><span class="nc"> smithy.waiters#waitable</span><span class="w"></span>
 </span>
-<span class="nt">@waitable</span>(
-<span class="w">    </span><span class="py">BucketExists</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">documentation</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Wait until a bucket exists&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="py">acceptors</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">            </span>{
-<span class="w">                </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                    </span><span class="py">success</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
-<span class="w">                </span>}
-<span class="w">            </span>}<span class="p">,</span>
-<span class="w">            </span>{
-<span class="w">                </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;retry&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                    </span><span class="py">errorType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NotFound&quot;</span>
-<span class="w">                </span>}
-<span class="w">            </span>}
-<span class="w">        </span>]
-<span class="w">    </span>}
-)
-<span class="kd">operation </span><span class="nc">HeadBucket</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">HeadBucketInput</span><span class="p">,</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">HeadBucketOutput</span><span class="p">,</span>
-<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[<span class="vc">NotFound</span>]
-}
+<span class="nd">@waitable</span>(<span class="w"></span>
+<span class="w">    </span><span class="nl">BucketExists:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">documentation:</span><span class="w"> </span><span class="s2">&quot;Wait until a bucket exists&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">acceptors:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">            </span>{<span class="w"></span>
+<span class="w">                </span><span class="nl">state:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="nl">matcher:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                    </span><span class="nl">success:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<span class="w">                </span>}<span class="w"></span>
+<span class="w">            </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">            </span>{<span class="w"></span>
+<span class="w">                </span><span class="nl">state:</span><span class="w"> </span><span class="s2">&quot;retry&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="nl">matcher:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                    </span><span class="nl">errorType:</span><span class="w"> </span><span class="s2">&quot;NotFound&quot;</span><span class="w"></span>
+<span class="w">                </span>}<span class="w"></span>
+<span class="w">            </span>}<span class="w"></span>
+<span class="w">        </span>]<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> HeadBucket</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">HeadBucketInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">HeadBucketOutput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">errors:</span><span class="w"> </span>[<span class="vc">NotFound</span>]<span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <p>Applying the steps defined in <a class="reference internal" href="#waiter-workflow">Waiter workflow</a> to the above example,
@@ -380,12 +142,12 @@ delaying with exponential backoff until the total allowed time to wait
 is exceeded.</li>
 </ol>
 <div class="section" id="waiter-names">
-<span id="id3"></span><h3>Waiter names<a class="headerlink" href="#waiter-names" title="Permalink to this headline">#</a></h3>
+<span id="id3"></span><h3><a href="#waiter-names">Waiter names</a></h3>
 <p>Waiter names MUST be defined using UpperCamelCase and only contain
 alphanumeric characters. That is, waiters MUST adhere to the following
 ABNF:</p>
-<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">waiter-name</span>:<span class="w"> </span><span class="nc">upper-alpha</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="k">ALPHA</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">DIGIT</span><span class="p">)</span>
-<span class="nc">upper-alpha</span>:<span class="w"> </span><span class="l">%x41-5A</span><span class="w"> </span><span class="c1">; A-Z</span>
+<div class="highlight-abnf notranslate"><div class="highlight"><pre><span></span><span class="nc">waiter-name</span>: <span class="nc">upper-alpha</span> <span class="o">*</span><span class="p">(</span><span class="k">ALPHA</span> <span class="o">/</span> <span class="k">DIGIT</span><span class="p">)</span>
+<span class="nc">upper-alpha</span>: <span class="l">%x41-5A</span> <span class="c1">; A-Z</span>
 </pre></div>
 </div>
 <div class="admonition seealso">
@@ -400,7 +162,7 @@ without needing to consider duplicate waiter names across operations.</p>
 </div>
 </div>
 <div class="section" id="waiter-workflow">
-<h2>Waiter workflow<a class="headerlink" href="#waiter-workflow" title="Permalink to this headline">#</a></h2>
+<h2><a href="#waiter-workflow">Waiter workflow</a></h2>
 <p>Implementations MUST require callers to provide the total amount of time
 they are willing to wait for a waiter to complete. Requiring the caller
 to set a deadline removes any surprises as to how long a waiter can
@@ -430,7 +192,7 @@ waiting.</li>
 described in <a class="reference internal" href="#waiter-retries"><span class="std std-ref">Waiter retries</span></a>, and continue to step 1.</li>
 </ol>
 <div class="section" id="waiter-retries">
-<span id="id4"></span><h3>Waiter retries<a class="headerlink" href="#waiter-retries" title="Permalink to this headline">#</a></h3>
+<span id="id4"></span><h3><a href="#waiter-retries">Waiter retries</a></h3>
 <p>Waiter implementations MUST delay for a period of time before attempting a
 retry. The amount of time a waiter delays between retries is computed using
 exponential backoff with jitter through the following algorithm:</p>
@@ -474,7 +236,6 @@ needlessly only to exceed <code class="docutils literal notranslate"><span class
 provided <code class="docutils literal notranslate"><span class="pre">maxWaitTime</span></code> of 300 (5 minutes), and assuming that requests
 complete in 0 seconds (for example purposes only), delays might be computed as
 follows:</p>
-<div class="table-wrapper docutils container">
 <table border="1" class="docutils align-default">
 <colgroup>
 <col width="25%" />
@@ -557,7 +318,6 @@ follows:</p>
 </tr>
 </tbody>
 </table>
-</div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Because waiters use jitter, waiters might use different delays than the
@@ -565,7 +325,7 @@ example table above.</p>
 </div>
 </div>
 <div class="section" id="why-exponential-backoff-with-jitter">
-<h3>Why exponential backoff with jitter?<a class="headerlink" href="#why-exponential-backoff-with-jitter" title="Permalink to this headline">#</a></h3>
+<h3><a href="#why-exponential-backoff-with-jitter">Why exponential backoff with jitter?</a></h3>
 <p><a class="reference external" href="https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/#Jitter">Exponential backoff with full jitter</a> is used as opposed to other retry
 strategies like linear backoff because it should work for most use cases,
 balancing the cost to the caller spent waiting on a resource to stabilize,
@@ -588,10 +348,9 @@ using linear backoff.</p>
 </div>
 </div>
 <div class="section" id="waiter-structure">
-<span id="id5"></span><h2>Waiter structure<a class="headerlink" href="#waiter-structure" title="Permalink to this headline">#</a></h2>
+<span id="id5"></span><h2><a href="#waiter-structure">Waiter structure</a></h2>
 <p>A <em>waiter</em> defines a set of acceptors that are used to check if a resource
 has entered into a desired state.</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
@@ -643,10 +402,8 @@ categorized and grouped.</td>
 </tbody>
 </table>
 </div>
-</div>
 <div class="section" id="acceptor-structure">
-<span id="waiter-acceptor"></span><h2>Acceptor structure<a class="headerlink" href="#acceptor-structure" title="Permalink to this headline">#</a></h2>
-<div class="table-wrapper colwidths-given docutils container">
+<span id="waiter-acceptor"></span><h2><a href="#acceptor-structure">Acceptor structure</a></h2>
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
@@ -673,11 +430,9 @@ that matches the requirements needed for a state transition.</td>
 </tbody>
 </table>
 </div>
-</div>
 <div class="section" id="acceptorstate-enum">
-<span id="waiter-acceptor-state"></span><h2>AcceptorState enum<a class="headerlink" href="#acceptorstate-enum" title="Permalink to this headline">#</a></h2>
+<span id="waiter-acceptor-state"></span><h2><a href="#acceptorstate-enum">AcceptorState enum</a></h2>
 <p>Acceptors cause a waiter to transition into one of the following states:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
@@ -704,13 +459,11 @@ implicit if no accepter causes a state transition.</td>
 </tbody>
 </table>
 </div>
-</div>
 <div class="section" id="matcher-union">
-<span id="waiter-matcher"></span><h2>Matcher union<a class="headerlink" href="#matcher-union" title="Permalink to this headline">#</a></h2>
+<span id="waiter-matcher"></span><h2><a href="#matcher-union">Matcher union</a></h2>
 <p>A <em>matcher</em> defines how an acceptor determines if it matches the current
 state of a resource. A matcher is a union where exactly one of the following
 members MUST be set:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
@@ -762,13 +515,11 @@ errors that are not defined in the model.</p>
 </tbody>
 </table>
 </div>
-</div>
 <div class="section" id="pathmatcher-structure">
-<span id="waiter-pathmatcher"></span><h2>PathMatcher structure<a class="headerlink" href="#pathmatcher-structure" title="Permalink to this headline">#</a></h2>
+<span id="waiter-pathmatcher"></span><h2><a href="#pathmatcher-structure">PathMatcher structure</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">output</span></code> and <code class="docutils literal notranslate"><span class="pre">inputOutput</span></code> matchers test the result of a <a class="reference external" href="https://jmespath.org/">JMESPath</a>
 expression against an expected value. These matchers are structures that
 support the following members:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
@@ -799,13 +550,11 @@ be a valid <a class="reference internal" href="#pathcomparator-enum"><span class
 </tr>
 </tbody>
 </table>
-</div>
 <div class="section" id="jmespath-data-model">
-<h3>JMESPath data model<a class="headerlink" href="#jmespath-data-model" title="Permalink to this headline">#</a></h3>
+<h3><a href="#jmespath-data-model">JMESPath data model</a></h3>
 <p>The data model exposed to <a class="reference external" href="https://jmespath.org/">JMESPath</a> for input and output structures is
 converted from Smithy types to <a class="reference external" href="https://jmespath.org/specification.html#data-types">JMESPath types</a> using the following
 conversion table:</p>
-<div class="table-wrapper docutils container">
 <table border="1" class="docutils align-default">
 <colgroup>
 <col width="50%" />
@@ -870,7 +619,6 @@ conversion table:</p>
 </tr>
 </tbody>
 </table>
-</div>
 <p class="rubric">Footnotes</p>
 <table class="docutils footnote" frame="void" id="fnumbers" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
@@ -906,7 +654,7 @@ only a single member is set to a non-null value.</td></tr>
 </table>
 </div>
 <div class="section" id="jmespath-static-analysis">
-<h3>JMESPath static analysis<a class="headerlink" href="#jmespath-static-analysis" title="Permalink to this headline">#</a></h3>
+<h3><a href="#jmespath-static-analysis">JMESPath static analysis</a></h3>
 <p>Smithy implementations that can statically analyze JMESPath expressions
 MAY emit a <a class="reference internal" href="core/model-validation.html#validation"><span class="std std-ref">validation event</span></a> with an event ID of
 <code class="docutils literal notranslate"><span class="pre">WaitableTraitJmespathProblem</span></code> and a <a class="reference internal" href="core/model-validation.html#severity-definition"><span class="std std-ref">severity of DANGER</span></a>
@@ -921,11 +669,10 @@ return type of a <a class="reference internal" href="#pathcomparator-enum"><span
 </div>
 </div>
 <div class="section" id="pathcomparator-enum">
-<span id="id12"></span><h2>PathComparator enum<a class="headerlink" href="#pathcomparator-enum" title="Permalink to this headline">#</a></h2>
+<span id="id12"></span><h2><a href="#pathcomparator-enum">PathComparator enum</a></h2>
 <p>Each <code class="docutils literal notranslate"><span class="pre">PathMatcher</span></code> structure contains a <code class="docutils literal notranslate"><span class="pre">comparator</span></code> that is used to
 check the result of a JMESPath expression against an expected value. A
 comparator can be set to any of the following values:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
@@ -965,9 +712,8 @@ any value in the array is a string that equals an expected string.</td>
 </tbody>
 </table>
 </div>
-</div>
 <div class="section" id="waiter-examples">
-<h2>Waiter examples<a class="headerlink" href="#waiter-examples" title="Permalink to this headline">#</a></h2>
+<h2><a href="#waiter-examples">Waiter examples</a></h2>
 <p>This section provides examples for various features of waiters.</p>
 <p>The following example defines a <code class="docutils literal notranslate"><span class="pre">ThingExists</span></code> waiter that waits until the
 <code class="docutils literal notranslate"><span class="pre">status</span></code> member in the output of the <code class="docutils literal notranslate"><span class="pre">GetThing</span></code> operation returns
@@ -976,89 +722,89 @@ a &quot;Thing&quot; has a <code class="docutils literal notranslate"><span class
 <code class="docutils literal notranslate"><span class="pre">success</span></code> state. To address this and prevent needlessly waiting on a
 success state that can never happen, a <code class="docutils literal notranslate"><span class="pre">failure</span></code> state transition is
 triggered if the <code class="docutils literal notranslate"><span class="pre">status</span></code> property equals <code class="docutils literal notranslate"><span class="pre">failed</span></code>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">use </span><span class="nc">smithy.waiters#waitable</span>
+<span class="kd">use</span><span class="nc"> smithy.waiters#waitable</span><span class="w"></span>
 
-<span class="nt">@waitable</span>(
-<span class="w">    </span><span class="py">ThingExists</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Waits until a thing has been created&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="py">acceptors</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">            </span><span class="c">// Fail-fast if the thing transitions to a &quot;failed&quot; state.</span>
-<span class="w">            </span>{
-<span class="w">                </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;failure&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                        </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;status&quot;</span><span class="p">,</span>
-<span class="w">                        </span><span class="py">comparator</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stringEquals&quot;</span><span class="p">,</span>
-<span class="w">                        </span><span class="py">expected</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;failed&quot;</span>
-<span class="w">                    </span>}
-<span class="w">                </span>}
-<span class="w">            </span>}<span class="p">,</span>
-<span class="w">            </span><span class="c">// Succeed when the thing enters into a &quot;success&quot; state.</span>
-<span class="w">            </span>{
-<span class="w">                </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                        </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;status&quot;</span><span class="p">,</span>
-<span class="w">                        </span><span class="py">comparator</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stringEquals&quot;</span><span class="p">,</span>
-<span class="w">                        </span><span class="py">expected</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span>
-<span class="w">                    </span>}
-<span class="w">                </span>}
-<span class="w">            </span>}
-<span class="w">        </span>]
-<span class="w">    </span>}
-)
-<span class="kd">operation </span><span class="nc">GetThing</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetThingInput</span><span class="p">,</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetThingOutput</span><span class="p">,</span>
-}
+<span class="nd">@waitable</span>(<span class="w"></span>
+<span class="w">    </span><span class="nl">ThingExists:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">description:</span><span class="w"> </span><span class="s2">&quot;Waits until a thing has been created&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">acceptors:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">            </span><span class="c">// Fail-fast if the thing transitions to a &quot;failed&quot; state.</span><span class="w"></span>
+<span class="w">            </span>{<span class="w"></span>
+<span class="w">                </span><span class="nl">state:</span><span class="w"> </span><span class="s2">&quot;failure&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="nl">matcher:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                    </span><span class="nl">output:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                        </span><span class="nl">path:</span><span class="w"> </span><span class="s2">&quot;status&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                        </span><span class="nl">comparator:</span><span class="w"> </span><span class="s2">&quot;stringEquals&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                        </span><span class="nl">expected:</span><span class="w"> </span><span class="s2">&quot;failed&quot;</span><span class="w"></span>
+<span class="w">                    </span>}<span class="w"></span>
+<span class="w">                </span>}<span class="w"></span>
+<span class="w">            </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="c">// Succeed when the thing enters into a &quot;success&quot; state.</span><span class="w"></span>
+<span class="w">            </span>{<span class="w"></span>
+<span class="w">                </span><span class="nl">state:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="nl">matcher:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                    </span><span class="nl">output:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                        </span><span class="nl">path:</span><span class="w"> </span><span class="s2">&quot;status&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                        </span><span class="nl">comparator:</span><span class="w"> </span><span class="s2">&quot;stringEquals&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                        </span><span class="nl">expected:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="w"></span>
+<span class="w">                    </span>}<span class="w"></span>
+<span class="w">                </span>}<span class="w"></span>
+<span class="w">            </span>}<span class="w"></span>
+<span class="w">        </span>]<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> GetThing</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">GetThingInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetThingOutput</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">GetThingInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
-}
+<span class="nd">@input</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> GetThingInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nl">name:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@output</span>
-<span class="kd">structure </span><span class="nc">GetThingOutput</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">status</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
-}
+<span class="nd">@output</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> GetThingOutput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">status:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <p>Both input and output data can be queried using the <code class="docutils literal notranslate"><span class="pre">inputOutput</span></code> matcher.
 The following example waiter completes successfully when the number of
 provided groups on input matches the number of provided groups on output:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">use </span><span class="nc">smithy.waiters#waitable</span>
+<span class="kd">use</span><span class="nc"> smithy.waiters#waitable</span><span class="w"></span>
 
-<span class="nt">@waitable</span>(
-<span class="w">    </span><span class="py">GroupExists</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">acceptors</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">            </span>{
-<span class="w">                </span><span class="py">inputOutput</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                    </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;length(input.groups) == length(output.groups)&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="py">expected</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="py">comparator</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;booleanEquals&quot;</span>
-<span class="w">                </span>}
-<span class="w">            </span>}
-<span class="w">        </span>]
-<span class="w">    </span>}
-)
-<span class="kd">operation </span><span class="nc">ListGroups</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ListGroupsInput</span><span class="p">,</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">ListGroupsOutput</span><span class="p">,</span>
-}
+<span class="nd">@waitable</span>(<span class="w"></span>
+<span class="w">    </span><span class="nl">GroupExists:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">acceptors:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">            </span>{<span class="w"></span>
+<span class="w">                </span><span class="nl">inputOutput:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                    </span><span class="nl">path:</span><span class="w"> </span><span class="s2">&quot;length(input.groups) == length(output.groups)&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                    </span><span class="nl">expected:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                    </span><span class="nl">comparator:</span><span class="w"> </span><span class="s2">&quot;booleanEquals&quot;</span><span class="w"></span>
+<span class="w">                </span>}<span class="w"></span>
+<span class="w">            </span>}<span class="w"></span>
+<span class="w">        </span>]<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> ListGroups</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">ListGroupsInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">ListGroupsOutput</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="waiter-best-practices">
-<span id="id13"></span><h2>Waiter best-practices<a class="headerlink" href="#waiter-best-practices" title="Permalink to this headline">#</a></h2>
+<span id="id13"></span><h2><a href="#waiter-best-practices">Waiter best-practices</a></h2>
 <p>The following non-normative section outlines best practices for defining
 and implementing waiters.</p>
 <div class="section" id="keep-jmespath-expressions-simple">
-<h3>Keep JMESPath expressions simple<a class="headerlink" href="#keep-jmespath-expressions-simple" title="Permalink to this headline">#</a></h3>
+<h3><a href="#keep-jmespath-expressions-simple">Keep JMESPath expressions simple</a></h3>
 <p>Overly complex <a class="reference external" href="https://jmespath.org/">JMESPath</a> expressions can easily lead to bugs. While static
 analysis of JMESPath expressions can give some level of confidence in
 expressions, it does not guarantee that the logic encoded in the
@@ -1067,7 +813,7 @@ a particular use-case, consider if the API itself is overly complex and
 needs to be simplified.</p>
 </div>
 <div class="section" id="name-waiters-after-the-resource-and-state">
-<h3>Name waiters after the resource and state<a class="headerlink" href="#name-waiters-after-the-resource-and-state" title="Permalink to this headline">#</a></h3>
+<h3><a href="#name-waiters-after-the-resource-and-state">Name waiters after the resource and state</a></h3>
 <p>Waiters SHOULD be named after the resource name and desired state, for example
 <code class="docutils literal notranslate"><span class="pre">&lt;Resource&gt;&lt;StateName&gt;</span></code>. &quot;StateName&quot; SHOULD match the expected state
 name of the resource where possible. For example, if a &quot;Snapshot&quot; resource
@@ -1099,7 +845,7 @@ and <code class="docutils literal notranslate"><span class="pre">&lt;Resource&gt
 </div>
 </div>
 <div class="section" id="do-not-model-implicit-acceptors">
-<h3>Do not model implicit acceptors<a class="headerlink" href="#do-not-model-implicit-acceptors" title="Permalink to this headline">#</a></h3>
+<h3><a href="#do-not-model-implicit-acceptors">Do not model implicit acceptors</a></h3>
 <p>Implicit acceptors are unnecessary and can quickly become incomplete as new
 resource states and errors are added. Waiters have 2 implicit
 <a class="reference internal" href="#waiter-acceptor"><span class="std std-ref">acceptors</span></a>:</p>
@@ -1114,39 +860,39 @@ process described in <a class="reference internal" href="#waiter-retries"><span 
 <a class="reference internal" href="#waiter-matcher"><span class="std std-ref">matcher</span></a> that transitions to a state of &quot;failure&quot;.
 This is already the default behavior. For example, the following acceptor
 is unnecessary:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
-<span class="w">    </span><span class="py">acceptors</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{
-<span class="w">            </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;failure&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                </span><span class="py">errorType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ValidationError&quot;</span>
-<span class="w">            </span>}
-<span class="w">        </span>}<span class="p">,</span>
-<span class="w">        </span><span class="c">// other acceptors...</span>
-<span class="w">    </span>]
-}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">acceptors:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">        </span>{<span class="w"></span>
+<span class="w">            </span><span class="nl">state:</span><span class="w"> </span><span class="s2">&quot;failure&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="nl">matcher:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                </span><span class="nl">errorType:</span><span class="w"> </span><span class="s2">&quot;ValidationError&quot;</span><span class="w"></span>
+<span class="w">            </span>}<span class="w"></span>
+<span class="w">        </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="c">// other acceptors...</span><span class="w"></span>
+<span class="w">    </span>]<span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <p>Because a successful request that does not match any acceptor by default
 transitions to the <a class="reference internal" href="#waiter-acceptor-state"><span class="std std-ref">retry state</span></a>, there is no
 need to model matchers with a state of retry unless the matcher is for
 specific errors. For example, the following matcher is unnecessary:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{
-<span class="w">    </span><span class="py">acceptors</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span>{
-<span class="w">            </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;retry&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                </span><span class="py">success</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
-<span class="w">            </span>}
-<span class="w">        </span>}<span class="p">,</span>
-<span class="w">        </span><span class="c">// other acceptors...</span>
-<span class="w">    </span>]
-}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">acceptors:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">        </span>{<span class="w"></span>
+<span class="w">            </span><span class="nl">state:</span><span class="w"> </span><span class="s2">&quot;retry&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="nl">matcher:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                </span><span class="nl">success:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<span class="w">            </span>}<span class="w"></span>
+<span class="w">        </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="c">// other acceptors...</span><span class="w"></span>
+<span class="w">    </span>]<span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="only-model-terminal-failure-states">
-<h3>Only model terminal failure states<a class="headerlink" href="#only-model-terminal-failure-states" title="Permalink to this headline">#</a></h3>
+<h3><a href="#only-model-terminal-failure-states">Only model terminal failure states</a></h3>
 <p>Waiters SHOULD only model terminal failure states. A <em>terminal failure state</em>
 is a resource state in which the resource cannot transition to the desired
 success state without a user taking some explicit action. Only modeling
@@ -1158,9 +904,8 @@ waiter logic.</p>
 <p>For example, suppose a resource has the following state transitions, and
 if a resource is in the &quot;Stopped&quot; state, it can only transition to &quot;Running&quot;
 if the user invokes the &quot;StartResource&quot; API operation:</p>
-<div class="literal-block-wrapper docutils container" id="waiters-figure-1-1">
-<div class="code-block-caption"><span class="caption-text"><strong>Figure Waiters-1.1</strong>: Example resource state transitions</span><a class="headerlink" href="#waiters-figure-1-1" title="Permalink to this code">#</a></div>
-<div class="no-copybutton highlight-none notranslate"><div class="highlight"><pre><span></span>          User calls
+<div class="literal-block-wrapper text-figure docutils container" id="waiters-figure-1-1">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>          User calls
          StopResource
 ┌──────────┐        ┌──────────┐        ┌──────────┐
 │ Creating │───────▶│ Stopping │───────▶│ Stopped  │
@@ -1181,112 +926,72 @@ if the user invokes the &quot;StartResource&quot; API operation:</p>
                                         └──────────┘
 </pre></div>
 </div>
+<div class="code-block-caption"><span class="caption-text"><strong>Figure Waiters-1.1</strong>: Example resource state transitions</span><a class="headerlink" href="#waiters-figure-1-1" title="Permalink to this code">¶</a></div>
 </div>
 <p>A &quot;ResourceRunning&quot; waiter for the above resource SHOULD NOT include
 the intermediate state transition &quot;Stopping&quot; to fail-fast. Instead, a failure
 transition should be defined that matches on the terminal &quot;Stopped&quot; state
 because the only way to transition from &quot;Stopped&quot; to running is by invoking
 the <code class="docutils literal notranslate"><span class="pre">StartResource</span></code> API operation.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@waitable</span>(
-<span class="w">    </span><span class="py">ResourceRunning</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">description</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Waits for the resource to be running&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="py">acceptors</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">            </span>{
-<span class="w">                </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;failure&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                        </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;State&quot;</span><span class="p">,</span>
-<span class="w">                        </span><span class="py">expected</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Stopped&quot;</span><span class="p">,</span>
-<span class="w">                        </span><span class="py">comparator</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stringEquals&quot;</span>
-<span class="w">                    </span>}
-<span class="w">                </span>}
-<span class="w">            </span>}<span class="p">,</span>
-<span class="w">            </span>{
-<span class="w">                </span><span class="py">state</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="py">matcher</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">                        </span><span class="py">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;State&quot;</span><span class="p">,</span>
-<span class="w">                        </span><span class="py">expected</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Running&quot;</span><span class="p">,</span>
-<span class="w">                        </span><span class="py">comparator</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stringEquals&quot;</span>
-<span class="w">                    </span>}
-<span class="w">                </span>}
-<span class="w">            </span>}<span class="p">,</span>
-<span class="w">            </span><span class="c">// other acceptors...</span>
-<span class="w">        </span>]
-<span class="w">    </span>}
-)
-<span class="kd">operation </span><span class="nc">GetResource</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetResourceInput</span><span class="p">,</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetResourceOutput</span><span class="p">,</span>
-}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@waitable</span>(<span class="w"></span>
+<span class="w">    </span><span class="nl">ResourceRunning:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">description:</span><span class="w"> </span><span class="s2">&quot;Waits for the resource to be running&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">acceptors:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">            </span>{<span class="w"></span>
+<span class="w">                </span><span class="nl">state:</span><span class="w"> </span><span class="s2">&quot;failure&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="nl">matcher:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                    </span><span class="nl">output:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                        </span><span class="nl">path:</span><span class="w"> </span><span class="s2">&quot;State&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                        </span><span class="nl">expected:</span><span class="w"> </span><span class="s2">&quot;Stopped&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                        </span><span class="nl">comparator:</span><span class="w"> </span><span class="s2">&quot;stringEquals&quot;</span><span class="w"></span>
+<span class="w">                    </span>}<span class="w"></span>
+<span class="w">                </span>}<span class="w"></span>
+<span class="w">            </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">            </span>{<span class="w"></span>
+<span class="w">                </span><span class="nl">state:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                </span><span class="nl">matcher:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                    </span><span class="nl">output:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">                        </span><span class="nl">path:</span><span class="w"> </span><span class="s2">&quot;State&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                        </span><span class="nl">expected:</span><span class="w"> </span><span class="s2">&quot;Running&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">                        </span><span class="nl">comparator:</span><span class="w"> </span><span class="s2">&quot;stringEquals&quot;</span><span class="w"></span>
+<span class="w">                    </span>}<span class="w"></span>
+<span class="w">                </span>}<span class="w"></span>
+<span class="w">            </span>}<span class="p">,</span><span class="w"></span>
+<span class="w">            </span><span class="c">// other acceptors...</span><span class="w"></span>
+<span class="w">        </span>]<span class="w"></span>
+<span class="w">    </span>}<span class="w"></span>
+)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> GetResource</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">GetResourceInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetResourceOutput</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
 
-        </article>
-      </div>
-      <footer>
-        
-        <div class="related-pages">
-          <a class="next-page" href="mqtt.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">MQTT Protocol Bindings</div>
-              </div>
-              <svg><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="http-protocol-compliance-tests.html">
-              <svg><use href="#svg-arrow-right"></use></svg>
-              <div class="page-info">
-                <div class="context">
-                  <span>Previous</span>
-                </div>
-                
-                <div class="title">HTTP Protocol Compliance Tests</div>
-                
-              </div>
-            </a>
-        </div>
-        <div class="bottom-of-page">
-          <div class="left-details">
-            <div class="copyright">
-                Copyright &#169; 2022, Amazon Web Services
-            </div>
-            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-            
-            <a href="https://github.com/pradyunsg/furo">Furo</a>
-            
-          </div>
-          <div class="right-details">
-            <div class="icons">
-              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
-                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
-                </svg>
-            </a>
-              
-            </div>
-          </div>
-        </div>
-        
-      </footer>
-    </div>
-    <aside class="toc-drawer">
-      
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            Contents
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
+
+                    
+                    <section class="relations">
+                        
+                        <a href="http-protocol-compliance-tests.html" title="previous chapter" class="previous-page clearfix hidden-xs">← HTTP Protocol Compliance Tests</a>
+                        
+                        <a href="mqtt.html" title="next chapter" class="next-page clearfix">MQTT Protocol Bindings →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="http-protocol-compliance-tests.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
+                                
+                                <a href="mqtt.html" title="next chapter" class="next-page clearfix">Next →</a>
+                            </section>
+                            
+                            <ul>
 <li><a class="reference internal" href="#">Waiters</a><ul>
 <li><a class="reference internal" href="#smithy-waiters-waitable-trait"><code class="docutils literal notranslate"><span class="pre">smithy.waiters#waitable</span></code> trait</a><ul>
 <li><a class="reference internal" href="#waiter-names">Waiter names</a></li>
@@ -1319,19 +1024,18 @@ the <code class="docutils literal notranslate"><span class="pre">StartResource</
 </li>
 </ul>
 
-          </div>
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2021, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
         </div>
-      </div>
-      
-      
-    </aside>
-  </div>
-</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/scripts/furo.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    </body>
+    </div>
+</footer>
+  </body>
 </html>

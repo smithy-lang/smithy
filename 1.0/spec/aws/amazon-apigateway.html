@@ -1,317 +1,92 @@
-<!doctype html>
-<html class="no-js" lang="en">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="AWS CloudFormation traits" href="aws-cloudformation.html" /><link rel="prev" title="AWS IAM traits" href="aws-iam.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
-        <title>Amazon API Gateway traits - Smithy 1.0</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
-    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Amazon API Gateway traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
     
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
+    <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
+
     
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/tabs.js"></script>
+    <script type="text/javascript" src="../../../_static/smithy.js"></script>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="AWS CloudFormation traits" href="aws-cloudformation.html" />
+    <link rel="prev" title="AWS IAM traits" href="aws-iam.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="smithy-version" content="1.0">
 
-
-<style>
-  body {
-    --color-code-background: #f8f8f8;
-  --color-code-foreground: black;
-  --admonition-font-size: 100%;
-  --admonition-title-font-size: 100%;
-  --color-brand-primary: #C44536;
-  --color-brand-content: #00808b;
-  --color-announcement-background: #711818de;
-  --color-announcement-text: #fff;
-  
-  }
-  @media not print {
-    body[data-theme="dark"] {
-      --color-code-background: #282828;
-  --color-code-foreground: #dddddd;
-  --color-brand-primary: #ed9d13;
-  --color-brand-content: #58d3ff;
-  --color-announcement-background: #711818de;
-  --color-announcement-text: #fff;
-  
-    }
-    @media (prefers-color-scheme: dark) {
-      body:not([data-theme="light"]) {
-        --color-code-background: #282828;
-  --color-code-foreground: #dddddd;
-  --color-brand-primary: #ed9d13;
-  --color-brand-content: #58d3ff;
-  --color-announcement-background: #711818de;
-  --color-announcement-text: #fff;
-  
-      }
-    }
-  }
-</style><script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
-<script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script></head>
-  <body>
-    
-    <script>
-      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
-    </script>
-    
-
-<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-  <symbol id="svg-toc" viewBox="0 0 24 24">
-    <title>Contents</title>
-    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
-      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
-    </svg>
-  </symbol>
-  <symbol id="svg-menu" viewBox="0 0 24 24">
-    <title>Menu</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
-      <line x1="3" y1="12" x2="21" y2="12"></line>
-      <line x1="3" y1="6" x2="21" y2="6"></line>
-      <line x1="3" y1="18" x2="21" y2="18"></line>
-    </svg>
-  </symbol>
-  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
-    <title>Expand</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
-      <polyline points="9 18 15 12 9 6"></polyline>
-    </svg>
-  </symbol>
-  <symbol id="svg-sun" viewBox="0 0 24 24">
-    <title>Light mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
-      <circle cx="12" cy="12" r="5"></circle>
-      <line x1="12" y1="1" x2="12" y2="3"></line>
-      <line x1="12" y1="21" x2="12" y2="23"></line>
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-      <line x1="1" y1="12" x2="3" y2="12"></line>
-      <line x1="21" y1="12" x2="23" y2="12"></line>
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-    </svg>
-  </symbol>
-  <symbol id="svg-moon" viewBox="0 0 24 24">
-    <title>Dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
-    </svg>
-  </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
-    </svg>
-  </symbol>
-</svg>
-
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
-
-<div class="announcement">
-  <aside class="announcement-content">
-     <strong>⚠️ You are viewing version 1.0.</strong><br/>
-Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2.0/</a>. 
-  </aside>
-</div>
-
-<div class="page">
-  <header class="mobile-header">
-    <div class="header-left">
-      <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
-      </label>
-    </div>
-    <div class="header-center">
-      <a href="../../index.html"><div class="brand">Smithy 1.0</div></a>
-    </div>
-    <div class="header-right">
-      <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-        </button>
-      </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-      </label>
-    </div>
-  </header>
-  <aside class="sidebar-drawer">
-    <div class="sidebar-container">
-      
-      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../../index.html">
-  
-  <div class="sidebar-logo-container">
-    <img class="sidebar-logo" src="../../_static/smithy.svg" alt="Logo"/>
-  </div>
-  
-  
-</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
-  <input type="hidden" name="check_keywords" value="yes">
-  <input type="hidden" name="area" value="default">
-</form>
-<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quick start</a></li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">Specifications</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2 has-children"><a class="reference internal" href="../core/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../core/model.html">1. The Smithy model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../core/prelude-model.html">2. Prelude model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../core/constraint-traits.html">3. Constraint traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../core/documentation-traits.html">4. Documentation traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../core/type-refinement-traits.html">5. Type refinement traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../core/protocol-traits.html">6. Protocol traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../core/auth-traits.html">7. Authentication traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../core/behavior-traits.html">8. Behavior traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../core/resource-traits.html">9. Resource traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../core/stream-traits.html">10. Streaming Traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../core/http-traits.html">11. HTTP binding traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../core/xml-traits.html">12. XML binding traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../core/endpoint-traits.html">13. Endpoint Traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../core/selectors.html">14. Selectors</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../core/model-validation.html">15. Model validation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../core/idl.html">16. Smithy IDL</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../core/json-ast.html">17. JSON AST</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../waiters.html">Waiters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mqtt.html">MQTT Protocol Bindings</a></li>
-<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">AWS specifications</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="aws-core.html">AWS Core Specification</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws-auth.html">AWS Authentication Traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws-iam.html">AWS IAM traits</a></li>
-<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Amazon API Gateway traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws-cloudformation.html">AWS CloudFormation traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws-restxml-protocol.html">AWS restXml protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws-query-protocol.html">AWS query protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../guides/index.html">Smithy Guides</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../guides/building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../guides/building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../guides/building-models/build-config.html">smithy-build</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../../guides/model-linters.html">Model linters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guides/evolving-models.html">Evolving Models</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guides/style-guide.html">Style Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guides/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guides/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
-</ul>
-</li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Implementations</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/implementations.html">Implementations</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
-</ul>
-</li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Project links</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/">2.0 Documentation</a></li>
-</ul>
-
-</div>
-</div>
-
-      </div>
-      
-    </div>
-  </aside>
-  <div class="main">
-    <div class="content">
-      <div class="article-container">
-        <a href="#" class="back-to-top muted-link">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
-          </svg>
-          <span>Back to top</span>
-        </a>
-        <div class="content-icon-container">
-          <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-1.0/spec/aws/amazon-apigateway.rst" title="Edit this page">
-    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
-      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
-    </svg>
-    <span class="visually-hidden">Edit this page</span>
-  </a>
-</div><div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-            </button>
-          </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-          </label>
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../../../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
+                </a>
+                <span class="version-text">1.0</span>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../../../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../index.html">Specifications</a></li>
+                <li class="site-page"><a href="../../guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../../../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
         </div>
-        <article role="main">
-          <div class="section" id="amazon-api-gateway-traits">
-<h1>Amazon API Gateway traits<a class="headerlink" href="#amazon-api-gateway-traits" title="Permalink to this headline">#</a></h1>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article class="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="../index.html" >Specifications</a></li>
+                    <li><a href="index.html" accesskey="U">AWS specifications</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="amazon-api-gateway-traits">
+<h1><a href="#amazon-api-gateway-traits">Amazon API Gateway traits</a></h1>
 <p>Smithy can integrate with Amazon API Gateway using traits, authentication
 schemes, and OpenAPI specifications.</p>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title">Table of contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#aws-apigateway-apikeysource-trait" id="id7"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiKeySource</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-apigateway-authorizers-trait" id="id8"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizers</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-apigateway-authorizer-trait" id="id9"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizer</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-apigateway-requestvalidator-trait" id="id10"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#requestValidator</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-apigateway-integration-trait" id="id11"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#integration</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-apigateway-mockintegration-trait" id="id12"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#mockIntegration</span></code> trait</a></li>
+<li><a class="reference internal" href="#shared-trait-data-types" id="id13">Shared trait data types</a></li>
+</ul>
+</div>
 <div class="section" id="aws-apigateway-apikeysource-trait">
-<span id="aws-apigateway-apikeysource-trait"></span><span id="id1"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiKeySource</span></code> trait<a class="headerlink" href="#aws-apigateway-apikeysource-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-apigateway-apikeysource-trait"></span><span id="id1"></span><h2><a href="#aws-apigateway-apikeysource-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiKeySource</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Specifies the source of the caller identifier that will be used to
 throttle API methods that require a key.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
 <dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">string</span></code> set to one of the following values:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
@@ -332,7 +107,6 @@ from a Lambda authorizer (formerly known as a custom authorizer)</td>
 </tr>
 </tbody>
 </table>
-</div>
 </dd>
 <dt>See also</dt><dd><ul class="simple">
 <li><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-usage-plans.html">Create and Use Usage Plans with API Keys</a> for more on usage plans and
@@ -344,27 +118,27 @@ API keys</li>
 </dl>
 <p>The following example sets the <code class="docutils literal notranslate"><span class="pre">X-API-Key</span></code> header as the API key source.</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">use </span><span class="nc">aws.apigateway#apiKeySource</span>
+<span class="kd">use</span><span class="nc"> aws.apigateway#apiKeySource</span><span class="w"></span>
 
-<span class="nt">@apiKeySource</span>(<span class="s2">&quot;HEADER&quot;</span>)
-<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
-}
+<span class="nd">@apiKeySource</span>(<span class="s2">&quot;HEADER&quot;</span>)<span class="w"></span>
+<span class="kd">service</span><span class="nc"> Weather</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 </div><div aria-labelledby="tab-0-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-0-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#Weather&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;aws.apigateway#apiKeySource&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;HEADER&quot;</span>
-<span class="w">            </span><span class="p">}</span>
-<span class="w">        </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#Weather&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;aws.apigateway#apiKeySource&quot;</span><span class="p">:</span> <span class="s2">&quot;HEADER&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -376,7 +150,7 @@ customers.</p>
 </div>
 </div>
 <div class="section" id="aws-apigateway-authorizers-trait">
-<span id="aws-apigateway-authorizers-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizers</span></code> trait<a class="headerlink" href="#aws-apigateway-authorizers-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-apigateway-authorizers-trait"></span><span id="id2"></span><h2><a href="#aws-apigateway-authorizers-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizers</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-authorizer.html">Lambda authorizers</a> to attach to the authentication schemes defined on
 this service.</dd>
@@ -388,7 +162,6 @@ definitions are applied to a service, resource, or operation using the
 <a class="reference internal" href="#aws-apigateway-authorizer-trait"><span class="std std-ref">aws.apigateway#authorizer trait</span></a>.</dd>
 </dl>
 <p>An <em>authorizer</em> definition is a structure that supports the following members:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
@@ -488,31 +261,30 @@ the default value is 300. The maximum value is 3600, or 1 hour.</td>
 </tr>
 </tbody>
 </table>
-</div>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">ns.foo</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> ns.foo</span><span class="w"></span>
 
-<span class="kd">use </span><span class="nc">aws.apigateway#authorizer</span>
-<span class="kd">use </span><span class="nc">aws.apigateway#authorizers</span>
-<span class="kd">use </span><span class="nc">aws.auth#sigv4</span>
-<span class="kd">use </span><span class="nc">aws.protocols#restJson1</span>
+<span class="kd">use</span><span class="nc"> aws.apigateway#authorizer</span><span class="w"></span>
+<span class="kd">use</span><span class="nc"> aws.apigateway#authorizers</span><span class="w"></span>
+<span class="kd">use</span><span class="nc"> aws.auth#sigv4</span><span class="w"></span>
+<span class="kd">use</span><span class="nc"> aws.protocols#restJson1</span><span class="w"></span>
 
-<span class="nt">@restJson1</span>
-<span class="nt">@sigv4</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;weather&quot;</span>)
-<span class="nt">@authorizer</span>(<span class="s2">&quot;arbitrary-name&quot;</span>)
-<span class="nt">@authorizers</span>(
-<span class="w">    </span><span class="s2">&quot;arbitrary-name&quot;</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">scheme</span><span class="p">:</span><span class="w"> </span><span class="vc">sigv4</span><span class="p">,</span>
-<span class="w">        </span><span class="py">type</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;request&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arn:foo:baz&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="py">credentials</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arn:foo:bar&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="py">identitySource</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mapping.expression&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="py">identityValidationExpression</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[A-Z]+&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="py">resultTtlInSeconds</span><span class="p">:</span><span class="w"> </span><span class="m">100</span>
-<span class="w">    </span>})
-<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
-}
+<span class="nd">@restJson1</span><span class="w"></span>
+<span class="nd">@sigv4</span>(<span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;weather&quot;</span>)<span class="w"></span>
+<span class="nd">@authorizer</span>(<span class="s2">&quot;arbitrary-name&quot;</span>)<span class="w"></span>
+<span class="nd">@authorizers</span>(<span class="w"></span>
+<span class="w">    </span><span class="s2">&quot;arbitrary-name&quot;</span><span class="p">:</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">        </span><span class="nl">scheme:</span><span class="w"> </span><span class="vc">sigv4</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">type:</span><span class="w"> </span><span class="s2">&quot;request&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;arn:foo:baz&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">credentials:</span><span class="w"> </span><span class="s2">&quot;arn:foo:bar&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">identitySource:</span><span class="w"> </span><span class="s2">&quot;mapping.expression&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">identityValidationExpression:</span><span class="w"> </span><span class="s2">&quot;[A-Z]+&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="nl">resultTtlInSeconds:</span><span class="w"> </span><span class="m">100</span><span class="w"></span>
+<span class="w">    </span>})<span class="w"></span>
+<span class="kd">service</span><span class="nc"> Weather</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 </div></div>
@@ -523,7 +295,7 @@ customers.</p>
 </div>
 </div>
 <div class="section" id="aws-apigateway-authorizer-trait">
-<span id="aws-apigateway-authorizer-trait"></span><span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizer</span></code> trait<a class="headerlink" href="#aws-apigateway-authorizer-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-apigateway-authorizer-trait"></span><span id="id3"></span><h2><a href="#aws-apigateway-authorizer-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizer</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Applies a Lambda authorizer to a service, resource, or operation.
 Authorizers are resolved hierarchically: an operation inherits
@@ -542,13 +314,12 @@ customers.</p>
 </div>
 </div>
 <div class="section" id="aws-apigateway-requestvalidator-trait">
-<span id="aws-apigateway-requestvalidator-trait"></span><span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#requestValidator</span></code> trait<a class="headerlink" href="#aws-apigateway-requestvalidator-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-apigateway-requestvalidator-trait"></span><span id="id4"></span><h2><a href="#aws-apigateway-requestvalidator-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#requestValidator</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Opts-in to Amazon API Gateway request validation for a service or
 operation.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">operation)</span></code></dd>
 <dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">string</span></code> value set to one of the following:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
@@ -571,7 +342,6 @@ operation.</dd>
 </tr>
 </tbody>
 </table>
-</div>
 </dd>
 <dt>See also</dt><dd><ul class="simple">
 <li><a class="reference external" href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-method-request-validation.html">Enable Request Validation in API Gateway</a> for more information</li>
@@ -586,27 +356,27 @@ to OpenAPI</li>
 </dl>
 <p>Then following example enables request validation on a service:</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-2-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-2-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-2-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-2-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-2-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-2-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-2-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-2-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-2-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="kd">use </span><span class="nc">aws.apigateway#requestValidator</span>
+<span class="kd">use</span><span class="nc"> aws.apigateway#requestValidator</span><span class="w"></span>
 
-<span class="nt">@requestValidator</span>(<span class="s2">&quot;full&quot;</span>)
-<span class="kd">service </span><span class="nc">Weather</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
-}
+<span class="nd">@requestValidator</span>(<span class="s2">&quot;full&quot;</span>)<span class="w"></span>
+<span class="kd">service</span><span class="nc"> Weather</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 </div><div aria-labelledby="tab-2-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-2-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#Weather&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;aws.apigateway#requestValidator&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;full&quot;</span>
-<span class="w">            </span><span class="p">}</span>
-<span class="w">        </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#Weather&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;aws.apigateway#requestValidator&quot;</span><span class="p">:</span> <span class="s2">&quot;full&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -618,7 +388,7 @@ customers.</p>
 </div>
 </div>
 <div class="section" id="aws-apigateway-integration-trait">
-<span id="aws-apigateway-integration-trait"></span><span id="id5"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#integration</span></code> trait<a class="headerlink" href="#aws-apigateway-integration-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-apigateway-integration-trait"></span><span id="id5"></span><h2><a href="#aws-apigateway-integration-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#integration</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Defines an <a class="reference external" href="https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/">API Gateway integration</a> that integrates with an actual
 backend.</dd>
@@ -635,7 +405,6 @@ to OpenAPI</li>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.apigateway#integration</span></code> trait is a structure that supports the
 following members:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
@@ -743,63 +512,62 @@ responses.</td>
 </tr>
 </tbody>
 </table>
-</div>
 <p>The following example defines an integration that is applied to every
 operation within the service.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#Weather&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;aws.protocols#restJson1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
-<span class="w">                </span><span class="nt">&quot;aws.auth#sigv4&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;weather&quot;</span>
-<span class="w">                </span><span class="p">},</span>
-<span class="w">                </span><span class="nt">&quot;aws.apigateway#integration&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aws&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:012345678901:function:HelloWorld/invocations&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;httpMethod&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;credentials&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arn:aws:iam::012345678901:role/apigateway-invoke-lambda-exec-role&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;requestTemplates&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;application/json&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
-<span class="w">                        </span><span class="nt">&quot;application/xml&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
-<span class="w">                    </span><span class="p">},</span>
-<span class="w">                    </span><span class="nt">&quot;requestParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;integration.request.path.stage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;method.request.querystring.version&quot;</span><span class="p">,</span>
-<span class="w">                        </span><span class="nt">&quot;integration.request.querystring.provider&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;method.request.querystring.vendor&quot;</span>
-<span class="w">                    </span><span class="p">},</span>
-<span class="w">                    </span><span class="nt">&quot;cacheNamespace&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cache namespace&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;cacheKeyParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
-<span class="w">                    </span><span class="nt">&quot;responses&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;2\\d{2}&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                            </span><span class="nt">&quot;statusCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;200&quot;</span><span class="p">,</span>
-<span class="w">                            </span><span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                                </span><span class="nt">&quot;method.response.header.requestId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.header.cid&quot;</span>
-<span class="w">                            </span><span class="p">},</span>
-<span class="w">                            </span><span class="nt">&quot;responseTemplates&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                                </span><span class="nt">&quot;application/json&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
-<span class="w">                                </span><span class="nt">&quot;application/xml&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
-<span class="w">                            </span><span class="p">}</span>
-<span class="w">                        </span><span class="p">},</span>
-<span class="w">                        </span><span class="nt">&quot;302&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                            </span><span class="nt">&quot;statusCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;302&quot;</span><span class="p">,</span>
-<span class="w">                            </span><span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                                </span><span class="nt">&quot;method.response.header.Location&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.body.redirect.url&quot;</span>
-<span class="w">                            </span><span class="p">}</span>
-<span class="w">                        </span><span class="p">},</span>
-<span class="w">                        </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                            </span><span class="nt">&quot;statusCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;400&quot;</span><span class="p">,</span>
-<span class="w">                            </span><span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                                </span><span class="nt">&quot;method.response.header.test-method-response-header&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&#39;static value&#39;&quot;</span>
-<span class="w">                            </span><span class="p">}</span>
-<span class="w">                        </span><span class="p">}</span>
-<span class="w">                    </span><span class="p">}</span>
-<span class="w">                </span><span class="p">}</span>
-<span class="w">            </span><span class="p">}</span>
-<span class="w">        </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#Weather&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-03-17&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;aws.protocols#restJson1&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="nt">&quot;aws.auth#sigv4&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;weather&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;aws.apigateway#integration&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;aws&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:012345678901:function:HelloWorld/invocations&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;httpMethod&quot;</span><span class="p">:</span> <span class="s2">&quot;POST&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;credentials&quot;</span><span class="p">:</span> <span class="s2">&quot;arn:aws:iam::012345678901:role/apigateway-invoke-lambda-exec-role&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;requestTemplates&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;application/json&quot;</span><span class="p">:</span> <span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;application/xml&quot;</span><span class="p">:</span> <span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;requestParameters&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;integration.request.path.stage&quot;</span><span class="p">:</span> <span class="s2">&quot;method.request.querystring.version&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;integration.request.querystring.provider&quot;</span><span class="p">:</span> <span class="s2">&quot;method.request.querystring.vendor&quot;</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;cacheNamespace&quot;</span><span class="p">:</span> <span class="s2">&quot;cache namespace&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;cacheKeyParameters&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                    <span class="nt">&quot;responses&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;2\\d{2}&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="nt">&quot;statusCode&quot;</span><span class="p">:</span> <span class="s2">&quot;200&quot;</span><span class="p">,</span>
+                            <span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;method.response.header.requestId&quot;</span><span class="p">:</span> <span class="s2">&quot;integration.response.header.cid&quot;</span>
+                            <span class="p">},</span>
+                            <span class="nt">&quot;responseTemplates&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;application/json&quot;</span><span class="p">:</span> <span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;application/xml&quot;</span><span class="p">:</span> <span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
+                            <span class="p">}</span>
+                        <span class="p">},</span>
+                        <span class="nt">&quot;302&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="nt">&quot;statusCode&quot;</span><span class="p">:</span> <span class="s2">&quot;302&quot;</span><span class="p">,</span>
+                            <span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;method.response.header.Location&quot;</span><span class="p">:</span> <span class="s2">&quot;integration.response.body.redirect.url&quot;</span>
+                            <span class="p">}</span>
+                        <span class="p">},</span>
+                        <span class="nt">&quot;default&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="nt">&quot;statusCode&quot;</span><span class="p">:</span> <span class="s2">&quot;400&quot;</span><span class="p">,</span>
+                            <span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;method.response.header.test-method-response-header&quot;</span><span class="p">:</span> <span class="s2">&quot;&#39;static value&#39;&quot;</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -810,7 +578,7 @@ customers.</p>
 </div>
 </div>
 <div class="section" id="aws-apigateway-mockintegration-trait">
-<span id="aws-apigateway-mockintegration-trait"></span><span id="id6"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.apigateway#mockIntegration</span></code> trait<a class="headerlink" href="#aws-apigateway-mockintegration-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-apigateway-mockintegration-trait"></span><span id="id6"></span><h2><a href="#aws-apigateway-mockintegration-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#mockIntegration</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Defines an <a class="reference external" href="https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/">API Gateway integration</a> that returns a mock response.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">:test(service,</span> <span class="pre">resource,</span> <span class="pre">operation)</span></code></dd>
@@ -818,7 +586,6 @@ customers.</p>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.apigateway#mockIntegration</span></code> trait is a structure that supports the
 following members:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
@@ -857,55 +624,54 @@ responses.</td>
 </tr>
 </tbody>
 </table>
-</div>
 <p>The following example defines an operation that uses a mock integration.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#MyOperation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;smithy.api#http&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/2&quot;</span>
-<span class="w">                </span><span class="p">},</span>
-<span class="w">                </span><span class="nt">&quot;aws.apigateway#mockIntegration&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;requestTemplates&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;application/json&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
-<span class="w">                        </span><span class="nt">&quot;application/xml&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
-<span class="w">                    </span><span class="p">},</span>
-<span class="w">                    </span><span class="nt">&quot;requestParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;integration.request.path.stage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;method.request.querystring.version&quot;</span><span class="p">,</span>
-<span class="w">                        </span><span class="nt">&quot;integration.request.querystring.provider&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;method.request.querystring.vendor&quot;</span>
-<span class="w">                    </span><span class="p">},</span>
-<span class="w">                    </span><span class="nt">&quot;responses&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                        </span><span class="nt">&quot;2\\d{2}&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                            </span><span class="nt">&quot;statusCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;200&quot;</span><span class="p">,</span>
-<span class="w">                            </span><span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                                </span><span class="nt">&quot;method.response.header.requestId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.header.cid&quot;</span>
-<span class="w">                            </span><span class="p">},</span>
-<span class="w">                            </span><span class="nt">&quot;responseTemplates&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                                </span><span class="nt">&quot;application/json&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
-<span class="w">                                </span><span class="nt">&quot;application/xml&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
-<span class="w">                            </span><span class="p">}</span>
-<span class="w">                        </span><span class="p">},</span>
-<span class="w">                        </span><span class="nt">&quot;302&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                            </span><span class="nt">&quot;statusCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;302&quot;</span><span class="p">,</span>
-<span class="w">                            </span><span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                                </span><span class="nt">&quot;method.response.header.Location&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.body.redirect.url&quot;</span>
-<span class="w">                            </span><span class="p">}</span>
-<span class="w">                        </span><span class="p">},</span>
-<span class="w">                        </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                            </span><span class="nt">&quot;statusCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;400&quot;</span><span class="p">,</span>
-<span class="w">                            </span><span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                                </span><span class="nt">&quot;method.response.header.test-method-response-header&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&#39;static value&#39;&quot;</span>
-<span class="w">                            </span><span class="p">}</span>
-<span class="w">                        </span><span class="p">}</span>
-<span class="w">                    </span><span class="p">}</span>
-<span class="w">                </span><span class="p">}</span>
-<span class="w">            </span><span class="p">}</span>
-<span class="w">        </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#MyOperation&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#http&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;POST&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;/2&quot;</span>
+                <span class="p">},</span>
+                <span class="nt">&quot;aws.apigateway#mockIntegration&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;requestTemplates&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;application/json&quot;</span><span class="p">:</span> <span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;application/xml&quot;</span><span class="p">:</span> <span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;requestParameters&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;integration.request.path.stage&quot;</span><span class="p">:</span> <span class="s2">&quot;method.request.querystring.version&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;integration.request.querystring.provider&quot;</span><span class="p">:</span> <span class="s2">&quot;method.request.querystring.vendor&quot;</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;responses&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;2\\d{2}&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="nt">&quot;statusCode&quot;</span><span class="p">:</span> <span class="s2">&quot;200&quot;</span><span class="p">,</span>
+                            <span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;method.response.header.requestId&quot;</span><span class="p">:</span> <span class="s2">&quot;integration.response.header.cid&quot;</span>
+                            <span class="p">},</span>
+                            <span class="nt">&quot;responseTemplates&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;application/json&quot;</span><span class="p">:</span> <span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
+                                <span class="nt">&quot;application/xml&quot;</span><span class="p">:</span> <span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
+                            <span class="p">}</span>
+                        <span class="p">},</span>
+                        <span class="nt">&quot;302&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="nt">&quot;statusCode&quot;</span><span class="p">:</span> <span class="s2">&quot;302&quot;</span><span class="p">,</span>
+                            <span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;method.response.header.Location&quot;</span><span class="p">:</span> <span class="s2">&quot;integration.response.body.redirect.url&quot;</span>
+                            <span class="p">}</span>
+                        <span class="p">},</span>
+                        <span class="nt">&quot;default&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="nt">&quot;statusCode&quot;</span><span class="p">:</span> <span class="s2">&quot;400&quot;</span><span class="p">,</span>
+                            <span class="nt">&quot;responseParameters&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="nt">&quot;method.response.header.test-method-response-header&quot;</span><span class="p">:</span> <span class="s2">&quot;&#39;static value&#39;&quot;</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -916,11 +682,11 @@ customers.</p>
 </div>
 </div>
 <div class="section" id="shared-trait-data-types">
-<h2>Shared trait data types<a class="headerlink" href="#shared-trait-data-types" title="Permalink to this headline">#</a></h2>
+<h2><a href="#shared-trait-data-types">Shared trait data types</a></h2>
 <p>The following shapes are used throughout the Smithy API Gateway traits
 definitions.</p>
 <div class="section" id="contenthandling-string">
-<span id="apigateway-content-handling"></span><h3>ContentHandling string<a class="headerlink" href="#contenthandling-string" title="Permalink to this headline">#</a></h3>
+<span id="apigateway-content-handling"></span><h3><a href="#contenthandling-string">ContentHandling string</a></h3>
 <p>Defines the payload conversion handling of a request or response.
 Valid values are:</p>
 <ul class="simple">
@@ -934,12 +700,11 @@ without modification.</li>
 </ul>
 </div>
 <div class="section" id="requestparameters-structure">
-<span id="apigateway-requestparameters"></span><h3>requestParameters structure<a class="headerlink" href="#requestparameters-structure" title="Permalink to this headline">#</a></h3>
+<span id="apigateway-requestparameters"></span><h3><a href="#requestparameters-structure">requestParameters structure</a></h3>
 <p>Specifies mappings from named method request parameters to integration
 request parameters. The method request parameters must be defined before
 they are referenced.</p>
 <p><strong>Properties</strong></p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="30%" />
@@ -963,26 +728,24 @@ without the <code class="docutils literal notranslate"><span class="pre">$.</spa
 </tr>
 </tbody>
 </table>
-</div>
 <p>The following request parameter mappings example translates a method
 request's query (version), header (x-user-id) and path (service)
 parameters to the integration request's query (stage),
 header (x-userid), and path parameters (op), respectively.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;requestParameters&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;integration.request.querystring.stage&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;method.request.querystring.version&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;integration.request.header.x-userid&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;method.request.header.x-user-id&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;integration.request.path.op&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;method.request.path.service&quot;</span>
-<span class="w">    </span><span class="p">}</span>
+    <span class="nt">&quot;requestParameters&quot;</span> <span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;integration.request.querystring.stage&quot;</span> <span class="p">:</span> <span class="s2">&quot;method.request.querystring.version&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;integration.request.header.x-userid&quot;</span> <span class="p">:</span> <span class="s2">&quot;method.request.header.x-user-id&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;integration.request.path.op&quot;</span> <span class="p">:</span> <span class="s2">&quot;method.request.path.service&quot;</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="requesttemplates-structure">
-<span id="apigateway-requesttemplates"></span><h3>requestTemplates structure<a class="headerlink" href="#requesttemplates-structure" title="Permalink to this headline">#</a></h3>
+<span id="apigateway-requesttemplates"></span><h3><a href="#requesttemplates-structure">requestTemplates structure</a></h3>
 <p>Specifies mapping templates for a request payload of the specified media types.</p>
 <p><strong>Properties</strong></p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="15%" />
@@ -1002,24 +765,22 @@ header (x-userid), and path parameters (op), respectively.</p>
 </tr>
 </tbody>
 </table>
-</div>
 <p>The following example sets mapping templates for a request payload of the
 <code class="docutils literal notranslate"><span class="pre">application/json</span></code> and <code class="docutils literal notranslate"><span class="pre">application/xml</span></code> media types.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;requestTemplates&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;application/json&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;application/xml&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
-<span class="w">    </span><span class="p">}</span>
+    <span class="nt">&quot;requestTemplates&quot;</span> <span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;application/json&quot;</span> <span class="p">:</span> <span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;application/xml&quot;</span> <span class="p">:</span> <span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="responses-structure">
-<span id="apigateway-responses"></span><h3>responses structure<a class="headerlink" href="#responses-structure" title="Permalink to this headline">#</a></h3>
+<span id="apigateway-responses"></span><h3><a href="#responses-structure">responses structure</a></h3>
 <p>Defines the method's responses and specifies parameter mappings or payload
 mappings from integration responses to method responses.</p>
 <p><strong>Properties</strong></p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
@@ -1052,7 +813,6 @@ status codes. It does not correspond to any identifier of an
 </tr>
 </tbody>
 </table>
-</div>
 <p>The following example shows a list of responses from <code class="docutils literal notranslate"><span class="pre">2xx</span></code> and <code class="docutils literal notranslate"><span class="pre">302</span></code>
 responses. For the <code class="docutils literal notranslate"><span class="pre">2xx</span></code> response, the method response is mapped from
 the integration response's payload of the <code class="docutils literal notranslate"><span class="pre">application/json</span></code> or
@@ -1061,31 +821,30 @@ templates. For the <code class="docutils literal notranslate"><span class="pre">
 <code class="docutils literal notranslate"><span class="pre">Location</span></code> header whose value is derived from the <code class="docutils literal notranslate"><span class="pre">redirect.url</span></code>
 property on the integration response's payload.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;responses&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;2\\d{2}&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;statusCode&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;200&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;responseTemplates&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;application/json&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;application/xml&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
-<span class="w">            </span><span class="p">}</span>
-<span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;302&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;statusCode&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;302&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;responseParameters&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;method.response.header.Location&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.body.redirect.url&quot;</span>
-<span class="w">            </span><span class="p">}</span>
-<span class="w">        </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
+    <span class="nt">&quot;responses&quot;</span> <span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;2\\d{2}&quot;</span> <span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;statusCode&quot;</span> <span class="p">:</span> <span class="s2">&quot;200&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;responseTemplates&quot;</span> <span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;application/json&quot;</span> <span class="p">:</span> <span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;application/xml&quot;</span> <span class="p">:</span> <span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;302&quot;</span> <span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;statusCode&quot;</span> <span class="p">:</span> <span class="s2">&quot;302&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;responseParameters&quot;</span> <span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;method.response.header.Location&quot;</span><span class="p">:</span> <span class="s2">&quot;integration.response.body.redirect.url&quot;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="response-structure">
-<span id="apigateway-response-structure"></span><h3>response structure<a class="headerlink" href="#response-structure" title="Permalink to this headline">#</a></h3>
+<span id="apigateway-response-structure"></span><h3><a href="#response-structure">response structure</a></h3>
 <p>Defines a response and specifies parameter mappings or payload mappings from
 the integration response to the method response.</p>
 <p><strong>Properties</strong></p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="30%" />
@@ -1122,30 +881,28 @@ parameters of the method.</td>
 </tr>
 </tbody>
 </table>
-</div>
 <p>The following example defines a 302 response for the method that derives a
 payload of the <code class="docutils literal notranslate"><span class="pre">application/json</span></code> or <code class="docutils literal notranslate"><span class="pre">application/xml</span></code> media type from the
 backend. The response uses the supplied mapping templates and returns the
 redirect URL from the integration response in the method's Location header.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;statusCode&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;302&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;responseTemplates&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="nt">&quot;application/json&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
-<span class="w">         </span><span class="nt">&quot;application/xml&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;responseParameters&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;method.response.header.Location&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.body.redirect.url&quot;</span>
-<span class="w">    </span><span class="p">}</span>
+    <span class="nt">&quot;statusCode&quot;</span> <span class="p">:</span> <span class="s2">&quot;302&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;responseTemplates&quot;</span> <span class="p">:</span> <span class="p">{</span>
+         <span class="nt">&quot;application/json&quot;</span> <span class="p">:</span> <span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
+         <span class="nt">&quot;application/xml&quot;</span> <span class="p">:</span> <span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;responseParameters&quot;</span> <span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;method.response.header.Location&quot;</span><span class="p">:</span> <span class="s2">&quot;integration.response.body.redirect.url&quot;</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="response-templates-structure">
-<span id="apigateway-response-templates-structure"></span><h3>Response templates structure<a class="headerlink" href="#response-templates-structure" title="Permalink to this headline">#</a></h3>
+<span id="apigateway-response-templates-structure"></span><h3><a href="#response-templates-structure">Response templates structure</a></h3>
 <p>Specifies mapping templates for a response payload of the specified
 media types.</p>
 <p><strong>Properties</strong></p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="30%" />
@@ -1169,26 +926,24 @@ information about creating a mapping template, see
 </tr>
 </tbody>
 </table>
-</div>
 <p>The following example sets mapping templates for a request payload of the
 <code class="docutils literal notranslate"><span class="pre">application/json</span></code> and <code class="docutils literal notranslate"><span class="pre">application/xml</span></code> media types.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;responseTemplates&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;application/json&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;application/xml&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
-<span class="w">    </span><span class="p">}</span>
+    <span class="nt">&quot;responseTemplates&quot;</span> <span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;application/json&quot;</span> <span class="p">:</span> <span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) { \&quot;stage\&quot;: \&quot;$root.name\&quot;, \&quot;user-id\&quot;: \&quot;$root.key\&quot; }&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;application/xml&quot;</span> <span class="p">:</span> <span class="s2">&quot;#set ($root=$input.path(&#39;$&#39;)) &lt;stage&gt;$root.name&lt;/stage&gt; &quot;</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="response-parameters-structure">
-<span id="apigateway-response-parameters-structure"></span><h3>Response parameters structure<a class="headerlink" href="#response-parameters-structure" title="Permalink to this headline">#</a></h3>
+<span id="apigateway-response-parameters-structure"></span><h3><a href="#response-parameters-structure">Response parameters structure</a></h3>
 <p>Specifies mappings from integration method response parameters to method
 response parameters. Only the <code class="docutils literal notranslate"><span class="pre">header</span></code> and <code class="docutils literal notranslate"><span class="pre">body</span></code> types of the integration
 response parameters can be mapped to the <code class="docutils literal notranslate"><span class="pre">header</span></code> type of the method
 response.</p>
 <p><strong>Properties</strong></p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="30%" />
@@ -1209,14 +964,13 @@ types of the integration response parameters only.</td>
 </tr>
 </tbody>
 </table>
-</div>
 <p>The following example maps <code class="docutils literal notranslate"><span class="pre">body</span></code> and <code class="docutils literal notranslate"><span class="pre">header</span></code> parameters of the
 integration response to two <code class="docutils literal notranslate"><span class="pre">header</span></code> parameters of the method response.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;responseParameters&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;method.response.header.Location&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.body.redirect.url&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;method.response.header.x-user-id&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integration.response.header.x-userid&quot;</span>
-<span class="w">    </span><span class="p">}</span>
+    <span class="nt">&quot;responseParameters&quot;</span> <span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;method.response.header.Location&quot;</span> <span class="p">:</span> <span class="s2">&quot;integration.response.body.redirect.url&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;method.response.header.x-user-id&quot;</span> <span class="p">:</span> <span class="s2">&quot;integration.response.header.x-userid&quot;</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1224,68 +978,27 @@ integration response to two <code class="docutils literal notranslate"><span cla
 </div>
 </div>
 
-        </article>
-      </div>
-      <footer>
-        
-        <div class="related-pages">
-          <a class="next-page" href="aws-cloudformation.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">AWS CloudFormation traits</div>
-              </div>
-              <svg><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="aws-iam.html">
-              <svg><use href="#svg-arrow-right"></use></svg>
-              <div class="page-info">
-                <div class="context">
-                  <span>Previous</span>
-                </div>
-                
-                <div class="title">AWS IAM traits</div>
-                
-              </div>
-            </a>
-        </div>
-        <div class="bottom-of-page">
-          <div class="left-details">
-            <div class="copyright">
-                Copyright &#169; 2022, Amazon Web Services
-            </div>
-            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-            
-            <a href="https://github.com/pradyunsg/furo">Furo</a>
-            
-          </div>
-          <div class="right-details">
-            <div class="icons">
-              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
-                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
-                </svg>
-            </a>
-              
-            </div>
-          </div>
-        </div>
-        
-      </footer>
-    </div>
-    <aside class="toc-drawer">
-      
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            Contents
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
+
+                    
+                    <section class="relations">
+                        
+                        <a href="aws-iam.html" title="previous chapter" class="previous-page clearfix hidden-xs">← AWS IAM traits</a>
+                        
+                        <a href="aws-cloudformation.html" title="next chapter" class="next-page clearfix">AWS CloudFormation traits →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="aws-iam.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
+                                
+                                <a href="aws-cloudformation.html" title="next chapter" class="next-page clearfix">Next →</a>
+                            </section>
+                            
+                            <ul>
 <li><a class="reference internal" href="#">Amazon API Gateway traits</a><ul>
 <li><a class="reference internal" href="#aws-apigateway-apikeysource-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#apiKeySource</span></code> trait</a></li>
 <li><a class="reference internal" href="#aws-apigateway-authorizers-trait"><code class="docutils literal notranslate"><span class="pre">aws.apigateway#authorizers</span></code> trait</a></li>
@@ -1307,20 +1020,18 @@ integration response to two <code class="docutils literal notranslate"><span cla
 </li>
 </ul>
 
-          </div>
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2021, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
         </div>
-      </div>
-      
-      
-    </aside>
-  </div>
-</div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/scripts/furo.js"></script>
-    <script src="../../_static/clipboard.min.js"></script>
-    <script src="../../_static/copybutton.js"></script>
-    <script src="../../_static/tabs.js"></script>
-    </body>
+    </div>
+</footer>
+  </body>
 </html>

@@ -12,13 +12,10 @@ multiple HTTP message locations (e.g., a member cannot be bound to both a URI
 label and to a header). Only top-level members of an operation's input, output,
 and error structures are considered when serializing HTTP messages.
 
-.. important::
-
-    Violating `HTTP specifications`_ or relying on poorly-supported HTTP
-    functionality when defining HTTP bindings will limit interoperability
-    and likely lead to undefined behavior across Smithy implementations. For
-    example, avoid defining GET/DELETE requests with payloads, defining
-    response payloads for operations with a 204/205 status, etc.
+.. contents:: Table of contents
+    :depth: 1
+    :local:
+    :backlinks: none
 
 
 .. smithy-trait:: smithy.api#http
@@ -54,9 +51,7 @@ The ``http`` trait is a structure that supports the following members:
       - ``integer``
       - The HTTP status code of a successful response. Defaults to ``200`` if
         not provided. The provided value SHOULD be between 100 and 599, and
-        it MUST be between 100 and 999. Status codes that do not allow a body
-        like 204 and 205 SHOULD bind all output members to locations other than
-        the body of the response.
+        it MUST be between 100 and 999.
 
 The following example defines an operation that uses HTTP bindings:
 
@@ -518,11 +513,11 @@ Trait selector
     .. code-block:: none
 
         structure > :test(member > :test(boolean, number, string, timestamp,
-                list > member > :test(boolean, number, string, timestamp)))
+                collection > member > :test(boolean, number, string, timestamp)))
 
     The ``httpHeader`` trait can be applied to ``structure`` members that
     target a ``boolean``, ``number``, ``string``, or ``timestamp``; or a
-    ``structure`` member that targets a list of these types.
+    ``structure`` member that targets a list/set of these types.
 Value type
     ``string`` value defining a valid HTTP header field name according to
     :rfc:`section 3.2 of RFC7230 <7230#section-3.2>`. The value MUST NOT be
@@ -794,11 +789,10 @@ Trait selector
     .. code-block:: none
 
         structure > member
-        :test(> map :not([trait|sparse]) > member[id|member=value] > string)
+        :test(> map > member[id|member=value] > string)
 
     The ``httpPrefixHeaders`` trait can be applied to ``structure`` members
-    that target a ``map`` of ``string``. The targeted map MUST NOT be marked
-    with the :ref:`sparse-trait`.
+    that target a ``map`` of ``string``.
 Value type
     ``string`` value that defines the prefix to prepend to each header field
     name stored in the targeted map member. For example, given a prefix value
@@ -875,7 +869,7 @@ Trait selector
 
         structure > member
         :test(> :test(string, number, boolean, timestamp),
-              > list > member > :test(string, number, boolean, timestamp))
+              > collection > member > :test(string, number, boolean, timestamp))
 
     The ``httpQuery`` trait can be applied to ``structure`` members that
     target a ``string``, ``number``, ``boolean``, or ``timestamp``; or a
@@ -932,7 +926,7 @@ request:
   with a value of ``["a", "b"]``, the value is serialized in the query string
   as ``foo=a&foo=b``.
 * When deserializing, server implementations SHOULD use the first encountered
-  value in the query string for non-list members. For example, given a
+  value in the query string for non-collection members. For example, given a
   member bound to ``foo`` that targets a string and a query string of
   ``foo=a&foo=b``, the deserialized value of ``foo`` should be ``a``.
 
@@ -975,10 +969,10 @@ Trait selector
     .. code-block:: none
 
         structure > member
-        :test(> map > member[id|member=value] > :test(string, list > member > string))
+        :test(> map > member[id|member=value] > :test(string, collection > member > string))
 
     The ``httpQueryParams`` trait can be applied to ``structure`` members
-    that target a ``map`` of ``string``, or a ``map`` of ``list`` of
+    that target a ``map`` of ``string``, or a ``map`` of ``list``/``set`` of
     ``string``.
 
 Value type
@@ -1338,4 +1332,3 @@ marked with the ``httpPayload`` trait:
 
 .. _percent-encoded: https://tools.ietf.org/html/rfc3986#section-2.1
 .. _HTTP request line: https://tools.ietf.org/html/rfc7230.html#section-3.1.1
-.. _HTTP specifications: https://datatracker.ietf.org/doc/html/rfc7230

@@ -245,12 +245,12 @@ These values use the same semantics and format as
             {
                 title: "Error example for MyOperation",
                 input: {
-                    foo: "!",
+                    foo: 1,
                 },
                 error: {
                     shapeId: MyOperationError,
                     content: {
-                        message: "Invalid 'foo'. Special character not allowed.",
+                        message: "Invalid 'foo'",
                     }
                 }
             },
@@ -395,12 +395,12 @@ Conflicts with
 -------------------
 
 Summary
-    Indicates that the data stored in the shape is sensitive and MUST be
-    handled with care.
+    Indicates that the data stored in the shape or member is sensitive
+    and MUST be handled with care.
 Trait selector
-    ``:not(:is(service, operation, resource, member))``
+    ``:not(:is(service, operation, resource))``
 
-    *Any shape that is not a service, operation, resource, or member.*
+    *Any shape that is not a service, operation, or resource.*
 Value type
     Annotation trait
 

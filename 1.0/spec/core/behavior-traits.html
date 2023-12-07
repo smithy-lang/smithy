@@ -1,310 +1,85 @@
-<!doctype html>
-<html class="no-js" lang="en">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="9. Resource traits" href="resource-traits.html" /><link rel="prev" title="7. Authentication traits" href="auth-traits.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
-        <title>8. Behavior traits - Smithy 1.0</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
-    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>8. Behavior traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
     
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
+    <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
+
     
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/tabs.js"></script>
+    <script type="text/javascript" src="../../../_static/smithy.js"></script>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="9. Resource traits" href="resource-traits.html" />
+    <link rel="prev" title="7. Authentication traits" href="auth-traits.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="smithy-version" content="1.0">
 
-
-<style>
-  body {
-    --color-code-background: #f8f8f8;
-  --color-code-foreground: black;
-  --admonition-font-size: 100%;
-  --admonition-title-font-size: 100%;
-  --color-brand-primary: #C44536;
-  --color-brand-content: #00808b;
-  --color-announcement-background: #711818de;
-  --color-announcement-text: #fff;
-  
-  }
-  @media not print {
-    body[data-theme="dark"] {
-      --color-code-background: #282828;
-  --color-code-foreground: #dddddd;
-  --color-brand-primary: #ed9d13;
-  --color-brand-content: #58d3ff;
-  --color-announcement-background: #711818de;
-  --color-announcement-text: #fff;
-  
-    }
-    @media (prefers-color-scheme: dark) {
-      body:not([data-theme="light"]) {
-        --color-code-background: #282828;
-  --color-code-foreground: #dddddd;
-  --color-brand-primary: #ed9d13;
-  --color-brand-content: #58d3ff;
-  --color-announcement-background: #711818de;
-  --color-announcement-text: #fff;
-  
-      }
-    }
-  }
-</style><script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
-<script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script></head>
-  <body>
-    
-    <script>
-      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
-    </script>
-    
-
-<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-  <symbol id="svg-toc" viewBox="0 0 24 24">
-    <title>Contents</title>
-    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
-      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
-    </svg>
-  </symbol>
-  <symbol id="svg-menu" viewBox="0 0 24 24">
-    <title>Menu</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
-      <line x1="3" y1="12" x2="21" y2="12"></line>
-      <line x1="3" y1="6" x2="21" y2="6"></line>
-      <line x1="3" y1="18" x2="21" y2="18"></line>
-    </svg>
-  </symbol>
-  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
-    <title>Expand</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
-      <polyline points="9 18 15 12 9 6"></polyline>
-    </svg>
-  </symbol>
-  <symbol id="svg-sun" viewBox="0 0 24 24">
-    <title>Light mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
-      <circle cx="12" cy="12" r="5"></circle>
-      <line x1="12" y1="1" x2="12" y2="3"></line>
-      <line x1="12" y1="21" x2="12" y2="23"></line>
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-      <line x1="1" y1="12" x2="3" y2="12"></line>
-      <line x1="21" y1="12" x2="23" y2="12"></line>
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-    </svg>
-  </symbol>
-  <symbol id="svg-moon" viewBox="0 0 24 24">
-    <title>Dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
-    </svg>
-  </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
-    </svg>
-  </symbol>
-</svg>
-
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
-
-<div class="announcement">
-  <aside class="announcement-content">
-     <strong>⚠️ You are viewing version 1.0.</strong><br/>
-Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2.0/</a>. 
-  </aside>
-</div>
-
-<div class="page">
-  <header class="mobile-header">
-    <div class="header-left">
-      <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
-      </label>
-    </div>
-    <div class="header-center">
-      <a href="../../index.html"><div class="brand">Smithy 1.0</div></a>
-    </div>
-    <div class="header-right">
-      <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-        </button>
-      </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-      </label>
-    </div>
-  </header>
-  <aside class="sidebar-drawer">
-    <div class="sidebar-container">
-      
-      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../../index.html">
-  
-  <div class="sidebar-logo-container">
-    <img class="sidebar-logo" src="../../_static/smithy.svg" alt="Logo"/>
-  </div>
-  
-  
-</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
-  <input type="hidden" name="check_keywords" value="yes">
-  <input type="hidden" name="area" value="default">
-</form>
-<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quick start</a></li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">Specifications</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">Smithy specification</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="model.html">1. The Smithy model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="prelude-model.html">2. Prelude model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="constraint-traits.html">3. Constraint traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="documentation-traits.html">4. Documentation traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="type-refinement-traits.html">5. Type refinement traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="protocol-traits.html">6. Protocol traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="auth-traits.html">7. Authentication traits</a></li>
-<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">8. Behavior traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="resource-traits.html">9. Resource traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="stream-traits.html">10. Streaming Traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="http-traits.html">11. HTTP binding traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="xml-traits.html">12. XML binding traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="endpoint-traits.html">13. Endpoint Traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html">14. Selectors</a></li>
-<li class="toctree-l3"><a class="reference internal" href="model-validation.html">15. Model validation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="idl.html">16. Smithy IDL</a></li>
-<li class="toctree-l3"><a class="reference internal" href="json-ast.html">17. JSON AST</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../waiters.html">Waiters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mqtt.html">MQTT Protocol Bindings</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/index.html">AWS specifications</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-core.html">AWS Core Specification</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-auth.html">AWS Authentication Traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-iam.html">AWS IAM traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-cloudformation.html">AWS CloudFormation traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-restxml-protocol.html">AWS restXml protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-query-protocol.html">AWS query protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../guides/index.html">Smithy Guides</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../guides/building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../guides/building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../guides/building-models/build-config.html">smithy-build</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../../guides/model-linters.html">Model linters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guides/evolving-models.html">Evolving Models</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guides/style-guide.html">Style Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guides/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guides/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
-</ul>
-</li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Implementations</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/implementations.html">Implementations</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
-</ul>
-</li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Project links</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/">2.0 Documentation</a></li>
-</ul>
-
-</div>
-</div>
-
-      </div>
-      
-    </div>
-  </aside>
-  <div class="main">
-    <div class="content">
-      <div class="article-container">
-        <a href="#" class="back-to-top muted-link">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
-          </svg>
-          <span>Back to top</span>
-        </a>
-        <div class="content-icon-container">
-          <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-1.0/spec/core/behavior-traits.rst" title="Edit this page">
-    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
-      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
-    </svg>
-    <span class="visually-hidden">Edit this page</span>
-  </a>
-</div><div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-            </button>
-          </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-          </label>
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../../../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
+                </a>
+                <span class="version-text">1.0</span>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../../../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../index.html">Specifications</a></li>
+                <li class="site-page"><a href="../../guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../../../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
         </div>
-        <article role="main">
-          <div class="section" id="behavior-traits">
-<h1><span class="section-number">8. </span>Behavior traits<a class="headerlink" href="#behavior-traits" title="Permalink to this headline">#</a></h1>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article class="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="../index.html" >Specifications</a></li>
+                    <li><a href="index.html" accesskey="U">Smithy specification</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="behavior-traits">
+<h1><a href="#behavior-traits"><span class="section-number">8. </span>Behavior traits</a></h1>
 <p>Behavior traits are used to alter the behavior of operations.</p>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title">Table of contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#idempotencytoken-trait" id="id7"><code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait</a></li>
+<li><a class="reference internal" href="#idempotent-trait" id="id8"><code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait</a></li>
+<li><a class="reference internal" href="#readonly-trait" id="id9"><code class="docutils literal notranslate"><span class="pre">readonly</span></code> trait</a></li>
+<li><a class="reference internal" href="#retryable-trait" id="id10"><code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait</a></li>
+<li><a class="reference internal" href="#paginated-trait" id="id11"><code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpchecksumrequired-trait" id="id12"><code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait</a></li>
+</ul>
+</div>
 <div class="section" id="idempotencytoken-trait">
-<span id="smithy-api-idempotencytoken-trait"></span><span id="id1"></span><h2><span class="section-number">8.1. </span><code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait<a class="headerlink" href="#idempotencytoken-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-idempotencytoken-trait"></span><span id="id1"></span><h2><a href="#idempotencytoken-trait"><span class="section-number">8.1. </span><code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Defines the input member of an operation that is used by the server to
 identify and discard replayed requests.</dd>
@@ -325,20 +100,20 @@ due to networking issues or internal server errors. The service uses the
 provided request token to identify and discard duplicate requests.</p>
 <p>Client implementations MAY automatically provide a value for a request token
 member if and only if the member is not explicitly provided.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">operation </span><span class="nc">AllocateWidget</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">AllocateWidgetInput</span>
-}
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">operation</span> <span class="n">AllocateWidget</span> <span class="p">{</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="n">AllocateWidgetInput</span>
+<span class="p">}</span>
 
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">AllocateWidgetInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@idempotencyToken</span>
-<span class="w">    </span><span class="py">clientToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
-}
+<span class="nd">@input</span>
+<span class="n">structure</span> <span class="n">AllocateWidgetInput</span> <span class="p">{</span>
+    <span class="nd">@idempotencyToken</span>
+    <span class="n">clientToken</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="idempotent-trait">
-<span id="smithy-api-idempotent-trait"></span><span id="id2"></span><h2><span class="section-number">8.2. </span><code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait<a class="headerlink" href="#idempotent-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-idempotent-trait"></span><span id="id2"></span><h2><a href="#idempotent-trait"><span class="section-number">8.2. </span><code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that the intended effect on the server of multiple identical
 requests with an operation is the same as the effect for a single such
@@ -347,11 +122,11 @@ request.</dd>
 <dt>Value type</dt><dd>Annotation trait</dd>
 <dt>Conflicts with</dt><dd><a class="reference internal" href="#readonly-trait"><span class="std std-ref">readonly trait</span></a></dd>
 </dl>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@idempotent</span>
-<span class="kd">operation </span><span class="nc">DeleteSomething</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">DeleteSomethingInput</span><span class="p">,</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">DeleteSomethingOutput</span>
-}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@idempotent</span><span class="w"></span>
+<span class="kd">operation</span><span class="nc"> DeleteSomething</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">DeleteSomethingInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">DeleteSomethingOutput</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -361,23 +136,23 @@ idempotent.</p>
 </div>
 </div>
 <div class="section" id="readonly-trait">
-<span id="smithy-api-readonly-trait"></span><span id="id3"></span><h2><span class="section-number">8.3. </span><code class="docutils literal notranslate"><span class="pre">readonly</span></code> trait<a class="headerlink" href="#readonly-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-readonly-trait"></span><span id="id3"></span><h2><a href="#readonly-trait"><span class="section-number">8.3. </span><code class="docutils literal notranslate"><span class="pre">readonly</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that an operation is effectively read-only.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
 <dt>Value type</dt><dd>Annotation trait</dd>
 <dt>Conflicts with</dt><dd><a class="reference internal" href="#idempotent-trait"><span class="std std-ref">idempotent trait</span></a></dd>
 </dl>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
-<span class="kd">operation </span><span class="nc">GetSomething</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetSomethingInput</span><span class="p">,</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetSomethingOutput</span>
-}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@readonly</span><span class="w"></span>
+<span class="kd">operation</span><span class="nc"> GetSomething</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">GetSomethingInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetSomethingOutput</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="retryable-trait">
-<span id="smithy-api-retryable-trait"></span><span id="id4"></span><h2><span class="section-number">8.4. </span><code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait<a class="headerlink" href="#retryable-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-retryable-trait"></span><span id="id4"></span><h2><a href="#retryable-trait"><span class="section-number">8.4. </span><code class="docutils literal notranslate"><span class="pre">retryable</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that an error MAY be retried by the client.</dd>
 <dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure[trait|error]</span></code></p>
@@ -386,7 +161,6 @@ idempotent.</p>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
 </dl>
 <p>The retryable trait is a structure that contains the following members:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
@@ -406,21 +180,20 @@ idempotent.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@error</span>(<span class="s2">&quot;server&quot;</span>)
-<span class="nt">@retryable</span>
-<span class="nt">@httpError</span>(<span class="m">503</span>)
-<span class="kd">structure </span><span class="nc">ServiceUnavailableError</span><span class="w"> </span>{}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@error</span>(<span class="s2">&quot;server&quot;</span>)<span class="w"></span>
+<span class="nd">@retryable</span><span class="w"></span>
+<span class="nd">@httpError</span>(<span class="m">503</span>)<span class="w"></span>
+<span class="kd">structure</span><span class="nc"> ServiceUnavailableError</span><span class="w"> </span>{}<span class="w"></span>
 
-<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
-<span class="nt">@retryable</span>(<span class="py">throttling</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>)
-<span class="nt">@httpError</span>(<span class="m">429</span>)
-<span class="kd">structure </span><span class="nc">ThrottlingError</span><span class="w"> </span>{}
+<span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
+<span class="nd">@retryable</span>(<span class="nl">throttling:</span><span class="w"> </span><span class="kc">true</span>)<span class="w"></span>
+<span class="nd">@httpError</span>(<span class="m">429</span>)<span class="w"></span>
+<span class="kd">structure</span><span class="nc"> ThrottlingError</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="paginated-trait">
-<span id="smithy-api-paginated-trait"></span><span id="pagination"></span><span id="id5"></span><h2><span class="section-number">8.5. </span><code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait<a class="headerlink" href="#paginated-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-paginated-trait"></span><span id="pagination"></span><span id="id5"></span><h2><a href="#paginated-trait"><span class="section-number">8.5. </span><code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>The <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait indicates that an operation intentionally limits
 the number of results returned in a single response and that multiple
@@ -434,7 +207,6 @@ invocations might be necessary to retrieve all results.</dd>
 pages. Smithy provides a built-in pagination mechanism that utilizes a
 cursor.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait is a structure that contains the following members:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
@@ -484,8 +256,7 @@ output member, if specified, MUST target a list or map.</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td><p class="first">The name of an operation input member that limits the maximum number
 of results to include in the operation output. This input member
-SHOULD NOT be required and SHOULD target an integer shape. It can, but
-SHOULD NOT target a byte, short, or long shape.</p>
+SHOULD NOT be required and MUST target an integer shape.</p>
 <div class="last admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">Do not attempt to fill response pages to meet the value provided
@@ -497,91 +268,90 @@ an unpredictable latency.</p>
 </tr>
 </tbody>
 </table>
-</div>
 <p>The following example defines a paginated operation that sets each value
 explicitly on the operation.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="nt">@readonly</span>
-<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
-<span class="w">           </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;maxResults&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foos&quot;</span>)
-<span class="kd">operation </span><span class="nc">GetFoos</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosInput</span><span class="p">,</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosOutput</span>
-}
+<span class="nd">@readonly</span><span class="w"></span>
+<span class="nd">@paginated</span>(<span class="nl">inputToken:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">outputToken:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">           </span><span class="nl">pageSize:</span><span class="w"> </span><span class="s2">&quot;maxResults&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">items:</span><span class="w"> </span><span class="s2">&quot;foos&quot;</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> GetFoos</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">GetFoosInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetFoosOutput</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">GetFoosInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">maxResults</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="p">,</span>
-<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
-}
+<span class="nd">@input</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> GetFoosInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">maxResults:</span><span class="w"> </span><span class="vc">Integer</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">nextToken:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@output</span>
-<span class="kd">structure </span><span class="nc">GetFoosOutput</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="nd">@output</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> GetFoosOutput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">nextToken:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="py">foos</span><span class="p">:</span><span class="w"> </span><span class="vc">StringList</span><span class="p">,</span>
-}
+<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nl">foos:</span><span class="w"> </span><span class="vc">StringList</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">list </span><span class="nc">StringList</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
-}
+<span class="kd">list</span><span class="nc"> StringList</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">member:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <p>Attaching the <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait to a service provides default pagination
-configuration settings to all <code class="docutils literal notranslate"><span class="pre">paginated</span></code> operations bound within the closure
-of the service. Pagination settings configured on an operation override any
-inherited service setting.</p>
+configuration settings to all operations bound within the closure of the
+service. Pagination settings configured on an operation override any inherited
+service setting.</p>
 <p>The following example defines a paginated operation that inherits some
 settings from a service.</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
-<span class="w">           </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;maxResults&quot;</span>)
-<span class="kd">service </span><span class="nc">Example</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2019-06-27&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">GetFoos</span>]<span class="p">,</span>
-}
+<span class="nd">@paginated</span>(<span class="nl">inputToken:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">outputToken:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">           </span><span class="nl">pageSize:</span><span class="w"> </span><span class="s2">&quot;maxResults&quot;</span>)<span class="w"></span>
+<span class="kd">service</span><span class="nc"> Example</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2019-06-27&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">operations:</span><span class="w"> </span>[<span class="vc">GetFoos</span>]<span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@readonly</span><span class="w"> </span><span class="nt">@paginated</span>(<span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foos&quot;</span>)
-<span class="kd">operation </span><span class="nc">GetFoos</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosInput</span><span class="p">,</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosOutput</span>
-}
+<span class="nd">@readonly</span><span class="w"> </span><span class="nd">@paginated</span>(<span class="nl">items:</span><span class="w"> </span><span class="s2">&quot;foos&quot;</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> GetFoos</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">GetFoosInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetFoosOutput</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 </div><div aria-labelledby="tab-0-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-0-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#Example&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2019-06-27&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;smithy.api#paginated&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;inputToken&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;outputToken&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="nt">&quot;pageSize&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;maxResults&quot;</span>
-<span class="w">                </span><span class="p">}</span>
-<span class="w">            </span><span class="p">}</span>
-<span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#GetFoos&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;input&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#GetFoosInput&quot;</span>
-<span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="nt">&quot;output&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#GetFoosOutput&quot;</span>
-<span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;smithy.api#readonly&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
-<span class="w">                </span><span class="nt">&quot;smithy.api#paginated&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foos&quot;</span>
-<span class="w">                </span><span class="p">}</span>
-<span class="w">            </span><span class="p">}</span>
-<span class="w">        </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#Example&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2019-06-27&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#paginated&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;inputToken&quot;</span><span class="p">:</span> <span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;outputToken&quot;</span><span class="p">:</span> <span class="s2">&quot;nextToken&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;pageSize&quot;</span><span class="p">:</span> <span class="s2">&quot;maxResults&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#GetFoos&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#GetFoosInput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#GetFoosOutput&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#readonly&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="nt">&quot;smithy.api#paginated&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;items&quot;</span><span class="p">:</span> <span class="s2">&quot;foos&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -592,48 +362,48 @@ member name in a structure. The first member name MUST correspond to a member
 of the output structure and each subsequent member name MUST correspond to a
 member in the previously referenced structure. Paths MUST adhere to the
 following ABNF.</p>
-<pre class="productionlist highlight">
+<pre class="productionlist">
 <strong id="grammar-token-smithy-path"><span id="grammar-token-path"></span>path</strong> =
-    <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a> *(&quot;.&quot; <a class="reference internal" href="model.html#grammar-token-smithy-Identifier"><code class="xref docutils literal notranslate"><span class="pre">Identifier</span></code></a>)
+    <a class="reference internal" href="model.html#grammar-token-smithy-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a> *(&quot;.&quot; <a class="reference internal" href="model.html#grammar-token-smithy-identifier"><code class="xref docutils literal notranslate"><span class="pre">identifier</span></code></a>)
 </pre>
 <p>The following example defines a paginated operation which uses a result
 wrapper where the output token and items are referenced by paths.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="nt">@readonly</span>
-<span class="nt">@paginated</span>(<span class="py">inputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">outputToken</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;result.nextToken&quot;</span><span class="p">,</span>
-<span class="w">           </span><span class="py">pageSize</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;maxResults&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">items</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;result.foos&quot;</span>)
-<span class="kd">operation </span><span class="nc">GetFoos</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosInput</span><span class="p">,</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosOutput</span>
-}
+<span class="nd">@readonly</span><span class="w"></span>
+<span class="nd">@paginated</span>(<span class="nl">inputToken:</span><span class="w"> </span><span class="s2">&quot;nextToken&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">outputToken:</span><span class="w"> </span><span class="s2">&quot;result.nextToken&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">           </span><span class="nl">pageSize:</span><span class="w"> </span><span class="s2">&quot;maxResults&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">items:</span><span class="w"> </span><span class="s2">&quot;result.foos&quot;</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> GetFoos</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">GetFoosInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetFoosOutput</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">GetFoosInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">maxResults</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="p">,</span>
-<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
-}
+<span class="nd">@input</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> GetFoosInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">maxResults:</span><span class="w"> </span><span class="vc">Integer</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">nextToken:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@output</span>
-<span class="kd">structure </span><span class="nc">GetFoosOutput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="py">result</span><span class="p">:</span><span class="w"> </span><span class="vc">ResultWrapper</span>
-}
+<span class="nd">@output</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> GetFoosOutput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nl">result:</span><span class="w"> </span><span class="vc">ResultWrapper</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">structure </span><span class="nc">ResultWrapper</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">nextToken</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="kd">structure</span><span class="nc"> ResultWrapper</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">nextToken:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="py">foos</span><span class="p">:</span><span class="w"> </span><span class="vc">StringList</span><span class="p">,</span>
-}
+<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nl">foos:</span><span class="w"> </span><span class="vc">StringList</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">list </span><span class="nc">StringList</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
-}
+<span class="kd">list</span><span class="nc"> StringList</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">member:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <div class="section" id="pagination-behavior">
-<h3><span class="section-number">8.5.1. </span>Pagination Behavior<a class="headerlink" href="#pagination-behavior" title="Permalink to this headline">#</a></h3>
+<h3><a href="#pagination-behavior"><span class="section-number">8.5.1. </span>Pagination Behavior</a></h3>
 <ol class="arabic simple">
 <li>If an operation returns a naturally size-limited subset of data
 (e.g., a top-ten list of users sorted by rank), then the operation
@@ -651,7 +421,7 @@ page.</li>
 </ol>
 </div>
 <div class="section" id="client-behavior">
-<h3><span class="section-number">8.5.2. </span>Client behavior<a class="headerlink" href="#client-behavior" title="Permalink to this headline">#</a></h3>
+<h3><a href="#client-behavior"><span class="section-number">8.5.2. </span>Client behavior</a></h3>
 <p>Smithy clients SHOULD provide abstractions that can be used to automatically
 iterate over paginated responses. The following steps describe the process a
 client MUST follow when iterating over paginated API calls:</p>
@@ -677,7 +447,7 @@ as they are available.</li>
 </ol>
 </div>
 <div class="section" id="continuation-tokens">
-<h3><span class="section-number">8.5.3. </span>Continuation tokens<a class="headerlink" href="#continuation-tokens" title="Permalink to this headline">#</a></h3>
+<h3><a href="#continuation-tokens"><span class="section-number">8.5.3. </span>Continuation tokens</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait indicates that an operation utilizes cursor-based
 pagination. When a paginated operation truncates its output, it MUST return a
 continuation token in the operation output that can be used to get the next
@@ -725,7 +495,7 @@ presence, absence, or contents of a continuation token.</p>
 </ol>
 </div>
 <div class="section" id="backward-compatibility">
-<h3><span class="section-number">8.5.4. </span>Backward compatibility<a class="headerlink" href="#backward-compatibility" title="Permalink to this headline">#</a></h3>
+<h3><a href="#backward-compatibility"><span class="section-number">8.5.4. </span>Backward compatibility</a></h3>
 <p>Many tools use the <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait to expose additional functionality to
 things like generated code. To support these use cases, the following changes
 to the <code class="docutils literal notranslate"><span class="pre">paginated</span></code> trait are considered backward incompatible:</p>
@@ -743,7 +513,7 @@ to the <code class="docutils literal notranslate"><span class="pre">paginated</s
 </div>
 </div>
 <div class="section" id="httpchecksumrequired-trait">
-<span id="smithy-api-httpchecksumrequired-trait"></span><span id="id6"></span><h2><span class="section-number">8.6. </span><code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait<a class="headerlink" href="#httpchecksumrequired-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-httpchecksumrequired-trait"></span><span id="id6"></span><h2><a href="#httpchecksumrequired-trait"><span class="section-number">8.6. </span><code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that an operation requires a checksum in its HTTP request. By
 default, the checksum used for a service is a MD5 checksum passed in the
@@ -753,251 +523,38 @@ Content-MD5 header.</dd>
 <dt>See</dt><dd><span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc1864.html"><strong>RFC 1864</strong></a></dd>
 </dl>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpChecksumRequired</span>
-<span class="kd">operation </span><span class="nc">PutSomething</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutSomethingInput</span><span class="p">,</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">PutSomethingOutput</span>
-}
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@httpChecksumRequired</span><span class="w"></span>
+<span class="kd">operation</span><span class="nc"> PutSomething</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">PutSomethingInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">PutSomethingOutput</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 </div></div>
 </div>
-<div class="section" id="requestcompression-trait">
-<span id="smithy-api-requestcompression-trait"></span><span id="id7"></span><h2><span class="section-number">8.7. </span><code class="docutils literal notranslate"><span class="pre">requestCompression</span></code> trait<a class="headerlink" href="#requestcompression-trait" title="Permalink to this headline">#</a></h2>
-<dl class="docutils">
-<dt>Summary</dt><dd>Indicates that an operation supports compressing requests from clients to
-services.</dd>
-<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
-<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
-<dt>Validation</dt><dd><ol class="arabic simple">
-<li>Operation input members must not have both the <a class="reference internal" href="stream-traits.html#streaming-trait"><span class="std std-ref">streaming trait</span></a> and
-<a class="reference internal" href="stream-traits.html#requireslength-trait"><span class="std std-ref">requiresLength trait</span></a> applied.
-This avoids the client reading and compressing the entire stream for the
-length of the compressed data to set the <code class="docutils literal notranslate"><span class="pre">Content-Length</span></code> header.</li>
-<li><code class="docutils literal notranslate"><span class="pre">encodings</span></code> must not be empty, and all members must be valid,
-case-insensitive, supported compression algorithm values.</li>
-</ol>
-</dd>
-</dl>
-<p>The <code class="docutils literal notranslate"><span class="pre">requestCompression</span></code> trait is a structure that contains the following
-members:</p>
-<div class="table-wrapper colwidths-given docutils container">
-<table border="1" class="colwidths-given docutils align-default">
-<colgroup>
-<col width="10%" />
-<col width="10%" />
-<col width="80%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Property</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>encodings</td>
-<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
-<td>Defines the priority-ordered list of compression algorithms supported by
-the service operation. Supported compression algorithms are: &quot;gzip&quot;.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>The following example defines an operation that supports <code class="docutils literal notranslate"><span class="pre">gzip</span></code> compression
-for requests from clients to services with both a streaming and non-streaming
-member.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
-
-<span class="nt">@requestCompression</span>(
-<span class="w">    </span><span class="py">encodings</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;gzip&quot;</span>]
-)
-<span class="kd">operation </span><span class="nc">GetFoos</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoosInput</span>
-}
-
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">GetFoosInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="py">streamingMember</span><span class="p">:</span><span class="w"> </span><span class="vc">StreamingFoo</span><span class="p">,</span>
-<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
-}
-
-<span class="nt">@streaming</span>
-<span class="kd">blob </span><span class="nc">StreamingFoo</span>
-</pre></div>
-</div>
-<div class="section" id="request-compression-behavior">
-<h3><span class="section-number">8.7.1. </span>Request compression behavior<a class="headerlink" href="#request-compression-behavior" title="Permalink to this headline">#</a></h3>
-<p>Operations with the <code class="docutils literal notranslate"><span class="pre">requestCompression</span></code> trait applied direct clients to
-compress requests sent to services and set the corresponding encoding in the
-<code class="docutils literal notranslate"><span class="pre">Content-Encoding</span></code> header.</p>
-<p>Operations with the <code class="docutils literal notranslate"><span class="pre">requestCompression</span></code> trait applied have request
-compression enabled by default, and clients SHOULD attempt to compress a request
-when a compression algorithm is supported (see <code class="docutils literal notranslate"><span class="pre">DISABLE_REQUEST_COMPRESSION</span></code>
-in <a class="reference internal" href="#compression-client-implementation"><span class="std std-ref">Client Implementation</span></a> to disable request compression).</p>
-<p>Since compression is NOT required, services supporting operations with the
-<code class="docutils literal notranslate"><span class="pre">requestCompression</span></code> trait applied MUST be able to receive non-compressed
-requests, for cases such as clients not supporting certain compression
-algorithms or older versions of clients that have out-of-date supported
-compression algorithms.</p>
-<p>The client MUST only compress the request using the first supported algorithm in
-<code class="docutils literal notranslate"><span class="pre">encodings</span></code> and stop considering algorithms that appear later in the list.</p>
-<p>If a client does compress the request, they MUST also set the
-<code class="docutils literal notranslate"><span class="pre">Content-Encoding</span></code> header per <span class="target" id="index-1"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc9110.html#section-8.4"><strong>RFC 9110#section-8.4</strong></a>:</p>
-<blockquote>
-<div>If one or more encodings have been applied to a representation, the sender
-that applied the encodings MUST generate a Content-Encoding header field
-that lists the content codings in the order in which they were applied.</div></blockquote>
-<p>If a request has a structure member bound to the <code class="docutils literal notranslate"><span class="pre">Content-Encoding</span></code> header,
-the trait MAY still be applied. If the request is compressed, then the
-compression encoding MUST be appended to the <code class="docutils literal notranslate"><span class="pre">Content-Encoding</span></code> header after
-any user-provided encoding(s).</p>
-<p>As an example, using the <code class="docutils literal notranslate"><span class="pre">PutWithContentEncoding</span></code> operation below with the
-<code class="docutils literal notranslate"><span class="pre">customEncoding</span></code> member set to <code class="docutils literal notranslate"><span class="pre">brotli</span></code>, the header would be
-<code class="docutils literal notranslate"><span class="pre">&quot;Content-Encoding&quot;:</span> <span class="pre">&quot;brotli,</span> <span class="pre">gzip&quot;</span></code>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
-
-<span class="nt">@requestCompression</span>(
-<span class="w">    </span><span class="py">encodings</span><span class="p">:</span><span class="w"> </span>[<span class="s2">&quot;gzip&quot;</span>]
-)
-<span class="kd">operation </span><span class="nc">PutWithContentEncoding</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutWithContentEncodingInput</span>
-}
-
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">PutWithContentEncodingInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;Content-Encoding&quot;</span>)
-<span class="w">    </span><span class="py">customEncoding</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"> </span><span class="c">// brotli</span>
-
-<span class="w">    </span><span class="nt">@httpPayload</span>
-<span class="w">    </span><span class="py">data</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
-}
-</pre></div>
-</div>
-<p>Clients MUST encode the request content prior to request signing, otherwise the
-request signature will mismatch.</p>
-<p>Because small payloads may become longer when compressed, operations SHOULD only
-be compressed when the payload size is greater than or equal to the value of the
-minimum compression threshold (see <code class="docutils literal notranslate"><span class="pre">REQUEST_MIN_COMPRESSION_SIZE_BYTES</span></code> in
-<a class="reference internal" href="#compression-client-implementation"><span class="std std-ref">Client Implementation</span></a>).</p>
-<p>If the request contains a member with the <a class="reference internal" href="stream-traits.html#streaming-trait"><span class="std std-ref">streaming trait</span></a> applied without
-the <a class="reference internal" href="stream-traits.html#requireslength-trait"><span class="std std-ref">requiresLength trait</span></a> applied, the request MUST be compressed if
-enabled regardless of the minimum compression threshold.</p>
-<p>Operations with input members with both <a class="reference internal" href="stream-traits.html#streaming-trait"><span class="std std-ref">streaming trait</span></a> and
-<a class="reference internal" href="stream-traits.html#requireslength-trait"><span class="std std-ref">requiresLength trait</span></a> are not allowed to use request compression. This
-avoids the client reading and compressing the entire stream for the length of
-the compressed data to set the <code class="docutils literal notranslate"><span class="pre">Content-Length</span></code> header.</p>
-</div>
-<div class="section" id="client-implementation">
-<span id="compression-client-implementation"></span><h3><span class="section-number">8.7.2. </span>Client Implementation<a class="headerlink" href="#client-implementation" title="Permalink to this headline">#</a></h3>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">The client configuration settings defined in this specification are still
-evolving and subject to change.</p>
-</div>
-<p>Smithy clients MUST expose a setting <code class="docutils literal notranslate"><span class="pre">DISABLE_REQUEST_COMPRESSION</span></code> to disable
-request compression. The value MUST be a boolean value which defaults to
-<code class="docutils literal notranslate"><span class="pre">false</span></code>. In order of precedence from highest to lowest, the setting shall be
-exposed:</p>
-<ul class="simple">
-<li>Per-request configuration (SHOULD, if request-level configuration is supported
-by the client)</li>
-<li>Service client configuration - <code class="docutils literal notranslate"><span class="pre">DisableRequestCompression</span></code> (MUST, with
-idiomatic casing/spacing for that client programming language)</li>
-</ul>
-<p>Smithy clients MUST expose a setting <code class="docutils literal notranslate"><span class="pre">REQUEST_MIN_COMPRESSION_SIZE_BYTES</span></code> to
-specify the minimum size in bytes that a request body should be to trigger
-compression. The value MUST be a non-negative integer in the range <code class="docutils literal notranslate"><span class="pre">0</span></code> and
-<code class="docutils literal notranslate"><span class="pre">10485760</span></code> inclusive, and defaults to <code class="docutils literal notranslate"><span class="pre">10240</span></code> bytes. If the value is outside
-of the range, the client MUST throw an error. In order of precedence from
-highest to lowest, the setting shall be exposed:</p>
-<ul class="simple">
-<li>Per-request configuration (SHOULD, if request-level configuration is supported
-by that client)</li>
-<li>Service client configuration - <code class="docutils literal notranslate"><span class="pre">RequestMinCompressionSizeBytes</span></code> (MUST, with
-idiomatic casing/spacing for that client programming language)</li>
-</ul>
-<p>If a client's language or standard library does not support a compression
-algorithm, they are not required to implement that algorithm. If none of the
-compression algorithms are supported by the client, then the request does not
-need to be compressed.</p>
-<p>If the client's language or standard library exposes a &quot;level&quot; or &quot;quality&quot;
-setting to control the tradeoff between speed and the compressed size, clients
-MUST set this setting to an idiomatic default (either the default value for
-their language, or else a &quot;balanced&quot; mode).</p>
-</div>
-<div class="section" id="id8">
-<h3><span class="section-number">8.7.3. </span>Backward compatibility<a class="headerlink" href="#id8" title="Permalink to this headline">#</a></h3>
-<p>Once a compression algorithm is added to <code class="docutils literal notranslate"><span class="pre">encodings</span></code>, the algorithm SHOULD NOT
-be removed. If an algorithm is removed, the service MUST continue to support the
-removed algorithm on the server-side because older clients or non-official
-clients may continue sending compressed requests.</p>
-</div>
-</div>
 </div>
 
-        </article>
-      </div>
-      <footer>
-        
-        <div class="related-pages">
-          <a class="next-page" href="resource-traits.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title"><span class="section-number">9. </span>Resource traits</div>
-              </div>
-              <svg><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="auth-traits.html">
-              <svg><use href="#svg-arrow-right"></use></svg>
-              <div class="page-info">
-                <div class="context">
-                  <span>Previous</span>
-                </div>
-                
-                <div class="title"><span class="section-number">7. </span>Authentication traits</div>
-                
-              </div>
-            </a>
-        </div>
-        <div class="bottom-of-page">
-          <div class="left-details">
-            <div class="copyright">
-                Copyright &#169; 2022, Amazon Web Services
-            </div>
-            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-            
-            <a href="https://github.com/pradyunsg/furo">Furo</a>
-            
-          </div>
-          <div class="right-details">
-            <div class="icons">
-              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
-                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
-                </svg>
-            </a>
-              
-            </div>
-          </div>
-        </div>
-        
-      </footer>
-    </div>
-    <aside class="toc-drawer">
-      
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            Contents
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
+
+                    
+                    <section class="relations">
+                        
+                        <a href="auth-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← <span class="section-number">7. </span>Authentication traits</a>
+                        
+                        <a href="resource-traits.html" title="next chapter" class="next-page clearfix"><span class="section-number">9. </span>Resource traits →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="auth-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
+                                
+                                <a href="resource-traits.html" title="next chapter" class="next-page clearfix">Next →</a>
+                            </section>
+                            
+                            <ul>
 <li><a class="reference internal" href="#">8. Behavior traits</a><ul>
 <li><a class="reference internal" href="#idempotencytoken-trait">8.1. <code class="docutils literal notranslate"><span class="pre">idempotencyToken</span></code> trait</a></li>
 <li><a class="reference internal" href="#idempotent-trait">8.2. <code class="docutils literal notranslate"><span class="pre">idempotent</span></code> trait</a></li>
@@ -1011,30 +568,22 @@ clients may continue sending compressed requests.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#httpchecksumrequired-trait">8.6. <code class="docutils literal notranslate"><span class="pre">httpChecksumRequired</span></code> trait</a></li>
-<li><a class="reference internal" href="#requestcompression-trait">8.7. <code class="docutils literal notranslate"><span class="pre">requestCompression</span></code> trait</a><ul>
-<li><a class="reference internal" href="#request-compression-behavior">8.7.1. Request compression behavior</a></li>
-<li><a class="reference internal" href="#client-implementation">8.7.2. Client Implementation</a></li>
-<li><a class="reference internal" href="#id8">8.7.3. Backward compatibility</a></li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
 
-          </div>
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2021, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
         </div>
-      </div>
-      
-      
-    </aside>
-  </div>
-</div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/scripts/furo.js"></script>
-    <script src="../../_static/clipboard.min.js"></script>
-    <script src="../../_static/copybutton.js"></script>
-    <script src="../../_static/tabs.js"></script>
-    </body>
+    </div>
+</footer>
+  </body>
 </html>

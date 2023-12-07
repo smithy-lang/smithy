@@ -1,3 +1,207 @@
+
+<!DOCTYPE html>
+
 <html>
-  <head><meta http-equiv="refresh" content="0; url=2.0/index.html"/></head>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smithy &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="_static/bootstrap-reboot.css" type="text/css" />
+    
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="_static/tabs.css" />
+    <link rel="stylesheet" href="_static/custom-tabs.css" type="text/css" />
+
+    
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/smithy.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.png"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Quick start" href="quickstart.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="smithy-version" content="1.0">
+
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="#">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
+                </a>
+                <span class="version-text">1.0</span>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="1.0/spec/index.html">Specifications</a></li>
+                <li class="site-page"><a href="1.0/guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+    
+        <section id="landing-container">
+
+    <div id="splash">
+        <div class="width-wrapper">
+            <div class="splash-row">
+                <div class="splash-column">
+                    <div class="headline">
+                        <h1>Smithy</h1>
+                        A language for defining services and SDKs
+                    </div>
+                    <a class="splash-link" href="quickstart.html">Get started</a>
+                </div>
+
+                <div class="splash-column">
+                    <div class="highlight-smithy notranslate">
+                        <div class="highlight">
+<pre><a class="see-full-example" href="quickstart.html#complete-example">[full example]</a><span class="kd">namespace</span><span class="nc"> example.weather</span>
+
+<span class="kd">service</span><span class="nc"> Weather</span> {
+    <span class="nl">version:</span> <span class="s2">"2006-03-01"</span>,
+    <span class="nl">resources:</span> [<span class="vc">City</span>],
+    <span class="nl">operations:</span> [<span class="vc">GetCurrentTime</span>]
+}
+
+<span class="kd">resource</span><span class="vc"> City</span> {
+    <span class="nl">identifiers:</span> { <span class="nl">cityId:</span> <span class="vc">CityId</span> },
+    <span class="nl">read:</span> <span class="vc">GetCity</span>,
+    <span class="nl">list:</span> <span class="vc">ListCities</span>,
+    <span class="nl">resources:</span> [<span class="vc">Forecast</span>],
+}
+</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="width-wrapper">
+        <div class="splash-row">
+            <div class="splash-column">
+                <h2>🤖 &nbsp;Protocol-agnostic</h2>
+                <p>Smithy is designed to work with any programming language, describe
+                    services running in any environment, and work with any kind of
+                    transport or serialization format.</p>
+            </div>
+            <div class="splash-column">
+                <h2>🧬 &nbsp;Designed to evolve</h2>
+                <p>Smithy is extended through <em>traits</em>. Smithy's extensible
+                   meta-model can evolve and capture more information about services
+                   without breaking changes.</p>
+            </div>
+        </div>
+        <div class="splash-row">
+            <div class="splash-column">
+                <h2>⚖ &nbsp;Codify and enforce API governance</h2>
+                <p>Customizable API standards help to automatically ensure that APIs
+                    meet customer expectations. Validation rules can be shared and
+                    applied to all APIs in an organization.</p>
+            </div>
+            <div class="splash-column">
+                <h2>🖇️ &nbsp;Resource based</h2>
+                <p>Smithy models are defined by resources and operations. Defining
+                    services with resources helps lead to better APIs and provides
+                    rich information for model transformations.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="faq">
+        <div class="width-wrapper">
+            <h2 class="faq-heading">FAQs</h2>
+
+            <h2>Why did you develop Smithy?</h2>
+            <p>Smithy is based on an interface definition language that has been widely
+                used within Amazon and AWS for over a decade. We decided to release Smithy
+                publicly to let other developers use Smithy for their own services and
+                benefit from our years of experience with building tens of thousands of
+                services. By releasing the Smithy specification and tooling, we also hope
+                to make it easier for developers to maintain open source AWS SDKs.</p>
+
+            <h2>Does Smithy only work with AWS?</h2>
+            <p>No. Smithy can be used with any kind of service. All AWS-specific metadata
+                in Smithy is implemented as decoupled packages.</p>
+
+            <h2>Why not just use an existing IDL?</h2>
+            <p>At AWS, we rely heavily on metadata, code generation, service frameworks,
+                client libraries, and automated policy enforcement. Existing IDLs
+                available outside of AWS were not extensible enough to meet our needs
+                and not compatible with our existing services.</p>
+
+            <h2>How is Smithy different than other IDLs and frameworks?</h2>
+            <p><strong>Smithy is built for code generation and tools.</strong>
+                Smithy models were designed for the purpose of generating code for
+                multiple programming languages. For example, Smithy models are
+                completely normalized, which gives all generated types an explicit
+                name and makes models easy to traverse, validate, and diff.</p>
+            <p><strong>Smithy can be extended <em>and</em> constrained.</strong>
+                Traits are used to extend a model and add capabilities that are not
+                part of the core specification. For example, AWS defines AWS-specific
+                traits that are used to generate other metadata documents that are
+                derived from Smithy models. While extensibility is a key design
+                requirement, Smithy provides a built-in validation system that
+                ensures models adhere to a configurable set of rules and policies.</p>
+            <p><strong>Smithy is protocol agnostic.</strong> Smithy decouples the
+                transport layer of web services from the data structures and capabilities
+                of the service so that they can evolve independently.</p>
+            <p><strong>Smithy helps large organizations collaborate on APIs.</strong>
+                Smithy allows different aspects of a model to be owned by different
+                teams. We use this feature at AWS to allow the documentation teams
+                to own API documentation, while service owners control the shape and
+                operations of a service.</p>
+            <p><strong>Smithy models can be altered for different audiences</strong>.
+                Smithy's <em>projection</em> system allows the contents of a model to
+                be filtered and changed based on who a particular build of a model is
+                intended for. This allows for use cases like maintaining an internal
+                and external version of a model and providing beta models to customers
+                as part of a private beta.</p>
+
+            <h2>What does protocol-agnostic mean?</h2>
+            <p>Protocol-agnostic means that the model is an abstraction that specifies
+                the rules and semantics of how a client and server communicate. The
+                transport and serialization format of a service is left as an
+                implementation detail, allowing them to evolve over time. For example,
+                a service owner may wish to evolve their serialization format (e.g.,
+                move from text to binary), their connection type (e.g., move from
+                HTTP/1 to HTTP/2), or launch entirely new capabilities.</p>
+
+            <h2>What is the main difference between Smithy and OpenAPI?</h2>
+            <p>The primary difference between Smithy and OpenAPI is that Smithy is
+                protocol-agnostic, allowing Smithy to describe a broader range of
+                services, metadata, and capabilities. Smithy can be used alongside
+                OpenAPI by <a href="1.0/guides/converting-to-openapi.html">converting Smithy models to OpenAPI</a>.</p>
+
+            <h2 id="status">What can Smithy do today?</h2>
+            <p>See <a href="implementations.html">Smithy projects and implementations</a></p>
+
+            <section class="relations">
+                <a class="next-page clearfix" href="quickstart.html">Quick start -&gt;</a>
+            </section>
+        </div>
+    </div>
+</section>
+        
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2021, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+  </body>
 </html>

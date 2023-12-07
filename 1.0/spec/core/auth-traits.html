@@ -1,317 +1,92 @@
-<!doctype html>
-<html class="no-js" lang="en">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="8. Behavior traits" href="behavior-traits.html" /><link rel="prev" title="6. Protocol traits" href="protocol-traits.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
-        <title>7. Authentication traits - Smithy 1.0</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
-    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>7. Authentication traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
     
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
+    <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
+
     
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/tabs.js"></script>
+    <script type="text/javascript" src="../../../_static/smithy.js"></script>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="8. Behavior traits" href="behavior-traits.html" />
+    <link rel="prev" title="6. Protocol traits" href="protocol-traits.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="smithy-version" content="1.0">
 
-
-<style>
-  body {
-    --color-code-background: #f8f8f8;
-  --color-code-foreground: black;
-  --admonition-font-size: 100%;
-  --admonition-title-font-size: 100%;
-  --color-brand-primary: #C44536;
-  --color-brand-content: #00808b;
-  --color-announcement-background: #711818de;
-  --color-announcement-text: #fff;
-  
-  }
-  @media not print {
-    body[data-theme="dark"] {
-      --color-code-background: #282828;
-  --color-code-foreground: #dddddd;
-  --color-brand-primary: #ed9d13;
-  --color-brand-content: #58d3ff;
-  --color-announcement-background: #711818de;
-  --color-announcement-text: #fff;
-  
-    }
-    @media (prefers-color-scheme: dark) {
-      body:not([data-theme="light"]) {
-        --color-code-background: #282828;
-  --color-code-foreground: #dddddd;
-  --color-brand-primary: #ed9d13;
-  --color-brand-content: #58d3ff;
-  --color-announcement-background: #711818de;
-  --color-announcement-text: #fff;
-  
-      }
-    }
-  }
-</style><script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
-<script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script></head>
-  <body>
-    
-    <script>
-      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
-    </script>
-    
-
-<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-  <symbol id="svg-toc" viewBox="0 0 24 24">
-    <title>Contents</title>
-    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
-      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
-    </svg>
-  </symbol>
-  <symbol id="svg-menu" viewBox="0 0 24 24">
-    <title>Menu</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
-      <line x1="3" y1="12" x2="21" y2="12"></line>
-      <line x1="3" y1="6" x2="21" y2="6"></line>
-      <line x1="3" y1="18" x2="21" y2="18"></line>
-    </svg>
-  </symbol>
-  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
-    <title>Expand</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
-      <polyline points="9 18 15 12 9 6"></polyline>
-    </svg>
-  </symbol>
-  <symbol id="svg-sun" viewBox="0 0 24 24">
-    <title>Light mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
-      <circle cx="12" cy="12" r="5"></circle>
-      <line x1="12" y1="1" x2="12" y2="3"></line>
-      <line x1="12" y1="21" x2="12" y2="23"></line>
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-      <line x1="1" y1="12" x2="3" y2="12"></line>
-      <line x1="21" y1="12" x2="23" y2="12"></line>
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-    </svg>
-  </symbol>
-  <symbol id="svg-moon" viewBox="0 0 24 24">
-    <title>Dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
-    </svg>
-  </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
-    </svg>
-  </symbol>
-</svg>
-
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
-
-<div class="announcement">
-  <aside class="announcement-content">
-     <strong>⚠️ You are viewing version 1.0.</strong><br/>
-Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2.0/</a>. 
-  </aside>
-</div>
-
-<div class="page">
-  <header class="mobile-header">
-    <div class="header-left">
-      <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
-      </label>
-    </div>
-    <div class="header-center">
-      <a href="../../index.html"><div class="brand">Smithy 1.0</div></a>
-    </div>
-    <div class="header-right">
-      <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-        </button>
-      </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-      </label>
-    </div>
-  </header>
-  <aside class="sidebar-drawer">
-    <div class="sidebar-container">
-      
-      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../../index.html">
-  
-  <div class="sidebar-logo-container">
-    <img class="sidebar-logo" src="../../_static/smithy.svg" alt="Logo"/>
-  </div>
-  
-  
-</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
-  <input type="hidden" name="check_keywords" value="yes">
-  <input type="hidden" name="area" value="default">
-</form>
-<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quick start</a></li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">Specifications</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">Smithy specification</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="model.html">1. The Smithy model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="prelude-model.html">2. Prelude model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="constraint-traits.html">3. Constraint traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="documentation-traits.html">4. Documentation traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="type-refinement-traits.html">5. Type refinement traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="protocol-traits.html">6. Protocol traits</a></li>
-<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">7. Authentication traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="behavior-traits.html">8. Behavior traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="resource-traits.html">9. Resource traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="stream-traits.html">10. Streaming Traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="http-traits.html">11. HTTP binding traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="xml-traits.html">12. XML binding traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="endpoint-traits.html">13. Endpoint Traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html">14. Selectors</a></li>
-<li class="toctree-l3"><a class="reference internal" href="model-validation.html">15. Model validation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="idl.html">16. Smithy IDL</a></li>
-<li class="toctree-l3"><a class="reference internal" href="json-ast.html">17. JSON AST</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../waiters.html">Waiters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mqtt.html">MQTT Protocol Bindings</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/index.html">AWS specifications</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-core.html">AWS Core Specification</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-auth.html">AWS Authentication Traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-iam.html">AWS IAM traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-cloudformation.html">AWS CloudFormation traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-restxml-protocol.html">AWS restXml protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-query-protocol.html">AWS query protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../guides/index.html">Smithy Guides</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../guides/building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../guides/building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../guides/building-models/build-config.html">smithy-build</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../../guides/model-linters.html">Model linters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guides/evolving-models.html">Evolving Models</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guides/style-guide.html">Style Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guides/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guides/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
-</ul>
-</li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Implementations</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/implementations.html">Implementations</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
-</ul>
-</li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Project links</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/">2.0 Documentation</a></li>
-</ul>
-
-</div>
-</div>
-
-      </div>
-      
-    </div>
-  </aside>
-  <div class="main">
-    <div class="content">
-      <div class="article-container">
-        <a href="#" class="back-to-top muted-link">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
-          </svg>
-          <span>Back to top</span>
-        </a>
-        <div class="content-icon-container">
-          <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-1.0/spec/core/auth-traits.rst" title="Edit this page">
-    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
-      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
-    </svg>
-    <span class="visually-hidden">Edit this page</span>
-  </a>
-</div><div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-            </button>
-          </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-          </label>
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../../../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
+                </a>
+                <span class="version-text">1.0</span>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../../../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../index.html">Specifications</a></li>
+                <li class="site-page"><a href="../../guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../../../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
         </div>
-        <article role="main">
-          <div class="section" id="authentication-traits">
-<span id="id1"></span><h1><span class="section-number">7. </span>Authentication traits<a class="headerlink" href="#authentication-traits" title="Permalink to this headline">#</a></h1>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article class="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="../index.html" >Specifications</a></li>
+                    <li><a href="index.html" accesskey="U">Smithy specification</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="authentication-traits">
+<span id="id1"></span><h1><a href="#authentication-traits"><span class="section-number">7. </span>Authentication traits</a></h1>
 <p>Authentication traits define how a client authenticates with a service.</p>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title">Table of contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#authdefinition-trait" id="id9"><code class="docutils literal notranslate"><span class="pre">authDefinition</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpbasicauth-trait" id="id10"><code class="docutils literal notranslate"><span class="pre">httpBasicAuth</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpdigestauth-trait" id="id11"><code class="docutils literal notranslate"><span class="pre">httpDigestAuth</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpbearerauth-trait" id="id12"><code class="docutils literal notranslate"><span class="pre">httpBearerAuth</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpapikeyauth-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">httpApiKeyAuth</span></code> trait</a></li>
+<li><a class="reference internal" href="#optionalauth-trait" id="id14"><code class="docutils literal notranslate"><span class="pre">optionalAuth</span></code> trait</a></li>
+<li><a class="reference internal" href="#auth-trait" id="id15"><code class="docutils literal notranslate"><span class="pre">auth</span></code> trait</a></li>
+</ul>
+</div>
 <div class="section" id="authdefinition-trait">
-<span id="smithy-api-authdefinition-trait"></span><span id="id2"></span><h2><span class="section-number">7.1. </span><code class="docutils literal notranslate"><span class="pre">authDefinition</span></code> trait<a class="headerlink" href="#authdefinition-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-authdefinition-trait"></span><span id="id2"></span><h2><a href="#authdefinition-trait"><span class="section-number">7.1. </span><code class="docutils literal notranslate"><span class="pre">authDefinition</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>A meta-trait that marks a trait as an authentication scheme. Traits
 that are marked with this trait are applied to service shapes to
 indicate how a client can authenticate with the service.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">[trait|trait]</span></code></dd>
 <dt>Value type</dt><dd><p>An object with the following properties:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
@@ -334,7 +109,6 @@ that they support each listed trait.</td>
 </tr>
 </tbody>
 </table>
-</div>
 </dd>
 </dl>
 <p>Every operation in the closure of a service is expected to support the
@@ -344,112 +118,112 @@ supported authentication schemes.</p>
 <p>The following example defines a service that supports both <code class="docutils literal notranslate"><span class="pre">httpBasicAuth</span></code>
 and the hypothetical <code class="docutils literal notranslate"><span class="pre">fooExample</span></code> authentication scheme.</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="nt">@authDefinition</span>
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)
-<span class="kd">structure </span><span class="nc">fooExample</span><span class="w"> </span>{}
+<span class="nd">@authDefinition</span><span class="w"></span>
+<span class="nd">@trait</span>(<span class="nl">selector:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)<span class="w"></span>
+<span class="kd">structure</span><span class="nc"> fooExample</span><span class="w"> </span>{}<span class="w"></span>
 
-<span class="nt">@fooExample</span>
-<span class="nt">@httpBasicAuth</span>
-<span class="kd">service </span><span class="nc">WeatherService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
-}
+<span class="nd">@fooExample</span><span class="w"></span>
+<span class="nd">@httpBasicAuth</span><span class="w"></span>
+<span class="kd">service</span><span class="nc"> WeatherService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 </div><div aria-labelledby="tab-0-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-0-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#WeatherService&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;smithy.example#fooExample&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
-<span class="w">                </span><span class="nt">&quot;smithy.api#httpBasicAuth&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
-<span class="w">            </span><span class="p">}</span>
-<span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#fooExample&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;smithy.api#authDefinition&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
-<span class="w">                </span><span class="nt">&quot;smithy.api#trait&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;selector&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>
-<span class="w">                </span><span class="p">}</span>
-<span class="w">            </span><span class="p">}</span>
-<span class="w">        </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#WeatherService&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.example#fooExample&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="nt">&quot;smithy.api#httpBasicAuth&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#fooExample&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#authDefinition&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="nt">&quot;smithy.api#trait&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;selector&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </div></div>
 <p>Because authentication scheme definitions are just specialized shapes, they
 can also support configuration settings.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="nt">@authDefinition</span>
-<span class="nt">@trait</span>(<span class="py">selector</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)
-<span class="kd">structure </span><span class="nc">algorithmAuth</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">algorithm</span><span class="p">:</span><span class="w"> </span><span class="vc">AlgorithmAuthAlgorithm</span><span class="p">,</span>
-}
+<span class="nd">@authDefinition</span><span class="w"></span>
+<span class="nd">@trait</span>(<span class="nl">selector:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span>)<span class="w"></span>
+<span class="kd">structure</span><span class="nc"> algorithmAuth</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">algorithm:</span><span class="w"> </span><span class="vc">AlgorithmAuthAlgorithm</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@private</span>
-<span class="nt">@enum</span>([{<span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SHA-2&quot;</span>}])
-<span class="kd">string </span><span class="nc">AlgorithmAuthAlgorithm</span>
+<span class="nd">@private</span><span class="w"></span>
+<span class="nd">@enum</span>([{<span class="nl">value:</span><span class="w"> </span><span class="s2">&quot;SHA-2&quot;</span>}])<span class="w"></span>
+<span class="kd">string</span><span class="nc"> AlgorithmAuthAlgorithm</span><span class="w"></span>
 
-<span class="nt">@algorithmAuth</span>(<span class="py">algorithm</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SHA-2&quot;</span>)
-<span class="kd">service </span><span class="nc">WeatherService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
-}
+<span class="nd">@algorithmAuth</span>(<span class="nl">algorithm:</span><span class="w"> </span><span class="s2">&quot;SHA-2&quot;</span>)<span class="w"></span>
+<span class="kd">service</span><span class="nc"> WeatherService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="httpbasicauth-trait">
-<span id="smithy-api-httpbasicauth-trait"></span><span id="id3"></span><h2><span class="section-number">7.2. </span><code class="docutils literal notranslate"><span class="pre">httpBasicAuth</span></code> trait<a class="headerlink" href="#httpbasicauth-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-httpbasicauth-trait"></span><span id="id3"></span><h2><a href="#httpbasicauth-trait"><span class="section-number">7.2. </span><code class="docutils literal notranslate"><span class="pre">httpBasicAuth</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that a service supports HTTP Basic Authentication as
 defined in <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc2617.html"><strong>RFC 2617</strong></a>.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
 <dt>Value type</dt><dd>Annotation trait.</dd>
 </dl>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpBasicAuth</span>
-<span class="kd">service </span><span class="nc">WeatherService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
-}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@httpBasicAuth</span><span class="w"></span>
+<span class="kd">service</span><span class="nc"> WeatherService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="httpdigestauth-trait">
-<span id="smithy-api-httpdigestauth-trait"></span><span id="id4"></span><h2><span class="section-number">7.3. </span><code class="docutils literal notranslate"><span class="pre">httpDigestAuth</span></code> trait<a class="headerlink" href="#httpdigestauth-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-httpdigestauth-trait"></span><span id="id4"></span><h2><a href="#httpdigestauth-trait"><span class="section-number">7.3. </span><code class="docutils literal notranslate"><span class="pre">httpDigestAuth</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that a service supports HTTP Digest Authentication as defined
 in <span class="target" id="index-1"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc2617.html"><strong>RFC 2617</strong></a>.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
 <dt>Value type</dt><dd>Annotation trait.</dd>
 </dl>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpDigestAuth</span>
-<span class="kd">service </span><span class="nc">WeatherService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
-}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@httpDigestAuth</span><span class="w"></span>
+<span class="kd">service</span><span class="nc"> WeatherService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="httpbearerauth-trait">
-<span id="smithy-api-httpbearerauth-trait"></span><span id="id5"></span><h2><span class="section-number">7.4. </span><code class="docutils literal notranslate"><span class="pre">httpBearerAuth</span></code> trait<a class="headerlink" href="#httpbearerauth-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-httpbearerauth-trait"></span><span id="id5"></span><h2><a href="#httpbearerauth-trait"><span class="section-number">7.4. </span><code class="docutils literal notranslate"><span class="pre">httpBearerAuth</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that a service supports HTTP Bearer Authentication as defined
 in <span class="target" id="index-2"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc6750.html"><strong>RFC 6750</strong></a>.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
 <dt>Value type</dt><dd>Annotation trait.</dd>
 </dl>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpBearerAuth</span>
-<span class="kd">service </span><span class="nc">WeatherService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
-}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@httpBearerAuth</span><span class="w"></span>
+<span class="kd">service</span><span class="nc"> WeatherService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="httpapikeyauth-trait">
-<span id="smithy-api-httpapikeyauth-trait"></span><span id="id6"></span><h2><span class="section-number">7.5. </span><code class="docutils literal notranslate"><span class="pre">httpApiKeyAuth</span></code> trait<a class="headerlink" href="#httpapikeyauth-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-httpapikeyauth-trait"></span><span id="id6"></span><h2><a href="#httpapikeyauth-trait"><span class="section-number">7.5. </span><code class="docutils literal notranslate"><span class="pre">httpApiKeyAuth</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that a service supports HTTP-specific authentication using an
 API key sent in a header or query string parameter.</dd>
@@ -458,7 +232,6 @@ API key sent in a header or query string parameter.</dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">httpApiKeyAuth</span></code> trait is an object that supports the following
 properties:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
@@ -489,26 +262,25 @@ This can only be set if the &quot;in&quot; property is set to <code class="docut
 </tr>
 </tbody>
 </table>
-</div>
 <p>The following example defines a service that accepts an API key in the &quot;X-Api-Key&quot;
 HTTP header:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpApiKeyAuth</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;X-Api-Key&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">in</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;header&quot;</span>)
-<span class="kd">service </span><span class="nc">WeatherService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
-}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@httpApiKeyAuth</span>(<span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;X-Api-Key&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">in:</span><span class="w"> </span><span class="s2">&quot;header&quot;</span>)<span class="w"></span>
+<span class="kd">service</span><span class="nc"> WeatherService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <p>The following example defines a service that uses an API key auth scheme through
 the HTTP <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpApiKeyAuth</span>(<span class="py">scheme</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ApiKey&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Authorization&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">in</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;header&quot;</span>)
-<span class="kd">service </span><span class="nc">WeatherService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
-}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@httpApiKeyAuth</span>(<span class="nl">scheme:</span><span class="w"> </span><span class="s2">&quot;ApiKey&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;Authorization&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">in:</span><span class="w"> </span><span class="s2">&quot;header&quot;</span>)<span class="w"></span>
+<span class="kd">service</span><span class="nc"> WeatherService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="optionalauth-trait">
-<span id="smithy-api-optionalauth-trait"></span><span id="id7"></span><h2><span class="section-number">7.6. </span><code class="docutils literal notranslate"><span class="pre">optionalAuth</span></code> trait<a class="headerlink" href="#optionalauth-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-optionalauth-trait"></span><span id="id7"></span><h2><a href="#optionalauth-trait"><span class="section-number">7.6. </span><code class="docutils literal notranslate"><span class="pre">optionalAuth</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that an operation MAY be invoked without authentication,
 regardless of any authentication traits applied to the operation.</dd>
@@ -517,26 +289,26 @@ regardless of any authentication traits applied to the operation.</dd>
 </dl>
 <p>The following example defines a service that uses HTTP digest authentication,
 and bound to the service is an operation that supports unauthenticated access.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpDigestAuth</span>
-<span class="kd">service </span><span class="nc">WeatherService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">PingServer</span>]
-}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@httpDigestAuth</span><span class="w"></span>
+<span class="kd">service</span><span class="nc"> WeatherService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">operations:</span><span class="w"> </span>[<span class="vc">PingServer</span>]<span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@optionalAuth</span>
-<span class="kd">operation </span><span class="nc">PingServer</span><span class="w"> </span>{}
+<span class="nd">@optionalAuth</span><span class="w"></span>
+<span class="kd">operation</span><span class="nc"> PingServer</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
 <p>The following example defines an operation that does not support
 <em>any</em> authentication. This kind of operation does not require the
 <code class="docutils literal notranslate"><span class="pre">optionalAuth</span></code> trait.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@auth</span>([])
-<span class="kd">operation </span><span class="nc">SomeUnauthenticatedOperation</span><span class="w"> </span>{}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@auth</span>([])<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> SomeUnauthenticatedOperation</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="auth-trait">
-<span id="smithy-api-auth-trait"></span><span id="id8"></span><h2><span class="section-number">7.7. </span><code class="docutils literal notranslate"><span class="pre">auth</span></code> trait<a class="headerlink" href="#auth-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-auth-trait"></span><span id="id8"></span><h2><a href="#auth-trait"><span class="section-number">7.7. </span><code class="docutils literal notranslate"><span class="pre">auth</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Defines the priority ordered authentication schemes supported by a service
 or operation. When applied to a service, it defines the default
@@ -580,206 +352,165 @@ list of authentication schemes.</li>
 </li>
 </ul>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-1-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpBasicAuth</span>
-<span class="nt">@httpDigestAuth</span>
-<span class="nt">@httpBearerAuth</span>
-<span class="kd">service </span><span class="nc">ServiceWithNoAuthTrait</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-01-29&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span><span class="vc">OperationA</span><span class="p">,</span>
-<span class="w">        </span><span class="vc">OperationB</span>
-<span class="w">    </span>]
-}
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-1-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@httpBasicAuth</span><span class="w"></span>
+<span class="nd">@httpDigestAuth</span><span class="w"></span>
+<span class="nd">@httpBearerAuth</span><span class="w"></span>
+<span class="kd">service</span><span class="nc"> ServiceWithNoAuthTrait</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2020-01-29&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">operations:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">        </span><span class="vc">OperationA</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="vc">OperationB</span><span class="w"></span>
+<span class="w">    </span>]<span class="w"></span>
+}<span class="w"></span>
 
-<span class="c">// This operation does not have the @auth trait and is bound to a service</span>
-<span class="c">// without the @auth trait. The effective set of authentication schemes it</span>
-<span class="c">// supports are: httpBasicAuth, httpDigestAuth and httpBearerAuth</span>
-<span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{}
+<span class="c">// This operation does not have the @auth trait and is bound to a service</span><span class="w"></span>
+<span class="c">// without the @auth trait. The effective set of authentication schemes it</span><span class="w"></span>
+<span class="c">// supports are: httpBasicAuth, httpDigestAuth and httpBearerAuth</span><span class="w"></span>
+<span class="kd">operation</span><span class="nc"> OperationA</span><span class="w"> </span>{}<span class="w"></span>
 
-<span class="c">// This operation does have the @auth trait and is bound to a service</span>
-<span class="c">// without the @auth trait. The effective set of authentication schemes it</span>
-<span class="c">// supports are: httpDigestAuth.</span>
-<span class="nt">@auth</span>([<span class="vc">httpDigestAuth</span>])
-<span class="kd">operation </span><span class="nc">OperationB</span><span class="w"> </span>{}
+<span class="c">// This operation does have the @auth trait and is bound to a service</span><span class="w"></span>
+<span class="c">// without the @auth trait. The effective set of authentication schemes it</span><span class="w"></span>
+<span class="c">// supports are: httpDigestAuth.</span><span class="w"></span>
+<span class="nd">@auth</span>([<span class="vc">httpDigestAuth</span>])<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> OperationB</span><span class="w"> </span>{}<span class="w"></span>
 
-<span class="nt">@httpBasicAuth</span>
-<span class="nt">@httpDigestAuth</span>
-<span class="nt">@httpBearerAuth</span>
-<span class="nt">@auth</span>([<span class="vc">httpBasicAuth</span><span class="p">,</span><span class="w"> </span><span class="vc">httpDigestAuth</span>])
-<span class="kd">service </span><span class="nc">ServiceWithAuthTrait</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-01-29&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[
-<span class="w">        </span><span class="vc">OperationC</span><span class="p">,</span>
-<span class="w">        </span><span class="vc">OperationD</span>
-<span class="w">    </span>]
-}
+<span class="nd">@httpBasicAuth</span><span class="w"></span>
+<span class="nd">@httpDigestAuth</span><span class="w"></span>
+<span class="nd">@httpBearerAuth</span><span class="w"></span>
+<span class="nd">@auth</span>([<span class="vc">httpBasicAuth</span><span class="p">,</span><span class="w"> </span><span class="vc">httpDigestAuth</span>])<span class="w"></span>
+<span class="kd">service</span><span class="nc"> ServiceWithAuthTrait</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2020-01-29&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">operations:</span><span class="w"> </span>[<span class="w"></span>
+<span class="w">        </span><span class="vc">OperationC</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="vc">OperationD</span><span class="w"></span>
+<span class="w">    </span>]<span class="w"></span>
+}<span class="w"></span>
 
-<span class="c">// This operation does not have the @auth trait and is bound to a service</span>
-<span class="c">// with the @auth trait. The effective set of authentication schemes it</span>
-<span class="c">// supports are: httpBasicAuth, httpDigestAuth</span>
-<span class="kd">operation </span><span class="nc">OperationC</span><span class="w"> </span>{}
+<span class="c">// This operation does not have the @auth trait and is bound to a service</span><span class="w"></span>
+<span class="c">// with the @auth trait. The effective set of authentication schemes it</span><span class="w"></span>
+<span class="c">// supports are: httpBasicAuth, httpDigestAuth</span><span class="w"></span>
+<span class="kd">operation</span><span class="nc"> OperationC</span><span class="w"> </span>{}<span class="w"></span>
 
-<span class="c">// This operation has the @auth trait and is bound to a service</span>
-<span class="c">// with the @auth trait. The effective set of authentication schemes it</span>
-<span class="c">// supports are: httpBearerAuth</span>
-<span class="nt">@auth</span>([<span class="vc">httpBearerAuth</span>])
-<span class="kd">operation </span><span class="nc">OperationD</span><span class="w"> </span>{}
+<span class="c">// This operation has the @auth trait and is bound to a service</span><span class="w"></span>
+<span class="c">// with the @auth trait. The effective set of authentication schemes it</span><span class="w"></span>
+<span class="c">// supports are: httpBearerAuth</span><span class="w"></span>
+<span class="nd">@auth</span>([<span class="vc">httpBearerAuth</span>])<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> OperationD</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
 </div><div aria-labelledby="tab-1-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-1-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#OperationA&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span>
-<span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#OperationB&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;smithy.api#auth&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">                    </span><span class="s2">&quot;smithy.api#httpDigestAuth&quot;</span>
-<span class="w">                </span><span class="p">]</span>
-<span class="w">            </span><span class="p">}</span>
-<span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#OperationC&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span>
-<span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#OperationD&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;operation&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;smithy.api#auth&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">                    </span><span class="s2">&quot;smithy.api#httpBearerAuth&quot;</span>
-<span class="w">                </span><span class="p">]</span>
-<span class="w">            </span><span class="p">}</span>
-<span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#ServiceWithAuthTrait&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;smithy.api#auth&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">                    </span><span class="s2">&quot;smithy.api#httpBasicAuth&quot;</span><span class="p">,</span>
-<span class="w">                    </span><span class="s2">&quot;smithy.api#httpDigestAuth&quot;</span>
-<span class="w">                </span><span class="p">],</span>
-<span class="w">                </span><span class="nt">&quot;smithy.api#httpBasicAuth&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
-<span class="w">                </span><span class="nt">&quot;smithy.api#httpBearerAuth&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
-<span class="w">                </span><span class="nt">&quot;smithy.api#httpDigestAuth&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
-<span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-01-29&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;operations&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">                </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#OperationC&quot;</span>
-<span class="w">                </span><span class="p">},</span>
-<span class="w">                </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#OperationD&quot;</span>
-<span class="w">                </span><span class="p">}</span>
-<span class="w">            </span><span class="p">]</span>
-<span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;smithy.example#ServiceWithNoAuthTrait&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;smithy.api#httpBasicAuth&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
-<span class="w">                </span><span class="nt">&quot;smithy.api#httpBearerAuth&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
-<span class="w">                </span><span class="nt">&quot;smithy.api#httpDigestAuth&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
-<span class="w">            </span><span class="p">},</span>
-<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-01-29&quot;</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;operations&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">                </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#OperationA&quot;</span>
-<span class="w">                </span><span class="p">},</span>
-<span class="w">                </span><span class="p">{</span>
-<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#OperationB&quot;</span>
-<span class="w">                </span><span class="p">}</span>
-<span class="w">            </span><span class="p">]</span>
-<span class="w">        </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
+    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;smithy.example#OperationA&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#OperationB&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#auth&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;smithy.api#httpDigestAuth&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#OperationC&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#OperationD&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#auth&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;smithy.api#httpBearerAuth&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#ServiceWithAuthTrait&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#auth&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;smithy.api#httpBasicAuth&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;smithy.api#httpDigestAuth&quot;</span>
+                <span class="p">],</span>
+                <span class="nt">&quot;smithy.api#httpBasicAuth&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="nt">&quot;smithy.api#httpBearerAuth&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="nt">&quot;smithy.api#httpDigestAuth&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-01-29&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;operations&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#OperationC&quot;</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#OperationD&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;smithy.example#ServiceWithNoAuthTrait&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;smithy.api#httpBasicAuth&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="nt">&quot;smithy.api#httpBearerAuth&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="nt">&quot;smithy.api#httpDigestAuth&quot;</span><span class="p">:</span> <span class="p">{}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-01-29&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;operations&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#OperationA&quot;</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#OperationB&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </div></div>
 <p>The following <code class="docutils literal notranslate"><span class="pre">auth</span></code> trait is invalid because it references an
 authentication scheme trait that is not applied to the service:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpDigestAuth</span>
-<span class="nt">@auth</span>([<span class="vc">httpBasicAuth</span>])<span class="w"> </span><span class="c">// &lt;-- Invalid!</span>
-<span class="kd">service </span><span class="nc">InvalidExample</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span>
-}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@httpDigestAuth</span><span class="w"></span>
+<span class="nd">@auth</span>([<span class="vc">httpBasicAuth</span>])<span class="w"> </span><span class="c">// &lt;-- Invalid!</span><span class="w"></span>
+<span class="kd">service</span><span class="nc"> InvalidExample</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <p>The following operation <code class="docutils literal notranslate"><span class="pre">auth</span></code> trait is invalid because it references an
 authentication scheme trait that is not applied to the service:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@httpDigestAuth</span>
-<span class="kd">service </span><span class="nc">InvalidExample</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="py">operations</span><span class="p">:</span><span class="w"> </span>[<span class="vc">OperationA</span>]
-}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@httpDigestAuth</span><span class="w"></span>
+<span class="kd">service</span><span class="nc"> InvalidExample</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2017-02-11&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">operations:</span><span class="w"> </span>[<span class="vc">OperationA</span>]<span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@auth</span>([<span class="vc">httpBasicAuth</span>])<span class="w"> </span><span class="c">// &lt;-- Invalid!</span>
-<span class="kd">operation </span><span class="nc">OperationA</span><span class="w"> </span>{}
+<span class="nd">@auth</span>([<span class="vc">httpBasicAuth</span>])<span class="w"> </span><span class="c">// &lt;-- Invalid!</span><span class="w"></span>
+<span class="kd">operation</span><span class="nc"> OperationA</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
 </div>
 </div>
 
-        </article>
-      </div>
-      <footer>
-        
-        <div class="related-pages">
-          <a class="next-page" href="behavior-traits.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title"><span class="section-number">8. </span>Behavior traits</div>
-              </div>
-              <svg><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="protocol-traits.html">
-              <svg><use href="#svg-arrow-right"></use></svg>
-              <div class="page-info">
-                <div class="context">
-                  <span>Previous</span>
-                </div>
-                
-                <div class="title"><span class="section-number">6. </span>Protocol traits</div>
-                
-              </div>
-            </a>
-        </div>
-        <div class="bottom-of-page">
-          <div class="left-details">
-            <div class="copyright">
-                Copyright &#169; 2022, Amazon Web Services
-            </div>
-            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-            
-            <a href="https://github.com/pradyunsg/furo">Furo</a>
-            
-          </div>
-          <div class="right-details">
-            <div class="icons">
-              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
-                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
-                </svg>
-            </a>
-              
-            </div>
-          </div>
-        </div>
-        
-      </footer>
-    </div>
-    <aside class="toc-drawer">
-      
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            Contents
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
+
+                    
+                    <section class="relations">
+                        
+                        <a href="protocol-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← <span class="section-number">6. </span>Protocol traits</a>
+                        
+                        <a href="behavior-traits.html" title="next chapter" class="next-page clearfix"><span class="section-number">8. </span>Behavior traits →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="protocol-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
+                                
+                                <a href="behavior-traits.html" title="next chapter" class="next-page clearfix">Next →</a>
+                            </section>
+                            
+                            <ul>
 <li><a class="reference internal" href="#">7. Authentication traits</a><ul>
 <li><a class="reference internal" href="#authdefinition-trait">7.1. <code class="docutils literal notranslate"><span class="pre">authDefinition</span></code> trait</a></li>
 <li><a class="reference internal" href="#httpbasicauth-trait">7.2. <code class="docutils literal notranslate"><span class="pre">httpBasicAuth</span></code> trait</a></li>
@@ -792,20 +523,18 @@ authentication scheme trait that is not applied to the service:</p>
 </li>
 </ul>
 
-          </div>
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2021, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
         </div>
-      </div>
-      
-      
-    </aside>
-  </div>
-</div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/scripts/furo.js"></script>
-    <script src="../../_static/clipboard.min.js"></script>
-    <script src="../../_static/copybutton.js"></script>
-    <script src="../../_static/tabs.js"></script>
-    </body>
+    </div>
+</footer>
+  </body>
 </html>

@@ -337,7 +337,7 @@ following constraints:
     metadata validators = [{
         name: "EmitEachSelector",
         id: "MissingDocumentation",
-        message: "This shape is missing documentation",
+        message: "This shape is missing documentation"
         configuration: {
             selector: """
                 :not([trait|documentation])

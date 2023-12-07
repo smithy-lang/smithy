@@ -1,330 +1,102 @@
-<!doctype html>
-<html class="no-js" lang="en">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="12. XML binding traits" href="xml-traits.html" /><link rel="prev" title="10. Streaming Traits" href="stream-traits.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
-        <title>11. HTTP binding traits - Smithy 1.0</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
-    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>11. HTTP binding traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
     
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
+    <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
+
     
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/tabs.js"></script>
+    <script type="text/javascript" src="../../../_static/smithy.js"></script>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="12. XML binding traits" href="xml-traits.html" />
+    <link rel="prev" title="10. Streaming Traits" href="stream-traits.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="smithy-version" content="1.0">
 
-
-<style>
-  body {
-    --color-code-background: #f8f8f8;
-  --color-code-foreground: black;
-  --admonition-font-size: 100%;
-  --admonition-title-font-size: 100%;
-  --color-brand-primary: #C44536;
-  --color-brand-content: #00808b;
-  --color-announcement-background: #711818de;
-  --color-announcement-text: #fff;
-  
-  }
-  @media not print {
-    body[data-theme="dark"] {
-      --color-code-background: #282828;
-  --color-code-foreground: #dddddd;
-  --color-brand-primary: #ed9d13;
-  --color-brand-content: #58d3ff;
-  --color-announcement-background: #711818de;
-  --color-announcement-text: #fff;
-  
-    }
-    @media (prefers-color-scheme: dark) {
-      body:not([data-theme="light"]) {
-        --color-code-background: #282828;
-  --color-code-foreground: #dddddd;
-  --color-brand-primary: #ed9d13;
-  --color-brand-content: #58d3ff;
-  --color-announcement-background: #711818de;
-  --color-announcement-text: #fff;
-  
-      }
-    }
-  }
-</style><script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
-<script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script></head>
-  <body>
-    
-    <script>
-      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
-    </script>
-    
-
-<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-  <symbol id="svg-toc" viewBox="0 0 24 24">
-    <title>Contents</title>
-    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
-      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
-    </svg>
-  </symbol>
-  <symbol id="svg-menu" viewBox="0 0 24 24">
-    <title>Menu</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
-      <line x1="3" y1="12" x2="21" y2="12"></line>
-      <line x1="3" y1="6" x2="21" y2="6"></line>
-      <line x1="3" y1="18" x2="21" y2="18"></line>
-    </svg>
-  </symbol>
-  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
-    <title>Expand</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
-      <polyline points="9 18 15 12 9 6"></polyline>
-    </svg>
-  </symbol>
-  <symbol id="svg-sun" viewBox="0 0 24 24">
-    <title>Light mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
-      <circle cx="12" cy="12" r="5"></circle>
-      <line x1="12" y1="1" x2="12" y2="3"></line>
-      <line x1="12" y1="21" x2="12" y2="23"></line>
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-      <line x1="1" y1="12" x2="3" y2="12"></line>
-      <line x1="21" y1="12" x2="23" y2="12"></line>
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-    </svg>
-  </symbol>
-  <symbol id="svg-moon" viewBox="0 0 24 24">
-    <title>Dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
-    </svg>
-  </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
-    </svg>
-  </symbol>
-</svg>
-
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
-
-<div class="announcement">
-  <aside class="announcement-content">
-     <strong>⚠️ You are viewing version 1.0.</strong><br/>
-Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2.0/</a>. 
-  </aside>
-</div>
-
-<div class="page">
-  <header class="mobile-header">
-    <div class="header-left">
-      <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
-      </label>
-    </div>
-    <div class="header-center">
-      <a href="../../index.html"><div class="brand">Smithy 1.0</div></a>
-    </div>
-    <div class="header-right">
-      <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-        </button>
-      </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-      </label>
-    </div>
-  </header>
-  <aside class="sidebar-drawer">
-    <div class="sidebar-container">
-      
-      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../../index.html">
-  
-  <div class="sidebar-logo-container">
-    <img class="sidebar-logo" src="../../_static/smithy.svg" alt="Logo"/>
-  </div>
-  
-  
-</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
-  <input type="hidden" name="check_keywords" value="yes">
-  <input type="hidden" name="area" value="default">
-</form>
-<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quick start</a></li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">Specifications</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">Smithy specification</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="model.html">1. The Smithy model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="prelude-model.html">2. Prelude model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="constraint-traits.html">3. Constraint traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="documentation-traits.html">4. Documentation traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="type-refinement-traits.html">5. Type refinement traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="protocol-traits.html">6. Protocol traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="auth-traits.html">7. Authentication traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="behavior-traits.html">8. Behavior traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="resource-traits.html">9. Resource traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="stream-traits.html">10. Streaming Traits</a></li>
-<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">11. HTTP binding traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="xml-traits.html">12. XML binding traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="endpoint-traits.html">13. Endpoint Traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="selectors.html">14. Selectors</a></li>
-<li class="toctree-l3"><a class="reference internal" href="model-validation.html">15. Model validation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="idl.html">16. Smithy IDL</a></li>
-<li class="toctree-l3"><a class="reference internal" href="json-ast.html">17. JSON AST</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../waiters.html">Waiters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mqtt.html">MQTT Protocol Bindings</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../aws/index.html">AWS specifications</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-core.html">AWS Core Specification</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-auth.html">AWS Authentication Traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-iam.html">AWS IAM traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-cloudformation.html">AWS CloudFormation traits</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-restxml-protocol.html">AWS restXml protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-query-protocol.html">AWS query protocol</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../aws/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../guides/index.html">Smithy Guides</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../guides/building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../guides/building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../guides/building-models/build-config.html">smithy-build</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../../guides/model-linters.html">Model linters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guides/evolving-models.html">Evolving Models</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guides/style-guide.html">Style Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guides/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guides/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
-</ul>
-</li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Implementations</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/implementations.html">Implementations</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
-</ul>
-</li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Project links</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/">2.0 Documentation</a></li>
-</ul>
-
-</div>
-</div>
-
-      </div>
-      
-    </div>
-  </aside>
-  <div class="main">
-    <div class="content">
-      <div class="article-container">
-        <a href="#" class="back-to-top muted-link">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
-          </svg>
-          <span>Back to top</span>
-        </a>
-        <div class="content-icon-container">
-          <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-1.0/spec/core/http-traits.rst" title="Edit this page">
-    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
-      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
-    </svg>
-    <span class="visually-hidden">Edit this page</span>
-  </a>
-</div><div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-            </button>
-          </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-          </label>
+  </head><body>
+    <header>
+        <div class="header-flex width-wrapper">
+            <div class="site-logo">
+                <a href="../../../index.html">
+                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
+                </a>
+                <span class="version-text">1.0</span>
+            </div>
+            <ul id="page-navigation">
+                <li class="site-page first"><a href="../../../quickstart.html">Quick Start</a></li>
+                <li class="site-page"><a href="../index.html">Specifications</a></li>
+                <li class="site-page"><a href="../../guides/index.html">Guides</a></li>
+                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
+                <li class="site-search hidden-sm">
+                    <form action="../../../search.html" method="get">
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
         </div>
-        <article role="main">
-          <div class="section" id="http-binding-traits">
-<span id="http-traits"></span><h1><span class="section-number">11. </span>HTTP binding traits<a class="headerlink" href="#http-binding-traits" title="Permalink to this headline">#</a></h1>
+    </header>
+    
+        
+        
+        <section id="page-container">
+            <div class="width-wrapper flex">
+                <article class="document-body">
+                    
+                    <ul class="rel-parents">
+                    <li><a href="../index.html" >Specifications</a></li>
+                    <li><a href="index.html" accesskey="U">Smithy specification</a></li>
+                    </ul>
+                    
+                    
+  <div class="section" id="http-binding-traits">
+<span id="http-traits"></span><h1><a href="#http-binding-traits"><span class="section-number">11. </span>HTTP binding traits</a></h1>
 <p>Smithy provides various HTTP binding traits that can be used by protocols to
 explicitly configure HTTP request and response messages.</p>
 <p>The members of an operation input, output, and errors MUST NOT be bound to
 multiple HTTP message locations (e.g., a member cannot be bound to both a URI
 label and to a header). Only top-level members of an operation's input, output,
 and error structures are considered when serializing HTTP messages.</p>
-<div class="admonition important">
-<p class="first admonition-title">Important</p>
-<p class="last">Violating <a class="reference external" href="https://datatracker.ietf.org/doc/html/rfc7230">HTTP specifications</a> or relying on poorly-supported HTTP
-functionality when defining HTTP bindings will limit interoperability
-and likely lead to undefined behavior across Smithy implementations. For
-example, avoid defining GET/DELETE requests with payloads, defining
-response payloads for operations with a 204/205 status, etc.</p>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title">Table of contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#http-trait" id="id12"><code class="docutils literal notranslate"><span class="pre">http</span></code> trait</a></li>
+<li><a class="reference internal" href="#httperror-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpheader-trait" id="id14"><code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait</a></li>
+<li><a class="reference internal" href="#httplabel-trait" id="id15"><code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait</a></li>
+<li><a class="reference internal" href="#httppayload-trait" id="id16"><code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpprefixheaders-trait" id="id17"><code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpquery-trait" id="id18"><code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpqueryparams-trait" id="id19"><code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait</a></li>
+<li><a class="reference internal" href="#httpresponsecode-trait" id="id20"><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait</a></li>
+<li><a class="reference internal" href="#cors-trait" id="id21"><code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></li>
+<li><a class="reference internal" href="#serializing-http-messages" id="id22">Serializing HTTP messages</a></li>
+<li><a class="reference internal" href="#event-streams" id="id23">Event streams</a></li>
+</ul>
 </div>
 <div class="section" id="http-trait">
-<span id="smithy-api-http-trait"></span><span id="id1"></span><h2><span class="section-number">11.1. </span><code class="docutils literal notranslate"><span class="pre">http</span></code> trait<a class="headerlink" href="#http-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-http-trait"></span><span id="id1"></span><h2><a href="#http-trait"><span class="section-number">11.1. </span><code class="docutils literal notranslate"><span class="pre">http</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Configures the HTTP bindings of an operation.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">http</span></code> trait is a structure that supports the following members:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
@@ -350,53 +122,50 @@ URI pattern are used to bind operation input members to the URI.</td>
 <tr class="row-even"><td>code</td>
 <td><code class="docutils literal notranslate"><span class="pre">integer</span></code></td>
 <td>The HTTP status code of a successful response. Defaults to <code class="docutils literal notranslate"><span class="pre">200</span></code> if
-not provided. The provided value SHOULD be between 200 and 299, and
-it MUST be between 100 and 999. Status codes that do not allow a body
-like 204 and 205 SHOULD bind all output members to locations other than
-the body of the response.</td>
+not provided. The provided value SHOULD be between 100 and 599, and
+it MUST be between 100 and 999.</td>
 </tr>
 </tbody>
 </table>
-</div>
 <p>The following example defines an operation that uses HTTP bindings:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="nt">@idempotent</span>
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PUT&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/{bucketName}/{key}&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span>)
-<span class="kd">operation </span><span class="nc">PutObject</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutObjectInput</span>
-}
+<span class="nd">@idempotent</span><span class="w"></span>
+<span class="nd">@http</span>(<span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;PUT&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/{bucketName}/{key}&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">code:</span><span class="w"> </span><span class="m">200</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> PutObject</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">PutObjectInput</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">PutObjectInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="c">// Sent in the URI label named &quot;key&quot;.</span>
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="nt">@httpLabel</span>
-<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">ObjectKey</span><span class="p">,</span>
+<span class="nd">@input</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> PutObjectInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="c">// Sent in the URI label named &quot;key&quot;.</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@httpLabel</span><span class="w"></span>
+<span class="w">    </span><span class="nl">key:</span><span class="w"> </span><span class="vc">ObjectKey</span><span class="p">,</span><span class="w"></span>
 
-<span class="w">    </span><span class="c">// Sent in the URI label named &quot;bucketName&quot;.</span>
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="nt">@httpLabel</span>
-<span class="w">    </span><span class="py">bucketName</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span><span class="c">// Sent in the URI label named &quot;bucketName&quot;.</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@httpLabel</span><span class="w"></span>
+<span class="w">    </span><span class="nl">bucketName:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-<span class="w">    </span><span class="c">// Sent in the X-Foo header</span>
-<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;X-Foo&quot;</span>)
-<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span><span class="c">// Sent in the X-Foo header</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@httpHeader</span>(<span class="s2">&quot;X-Foo&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="nl">foo:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-<span class="w">    </span><span class="c">// Sent in the query string as paramName</span>
-<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">&quot;paramName&quot;</span>)
-<span class="w">    </span><span class="py">someValue</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span><span class="c">// Sent in the query string as paramName</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@httpQuery</span>(<span class="s2">&quot;paramName&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="nl">someValue:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-<span class="w">    </span><span class="c">// Sent in the body</span>
-<span class="w">    </span><span class="py">data</span><span class="p">:</span><span class="w"> </span><span class="vc">MyBlob</span><span class="p">,</span>
+<span class="w">    </span><span class="c">// Sent in the body</span><span class="w"></span>
+<span class="w">    </span><span class="nl">data:</span><span class="w"> </span><span class="vc">MyBlob</span><span class="p">,</span><span class="w"></span>
 
-<span class="w">    </span><span class="c">// Sent in the body</span>
-<span class="w">    </span><span class="py">additional</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
-}
+<span class="w">    </span><span class="c">// Sent in the body</span><span class="w"></span>
+<span class="w">    </span><span class="nl">additional:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <div class="section" id="method">
-<span id="http-method"></span><h3><span class="section-number">11.1.1. </span>method<a class="headerlink" href="#method" title="Permalink to this headline">#</a></h3>
+<span id="http-method"></span><h3><a href="#method"><span class="section-number">11.1.1. </span>method</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">method</span></code> property defines the HTTP method of the operation (e.g., &quot;GET&quot;,
 &quot;PUT&quot;, &quot;POST&quot;, &quot;DELETE&quot;, &quot;PATCH&quot;, etc). Smithy will use this value literally
 and will perform no validation on the method. The <code class="docutils literal notranslate"><span class="pre">method</span></code> value SHOULD
@@ -405,7 +174,7 @@ property does not influence the safety or idempotency characteristics of an
 operation.</p>
 </div>
 <div class="section" id="uri">
-<span id="http-uri"></span><h3><span class="section-number">11.1.2. </span>uri<a class="headerlink" href="#uri" title="Permalink to this headline">#</a></h3>
+<span id="http-uri"></span><h3><a href="#uri"><span class="section-number">11.1.2. </span>uri</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">uri</span></code> property defines the <em>request-target</em> of the operation in
 <em>origin-form</em> as defined in <span class="target" id="index-1"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc7230.html#section-5.3.1"><strong>RFC 7230#section-5.3.1</strong></a>. The URI is a simple
 pattern that Smithy uses to match HTTP requests to operations and to bind
@@ -430,20 +199,19 @@ constraints:</p>
 <li>MUST NOT case-sensitively conflict with other <code class="docutils literal notranslate"><span class="pre">http</span></code> / <code class="docutils literal notranslate"><span class="pre">uri</span></code>
 properties.</li>
 </ol>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/foo/{baz}&quot;</span>)
-<span class="kd">operation </span><span class="nc">GetService</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetServiceOutput</span>
-}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@readonly</span><span class="w"></span>
+<span class="nd">@http</span>(<span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/foo/{baz}&quot;</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> GetService</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetServiceOutput</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <div class="section" id="literal-character-sequences">
-<h4><span class="section-number">11.1.2.1. </span>Literal character sequences<a class="headerlink" href="#literal-character-sequences" title="Permalink to this headline">#</a></h4>
+<h4><a href="#literal-character-sequences"><span class="section-number">11.1.2.1. </span>Literal character sequences</a></h4>
 <p>Patterns with no labels will match only requests containing the exact literal
 characters declared in the pattern, with the exception of trailing slashes
 which are always optional.</p>
 <p>Given an endpoint of <code class="docutils literal notranslate"><span class="pre">https://yourhost</span></code> and a pattern of <code class="docutils literal notranslate"><span class="pre">/my/uri/path</span></code>:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="40%" />
@@ -480,9 +248,8 @@ which are always optional.</p>
 </tbody>
 </table>
 </div>
-</div>
 <div class="section" id="labels">
-<span id="http-uri-label"></span><h4><span class="section-number">11.1.2.2. </span>Labels<a class="headerlink" href="#labels" title="Permalink to this headline">#</a></h4>
+<span id="http-uri-label"></span><h4><a href="#labels"><span class="section-number">11.1.2.2. </span>Labels</a></h4>
 <p>Patterns MAY contain label placeholders in the path. <em class="dfn">Labels</em> consist of
 label name characters surrounded by open and closed braces (i.e.,
 &quot;{label_name}&quot; is a label and <code class="docutils literal notranslate"><span class="pre">label_name</span></code> is the label name). The label
@@ -502,7 +269,6 @@ and &quot;/{foo}bar&quot; is invalid).</li>
 <code class="docutils literal notranslate"><span class="pre">/my/uri/</span></code> followed by any string not including an additional path segment
 (&quot;/&quot;).</p>
 <p>Given a pattern of <code class="docutils literal notranslate"><span class="pre">/my/uri/{label}</span></code> and an endpoint of <code class="docutils literal notranslate"><span class="pre">http://yourhost</span></code>:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="40%" />
@@ -547,12 +313,10 @@ and &quot;/{foo}bar&quot; is invalid).</li>
 </tr>
 </tbody>
 </table>
-</div>
 <p>Any number of labels can be included within a pattern, provided that they are
 not immediately adjacent and do not have identical label names. Given a
 pattern of <code class="docutils literal notranslate"><span class="pre">/my/uri/{label1}/{label2}</span></code> and an endpoint of
 <code class="docutils literal notranslate"><span class="pre">http://yourhost</span></code>:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="40%" />
@@ -593,14 +357,12 @@ is captured as <code class="docutils literal notranslate"><span class="pre">labe
 </tbody>
 </table>
 </div>
-</div>
 <div class="section" id="query-string-literals">
-<h4><span class="section-number">11.1.2.3. </span>Query string literals<a class="headerlink" href="#query-string-literals" title="Permalink to this headline">#</a></h4>
+<h4><a href="#query-string-literals"><span class="section-number">11.1.2.3. </span>Query string literals</a></h4>
 <p>Components of the query string can be matched literally in the URI pattern.
 The query string portion of a pattern MUST NOT contain labels.</p>
 <p>Literals can be in the form of required keys without values. Given a pattern
 of <code class="docutils literal notranslate"><span class="pre">/path?requiredKey</span></code> and an endpoint of <code class="docutils literal notranslate"><span class="pre">http://yourhost</span></code>:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="40%" />
@@ -641,11 +403,9 @@ string parameter.</td>
 </tr>
 </tbody>
 </table>
-</div>
 <p>Literal query string parameters can be matched with required key-value pairs.
 Given a pattern of <code class="docutils literal notranslate"><span class="pre">/path?requiredKey=requiredValue</span></code> and an endpoint of
 <code class="docutils literal notranslate"><span class="pre">http://yourhost</span></code>:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="40%" />
@@ -686,15 +446,13 @@ is not &quot;requiredValue&quot;.</td>
 </tbody>
 </table>
 </div>
-</div>
 <div class="section" id="greedy-labels">
-<span id="id2"></span><h4><span class="section-number">11.1.2.4. </span>Greedy labels<a class="headerlink" href="#greedy-labels" title="Permalink to this headline">#</a></h4>
+<span id="id2"></span><h4><a href="#greedy-labels"><span class="section-number">11.1.2.4. </span>Greedy labels</a></h4>
 <p>A <em class="dfn">greedy label</em> is a label suffixed with the <code class="docutils literal notranslate"><span class="pre">+</span></code> qualifier that can be
 used to match more than one path segment. At most, one greedy label may exist
 in any path pattern, and if present, it MUST be the last label in the pattern.
 Greedy labels MUST be bound to a string shape.</p>
 <p>Given a pattern of <code class="docutils literal notranslate"><span class="pre">/my/uri/{label+}</span></code> and an endpoint of <code class="docutils literal notranslate"><span class="pre">http://yourhost</span></code>:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="40%" />
@@ -727,14 +485,12 @@ Greedy labels MUST be bound to a string shape.</p>
 </tr>
 </tbody>
 </table>
-</div>
 <p>Greedy matching can be used to capture the whole URI to a label, which results
 in every request for a particular HTTP method being captured. For example, this
 can be modeled with a pattern of <code class="docutils literal notranslate"><span class="pre">/{label+}</span></code>.</p>
 <p>Segments in the middle of a URI can be captured using greedy labels. Greedy
 labels match greedily: they will match the longest possible string. Given a
 pattern of <code class="docutils literal notranslate"><span class="pre">/prefix/{label+}/suffix</span></code> and an endpoint of <code class="docutils literal notranslate"><span class="pre">https://yourhost</span></code>:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="40%" />
@@ -780,9 +536,8 @@ contain a segment to match <code class="docutils literal notranslate"><span clas
 </tbody>
 </table>
 </div>
-</div>
 <div class="section" id="pattern-validation-and-conflict-avoidance">
-<h4><span class="section-number">11.1.2.5. </span>Pattern Validation and Conflict Avoidance<a class="headerlink" href="#pattern-validation-and-conflict-avoidance" title="Permalink to this headline">#</a></h4>
+<h4><a href="#pattern-validation-and-conflict-avoidance"><span class="section-number">11.1.2.5. </span>Pattern Validation and Conflict Avoidance</a></h4>
 <p>Smithy validates the patterns within a service against each other to ensure
 that no two patterns conflict with each other for the same HTTP method. To
 prevent ambiguity when matching requests for different operations, the
@@ -836,7 +591,7 @@ endpoint trait and the other specifies <code class="docutils literal notranslate
 </div>
 </div>
 <div class="section" id="httperror-trait">
-<span id="smithy-api-httperror-trait"></span><span id="id3"></span><h2><span class="section-number">11.2. </span><code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait<a class="headerlink" href="#httperror-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-httperror-trait"></span><span id="id3"></span><h2><a href="#httperror-trait"><span class="section-number">11.2. </span><code class="docutils literal notranslate"><span class="pre">httpError</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Defines an HTTP response code for an operation error.</dd>
 <dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>structure[trait|error]
@@ -849,9 +604,9 @@ shapes that also have the <a class="reference internal" href="type-refinement-tr
 (for example, <code class="docutils literal notranslate"><span class="pre">404</span></code>).</dd>
 </dl>
 <p>The following example defines an error with an HTTP status code of <code class="docutils literal notranslate"><span class="pre">404</span></code>.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
-<span class="nt">@httpError</span>(<span class="m">404</span>)
-<span class="kd">structure </span><span class="nc">MyError</span><span class="w"> </span>{}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
+<span class="nd">@httpError</span>(<span class="m">404</span>)<span class="w"></span>
+<span class="kd">structure</span><span class="nc"> MyError</span><span class="w"> </span>{}<span class="w"></span>
 </pre></div>
 </div>
 <p class="rubric">Default HTTP status codes</p>
@@ -864,16 +619,16 @@ HTTP status code of the <a class="reference internal" href="type-refinement-trai
 </ul>
 </div>
 <div class="section" id="httpheader-trait">
-<span id="smithy-api-httpheader-trait"></span><span id="id4"></span><h2><span class="section-number">11.3. </span><code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait<a class="headerlink" href="#httpheader-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-httpheader-trait"></span><span id="id4"></span><h2><a href="#httpheader-trait"><span class="section-number">11.3. </span><code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds a structure member to an HTTP header.</dd>
 <dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; :test(member &gt; :test(boolean, number, string, timestamp,
-        list &gt; member &gt; :test(boolean, number, string, timestamp)))
+        collection &gt; member &gt; :test(boolean, number, string, timestamp)))
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> trait can be applied to <code class="docutils literal notranslate"><span class="pre">structure</span></code> members that
 target a <code class="docutils literal notranslate"><span class="pre">boolean</span></code>, <code class="docutils literal notranslate"><span class="pre">number</span></code>, <code class="docutils literal notranslate"><span class="pre">string</span></code>, or <code class="docutils literal notranslate"><span class="pre">timestamp</span></code>; or a
-<code class="docutils literal notranslate"><span class="pre">structure</span></code> member that targets a list of these types.</p>
+<code class="docutils literal notranslate"><span class="pre">structure</span></code> member that targets a list/set of these types.</p>
 </dd>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code> value defining a valid HTTP header field name according to
 <span class="target" id="index-2"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc7230.html#section-3.2"><strong>section 3.2 of RFC7230</strong></a>. The value MUST NOT be
@@ -905,10 +660,9 @@ HTTP client and server implementations enforce limits in practice.
 Carefully consider the maximum allowed length of each member that is bound
 to an HTTP header.</p>
 <div class="section" id="restricted-http-headers">
-<span id="restricted-headers"></span><h3><span class="section-number">11.3.1. </span>Restricted HTTP headers<a class="headerlink" href="#restricted-http-headers" title="Permalink to this headline">#</a></h3>
+<span id="restricted-headers"></span><h3><a href="#restricted-http-headers"><span class="section-number">11.3.1. </span>Restricted HTTP headers</a></h3>
 <p>Various HTTP headers are highly discouraged for the <code class="docutils literal notranslate"><span class="pre">httpHeader</span></code> and
 <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> traits.</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="25%" />
@@ -974,9 +728,8 @@ need to be modeled.</td>
 </table>
 </div>
 </div>
-</div>
 <div class="section" id="httplabel-trait">
-<span id="smithy-api-httplabel-trait"></span><span id="id5"></span><h2><span class="section-number">11.4. </span><code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait<a class="headerlink" href="#httplabel-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-httplabel-trait"></span><span id="id5"></span><h2><a href="#httplabel-trait"><span class="section-number">11.4. </span><code class="docutils literal notranslate"><span class="pre">httpLabel</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds an operation input structure member to an
 <a class="reference internal" href="#http-uri-label"><span class="std std-ref">HTTP label</span></a> so that it is used as part of an
@@ -998,21 +751,21 @@ with the <a class="reference internal" href="constraint-traits.html#required-tra
 </dl>
 <p>The following example defines an operation that send an HTTP label named
 <code class="docutils literal notranslate"><span class="pre">foo</span></code> as part of the URI of an HTTP request:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="nt">@readonly</span>
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/{foo}&quot;</span>)
-<span class="kd">operation </span><span class="nc">GetStatus</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusInput</span><span class="p">,</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetStatusOutput</span>
-}
+<span class="nd">@readonly</span><span class="w"></span>
+<span class="nd">@http</span>(<span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/{foo}&quot;</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> GetStatus</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">GetStatusInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetStatusOutput</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">GetStatusInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="nt">@httpLabel</span>
-<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
-}
+<span class="nd">@input</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> GetStatusInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@httpLabel</span><span class="w"></span>
+<span class="w">    </span><span class="nl">foo:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <p class="rubric">Relationship to <a class="reference internal" href="#http-trait"><span class="std std-ref">http trait</span></a></p>
@@ -1038,9 +791,8 @@ structure with the <code class="docutils literal notranslate"><span class="pre">
 (for example, <code class="docutils literal notranslate"><span class="pre">1985-04-12T23:20:50.52Z</span></code>, and with percent-encoding,
 <code class="docutils literal notranslate"><span class="pre">1985-04-12T23%3A20%3A50.52Z</span></code>). The <a class="reference internal" href="protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat trait</span></a>
 MAY be used to use a custom serialization format.</li>
-<li>Characters not defined as unreserved by <span class="target" id="index-5"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html#section-2.3"><strong>RFC 3986 section 2.3</strong></a>
-MUST be <span class="target" id="index-6"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html#section-2.1"><strong>percent-encoded</strong></a>. That is, all characters except for
-alphanumerics and <code class="docutils literal notranslate"><span class="pre">-._~</span></code>.</li>
+<li>Reserved characters defined in <span class="target" id="index-5"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html#section-2.2"><strong>section 2.2 of RFC3986</strong></a>
+and the <cite>%</cite> itself MUST be <a class="reference external" href="https://tools.ietf.org/html/rfc3986#section-2.1">percent-encoded</a> (that is, <code class="docutils literal notranslate"><span class="pre">:/?#[]&#64;!$&amp;'()*+,;=%</span></code>).</li>
 <li>However, if the label is greedy, then &quot;/&quot; MUST NOT be percent-encoded
 because greedy labels are meant to span multiple path segments.</li>
 </ul>
@@ -1053,11 +805,15 @@ of an operation, then those members are sent as part of the
 the body of the response.</p>
 </div>
 <div class="section" id="httppayload-trait">
-<span id="smithy-api-httppayload-trait"></span><span id="id6"></span><h2><span class="section-number">11.5. </span><code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait<a class="headerlink" href="#httppayload-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-httppayload-trait"></span><span id="id6"></span><h2><a href="#httppayload-trait"><span class="section-number">11.5. </span><code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds a single structure member to the body of an HTTP message.</dd>
-<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span></code></p>
-<p><em>Any structure member</em></p>
+<dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; :test(member &gt; :test(string, blob, structure, union, document, list, set, map))
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait can be applied to <code class="docutils literal notranslate"><span class="pre">structure</span></code> members that
+target a <code class="docutils literal notranslate"><span class="pre">string</span></code>, <code class="docutils literal notranslate"><span class="pre">blob</span></code>, <code class="docutils literal notranslate"><span class="pre">structure</span></code>, <code class="docutils literal notranslate"><span class="pre">union</span></code>, <code class="docutils literal notranslate"><span class="pre">document</span></code>,
+<code class="docutils literal notranslate"><span class="pre">set</span></code>, <code class="docutils literal notranslate"><span class="pre">map</span></code>, or <code class="docutils literal notranslate"><span class="pre">list</span></code>.</p>
 </dd>
 <dt>Value type</dt><dd>Annotation trait.</dd>
 <dt>Conflicts with</dt><dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>, <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>, <a class="reference internal" href="#httpqueryparams-trait"><span class="std std-ref">httpQueryParams trait</span></a>,
@@ -1067,27 +823,27 @@ the body of the response.</p>
 </dl>
 <p>The following example defines an operation that returns a <code class="docutils literal notranslate"><span class="pre">blob</span></code> of binary
 data in a response:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="nt">@readonly</span>
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/random-binary-data&quot;</span>)
-<span class="kd">operation </span><span class="nc">GetRandomBinaryData</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetRandomBinaryDataInput</span><span class="p">,</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetRandomBinaryDataOutput</span>
-}
+<span class="nd">@readonly</span><span class="w"></span>
+<span class="nd">@http</span>(<span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/random-binary-data&quot;</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> GetRandomBinaryData</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">GetRandomBinaryDataInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetRandomBinaryDataOutput</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">GetRandomBinaryDataInput</span><span class="w"> </span>{}
+<span class="nd">@input</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> GetRandomBinaryDataInput</span><span class="w"> </span>{}<span class="w"></span>
 
-<span class="nt">@output</span>
-<span class="kd">structure </span><span class="nc">GetRandomBinaryDataOutput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="nt">@httpHeader</span>(<span class="s2">&quot;Content-Type&quot;</span>)
-<span class="w">    </span><span class="py">contentType</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="nd">@output</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> GetRandomBinaryDataOutput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@httpHeader</span>(<span class="s2">&quot;Content-Type&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="nl">contentType:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-<span class="w">    </span><span class="nt">@httpPayload</span>
-<span class="w">    </span><span class="py">content</span><span class="p">:</span><span class="w"> </span><span class="vc">Blob</span><span class="p">,</span>
-}
+<span class="w">    </span><span class="nd">@httpPayload</span><span class="w"></span>
+<span class="w">    </span><span class="nl">content:</span><span class="w"> </span><span class="vc">Blob</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <p class="rubric" id="http-protocol-document-payloads">Protocol-specific document payloads</p>
@@ -1110,22 +866,22 @@ or <a class="reference internal" href="#httpprefixheaders-trait"><span class="st
 <ol class="arabic simple">
 <li>When a string or blob member is referenced, the raw value is serialized
 as the body of the message.</li>
-<li>When any other type of member is referenced, the shape value is serialized
-as a <a class="reference internal" href="protocol-traits.html#protocoldefinition-trait"><span class="std std-ref">protocol-specific</span></a> value that is sent
-as the body of the message.</li>
+<li>When a <a class="reference internal" href="model.html#structure"><span class="std std-ref">structure</span></a>, <a class="reference internal" href="model.html#union"><span class="std std-ref">union</span></a>, <a class="reference internal" href="model.html#list"><span class="std std-ref">list</span></a>,
+<a class="reference internal" href="model.html#set"><span class="std std-ref">set</span></a>, <a class="reference internal" href="model.html#map"><span class="std std-ref">map</span></a>, or document type is targeted,
+the shape value is serialized as a <a class="reference internal" href="protocol-traits.html#protocoldefinition-trait"><span class="std std-ref">protocol-specific</span></a>
+document that is sent as the body of the message.</li>
 </ol>
 </div>
 <div class="section" id="httpprefixheaders-trait">
-<span id="smithy-api-httpprefixheaders-trait"></span><span id="id7"></span><h2><span class="section-number">11.6. </span><code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait<a class="headerlink" href="#httpprefixheaders-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-httpprefixheaders-trait"></span><span id="id7"></span><h2><a href="#httpprefixheaders-trait"><span class="section-number">11.6. </span><code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds a map of key-value pairs to prefixed HTTP headers.</dd>
 <dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; member
-:test(&gt; map :not([trait|sparse]) &gt; member[id|member=value] &gt; string)
+:test(&gt; map &gt; member[id|member=value] &gt; string)
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code> trait can be applied to <code class="docutils literal notranslate"><span class="pre">structure</span></code> members
-that target a <code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code>. The targeted map MUST NOT be marked
-with the <a class="reference internal" href="type-refinement-traits.html#sparse-trait"><span class="std std-ref">sparse trait</span></a>.</p>
+that target a <code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code>.</p>
 </dd>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code> value that defines the prefix to prepend to each header field
 name stored in the targeted map member. For example, given a prefix value
@@ -1137,30 +893,30 @@ name serialized in the message is &quot;X-Amz-Meta-Baz&quot;.</dd>
 <dt>Structurally exclusive</dt><dd>Only a single structure member can be bound to <code class="docutils literal notranslate"><span class="pre">httpPrefixHeaders</span></code>.</dd>
 </dl>
 <p>Given the following Smithy model:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/myOperation&quot;</span>)
-<span class="kd">operation </span><span class="nc">MyOperation</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">MyOperationInput</span>
-}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@readonly</span><span class="w"></span>
+<span class="nd">@http</span>(<span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/myOperation&quot;</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> MyOperation</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">MyOperationInput</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">MyOperationInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@httpPrefixHeaders</span>(<span class="s2">&quot;X-Foo-&quot;</span>)
-<span class="w">    </span><span class="py">headers</span><span class="p">:</span><span class="w"> </span><span class="vc">StringMap</span>
-}
+<span class="nd">@input</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> MyOperationInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@httpPrefixHeaders</span>(<span class="s2">&quot;X-Foo-&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="nl">headers:</span><span class="w"> </span><span class="vc">StringMap</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">map </span><span class="nc">StringMap</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
-<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
-}
+<span class="kd">map</span><span class="nc"> StringMap</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">key:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">value:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <p>And given the following input to <code class="docutils literal notranslate"><span class="pre">MyOperation</span></code>:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;headers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;first&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hi&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;second&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;there&quot;</span>
-<span class="w">    </span><span class="p">}</span>
+    <span class="nt">&quot;headers&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;first&quot;</span><span class="p">:</span> <span class="s2">&quot;hi&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;second&quot;</span><span class="p">:</span> <span class="s2">&quot;there&quot;</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1179,12 +935,12 @@ start with the same prefix provided in <code class="docutils literal notranslate
 bound to <code class="docutils literal notranslate"><span class="pre">headers</span></code>.</p>
 </div>
 <div class="section" id="httpquery-trait">
-<span id="smithy-api-httpquery-trait"></span><span id="id8"></span><h2><span class="section-number">11.7. </span><code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait<a class="headerlink" href="#httpquery-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-httpquery-trait"></span><span id="id8"></span><h2><a href="#httpquery-trait"><span class="section-number">11.7. </span><code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds an operation input structure member to a query string parameter.</dd>
 <dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; member
 :test(&gt; :test(string, number, boolean, timestamp),
-      &gt; list &gt; member &gt; :test(string, number, boolean, timestamp))
+      &gt; collection &gt; member &gt; :test(string, number, boolean, timestamp))
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">httpQuery</span></code> trait can be applied to <code class="docutils literal notranslate"><span class="pre">structure</span></code> members that
@@ -1201,35 +957,34 @@ across all other members marked with the <code class="docutils literal notransla
 <p>The following example defines an operation that optionally sends the
 <code class="docutils literal notranslate"><span class="pre">color</span></code>, <code class="docutils literal notranslate"><span class="pre">shape</span></code>, and <code class="docutils literal notranslate"><span class="pre">size</span></code> query string parameters in an HTTP
 request:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/things&quot;</span>)
-<span class="kd">operation </span><span class="nc">ListThings</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ListThingsInput</span><span class="p">,</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">ListThingsOutput</span><span class="p">,</span><span class="w"> </span><span class="c">// omitted for brevity</span>
-}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@readonly</span><span class="w"></span>
+<span class="nd">@http</span>(<span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/things&quot;</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> ListThings</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">ListThingsInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">ListThingsOutput</span><span class="p">,</span><span class="w"> </span><span class="c">// omitted for brevity</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">ListThingsInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">&quot;color&quot;</span>)
-<span class="w">    </span><span class="py">color</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="nd">@input</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> ListThingsInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@httpQuery</span>(<span class="s2">&quot;color&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="nl">color:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">&quot;shape&quot;</span>)
-<span class="w">    </span><span class="py">shape</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span><span class="nd">@httpQuery</span>(<span class="s2">&quot;shape&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="nl">shape:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">&quot;size&quot;</span>)
-<span class="w">    </span><span class="py">size</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="p">,</span>
-}
+<span class="w">    </span><span class="nd">@httpQuery</span>(<span class="s2">&quot;size&quot;</span>)<span class="w"></span>
+<span class="w">    </span><span class="nl">size:</span><span class="w"> </span><span class="vc">Integer</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <p class="rubric">Serialization rules</p>
 <ul class="simple">
 <li>&quot;&amp;&quot; is used to separate query string parameter key-value pairs.</li>
 <li>&quot;=&quot; is used to separate query string parameter names from values.</li>
-<li>Characters not defined as unreserved by <span class="target" id="index-7"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html#section-2.3"><strong>RFC 3986 section 2.3</strong></a>
-MUST be <span class="target" id="index-8"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html#section-2.1"><strong>percent-encoded</strong></a>. That is, all characters except for
-alphanumerics and <code class="docutils literal notranslate"><span class="pre">-._~</span></code>.</li>
+<li>Reserved characters in keys and values as defined in <span class="target" id="index-6"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html#section-2.2"><strong>section 2.2 of RFC3986</strong></a> and <cite>%</cite>
+MUST be <a class="reference external" href="https://tools.ietf.org/html/rfc3986#section-2.1">percent-encoded</a> (that is, <code class="docutils literal notranslate"><span class="pre">:/?#[]&#64;!$&amp;'()*+,;=%</span></code>).</li>
 <li><code class="docutils literal notranslate"><span class="pre">boolean</span></code> values are serialized as <code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>.</li>
-<li><code class="docutils literal notranslate"><span class="pre">timestamp</span></code> values are serialized as an <span class="target" id="index-9"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3339.html"><strong>RFC 3339</strong></a>
+<li><code class="docutils literal notranslate"><span class="pre">timestamp</span></code> values are serialized as an <span class="target" id="index-7"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3339.html"><strong>RFC 3339</strong></a>
 <code class="docutils literal notranslate"><span class="pre">date-time</span></code> string by default (for example, <code class="docutils literal notranslate"><span class="pre">1985-04-12T23:20:50.52Z</span></code>,
 and with percent-encoding, <code class="docutils literal notranslate"><span class="pre">1985-04-12T23%3A20%3A50.52Z</span></code>). The
 <a class="reference internal" href="protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat trait</span></a> MAY be used to use a custom serialization
@@ -1240,7 +995,7 @@ example, given a member bound to <code class="docutils literal notranslate"><spa
 with a value of <code class="docutils literal notranslate"><span class="pre">[&quot;a&quot;,</span> <span class="pre">&quot;b&quot;]</span></code>, the value is serialized in the query string
 as <code class="docutils literal notranslate"><span class="pre">foo=a&amp;foo=b</span></code>.</li>
 <li>When deserializing, server implementations SHOULD use the first encountered
-value in the query string for non-list members. For example, given a
+value in the query string for non-collection members. For example, given a
 member bound to <code class="docutils literal notranslate"><span class="pre">foo</span></code> that targets a string and a query string of
 <code class="docutils literal notranslate"><span class="pre">foo=a&amp;foo=b</span></code>, the deserialized value of <code class="docutils literal notranslate"><span class="pre">foo</span></code> should be <code class="docutils literal notranslate"><span class="pre">a</span></code>.</li>
 </ul>
@@ -1269,15 +1024,15 @@ Carefully consider the maximum allowed length of each member that is bound to
 an HTTP query string or path.</p>
 </div>
 <div class="section" id="httpqueryparams-trait">
-<span id="smithy-api-httpqueryparams-trait"></span><span id="id9"></span><h2><span class="section-number">11.8. </span><code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait<a class="headerlink" href="#httpqueryparams-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-httpqueryparams-trait"></span><span id="id9"></span><h2><a href="#httpqueryparams-trait"><span class="section-number">11.8. </span><code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds a map of key-value pairs to query string parameters.</dd>
 <dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; member
-:test(&gt; map &gt; member[id|member=value] &gt; :test(string, list &gt; member &gt; string))
+:test(&gt; map &gt; member[id|member=value] &gt; :test(string, collection &gt; member &gt; string))
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait can be applied to <code class="docutils literal notranslate"><span class="pre">structure</span></code> members
-that target a <code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code>, or a <code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">list</span></code> of
+that target a <code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">string</span></code>, or a <code class="docutils literal notranslate"><span class="pre">map</span></code> of <code class="docutils literal notranslate"><span class="pre">list</span></code>/<code class="docutils literal notranslate"><span class="pre">set</span></code> of
 <code class="docutils literal notranslate"><span class="pre">string</span></code>.</p>
 </dd>
 <dt>Value type</dt><dd>Annotation trait.</dd>
@@ -1288,23 +1043,23 @@ that target a <code class="docutils literal notranslate"><span class="pre">map</
 </dl>
 <p>The following example defines an operation that optionally sends the
 target input map as query string parameters in an HTTP request:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@readonly</span>
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/things&quot;</span>)
-<span class="kd">operation </span><span class="nc">ListThings</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">ListThingsInput</span><span class="p">,</span>
-<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">ListThingsOutput</span><span class="p">,</span><span class="w"> </span><span class="c">// omitted for brevity</span>
-}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@readonly</span><span class="w"></span>
+<span class="nd">@http</span>(<span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/things&quot;</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> ListThings</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">ListThingsInput</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">ListThingsOutput</span><span class="p">,</span><span class="w"> </span><span class="c">// omitted for brevity</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">ListThingsInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@httpQueryParams</span>()
-<span class="w">    </span><span class="py">myParams</span><span class="p">:</span><span class="w"> </span><span class="vc">MapOfStrings</span><span class="p">,</span>
-}
+<span class="nd">@input</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> ListThingsInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@httpQueryParams</span>()<span class="w"></span>
+<span class="w">    </span><span class="nl">myParams:</span><span class="w"> </span><span class="vc">MapOfStrings</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">map </span><span class="nc">MapOfStrings</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
-<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
-}
+<span class="kd">map</span><span class="nc"> MapOfStrings</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">key:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">value:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <p class="rubric"><code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> is only used on input</p>
@@ -1327,34 +1082,34 @@ certain that multiple values for any query string will never be meaningful for t
 <p>If a member with the <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code> trait and a member with the <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a>
 conflict, clients MUST use the value set by the member with the <a class="reference internal" href="#httpquery-trait"><span class="std std-ref">httpQuery trait</span></a> and
 disregard the value set by <code class="docutils literal notranslate"><span class="pre">httpQueryParams</span></code>. For example, given the following model:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/things&quot;</span>)
-<span class="kd">operation </span><span class="nc">PutThing</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PutThingInput</span>
-}
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@http</span>(<span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/things&quot;</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> PutThing</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">PutThingInput</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">PutThingInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@httpQuery</span>
-<span class="w">    </span><span class="nt">@required</span>
-<span class="w">    </span><span class="py">thingId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="nd">@input</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> PutThingInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@httpQuery</span><span class="w"></span>
+<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
+<span class="w">    </span><span class="nl">thingId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
 
-<span class="w">    </span><span class="nt">@httpQueryParams</span>
-<span class="w">    </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span><span class="vc">MapOfStrings</span>
-}
+<span class="w">    </span><span class="nd">@httpQueryParams</span><span class="w"></span>
+<span class="w">    </span><span class="nl">tags:</span><span class="w"> </span><span class="vc">MapOfStrings</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">map </span><span class="nc">MapOfStrings</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
-<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
-}
+<span class="kd">map</span><span class="nc"> MapOfStrings</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">key:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">value:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <p>And given the following input to <code class="docutils literal notranslate"><span class="pre">PutThing</span></code>:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;thingId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;realId&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;thingId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;fakeId&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;otherTag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;value&quot;</span>
-<span class="w">    </span><span class="p">}</span>
+    <span class="nt">&quot;thingId&quot;</span><span class="p">:</span> <span class="s2">&quot;realId&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;thingId&quot;</span><span class="p">:</span> <span class="s2">&quot;fakeId&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;otherTag&quot;</span><span class="p">:</span> <span class="s2">&quot;value&quot;</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -1368,20 +1123,20 @@ Host: &lt;server&gt;
 empty string values for keys which do not have values specified. For example,
 given the following model:</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/things&quot;</span>)
-<span class="kd">operation </span><span class="nc">PostThing</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PostThingInput</span>
-}
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@http</span>(<span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/things&quot;</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> PostThing</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">PostThingInput</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">structure </span><span class="nc">PostThingInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@httpQueryParams</span>
-<span class="w">    </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span><span class="vc">MapOfStrings</span>
-}
+<span class="kd">structure</span><span class="nc"> PostThingInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@httpQueryParams</span><span class="w"></span>
+<span class="w">    </span><span class="nl">tags:</span><span class="w"> </span><span class="vc">MapOfStrings</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">map </span><span class="nc">MapOfStrings</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
-<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
-}
+<span class="kd">map</span><span class="nc"> MapOfStrings</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">key:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nl">value:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 </div></div>
@@ -1391,28 +1146,27 @@ given the following model:</p>
 </div>
 <p>A server should deserialize the following input structure:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;thingId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;realId&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;otherTag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;anotherTag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;lastTag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
-<span class="w">    </span><span class="p">}</span>
+    <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;thingId&quot;</span><span class="p">:</span> <span class="s2">&quot;realId&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;otherTag&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;anotherTag&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;lastTag&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="httpresponsecode-trait">
-<span id="smithy-api-httpresponsecode-trait"></span><span id="id10"></span><h2><span class="section-number">11.9. </span><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait<a class="headerlink" href="#httpresponsecode-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-httpresponsecode-trait"></span><span id="id10"></span><h2><a href="#httpresponsecode-trait"><span class="section-number">11.9. </span><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Binds a structure member to the HTTP response status code so that an
 HTTP response status code can be set dynamically at runtime to something
 other than <code class="docutils literal notranslate"><span class="pre">code</span></code> of the <a class="reference internal" href="#http-trait"><span class="std std-ref">http trait</span></a>.</dd>
-<dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>structure :not([trait|input]) &gt; member :test(&gt; integer)
+<dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>structure &gt; member :test(&gt; integer)
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait can be applied to <code class="docutils literal notranslate"><span class="pre">structure</span></code> members
-that target an <code class="docutils literal notranslate"><span class="pre">integer</span></code> within any <code class="docutils literal notranslate"><span class="pre">structure</span></code> that has no <code class="docutils literal notranslate"><span class="pre">input</span></code>
-trait applied.</p>
+that target an <code class="docutils literal notranslate"><span class="pre">integer</span></code>.</p>
 </dd>
 <dt>Value type</dt><dd>Annotation trait.</dd>
 <dt>Conflicts with</dt><dd><a class="reference internal" href="#httplabel-trait"><span class="std std-ref">httpLabel trait</span></a>, <a class="reference internal" href="#httpheader-trait"><span class="std std-ref">httpHeader trait</span></a>,
@@ -1425,22 +1179,21 @@ different response codes for an operation, like a 200 or 201 for a PUT
 operation. If this member isn't provided, server implementations MUST default
 to the <cite>code</cite> set by the <a class="reference internal" href="#http-trait"><span class="std std-ref">http trait</span></a>.</p>
 <p class="rubric"><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> is only used on output</p>
-<p><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> is ignored when resolving the HTTP bindings of any
-structure except an operation's output structure. This means that if a
-structure that contains members marked with the <code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait
-is not used as an output structure of an operation, then those members are
-sent as part of the <a class="reference internal" href="#http-protocol-document-payloads"><span class="std std-ref">protocol-specific document</span></a>
-sent in the body of the request.</p>
+<p><code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> is ignored when resolving the HTTP bindings of an
+operation's input structure. This means that if a structure that contains
+members marked with the <code class="docutils literal notranslate"><span class="pre">httpResponseCode</span></code> trait is used as the top-level
+input structure of an operation, then those members are sent as part of the
+<a class="reference internal" href="#http-protocol-document-payloads"><span class="std std-ref">protocol-specific document</span></a> sent in
+the body of the request.</p>
 </div>
 <div class="section" id="cors-trait">
-<span id="smithy-api-cors-trait"></span><span id="id11"></span><h2><span class="section-number">11.10. </span><code class="docutils literal notranslate"><span class="pre">cors</span></code> trait<a class="headerlink" href="#cors-trait" title="Permalink to this headline">#</a></h2>
+<span id="smithy-api-cors-trait"></span><span id="id11"></span><h2><a href="#cors-trait"><span class="section-number">11.10. </span><code class="docutils literal notranslate"><span class="pre">cors</span></code> trait</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Defines how a service supports cross-origin resource sharing</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">structure</span></code></dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">cors</span></code> trait is a structure that supports the following members:</p>
-<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
@@ -1486,7 +1239,6 @@ scheme.</td>
 </tr>
 </tbody>
 </table>
-</div>
 <p>Adding a <code class="docutils literal notranslate"><span class="pre">cors</span></code> trait with its value set to an empty object enables
 cross-origin resource sharing for all origins and allows browser scripts access
 to all headers to which data is bound in the model, as well as any headers used
@@ -1497,7 +1249,7 @@ such authentication schemes MUST designate a single origin from which
 cross-origin, credentialed requests will be accepted.</p>
 </div>
 <div class="section" id="serializing-http-messages">
-<h2><span class="section-number">11.11. </span>Serializing HTTP messages<a class="headerlink" href="#serializing-http-messages" title="Permalink to this headline">#</a></h2>
+<h2><a href="#serializing-http-messages"><span class="section-number">11.11. </span>Serializing HTTP messages</a></h2>
 <p>The following steps are taken to serialize an HTTP request given a map of
 parameters:</p>
 <ol class="arabic simple">
@@ -1547,125 +1299,84 @@ protocol-specific document sent in the body of the response.</li>
 </ol>
 </div>
 <div class="section" id="event-streams">
-<h2><span class="section-number">11.12. </span>Event streams<a class="headerlink" href="#event-streams" title="Permalink to this headline">#</a></h2>
+<h2><a href="#event-streams"><span class="section-number">11.12. </span>Event streams</a></h2>
 <p>When using <a class="reference internal" href="stream-traits.html#event-streams"><span class="std std-ref">event streams</span></a> and HTTP bindings, the
 <a class="reference internal" href="#httppayload-trait"><span class="std std-ref">httpPayload</span></a> trait MUST be applied to any input or
 output member that targets a shape marked with the <a class="reference internal" href="stream-traits.html#streaming-trait"><span class="std std-ref">streaming trait</span></a>.</p>
 <p>The following example defines an operation that uses an input event stream
 and HTTP bindings:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/messages&quot;</span>)
-<span class="kd">operation </span><span class="nc">PublishMessages</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">PublishMessagesInput</span>
-}
+<span class="nd">@http</span>(<span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/messages&quot;</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> PublishMessages</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">PublishMessagesInput</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">PublishMessagesInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="nt">@httpPayload</span>
-<span class="w">    </span><span class="py">messages</span><span class="p">:</span><span class="w"> </span><span class="vc">MessageStream</span><span class="p">,</span>
-}
+<span class="nd">@input</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> PublishMessagesInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nd">@httpPayload</span><span class="w"></span>
+<span class="w">    </span><span class="nl">messages:</span><span class="w"> </span><span class="vc">MessageStream</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@streaming</span>
-<span class="kd">union </span><span class="nc">MessageStream</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">Message</span><span class="p">,</span>
-}
+<span class="nd">@streaming</span><span class="w"></span>
+<span class="kd">union</span><span class="nc"> MessageStream</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">message:</span><span class="w"> </span><span class="vc">Message</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">structure </span><span class="nc">Message</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
-}
+<span class="kd">structure</span><span class="nc"> Message</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">message:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 <p>The following is <strong>invalid</strong> because the operation has the <code class="docutils literal notranslate"><span class="pre">http</span></code> trait
 and an input member is marked with the <code class="docutils literal notranslate"><span class="pre">streaming</span></code> trait but not
 marked with the <code class="docutils literal notranslate"><span class="pre">httpPayload</span></code> trait:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
 
-<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/messages&quot;</span>)
-<span class="kd">operation </span><span class="nc">InvalidOperation</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">InvalidOperationInput</span>
-}
+<span class="nd">@http</span>(<span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/messages&quot;</span>)<span class="w"></span>
+<span class="kd">operation</span><span class="nc"> InvalidOperation</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">InvalidOperationInput</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@input</span>
-<span class="kd">structure </span><span class="nc">InvalidOperationInput</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">invalid</span><span class="p">:</span><span class="w"> </span><span class="vc">MessageStream</span><span class="p">,</span><span class="w"> </span><span class="c">// &lt;-- Missing the @httpPayload trait</span>
-}
+<span class="nd">@input</span><span class="w"></span>
+<span class="kd">structure</span><span class="nc"> InvalidOperationInput</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">invalid:</span><span class="w"> </span><span class="vc">MessageStream</span><span class="p">,</span><span class="w"> </span><span class="c">// &lt;-- Missing the @httpPayload trait</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="nt">@streaming</span>
-<span class="kd">union </span><span class="nc">MessageStream</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">Message</span><span class="p">,</span>
-}
+<span class="nd">@streaming</span><span class="w"></span>
+<span class="kd">union</span><span class="nc"> MessageStream</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">message:</span><span class="w"> </span><span class="vc">Message</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 
-<span class="kd">structure </span><span class="nc">Message</span><span class="w"> </span>{
-<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
-}
+<span class="kd">structure</span><span class="nc"> Message</span><span class="w"> </span>{<span class="w"></span>
+<span class="w">    </span><span class="nl">message:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+}<span class="w"></span>
 </pre></div>
 </div>
 </div>
 </div>
 
-        </article>
-      </div>
-      <footer>
-        
-        <div class="related-pages">
-          <a class="next-page" href="xml-traits.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title"><span class="section-number">12. </span>XML binding traits</div>
-              </div>
-              <svg><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="stream-traits.html">
-              <svg><use href="#svg-arrow-right"></use></svg>
-              <div class="page-info">
-                <div class="context">
-                  <span>Previous</span>
-                </div>
-                
-                <div class="title"><span class="section-number">10. </span>Streaming Traits</div>
-                
-              </div>
-            </a>
-        </div>
-        <div class="bottom-of-page">
-          <div class="left-details">
-            <div class="copyright">
-                Copyright &#169; 2022, Amazon Web Services
-            </div>
-            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-            
-            <a href="https://github.com/pradyunsg/furo">Furo</a>
-            
-          </div>
-          <div class="right-details">
-            <div class="icons">
-              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
-                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
-                </svg>
-            </a>
-              
-            </div>
-          </div>
-        </div>
-        
-      </footer>
-    </div>
-    <aside class="toc-drawer">
-      
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            Contents
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
+
+                    
+                    <section class="relations">
+                        
+                        <a href="stream-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← <span class="section-number">10. </span>Streaming Traits</a>
+                        
+                        <a href="xml-traits.html" title="next chapter" class="next-page clearfix"><span class="section-number">12. </span>XML binding traits →</a>
+                    </section>
+                    
+                </article><aside id="right-column" class="side-column hidden-sm">
+                    <div class="column-body">
+                        <section class="sidebar">
+                            
+                            <section class="next-previous">
+                                
+                                <a href="stream-traits.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
+                                
+                                <a href="xml-traits.html" title="next chapter" class="next-page clearfix">Next →</a>
+                            </section>
+                            
+                            <ul>
 <li><a class="reference internal" href="#">11. HTTP binding traits</a><ul>
 <li><a class="reference internal" href="#http-trait">11.1. <code class="docutils literal notranslate"><span class="pre">http</span></code> trait</a><ul>
 <li><a class="reference internal" href="#method">11.1.1. method</a></li>
@@ -1697,20 +1408,18 @@ marked with the <code class="docutils literal notranslate"><span class="pre">htt
 </li>
 </ul>
 
-          </div>
+                        </section>
+                    </div>
+                </aside></div>
+        </section>
+        
+    
+<footer id="footer">
+    <div class="width-wrapper">
+        <div class="copyright">
+            <p>©2021, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
         </div>
-      </div>
-      
-      
-    </aside>
-  </div>
-</div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/scripts/furo.js"></script>
-    <script src="../../_static/clipboard.min.js"></script>
-    <script src="../../_static/copybutton.js"></script>
-    <script src="../../_static/tabs.js"></script>
-    </body>
+    </div>
+</footer>
+  </body>
 </html>

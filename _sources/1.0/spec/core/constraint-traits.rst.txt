@@ -1,5 +1,3 @@
-.. _constraint-traits:
-
 =================
 Constraint traits
 =================
@@ -600,62 +598,51 @@ in a response.
 
 
 .. smithy-trait:: smithy.api#uniqueItems
-.. _uniqueItems-trait:
+.. _uniqueItems:
 
 ---------------------
 ``uniqueItems`` trait
 ---------------------
 
-Summary
-    Indicates that the items in a :ref:`list <list>` MUST be unique
-    based on :ref:`value-equality`.
-Trait selector
-    ``list :not(> member ~> :is(float, double, document))``
+.. warning::
 
-    *A list that does not transitively contain floats, doubles, or documents*
-Conflicts with
-    * :ref:`sparse-trait`
+    This trait has been deprecated. It will be removed in future versions
+    of Smithy. Set shapes should be used instead.
+
+Summary
+    Indicates that the items in a :ref:`list` MUST be unique.
+Trait selector
+    ``:test(list > member > simpleType)``
+
+    *A list that targets any simple type.*
 Value type
     Annotation trait.
 
+.. tabs::
 
-.. code-block:: smithy
+    .. code-tab:: smithy
 
-    @uniqueItems
-    list MyList {
-        member: String
-    }
+        @uniqueItems
+        list MyList {
+            member: String,
+        }
 
+    .. code-tab:: json
 
-.. _value-equality:
-
-Value equality
-==============
-
-Two values are considered equal if:
-
-* They are the same type.
-* Both are strings and are the same codepoint-for-codepoint.
-* Both are blobs and are the same byte-for-byte.
-* Both are booleans and are both true or are both false.
-* Both are timestamps and refer to the same instant in time.
-* Both are lists and have an equal value item-for-item. Note that
-  sets, a deprecated data type, are treated exactly like lists.
-* Both are maps, have the same number of entries, and each key value
-  pair in one map has an equal key value pair in the other map. The
-  order of entries does not matter.
-* Both are numbers of the same type and have the same mathematical value.
-* Both are structures of the same type and have the same members with
-  equal values.
-* Both are unions of the same type, are set to the same member, and the
-  set members have the same value.
-
-.. note::
-
-    Floats, doubles, and documents are not allowed in ``@uniqueItems`` lists
-    because they only allow for partial equivalence and require special care
-    to determine if two values are considered equal.
-
+        {
+            "smithy": "1.0",
+            "shapes": {
+                "smithy.example#MyList": {
+                    "type": "list",
+                    "member": {
+                        "target": "smithy.api#String"
+                    },
+                    "traits": {
+                        "smithy.api#uniqueItems": {}
+                    }
+                }
+            }
+        }
 
 .. _precedence:
 
@@ -663,9 +650,9 @@ Two values are considered equal if:
 Trait precedence
 ----------------
 
-Some constraint traits can be applied to shapes as well as members.
-Constraint traits applied to members take precedence over constraint
-traits applied to the shape targeted by members.
+Some constraints can be applied to shapes as well as structure members. If a
+constraint of the same type is applied to a structure member and the shape
+that the member targets, the trait applied to the member takes precedence.
 
 In the below example, the ``range`` trait applied to ``numberOfItems``
 takes precedence over the one applied to ``PositiveInteger``. The resolved
@@ -716,4 +703,3 @@ minimum will be ``7``, and the maximum ``12``.
 .. _ECMA 262 regular expression dialect: https://www.ecma-international.org/ecma-262/8.0/index.html#sec-patterns
 .. _CommonMark: https://spec.commonmark.org/
 .. _OWASP Regular expression Denial of Service: https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS
-.. _JSON Schema "Instance Equality": https://json-schema.org/draft/2020-12/json-schema-core.html#rfc.section.4.2.2
