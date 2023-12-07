@@ -1,86 +1,311 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Smithy Server Generator for TypeScript" href="../ts-ssdk/index.html" /><link rel="prev" title="Converting Smithy to OpenAPI" href="converting-to-openapi.html" />
 
-<!DOCTYPE html>
-
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Generating CloudFormation Resource Schemas from Smithy &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../_static/bootstrap-reboot.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+        <title>Generating CloudFormation Resource Schemas from Smithy - Smithy 1.0</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
     
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/default.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
-    <link rel="stylesheet" href="../../_static/custom-tabs.css" type="text/css" />
-
     
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/smithy.js"></script>
-    <link rel="shortcut icon" href="../../_static/favicon.png"/>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="prev" title="Converting Smithy to OpenAPI" href="converting-to-openapi.html" />
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="smithy-version" content="1.0">
 
-  </head><body>
-    <header>
-        <div class="header-flex width-wrapper">
-            <div class="site-logo">
-                <a href="../../index.html">
-                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
-                </a>
-                <span class="version-text">1.0</span>
-            </div>
-            <ul id="page-navigation">
-                <li class="site-page first"><a href="../../quickstart.html">Quick Start</a></li>
-                <li class="site-page"><a href="../spec/index.html">Specifications</a></li>
-                <li class="site-page"><a href="index.html">Guides</a></li>
-                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
-                <li class="site-search hidden-sm">
-                    <form action="../../search.html" method="get">
-                        <input type="hidden" name="check_keywords" value="yes" />
-                        <input type="hidden" name="area" value="default" />
-                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
-                    </form>
-                </li>
-            </ul>
-        </div>
-    </header>
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --admonition-font-size: 100%;
+  --admonition-title-font-size: 100%;
+  --color-brand-primary: #C44536;
+  --color-brand-content: #00808b;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+      }
+    }
+  }
+</style><script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
+<script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script></head>
+  <body>
     
-        
-        
-        <section id="page-container">
-            <div class="width-wrapper flex">
-                <article class="document-body">
-                    
-                    <ul class="rel-parents">
-                    <li><a href="index.html" accesskey="U">Smithy Guides</a></li>
-                    </ul>
-                    
-                    
-  <div class="section" id="generating-cloudformation-resource-schemas-from-smithy">
-<span id="smithy-to-cloudformation"></span><h1><a href="#generating-cloudformation-resource-schemas-from-smithy">Generating CloudFormation Resource Schemas from Smithy</a></h1>
-<p>This guide describes how Smithy models can generate <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html">CloudFormation Resource
-Schemas</a>.</p>
-<div class="contents local topic" id="table-of-contents">
-<p class="topic-title">Table of contents</p>
-<ul class="simple">
-<li><a class="reference internal" href="#introduction" id="id5">Introduction</a><ul>
-<li><a class="reference internal" href="#differences-between-smithy-resources-and-cloudformation-resource-schemas" id="id6">Differences between Smithy resources and CloudFormation Resource Schemas</a></li>
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<div class="announcement">
+  <aside class="announcement-content">
+     <strong>⚠️ You are viewing version 1.0.</strong><br/>
+Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2.0/</a>. 
+  </aside>
+</div>
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Smithy 1.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/smithy.svg" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick start</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../spec/index.html">Specifications</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../spec/core/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../spec/core/model.html">1. The Smithy model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/core/prelude-model.html">2. Prelude model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/core/constraint-traits.html">3. Constraint traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/core/documentation-traits.html">4. Documentation traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/core/type-refinement-traits.html">5. Type refinement traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/core/protocol-traits.html">6. Protocol traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/core/auth-traits.html">7. Authentication traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/core/behavior-traits.html">8. Behavior traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/core/resource-traits.html">9. Resource traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/core/stream-traits.html">10. Streaming Traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/core/http-traits.html">11. HTTP binding traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/core/xml-traits.html">12. XML binding traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/core/endpoint-traits.html">13. Endpoint Traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/core/selectors.html">14. Selectors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/core/model-validation.html">15. Model validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/core/idl.html">16. Smithy IDL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/core/json-ast.html">17. JSON AST</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#generating-schemas-with-smithy-build" id="id7">Generating Schemas with smithy-build</a></li>
-<li><a class="reference internal" href="#cloudformation-configuration-settings" id="id8">CloudFormation configuration settings</a></li>
-<li><a class="reference internal" href="#json-schema-configuration-settings" id="id9">JSON schema configuration settings</a></li>
-<li><a class="reference internal" href="#other-traits-that-influence-generation" id="id10">Other traits that influence generation</a></li>
-<li><a class="reference internal" href="#generating-schemas-with-code" id="id11">Generating Schemas with code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/waiters.html">Waiters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/mqtt.html">MQTT Protocol Bindings</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../spec/aws/index.html">AWS specifications</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../spec/aws/aws-core.html">AWS Core Specification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/aws/aws-auth.html">AWS Authentication Traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/aws/aws-iam.html">AWS IAM traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/aws/amazon-apigateway.html">Amazon API Gateway traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/aws/aws-cloudformation.html">AWS CloudFormation traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/aws/aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/aws/aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/aws/aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/aws/aws-restxml-protocol.html">AWS restXml protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/aws/aws-query-protocol.html">AWS query protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../spec/aws/aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../spec/aws/customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../spec/aws/customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spec/aws/customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spec/aws/customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../spec/aws/customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
 </ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Smithy Guides</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="building-models/build-config.html">smithy-build</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="model-linters.html">Model linters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="style-guide.html">Style Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Generating CloudFormation Resource Schemas from Smithy</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Implementations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/implementations.html">Implementations</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/">2.0 Documentation</a></li>
+</ul>
+
 </div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-1.0/guides/generating-cloudformation-resources.rst" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <div class="section" id="generating-cloudformation-resource-schemas-from-smithy">
+<span id="smithy-to-cloudformation"></span><h1>Generating CloudFormation Resource Schemas from Smithy<a class="headerlink" href="#generating-cloudformation-resource-schemas-from-smithy" title="Permalink to this headline">#</a></h1>
+<p>This guide describes how Smithy models can generate <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html">CloudFormation Resource
+Schemas</a>.</p>
 <div class="section" id="introduction">
-<h2><a href="#introduction">Introduction</a></h2>
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">#</a></h2>
 <p>CloudFormation Resource Schemas are the standard method of <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-types.html">modeling a resource
 provider</a> for use within <a class="reference external" href="https://aws.amazon.com/cloudformation/">CloudFormation</a>. These schemas can then be used
 to <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-develop.html">develop the resource provider</a> for support in CloudFormation. Generating
@@ -97,7 +322,7 @@ register, and deploy resource providers.</p>
 <p><a class="reference internal" href="#generate-cloudformation-other-traits"><span class="std std-ref">Other traits may also influence CloudFormation Resource Schema
 generation.</span></a></p>
 <div class="section" id="differences-between-smithy-resources-and-cloudformation-resource-schemas">
-<h3><a href="#differences-between-smithy-resources-and-cloudformation-resource-schemas">Differences between Smithy resources and CloudFormation Resource Schemas</a></h3>
+<h3>Differences between Smithy resources and CloudFormation Resource Schemas<a class="headerlink" href="#differences-between-smithy-resources-and-cloudformation-resource-schemas" title="Permalink to this headline">#</a></h3>
 <p>Smithy and CloudFormation have different approaches to modeling resources. In
 Smithy, a <a class="reference internal" href="../spec/core/model.html#resource"><span class="std std-ref">resource</span></a> is an entity with an identity that has a
 set of operations. CloudFormation resources are defined as a collection of
@@ -106,23 +331,23 @@ properties are identifiers or have restrictions on their mutability.</p>
 </div>
 </div>
 <div class="section" id="generating-schemas-with-smithy-build">
-<h2><a href="#generating-schemas-with-smithy-build">Generating Schemas with smithy-build</a></h2>
+<h2>Generating Schemas with smithy-build<a class="headerlink" href="#generating-schemas-with-smithy-build" title="Permalink to this headline">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">cloudformation</span></code> plugin contained in the <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy:smithy-aws-cloudformation</span></code>
 package can be used with smithy-build and the <a class="reference external" href="https://github.com/awslabs/smithy-gradle-plugin">Smithy Gradle plugin</a> to
 generate CloudFormation Resource Schemas from Smithy models.</p>
 <p>The following example shows how to configure Gradle to generate CloudFormation
 Resource Schemas from a Smithy model <a class="reference internal" href="building-models/gradle-plugin.html#artifacts-from-smithy-models"><span class="std std-ref">using a buildscript dependency</span></a>:</p>
 <div class="literal-block-wrapper docutils container" id="cfn-smithy-build-gradle">
-<div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#cfn-smithy-build-gradle" title="Permalink to this code">¶</a></div>
-<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span> <span class="p">{</span>
-    <span class="n">java</span>
-    <span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;0.6.0&quot;</span><span class="p">)</span>
+<div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#cfn-smithy-build-gradle" title="Permalink to this code">#</a></div>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">plugins</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">java</span>
+<span class="w">    </span><span class="n">id</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy&quot;</span><span class="p">).</span><span class="na">version</span><span class="p">(</span><span class="s">&quot;0.6.0&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 
-<span class="n">buildscript</span> <span class="p">{</span>
-    <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.21.0&quot;</span><span class="p">)</span>
-    <span class="p">}</span>
+<span class="n">buildscript</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.42.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -134,15 +359,15 @@ that generates a CloudFormation Resource Schemas for the specified resource
 shapes bound to the <code class="docutils literal notranslate"><span class="pre">smithy.example#Queues</span></code> service using the <code class="docutils literal notranslate"><span class="pre">Smithy</span></code>
 organization.</p>
 <div class="literal-block-wrapper docutils container" id="cfn-smithy-build-json">
-<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#cfn-smithy-build-json" title="Permalink to this code">¶</a></div>
+<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#cfn-smithy-build-json" title="Permalink to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;organizationName&quot;</span><span class="p">:</span> <span class="s2">&quot;Smithy&quot;</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -151,41 +376,41 @@ organization.</p>
 use the <a class="reference internal" href="../spec/aws/aws-core.html#service-cloudformation-name"><span class="std std-ref">cloudFormationName property of the aws.api#service trait</span></a>. The following configuration and model would
 generate one Resource Schema with the <code class="docutils literal notranslate"><span class="pre">typeName</span></code> of <code class="docutils literal notranslate"><span class="pre">AWS:Queues:Queue</span></code>.</p>
 <div class="literal-block-wrapper docutils container" id="id3">
-<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id3" title="Permalink to this code">¶</a></div>
+<div class="code-block-caption"><span class="caption-text">smithy-build.json</span><a class="headerlink" href="#id3" title="Permalink to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#QueueService&quot;</span><span class="p">,</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#QueueService&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </div>
 <div class="literal-block-wrapper docutils container" id="id4">
-<div class="code-block-caption"><span class="caption-text">model.smithy</span><a class="headerlink" href="#id4" title="Permalink to this code">¶</a></div>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="code-block-caption"><span class="caption-text">model.smithy</span><a class="headerlink" href="#id4" title="Permalink to this code">#</a></div>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use</span><span class="nc"> aws.api#service</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.api#service</span>
 
-<span class="nd">@service</span>(<span class="nl">sdkId:</span><span class="w"> </span><span class="s2">&quot;Queues&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">cloudFormationName:</span><span class="w"> </span><span class="s2">&quot;Queues&quot;</span>)<span class="w"></span>
-<span class="kd">service</span><span class="nc"> QueueService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2020-07-02&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">resources:</span><span class="w"> </span>[<span class="vc">Queue</span>]<span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Queues&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">cloudFormationName</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Queues&quot;</span>)
+<span class="kd">service </span><span class="nc">QueueService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-07-02&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">resources</span><span class="p">:</span><span class="w"> </span>[<span class="vc">Queue</span>]<span class="p">,</span>
+}
 </pre></div>
 </div>
 </div>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
-<p class="last">A buildscript dependency on &quot;software.amazon.smithy:smithy-aws-cloudformation:1.21.0&quot; is
+<p class="last">A buildscript dependency on &quot;software.amazon.smithy:smithy-aws-cloudformation:1.42.0&quot; is
 required in order for smithy-build to map the &quot;cloudformation&quot; plugin name
 to the correct Java library implementation.</p>
 </div>
 </div>
 <div class="section" id="cloudformation-configuration-settings">
-<h2><a href="#cloudformation-configuration-settings">CloudFormation configuration settings</a></h2>
+<h2>CloudFormation configuration settings<a class="headerlink" href="#cloudformation-configuration-settings" title="Permalink to this headline">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">cloudformation</span></code> plugin provides configuration options to influence the
 Resource Schemas that it generates.</p>
 <div class="admonition tip">
@@ -198,13 +423,13 @@ Resource Schemas that it generates.</p>
 <dt>service (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt><dd><p><strong>Required</strong>. The Smithy service <a class="reference internal" href="../spec/core/model.html#shape-id"><span class="std std-ref">shape ID</span></a> to convert.
 For example, <code class="docutils literal notranslate"><span class="pre">smithy.example#Queues</span></code>.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;organizationName&quot;</span><span class="p">:</span> <span class="s2">&quot;Smithy&quot;</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -215,13 +440,13 @@ For example, <code class="docutils literal notranslate"><span class="pre">smithy
 &quot;AWS&quot; if the <a class="reference internal" href="../spec/aws/aws-core.html#aws-api-service-trait"><span class="std std-ref">aws.api#service trait</span></a> is present, otherwise is
 <strong>required</strong>.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;organizationName&quot;</span><span class="p">:</span> <span class="s2">&quot;Smithy&quot;</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -233,14 +458,14 @@ This value defaults to the <a class="reference internal" href="../spec/aws/aws-c
 aws.api#service trait</span></a> if present, or the
 shape name of the specified service shape otherwise.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#QueueService&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;organizationName&quot;</span><span class="p">:</span> <span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;serviceName&quot;</span><span class="p">:</span> <span class="s2">&quot;Queues&quot;</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#QueueService&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;serviceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Queues&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -253,17 +478,17 @@ This list is case insensitive. By default, this is a list of the following
 values: &quot;Documentation Url&quot;, &quot;DocumentationUrl&quot;, &quot;API Reference&quot;, &quot;User
 Guide&quot;, &quot;Developer Guide&quot;, &quot;Reference&quot;, and &quot;Guide&quot;.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;organizationName&quot;</span><span class="p">:</span> <span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;externalDocs&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s2">&quot;Documentation Url&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Custom&quot;</span>
-            <span class="p">]</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;externalDocs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">&quot;Documentation Url&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;Custom&quot;</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -275,17 +500,17 @@ priority ordered list of names in an <a class="reference internal" href="../spec
 This list is case insensitive. By default, this is a list of the following
 values: &quot;Source Url&quot;, &quot;SourceUrl&quot;, &quot;Source&quot;, and &quot;Source Code&quot;.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;organizationName&quot;</span><span class="p">:</span> <span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;sourceDocs&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s2">&quot;Source Url&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Custom&quot;</span>
-            <span class="p">]</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;sourceDocs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">&quot;Source Url&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;Custom&quot;</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -302,22 +527,22 @@ JSON Patch, as specified in <span class="target" id="index-1"></span><a class="r
 properties to an undefined object will create nested objects in the
 result as needed.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;organizationName&quot;</span><span class="p">:</span> <span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;jsonAdd&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;smithy.example#Queue&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;/info/title&quot;</span><span class="p">:</span> <span class="s2">&quot;Replaced title value&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;/info/nested/foo&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;hi&quot;</span><span class="p">:</span> <span class="s2">&quot;Adding this object created intermediate objects too!&quot;</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;/info/nested/foo/baz&quot;</span><span class="p">:</span> <span class="kc">true</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;jsonAdd&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;smithy.example#Queue&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;/info/title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Replaced title value&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;/info/nested/foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;hi&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Adding this object created intermediate objects too!&quot;</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="nt">&quot;/info/nested/foo/baz&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -331,14 +556,14 @@ listed in the <a class="reference internal" href="../spec/aws/aws-iam.html#aws-i
 <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-handlers">the handlers section</a> in the CloudFormation Resource Schemas
 documentation for more information.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;organizationName&quot;</span><span class="p">:</span> <span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;disableHandlerPermissionGeneration&quot;</span><span class="p">:</span> <span class="kc">true</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;disableHandlerPermissionGeneration&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -349,34 +574,34 @@ define other permission actions required to invoke them with the <a class="refer
 <p>When handler permission generation is enabled, all the actions required to
 invoke the operations related to the handler, including the actions for the
 operations themselves, are used to populate permission lists:</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;handlers&quot;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;create&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;permissions&quot;</span><span class="p">:</span> <span class="p">[</span>
-            <span class="s2">&quot;dependency:GetDependencyComponent&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;queues:CreateQueue&quot;</span>
-        <span class="p">]</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;read&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;permissions&quot;</span><span class="p">:</span> <span class="p">[</span>
-            <span class="s2">&quot;queues:GetQueue&quot;</span>
-        <span class="p">]</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;update&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;permissions&quot;</span><span class="p">:</span> <span class="p">[</span>
-            <span class="s2">&quot;dependency:GetDependencyComponent&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;queues:UpdateQueue&quot;</span>
-        <span class="p">]</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;delete&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;permissions&quot;</span><span class="p">:</span> <span class="p">[</span>
-            <span class="s2">&quot;queues:DeleteQueue&quot;</span>
-        <span class="p">]</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;list&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;permissions&quot;</span><span class="p">:</span> <span class="p">[</span>
-            <span class="s2">&quot;queues:ListQueues&quot;</span>
-        <span class="p">]</span>
-    <span class="p">}</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;handlers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;create&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;permissions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">&quot;dependency:GetDependencyComponent&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;queues:CreateQueue&quot;</span>
+<span class="w">        </span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;read&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;permissions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">&quot;queues:GetQueue&quot;</span>
+<span class="w">        </span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;update&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;permissions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">&quot;dependency:GetDependencyComponent&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;queues:UpdateQueue&quot;</span>
+<span class="w">        </span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;delete&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;permissions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">&quot;queues:DeleteQueue&quot;</span>
+<span class="w">        </span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;list&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;permissions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">&quot;queues:ListQueues&quot;</span>
+<span class="w">        </span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">},</span>
 </pre></div>
 </div>
@@ -389,14 +614,14 @@ Schemas. By default, deprecated members are automatically added to the
 section</a> in the CloudFormation Resource Schemas documentation for more
 information.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;organizationName&quot;</span><span class="p">:</span> <span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;disableDeprecatedPropertyGeneration&quot;</span><span class="p">:</span> <span class="kc">true</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;disableDeprecatedPropertyGeneration&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -408,14 +633,14 @@ default, required members are automatically added to the <code class="docutils l
 schema property. See <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-required">the required property section</a> in the CloudFormation
 Resource Schemas documentation for more information.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;organizationName&quot;</span><span class="p">:</span> <span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;disableRequiredPropertyGeneration&quot;</span><span class="p">:</span> <span class="kc">true</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;disableRequiredPropertyGeneration&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -427,14 +652,14 @@ Resource Schemas. By default, property names of resource schemas are
 capitalized if no <a class="reference internal" href="../spec/aws/aws-cloudformation.html#aws-cloudformation-cfnname-trait"><span class="std std-ref">cfnName</span></a> trait
 is applied.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;organizationName&quot;</span><span class="p">:</span> <span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;disableCapitalizedProperties&quot;</span><span class="p">:</span> <span class="kc">true</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;disableCapitalizedProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -442,21 +667,21 @@ is applied.</p>
 </dl>
 </div>
 <div class="section" id="json-schema-configuration-settings">
-<h2><a href="#json-schema-configuration-settings">JSON schema configuration settings</a></h2>
+<h2>JSON schema configuration settings<a class="headerlink" href="#json-schema-configuration-settings" title="Permalink to this headline">#</a></h2>
 <dl class="docutils" id="generate-cloudformation-jsonschema-setting-defaulttimestampformat">
 <dt>defaultTimestampFormat (<code class="docutils literal notranslate"><span class="pre">string</span></code>)</dt><dd><p>Sets the assumed <a class="reference internal" href="../spec/core/protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat trait</span></a> value for timestamps with
 no explicit timestampFormat trait. The provided value is expected to be
 a string. Defaults to &quot;date-time&quot; if not set. Can be set to &quot;date-time&quot;,
 &quot;epoch-seconds&quot;, or &quot;http-date&quot;.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;organizationName&quot;</span><span class="p">:</span> <span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;defaultTimestampFormat&quot;</span><span class="p">:</span> <span class="s2">&quot;epoch-seconds&quot;</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;defaultTimestampFormat&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;epoch-seconds&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -466,19 +691,19 @@ a string. Defaults to &quot;date-time&quot; if not set. Can be set to &quot;date
 <dt>schemaDocumentExtensions (<code class="docutils literal notranslate"><span class="pre">Map&lt;String,</span> <span class="pre">any&gt;</span></code>)</dt><dd><p>Adds custom top-level key-value pairs to all of the generated
 CloudFormation Resource Schemas. Any existing value is overwritten.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;organizationName&quot;</span><span class="p">:</span> <span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;schemaDocumentExtensions&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;x-my-custom-top-level-property&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello!&quot;</span><span class="p">,</span>
-                <span class="nt">&quot;x-another-custom-top-level-property&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;can be&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;complex&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="s2">&quot;too!&quot;</span><span class="p">]</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;schemaDocumentExtensions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;x-my-custom-top-level-property&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hello!&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;x-another-custom-top-level-property&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;can be&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;complex&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;value&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;too!&quot;</span><span class="p">]</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -488,14 +713,14 @@ CloudFormation Resource Schemas. Any existing value is overwritten.</p>
 <dt>disableFeatures (<code class="docutils literal notranslate"><span class="pre">[string]</span></code>)</dt><dd><p>Disables JSON schema and CloudFormation schema property names from
 appearing in the generated CloudFormation Resource Schemas.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;service&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;organizationName&quot;</span><span class="p">:</span> <span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;disableFeatures&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;propertyNames&quot;</span><span class="p">]</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;cloudformation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;service&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.example#Queues&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;organizationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Smithy&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;disableFeatures&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;propertyNames&quot;</span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -503,7 +728,7 @@ appearing in the generated CloudFormation Resource Schemas.</p>
 </dl>
 </div>
 <div class="section" id="other-traits-that-influence-generation">
-<span id="generate-cloudformation-other-traits"></span><h2><a href="#other-traits-that-influence-generation">Other traits that influence generation</a></h2>
+<span id="generate-cloudformation-other-traits"></span><h2>Other traits that influence generation<a class="headerlink" href="#other-traits-that-influence-generation" title="Permalink to this headline">#</a></h2>
 <p>In addition to the <a class="reference internal" href="../spec/aws/aws-cloudformation.html#aws-cloudformation-traits"><span class="std std-ref">AWS CloudFormation traits</span></a>,
 the following traits affect the generation of CloudFormation Resource Schemas.</p>
 <dl class="docutils">
@@ -522,7 +747,7 @@ the creation of a custom <code class="docutils literal notranslate"><span class=
 </div>
 </div>
 <div class="section" id="generating-schemas-with-code">
-<h2><a href="#generating-schemas-with-code">Generating Schemas with code</a></h2>
+<h2>Generating Schemas with code<a class="headerlink" href="#generating-schemas-with-code" title="Permalink to this headline">#</a></h2>
 <p>Developers that need more advanced control over the generation of
 CloudFormation resources from Smithy can use the
 <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy:smithy-aws-cloudformation</span></code> Java library to perform
@@ -531,58 +756,101 @@ the generation.</p>
 how to install <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy:smithy-aws-cloudformation</span></code> through
 Gradle:</p>
 <div class="literal-block-wrapper docutils container" id="cfn-code-build-gradle">
-<div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#cfn-code-build-gradle" title="Permalink to this code">¶</a></div>
-<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span> <span class="p">{</span>
-    <span class="n">dependencies</span> <span class="p">{</span>
-        <span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.21.0&quot;</span><span class="p">)</span>
-    <span class="p">}</span>
+<div class="code-block-caption"><span class="caption-text">build.gradle.kts</span><a class="headerlink" href="#cfn-code-build-gradle" title="Permalink to this code">#</a></div>
+<div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">buildscript</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">classpath</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-cloudformation:1.42.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </div>
 <p>Next, you need to create and configure a <code class="docutils literal notranslate"><span class="pre">CloudFormationConverter</span></code>:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">java.util.List</span><span class="p">;</span>
-<span class="kn">import</span> <span class="nn">software.amazon.smithy.model.shapes.ShapeId</span><span class="p">;</span>
-<span class="kn">import</span> <span class="nn">software.amazon.smithy.aws.cloudformation.schema.CfnConfig</span><span class="p">;</span>
-<span class="kn">import</span> <span class="nn">software.amazon.smithy.aws.cloudformation.schema.fromsmithy.CfnConverter</span><span class="p">;</span>
-<span class="kn">import</span> <span class="nn">software.amazon.smithy.aws.cloudformation.schema.model.ResourceSchema</span><span class="p">;</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.model.shapes.ShapeId</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.aws.cloudformation.schema.CfnConfig</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.aws.cloudformation.schema.fromsmithy.CfnConverter</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">software.amazon.smithy.aws.cloudformation.schema.model.ResourceSchema</span><span class="p">;</span>
 
-<span class="n">CfnConverter</span> <span class="n">converter</span> <span class="o">=</span> <span class="n">CfnConverter</span><span class="p">.</span><span class="na">create</span><span class="p">();</span>
+<span class="n">CfnConverter</span><span class="w"> </span><span class="n">converter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CfnConverter</span><span class="p">.</span><span class="na">create</span><span class="p">();</span>
 
 <span class="c1">// Add any necessary configuration settings.</span>
-<span class="n">CfnConfig</span> <span class="n">config</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CfnConfig</span><span class="p">();</span>
+<span class="n">CfnConfig</span><span class="w"> </span><span class="n">config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CfnConfig</span><span class="p">();</span>
 <span class="n">config</span><span class="p">.</span><span class="na">setService</span><span class="p">(</span><span class="n">ShapeId</span><span class="p">.</span><span class="na">from</span><span class="p">(</span><span class="s">&quot;smithy.example#Queues&quot;</span><span class="p">));</span>
 <span class="n">config</span><span class="p">.</span><span class="na">setOrganizationName</span><span class="p">(</span><span class="s">&quot;Smithy&quot;</span><span class="p">);</span>
 
 <span class="c1">// Generate the schemas.</span>
-<span class="n">List</span><span class="o">&lt;</span><span class="n">ResourceSchema</span><span class="o">&gt;</span> <span class="n">schemas</span> <span class="o">=</span> <span class="n">converter</span><span class="p">.</span><span class="na">convert</span><span class="p">(</span><span class="n">myModel</span><span class="p">);</span>
+<span class="n">List</span><span class="o">&lt;</span><span class="n">ResourceSchema</span><span class="o">&gt;</span><span class="w"> </span><span class="n">schemas</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">converter</span><span class="p">.</span><span class="na">convert</span><span class="p">(</span><span class="n">myModel</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>The conversion process is highly extensible through
 <code class="docutils literal notranslate"><span class="pre">software.amazon.smithy.aws.cloudformation.schema.fromsmithy.Smithy2CfnExtension</span></code>
-service providers. See the <a class="reference external" href="https://awslabs.github.io/smithy/javadoc/1.21.0/software/amazon/smithy/aws/cloudformation/schema/fromsmithy/Smithy2CfnExtension.html">Javadocs</a> for more information.</p>
+service providers. See the <a class="reference external" href="https://smithy.io/javadoc/1.42.0/software/amazon/smithy/aws/cloudformation/schema/fromsmithy/Smithy2CfnExtension.html">Javadocs</a> for more information.</p>
 </div>
 </div>
 
-
-                    
-                    <section class="relations">
-                        
-                        <a href="converting-to-openapi.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Converting Smithy to OpenAPI</a>
-                        
-                    </section>
-                    
-                </article><aside id="right-column" class="side-column hidden-sm">
-                    <div class="column-body">
-                        <section class="sidebar">
-                            
-                            <section class="next-previous">
-                                
-                                <a href="converting-to-openapi.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
-                                
-                            </section>
-                            
-                            <ul>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../ts-ssdk/index.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Smithy Server Generator for TypeScript</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="converting-to-openapi.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Converting Smithy to OpenAPI</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Amazon Web Services
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
 <li><a class="reference internal" href="#">Generating CloudFormation Resource Schemas from Smithy</a><ul>
 <li><a class="reference internal" href="#introduction">Introduction</a><ul>
 <li><a class="reference internal" href="#differences-between-smithy-resources-and-cloudformation-resource-schemas">Differences between Smithy resources and CloudFormation Resource Schemas</a></li>
@@ -597,18 +865,19 @@ service providers. See the <a class="reference external" href="https://awslabs.g
 </li>
 </ul>
 
-                        </section>
-                    </div>
-                </aside></div>
-        </section>
-        
-    
-<footer id="footer">
-    <div class="width-wrapper">
-        <div class="copyright">
-            <p>©2021, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+          </div>
         </div>
-    </div>
-</footer>
-  </body>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/scripts/furo.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    </body>
 </html>

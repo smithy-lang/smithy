@@ -1,94 +1,316 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="Smithy Guides" href="../../../guides/index.html" /><link rel="prev" title="Amazon Machine Learning Customizations" href="machinelearning-customizations.html" />
 
-<!DOCTYPE html>
-
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Amazon S3 Customizations &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../../_static/bootstrap-reboot.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+        <title>Amazon S3 Customizations - Smithy 1.0</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css" />
     
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/default.css" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/tabs.css" />
-    <link rel="stylesheet" href="../../../../_static/custom-tabs.css" type="text/css" />
-
     
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/jquery.js"></script>
-    <script src="../../../../_static/underscore.js"></script>
-    <script src="../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../_static/smithy.js"></script>
-    <link rel="shortcut icon" href="../../../../_static/favicon.png"/>
-    <link rel="index" title="Index" href="../../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../../search.html" />
-    <link rel="next" title="Smithy Guides" href="../../../guides/index.html" />
-    <link rel="prev" title="Amazon Machine Learning Customizations" href="machinelearning-customizations.html" />
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="smithy-version" content="1.0">
 
-  </head><body>
-    <header>
-        <div class="header-flex width-wrapper">
-            <div class="site-logo">
-                <a href="../../../../index.html">
-                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
-                </a>
-                <span class="version-text">1.0</span>
-            </div>
-            <ul id="page-navigation">
-                <li class="site-page first"><a href="../../../../quickstart.html">Quick Start</a></li>
-                <li class="site-page"><a href="../../index.html">Specifications</a></li>
-                <li class="site-page"><a href="../../../guides/index.html">Guides</a></li>
-                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
-                <li class="site-search hidden-sm">
-                    <form action="../../../../search.html" method="get">
-                        <input type="hidden" name="check_keywords" value="yes" />
-                        <input type="hidden" name="area" value="default" />
-                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
-                    </form>
-                </li>
-            </ul>
-        </div>
-    </header>
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --admonition-font-size: 100%;
+  --admonition-title-font-size: 100%;
+  --color-brand-primary: #C44536;
+  --color-brand-content: #00808b;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+      }
+    }
+  }
+</style><script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
+<script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script></head>
+  <body>
     
-        
-        
-        <section id="page-container">
-            <div class="width-wrapper flex">
-                <article class="document-body">
-                    
-                    <ul class="rel-parents">
-                    <li><a href="../../index.html" >Specifications</a></li>
-                    <li><a href="../index.html" >AWS specifications</a></li>
-                    <li><a href="index.html" accesskey="U">AWS Service Customizations</a></li>
-                    </ul>
-                    
-                    
-  <div class="section" id="amazon-s3-customizations">
-<h1><a href="#amazon-s3-customizations">Amazon S3 Customizations</a></h1>
-<div class="contents local topic" id="table-of-contents">
-<p class="topic-title">Table of contents</p>
-<ul class="simple">
-<li><a class="reference internal" href="#s3-bucket-addressing" id="id2">S3 Bucket Addressing</a><ul>
-<li><a class="reference internal" href="#s3-bucket-virtual-hosting" id="id3">S3 Bucket Virtual Hosting</a></li>
-<li><a class="reference internal" href="#s3-dual-stack-endpoints" id="id4">S3 Dual-Stack Endpoints</a></li>
-<li><a class="reference internal" href="#s3-transfer-acceleration-endpoints" id="id5">S3 Transfer Acceleration Endpoints</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#s3-traits" id="id6">S3 Traits</a><ul>
-<li><a class="reference internal" href="#aws-customizations-s3unwrappedxmloutput-trait" id="id7"><code class="docutils literal notranslate"><span class="pre">aws.customizations#s3UnwrappedXmlOutput</span></code> trait</a></li>
-</ul>
-</li>
-</ul>
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<div class="announcement">
+  <aside class="announcement-content">
+     <strong>⚠️ You are viewing version 1.0.</strong><br/>
+Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2.0/</a>. 
+  </aside>
 </div>
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">Smithy 1.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../../_static/smithy.svg" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick start</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../index.html">Specifications</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../core/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../core/model.html">1. The Smithy model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../core/prelude-model.html">2. Prelude model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../core/constraint-traits.html">3. Constraint traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../core/documentation-traits.html">4. Documentation traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../core/type-refinement-traits.html">5. Type refinement traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../core/protocol-traits.html">6. Protocol traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../core/auth-traits.html">7. Authentication traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../core/behavior-traits.html">8. Behavior traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../core/resource-traits.html">9. Resource traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../core/stream-traits.html">10. Streaming Traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../core/http-traits.html">11. HTTP binding traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../core/xml-traits.html">12. XML binding traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../core/endpoint-traits.html">13. Endpoint Traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../core/selectors.html">14. Selectors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../core/model-validation.html">15. Model validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../core/idl.html">16. Smithy IDL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../core/json-ast.html">17. JSON AST</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../waiters.html">Waiters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../mqtt.html">MQTT Protocol Bindings</a></li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../index.html">AWS specifications</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../aws-core.html">AWS Core Specification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws-auth.html">AWS Authentication Traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws-iam.html">AWS IAM traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../amazon-apigateway.html">Amazon API Gateway traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws-cloudformation.html">AWS CloudFormation traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws-restxml-protocol.html">AWS restXml protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws-query-protocol.html">AWS query protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
+<li class="toctree-l3 current has-children"><a class="reference internal" href="index.html">AWS Service Customizations</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="glacier-customizations.html">Amazon Glacier Customizations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
+<li class="toctree-l4 current current-page"><a class="current reference internal" href="#">Amazon S3 Customizations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../guides/index.html">Smithy Guides</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../guides/building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../guides/building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../guides/building-models/build-config.html">smithy-build</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guides/model-linters.html">Model linters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guides/evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guides/style-guide.html">Style Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guides/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guides/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Implementations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/implementations.html">Implementations</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/">2.0 Documentation</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-1.0/spec/aws/customizations/s3-customizations.rst" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <div class="section" id="amazon-s3-customizations">
+<h1>Amazon S3 Customizations<a class="headerlink" href="#amazon-s3-customizations" title="Permalink to this headline">#</a></h1>
 <div class="section" id="s3-bucket-addressing">
-<h2><a href="#s3-bucket-addressing">S3 Bucket Addressing</a></h2>
+<h2>S3 Bucket Addressing<a class="headerlink" href="#s3-bucket-addressing" title="Permalink to this headline">#</a></h2>
 <p>Clients for Amazon S3 SHOULD expose multiple levels of configuration for bucket
 addressing: environment, file, client, and operation. Settings for bucket
 addressing should be resolved closest to the operation. Most bucket addressing
 configuration settings compose together. The following table is a
 non-exhaustive list of combinations showing the expected precedence orders for
 the <a class="reference internal" href="#s3-bucket-virtual-hosting"><span class="std std-ref">S3 Bucket Virtual Hosting</span></a> settings:</p>
+<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
@@ -138,8 +360,9 @@ the <a class="reference internal" href="#s3-bucket-virtual-hosting"><span class=
 </tr>
 </tbody>
 </table>
+</div>
 <div class="section" id="s3-bucket-virtual-hosting">
-<span id="id1"></span><h3><a href="#s3-bucket-virtual-hosting">S3 Bucket Virtual Hosting</a></h3>
+<span id="id1"></span><h3>S3 Bucket Virtual Hosting<a class="headerlink" href="#s3-bucket-virtual-hosting" title="Permalink to this headline">#</a></h3>
 <p>A client for Amazon S3 MUST expose the option to use <a class="reference external" href="https://docs.aws.amazon.com/AmazonS3/latest/dev/VirtualHosting.html">virtual hosting</a> for
 addressing a bucket. Configurations MUST support the default of using virtual
 hosting, explicitly configuring virtual hosting, and explicitly configuring the
@@ -147,6 +370,7 @@ hosting, explicitly configuring virtual hosting, and explicitly configuring the
 bucket name from the request URI and MUST prepend it to the request host. When
 set to path-style, clients MUST NOT perform this action and MUST use the
 modeled HTTP bindings for the request.</p>
+<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
@@ -171,14 +395,16 @@ modeled HTTP bindings for the request.</p>
 </tbody>
 </table>
 </div>
+</div>
 <div class="section" id="s3-dual-stack-endpoints">
-<h3><a href="#s3-dual-stack-endpoints">S3 Dual-Stack Endpoints</a></h3>
+<h3>S3 Dual-Stack Endpoints<a class="headerlink" href="#s3-dual-stack-endpoints" title="Permalink to this headline">#</a></h3>
 <p>A client for Amazon S3 MUST expose the option to use <a class="reference external" href="https://docs.aws.amazon.com/AmazonS3/latest/dev/dual-stack-endpoints.html">dual-stack endpoints</a>
 for addressing a bucket. Configurations MUST default this setting to being
 disabled. When enabled, the string literal &quot;.dualstack&quot; is placed after S3's
 <a class="reference internal" href="../aws-core.html#service-endpoint-prefix"><span class="std std-ref">endpointPrefix</span></a> of &quot;s3&quot; and before the region in the host for
 the request. Clients MUST have the <a class="reference internal" href="#s3-bucket-virtual-hosting"><span class="std std-ref">S3 Bucket Virtual Hosting</span></a> setting
 resolved to &quot;virtual&quot; to enable this setting.</p>
+<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
@@ -199,14 +425,16 @@ resolved to &quot;virtual&quot; to enable this setting.</p>
 </tbody>
 </table>
 </div>
+</div>
 <div class="section" id="s3-transfer-acceleration-endpoints">
-<h3><a href="#s3-transfer-acceleration-endpoints">S3 Transfer Acceleration Endpoints</a></h3>
+<h3>S3 Transfer Acceleration Endpoints<a class="headerlink" href="#s3-transfer-acceleration-endpoints" title="Permalink to this headline">#</a></h3>
 <p>A client for Amazon S3 MUST expose the option to use S3 <a class="reference external" href="https://docs.aws.amazon.com/AmazonS3/latest/dev/transfer-acceleration.html">transfer acceleration</a>
 for addressing a bucket. Configurations MUST default this setting to being
 disabled. When enabled, the string literal &quot;s3-accelerate&quot; MUST replace the
 S3's <a class="reference internal" href="../aws-core.html#service-endpoint-prefix"><span class="std std-ref">endpointPrefix</span></a> of &quot;s3&quot; and MUST remove the resolved region
 from the host. Clients MUST have the <a class="reference internal" href="#s3-bucket-virtual-hosting"><span class="std std-ref">S3 Bucket Virtual Hosting</span></a> setting
 resolved to &quot;virtual&quot; to enable this setting.</p>
+<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
@@ -226,49 +454,50 @@ resolved to &quot;virtual&quot; to enable this setting.</p>
 </tr>
 </tbody>
 </table>
+</div>
 <p><em>TODO: Add the other bucket addressing customizations and more.</em></p>
 </div>
 </div>
 <div class="section" id="s3-traits">
-<h2><a href="#s3-traits">S3 Traits</a></h2>
+<h2>S3 Traits<a class="headerlink" href="#s3-traits" title="Permalink to this headline">#</a></h2>
 <div class="section" id="aws-customizations-s3unwrappedxmloutput-trait">
-<h3><a href="#aws-customizations-s3unwrappedxmloutput-trait"><code class="docutils literal notranslate"><span class="pre">aws.customizations#s3UnwrappedXmlOutput</span></code> trait</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">aws.customizations#s3UnwrappedXmlOutput</span></code> trait<a class="headerlink" href="#aws-customizations-s3unwrappedxmloutput-trait" title="Permalink to this headline">#</a></h3>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates the response body from S3 is not wrapped in the <a class="reference internal" href="../aws-restxml-protocol.html#aws-restxml-protocol"><span class="std std-ref">AWS restXml protocol</span></a> operation-level XML node.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">operation</span></code></dd>
 <dt>Value type</dt><dd>Annotation trait</dd>
 </dl>
 <p>Consider the following <em>abridged</em> model of S3's <code class="docutils literal notranslate"><span class="pre">GetBucketLocation</span></code> operation:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.customizations#s3UnwrappedXmlOutput</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use </span><span class="nc">aws.customizations#s3UnwrappedXmlOutput</span>
 
-<span class="nd">@http</span>(<span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/GetBucketLocation&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span>)<span class="w"></span>
-<span class="nd">@s3UnwrappedXmlOutput</span><span class="w"></span>
-<span class="kd">operation</span><span class="nc"> GetBucketLocation</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">GetBucketLocationInput</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetBucketLocationOutput</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@http</span>(<span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/GetBucketLocation&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span>)
+<span class="nt">@s3UnwrappedXmlOutput</span>
+<span class="kd">operation </span><span class="nc">GetBucketLocation</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetBucketLocationInput</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetBucketLocationOutput</span>
+}
 
-<span class="nd">@output</span><span class="w"></span>
-<span class="nd">@xmlName</span>(<span class="s2">&quot;LocationConstraint&quot;</span>)<span class="w"></span>
-<span class="kd">structure</span><span class="nc"> GetBucketLocationOutput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">LocationConstraint:</span><span class="w"> </span><span class="vc">BucketLocationConstraint</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="nt">@xmlName</span>(<span class="s2">&quot;LocationConstraint&quot;</span>)
+<span class="kd">structure </span><span class="nc">GetBucketLocationOutput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">LocationConstraint</span><span class="p">:</span><span class="w"> </span><span class="vc">BucketLocationConstraint</span>
+}
 
-<span class="nd">@enum</span>([<span class="w"></span>
-<span class="w">    </span>{<span class="w"> </span><span class="nl">value:</span><span class="w"> </span><span class="s2">&quot;us-west-2&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;us_west_2&quot;</span><span class="w"> </span>}<span class="w"></span>
-])<span class="w"></span>
-<span class="kd">string</span><span class="nc"> BucketLocationConstraint</span><span class="w"></span>
+<span class="nt">@enum</span>([
+<span class="w">    </span>{<span class="w"> </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;us-west-2&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;us_west_2&quot;</span><span class="w"> </span>}
+])
+<span class="kd">string </span><span class="nc">BucketLocationConstraint</span>
 </pre></div>
 </div>
 <p>Since this operation is modeled with <code class="docutils literal notranslate"><span class="pre">&#64;s3UnwrappedXmlOutput</span></code>,
 an Amazon S3 client should expect the response from S3 to be unwrapped as shown below:</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;LocationConstraint</span> <span class="na">xmlns=</span><span class="s">&quot;http://s3.amazonaws.com/doc/2006-03-01/&quot;</span><span class="nt">&gt;</span>us-west-2<span class="nt">&lt;/LocationConstraint&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;LocationConstraint</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;http://s3.amazonaws.com/doc/2006-03-01/&quot;</span><span class="nt">&gt;</span>us-west-2<span class="nt">&lt;/LocationConstraint&gt;</span>
 </pre></div>
 </div>
 <p>Without <code class="docutils literal notranslate"><span class="pre">&#64;s3UnwrappedXmlOutput</span></code> on the operation, the response would be expected to be
 wrapped with the <a class="reference internal" href="../aws-restxml-protocol.html#aws-restxml-protocol"><span class="std std-ref">AWS restXml protocol</span></a> operation-level XML node:</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;LocationConstraint</span> <span class="na">xmlns=</span><span class="s">&quot;http://s3.amazonaws.com/doc/2006-03-01/&quot;</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;LocationConstraint&gt;</span>us-west-2<span class="nt">&lt;/LocationConstraint&gt;</span>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;LocationConstraint</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;http://s3.amazonaws.com/doc/2006-03-01/&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;LocationConstraint&gt;</span>us-west-2<span class="nt">&lt;/LocationConstraint&gt;</span>
 <span class="nt">&lt;/LocationConstraint&gt;</span>
 </pre></div>
 </div>
@@ -278,27 +507,68 @@ in order to properly handle the output for the <code class="docutils literal not
 </div>
 </div>
 
-
-                    
-                    <section class="relations">
-                        
-                        <a href="machinelearning-customizations.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Amazon Machine Learning Customizations</a>
-                        
-                        <a href="../../../guides/index.html" title="next chapter" class="next-page clearfix">Smithy Guides →</a>
-                    </section>
-                    
-                </article><aside id="right-column" class="side-column hidden-sm">
-                    <div class="column-body">
-                        <section class="sidebar">
-                            
-                            <section class="next-previous">
-                                
-                                <a href="machinelearning-customizations.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
-                                
-                                <a href="../../../guides/index.html" title="next chapter" class="next-page clearfix">Next →</a>
-                            </section>
-                            
-                            <ul>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../../../guides/index.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Smithy Guides</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="machinelearning-customizations.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Amazon Machine Learning Customizations</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Amazon Web Services
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
 <li><a class="reference internal" href="#">Amazon S3 Customizations</a><ul>
 <li><a class="reference internal" href="#s3-bucket-addressing">S3 Bucket Addressing</a><ul>
 <li><a class="reference internal" href="#s3-bucket-virtual-hosting">S3 Bucket Virtual Hosting</a></li>
@@ -314,18 +584,19 @@ in order to properly handle the output for the <code class="docutils literal not
 </li>
 </ul>
 
-                        </section>
-                    </div>
-                </aside></div>
-        </section>
-        
-    
-<footer id="footer">
-    <div class="width-wrapper">
-        <div class="copyright">
-            <p>©2021, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+          </div>
         </div>
-    </div>
-</footer>
-  </body>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/scripts/furo.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    </body>
 </html>

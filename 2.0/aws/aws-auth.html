@@ -237,6 +237,7 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../additional-specs/index.html">Additional specs</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../additional-specs/smoke-tests.html">Smoke Tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../additional-specs/waiters.html">Waiters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/rules-engine/index.html">Rules engine</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -364,7 +365,8 @@ to a service.</dd>
 <td><strong>Required</strong>. The signature version 4 service signing name to use
 in the <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/sigv4-create-string-to-sign.html">credential scope</a> when signing requests. This value MUST
 NOT be empty. This value SHOULD match the <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code> property
-of the <a class="reference internal" href="aws-core.html#aws-api-service-trait"><span class="std std-ref">aws.api#service trait</span></a>.</td>
+of the <a class="reference internal" href="aws-core.html#aws-api-service-trait"><span class="std std-ref">aws.api#service trait</span></a> if present and the <code class="docutils literal notranslate"><span class="pre">name</span></code>
+property of the <a class="reference internal" href="#aws-auth-sigv4a-trait"><span class="std std-ref">aws.auth#sigv4a trait</span></a> if present.</td>
 </tr>
 </tbody>
 </table>
@@ -393,8 +395,69 @@ unauthenticated request.</p>
 </pre></div>
 </div>
 </div>
+<div class="section" id="aws-auth-sigv4a-trait">
+<span id="aws-auth-sigv4a-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.auth#sigv4a</span></code> trait<a class="headerlink" href="#aws-auth-sigv4a-trait" title="Permalink to this headline">#</a></h2>
+<dl class="docutils">
+<dt>Trait summary</dt><dd>The <code class="docutils literal notranslate"><span class="pre">aws.auth#sigv4a</span></code> trait adds support for AWS Signature Version 4
+Asymmetric (SigV4A), an extension of <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html">AWS signature version 4</a> (SigV4), to
+a service.</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service[trait|aws.auth#sigv4]</span></code></dd>
+<dt>Trait value</dt><dd><p>An <code class="docutils literal notranslate"><span class="pre">object</span></code> that supports the following properties:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="20%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>name</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. The signature version 4a service signing name to use
+in the <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/sigv4-create-string-to-sign.html">credential scope</a> when signing requests. This value MUST
+NOT be empty. This value SHOULD match the <code class="docutils literal notranslate"><span class="pre">arnNamespace</span></code> property
+of the <a class="reference internal" href="aws-core.html#aws-api-service-trait"><span class="std std-ref">aws.api#service trait</span></a> if present and the <code class="docutils literal notranslate"><span class="pre">name</span></code>
+property of the <a class="reference internal" href="#aws-auth-sigv4-trait"><span class="std std-ref">aws.auth#sigv4 trait</span></a>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</dd>
+</dl>
+<p>SigV4A is nearly identical to SigV4, but also uses public-private keys and
+asymmetric cryptographic signatures for every request. Most notably, SigV4A
+supports signatures for multi-region API requests.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">namespace </span><span class="nc">aws.fooBaz</span>
+
+<span class="kd">use </span><span class="nc">aws.api#service</span>
+<span class="kd">use </span><span class="nc">aws.auth#sigv4</span>
+<span class="kd">use </span><span class="nc">aws.auth#sigv4a</span>
+<span class="kd">use </span><span class="nc">aws.protocols#restJson1</span>
+
+<span class="c">// This service is an AWS service that prioritizes SigV4A</span>
+<span class="c">// authentication before SigV4 authentication.</span>
+<span class="c">// Note that services that support SigV4A MUST support SigV4.</span>
+<span class="nt">@service</span>(<span class="py">sdkId</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some Value&quot;</span>)
+<span class="nt">@auth</span>([<span class="vc">sigv4a</span><span class="p">,</span><span class="w"> </span><span class="vc">sigv4</span>])
+<span class="nt">@sigv4</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foobaz&quot;</span>)
+<span class="nt">@sigv4a</span>(<span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foobaz&quot;</span>)
+<span class="nt">@restJson1</span>
+<span class="kd">service </span><span class="nc">FooBaz</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-03-17&quot;</span>
+}
+</pre></div>
+</div>
+</div>
 <div class="section" id="aws-auth-unsignedpayload-trait">
-<span id="aws-auth-unsignedpayload-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.auth#unsignedPayload</span></code> trait<a class="headerlink" href="#aws-auth-unsignedpayload-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-auth-unsignedpayload-trait"></span><span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.auth#unsignedPayload</span></code> trait<a class="headerlink" href="#aws-auth-unsignedpayload-trait" title="Permalink to this headline">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that the payload of an operation is not to be part of the
 signature computed for the request of an operation.</dd>
@@ -427,7 +490,7 @@ literal string <code class="docutils literal notranslate"><span class="pre">UNSI
 </div>
 </div>
 <div class="section" id="aws-auth-cognitouserpools-trait">
-<span id="aws-auth-cognitouserpools-trait"></span><span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.auth#cognitoUserPools</span></code> trait<a class="headerlink" href="#aws-auth-cognitouserpools-trait" title="Permalink to this headline">#</a></h2>
+<span id="aws-auth-cognitouserpools-trait"></span><span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.auth#cognitoUserPools</span></code> trait<a class="headerlink" href="#aws-auth-cognitouserpools-trait" title="Permalink to this headline">#</a></h2>
 <dl class="docutils">
 <dt>Trait summary</dt><dd>The <code class="docutils literal notranslate"><span class="pre">aws.auth#cognitoUserPools</span></code> trait adds support for
 <a class="reference external" href="https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-identity-pools.html">Amazon Cognito User Pools</a> to a service.</dd>
@@ -541,6 +604,7 @@ element is of this format: <code class="docutils literal notranslate"><span clas
             <ul>
 <li><a class="reference internal" href="#">AWS Authentication Traits</a><ul>
 <li><a class="reference internal" href="#aws-auth-sigv4-trait"><code class="docutils literal notranslate"><span class="pre">aws.auth#sigv4</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-auth-sigv4a-trait"><code class="docutils literal notranslate"><span class="pre">aws.auth#sigv4a</span></code> trait</a></li>
 <li><a class="reference internal" href="#aws-auth-unsignedpayload-trait"><code class="docutils literal notranslate"><span class="pre">aws.auth#unsignedPayload</span></code> trait</a><ul>
 <li><a class="reference internal" href="#unsigned-payloads-and-signature-version-4">Unsigned Payloads and signature version 4</a></li>
 </ul>

@@ -1,100 +1,310 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="AWS EC2 query protocol" href="aws-ec2-query-protocol.html" /><link rel="prev" title="AWS restXml protocol" href="aws-restxml-protocol.html" />
 
-<!DOCTYPE html>
-
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AWS query protocol &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+        <title>AWS query protocol - Smithy 1.0</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
     
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/default.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
-    <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
-
     
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/tabs.js"></script>
-    <script type="text/javascript" src="../../../_static/smithy.js"></script>
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
-    <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="AWS EC2 query protocol" href="aws-ec2-query-protocol.html" />
-    <link rel="prev" title="AWS restXml protocol" href="aws-restxml-protocol.html" />
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="smithy-version" content="1.0">
 
-  </head><body>
-    <header>
-        <div class="header-flex width-wrapper">
-            <div class="site-logo">
-                <a href="../../../index.html">
-                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
-                </a>
-                <span class="version-text">1.0</span>
-            </div>
-            <ul id="page-navigation">
-                <li class="site-page first"><a href="../../../quickstart.html">Quick Start</a></li>
-                <li class="site-page"><a href="../index.html">Specifications</a></li>
-                <li class="site-page"><a href="../../guides/index.html">Guides</a></li>
-                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
-                <li class="site-search hidden-sm">
-                    <form action="../../../search.html" method="get">
-                        <input type="hidden" name="check_keywords" value="yes" />
-                        <input type="hidden" name="area" value="default" />
-                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
-                    </form>
-                </li>
-            </ul>
-        </div>
-    </header>
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --admonition-font-size: 100%;
+  --admonition-title-font-size: 100%;
+  --color-brand-primary: #C44536;
+  --color-brand-content: #00808b;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+      }
+    }
+  }
+</style><script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
+<script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script></head>
+  <body>
     
-        
-        
-        <section id="page-container">
-            <div class="width-wrapper flex">
-                <article class="document-body">
-                    
-                    <ul class="rel-parents">
-                    <li><a href="../index.html" >Specifications</a></li>
-                    <li><a href="index.html" accesskey="U">AWS specifications</a></li>
-                    </ul>
-                    
-                    
-  <div class="section" id="aws-query-protocol">
-<span id="id1"></span><h1><a href="#aws-query-protocol">AWS query protocol</a></h1>
-<p>This document defines the <code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> protocol.</p>
-<div class="contents local topic" id="table-of-contents">
-<p class="topic-title">Table of contents</p>
-<ul class="simple">
-<li><a class="reference internal" href="#overview" id="id5">Overview</a></li>
-<li><a class="reference internal" href="#supported-traits" id="id6">Supported traits</a></li>
-<li><a class="reference internal" href="#request-serialization" id="id7">Request serialization</a><ul>
-<li><a class="reference internal" href="#x-www-form-urlencoded-shape-serialization" id="id8">x-www-form-urlencoded shape serialization</a></li>
-<li><a class="reference internal" href="#query-key-resolution" id="id9">Query key resolution</a></li>
-<li><a class="reference internal" href="#example-requests" id="id10">Example requests</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#response-serialization" id="id11">Response serialization</a><ul>
-<li><a class="reference internal" href="#xml-shape-serialization" id="id12">XML shape serialization</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#operation-error-serialization" id="id13">Operation error serialization</a></li>
-<li><a class="reference internal" href="#non-numeric-float-and-double-serialization" id="id14">Non-numeric float and double serialization</a><ul>
-<li><a class="reference internal" href="#error-http-response-status-code-resolution" id="id15">Error HTTP response status code resolution</a></li>
-<li><a class="reference internal" href="#error-code-resolution" id="id16">Error &quot;Code&quot; resolution</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#aws-protocols-awsquery-trait" id="id17"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-protocols-awsqueryerror-trait" id="id18"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQueryError</span></code> trait</a></li>
-<li><a class="reference internal" href="#protocol-compliance-tests" id="id19">Protocol compliance tests</a></li>
-</ul>
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<div class="announcement">
+  <aside class="announcement-content">
+     <strong>⚠️ You are viewing version 1.0.</strong><br/>
+Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2.0/</a>. 
+  </aside>
 </div>
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Smithy 1.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../_static/smithy.svg" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quick start</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">Specifications</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../core/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../core/model.html">1. The Smithy model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/prelude-model.html">2. Prelude model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/constraint-traits.html">3. Constraint traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/documentation-traits.html">4. Documentation traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/type-refinement-traits.html">5. Type refinement traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/protocol-traits.html">6. Protocol traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/auth-traits.html">7. Authentication traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/behavior-traits.html">8. Behavior traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/resource-traits.html">9. Resource traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/stream-traits.html">10. Streaming Traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/http-traits.html">11. HTTP binding traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/xml-traits.html">12. XML binding traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/endpoint-traits.html">13. Endpoint Traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/selectors.html">14. Selectors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/model-validation.html">15. Model validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/idl.html">16. Smithy IDL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/json-ast.html">17. JSON AST</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../waiters.html">Waiters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mqtt.html">MQTT Protocol Bindings</a></li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">AWS specifications</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="aws-core.html">AWS Core Specification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws-auth.html">AWS Authentication Traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws-iam.html">AWS IAM traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="amazon-apigateway.html">Amazon API Gateway traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws-cloudformation.html">AWS CloudFormation traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws-restxml-protocol.html">AWS restXml protocol</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">AWS query protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../guides/index.html">Smithy Guides</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../guides/building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../guides/building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../guides/building-models/build-config.html">smithy-build</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../guides/model-linters.html">Model linters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guides/evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guides/style-guide.html">Style Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guides/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guides/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Implementations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/implementations.html">Implementations</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/">2.0 Documentation</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-1.0/spec/aws/aws-query-protocol.rst" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <div class="section" id="aws-query-protocol">
+<span id="id1"></span><h1>AWS query protocol<a class="headerlink" href="#aws-query-protocol" title="Permalink to this headline">#</a></h1>
+<p>This document defines the <code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> protocol.</p>
 <div class="section" id="overview">
-<h2><a href="#overview">Overview</a></h2>
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">#</a></h2>
 <p>The AWS Query protocol uses HTTP and serializes HTTP requests using query
 string parameters and responses using XML. Requests can be sent using GET
 requests and placing parameters in the query string; however, sending
@@ -105,15 +315,15 @@ string.</p>
 <p>A service is configured to use this protocol by applying the <a class="reference internal" href="#aws-protocols-awsquery-trait"><span class="std std-ref">aws.protocols#awsQuery trait</span></a>.
 The service MUST also define the <a class="reference internal" href="../core/xml-traits.html#xmlnamespace-trait"><span class="std std-ref">xmlNamespace trait</span></a> which is used
 to determine the XML namespace used in XML responses.</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use</span><span class="nc"> aws.protocols#awsQuery</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.protocols#awsQuery</span>
 
-<span class="nd">@awsQuery</span><span class="w"></span>
-<span class="nd">@xmlNamespace</span>(<span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;http://foo.com&quot;</span>)<span class="w"></span>
-<span class="kd">service</span><span class="nc"> MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@awsQuery</span>
+<span class="nt">@xmlNamespace</span>(<span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://foo.com&quot;</span>)
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span>
+}
 </pre></div>
 </div>
 <div class="admonition important">
@@ -129,9 +339,10 @@ responses, including event streams.</li>
 </div>
 </div>
 <div class="section" id="supported-traits">
-<h2><a href="#supported-traits">Supported traits</a></h2>
+<h2>Supported traits<a class="headerlink" href="#supported-traits" title="Permalink to this headline">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> protocol supports the following traits
 that affect serialization:</p>
+<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
@@ -181,11 +392,16 @@ for the targeted shape.</td>
 The &quot;Code&quot; of an <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> error is used by clients to determine
 which type of error was encountered.</td>
 </tr>
+<tr class="row-odd"><td><a class="reference internal" href="../core/behavior-traits.html#requestcompression-trait"><span class="std std-ref">requestCompression</span></a></td>
+<td>Indicates that an operation supports compressing requests from clients
+to services.</td>
+</tr>
 </tbody>
 </table>
 </div>
+</div>
 <div class="section" id="request-serialization">
-<h2><a href="#request-serialization">Request serialization</a></h2>
+<h2>Request serialization<a class="headerlink" href="#request-serialization" title="Permalink to this headline">#</a></h2>
 <p>Requests SHALL be sent to the root URL (<code class="docutils literal notranslate"><span class="pre">/</span></code>). Requests SHALL use a POST
 request and a body that contains input parameters serialized with a
 Content-Type of <code class="docutils literal notranslate"><span class="pre">application/x-www-form-urlencoded</span></code>. All keys and
@@ -193,6 +409,7 @@ values MUST be encoded according to <span class="target" id="index-0"></span><a 
 a Content-Length header; this protocol does not support chunked
 Transfer-Encoding.</p>
 <p>Requests MUST include the following key value pairs in the serialized body:</p>
+<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="30%" />
@@ -205,13 +422,14 @@ Transfer-Encoding.</p>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">Action</span></code></td>
-<td>The <a class="reference internal" href="../core/model.html#grammar-token-smithy-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the operation's <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>.</td>
+<td>The <a class="reference internal" href="../core/model.html#grammar-token-smithy-Identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the operation's <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>.</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">Version</span></code></td>
 <td>The value of the <a class="reference internal" href="../core/model.html#service"><span class="std std-ref">&quot;version&quot; property of the service</span></a>.</td>
 </tr>
 </tbody>
 </table>
+</div>
 <p>These, along with other input members, are serialized in the request body,
 concatenated with the following rules:</p>
 <ul class="simple">
@@ -220,8 +438,9 @@ concatenated with the following rules:</p>
 <li>&quot;.&quot; is used to separate member name segments within keys.</li>
 </ul>
 <div class="section" id="x-www-form-urlencoded-shape-serialization">
-<h3><a href="#x-www-form-urlencoded-shape-serialization">x-www-form-urlencoded shape serialization</a></h3>
+<h3>x-www-form-urlencoded shape serialization<a class="headerlink" href="#x-www-form-urlencoded-shape-serialization" title="Permalink to this headline">#</a></h3>
 <p>Simple shapes are serialized according to the following rules:</p>
+<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="25%" />
@@ -282,8 +501,10 @@ MAY be used to customize timestamp serialization.</td>
 </tr>
 </tbody>
 </table>
+</div>
 <p>Aggregate shapes are serialized with additional segments for members appended
 to the input's key.</p>
+<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="25%" />
@@ -330,8 +551,9 @@ single member can be set to a non-null value.</td>
 </tbody>
 </table>
 </div>
+</div>
 <div class="section" id="query-key-resolution">
-<span id="aws-protocols-awsqueryname-query-key-naming"></span><h3><a href="#query-key-resolution">Query key resolution</a></h3>
+<span id="aws-protocols-awsqueryname-query-key-naming"></span><h3>Query key resolution<a class="headerlink" href="#query-key-resolution" title="Permalink to this headline">#</a></h3>
 <p>The key component used to serialize a member in a request in <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> is
 resolved using the following process:</p>
 <ol class="arabic">
@@ -339,6 +561,7 @@ resolved using the following process:</p>
 member, if present.</p>
 </li>
 <li><p class="first">Use the default value for the member:</p>
+<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="50%" />
@@ -363,40 +586,41 @@ member, if present.</p>
 <td>The string literal &quot;value&quot;</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">structure</span></code> member</td>
-<td>The <a class="reference internal" href="../core/model.html#grammar-token-smithy-shape_id_member"><code class="xref std std-token docutils literal notranslate"><span class="pre">member</span> <span class="pre">name</span></code></a></td>
+<td>The <a class="reference internal" href="../core/model.html#grammar-token-smithy-ShapeIdMember"><code class="xref std std-token docutils literal notranslate"><span class="pre">member</span> <span class="pre">name</span></code></a></td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">union</span></code> member</td>
-<td>The <a class="reference internal" href="../core/model.html#grammar-token-smithy-shape_id_member"><code class="xref std std-token docutils literal notranslate"><span class="pre">member</span> <span class="pre">name</span></code></a></td>
+<td>The <a class="reference internal" href="../core/model.html#grammar-token-smithy-ShapeIdMember"><code class="xref std std-token docutils literal notranslate"><span class="pre">member</span> <span class="pre">name</span></code></a></td>
 </tr>
 </tbody>
 </table>
+</div>
 </li>
 </ol>
 </div>
 <div class="section" id="example-requests">
-<h3><a href="#example-requests">Example requests</a></h3>
+<h3>Example requests<a class="headerlink" href="#example-requests" title="Permalink to this headline">#</a></h3>
 <p>The following list of examples are non-exhaustive. See the
 <a class="reference internal" href="#awsquery-compliance-tests"><span class="std std-ref">Protocol compliance tests</span></a> for a suite of compliance tests for the
 <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol. Newlines have been to examples only for readability.</p>
 <div class="section" id="structures-and-unions">
-<h4><a href="#structures-and-unions">Structures and unions</a></h4>
+<h4>Structures and unions<a class="headerlink" href="#structures-and-unions" title="Permalink to this headline">#</a></h4>
 <p>Each member value provided for the shape is serialized as a separate key
 with a &quot;.&quot; separator and the member name appended to the container's key.
 The <a class="reference internal" href="../core/xml-traits.html#xmlname-trait"><span class="std std-ref">xmlName trait</span></a> can be used to serialize a property using a custom name. Members with null values are not serialized.</p>
 <p>For example, given the following:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@input</span><span class="w"></span>
-<span class="kd">structure</span><span class="nc"> QueryStructuresInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">foo:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">QueryStructuresInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">foo</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nd">@xmlName</span>(<span class="s2">&quot;Custom&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nl">bar:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Custom&quot;</span>)
+<span class="w">    </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nl">baz:</span><span class="w"> </span><span class="vc">MyStructure</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="py">baz</span><span class="p">:</span><span class="w"> </span><span class="vc">MyStructure</span><span class="p">,</span>
+}
 
-<span class="kd">structure</span><span class="nc"> MyStructure</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">temp:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">MyStructure</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">temp</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">application/x-www-form-urlencoded</span></code> serialization is:</p>
@@ -414,7 +638,7 @@ Action=QueryStructures
 </div>
 </div>
 <div class="section" id="collections">
-<h4><a href="#collections">Collections</a></h4>
+<h4>Collections<a class="headerlink" href="#collections" title="Permalink to this headline">#</a></h4>
 <p>Each value provided in the collection is serialized as a separate key with
 a &quot;.&quot; separator, the string &quot;member&quot;, a &quot;.&quot; separator, and a &quot;1&quot; indexed
 incrementing counter appended to the container's key.
@@ -423,38 +647,38 @@ can be used to unwrap the values into a containing structure or union,
 with the key not containing the initial &quot;.&quot; separator and <code class="docutils literal notranslate"><span class="pre">member</span></code>
 segment.</p>
 <p>For example, given the following:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@input</span><span class="w"></span>
-<span class="kd">structure</span><span class="nc"> QueryListsInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">ListArg:</span><span class="w"> </span><span class="vc">StringList</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">ComplexListArg:</span><span class="w"> </span><span class="vc">GreetingList</span><span class="p">,</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">QueryListsInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">ListArg</span><span class="p">:</span><span class="w"> </span><span class="vc">StringList</span><span class="p">,</span>
+<span class="w">    </span><span class="py">ComplexListArg</span><span class="p">:</span><span class="w"> </span><span class="vc">GreetingList</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nd">@xmlFlattened</span><span class="w"></span>
-<span class="w">    </span><span class="nl">FlattenedListArg:</span><span class="w"> </span><span class="vc">StringList</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@xmlFlattened</span>
+<span class="w">    </span><span class="py">FlattenedListArg</span><span class="p">:</span><span class="w"> </span><span class="vc">StringList</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nl">ListArgWithXmlNameMember:</span><span class="w"> </span><span class="vc">ListWithXmlName</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">ListArgWithXmlNameMember</span><span class="p">:</span><span class="w"> </span><span class="vc">ListWithXmlName</span><span class="p">,</span>
 
-<span class="w">    </span><span class="c">// Notice that the xmlName on the targeted list member is ignored.</span><span class="w"></span>
-<span class="w">    </span><span class="nd">@xmlFlattened</span><span class="w"></span>
-<span class="w">    </span><span class="nd">@xmlName</span>(<span class="s2">&quot;Hi&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nl">FlattenedListArgWithXmlName:</span><span class="w"> </span><span class="vc">ListWithXmlName</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="c">// Notice that the xmlName on the targeted list member is ignored.</span>
+<span class="w">    </span><span class="nt">@xmlFlattened</span>
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;Hi&quot;</span>)
+<span class="w">    </span><span class="py">FlattenedListArgWithXmlName</span><span class="p">:</span><span class="w"> </span><span class="vc">ListWithXmlName</span><span class="p">,</span>
+}
 
-<span class="kd">list</span><span class="nc"> ListWithXmlName</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nd">@xmlName</span>(<span class="s2">&quot;item&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nl">member:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">list </span><span class="nc">ListWithXmlName</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;item&quot;</span>)
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="kd">list</span><span class="nc"> StringList</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">member:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">list </span><span class="nc">StringList</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="kd">list</span><span class="nc"> GreetingList</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">member:</span><span class="w"> </span><span class="vc">GreetingStruct</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">list </span><span class="nc">GreetingList</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">GreetingStruct</span>
+}
 
-<span class="kd">structure</span><span class="nc"> GreetingStruct</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">hi:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">GreetingStruct</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">hi</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">application/x-www-form-urlencoded</span></code> serialization is:</p>
@@ -480,7 +704,7 @@ Action=QueryLists
 </div>
 </div>
 <div class="section" id="maps">
-<h4><a href="#maps">Maps</a></h4>
+<h4>Maps<a class="headerlink" href="#maps" title="Permalink to this headline">#</a></h4>
 <p>Each key and value in each pair provided in the map is serialized as a
 separate key with a &quot;.&quot; separator, the string &quot;entry&quot;, a &quot;.&quot; separator,
 a &quot;1&quot; indexed incrementing counter, a &quot;.&quot; separator, and the string
@@ -490,39 +714,39 @@ or &quot;value&quot;. The <a class="reference internal" href="../core/xml-traits
 values into a containing structure or union, with the key not
 containing the initial &quot;.&quot; separator and &quot;entry&quot; segment.</p>
 <p>For example, given the following:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nd">@input</span><span class="w"></span>
-<span class="kd">structure</span><span class="nc"> QueryMapsInput</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">MapArg:</span><span class="w"> </span><span class="vc">StringMap</span><span class="p">,</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">QueryMapsInput</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">MapArg</span><span class="p">:</span><span class="w"> </span><span class="vc">StringMap</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nd">@xmlName</span>(<span class="s2">&quot;reNamed&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nl">RenamedMapArg:</span><span class="w"> </span><span class="vc">StringMap</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;reNamed&quot;</span>)
+<span class="w">    </span><span class="py">RenamedMapArg</span><span class="p">:</span><span class="w"> </span><span class="vc">StringMap</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nl">ComplexMapArg:</span><span class="w"> </span><span class="vc">ComplexMap</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">ComplexMapArg</span><span class="p">:</span><span class="w"> </span><span class="vc">ComplexMap</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nl">MapWithXmlMemberName:</span><span class="w"> </span><span class="vc">MapWithXmlName</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="py">MapWithXmlMemberName</span><span class="p">:</span><span class="w"> </span><span class="vc">MapWithXmlName</span><span class="p">,</span>
+}
 
-<span class="kd">map</span><span class="nc"> StringMap</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">key:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">value:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">map </span><span class="nc">StringMap</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="kd">map</span><span class="nc"> ComplexMap</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">key:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">value:</span><span class="w"> </span><span class="vc">GreetingStruct</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">map </span><span class="nc">ComplexMap</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">GreetingStruct</span><span class="p">,</span>
+}
 
-<span class="kd">map</span><span class="nc"> MapWithXmlName</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nd">@xmlName</span>(<span class="s2">&quot;K&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nl">key:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="kd">map </span><span class="nc">MapWithXmlName</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;K&quot;</span>)
+<span class="w">    </span><span class="py">key</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nd">@xmlName</span>(<span class="s2">&quot;V&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nl">value:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@xmlName</span>(<span class="s2">&quot;V&quot;</span>)
+<span class="w">    </span><span class="py">value</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="kd">structure</span><span class="nc"> GreetingStruct</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">hi:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">GreetingStruct</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">hi</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">application/x-www-form-urlencoded</span></code> serialization is:</p>
@@ -553,7 +777,7 @@ Action=QueryMaps
 </div>
 </div>
 <div class="section" id="response-serialization">
-<h2><a href="#response-serialization">Response serialization</a></h2>
+<h2>Response serialization<a class="headerlink" href="#response-serialization" title="Permalink to this headline">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol serializes XML responses within an XML root node with
 the name of the operation's output suffixed with &quot;Response&quot;. A nested element,
 with the name of the operation's output suffixed with &quot;Result&quot;, contains the
@@ -563,23 +787,24 @@ for the associated request.</p>
 <p>The value of the <code class="docutils literal notranslate"><span class="pre">uri</span></code> member of the <a class="reference internal" href="../core/xml-traits.html#xmlnamespace-trait"><span class="std std-ref">xmlNamespace trait</span></a>
 is serialized in an <code class="docutils literal notranslate"><span class="pre">xmlns</span></code> attribute on the response's XML root node. The
 following is a sample response to an operation named <code class="docutils literal notranslate"><span class="pre">XmlTest</span></code>.</p>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>HTTP/1.1 200 OK
-Date: Mon, 27 Jul 2009 12:28:53 GMT
-Content-Type: text/xml
-Content-Length: ...
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>HTTP/1.1<span class="w"> </span>200<span class="w"> </span>OK
+Date:<span class="w"> </span>Mon,<span class="w"> </span>27<span class="w"> </span>Jul<span class="w"> </span>2009<span class="w"> </span>12:28:53<span class="w"> </span>GMT
+Content-Type:<span class="w"> </span>text/xml
+Content-Length:<span class="w"> </span>...
 
-<span class="nt">&lt;XmlTestResponse</span> <span class="na">xmlns=</span><span class="s">&quot;https://example.com/&quot;</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;XmlTestResult&gt;</span>
-        <span class="nt">&lt;testValue&gt;</span>Hello!<span class="nt">&lt;/testValue&gt;</span>
-    <span class="nt">&lt;/XmlTestResult&gt;</span>
-    <span class="nt">&lt;ResponseMetadata&gt;</span>
-        <span class="nt">&lt;RequestId&gt;</span>c6104cbe-af31-11e0-8154-cbc7ccf896c7<span class="nt">&lt;/RequestId&gt;</span>
-    <span class="nt">&lt;/ResponseMetadata&gt;</span>
+<span class="nt">&lt;XmlTestResponse</span><span class="w"> </span><span class="na">xmlns=</span><span class="s">&quot;https://example.com/&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;XmlTestResult&gt;</span>
+<span class="w">        </span><span class="nt">&lt;testValue&gt;</span>Hello!<span class="nt">&lt;/testValue&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/XmlTestResult&gt;</span>
+<span class="w">    </span><span class="nt">&lt;ResponseMetadata&gt;</span>
+<span class="w">        </span><span class="nt">&lt;RequestId&gt;</span>c6104cbe-af31-11e0-8154-cbc7ccf896c7<span class="nt">&lt;/RequestId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/ResponseMetadata&gt;</span>
 <span class="nt">&lt;/XmlTestResponse&gt;</span>
 </pre></div>
 </div>
 <div class="section" id="xml-shape-serialization">
-<h3><a href="#xml-shape-serialization">XML shape serialization</a></h3>
+<h3>XML shape serialization<a class="headerlink" href="#xml-shape-serialization" title="Permalink to this headline">#</a></h3>
+<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="25%" />
@@ -677,6 +902,7 @@ shape, but only a single member can be set to a non-null value.</td>
 </tr>
 </tbody>
 </table>
+</div>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
 <p class="last">See <a class="reference internal" href="../core/xml-traits.html#serializing-xml-shapes"><span class="std std-ref">Serializing XML shapes</span></a> for comprehensive documentation,
@@ -685,26 +911,26 @@ including examples and behaviors when using multiple XML traits.</p>
 </div>
 </div>
 <div class="section" id="operation-error-serialization">
-<span id="awsquery-errors"></span><h2><a href="#operation-error-serialization">Operation error serialization</a></h2>
+<span id="awsquery-errors"></span><h2>Operation error serialization<a class="headerlink" href="#operation-error-serialization" title="Permalink to this headline">#</a></h2>
 <p>Error response bodies in the <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol are wrapped within an XML
 root node named <code class="docutils literal notranslate"><span class="pre">ErrorResponse</span></code>. A nested element, named <code class="docutils literal notranslate"><span class="pre">Error</span></code>, contains
 the serialized error structure members. <a class="reference internal" href="#awsquery-error-response-code"><span class="std std-ref">The HTTP response code is a
 resolved value.</span></a></p>
-<div class="literal-block-wrapper docutils container" id="id4">
-<div class="code-block-caption"><span class="caption-text">AWS Query error example</span><a class="headerlink" href="#id4" title="Permalink to this code">¶</a></div>
-<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>HTTP/1.1 400 Bad Request
-Date: Mon, 27 Jul 2009 12:28:53 GMT
-Content-Type: text/xml
-Content-Length: ...
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">AWS Query error example</span><a class="headerlink" href="#id5" title="Permalink to this code">#</a></div>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>HTTP/1.1<span class="w"> </span>400<span class="w"> </span>Bad<span class="w"> </span>Request
+Date:<span class="w"> </span>Mon,<span class="w"> </span>27<span class="w"> </span>Jul<span class="w"> </span>2009<span class="w"> </span>12:28:53<span class="w"> </span>GMT
+Content-Type:<span class="w"> </span>text/xml
+Content-Length:<span class="w"> </span>...
 
 <span class="nt">&lt;ErrorResponse&gt;</span>
-    <span class="nt">&lt;Error&gt;</span>
-        <span class="nt">&lt;Type&gt;</span>Sender<span class="nt">&lt;/Type&gt;</span>
-        <span class="nt">&lt;Code&gt;</span>InvalidGreeting<span class="nt">&lt;/Code&gt;</span>
-        <span class="nt">&lt;Message&gt;</span>Hi<span class="nt">&lt;/Message&gt;</span>
-        <span class="nt">&lt;AnotherSetting&gt;</span>setting<span class="nt">&lt;/AnotherSetting&gt;</span>
-    <span class="nt">&lt;/Error&gt;</span>
-    <span class="nt">&lt;RequestId&gt;</span>c6104cbe-af31-11e0-8154-cbc7ccf896c7<span class="nt">&lt;/RequestId&gt;</span>
+<span class="w">    </span><span class="nt">&lt;Error&gt;</span>
+<span class="w">        </span><span class="nt">&lt;Type&gt;</span>Sender<span class="nt">&lt;/Type&gt;</span>
+<span class="w">        </span><span class="nt">&lt;Code&gt;</span>InvalidGreeting<span class="nt">&lt;/Code&gt;</span>
+<span class="w">        </span><span class="nt">&lt;Message&gt;</span>Hi<span class="nt">&lt;/Message&gt;</span>
+<span class="w">        </span><span class="nt">&lt;AnotherSetting&gt;</span>setting<span class="nt">&lt;/AnotherSetting&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/Error&gt;</span>
+<span class="w">    </span><span class="nt">&lt;RequestId&gt;</span>c6104cbe-af31-11e0-8154-cbc7ccf896c7<span class="nt">&lt;/RequestId&gt;</span>
 <span class="nt">&lt;/ErrorResponse&gt;</span>
 </pre></div>
 </div>
@@ -723,11 +949,12 @@ the response.</li>
 hypothetical members of the serialized error structure.</p>
 </div>
 <div class="section" id="non-numeric-float-and-double-serialization">
-<span id="awsquery-non-numeric-float-serialization"></span><h2><a href="#non-numeric-float-and-double-serialization">Non-numeric float and double serialization</a></h2>
+<span id="awsquery-non-numeric-float-serialization"></span><h2>Non-numeric float and double serialization<a class="headerlink" href="#non-numeric-float-and-double-serialization" title="Permalink to this headline">#</a></h2>
 <p>Smithy floats and doubles are defined by IEEE-754, which includes special values
 for &quot;not a number&quot; and both positive and negative infinity. Unless otherwise
 specified, the <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> protocol treats those special values as
 strings with the following values:</p>
+<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="50%" />
@@ -750,8 +977,9 @@ strings with the following values:</p>
 </tr>
 </tbody>
 </table>
+</div>
 <div class="section" id="error-http-response-status-code-resolution">
-<span id="awsquery-error-response-code"></span><h3><a href="#error-http-response-status-code-resolution">Error HTTP response status code resolution</a></h3>
+<span id="awsquery-error-response-code"></span><h3>Error HTTP response status code resolution<a class="headerlink" href="#error-http-response-status-code-resolution" title="Permalink to this headline">#</a></h3>
 <p>The status code of an error is <code class="docutils literal notranslate"><span class="pre">400</span></code>, <code class="docutils literal notranslate"><span class="pre">500</span></code>, or a custom status code
 defined by the <a class="reference internal" href="#aws-protocols-awsqueryerror-trait"><span class="std std-ref">aws.protocols#awsQueryError trait</span></a>. The status code
 is determined through the following process:</p>
@@ -763,18 +991,18 @@ applied to the error structure, if present.</li>
 </ol>
 </div>
 <div class="section" id="error-code-resolution">
-<span id="awsquery-error-code"></span><h3><a href="#error-code-resolution">Error &quot;Code&quot; resolution</a></h3>
+<span id="awsquery-error-code"></span><h3>Error &quot;Code&quot; resolution<a class="headerlink" href="#error-code-resolution" title="Permalink to this headline">#</a></h3>
 <p>The value of the &quot;Code&quot; element serialized in the error is resolved using the
 following process:</p>
 <ol class="arabic simple">
 <li>Use the value of the <code class="docutils literal notranslate"><span class="pre">code</span></code> member of the <a class="reference internal" href="#aws-protocols-awsqueryerror-trait"><span class="std std-ref">aws.protocols#awsQueryError trait</span></a>
 applied to the error structure, if present.</li>
-<li>The <a class="reference internal" href="../core/model.html#grammar-token-smithy-identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>.</li>
+<li>The <a class="reference internal" href="../core/model.html#grammar-token-smithy-Identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code></a> of the error's <a class="reference internal" href="../core/model.html#shape-id"><span class="std std-ref">Shape ID</span></a>.</li>
 </ol>
 </div>
 </div>
 <div class="section" id="aws-protocols-awsquery-trait">
-<span id="aws-protocols-awsquery-trait"></span><span id="id2"></span><h2><a href="#aws-protocols-awsquery-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> trait</a></h2>
+<span id="aws-protocols-awsquery-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> trait<a class="headerlink" href="#aws-protocols-awsquery-trait" title="Permalink to this headline">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Adds support for the awsQuery protocol to a service. The service MUST have
 an <a class="reference internal" href="../core/xml-traits.html#xmlnamespace-trait"><span class="std std-ref">xmlNamespace trait</span></a>.</dd>
@@ -782,41 +1010,41 @@ an <a class="reference internal" href="../core/xml-traits.html#xmlnamespace-trai
 <p><em>Service shapes with the xmlNamespace trait</em></p>
 </dd>
 <dt>Value type</dt><dd>Annotation trait.</dd>
-<dt>See</dt><dd><a class="reference external" href="https://github.com/awslabs/smithy/tree/1.21.0/smithy-aws-protocol-tests/model/awsQuery">Protocol tests</a></dd>
+<dt>See</dt><dd><a class="reference external" href="https://github.com/smithy-lang/smithy/tree/1.42.0/smithy-aws-protocol-tests/model/awsQuery">Protocol tests</a></dd>
 </dl>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-0-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use</span><span class="nc"> aws.protocols#awsQuery</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.protocols#awsQuery</span>
 
-<span class="nd">@awsQuery</span><span class="w"></span>
-<span class="nd">@xmlNamespace</span>(<span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;http://foo.com&quot;</span>)<span class="w"></span>
-<span class="kd">service</span><span class="nc"> MyService</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">version:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@awsQuery</span>
+<span class="nt">@xmlNamespace</span>(<span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://foo.com&quot;</span>)
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span>
+}
 </pre></div>
 </div>
 </div><div aria-labelledby="tab-0-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-0-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-02-05&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;aws.protocols#awsQuery&quot;</span><span class="p">:</span> <span class="p">{},</span>
-                <span class="nt">&quot;smithy.api#xmlNamespace&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;uri&quot;</span><span class="p">:</span> <span class="s2">&quot;example.com&quot;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;smithy.example#MyService&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;aws.protocols#awsQuery&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">                </span><span class="nt">&quot;smithy.api#xmlNamespace&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example.com&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </div></div>
 </div>
 <div class="section" id="aws-protocols-awsqueryerror-trait">
-<span id="aws-protocols-awsqueryerror-trait"></span><span id="id3"></span><h2><a href="#aws-protocols-awsqueryerror-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQueryError</span></code> trait</a></h2>
+<span id="aws-protocols-awsqueryerror-trait"></span><span id="id3"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQueryError</span></code> trait<a class="headerlink" href="#aws-protocols-awsqueryerror-trait" title="Permalink to this headline">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Provides a <a class="reference internal" href="#awsquery-error-code"><span class="std std-ref">custom &quot;Code&quot; value</span></a> for
 <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> errors and an <a class="reference internal" href="#awsquery-error-response-code"><span class="std std-ref">HTTP response code</span></a>.
@@ -827,6 +1055,7 @@ type of error was encountered.</dd>
 shapes that also have the <a class="reference internal" href="../core/type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a>.</p>
 </dd>
 <dt>Value type</dt><dd><p><code class="docutils literal notranslate"><span class="pre">structure</span></code> that supports the following members:</p>
+<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
@@ -852,6 +1081,7 @@ this error shape.</td>
 </tr>
 </tbody>
 </table>
+</div>
 </dd>
 </dl>
 <div class="admonition important">
@@ -864,72 +1094,163 @@ no impact on other Smithy protocols.</p>
 <p>The following example defines an error that uses a custom &quot;Code&quot; of
 &quot;InvalidThing&quot; and an HTTP status code of 400.</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-1-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use</span><span class="nc"> aws.protocols#awsQueryError</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button><button aria-controls="panel-1-SlNPTg==" aria-selected="false" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-SlNPTg==" name="SlNPTg==" role="tab" tabindex="-1">JSON</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">use </span><span class="nc">aws.protocols#awsQueryError</span>
 
-<span class="nd">@awsQueryError</span>(<span class="w"></span>
-<span class="w">    </span><span class="nl">code:</span><span class="w"> </span><span class="s2">&quot;InvalidThing&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">httpResponseCode:</span><span class="w"> </span><span class="m">400</span><span class="p">,</span><span class="w"></span>
-)<span class="w"></span>
-<span class="nd">@error</span>(<span class="s2">&quot;client&quot;</span>)<span class="w"></span>
-<span class="kd">structure</span><span class="nc"> InvalidThingException</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">message:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@awsQueryError</span>(
+<span class="w">    </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;InvalidThing&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">httpResponseCode</span><span class="p">:</span><span class="w"> </span><span class="m">400</span><span class="p">,</span>
+)
+<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="kd">structure </span><span class="nc">InvalidThingException</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 </div><div aria-labelledby="tab-1-SlNPTg==" class="sphinx-tabs-panel code-tab group-tab" hidden="true" id="panel-1-SlNPTg==" name="SlNPTg==" role="tabpanel" tabindex="0"><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;smithy&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;shapes&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;smithy.example#InvalidThingException&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;smithy.api#String&quot;</span>
-                <span class="p">}</span>
-            <span class="p">},</span>
-            <span class="nt">&quot;traits&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="nt">&quot;aws.protocols#awsQueryError&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="s2">&quot;InvalidThing&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;httpResponseCode&quot;</span><span class="p">:</span> <span class="mi">400</span>
-                <span class="p">},</span>
-                <span class="nt">&quot;smithy.api#error&quot;</span><span class="p">:</span> <span class="s2">&quot;client&quot;</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="nt">&quot;smithy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;shapes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;smithy.example#InvalidThingException&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;members&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;smithy.api#String&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;traits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;aws.protocols#awsQueryError&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;InvalidThing&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;httpResponseCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">400</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;smithy.api#error&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;client&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </div></div>
 </div>
+<div class="section" id="aws-protocols-awsquerycompatible-trait">
+<span id="aws-protocols-awsquerycompatible-trait"></span><span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQueryCompatible</span></code> trait<a class="headerlink" href="#aws-protocols-awsquerycompatible-trait" title="Permalink to this headline">#</a></h2>
+<dl class="docutils">
+<dt>Summary</dt><dd><p>When using the <a class="reference internal" href="#aws-protocols-awsquery-trait"><span class="std std-ref">awsQuery</span></a> protocol,
+custom <code class="docutils literal notranslate"><span class="pre">Code</span></code> and <code class="docutils literal notranslate"><span class="pre">HTTP</span> <span class="pre">response</span> <span class="pre">code</span></code> values can be defined for an error response via
+the <a class="reference internal" href="#aws-protocols-awsqueryerror-trait"><span class="std std-ref">awsQueryError</span></a> trait.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">awsQueryCompatible</span></code> trait allows services to backward compatibly migrate from <code class="docutils literal notranslate"><span class="pre">awsQuery</span></code> to
+<a class="reference internal" href="aws-json-1_0-protocol.html#aws-protocols-awsjson1-0-trait"><span class="std std-ref">awsJson1_0</span></a> without removing values defined in the <code class="docutils literal notranslate"><span class="pre">awsQueryError</span></code> trait.</p>
+<p>This trait adds the <code class="docutils literal notranslate"><span class="pre">x-amzn-query-error</span></code> header in the form of <code class="docutils literal notranslate"><span class="pre">Code;Fault</span></code> to error responses.
+<code class="docutils literal notranslate"><span class="pre">Code</span></code> is the value defined in the <a class="reference internal" href="#aws-protocols-awsqueryerror-trait"><span class="std std-ref">awsQueryError</span></a>,
+and <code class="docutils literal notranslate"><span class="pre">Fault</span></code> is one of <code class="docutils literal notranslate"><span class="pre">Sender</span></code> or <code class="docutils literal notranslate"><span class="pre">Receiver</span></code>.</p>
+</dd>
+<dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span> <span class="pre">[trait|awsJson1_0]</span></code></dd>
+<dt>Value type</dt><dd>Annotation trait</dd>
+</dl>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span>
+<span class="kd">use </span><span class="nc">aws.protocols#awsQueryCompatible</span>
+<span class="kd">use </span><span class="nc">aws.protocols#awsQueryError</span>
+<span class="kd">use </span><span class="nc">aws.protocols#awsJson1_0</span>
+
+<span class="nt">@awsQueryCompatible</span>
+<span class="nt">@awsJson1</span><span class="vc">_0</span>
+<span class="kd">service </span><span class="nc">MyService</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-02-05&quot;</span>
+}
+
+<span class="nt">@awsQueryError</span>(
+<span class="w">    </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;InvalidThing&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">httpResponseCode</span><span class="p">:</span><span class="w"> </span><span class="m">400</span><span class="p">,</span>
+)
+<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="kd">structure </span><span class="nc">InvalidThingException</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">message</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
+</pre></div>
+</div>
+</div>
 <div class="section" id="protocol-compliance-tests">
-<span id="awsquery-compliance-tests"></span><h2><a href="#protocol-compliance-tests">Protocol compliance tests</a></h2>
+<span id="awsquery-compliance-tests"></span><h2>Protocol compliance tests<a class="headerlink" href="#protocol-compliance-tests" title="Permalink to this headline">#</a></h2>
 <p>A full compliance test suite is provided and SHALL be considered a normative
-reference: <a class="reference external" href="https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/awsQuery">https://github.com/awslabs/smithy/tree/main/smithy-aws-protocol-tests/model/awsQuery</a></p>
+reference: <a class="reference external" href="https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/awsQuery">https://github.com/smithy-lang/smithy/tree/main/smithy-aws-protocol-tests/model/awsQuery</a></p>
 <p>These compliance tests define a model that is used to define test cases and
 the expected serialized HTTP requests and responses for each case.</p>
 </div>
+<div class="section" id="error-shape-renaming">
+<h2>Error shape renaming<a class="headerlink" href="#error-shape-renaming" title="Permalink to this headline">#</a></h2>
+<p>By default, Smithy permits renaming shapes to disambiguate shape ID conflicts in
+the <a class="reference internal" href="../core/model.html#service-closure"><span class="std std-ref">service closure</span></a> via the <code class="docutils literal notranslate"><span class="pre">rename</span></code> property. However, services using this protocol are
+not allowed to rename error shapes (shapes with <a class="reference internal" href="../core/type-refinement-traits.html#error-trait"><span class="std std-ref">error trait</span></a> applied).</p>
+<p>Client-side implementations rely on the response body field <code class="docutils literal notranslate"><span class="pre">code</span></code> or <code class="docutils literal notranslate"><span class="pre">__type</span></code> to resolve the error type.
+Server-side implementations of this protocol will only send the <code class="docutils literal notranslate"><span class="pre">shape</span> <span class="pre">name</span></code> for the response body field.</p>
+<p>When there are conflicting shape IDs <code class="docutils literal notranslate"><span class="pre">smithy.service#ServiceError</span></code> and <code class="docutils literal notranslate"><span class="pre">smithy.other#ServiceError</span></code>,
+the server will only send the shape name <code class="docutils literal notranslate"><span class="pre">ServiceError</span></code>. Clients will not be able to resolve
+the correct error type without the namespace.</p>
+<p>Server-side implementations of this protocol don't serialize renamed shape names.
+As a result, renaming will not resolve the conflicting shape IDs issue, and hence it is not permitted.</p>
+</div>
 </div>
 
-
-                    
-                    <section class="relations">
-                        
-                        <a href="aws-restxml-protocol.html" title="previous chapter" class="previous-page clearfix hidden-xs">← AWS restXml protocol</a>
-                        
-                        <a href="aws-ec2-query-protocol.html" title="next chapter" class="next-page clearfix">AWS EC2 query protocol →</a>
-                    </section>
-                    
-                </article><aside id="right-column" class="side-column hidden-sm">
-                    <div class="column-body">
-                        <section class="sidebar">
-                            
-                            <section class="next-previous">
-                                
-                                <a href="aws-restxml-protocol.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
-                                
-                                <a href="aws-ec2-query-protocol.html" title="next chapter" class="next-page clearfix">Next →</a>
-                            </section>
-                            
-                            <ul>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="aws-ec2-query-protocol.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">AWS EC2 query protocol</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="aws-restxml-protocol.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">AWS restXml protocol</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Amazon Web Services
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
 <li><a class="reference internal" href="#">AWS query protocol</a><ul>
 <li><a class="reference internal" href="#overview">Overview</a></li>
 <li><a class="reference internal" href="#supported-traits">Supported traits</a></li>
@@ -956,23 +1277,27 @@ the expected serialized HTTP requests and responses for each case.</p>
 </li>
 <li><a class="reference internal" href="#aws-protocols-awsquery-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQuery</span></code> trait</a></li>
 <li><a class="reference internal" href="#aws-protocols-awsqueryerror-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQueryError</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-protocols-awsquerycompatible-trait"><code class="docutils literal notranslate"><span class="pre">aws.protocols#awsQueryCompatible</span></code> trait</a></li>
 <li><a class="reference internal" href="#protocol-compliance-tests">Protocol compliance tests</a></li>
+<li><a class="reference internal" href="#error-shape-renaming">Error shape renaming</a></li>
 </ul>
 </li>
 </ul>
 
-                        </section>
-                    </div>
-                </aside></div>
-        </section>
-        
-    
-<footer id="footer">
-    <div class="width-wrapper">
-        <div class="copyright">
-            <p>©2021, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+          </div>
         </div>
-    </div>
-</footer>
-  </body>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/scripts/furo.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/tabs.js"></script>
+    </body>
 </html>

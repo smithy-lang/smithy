@@ -237,6 +237,7 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../additional-specs/index.html">Additional specs</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/smoke-tests.html">Smoke Tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../additional-specs/waiters.html">Waiters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../additional-specs/rules-engine/index.html">Rules engine</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -503,28 +504,31 @@ prefixed HTTP headers.</td>
 <tr class="row-even"><td><a class="reference internal" href="../../spec/http-bindings.html#httpqueryparams-trait"><span class="std std-ref">httpQueryParams</span></a></td>
 <td>Binds a map of key-value pairs to query string parameters.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../../spec/protocol-traits.html#xmlattribute-trait"><span class="std std-ref">xmlAttribute</span></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../../spec/http-bindings.html#httpchecksumrequired-trait"><span class="std std-ref">httpChecksumRequired</span></a></td>
+<td>Indicates that requests MUST send a checksum.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../../spec/protocol-traits.html#xmlattribute-trait"><span class="std std-ref">xmlAttribute</span></a></td>
 <td>Serializes an object property as an XML attribute rather than a nested
 XML element.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../../spec/protocol-traits.html#xmlflattened-trait"><span class="std std-ref">xmlFlattened</span></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../../spec/protocol-traits.html#xmlflattened-trait"><span class="std std-ref">xmlFlattened</span></a></td>
 <td>By default, entries in lists, sets, and maps have values serialized in
 nested XML elements specific to their type. The <code class="docutils literal notranslate"><span class="pre">xmlFlattened</span></code> trait
 unwraps these elements into the containing structure.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../../spec/protocol-traits.html#xmlname-trait"><span class="std std-ref">xmlName</span></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../../spec/protocol-traits.html#xmlname-trait"><span class="std std-ref">xmlName</span></a></td>
 <td>By default, the XML element names used in serialized structures are
 the same as a structure member name. The <code class="docutils literal notranslate"><span class="pre">xmlName</span></code> trait changes
 the XML element name to a custom value.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../../spec/protocol-traits.html#xmlnamespace-trait"><span class="std std-ref">xmlNamespace</span></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../../spec/protocol-traits.html#xmlnamespace-trait"><span class="std std-ref">xmlNamespace</span></a></td>
 <td>Adds an xmlns namespace definition URI to XML element(s) generated
 for the targeted shape.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../../spec/protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat</span></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../../spec/protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat</span></a></td>
 <td>Defines a custom timestamp serialization format.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../../spec/behavior-traits.html#requestcompression-trait"><span class="std std-ref">requestCompression</span></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../../spec/behavior-traits.html#requestcompression-trait"><span class="std std-ref">requestCompression</span></a></td>
 <td>Indicates that an operation supports compressing requests from clients
 to services.</td>
 </tr>

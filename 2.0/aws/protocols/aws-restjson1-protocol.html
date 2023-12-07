@@ -237,6 +237,7 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../additional-specs/index.html">Additional specs</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../additional-specs/smoke-tests.html">Smoke Tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../additional-specs/waiters.html">Waiters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../additional-specs/rules-engine/index.html">Rules engine</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -513,15 +514,18 @@ prefixed HTTP headers.</td>
 <tr class="row-even"><td><a class="reference internal" href="../../spec/http-bindings.html#httpqueryparams-trait"><span class="std std-ref">httpQueryParams</span></a></td>
 <td>Binds a map of key-value pairs to query string parameters.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../../spec/protocol-traits.html#jsonname-trait"><span class="std std-ref">jsonName</span></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../../spec/http-bindings.html#httpchecksumrequired-trait"><span class="std std-ref">httpChecksumRequired</span></a></td>
+<td>Indicates that requests MUST send a checksum.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../../spec/protocol-traits.html#jsonname-trait"><span class="std std-ref">jsonName</span></a></td>
 <td>By default, the JSON property names used in serialized structures are
 the same as a structure member name. The <code class="docutils literal notranslate"><span class="pre">jsonName</span></code> trait changes
 the JSON property name to a custom value.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../../spec/protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat</span></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../../spec/protocol-traits.html#timestampformat-trait"><span class="std std-ref">timestampFormat</span></a></td>
 <td>Defines a custom timestamp serialization format.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../../spec/behavior-traits.html#requestcompression-trait"><span class="std std-ref">requestCompression</span></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../../spec/behavior-traits.html#requestcompression-trait"><span class="std std-ref">requestCompression</span></a></td>
 <td>Indicates that an operation supports compressing requests from clients
 to services.</td>
 </tr>

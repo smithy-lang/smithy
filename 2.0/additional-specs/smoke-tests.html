@@ -2,10 +2,10 @@
 <html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="1. The Smithy model" href="model.html" /><link rel="prev" title="Quick start" href="../quickstart.html" />
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Waiters" href="waiters.html" /><link rel="prev" title="HTTP Protocol Compliance Tests" href="http-protocol-compliance-tests.html" />
 
     <link rel="shortcut icon" href="../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
-        <title>Smithy specification - Smithy 2.0</title>
+        <title>Smoke Tests - Smithy 2.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -175,26 +175,26 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick start</a></li>
-<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Smithy specification</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="model.html">1. The Smithy model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="simple-types.html">2. Simple types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="aggregate-types.html">3. Aggregate types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="service-types.html">4. Service types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mixins.html">5. Mixins</a></li>
-<li class="toctree-l2"><a class="reference internal" href="constraint-traits.html">6. Constraint traits</a></li>
-<li class="toctree-l2"><a class="reference internal" href="type-refinement-traits.html">7. Type refinement traits</a></li>
-<li class="toctree-l2"><a class="reference internal" href="documentation-traits.html">8. Documentation traits</a></li>
-<li class="toctree-l2"><a class="reference internal" href="behavior-traits.html">9. Behavior traits</a></li>
-<li class="toctree-l2"><a class="reference internal" href="resource-traits.html">10. Resource traits</a></li>
-<li class="toctree-l2"><a class="reference internal" href="authentication-traits.html">11. Authentication traits</a></li>
-<li class="toctree-l2"><a class="reference internal" href="protocol-traits.html">12. Serialization and Protocol traits</a></li>
-<li class="toctree-l2"><a class="reference internal" href="streaming.html">13. Streaming</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http-bindings.html">14. HTTP bindings</a></li>
-<li class="toctree-l2"><a class="reference internal" href="endpoint-traits.html">15. Endpoint traits</a></li>
-<li class="toctree-l2"><a class="reference internal" href="selectors.html">16. Selectors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model-validation.html">17. Model validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="idl.html">18. Smithy IDL</a></li>
-<li class="toctree-l2"><a class="reference internal" href="json-ast.html">19. JSON AST</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../spec/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../spec/model.html">1. The Smithy model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/simple-types.html">2. Simple types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/aggregate-types.html">3. Aggregate types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/service-types.html">4. Service types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/mixins.html">5. Mixins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/constraint-traits.html">6. Constraint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/type-refinement-traits.html">7. Type refinement traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/documentation-traits.html">8. Documentation traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/behavior-traits.html">9. Behavior traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/resource-traits.html">10. Resource traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/authentication-traits.html">11. Authentication traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/protocol-traits.html">12. Serialization and Protocol traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/streaming.html">13. Streaming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/http-bindings.html">14. HTTP bindings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/endpoint-traits.html">15. Endpoint traits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/selectors.html">16. Selectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/model-validation.html">17. Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/idl.html">18. Smithy IDL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spec/json-ast.html">19. JSON AST</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../trait-index.html">Trait index</a></li>
@@ -235,15 +235,15 @@
 <li class="toctree-l2"><a class="reference internal" href="../guides/glossary.html">Glossary</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../additional-specs/index.html">Additional specs</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../additional-specs/http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../additional-specs/smoke-tests.html">Smoke Tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../additional-specs/waiters.html">Waiters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../additional-specs/mqtt.html">MQTT Protocol Bindings</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../additional-specs/rules-engine/index.html">Rules engine</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../additional-specs/rules-engine/specification.html">Rules engine specification</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../additional-specs/rules-engine/parameters.html">Rules engine parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../additional-specs/rules-engine/standard-library.html">Rules engine standard library</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Additional specs</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Smoke Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="waiters.html">Waiters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mqtt.html">MQTT Protocol Bindings</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="rules-engine/index.html">Rules engine</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="rules-engine/specification.html">Rules engine specification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rules-engine/parameters.html">Rules engine parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rules-engine/standard-library.html">Rules engine standard library</a></li>
 </ul>
 </li>
 </ul>
@@ -314,7 +314,7 @@
         </a>
         <div class="content-icon-container">
           <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-2.0/spec/index.rst" title="Edit this page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-2.0/additional-specs/smoke-tests.rst" title="Edit this page">
     <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
@@ -336,54 +336,205 @@
           </label>
         </div>
         <article role="main">
-          <div class="section" id="smithy-specification">
-<span id="id1"></span><h1>Smithy specification<a class="headerlink" href="#smithy-specification" title="Permalink to this headline">#</a></h1>
-<p>This is the specification of Smithy 2.0, an interface definition language
-and set of tools used to build clients, servers, and other kinds of artifacts
-through model transformations.</p>
-<div class="section" id="conventions-used-in-this-document">
-<h2>Conventions used in this document<a class="headerlink" href="#conventions-used-in-this-document" title="Permalink to this headline">#</a></h2>
-<p>The key words &quot;MUST&quot;, &quot;MUST NOT&quot;, &quot;REQUIRED&quot;, &quot;SHALL&quot;, &quot;SHALL NOT&quot;,
-&quot;SHOULD&quot;, &quot;SHOULD NOT&quot;, &quot;RECOMMENDED&quot;, &quot;MAY&quot;, and &quot;OPTIONAL&quot; in this
-document are to be interpreted as described in <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc2119.html"><strong>RFC 2119</strong></a>.
-This specification makes use of the Augmented Backus-Naur Form (ABNF)
-<span class="target" id="index-1"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc5234.html"><strong>RFC 5234</strong></a> notation, including the <em>core rules</em> defined in Appendix B
-of that document.</p>
-<p>Please report technical errors and ambiguities in this specification to the
-Smithy GitHub repository at <a class="reference external" href="https://github.com/smithy-lang/smithy">https://github.com/smithy-lang/smithy</a>.
-This specification is open source; contributions are welcome.</p>
+          <div class="section" id="smoke-tests">
+<span id="id1"></span><h1>Smoke Tests<a class="headerlink" href="#smoke-tests" title="Permalink to this headline">#</a></h1>
+<p>Smoke tests are small, simple tests intended to uncover large issues by ensuring
+core functionality works as expected. In Smithy, these tests are used to make
+sure clients can successfully make a request to a live service, and that the
+service responds with the right kind of response.</p>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">#</a></h2>
+<p>This specification defines a single trait in the <code class="docutils literal notranslate"><span class="pre">smithy.test</span></code> namespace that is
+used to make basic assertions about how the service should respond to a given
+request from the client.</p>
+<dl class="docutils">
+<dt><a class="reference internal" href="#smoketests-trait"><span class="std std-ref">smithy.test#smokeTests</span></a></dt><dd>Defines a set of test cases to send to a live service to ensure that a
+client can successfully connect to a service and get the right kind of
+response.</dd>
+</dl>
+<p>This trait can be used by client code generators to generate test cases that test
+generated clients against live services to ensure core functionality is working,
+and continues to work as the client and service evolve.</p>
 </div>
-<div class="section" id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">#</a></h2>
-<p>Unless declared otherwise, example Smithy models given in this specification
-are written using the <a class="reference internal" href="idl.html#idl"><span class="std std-ref">Smithy interface definition language (IDL)</span></a>
-syntax. Complementary <a class="reference internal" href="json-ast.html#json-ast"><span class="std std-ref">JSON AST</span></a> examples are provided
-alongside Smithy IDL examples where appropriate.</p>
+<div class="section" id="smoketests">
+<span id="smoketests-trait"></span><span id="smithy-test-smoketests-trait"></span><h2>smokeTests<a class="headerlink" href="#smoketests" title="Permalink to this headline">#</a></h2>
+<dl class="docutils">
+<dt>Summary</dt><dd>The <code class="docutils literal notranslate"><span class="pre">smokeTests</span></code> trait is used to define a set of test cases to send
+to a live service to ensure that a client can successfully connect to
+a service and receives the right kind of response.</dd>
+<dt>Trait selector</dt><dd><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>operation
+</pre></div>
 </div>
-<div class="section" id="table-of-contents">
-<h2>Table of contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">#</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="model.html">1. The Smithy model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simple-types.html">2. Simple types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="aggregate-types.html">3. Aggregate types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="service-types.html">4. Service types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mixins.html">5. Mixins</a></li>
-<li class="toctree-l1"><a class="reference internal" href="constraint-traits.html">6. Constraint traits</a></li>
-<li class="toctree-l1"><a class="reference internal" href="type-refinement-traits.html">7. Type refinement traits</a></li>
-<li class="toctree-l1"><a class="reference internal" href="documentation-traits.html">8. Documentation traits</a></li>
-<li class="toctree-l1"><a class="reference internal" href="behavior-traits.html">9. Behavior traits</a></li>
-<li class="toctree-l1"><a class="reference internal" href="resource-traits.html">10. Resource traits</a></li>
-<li class="toctree-l1"><a class="reference internal" href="authentication-traits.html">11. Authentication traits</a></li>
-<li class="toctree-l1"><a class="reference internal" href="protocol-traits.html">12. Serialization and Protocol traits</a></li>
-<li class="toctree-l1"><a class="reference internal" href="streaming.html">13. Streaming</a></li>
-<li class="toctree-l1"><a class="reference internal" href="http-bindings.html">14. HTTP bindings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="endpoint-traits.html">15. Endpoint traits</a></li>
-<li class="toctree-l1"><a class="reference internal" href="selectors.html">16. Selectors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="model-validation.html">17. Model validation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="idl.html">18. Smithy IDL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="json-ast.html">19. JSON AST</a></li>
-</ul>
+</dd>
+<dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">list</span></code> of <a class="reference internal" href="#smoketestcase-struct"><span class="std std-ref">SmokeTestCase</span></a> structures</dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">smokeTests</span></code> trait is a list of <a class="reference internal" href="#smoketestcase-struct"><span class="std std-ref">SmokeTestCase</span></a> structures.</p>
+<div class="section" id="smoketestcase">
+<span id="smoketestcase-struct"></span><h3>SmokeTestCase<a class="headerlink" href="#smoketestcase" title="Permalink to this headline">#</a></h3>
+<p>A structure defining a smoke test case.</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="25%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>id</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><strong>Required</strong>. The identifier of the test case. This identifier may be
+used by smoke test implementations to generate test case names. The
+provided <code class="docutils literal notranslate"><span class="pre">id</span></code> MUST match Smithy's <a class="reference internal" href="../spec/model.html#grammar-token-smithy-Identifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">smithy:Identifier</span></code></a> ABNF. No
+two test cases can share the same ID, including test cases defined for
+other operations bound to the same service.</td>
+</tr>
+<tr class="row-odd"><td>params</td>
+<td><code class="docutils literal notranslate"><span class="pre">document</span></code></td>
+<td><p class="first">Defines the input parameters used to generate the request. These
+parameters MUST be compatible with the input of the operation.</p>
+<p class="last">Parameter values that contain binary data MUST be defined using values
+that can be represented in plain text as the plain text representation
+(for example, use <code class="docutils literal notranslate"><span class="pre">&quot;foo&quot;</span></code> and not <code class="docutils literal notranslate"><span class="pre">&quot;Zm9vCg==&quot;</span></code>).</p>
+</td>
+</tr>
+<tr class="row-even"><td>vendorParams</td>
+<td><code class="docutils literal notranslate"><span class="pre">document</span></code></td>
+<td><p class="first">Defines vendor-specific parameters that are used to influence the
+request. For example, some vendors might utilize environment variables,
+configuration files on disk, or other means to influence the
+serialization formats used by clients or servers.</p>
+<p class="last">If <code class="docutils literal notranslate"><span class="pre">vendorParamsShape</span></code> is set, these parameters MUST be compatible
+with that shape's definition.</p>
+</td>
+</tr>
+<tr class="row-odd"><td>vendorParamsShape</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first">The ID of the shape that should be used to validate the <code class="docutils literal notranslate"><span class="pre">vendorParams</span></code>
+member contents.</p>
+<p class="last">If set, the parameters in <code class="docutils literal notranslate"><span class="pre">vendorParams</span></code> MUST be compatible with this
+shape's definition.</p>
+</td>
+</tr>
+<tr class="row-even"><td>expect</td>
+<td><a class="reference internal" href="#expectation-union"><span class="std std-ref">Expectation</span></a></td>
+<td><strong>Required</strong>. Defines the kind of response that is expected from the
+service call.</td>
+</tr>
+<tr class="row-odd"><td>tags</td>
+<td><code class="docutils literal notranslate"><span class="pre">[string]</span></code></td>
+<td>Attaches a list of tags that can be used to categorize and group
+test cases. If a test case uses a feature that requires special
+configuration, it should be tagged.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="expectation">
+<span id="expectation-union"></span><h4>Expectation<a class="headerlink" href="#expectation" title="Permalink to this headline">#</a></h4>
+<p>A union describing the different kinds of expectations that can be made for a
+test case. Exactly one member must be set.</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="25%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>success</td>
+<td><code class="docutils literal notranslate"><span class="pre">Unit</span></code></td>
+<td>Indicates that the call is expected to not throw an error. No other
+assertions are made about the response.</td>
+</tr>
+<tr class="row-odd"><td>failure</td>
+<td><a class="reference internal" href="#failureexpectation-struct"><span class="std std-ref">FailureExpectation</span></a></td>
+<td>Indicates that the call is expected to throw an error.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="failureexpectation">
+<span id="failureexpectation-struct"></span><h5>FailureExpectation<a class="headerlink" href="#failureexpectation" title="Permalink to this headline">#</a></h5>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="25%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>errorId</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>Indicates that the call is expected to throw a specific type of error
+matching the targeted shape. If not specified, the error can be of
+any type.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="smoke-tests-example">
+<h3>Smoke tests example<a class="headerlink" href="#smoke-tests-example" title="Permalink to this headline">#</a></h3>
+<p>The following example defines smoke test cases for an operation which should
+return a specific <code class="docutils literal notranslate"><span class="pre">InvalidMessageError</span></code> response when given an invalid input,
+and return a successful response otherwise.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
+
+<span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">use </span><span class="nc">smithy.test#smokeTests</span>
+
+<span class="nt">@smokeTests</span>(
+<span class="w">    </span>[
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FooSuccess&quot;</span>
+<span class="w">            </span><span class="py">params</span><span class="p">:</span><span class="w"> </span>{<span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>}
+<span class="w">            </span><span class="py">expect</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                </span><span class="py">success</span><span class="p">:</span><span class="w"> </span>{}
+<span class="w">            </span>}
+<span class="w">        </span>}
+<span class="w">        </span>{
+<span class="w">            </span><span class="py">id</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FooInvalidMessageError&quot;</span>
+<span class="w">            </span><span class="py">params</span><span class="p">:</span><span class="w"> </span>{<span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;föö&quot;</span>}
+<span class="w">            </span><span class="py">expect</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">                </span><span class="py">failure</span><span class="p">:</span><span class="w"> </span>{<span class="py">errorId</span><span class="p">:</span><span class="w"> </span><span class="vc">InvalidMessageError</span>}
+<span class="w">            </span>}
+<span class="w">        </span>}
+<span class="w">    </span>]
+)
+<span class="kd">operation </span><span class="nc">Foo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="w"> </span><span class="p">:=</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+<span class="w">    </span>}
+<span class="w">    </span><span class="py">errors</span><span class="p">:</span><span class="w"> </span>[
+<span class="w">        </span><span class="vc">InvalidMessageError</span>
+<span class="w">    </span>]
+}
+
+<span class="nt">@error</span>(<span class="s2">&quot;client&quot;</span>)
+<span class="kd">structure </span><span class="nc">InvalidMessageError</span><span class="w"> </span>{}
+</pre></div>
+</div>
 </div>
 </div>
 </div>
@@ -393,23 +544,23 @@ alongside Smithy IDL examples where appropriate.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="model.html">
+          <a class="next-page" href="waiters.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title"><span class="section-number">1. </span>The Smithy model</div>
+                <div class="title">Waiters</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../quickstart.html">
+          <a class="prev-page" href="http-protocol-compliance-tests.html">
               <svg><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Quick start</div>
+                <div class="title">HTTP Protocol Compliance Tests</div>
                 
               </div>
             </a>
@@ -450,10 +601,19 @@ alongside Smithy IDL examples where appropriate.</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Smithy specification</a><ul>
-<li><a class="reference internal" href="#conventions-used-in-this-document">Conventions used in this document</a></li>
-<li><a class="reference internal" href="#examples">Examples</a></li>
-<li><a class="reference internal" href="#table-of-contents">Table of contents</a></li>
+<li><a class="reference internal" href="#">Smoke Tests</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#smoketests">smokeTests</a><ul>
+<li><a class="reference internal" href="#smoketestcase">SmokeTestCase</a><ul>
+<li><a class="reference internal" href="#expectation">Expectation</a><ul>
+<li><a class="reference internal" href="#failureexpectation">FailureExpectation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#smoke-tests-example">Smoke tests example</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

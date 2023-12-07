@@ -1,71 +1,307 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="AWS restJson1 protocol" href="aws-restjson1-protocol.html" /><link rel="prev" title="Amazon API Gateway traits" href="amazon-apigateway.html" />
 
-<!DOCTYPE html>
-
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AWS CloudFormation traits &#8212; Smithy 1.0 documentation</title><link rel="stylesheet" href="../../../_static/bootstrap-reboot.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-4.2.0, furo 2022.06.21"/>
+        <title>AWS CloudFormation traits - Smithy 1.0</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
     
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/default.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
-    <link rel="stylesheet" href="../../../_static/custom-tabs.css" type="text/css" />
-
     
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/tabs.js"></script>
-    <script type="text/javascript" src="../../../_static/smithy.js"></script>
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
-    <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="AWS restJson1 protocol" href="aws-restjson1-protocol.html" />
-    <link rel="prev" title="Amazon API Gateway traits" href="amazon-apigateway.html" />
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="smithy-version" content="1.0">
 
-  </head><body>
-    <header>
-        <div class="header-flex width-wrapper">
-            <div class="site-logo">
-                <a href="../../../index.html">
-                    <span class="logo-icon">🔨️</span><span class="logo-text">Smithy</span>
-                </a>
-                <span class="version-text">1.0</span>
-            </div>
-            <ul id="page-navigation">
-                <li class="site-page first"><a href="../../../quickstart.html">Quick Start</a></li>
-                <li class="site-page"><a href="../index.html">Specifications</a></li>
-                <li class="site-page"><a href="../../guides/index.html">Guides</a></li>
-                <li class="site-page"><a href="https://github.com/awslabs/smithy">Code</a></li>
-                <li class="site-search hidden-sm">
-                    <form action="../../../search.html" method="get">
-                        <input type="hidden" name="check_keywords" value="yes" />
-                        <input type="hidden" name="area" value="default" />
-                        <input class="search-input" autocomplete="off" type="search" name="q" placeholder="Search" />
-                    </form>
-                </li>
-            </ul>
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --admonition-font-size: 100%;
+  --admonition-title-font-size: 100%;
+  --color-brand-primary: #C44536;
+  --color-brand-content: #00808b;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #282828;
+  --color-code-foreground: #dddddd;
+  --color-brand-primary: #ed9d13;
+  --color-brand-content: #58d3ff;
+  --color-announcement-background: #711818de;
+  --color-announcement-text: #fff;
+  
+      }
+    }
+  }
+</style><script src="https://a0.awsstatic.com/s_code/js/3.0/awshome_s_code.js"></script>
+<script src="https://d2c.aws.amazon.com/client/loader/v1/d2c-load.js"></script></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<div class="announcement">
+  <aside class="announcement-content">
+     <strong>⚠️ You are viewing version 1.0.</strong><br/>
+Version 2.0 is available at <a href="https://smithy.io/2.0/">https://smithy.io/2.0/</a>. 
+  </aside>
+</div>
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Smithy 1.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../_static/smithy.svg" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quick start</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">Specifications</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../core/index.html">Smithy specification</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../core/model.html">1. The Smithy model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/prelude-model.html">2. Prelude model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/constraint-traits.html">3. Constraint traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/documentation-traits.html">4. Documentation traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/type-refinement-traits.html">5. Type refinement traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/protocol-traits.html">6. Protocol traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/auth-traits.html">7. Authentication traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/behavior-traits.html">8. Behavior traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/resource-traits.html">9. Resource traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/stream-traits.html">10. Streaming Traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/http-traits.html">11. HTTP binding traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/xml-traits.html">12. XML binding traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/endpoint-traits.html">13. Endpoint Traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/selectors.html">14. Selectors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/model-validation.html">15. Model validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/idl.html">16. Smithy IDL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core/json-ast.html">17. JSON AST</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../http-protocol-compliance-tests.html">HTTP Protocol Compliance Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../waiters.html">Waiters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mqtt.html">MQTT Protocol Bindings</a></li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="index.html">AWS specifications</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="aws-core.html">AWS Core Specification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws-auth.html">AWS Authentication Traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws-iam.html">AWS IAM traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="amazon-apigateway.html">Amazon API Gateway traits</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">AWS CloudFormation traits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws-restjson1-protocol.html">AWS restJson1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws-json-1_0-protocol.html">AWS JSON 1.0 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws-json-1_1-protocol.html">AWS JSON 1.1 protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws-restxml-protocol.html">AWS restXml protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws-query-protocol.html">AWS query protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws-ec2-query-protocol.html">AWS EC2 query protocol</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="customizations/index.html">AWS Service Customizations</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="customizations/apigateway-customizations.html">Amazon API Gateway Customizations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="customizations/glacier-customizations.html">Amazon Glacier Customizations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="customizations/machinelearning-customizations.html">Amazon Machine Learning Customizations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="customizations/s3-customizations.html">Amazon S3 Customizations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../guides/index.html">Smithy Guides</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../guides/building-models/index.html">Building Smithy Models</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../guides/building-models/gradle-plugin.html">Smithy Gradle Plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../guides/building-models/build-config.html">smithy-build</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../guides/model-linters.html">Model linters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guides/evolving-models.html">Evolving Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guides/style-guide.html">Style Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guides/converting-to-openapi.html">Converting Smithy to OpenAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guides/generating-cloudformation-resources.html">Generating CloudFormation Resource Schemas from Smithy</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Implementations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/implementations.html">Implementations</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../ts-ssdk/index.html">Smithy Server Generator for TypeScript</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/introduction.html">Introduction to the Smithy Server Generator for TypeScript</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/handlers.html">Smithy Server Generator for TypeScript handlers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/validation.html">Smithy Server Generator for TypeScript validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/error-handling.html">Smithy Server Generator for TypeScript error handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ts-ssdk/supported-endpoints.html">Smithy Server Generator for TypeScript supported endpoints</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/smithy-lang/smithy">Source code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://smithy.io/2.0/">2.0 Documentation</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/awslabs/smithy/edit/main/docs/source-1.0/spec/aws/aws-cloudformation.rst" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
         </div>
-    </header>
-    
-        
-        
-        <section id="page-container">
-            <div class="width-wrapper flex">
-                <article class="document-body">
-                    
-                    <ul class="rel-parents">
-                    <li><a href="../index.html" >Specifications</a></li>
-                    <li><a href="index.html" accesskey="U">AWS specifications</a></li>
-                    </ul>
-                    
-                    
-  <div class="section" id="aws-cloudformation-traits">
-<span id="id1"></span><h1><a href="#aws-cloudformation-traits">AWS CloudFormation traits</a></h1>
+        <article role="main">
+          <div class="section" id="aws-cloudformation-traits">
+<span id="id1"></span><h1>AWS CloudFormation traits<a class="headerlink" href="#aws-cloudformation-traits" title="Permalink to this headline">#</a></h1>
 <p>CloudFormation traits are used to describe Smithy resources and their
 components so they can be converted to <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html">CloudFormation Resource Schemas</a>.</p>
 <p id="aws-cloudformation-overview"><a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html">CloudFormation Resource Schemas</a> are the standard method of <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-types.html">modeling a
@@ -76,23 +312,8 @@ effort needed to generate and maintain them, reduces the potential for errors
 in the translation, and provides a more complete depiction of a resource in its
 schema. These schemas can be utilized by the <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/what-is-cloudformation-cli.html">CloudFormation Command Line
 Interface</a> to build, register, and deploy <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-types.html">resource providers</a>.</p>
-<div class="contents local topic" id="table-of-contents">
-<p class="topic-title">Table of contents</p>
-<ul class="simple">
-<li><a class="reference internal" href="#aws-cloudformation-cfnresource-trait" id="id11"><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnResource</span></code> trait</a><ul>
-<li><a class="reference internal" href="#resource-properties" id="id12">Resource properties</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#aws-cloudformation-cfnexcludeproperty-trait" id="id13"><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnExcludeProperty</span></code> trait</a></li>
-<li><a class="reference internal" href="#property-mutability" id="id14">Property mutability</a></li>
-<li><a class="reference internal" href="#aws-cloudformation-cfnmutability-trait" id="id15"><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnMutability</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-cloudformation-cfnname-trait" id="id16"><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnName</span></code> trait</a></li>
-<li><a class="reference internal" href="#aws-cloudformation-cfnadditionalidentifier-trait" id="id17"><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnAdditionalIdentifier</span></code> trait</a></li>
-<li><a class="reference internal" href="#example-model" id="id18">Example model</a></li>
-</ul>
-</div>
 <div class="section" id="aws-cloudformation-cfnresource-trait">
-<span id="aws-cloudformation-cfnresource-trait"></span><span id="id2"></span><h2><a href="#aws-cloudformation-cfnresource-trait"><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnResource</span></code> trait</a></h2>
+<span id="aws-cloudformation-cfnresource-trait"></span><span id="id2"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnResource</span></code> trait<a class="headerlink" href="#aws-cloudformation-cfnresource-trait" title="Permalink to this headline">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that a Smithy resource is a CloudFormation resource.</dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">resource</span></code></dd>
@@ -100,6 +321,7 @@ Interface</a> to build, register, and deploy <a class="reference external" href=
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnResource</span></code> trait is a structure that
 supports the following members:</p>
+<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="10%" />
@@ -129,19 +351,20 @@ more information.</td>
 </tr>
 </tbody>
 </table>
+</div>
 <p>The following example defines a simple resource that is also a CloudFormation
 resource:</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-0-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-0-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-0-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use</span><span class="nc"> aws.cloudformation#cfnResource</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.cloudformation#cfnResource</span>
 
-<span class="nd">@cfnResource</span><span class="w"></span>
-<span class="kd">resource</span><span class="nc"> Foo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">identifiers:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@cfnResource</span>
+<span class="kd">resource </span><span class="nc">Foo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span>}<span class="p">,</span>
+}
 </pre></div>
 </div>
 </div></div>
@@ -152,27 +375,27 @@ cannot be automatically converted to CloudFormation properties.</p>
 <p>The following example provides a <code class="docutils literal notranslate"><span class="pre">name</span></code> value and one structure shape in the
 <code class="docutils literal notranslate"><span class="pre">additionalSchemas</span></code> list.</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-U21pdGh5" aria-selected="true" class="sphinx-tabs-tab code-tab group-tab" id="tab-1-U21pdGh5" name="U21pdGh5" role="tab" tabindex="0">Smithy</button></div><div aria-labelledby="tab-1-U21pdGh5" class="sphinx-tabs-panel code-tab group-tab" id="panel-1-U21pdGh5" name="U21pdGh5" role="tabpanel" tabindex="0"><div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use</span><span class="nc"> aws.cloudformation#cfnResource</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.cloudformation#cfnResource</span>
 
-<span class="nd">@cfnResource</span>(<span class="w"></span>
-<span class="w">    </span><span class="nl">name:</span><span class="w"> </span><span class="s2">&quot;Foo&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">additionalSchemas:</span><span class="w"> </span>[<span class="vc">AdditionalFooProperties</span>])<span class="w"></span>
-<span class="kd">resource</span><span class="nc"> FooResource</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">identifiers:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@cfnResource</span>(
+<span class="w">    </span><span class="py">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Foo&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="py">additionalSchemas</span><span class="p">:</span><span class="w"> </span>[<span class="vc">AdditionalFooProperties</span>])
+<span class="kd">resource </span><span class="nc">FooResource</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span>}<span class="p">,</span>
+}
 
-<span class="kd">structure</span><span class="nc"> AdditionalFooProperties</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">barProperty:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">AdditionalFooProperties</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">barProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 </pre></div>
 </div>
 </div></div>
 <div class="section" id="resource-properties">
-<span id="aws-cloudformation-property-deriviation"></span><h3><a href="#resource-properties">Resource properties</a></h3>
+<span id="aws-cloudformation-property-deriviation"></span><h3>Resource properties<a class="headerlink" href="#resource-properties" title="Permalink to this headline">#</a></h3>
 <p>Smithy will automatically derive <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-properties">property</a> information for resources with
 the <code class="docutils literal notranslate"><span class="pre">&#64;aws.cloudformation#cfnResource</span></code> trait applied.</p>
 <p>A resource's properties include the <a class="reference internal" href="../core/model.html#resource-identifiers"><span class="std std-ref">resource's identifiers</span></a>
@@ -195,7 +418,7 @@ derived.</p>
 </div>
 </div>
 <div class="section" id="aws-cloudformation-cfnexcludeproperty-trait">
-<span id="aws-cloudformation-cfnexcludeproperty-trait"></span><span id="id4"></span><h2><a href="#aws-cloudformation-cfnexcludeproperty-trait"><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnExcludeProperty</span></code> trait</a></h2>
+<span id="aws-cloudformation-cfnexcludeproperty-trait"></span><span id="id4"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnExcludeProperty</span></code> trait<a class="headerlink" href="#aws-cloudformation-cfnexcludeproperty-trait" title="Permalink to this headline">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that structure member should not be included as a <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-properties">property</a> in
 generated CloudFormation resource definitions.</dd>
@@ -211,46 +434,46 @@ generated CloudFormation resource definitions.</dd>
 a CloudFormation resource.</p>
 <p>The following example defines a CloudFormation resource that excludes the
 <code class="docutils literal notranslate"><span class="pre">responseCode</span></code> property:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use</span><span class="nc"> aws.cloudformation#cfnExcludeProperty</span><span class="w"></span>
-<span class="kd">use</span><span class="nc"> aws.cloudformation#cfnResource</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.cloudformation#cfnExcludeProperty</span>
+<span class="kd">use </span><span class="nc">aws.cloudformation#cfnResource</span>
 
-<span class="nd">@cfnResource</span><span class="w"></span>
-<span class="kd">resource</span><span class="nc"> Foo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">identifiers:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">read:</span><span class="w"> </span><span class="vc">GetFoo</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@cfnResource</span>
+<span class="kd">resource </span><span class="nc">Foo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span>}<span class="p">,</span>
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoo</span><span class="p">,</span>
+}
 
-<span class="nd">@readonly</span><span class="w"></span>
-<span class="nd">@http</span>(<span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/foos/{fooId}&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">code:</span><span class="w"> </span><span class="m">200</span>)<span class="w"></span>
-<span class="kd">operation</span><span class="nc"> GetFoo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">GetFooRequest</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetFooResponse</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@readonly</span>
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/foos/{fooId}&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span>)
+<span class="kd">operation </span><span class="nc">GetFoo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFooRequest</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFooResponse</span><span class="p">,</span>
+}
 
-<span class="nd">@input</span><span class="w"></span>
-<span class="kd">structure</span><span class="nc"> GetFooRequest</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nd">@httpLabel</span><span class="w"></span>
-<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetFooRequest</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@httpLabel</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 
-<span class="nd">@output</span><span class="w"></span>
-<span class="kd">structure</span><span class="nc"> GetFooResponse</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">GetFooResponse</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nd">@httpResponseCode</span><span class="w"></span>
-<span class="w">    </span><span class="nd">@cfnExcludeProperty</span><span class="w"></span>
-<span class="w">    </span><span class="nl">responseCode:</span><span class="w"> </span><span class="vc">Integer</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@httpResponseCode</span>
+<span class="w">    </span><span class="nt">@cfnExcludeProperty</span>
+<span class="w">    </span><span class="py">responseCode</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="p">,</span>
+}
 </pre></div>
 </div>
 </div>
 <div class="section" id="property-mutability">
-<span id="aws-cloudformation-mutability-derivation"></span><h2><a href="#property-mutability">Property mutability</a></h2>
+<span id="aws-cloudformation-mutability-derivation"></span><h2>Property mutability<a class="headerlink" href="#property-mutability" title="Permalink to this headline">#</a></h2>
 <p>Any property derived for a resource will have its mutability automatically
 derived as well. CloudFormation resource properties can have the following
 mutability settings:</p>
@@ -267,78 +490,79 @@ returned by a <code class="docutils literal notranslate"><span class="pre">read<
 resource creation and cannot be returned in a <code class="docutils literal notranslate"><span class="pre">read</span></code> or <code class="docutils literal notranslate"><span class="pre">list</span></code> request.</li>
 </ul>
 <p>Given the following model without mutability traits applied,</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use</span><span class="nc"> aws.cloudformation#cfnResource</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.cloudformation#cfnResource</span>
 
-<span class="nd">@cfnResource</span><span class="w"></span>
-<span class="kd">resource</span><span class="nc"> Foo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">identifiers:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">create:</span><span class="w"> </span><span class="vc">CreateFoo</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">read:</span><span class="w"> </span><span class="vc">GetFoo</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">update:</span><span class="w"> </span><span class="vc">UpdateFoo</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@cfnResource</span>
+<span class="kd">resource </span><span class="nc">Foo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span>}<span class="p">,</span>
+<span class="w">    </span><span class="py">create</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateFoo</span><span class="p">,</span>
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoo</span><span class="p">,</span>
+<span class="w">    </span><span class="py">update</span><span class="p">:</span><span class="w"> </span><span class="vc">UpdateFoo</span><span class="p">,</span>
+}
 
-<span class="kd">operation</span><span class="nc"> CreateFoo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">CreateFooRequest</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">CreateFooResponse</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">operation </span><span class="nc">CreateFoo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateFooRequest</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateFooResponse</span><span class="p">,</span>
+}
 
-<span class="nd">@input</span><span class="w"></span>
-<span class="kd">structure</span><span class="nc"> CreateFooRequest</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">createProperty:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">mutableProperty:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">writeProperty:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">createWriteProperty:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">CreateFooRequest</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">createProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span>
+<span class="w">    </span><span class="py">mutableProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span>
+<span class="w">    </span><span class="py">writeProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span>
+<span class="w">    </span><span class="py">createWriteProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span>
+}
 
-<span class="nd">@output</span><span class="w"></span>
-<span class="kd">structure</span><span class="nc"> CreateFooResponse</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">CreateFooResponse</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 
-<span class="nd">@readonly</span><span class="w"></span>
-<span class="kd">operation</span><span class="nc"> GetFoo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">GetFooRequest</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetFooResponse</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@readonly</span>
+<span class="kd">operation </span><span class="nc">GetFoo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFooRequest</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFooResponse</span><span class="p">,</span>
+}
 
-<span class="nd">@input</span><span class="w"></span>
-<span class="kd">structure</span><span class="nc"> GetFooRequest</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetFooRequest</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 
-<span class="nd">@output</span><span class="w"></span>
-<span class="kd">structure</span><span class="nc"> GetFooResponse</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">createProperty:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">mutableProperty:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">readProperty:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">GetFooResponse</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span><span class="py">createProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span>
+<span class="w">    </span><span class="py">mutableProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span>
+<span class="w">    </span><span class="py">readProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span>
+}
 
-<span class="nd">@idempotent</span><span class="w"></span>
-<span class="kd">operation</span><span class="nc"> UpdateFoo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">UpdateFooRequest</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@idempotent</span>
+<span class="kd">operation </span><span class="nc">UpdateFoo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">UpdateFooRequest</span><span class="p">,</span>
+}
 
-<span class="nd">@input</span><span class="w"></span>
-<span class="kd">structure</span><span class="nc"> UpdateFooRequest</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">UpdateFooRequest</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nl">mutableProperty:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">writeProperty:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="py">mutableProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span>
+<span class="w">    </span><span class="py">writeProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span>
+}
 
-<span class="kd">structure</span><span class="nc"> ComplexProperty</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">anotherProperty:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">ComplexProperty</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">anotherProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 </pre></div>
 </div>
 <p>The computed resource property mutabilities are:</p>
+<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
@@ -400,8 +624,9 @@ resource creation and cannot be returned in a <code class="docutils literal notr
 </tbody>
 </table>
 </div>
+</div>
 <div class="section" id="aws-cloudformation-cfnmutability-trait">
-<span id="aws-cloudformation-cfnmutability-trait"></span><span id="id6"></span><h2><a href="#aws-cloudformation-cfnmutability-trait"><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnMutability</span></code> trait</a></h2>
+<span id="aws-cloudformation-cfnmutability-trait"></span><span id="id6"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnMutability</span></code> trait<a class="headerlink" href="#aws-cloudformation-cfnmutability-trait" title="Permalink to this headline">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates an explicit CloudFormation mutability of the structure member
 when part of a CloudFormation resource.</dd>
@@ -414,6 +639,7 @@ or &quot;write&quot;.</dd>
 </dl>
 <p>The <code class="docutils literal notranslate"><span class="pre">cfnMutability</span></code> trait overrides any <a class="reference internal" href="#aws-cloudformation-mutability-derivation"><span class="std std-ref">derived mutability setting</span></a> on a member. The values of the
 mutability trait have the following meanings:</p>
+<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
@@ -456,142 +682,143 @@ equivalent to <a class="reference external" href="https://docs.aws.amazon.com/cl
 </tr>
 </tbody>
 </table>
+</div>
 <p>The following example defines a CloudFormation resource that marks the <code class="docutils literal notranslate"><span class="pre">tags</span></code>
 and <code class="docutils literal notranslate"><span class="pre">barProperty</span></code> properties as fully mutable:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use</span><span class="nc"> aws.cloudformation#cfnMutability</span><span class="w"></span>
-<span class="kd">use</span><span class="nc"> aws.cloudformation#cfnResource</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.cloudformation#cfnMutability</span>
+<span class="kd">use </span><span class="nc">aws.cloudformation#cfnResource</span>
 
-<span class="nd">@cfnResource</span>(<span class="nl">additionalSchemas:</span><span class="w"> </span>[<span class="vc">FooProperties</span>])<span class="w"></span>
-<span class="kd">resource</span><span class="nc"> Foo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">identifiers:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">create:</span><span class="w"> </span><span class="vc">CreateFoo</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@cfnResource</span>(<span class="py">additionalSchemas</span><span class="p">:</span><span class="w"> </span>[<span class="vc">FooProperties</span>])
+<span class="kd">resource </span><span class="nc">Foo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span>}<span class="p">,</span>
+<span class="w">    </span><span class="py">create</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateFoo</span><span class="p">,</span>
+}
 
-<span class="kd">operation</span><span class="nc"> CreateFoo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">CreateFooRequest</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">CreateFooResponse</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">operation </span><span class="nc">CreateFoo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateFooRequest</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateFooResponse</span><span class="p">,</span>
+}
 
-<span class="nd">@input</span><span class="w"></span>
-<span class="kd">structure</span><span class="nc"> CreateFooRequest</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nd">@cfnMutability</span>(<span class="s2">&quot;full&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nl">tags:</span><span class="w"> </span><span class="vc">TagList</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">CreateFooRequest</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@cfnMutability</span>(<span class="s2">&quot;full&quot;</span>)
+<span class="w">    </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span><span class="vc">TagList</span><span class="p">,</span>
+}
 
-<span class="nd">@output</span><span class="w"></span>
-<span class="kd">structure</span><span class="nc"> CreateFooResponse</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">CreateFooResponse</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 
-<span class="kd">structure</span><span class="nc"> FooProperties</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nd">@cfnMutability</span>(<span class="s2">&quot;full&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nl">barProperty:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">FooProperties</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@cfnMutability</span>(<span class="s2">&quot;full&quot;</span>)
+<span class="w">    </span><span class="py">barProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 </pre></div>
 </div>
 <p>The following example defines a CloudFormation resource that marks the
 <code class="docutils literal notranslate"><span class="pre">immutableSetting</span></code> property as create and read only:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use</span><span class="nc"> aws.cloudformation#cfnMutability</span><span class="w"></span>
-<span class="kd">use</span><span class="nc"> aws.cloudformation#cfnResource</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.cloudformation#cfnMutability</span>
+<span class="kd">use </span><span class="nc">aws.cloudformation#cfnResource</span>
 
-<span class="nd">@cfnResource</span>(<span class="nl">additionalSchemas:</span><span class="w"> </span>[<span class="vc">FooProperties</span>])<span class="w"></span>
-<span class="kd">resource</span><span class="nc"> Foo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">identifiers:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@cfnResource</span>(<span class="py">additionalSchemas</span><span class="p">:</span><span class="w"> </span>[<span class="vc">FooProperties</span>])
+<span class="kd">resource </span><span class="nc">Foo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span>}<span class="p">,</span>
+}
 
-<span class="kd">structure</span><span class="nc"> FooProperties</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nd">@cfnMutability</span>(<span class="s2">&quot;create-and-read&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nl">immutableSetting:</span><span class="w"> </span><span class="vc">Boolean</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">FooProperties</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@cfnMutability</span>(<span class="s2">&quot;create-and-read&quot;</span>)
+<span class="w">    </span><span class="py">immutableSetting</span><span class="p">:</span><span class="w"> </span><span class="vc">Boolean</span><span class="p">,</span>
+}
 </pre></div>
 </div>
 <p>The following example defines a CloudFormation resource that marks the
 <code class="docutils literal notranslate"><span class="pre">updatedAt</span></code> and <code class="docutils literal notranslate"><span class="pre">createdAt</span></code> properties as read only:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use</span><span class="nc"> aws.cloudformation#cfnMutability</span><span class="w"></span>
-<span class="kd">use</span><span class="nc"> aws.cloudformation#cfnResource</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.cloudformation#cfnMutability</span>
+<span class="kd">use </span><span class="nc">aws.cloudformation#cfnResource</span>
 
-<span class="nd">@cfnResource</span>(<span class="nl">additionalSchemas:</span><span class="w"> </span>[<span class="vc">FooProperties</span>])<span class="w"></span>
-<span class="kd">resource</span><span class="nc"> Foo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">identifiers:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">read:</span><span class="w"> </span><span class="vc">GetFoo</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@cfnResource</span>(<span class="py">additionalSchemas</span><span class="p">:</span><span class="w"> </span>[<span class="vc">FooProperties</span>])
+<span class="kd">resource </span><span class="nc">Foo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span>}<span class="p">,</span>
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoo</span><span class="p">,</span>
+}
 
-<span class="nd">@readonly</span><span class="w"></span>
-<span class="kd">operation</span><span class="nc"> GetFoo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">GetFooRequest</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetFooResponse</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@readonly</span>
+<span class="kd">operation </span><span class="nc">GetFoo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFooRequest</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFooResponse</span><span class="p">,</span>
+}
 
-<span class="nd">@input</span><span class="w"></span>
-<span class="kd">structure</span><span class="nc"> GetFooRequest</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetFooRequest</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 
-<span class="nd">@output</span><span class="w"></span>
-<span class="kd">structure</span><span class="nc"> GetFooResponse</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nd">@cfnMutability</span>(<span class="s2">&quot;read&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nl">updatedAt:</span><span class="w"> </span><span class="vc">Timestamp</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">GetFooResponse</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@cfnMutability</span>(<span class="s2">&quot;read&quot;</span>)
+<span class="w">    </span><span class="py">updatedAt</span><span class="p">:</span><span class="w"> </span><span class="vc">Timestamp</span><span class="p">,</span>
+}
 
-<span class="kd">structure</span><span class="nc"> FooProperties</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nd">@cfnMutability</span>(<span class="s2">&quot;read&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nl">createdAt:</span><span class="w"> </span><span class="vc">Timestamp</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">FooProperties</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@cfnMutability</span>(<span class="s2">&quot;read&quot;</span>)
+<span class="w">    </span><span class="py">createdAt</span><span class="p">:</span><span class="w"> </span><span class="vc">Timestamp</span><span class="p">,</span>
+}
 </pre></div>
 </div>
 <p>The following example defines a CloudFormation resource that marks the
 derivable <code class="docutils literal notranslate"><span class="pre">secret</span></code> and <code class="docutils literal notranslate"><span class="pre">password</span></code> properties as write only:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use</span><span class="nc"> aws.cloudformation#cfnMutability</span><span class="w"></span>
-<span class="kd">use</span><span class="nc"> aws.cloudformation#cfnResource</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.cloudformation#cfnMutability</span>
+<span class="kd">use </span><span class="nc">aws.cloudformation#cfnResource</span>
 
-<span class="nd">@cfnResource</span>(<span class="nl">additionalSchemas:</span><span class="w"> </span>[<span class="vc">FooProperties</span>])<span class="w"></span>
-<span class="kd">resource</span><span class="nc"> Foo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">identifiers:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">create:</span><span class="w"> </span><span class="vc">CreateFoo</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@cfnResource</span>(<span class="py">additionalSchemas</span><span class="p">:</span><span class="w"> </span>[<span class="vc">FooProperties</span>])
+<span class="kd">resource </span><span class="nc">Foo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span>}<span class="p">,</span>
+<span class="w">    </span><span class="py">create</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateFoo</span><span class="p">,</span>
+}
 
-<span class="kd">operation</span><span class="nc"> CreateFoo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">CreateFooRequest</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">CreateFooResponse</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">operation </span><span class="nc">CreateFoo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateFooRequest</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateFooResponse</span><span class="p">,</span>
+}
 
-<span class="nd">@input</span><span class="w"></span>
-<span class="kd">structure</span><span class="nc"> CreateFooRequest</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nd">@cfnMutability</span>(<span class="s2">&quot;write&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nl">secret:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">CreateFooRequest</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@cfnMutability</span>(<span class="s2">&quot;write&quot;</span>)
+<span class="w">    </span><span class="py">secret</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 
-<span class="nd">@output</span><span class="w"></span>
-<span class="kd">structure</span><span class="nc"> CreateFooResponse</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">CreateFooResponse</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 
-<span class="kd">structure</span><span class="nc"> FooProperties</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nd">@cfnMutability</span>(<span class="s2">&quot;write&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nl">password:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">FooProperties</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@cfnMutability</span>(<span class="s2">&quot;write&quot;</span>)
+<span class="w">    </span><span class="py">password</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 </pre></div>
 </div>
 </div>
 <div class="section" id="aws-cloudformation-cfnname-trait">
-<span id="aws-cloudformation-cfnname-trait"></span><span id="id7"></span><h2><a href="#aws-cloudformation-cfnname-trait"><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnName</span></code> trait</a></h2>
+<span id="aws-cloudformation-cfnname-trait"></span><span id="id7"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnName</span></code> trait<a class="headerlink" href="#aws-cloudformation-cfnname-trait" title="Permalink to this headline">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Allows a CloudFormation <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-properties">resource property</a> name to differ from a
 structure member name used in the model.</dd>
@@ -601,16 +828,16 @@ structure member name used in the model.</dd>
 <dt>Value type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
 </dl>
 <p>Given the following structure definition:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use</span><span class="nc"> aws.cloudformation#cfnName</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.cloudformation#cfnName</span>
 
-<span class="kd">structure</span><span class="nc"> AdditionalFooProperties</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">bar:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">AdditionalFooProperties</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">bar</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nd">@cfnName</span>(<span class="s2">&quot;Tags&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nl">tagList:</span><span class="w"> </span><span class="vc">TagList</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@cfnName</span>(<span class="s2">&quot;Tags&quot;</span>)
+<span class="w">    </span><span class="py">tagList</span><span class="p">:</span><span class="w"> </span><span class="vc">TagList</span><span class="p">,</span>
+}
 </pre></div>
 </div>
 <p>the following property names are derived from it:</p>
@@ -620,7 +847,7 @@ structure member name used in the model.</dd>
 </div>
 </div>
 <div class="section" id="aws-cloudformation-cfnadditionalidentifier-trait">
-<span id="aws-cloudformation-cfnadditionalidentifier-trait"></span><span id="id9"></span><h2><a href="#aws-cloudformation-cfnadditionalidentifier-trait"><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnAdditionalIdentifier</span></code> trait</a></h2>
+<span id="aws-cloudformation-cfnadditionalidentifier-trait"></span><span id="id9"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnAdditionalIdentifier</span></code> trait<a class="headerlink" href="#aws-cloudformation-cfnadditionalidentifier-trait" title="Permalink to this headline">#</a></h2>
 <dl class="docutils">
 <dt>Summary</dt><dd>Indicates that the CloudFormation property generated from this member is an
 <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html#schema-properties-cfnAdditionalIdentifiers">additional identifier</a> for the resource.</dd>
@@ -640,165 +867,222 @@ customer provided alias in addition to its unique ID.)</p>
 input to an operation bound to the <code class="docutils literal notranslate"><span class="pre">read</span></code> lifecycle of a resource.</p>
 <p>The following example defines a CloudFormation resource that has the
 <code class="docutils literal notranslate"><span class="pre">fooAlias</span></code> property as an additional identifier:</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use</span><span class="nc"> aws.cloudformation#cfnAdditionalIdentifier</span><span class="w"></span>
-<span class="kd">use</span><span class="nc"> aws.cloudformation#cfnResource</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.cloudformation#cfnAdditionalIdentifier</span>
+<span class="kd">use </span><span class="nc">aws.cloudformation#cfnResource</span>
 
-<span class="nd">@cfnResource</span><span class="w"></span>
-<span class="kd">resource</span><span class="nc"> Foo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">identifiers:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">read:</span><span class="w"> </span><span class="vc">GetFoo</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@cfnResource</span>
+<span class="kd">resource </span><span class="nc">Foo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span>}<span class="p">,</span>
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoo</span><span class="p">,</span>
+}
 
-<span class="nd">@readonly</span><span class="w"></span>
-<span class="kd">operation</span><span class="nc"> GetFoo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">GetFooRequest</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@readonly</span>
+<span class="kd">operation </span><span class="nc">GetFoo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFooRequest</span><span class="p">,</span>
+}
 
-<span class="nd">@input</span><span class="w"></span>
-<span class="kd">structure</span><span class="nc"> GetFooRequest</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetFooRequest</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nd">@cfnAdditionalIdentifier</span><span class="w"></span>
-<span class="w">    </span><span class="nl">fooAlias:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@cfnAdditionalIdentifier</span>
+<span class="w">    </span><span class="py">fooAlias</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="aws-cloudformation-cfndefaultvalue-trait">
+<span id="aws-cloudformation-cfndefaultvalue-trait"></span><span id="id11"></span><h2><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnDefaultValue</span></code> trait<a class="headerlink" href="#aws-cloudformation-cfndefaultvalue-trait" title="Permalink to this headline">#</a></h2>
+<dl class="docutils">
+<dt>Summary</dt><dd>Indicates that the member annotated has a default value for the resource.</dd>
+<dt>Trait selector</dt><dd><p><code class="docutils literal notranslate"><span class="pre">resource</span> <span class="pre">&gt;</span> <span class="pre">operation</span> <span class="pre">-[output]-&gt;</span> <span class="pre">structure</span> <span class="pre">&gt;</span> <span class="pre">member</span></code></p>
+<p><em>Only applicable to members of ``&#64;output`` operations</em></p>
+</dd>
+<dt>Value type</dt><dd>Annotation trait</dd>
+</dl>
+<p>Given the following example, because the <code class="docutils literal notranslate"><span class="pre">fooAlias</span></code>
+member is annotated with <code class="docutils literal notranslate"><span class="pre">cfnDefaultValue</span></code>, it can be derived
+that the <code class="docutils literal notranslate"><span class="pre">fooAlias</span></code> member has a default value for this resource.</p>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
+
+<span class="kd">use </span><span class="nc">aws.cloudformation#cfnDefaultValue</span>
+<span class="kd">use </span><span class="nc">aws.cloudformation#cfnResource</span>
+
+<span class="nt">@cfnResource</span>
+<span class="kd">resource </span><span class="nc">Foo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span>}<span class="p">,</span>
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoo</span><span class="p">,</span>
+}
+
+<span class="nt">@readonly</span>
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/foos/{fooId}&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span>)
+<span class="kd">operation </span><span class="nc">GetFoo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFooRequest</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFooResponse</span><span class="p">,</span>
+}
+
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetFooRequest</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@httpLabel</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+
+<span class="w">    </span><span class="py">fooAlias</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
+
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">GetFooResponse</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+
+<span class="w">    </span><span class="nt">@cfnDefaultValue</span>
+<span class="w">    </span><span class="py">fooAlias</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+
+<span class="w">    </span><span class="nt">@httpResponseCode</span>
+<span class="w">    </span><span class="py">responseCode</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="p">,</span>
+}
 </pre></div>
 </div>
 </div>
 <div class="section" id="example-model">
-<h2><a href="#example-model">Example model</a></h2>
+<h2>Example model<a class="headerlink" href="#example-model" title="Permalink to this headline">#</a></h2>
 <p>The above traits and behaviors culminate in the ability to generate
 <a class="reference external" href="https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-schema.html">CloudFormation Resource Schemas</a> from a Smithy model. The following example
 model utilizes all of these traits to express how a complex Smithy resource
 can be annotated for CloudFormation resource generation.</p>
 <p>Given the following model,</p>
-<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace</span><span class="nc"> smithy.example</span><span class="w"></span>
+<div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">namespace </span><span class="nc">smithy.example</span>
 
-<span class="kd">use</span><span class="nc"> aws.cloudformation#cfnAdditionalIdentifier</span><span class="w"></span>
-<span class="kd">use</span><span class="nc"> aws.cloudformation#cfnExcludeProperty</span><span class="w"></span>
-<span class="kd">use</span><span class="nc"> aws.cloudformation#cfnMutability</span><span class="w"></span>
-<span class="kd">use</span><span class="nc"> aws.cloudformation#cfnResource</span><span class="w"></span>
+<span class="kd">use </span><span class="nc">aws.cloudformation#cfnDefaultValue</span>
+<span class="kd">use </span><span class="nc">aws.cloudformation#cfnAdditionalIdentifier</span>
+<span class="kd">use </span><span class="nc">aws.cloudformation#cfnExcludeProperty</span>
+<span class="kd">use </span><span class="nc">aws.cloudformation#cfnMutability</span>
+<span class="kd">use </span><span class="nc">aws.cloudformation#cfnResource</span>
 
-<span class="nd">@cfnResource</span>(<span class="nl">additionalSchemas:</span><span class="w"> </span>[<span class="vc">FooProperties</span>])<span class="w"></span>
-<span class="kd">resource</span><span class="nc"> Foo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">identifiers:</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">        </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span>}<span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">create:</span><span class="w"> </span><span class="vc">CreateFoo</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">read:</span><span class="w"> </span><span class="vc">GetFoo</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">update:</span><span class="w"> </span><span class="vc">UpdateFoo</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@cfnResource</span>(<span class="py">additionalSchemas</span><span class="p">:</span><span class="w"> </span>[<span class="vc">FooProperties</span>])
+<span class="kd">resource </span><span class="nc">Foo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">identifiers</span><span class="p">:</span><span class="w"> </span>{
+<span class="w">        </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span>}<span class="p">,</span>
+<span class="w">    </span><span class="py">create</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateFoo</span><span class="p">,</span>
+<span class="w">    </span><span class="py">read</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFoo</span><span class="p">,</span>
+<span class="w">    </span><span class="py">update</span><span class="p">:</span><span class="w"> </span><span class="vc">UpdateFoo</span><span class="p">,</span>
+}
 
-<span class="nd">@http</span>(<span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/foos&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">code:</span><span class="w"> </span><span class="m">200</span>)<span class="w"></span>
-<span class="kd">operation</span><span class="nc"> CreateFoo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">CreateFooRequest</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">CreateFooResponse</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;POST&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/foos&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span>)
+<span class="kd">operation </span><span class="nc">CreateFoo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateFooRequest</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">CreateFooResponse</span><span class="p">,</span>
+}
 
-<span class="nd">@input</span><span class="w"></span>
-<span class="kd">structure</span><span class="nc"> CreateFooRequest</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nd">@cfnMutability</span>(<span class="s2">&quot;full&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nl">tags:</span><span class="w"> </span><span class="vc">TagList</span><span class="p">,</span><span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">CreateFooRequest</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@cfnMutability</span>(<span class="s2">&quot;full&quot;</span>)
+<span class="w">    </span><span class="py">tags</span><span class="p">:</span><span class="w"> </span><span class="vc">TagList</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nd">@cfnMutability</span>(<span class="s2">&quot;write&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nl">secret:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@cfnMutability</span>(<span class="s2">&quot;write&quot;</span>)
+<span class="w">    </span><span class="py">secret</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nl">fooAlias:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="py">fooAlias</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nl">createProperty:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">mutableProperty:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">writeProperty:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">createWriteProperty:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="py">createProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span>
+<span class="w">    </span><span class="py">mutableProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span>
+<span class="w">    </span><span class="py">writeProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span>
+<span class="w">    </span><span class="py">createWriteProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span>
+}
 
-<span class="nd">@output</span><span class="w"></span>
-<span class="kd">structure</span><span class="nc"> CreateFooResponse</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">CreateFooResponse</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 
-<span class="nd">@readonly</span><span class="w"></span>
-<span class="nd">@http</span>(<span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/foos/{fooId}&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">code:</span><span class="w"> </span><span class="m">200</span>)<span class="w"></span>
-<span class="kd">operation</span><span class="nc"> GetFoo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">GetFooRequest</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">output:</span><span class="w"> </span><span class="vc">GetFooResponse</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@readonly</span>
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/foos/{fooId}&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span>)
+<span class="kd">operation </span><span class="nc">GetFoo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFooRequest</span><span class="p">,</span>
+<span class="w">    </span><span class="py">output</span><span class="p">:</span><span class="w"> </span><span class="vc">GetFooResponse</span><span class="p">,</span>
+}
 
-<span class="nd">@input</span><span class="w"></span>
-<span class="kd">structure</span><span class="nc"> GetFooRequest</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nd">@httpLabel</span><span class="w"></span>
-<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">GetFooRequest</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@httpLabel</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nd">@httpQuery</span>(<span class="s2">&quot;fooAlias&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nd">@cfnAdditionalIdentifier</span><span class="w"></span>
-<span class="w">    </span><span class="nl">fooAlias:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@httpQuery</span>(<span class="s2">&quot;fooAlias&quot;</span>)
+<span class="w">    </span><span class="nt">@cfnAdditionalIdentifier</span>
+<span class="w">    </span><span class="py">fooAlias</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 
-<span class="nd">@output</span><span class="w"></span>
-<span class="kd">structure</span><span class="nc"> GetFooResponse</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="nt">@output</span>
+<span class="kd">structure </span><span class="nc">GetFooResponse</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nd">@httpResponseCode</span><span class="w"></span>
-<span class="w">    </span><span class="nd">@cfnExcludeProperty</span><span class="w"></span>
-<span class="w">    </span><span class="nl">responseCode:</span><span class="w"> </span><span class="vc">Integer</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@httpResponseCode</span>
+<span class="w">    </span><span class="nt">@cfnExcludeProperty</span>
+<span class="w">    </span><span class="py">responseCode</span><span class="p">:</span><span class="w"> </span><span class="vc">Integer</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nd">@cfnMutability</span>(<span class="s2">&quot;read&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nl">updatedAt:</span><span class="w"> </span><span class="vc">Timestamp</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@cfnMutability</span>(<span class="s2">&quot;read&quot;</span>)
+<span class="w">    </span><span class="py">updatedAt</span><span class="p">:</span><span class="w"> </span><span class="vc">Timestamp</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nl">fooAlias:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">createProperty:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">mutableProperty:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">readProperty:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@cfnDefaultValue</span>
+<span class="w">    </span><span class="py">fooAlias</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span><span class="py">createProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span>
+<span class="w">    </span><span class="py">mutableProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span>
+<span class="w">    </span><span class="py">readProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span>
+}
 
-<span class="nd">@idempotent</span><span class="w"></span>
-<span class="nd">@http</span>(<span class="nl">method:</span><span class="w"> </span><span class="s2">&quot;PUT&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">uri:</span><span class="w"> </span><span class="s2">&quot;/foos/{fooId}&quot;</span><span class="p">,</span><span class="w"> </span><span class="nl">code:</span><span class="w"> </span><span class="m">200</span>)<span class="w"></span>
-<span class="kd">operation</span><span class="nc"> UpdateFoo</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">input:</span><span class="w"> </span><span class="vc">UpdateFooRequest</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="nt">@idempotent</span>
+<span class="nt">@http</span>(<span class="py">method</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PUT&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">uri</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/foos/{fooId}&quot;</span><span class="p">,</span><span class="w"> </span><span class="py">code</span><span class="p">:</span><span class="w"> </span><span class="m">200</span>)
+<span class="kd">operation </span><span class="nc">UpdateFoo</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">input</span><span class="p">:</span><span class="w"> </span><span class="vc">UpdateFooRequest</span><span class="p">,</span>
+}
 
-<span class="nd">@input</span><span class="w"></span>
-<span class="kd">structure</span><span class="nc"> UpdateFooRequest</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nd">@httpLabel</span><span class="w"></span>
-<span class="w">    </span><span class="nd">@required</span><span class="w"></span>
-<span class="w">    </span><span class="nl">fooId:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="nt">@input</span>
+<span class="kd">structure </span><span class="nc">UpdateFooRequest</span><span class="w"> </span>{
+<span class="w">    </span><span class="nt">@httpLabel</span>
+<span class="w">    </span><span class="nt">@required</span>
+<span class="w">    </span><span class="py">fooId</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nl">fooAlias:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">mutableProperty:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nl">writeProperty:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="py">fooAlias</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+<span class="w">    </span><span class="py">mutableProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span>
+<span class="w">    </span><span class="py">writeProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">ComplexProperty</span><span class="p">,</span>
+}
 
-<span class="kd">structure</span><span class="nc"> FooProperties</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">addedProperty:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="kd">structure </span><span class="nc">FooProperties</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">addedProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nd">@cfnMutability</span>(<span class="s2">&quot;full&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nl">barProperty:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@cfnMutability</span>(<span class="s2">&quot;full&quot;</span>)
+<span class="w">    </span><span class="py">barProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nd">@cfnName</span>(<span class="s2">&quot;Immutable&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nd">@cfnMutability</span>(<span class="s2">&quot;create-and-read&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nl">immutableSetting:</span><span class="w"> </span><span class="vc">Boolean</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@cfnName</span>(<span class="s2">&quot;Immutable&quot;</span>)
+<span class="w">    </span><span class="nt">@cfnMutability</span>(<span class="s2">&quot;create-and-read&quot;</span>)
+<span class="w">    </span><span class="py">immutableSetting</span><span class="p">:</span><span class="w"> </span><span class="vc">Boolean</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nd">@cfnMutability</span>(<span class="s2">&quot;read&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nl">createdAt:</span><span class="w"> </span><span class="vc">Timestamp</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nt">@cfnMutability</span>(<span class="s2">&quot;read&quot;</span>)
+<span class="w">    </span><span class="py">createdAt</span><span class="p">:</span><span class="w"> </span><span class="vc">Timestamp</span><span class="p">,</span>
 
-<span class="w">    </span><span class="nd">@cfnMutability</span>(<span class="s2">&quot;write&quot;</span>)<span class="w"></span>
-<span class="w">    </span><span class="nl">password:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="w">    </span><span class="nt">@cfnMutability</span>(<span class="s2">&quot;write&quot;</span>)
+<span class="w">    </span><span class="py">password</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 
-<span class="kd">structure</span><span class="nc"> ComplexProperty</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">anotherProperty:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">structure </span><span class="nc">ComplexProperty</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">anotherProperty</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span><span class="p">,</span>
+}
 
-<span class="kd">list</span><span class="nc"> TagList</span><span class="w"> </span>{<span class="w"></span>
-<span class="w">    </span><span class="nl">member:</span><span class="w"> </span><span class="vc">String</span><span class="w"></span>
-}<span class="w"></span>
+<span class="kd">list </span><span class="nc">TagList</span><span class="w"> </span>{
+<span class="w">    </span><span class="py">member</span><span class="p">:</span><span class="w"> </span><span class="vc">String</span>
+}
 </pre></div>
 </div>
 <p>The following CloudFormation resource information is computed:</p>
+<div class="table-wrapper colwidths-given docutils container">
 <table border="1" class="colwidths-given docutils align-default">
 <colgroup>
 <col width="20%" />
@@ -939,28 +1223,70 @@ can be annotated for CloudFormation resource generation.</p>
 </table>
 </div>
 </div>
+</div>
 
-
-                    
-                    <section class="relations">
-                        
-                        <a href="amazon-apigateway.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Amazon API Gateway traits</a>
-                        
-                        <a href="aws-restjson1-protocol.html" title="next chapter" class="next-page clearfix">AWS restJson1 protocol →</a>
-                    </section>
-                    
-                </article><aside id="right-column" class="side-column hidden-sm">
-                    <div class="column-body">
-                        <section class="sidebar">
-                            
-                            <section class="next-previous">
-                                
-                                <a href="amazon-apigateway.html" title="previous chapter" class="previous-page clearfix hidden-xs">← Prev</a>
-                                
-                                <a href="aws-restjson1-protocol.html" title="next chapter" class="next-page clearfix">Next →</a>
-                            </section>
-                            
-                            <ul>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="aws-restjson1-protocol.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">AWS restJson1 protocol</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="amazon-apigateway.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Amazon API Gateway traits</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Amazon Web Services
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/awslabs/smithy" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
 <li><a class="reference internal" href="#">AWS CloudFormation traits</a><ul>
 <li><a class="reference internal" href="#aws-cloudformation-cfnresource-trait"><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnResource</span></code> trait</a><ul>
 <li><a class="reference internal" href="#resource-properties">Resource properties</a></li>
@@ -971,23 +1297,26 @@ can be annotated for CloudFormation resource generation.</p>
 <li><a class="reference internal" href="#aws-cloudformation-cfnmutability-trait"><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnMutability</span></code> trait</a></li>
 <li><a class="reference internal" href="#aws-cloudformation-cfnname-trait"><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnName</span></code> trait</a></li>
 <li><a class="reference internal" href="#aws-cloudformation-cfnadditionalidentifier-trait"><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnAdditionalIdentifier</span></code> trait</a></li>
+<li><a class="reference internal" href="#aws-cloudformation-cfndefaultvalue-trait"><code class="docutils literal notranslate"><span class="pre">aws.cloudformation#cfnDefaultValue</span></code> trait</a></li>
 <li><a class="reference internal" href="#example-model">Example model</a></li>
 </ul>
 </li>
 </ul>
 
-                        </section>
-                    </div>
-                </aside></div>
-        </section>
-        
-    
-<footer id="footer">
-    <div class="width-wrapper">
-        <div class="copyright">
-            <p>©2021, Amazon Web Services, Inc or its affiliates. All rights reserved.</p>
+          </div>
         </div>
-    </div>
-</footer>
-  </body>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/scripts/furo.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/tabs.js"></script>
+    </body>
 </html>
