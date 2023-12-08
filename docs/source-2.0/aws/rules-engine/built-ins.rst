@@ -81,7 +81,7 @@ Type
 .. _rules-engine-aws-built-ins-account-id-endpoint-mode:
 
 ``AWS::Auth::AccountIdEndpointMode`` built-in
-=================================
+=============================================
 
 Description
     The AccountId Endpoint Mode.
