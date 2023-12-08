@@ -18,6 +18,7 @@ package software.amazon.smithy.model.knowledge;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import software.amazon.smithy.model.traits.InputTrait;
 import software.amazon.smithy.model.traits.OutputTrait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.SetUtils;
 
 /**
  * Index of operation IDs to their resolved input, output, and error
@@ -50,11 +52,20 @@ public final class OperationIndex implements KnowledgeIndex {
     private final Map<ShapeId, StructureShape> inputs = new HashMap<>();
     private final Map<ShapeId, StructureShape> outputs = new HashMap<>();
     private final Map<ShapeId, List<StructureShape>> errors = new HashMap<>();
+    private final Map<ShapeId, Set<OperationShape>> boundInputOperations = new HashMap<>();
+    private final Map<ShapeId, Set<OperationShape>> boundOutputOperations = new HashMap<>();
+    private final Map<ShapeId, Set<Shape>> boundErrorShapes = new HashMap<>();
 
     public OperationIndex(Model model) {
         for (OperationShape operation : model.getOperationShapes()) {
-            getStructure(model, operation.getInputShape()).ifPresent(shape -> inputs.put(operation.getId(), shape));
-            getStructure(model, operation.getOutputShape()).ifPresent(shape -> outputs.put(operation.getId(), shape));
+            getStructure(model, operation.getInputShape()).ifPresent(shape -> {
+                inputs.put(operation.getId(), shape);
+                boundInputOperations.computeIfAbsent(shape.getId(), id -> new HashSet<>()).add(operation);
+            });
+            getStructure(model, operation.getOutputShape()).ifPresent(shape -> {
+                outputs.put(operation.getId(), shape);
+                boundOutputOperations.computeIfAbsent(shape.getId(), id -> new HashSet<>()).add(operation);
+            });
             addErrorsFromShape(model, operation.getId(), operation.getErrors());
         }
 
@@ -65,8 +76,10 @@ public final class OperationIndex implements KnowledgeIndex {
 
     private void addErrorsFromShape(Model model, ShapeId source, List<ShapeId> errorShapeIds) {
         List<StructureShape> errorShapes = new ArrayList<>(errorShapeIds.size());
+        Shape sourceShape = model.expectShape(source);
         for (ShapeId target : errorShapeIds) {
             model.getShape(target).flatMap(Shape::asStructureShape).ifPresent(errorShapes::add);
+            boundErrorShapes.computeIfAbsent(target, id -> new HashSet<>()).add(sourceShape);
         }
         errors.put(source, errorShapes);
     }
@@ -159,6 +172,16 @@ public final class OperationIndex implements KnowledgeIndex {
     }
 
     /**
+     * Gets all the operations that bind the given shape as input.
+     *
+     * @param input The structure that may be used as input.
+     * @return Returns a set of operations that bind the given input shape.
+     */
+    public Set<OperationShape> getInputBindings(ToShapeId input) {
+        return SetUtils.copyOf(boundInputOperations.getOrDefault(input.toShapeId(), Collections.emptySet()));
+    }
+
+    /**
      * Gets the optional output structure of an operation, and returns an
      * empty optional if the output targets {@code smithy.api#Unit}.
      *
@@ -242,6 +265,16 @@ public final class OperationIndex implements KnowledgeIndex {
     }
 
     /**
+     * Gets all the operations that bind the given shape as output.
+     *
+     * @param output The structure that may be used as output.
+     * @return Returns a set of operations that bind the given output shape.
+     */
+    public Set<OperationShape> getOutputBindings(ToShapeId output) {
+        return SetUtils.copyOf(boundOutputOperations.getOrDefault(output.toShapeId(), Collections.emptySet()));
+    }
+
+    /**
      * Gets the list of error structures defined on an operation.
      *
      * <p>An empty list is returned if the operation is not found or
@@ -274,5 +307,15 @@ public final class OperationIndex implements KnowledgeIndex {
 
     private Optional<StructureShape> getStructure(Model model, ToShapeId id) {
         return model.getShape(id.toShapeId()).flatMap(Shape::asStructureShape);
+    }
+
+    /**
+     * Gets all the operations and services that bind the given shape as an error.
+     *
+     * @param error The structure that may be used as an error.
+     * @return Returns a set of operations and services that bind the given error shape.
+     */
+    public Set<Shape> getErrorBindings(ToShapeId error) {
+        return SetUtils.copyOf(boundErrorShapes.getOrDefault(error.toShapeId(), Collections.emptySet()));
     }
 }

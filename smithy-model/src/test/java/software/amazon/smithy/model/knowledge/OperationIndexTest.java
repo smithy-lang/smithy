@@ -23,15 +23,18 @@ import static org.hamcrest.Matchers.is;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
+import software.amazon.smithy.utils.SetUtils;
 
 public class OperationIndexTest {
 
@@ -40,7 +43,7 @@ public class OperationIndexTest {
     @BeforeAll
     public static void before() {
         model = Model.assembler()
-                .addImport(OperationIndexTest.class.getResource("operation-index-test.json"))
+                .addImport(OperationIndexTest.class.getResource("operation-index-test.smithy"))
                 .assemble()
                 .unwrap();
     }
@@ -104,6 +107,18 @@ public class OperationIndexTest {
     }
 
     @Test
+    public void getsInputBindings() {
+        OperationIndex index = OperationIndex.of(model);
+        Set<OperationShape> actual = index.getInputBindings(ShapeId.from("ns.foo#Input"));
+        Set<OperationShape> expected = SetUtils.of(
+                model.expectShape(ShapeId.from("ns.foo#B"), OperationShape.class),
+                model.expectShape(ShapeId.from("ns.foo#C"), OperationShape.class)
+        );
+        assertThat(actual, equalTo(expected));
+        assertThat(index.getInputBindings(ShapeId.from("ns.foo#Output")), empty());
+    }
+
+    @Test
     public void determinesIfShapeIsUsedAsOutput() {
         OperationIndex opIndex = OperationIndex.of(model);
         StructureShape input = model.expectShape(ShapeId.from("ns.foo#Input"), StructureShape.class);
@@ -111,6 +126,18 @@ public class OperationIndexTest {
 
         assertThat(opIndex.isOutputStructure(output), is(true));
         assertThat(opIndex.isOutputStructure(input), is(false));
+    }
+
+    @Test
+    public void getsOutputBindings() {
+        OperationIndex index = OperationIndex.of(model);
+        Set<OperationShape> actual = index.getOutputBindings(ShapeId.from("ns.foo#Output"));
+        Set<OperationShape> expected = SetUtils.of(
+                model.expectShape(ShapeId.from("ns.foo#B"), OperationShape.class),
+                model.expectShape(ShapeId.from("ns.foo#C"), OperationShape.class)
+        );
+        assertThat(actual, equalTo(expected));
+        assertThat(index.getOutputBindings(ShapeId.from("ns.foo#Input")), empty());
     }
 
     @Test
@@ -129,5 +156,22 @@ public class OperationIndexTest {
         assertThat(opIndex.getErrors(service, a), containsInAnyOrder(common1, common2));
         assertThat(opIndex.getErrors(b), containsInAnyOrder(error1, error2));
         assertThat(opIndex.getErrors(service, b), containsInAnyOrder(error1, error2, common1, common2));
+    }
+
+    @Test
+    public void getsErrorBindings() {
+        OperationIndex index = OperationIndex.of(model);
+        Set<Shape> actual = index.getErrorBindings(ShapeId.from("ns.foo#CommonError1"));
+        Set<Shape> expected = SetUtils.of(
+                model.expectShape(ShapeId.from("ns.foo#MyService"), ServiceShape.class),
+                model.expectShape(ShapeId.from("ns.foo#C"), OperationShape.class)
+        );
+        assertThat(actual, equalTo(expected));
+
+        actual = index.getErrorBindings(ShapeId.from("ns.foo#Error1"));
+        expected = SetUtils.of(model.expectShape(ShapeId.from("ns.foo#B"), OperationShape.class));
+        assertThat(actual, equalTo(expected));
+
+        assertThat(index.getOutputBindings(ShapeId.from("ns.foo#UnusedError")), empty());
     }
 }
