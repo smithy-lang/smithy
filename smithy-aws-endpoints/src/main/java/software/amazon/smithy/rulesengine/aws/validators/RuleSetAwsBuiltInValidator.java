@@ -27,6 +27,7 @@ import software.amazon.smithy.utils.SetUtils;
 public class RuleSetAwsBuiltInValidator extends AbstractValidator {
     private static final Set<String> ADDITIONAL_CONSIDERATION_BUILT_INS = SetUtils.of(
             AwsBuiltIns.ACCOUNT_ID.getBuiltIn().get(),
+            AwsBuiltIns.ACCOUNT_ID_ENDPOINT_MODE.getBuiltIn().get(),
             AwsBuiltIns.CREDENTIAL_SCOPE.getBuiltIn().get());
     private static final String ADDITIONAL_CONSIDERATION_MESSAGE = "The `%s` built-in used requires additional "
            + "consideration of the rules that use it.";
