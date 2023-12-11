@@ -1,0 +1,3 @@
+[WARNING] example#FizzBuzz: This shape applies a trait that is unstable: aws.endpoints#standardRegionalEndpoints | UnstableTrait.aws.endpoints#standardRegionalEndpoints
+[DANGER] example#FizzBuzz: Endpoint `myservice.{invalid}.{dnsSuffix}` contains unsupported pattern: `{invalid}` | EndpointModifier.UnsupportedEndpointPattern
+[DANGER] example#FizzBuzz: Endpoint `{invalid}-fips.{region}.{dnsSuffix}` contains unsupported pattern: `{invalid}` | EndpointModifier.UnsupportedEndpointPattern

@@ -27,7 +27,7 @@ class StandardPartitionalEndpointsTraitTest {
 
         trait = getTraitFromService(model, "ns.foo#Service2");
 
-        assertEquals(trait.getEndpointPatternType(), EndpointPatternType.SERVICE_REGION_DNSSUFFI);
+        assertEquals(trait.getEndpointPatternType(), EndpointPatternType.SERVICE_REGION_DNSSUFFIX);
         assertEquals(trait.getPartitionEndpointSpecialCases().size(), 1);
 
         List<PartitionEndpointSpecialCase> cases = trait.getPartitionEndpointSpecialCases().get("aws-us-gov");
