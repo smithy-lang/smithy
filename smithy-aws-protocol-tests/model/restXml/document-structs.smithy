@@ -577,9 +577,9 @@ apply XmlEmptyBlobs @httpResponseTests([
         protocol: restXml,
         code: 200,
         body: """
-              <XmlBlobsRequest>
+              <XmlEmptyBlobsResponse>
                   <data></data>
-              </XmlBlobsRequest>
+              </XmlEmptyBlobsResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {
@@ -596,9 +596,9 @@ apply XmlEmptyBlobs @httpResponseTests([
         protocol: restXml,
         code: 200,
         body: """
-              <XmlBlobsResponse>
+              <XmlEmptyBlobsResponse>
                   <data/>
-              </XmlBlobsResponse>
+              </XmlEmptyBlobsResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {

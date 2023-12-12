@@ -72,7 +72,7 @@ apply XmlMaps @httpResponseTests([
         protocol: restXml,
         code: 200,
         body: """
-              <XmlMapsRequest>
+              <XmlMapsResponse>
                   <myMap>
                       <entry>
                           <key>foo</key>
@@ -87,7 +87,7 @@ apply XmlMaps @httpResponseTests([
                           </value>
                       </entry>
                   </myMap>
-              </XmlMapsRequest>
+              </XmlMapsResponse>
               """,
         bodyMediaType: "application/xml",
         headers: {
