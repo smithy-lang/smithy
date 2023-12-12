@@ -218,6 +218,22 @@ apply AllQueryStringTypes @httpRequestTests([
             }
         }
     },
+    {
+        id: "RestJsonZeroAndFalseQueryValues"
+        documentation: "Query values of 0 and false are serialized"
+        protocol: restJson1
+        method: "GET"
+        uri: "/AllQueryStringTypesInput"
+        body: ""
+        queryParams: [
+            "Integer=0"
+            "Boolean=false"
+        ]
+        params: {
+            queryInteger: 0
+            queryBoolean: false
+        }
+    }
 ])
 
 @suppress(["HttpQueryParamsTrait"])

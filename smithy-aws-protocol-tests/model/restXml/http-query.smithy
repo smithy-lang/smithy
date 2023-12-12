@@ -180,6 +180,22 @@ apply AllQueryStringTypes @httpRequestTests([
             queryDouble: "-Infinity",
         }
     },
+    {
+        id: "RestXmlZeroAndFalseQueryValues"
+        documentation: "Query values of 0 and false are serialized"
+        protocol: restXml
+        method: "GET"
+        uri: "/AllQueryStringTypesInput"
+        body: ""
+        queryParams: [
+            "Integer=0"
+            "Boolean=false"
+        ]
+        params: {
+            queryInteger: 0
+            queryBoolean: false
+        }
+    }
 ])
 
 @suppress(["HttpQueryParamsTrait"])
