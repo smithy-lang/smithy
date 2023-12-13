@@ -6,6 +6,7 @@ import com.google.testing.compile.JavaFileObjects;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import software.amazon.smithy.processor.test.TestBuildPlugin;
 import software.amazon.smithy.processor.test.TestProcessorImplementation;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
@@ -31,7 +32,8 @@ public class AnnotationProcessorTest {
     void generatesBasicJavaFiles() {
         assertThat(compilation)
                 .generatedFile(StandardLocation.SOURCE_OUTPUT, "com/example/testing/Empty.java")
-                .hasSourceEquivalentTo(JavaFileObjects.forResource("testing/Empty.java"));
+                .contentsAsUtf8String()
+                .isEqualTo(TestBuildPlugin.getEmptyClass("com.example.testing"));
     }
 
     @Test

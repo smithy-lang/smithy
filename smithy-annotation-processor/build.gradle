@@ -17,11 +17,3 @@ dependencies {
 
     testImplementation "com.google.testing.compile:compile-testing:0.21.0"
 }
-
-test {
-    // Workaround Google compiler testing package using compiler internals
-    // See: https://github.com/google/compile-testing/issues/222
-    jvmArgs '--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED'
-    jvmArgs '--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED'
-    jvmArgs '--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED'
-}

@@ -42,7 +42,7 @@ public class TestBuildPlugin implements SmithyBuildPlugin {
         context.getModel().expectShape(ShapeId.from("com.testing.smithy#StructyMcStructFace"));
     }
 
-    private String getEmptyClass(String namespace) {
+    public static String getEmptyClass(String namespace) {
         StringBuilder builder = new StringBuilder();
         builder.append("package ").append(namespace).append(";").append(System.lineSeparator())
                 .append(System.lineSeparator())
