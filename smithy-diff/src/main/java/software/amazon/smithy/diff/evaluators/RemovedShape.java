@@ -46,8 +46,7 @@ public final class RemovedShape extends AbstractDiffEvaluator {
     }
 
     private boolean isScalarType(Shape shape) {
-        return shape.isIntegerShape()
-            || shape.isBigDecimalShape()
+        return shape.isBigDecimalShape()
             || shape.isBigIntegerShape()
             || shape.isBlobShape()
             || shape.isBooleanShape()
@@ -57,6 +56,7 @@ public final class RemovedShape extends AbstractDiffEvaluator {
             || shape.isShortShape()
             || shape.isTimestampShape()
             || shape.isLongShape()
-            || (shape.isStringShape() && !shape.hasTrait(EnumTrait.class));
+            || (shape.isStringShape() && !shape.hasTrait(EnumTrait.class))
+            || (shape.isIntegerShape() && !shape.isIntEnumShape());
     }
 }

@@ -29,7 +29,9 @@ import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.FloatShape;
+import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.LongShape;
@@ -89,6 +91,21 @@ public class RemovedShapeTest {
         Shape shapeA1 = StringShape.builder()
                 .id("foo.baz#Baz")
                 .addTrait(EnumTrait.builder().addEnum(EnumDefinition.builder().value("val").build()).build())
+                .build();
+        Model modelA = Model.assembler().addShapes(shapeA1).assemble().unwrap();
+        Model modelB = Model.assembler().addShapes().assemble().unwrap();
+        List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
+
+        assertThat(TestHelper.findEvents(events, "RemovedShape").size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, shapeA1.getId()).size(), equalTo(1));
+        assertThat(TestHelper.findEvents(events, Severity.ERROR).size(), equalTo(1));
+    }
+
+    @Test
+    public void emitsErrorForIntEnum() {
+        Shape shapeA1 = IntEnumShape.builder()
+                .id("foo.baz#Baz")
+                .addMember("FOO", 1)
                 .build();
         Model modelA = Model.assembler().addShapes(shapeA1).assemble().unwrap();
         Model modelB = Model.assembler().addShapes().assemble().unwrap();
