@@ -20,9 +20,7 @@ public class AnnotationProcessorTest {
 
     @BeforeAll
     static void compile() {
-        compilation = compiler.compile(
-                JavaFileObjects.forResource("testing/package-info.java")
-        );
+        compilation = compiler.compile(JavaFileObjects.forResource("testing/package-info.java"));
         assertThat(compilation).succeeded();
     }
 
@@ -44,7 +42,9 @@ public class AnnotationProcessorTest {
 
     @Test
     void ignoresFile() {
-        assertThat(compilation)
-                .hadNoteContaining("Ignoring generated file: com/example/testing/Ignored.ignored");
+        assertThat(compilation).hadNoteCount(2);
+        assertThat(compilation).hadNoteContaining("Executing processor: TestProcessorImplementation...");
+        assertThat(compilation).hadNoteContaining("Ignoring generated file: ");
+        assertThat(compilation).hadNoteContaining("Ignored.ignored");
     }
 }

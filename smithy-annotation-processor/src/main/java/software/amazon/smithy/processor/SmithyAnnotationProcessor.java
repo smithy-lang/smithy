@@ -12,7 +12,6 @@ import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -89,7 +88,7 @@ import software.amazon.smithy.utils.IoUtils;
  *            should be applied in the {@code package-info.java} file of a package.
  */
 public abstract class SmithyAnnotationProcessor<A extends Annotation> extends AbstractProcessor {
-    private static final Path MANIFEST_PATH = Paths.get("META-INF/smithy/manifest");
+    private static final String MANIFEST_PATH = "META-INF/smithy/manifest";
     private static final String SOURCE_PROJECTION_PATH = "build/smithy/source/";
     private Messager messager;
     private Filer filer;
@@ -210,7 +209,7 @@ public abstract class SmithyAnnotationProcessor<A extends Annotation> extends Ab
 
     private URL getManifestUrl() {
         try {
-            return filer.getResource(StandardLocation.CLASS_PATH, "", MANIFEST_PATH.toString()).toUri().toURL();
+            return filer.getResource(StandardLocation.CLASS_PATH, "", MANIFEST_PATH).toUri().toURL();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
