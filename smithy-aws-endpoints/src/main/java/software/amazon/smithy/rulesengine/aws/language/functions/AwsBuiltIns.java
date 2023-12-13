@@ -65,7 +65,7 @@ public final class AwsBuiltIns {
                     .build();
 
     /**
-     * Built-in parameter representing the AccountId.
+     * Built-in parameter representing the AccountId Endpoint Mode.
      */
     public static final Parameter ACCOUNT_ID_ENDPOINT_MODE =
             Parameter.builder()
