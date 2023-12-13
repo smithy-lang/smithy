@@ -6,8 +6,6 @@ import com.google.testing.compile.JavaFileObjects;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import software.amazon.smithy.processor.test.TestBuildPlugin;
-import software.amazon.smithy.processor.test.TestProcessorImplementation;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
 

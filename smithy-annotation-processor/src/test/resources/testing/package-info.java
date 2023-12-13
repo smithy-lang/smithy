@@ -4,4 +4,4 @@
 @TestProcessorAnnotation(namespace = "com.example.testing")
 package testing;
 
-import software.amazon.smithy.processor.test.TestProcessorAnnotation;
+import software.amazon.smithy.processor.TestProcessorAnnotation;

@@ -1,10 +1,9 @@
-package software.amazon.smithy.processor.test;
+package software.amazon.smithy.processor;
 
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.processor.SmithyAnnotationProcessor;
 import software.amazon.smithy.model.node.ObjectNode;
 
 @SupportedAnnotationTypes(TestProcessorAnnotation.NAME)

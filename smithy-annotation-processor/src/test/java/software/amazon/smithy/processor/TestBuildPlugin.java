@@ -1,7 +1,6 @@
-package software.amazon.smithy.processor.test;
+package software.amazon.smithy.processor;
 
 import java.nio.file.Paths;
-import java.util.logging.Logger;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.PluginContext;
 import software.amazon.smithy.build.SmithyBuildPlugin;
@@ -9,7 +8,6 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 
 public class TestBuildPlugin implements SmithyBuildPlugin {
-    private static final Logger LOGGER = Logger.getLogger(TestBuildPlugin.class.getName());
     private static final String META_INF_LOCATION = "META-INF/services/";
 
     @Override
@@ -62,10 +60,6 @@ public class TestBuildPlugin implements SmithyBuildPlugin {
 
         static Settings from(ObjectNode node) {
             return new Settings(node.expectStringMember("namespace").getValue());
-        }
-
-        public String getNamespace() {
-            return namespace;
         }
     }
 }
