@@ -10,7 +10,10 @@ import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.net.URL;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -87,7 +90,7 @@ import software.amazon.smithy.utils.IoUtils;
  *            should be applied in the {@code package-info.java} file of a package.
  */
 public abstract class SmithyAnnotationProcessor<A extends Annotation> extends AbstractProcessor {
-    private static final String MANIFEST_PATH = "META-INF/smithy/manifest";
+    private static final Path MANIFEST_PATH = Paths.get("META-INF/smithy/manifest");
     private static final String SOURCE_PROJECTION_PATH = "build/smithy/source/";
     private Messager messager;
     private Filer filer;
@@ -175,15 +178,16 @@ public abstract class SmithyAnnotationProcessor<A extends Annotation> extends Ab
         try {
             // Resources are written to the class output
             if (outputPath.startsWith("META-INF")) {
-                try (Writer writer = filer.createResource(StandardLocation.CLASS_OUTPUT, "", outputPath)
+                try (Writer writer = filer
+                        .createResource(StandardLocation.CLASS_OUTPUT, "", outputPath)
                         .openWriter()
                 ) {
                     writer.write(IoUtils.readUtf8File(path));
                 }
                 // All other Java files are written to the source output
             } else if (outputPath.endsWith(".java")) {
-                // The filer needs to use a namespace convention of `.` rather than `/` for paths.
-                String javaPath = outputPath.replace("/", ".")
+                // The filer needs to use a namespace convention of `.` rather than the default separator for paths.
+                String javaPath = outputPath.replace(FileSystems.getDefault().getSeparator(), ".")
                         .substring(0, outputPath.lastIndexOf(".java"));
                 try (Writer writer = filer.createSourceFile(javaPath).openWriter()) {
                     writer.write(IoUtils.readUtf8File(path));
@@ -207,7 +211,7 @@ public abstract class SmithyAnnotationProcessor<A extends Annotation> extends Ab
 
     private URL getManifestUrl() {
         try {
-            return filer.getResource(StandardLocation.CLASS_PATH, "", MANIFEST_PATH).toUri().toURL();
+            return filer.getResource(StandardLocation.CLASS_PATH, "", MANIFEST_PATH.toString()).toUri().toURL();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
