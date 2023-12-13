@@ -10,7 +10,6 @@ import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.net.URL;
-import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
