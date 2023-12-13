@@ -23,9 +23,9 @@ import software.amazon.smithy.rulesengine.aws.traits.StandardRegionalEndpointsTr
 import software.amazon.smithy.utils.SetUtils;
 
 /**
- * Validate endpoint patterns used in endpoint traits that are applied on a service.
+ * Validate special case endpoints from endpoint traits that are applied on a service.
  */
-public final class AwsEndpointPatternValidator extends AbstractValidator {
+public final class AwsSpecialCaseEndpointValidator extends AbstractValidator {
 
     private static final Set<String> SUPPORTED_PATTERNS = SetUtils.of(
             "{region}", "{service}", "{dnsSuffix}", "{dualStackDnsSuffix}"
@@ -102,6 +102,14 @@ public final class AwsEndpointPatternValidator extends AbstractValidator {
                     String.format("Endpoint `%s` contains unsupported patterns: %s",
                             endpoint, String.join(", ", unsupportedPatterns)),
                     "UnsupportedEndpointPattern"));
+        }
+
+        if (!(endpoint.startsWith("http://") || endpoint.startsWith("https://"))) {
+            events.add(danger(
+                    serviceShape, location,
+                    String.format("Endpoint `%s` should start with scheme `http://` or `https://`",
+                            endpoint),
+                    "InvalidEndpointPatternScheme"));
         }
 
         return events;

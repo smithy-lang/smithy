@@ -18,11 +18,11 @@ service Service2 {
     partitionSpecialCases: {
         "aws-us-gov": [
             {
-                endpoint: "myservice.{region}.{dnsSuffix}",
+                endpoint: "https://myservice.{region}.{dnsSuffix}",
                 fips: true
             },
             {
-                endpoint: "myservice.global.amazonaws.com",
+                endpoint: "https://myservice.global.amazonaws.com",
                 dualStack: true
             }
         ]
