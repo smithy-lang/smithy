@@ -1,0 +1,17 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+description = "AWS specific components for managing endpoints in Smithy"
+
+ext {
+    displayName = "Smithy :: Trait code generation annotation processor"
+    moduleName = "software.amazon.smithy.traitcodegen.processor"
+}
+
+dependencies {
+    implementation project(":smithy-annotation-processor")
+    implementation project(":smithy-trait-codegen:annotation-processor:annotation")
+    implementation project(":smithy-trait-codegen:codegen-core")
+}

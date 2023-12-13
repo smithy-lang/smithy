@@ -5,11 +5,6 @@
 
 package software.amazon.smithy.processor;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.io.Writer;
-import java.lang.annotation.Annotation;
-import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -174,7 +169,10 @@ public abstract class SmithyAnnotationProcessor<A extends Annotation> extends Ab
             // Resources are written to the class output
             if (outputPath.startsWith("META-INF")) {
                 try (Writer writer = filer
+<<<<<<< HEAD
+=======
                         .createResource(StandardLocation.CLASS_OUTPUT, "", convertOutputPath(outputPath))
+>>>>>>> e13c3301 (Try another method of enforcing path compatibility)
                         .openWriter()
                 ) {
                     writer.write(IoUtils.readUtf8File(path));
@@ -216,6 +214,7 @@ public abstract class SmithyAnnotationProcessor<A extends Annotation> extends Ab
     private String convertOutputPath(String outputPath) {
         return outputPath.replace(FileSystems.getDefault().getSeparator(), "/");
     }
+<<<<<<< HEAD
 
     private String getPackageName(Element element) {
         if (element instanceof PackageElement) {
@@ -226,4 +225,6 @@ public abstract class SmithyAnnotationProcessor<A extends Annotation> extends Ab
                     + "but found : " + element);
         }
     }
+=======
+>>>>>>> e13c3301 (Try another method of enforcing path compatibility)
 }

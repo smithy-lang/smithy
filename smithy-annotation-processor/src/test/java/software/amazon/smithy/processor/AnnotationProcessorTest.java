@@ -6,7 +6,6 @@ import com.google.testing.compile.JavaFileObjects;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import software.amazon.smithy.processor.test.TestProcessorImplementation;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
 
@@ -21,17 +20,17 @@ public class AnnotationProcessorTest {
 
     @BeforeAll
     static void compile() {
-        compilation = compiler.compile(
-                JavaFileObjects.forResource("testing/package-info.java")
-        );
+        compilation = compiler.compile(JavaFileObjects.forResource("testing/package-info.java"));
         assertThat(compilation).succeeded();
     }
 
     @Test
     void generatesBasicJavaFiles() {
+        System.out.println(compilation.diagnostics());
         assertThat(compilation)
                 .generatedFile(StandardLocation.SOURCE_OUTPUT, "com/example/testing/Empty.java")
-                .hasSourceEquivalentTo(JavaFileObjects.forResource("testing/Empty.java"));
+                .contentsAsUtf8String()
+                .isEqualTo(TestBuildPlugin.getEmptyClass("com.example.testing"));
     }
 
     @Test
@@ -44,7 +43,8 @@ public class AnnotationProcessorTest {
 
     @Test
     void ignoresFile() {
-        assertThat(compilation)
-                .hadNoteContaining("Ignoring generated file: com/example/testing/Ignored.ignored");
+        assertThat(compilation).hadNoteContaining("Executing processor: TestProcessorImplementation...");
+        assertThat(compilation).hadNoteContaining("Ignoring generated file: ");
+        assertThat(compilation).hadNoteContaining("Ignored.ignored");
     }
 }

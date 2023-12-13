@@ -1,0 +1,24 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+description = "Tests for Generating Trait Code from Smithy Models"
+
+ext {
+    displayName = "Smithy :: Trait Code Generation Test"
+    moduleName = "software.amazon.smithy.traitcodegen.test"
+}
+
+dependencies {
+    annotationProcessor project(":smithy-trait-codegen:annotation-processor:processor")
+    compileOnly project(":smithy-trait-codegen:annotation-processor:annotation")
+
+    implementation project(":smithy-model")
+}
+
+
+// Add resources to the source path of the annotation processor
+tasks.withType(JavaCompile).configureEach {
+    options.sourcepath = sourceSets.main.resources.getSourceDirectories()
+}
