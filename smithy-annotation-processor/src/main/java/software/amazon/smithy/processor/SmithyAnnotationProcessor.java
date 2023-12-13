@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.build.processor;
+package software.amazon.smithy.processor;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -180,8 +180,7 @@ public abstract class SmithyAnnotationProcessor<A extends Annotation> extends Ab
                 ) {
                     writer.write(IoUtils.readUtf8File(path));
                 }
-                // All other Java files are written to the source output while all
-                // Non-java files generated are ignored.
+                // All other Java files are written to the source output
             } else if (outputPath.endsWith(".java")) {
                 // The filer needs to use a namespace convention of `.` rather than `/` for paths.
                 String javaPath = outputPath.replace("/", ".")
@@ -189,6 +188,9 @@ public abstract class SmithyAnnotationProcessor<A extends Annotation> extends Ab
                 try (Writer writer = filer.createSourceFile(javaPath).openWriter()) {
                     writer.write(IoUtils.readUtf8File(path));
                 }
+            } else {
+                // Non-java files generated are ignored.
+                messager.printMessage(Diagnostic.Kind.NOTE, "Ignoring generated file: " + outputPath);
             }
         } catch (IOException exc) {
             throw new UncheckedIOException(exc);
@@ -205,7 +207,7 @@ public abstract class SmithyAnnotationProcessor<A extends Annotation> extends Ab
 
     private URL getManifestUrl() {
         try {
-            return filer.getResource(StandardLocation.SOURCE_PATH, "", MANIFEST_PATH).toUri().toURL();
+            return filer.getResource(StandardLocation.CLASS_PATH, "", MANIFEST_PATH).toUri().toURL();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
