@@ -418,6 +418,7 @@ The following example specifies a service that has standard regional endpoints e
 ----------------
 Endpoint Pattern
 ----------------
+
 When specifying special case endpoints in
 :ref:`StandardRegionalEndpoints <aws.endpoints#standardRegionalEndpoints-trait>` or
 :ref:`StandardPartitionalEndpoints <aws.endpoints#standardPartitionalEndpoints-trait>` you may use

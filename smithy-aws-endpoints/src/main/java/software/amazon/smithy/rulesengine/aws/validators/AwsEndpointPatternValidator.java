@@ -15,14 +15,17 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.validation.AbstractValidator;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.rulesengine.aws.traits.PartitionEndpointSpecialCase;
+import software.amazon.smithy.rulesengine.aws.traits.PartitionSpecialCase;
+import software.amazon.smithy.rulesengine.aws.traits.RegionSpecialCase;
 import software.amazon.smithy.rulesengine.aws.traits.StandardPartitionalEndpointsTrait;
 import software.amazon.smithy.rulesengine.aws.traits.StandardRegionalEndpointsTrait;
 import software.amazon.smithy.utils.SetUtils;
 
 /**
- * Validate EndpointModifier traits that are applied on a service.
+ * Validate endpoint patterns used in endpoint traits that are applied on a service.
  */
-public class EndpointModifierValidator extends AbstractValidator {
+public final class AwsEndpointPatternValidator extends AbstractValidator {
 
     private static final Set<String> SUPPORTED_PATTERNS = SetUtils.of(
             "{region}", "{service}", "{dnsSuffix}", "{dualStackDnsSuffix}"
@@ -48,19 +51,19 @@ public class EndpointModifierValidator extends AbstractValidator {
             ServiceShape serviceShape, StandardRegionalEndpointsTrait regionalEndpoints) {
         List<ValidationEvent> events = new ArrayList<>();
 
-        regionalEndpoints.getRegionSpecialCases().forEach((region, specialCases) -> {
-            specialCases.forEach((specialCase) -> {
+        for (List<RegionSpecialCase> specialCases : regionalEndpoints.getRegionSpecialCases().values()) {
+            for (RegionSpecialCase specialCase : specialCases) {
                 events.addAll(validateEndpointPatterns(
                         serviceShape, regionalEndpoints, specialCase.getEndpoint()));
-            });
-        });
+            }
+        }
 
-        regionalEndpoints.getPartitionSpecialCases().forEach((region, specialCases) -> {
-            specialCases.forEach((specialCase) -> {
+        for (List<PartitionSpecialCase> specialCases : regionalEndpoints.getPartitionSpecialCases().values()) {
+            for (PartitionSpecialCase specialCase : specialCases) {
                 events.addAll(validateEndpointPatterns(
                         serviceShape, regionalEndpoints, specialCase.getEndpoint()));
-            });
-        });
+            }
+        }
 
         return events;
     }
@@ -70,12 +73,13 @@ public class EndpointModifierValidator extends AbstractValidator {
 
         List<ValidationEvent> events = new ArrayList<>();
 
-        partitionalEndpoints.getPartitionEndpointSpecialCases().forEach((region, specialCases) -> {
-            specialCases.forEach((specialCase) -> {
+        for (List<PartitionEndpointSpecialCase> specialCases
+                : partitionalEndpoints.getPartitionEndpointSpecialCases().values()) {
+            for (PartitionEndpointSpecialCase specialCase : specialCases) {
                 events.addAll(validateEndpointPatterns(
                         serviceShape, partitionalEndpoints, specialCase.getEndpoint()));
-            });
-        });
+            }
+        }
 
         return events;
     }
@@ -85,14 +89,19 @@ public class EndpointModifierValidator extends AbstractValidator {
         List<ValidationEvent> events = new ArrayList<>();
 
         Matcher m = PATTERN.matcher(endpoint);
+        List<String> unsupportedPatterns = new ArrayList<>();
         while (m.find()) {
             if (!SUPPORTED_PATTERNS.contains(m.group())) {
-                events.add(danger(
-                        serviceShape, location,
-                        String.format("Endpoint `%s` contains unsupported pattern: `%s`",
-                                endpoint, m.group()),
-                        "UnsupportedEndpointPattern"));
+                unsupportedPatterns.add(m.group());
             }
+        }
+
+        if (!unsupportedPatterns.isEmpty()) {
+            events.add(danger(
+                    serviceShape, location,
+                    String.format("Endpoint `%s` contains unsupported patterns: %s",
+                            endpoint, String.join(", ", unsupportedPatterns)),
+                    "UnsupportedEndpointPattern"));
         }
 
         return events;

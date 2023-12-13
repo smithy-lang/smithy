@@ -15,7 +15,7 @@ use aws.endpoints#standardRegionalEndpoints
     partitionSpecialCases: {
         "aws": [
             {
-                endpoint: "{invalid}-fips.{region}.{dnsSuffix}",
+                endpoint: "{invalid}-fips.{region}.{badSuffix}",
                 fips: true
             }
         ]
