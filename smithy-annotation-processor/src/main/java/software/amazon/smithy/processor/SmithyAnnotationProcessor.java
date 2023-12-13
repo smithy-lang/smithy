@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.build.processor;
+package software.amazon.smithy.processor;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
