@@ -43,7 +43,6 @@ public class AnnotationProcessorTest {
 
     @Test
     void ignoresFile() {
-       // assertThat(compilation).hadNoteCount(2);
         assertThat(compilation).hadNoteContaining("Executing processor: TestProcessorImplementation...");
         assertThat(compilation).hadNoteContaining("Ignoring generated file: ");
         assertThat(compilation).hadNoteContaining("Ignored.ignored");
