@@ -12,6 +12,7 @@ import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -180,7 +181,8 @@ public abstract class SmithyAnnotationProcessor<A extends Annotation> extends Ab
             // Resources are written to the class output
             if (outputPath.startsWith("META-INF")) {
                 try (Writer writer = filer
-                        .createResource(StandardLocation.CLASS_OUTPUT, "", outputPath)
+                        .createResource(StandardLocation.CLASS_OUTPUT, "",
+                                Paths.get(outputPath).toUri().toString())
                         .openWriter()
                 ) {
                     writer.write(IoUtils.readUtf8File(path));
