@@ -69,28 +69,27 @@ subprojects {
         testCompileOnly "org.apiguardian:apiguardian-api:1.1.2"
     }
 
+    // ==== Tests ====
+    // https://docs.gradle.org/current/samples/sample_java_multi_project_with_junit5_tests.html
+    test {
+        useJUnitPlatform()
+    }
+
+    // Log on passed, skipped, and failed test events if the `-Plog-tests` property is set.
+    // https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/testing/logging/TestLoggingContainer.html
+    if (project.hasProperty("log-tests")) {
+        test {
+            testLogging {
+                events = ["passed", "skipped", "failed"]
+                exceptionFormat = "full"
+            }
+        }
+    }
+
     // Reusable license copySpec for building JARs
     def licenseSpec = copySpec {
         from "${project.rootDir}/LICENSE"
         from "${project.rootDir}/NOTICE"
-    }
-
-    // Set up tasks that build source and javadoc jars.
-    task sourcesJar(type: Jar) {
-        metaInf.with(licenseSpec)
-        from {
-            sourceSets.main.allSource
-        }
-        archiveClassifier = "sources"
-    }
-
-    // Build a javadoc JAR too.
-    task javadocJar(type: Jar) {
-        metaInf.with(licenseSpec)
-        from {
-            tasks.javadoc
-        }
-        archiveClassifier = "javadoc"
     }
 
     // Include an Automatic-Module-Name in all JARs.
@@ -104,122 +103,6 @@ subprojects {
         }
     }
 
-    // Always run javadoc after build.
-    tasks["build"].dependsOn(tasks["javadoc"])
-
-    // ==== Tests ====
-    // https://docs.gradle.org/current/samples/sample_java_multi_project_with_junit5_tests.html
-    test {
-        useJUnitPlatform()
-    }
-    // Log on passed, skipped, and failed test events if the `-Plog-tests` property is set.
-    // https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/testing/logging/TestLoggingContainer.html
-    if (project.hasProperty("log-tests")) {
-        test {
-            testLogging {
-                events = ["passed", "skipped", "failed"]
-                exceptionFormat = "full"
-            }
-        }
-    }
-
-    // ==== Maven ====
-    apply plugin: "maven-publish"
-    apply plugin: "signing"
-    apply plugin: "com.github.johnrengelman.shadow"
-
-    // This is a little hacky, but currently needed to build a shadowed CLI JAR and smithy-syntax JAR with the same
-    // customizations as other JARs.
-    if (project.name != "smithy-cli" && project.name != "smithy-syntax") {
-        tasks.shadowJar.enabled = false
-    }
-
-    publishing {
-        repositories {
-            // JReleaser's `publish` task publishes to all repositories, so only configure one.
-            if (useJreleaser) {
-                maven {
-                    name = "localStaging"
-                    url = stagingDirectory
-                }
-            } else {
-               mavenCentral {
-                   name = "sonatypeNexus"
-                   url = uri("https://aws.oss.sonatype.org/service/local/staging/deploy/maven2/")
-                   if (project.hasProperty("sonatypeUser")) {
-                       credentials {
-                           username = project.property("sonatypeUser")
-                           password = project.property("sonatypePassword")
-                       }
-                   }
-               }
-            }
-        }
-
-        publications {
-            mavenJava(MavenPublication) { publication ->
-                if (tasks.shadowJar.enabled) {
-                    project.shadow.component(publication)
-                } else {
-                    publication.from(components["java"])
-                }
-
-                // Ship the source and javadoc jars.
-                artifact(tasks["sourcesJar"])
-                artifact(tasks["javadocJar"])
-
-                // Include extra information in the POMs.
-                project.afterEvaluate {
-                    pom {
-                        name.set(project.ext["displayName"].toString())
-                        description.set(project.description)
-                        url.set("https://github.com/smithy-lang/smithy")
-                        licenses {
-                            license {
-                                name.set("Apache License 2.0")
-                                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                                distribution.set("repo")
-                            }
-                        }
-                        developers {
-                            developer {
-                                id.set("smithy")
-                                name.set("Smithy")
-                                organization.set("Amazon Web Services")
-                                organizationUrl.set("https://aws.amazon.com")
-                                roles.add("developer")
-                            }
-                        }
-                        scm {
-                            url.set("https://github.com/smithy-lang/smithy.git")
-                        }
-                    }
-                }
-            }
-        }
-
-        // Don't sign the artifacts if we didn't get a key and password to use.
-        if (project.hasProperty("signingKey") && project.hasProperty("signingPassword")) {
-            signing {
-                useInMemoryPgpKeys(
-                        (String) project.property("signingKey"),
-                        (String) project.property("signingPassword"))
-                sign(publishing.publications["mavenJava"])
-            }
-        }
-    }
-
-    task copyMavenMetadataForDevelopment(type: Copy) {
-        from('build/tmp/publishMavenJavaPublicationToMavenLocal') {
-            rename 'module-maven-metadata.xml', 'maven-metadata.xml'
-        }
-
-        def wdir = System.getProperty("user.home") + '/.m2/repository/software/amazon/smithy/' + project.name
-        into(wdir)
-    }
-
-    publishToMavenLocal.finalizedBy(copyMavenMetadataForDevelopment)
-
     // ==== CheckStyle ====
     // https://docs.gradle.org/current/userguide/checkstyle_plugin.html
     apply plugin: "checkstyle"
@@ -228,15 +111,15 @@ subprojects {
     // ==== Code coverage ====
     // https://docs.gradle.org/current/userguide/jacoco_plugin.html
     apply plugin: "jacoco"
+    
     // report is always generated after tests run
     test {
         finalizedBy jacocoTestReport
     }
+    
     // tests are required to run before generating the report
     jacocoTestReport {
         dependsOn test
-    }
-    jacocoTestReport {
         reports {
             xml.required.set(false)
             csv.required.set(false)
@@ -247,12 +130,135 @@ subprojects {
     // ==== Spotbugs ====
     // https://plugins.gradle.org/plugin/com.github.spotbugs
     apply plugin: "com.github.spotbugs"
+    
     // We don't need to lint tests.
     tasks["spotbugsTest"].enabled = false
+    
     // Configure the bug filter for spotbugs.
     spotbugs {
         effort = "max"
         excludeFilter = file("${project.rootDir}/config/spotbugs/filter.xml")
+    }
+
+    // Do not set up JavaDoc and Source jars or Publishing for test projects
+    if (!it.name.endsWith("-test")) {
+        // Set up tasks that build source and javadoc jars.
+        task sourcesJar(type: Jar) {
+            metaInf.with(licenseSpec)
+            from {
+                sourceSets.main.allSource
+            }
+            archiveClassifier = "sources"
+        }
+
+        // Build a javadoc JAR too.
+        task javadocJar(type: Jar) {
+            metaInf.with(licenseSpec)
+            from {
+                tasks.javadoc
+            }
+            archiveClassifier = "javadoc"
+        }
+
+        // Always run javadoc after build.
+        tasks["build"].dependsOn(tasks["javadoc"])
+
+        // ==== Maven ====
+        apply plugin: "maven-publish"
+        apply plugin: "signing"
+        apply plugin: "com.github.johnrengelman.shadow"
+
+        // This is a little hacky, but currently needed to build a shadowed CLI JAR and smithy-syntax JAR with the same
+        // customizations as other JARs.
+        if (project.name != "smithy-cli" && project.name != "smithy-syntax") {
+            tasks.shadowJar.enabled = false
+        }
+
+        publishing {
+            repositories {
+                // JReleaser's `publish` task publishes to all repositories, so only configure one.
+                if (useJreleaser) {
+                    maven {
+                        name = "localStaging"
+                        url = stagingDirectory
+                    }
+                } else {
+                    mavenCentral {
+                        name = "sonatypeNexus"
+                        url = uri("https://aws.oss.sonatype.org/service/local/staging/deploy/maven2/")
+                        if (project.hasProperty("sonatypeUser")) {
+                            credentials {
+                                username = project.property("sonatypeUser")
+                                password = project.property("sonatypePassword")
+                            }
+                        }
+                    }
+                }
+            }
+
+            publications {
+                mavenJava(MavenPublication) { publication ->
+                    if (tasks.shadowJar.enabled) {
+                        project.shadow.component(publication)
+                    } else {
+                        publication.from(components["java"])
+                    }
+
+                    // Ship the source and javadoc jars.
+                    artifact(tasks["sourcesJar"])
+                    artifact(tasks["javadocJar"])
+
+                    // Include extra information in the POMs.
+                    project.afterEvaluate {
+                        pom {
+                            name.set(project.ext["displayName"].toString())
+                            description.set(project.description)
+                            url.set("https://github.com/smithy-lang/smithy")
+                            licenses {
+                                license {
+                                    name.set("Apache License 2.0")
+                                    url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                                    distribution.set("repo")
+                                }
+                            }
+                            developers {
+                                developer {
+                                    id.set("smithy")
+                                    name.set("Smithy")
+                                    organization.set("Amazon Web Services")
+                                    organizationUrl.set("https://aws.amazon.com")
+                                    roles.add("developer")
+                                }
+                            }
+                            scm {
+                                url.set("https://github.com/smithy-lang/smithy.git")
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Don't sign the artifacts if we didn't get a key and password to use.
+            if (project.hasProperty("signingKey") && project.hasProperty("signingPassword")) {
+                signing {
+                    useInMemoryPgpKeys(
+                            (String) project.property("signingKey"),
+                            (String) project.property("signingPassword"))
+                    sign(publishing.publications["mavenJava"])
+                }
+            }
+        }
+
+        task copyMavenMetadataForDevelopment(type: Copy) {
+            from('build/tmp/publishMavenJavaPublicationToMavenLocal') {
+                rename 'module-maven-metadata.xml', 'maven-metadata.xml'
+            }
+
+            def wdir = System.getProperty("user.home") + '/.m2/repository/software/amazon/smithy/' + project.name
+            into(wdir)
+        }
+
+        publishToMavenLocal.finalizedBy(copyMavenMetadataForDevelopment)
     }
 }
 

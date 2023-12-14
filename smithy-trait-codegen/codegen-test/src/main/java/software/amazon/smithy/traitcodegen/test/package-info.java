@@ -1,3 +1,8 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 /**
  * Generates traits for tests.
  */
@@ -10,6 +15,6 @@
         excludeTags = {
                 "exclude"
         })
-package com.hmellema.traitcodegen;
+package software.amazon.smithy.traitcodegen.test;
 
 import software.amazon.smithy.traitcodegen.processing.annotations.GenerateTraits;

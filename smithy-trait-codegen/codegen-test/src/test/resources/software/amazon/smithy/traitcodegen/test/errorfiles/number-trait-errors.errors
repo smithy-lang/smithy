@@ -1,0 +1,5 @@
+[ERROR] test.smithy.traitcodegen#structWithInvalidStringInput: Error creating trait `test.smithy.traitcodegen#HttpCodeInteger`: Expected number, but found string. | Model
+[ERROR] test.smithy.traitcodegen#structWithInvalidStringInput: Error creating trait `test.smithy.traitcodegen#HttpCodeFloat`: Expected number, but found string. | Model
+[ERROR] test.smithy.traitcodegen#structWithInvalidStringInput: Error creating trait `test.smithy.traitcodegen#HttpCodeLong`: Expected number, but found string. | Model
+[ERROR] test.smithy.traitcodegen#structWithInvalidStringInput: Error creating trait `test.smithy.traitcodegen#HttpCodeShort`: Expected number, but found string. | Model
+[ERROR] test.smithy.traitcodegen#structWithInvalidStringInput: Error creating trait `test.smithy.traitcodegen#HttpCodeDouble`: Expected number, but found string. | Model

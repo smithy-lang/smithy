@@ -11,14 +11,18 @@ ext {
 }
 
 dependencies {
-    annotationProcessor project(":smithy-trait-codegen:annotation-processor:processor")
-    compileOnly project(":smithy-trait-codegen:annotation-processor:annotation")
+    annotationProcessor project(":smithy-trait-codegen-processor-processor")
+    compileOnly project(":smithy-trait-codegen-processor-annotation")
 
     implementation project(":smithy-model")
 }
 
 
-// Add resources to the source path of the annotation processor
-tasks.withType(JavaCompile).configureEach {
-    options.sourcepath = sourceSets.main.resources.getSourceDirectories()
+// Add resources to the compile classpath so they are available to the annotation processors
+sourceSets {
+    main {
+        java {
+            compileClasspath += main.resources.sourceDirectories
+        }
+    }
 }

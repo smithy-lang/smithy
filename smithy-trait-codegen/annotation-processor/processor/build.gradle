@@ -12,6 +12,6 @@ ext {
 
 dependencies {
     implementation project(":smithy-annotation-processor")
-    implementation project(":smithy-trait-codegen:annotation-processor:annotation")
-    implementation project(":smithy-trait-codegen:codegen-core")
+    implementation project(":smithy-trait-codegen-processor-annotation")
+    implementation project(":smithy-trait-codegen-core")
 }

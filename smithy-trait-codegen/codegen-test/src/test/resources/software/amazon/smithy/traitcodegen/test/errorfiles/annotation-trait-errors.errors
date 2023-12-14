@@ -1,0 +1,1 @@
+[ERROR] test.smithy.traitcodegen#myStruct: Trait `test.smithy.traitcodegen#basicAnnotationTrait` cannot be applied to `test.smithy.traitcodegen#myStruct`. This trait may only be applied to shapes that match the following selector: structure > :test(member > string) | TraitTarget

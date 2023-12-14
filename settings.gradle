@@ -35,8 +35,15 @@ include ":smithy-syntax"
 include ":smithy-aws-endpoints"
 include ":smithy-aws-smoke-test-model"
 include ":smithy-annotation-processor"
-include ":smithy-trait-codegen:codegen-core"
-include ":smithy-trait-codegen:codegen-test"
-include ":smithy-trait-codegen:annotation-processor:processor"
-include ":smithy-trait-codegen:annotation-processor:annotation"
+include ":smithy-trait-codegen-core"
+include ":smithy-trait-codegen-test"
+include ":smithy-trait-codegen-processor-processor"
+include ":smithy-trait-codegen-processor-annotation"
 
+// Set the locations of nested project dirs to avoid empty subprojects
+project(':smithy-trait-codegen-core').projectDir = new File(settingsDir, 'smithy-trait-codegen/codegen-core')
+project(':smithy-trait-codegen-test').projectDir = new File(settingsDir, 'smithy-trait-codegen/codegen-test')
+project(':smithy-trait-codegen-processor-processor').projectDir = new File(settingsDir,
+        'smithy-trait-codegen/annotation-processor/processor')
+project(':smithy-trait-codegen-processor-annotation').projectDir = new File(settingsDir,
+        'smithy-trait-codegen/annotation-processor/annotation')

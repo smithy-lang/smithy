@@ -1,0 +1,2 @@
+[ERROR] test.smithy.traitcodegen#repeatedNumberValues: Error validating trait `test.smithy.traitcodegen#NumberSetTrait`: Value provided for `test.smithy.traitcodegen#NumberSetTrait` must have unique items, but the following items had multiple entries: [`1`] | TraitValue
+[ERROR] test.smithy.traitcodegen#repeatedStringValues: Error validating trait `test.smithy.traitcodegen#StringSetTrait`: Value provided for `test.smithy.traitcodegen#StringSetTrait` must have unique items, but the following items had multiple entries: [`a`] | TraitValue
