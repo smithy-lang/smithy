@@ -26,6 +26,7 @@ public class AnnotationProcessorTest {
 
     @Test
     void generatesBasicJavaFiles() {
+        System.out.println(compilation.diagnostics());
         assertThat(compilation)
                 .generatedFile(StandardLocation.SOURCE_OUTPUT, "com/example/testing/Empty.java")
                 .contentsAsUtf8String()

@@ -89,7 +89,6 @@ import software.amazon.smithy.utils.IoUtils;
  */
 public abstract class SmithyAnnotationProcessor<A extends Annotation> extends AbstractProcessor {
     private static final String MANIFEST_PATH = "META-INF/smithy/manifest";
-    private static final String SOURCE_PROJECTION_PATH = "build/smithy/source/";
     private Messager messager;
     private Filer filer;
 
@@ -114,8 +113,8 @@ public abstract class SmithyAnnotationProcessor<A extends Annotation> extends Ab
             SmithyBuildConfig config = createBuildConfig(getAnnotation(elements));
             executeSmithyBuild(config).allArtifacts()
                     .peek(art -> messager.printMessage(Diagnostic.Kind.NOTE, "GENERATED ARTIFACT: "
-                            + art.toString()))
-                    .filter(path -> path.toString().contains(SOURCE_PROJECTION_PATH + getPluginName()))
+                            + art.toUri()))
+                    .filter(path -> path.toString().contains(getPluginName()) && path.toString().contains("source"))
                     .forEach(this::writeArtifact);
         }
 
