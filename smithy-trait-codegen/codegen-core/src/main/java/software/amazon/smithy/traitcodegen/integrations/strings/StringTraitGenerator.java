@@ -3,21 +3,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.traitcodegen.generators.traits;
+package software.amazon.smithy.traitcodegen.integrations.strings;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.traits.StringTrait;
 import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
-import software.amazon.smithy.traitcodegen.generators.common.PropertiesGenerator;
+import software.amazon.smithy.traitcodegen.generators.traits.TraitGenerator;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
-import software.amazon.smithy.utils.StringUtils;
 
-final class EnumTraitGenerator extends TraitGenerator {
+public class StringTraitGenerator extends TraitGenerator {
     private static final String CLASS_TEMPLATE = "public final class $T extends StringTrait {";
 
     @Override
@@ -32,15 +28,16 @@ final class EnumTraitGenerator extends TraitGenerator {
 
     @Override
     protected void writeTraitBody(TraitCodegenWriter writer, GenerateTraitDirective directive) {
-        new PropertiesGenerator(writer, directive.shape(), directive.symbolProvider()).run();
         writeConstructor(writer, directive.traitSymbol());
         writeConstructorWithSourceLocation(writer, directive.traitSymbol());
-        EnumShape shape = directive.shape().asEnumShape().orElseThrow(RuntimeException::new);
-        for (String memberKey : shape.getEnumValues().keySet()) {
-            writer.openBlock("public boolean is$L() {", "}", getMethodName(memberKey),
-                            () -> writer.write("return $L.equals(getValue());", memberKey))
-                    .writeInline("\n");
-        }
+    }
+
+    @Override
+    protected void writeProvider(TraitCodegenWriter writer, GenerateTraitDirective directive) {
+        writer.addImport(StringTrait.class);
+        writer.openBlock("public static final class Provider extends StringTrait.Provider<$T> {", "}",
+                directive.traitSymbol(), () -> writer.openBlock("public Provider() {", "}",
+                        () -> writer.write("super(ID, $T::new);", directive.traitSymbol())));
     }
 
     private void writeConstructorWithSourceLocation(TraitCodegenWriter writer, Symbol symbol) {
@@ -55,12 +52,5 @@ final class EnumTraitGenerator extends TraitGenerator {
         writer.openBlock("public $T(String name) {", "}", symbol,
                 () -> writer.write("super(ID, name, SourceLocation.NONE);"));
         writer.newLine();
-    }
-
-    private String getMethodName(String enumValue) {
-        return Arrays.stream(enumValue.split("_"))
-                .map(String::toLowerCase)
-                .map(StringUtils::capitalize)
-                .collect(Collectors.joining());
     }
 }
