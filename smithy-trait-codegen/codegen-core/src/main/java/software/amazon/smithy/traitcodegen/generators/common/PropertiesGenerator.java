@@ -27,7 +27,6 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.traitcodegen.sections.EnumVariantSection;
-import software.amazon.smithy.traitcodegen.sections.PropertySection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.SetUtils;
 
@@ -156,20 +155,18 @@ public final class PropertiesGenerator implements Runnable {
                     () -> writer.write("${#properties}${key:S}${^key.last}, ${/key.last}${/properties}"));
 
             for (MemberShape member : shape.members()) {
-                writer.pushState(new PropertySection(member));
                 writer.write(PROPERTY_TEMPLATE, symbolProvider.toSymbol(member), symbolProvider.toMemberName(member));
-                writer.popState();
             }
 
             return null;
         }
 
         private void createValueProperty(Shape shape) {
-            writer.write("private final $T value;", symbolProvider.toSymbol(shape));
+            writer.write("private final $B value;", symbolProvider.toSymbol(shape));
         }
 
         private void createValuesProperty(Shape shape) {
-            writer.write("private final $T values;", symbolProvider.toSymbol(shape));
+            writer.write("private final $B values;", symbolProvider.toSymbol(shape));
         }
     }
 }

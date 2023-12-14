@@ -28,16 +28,16 @@ public class StringTraitGenerator extends TraitGenerator {
 
     @Override
     protected void writeTraitBody(TraitCodegenWriter writer, GenerateTraitDirective directive) {
-        writeConstructor(writer, directive.traitSymbol());
-        writeConstructorWithSourceLocation(writer, directive.traitSymbol());
+        writeConstructor(writer, directive.symbol());
+        writeConstructorWithSourceLocation(writer, directive.symbol());
     }
 
     @Override
     protected void writeProvider(TraitCodegenWriter writer, GenerateTraitDirective directive) {
         writer.addImport(StringTrait.class);
         writer.openBlock("public static final class Provider extends StringTrait.Provider<$T> {", "}",
-                directive.traitSymbol(), () -> writer.openBlock("public Provider() {", "}",
-                        () -> writer.write("super(ID, $T::new);", directive.traitSymbol())));
+                directive.symbol(), () -> writer.openBlock("public Provider() {", "}",
+                        () -> writer.write("super(ID, $T::new);", directive.symbol())));
     }
 
     private void writeConstructorWithSourceLocation(TraitCodegenWriter writer, Symbol symbol) {

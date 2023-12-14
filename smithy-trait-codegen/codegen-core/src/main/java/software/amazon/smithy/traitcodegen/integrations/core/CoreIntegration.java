@@ -5,15 +5,19 @@
 
 package software.amazon.smithy.traitcodegen.integrations.core;
 
-import java.util.List;
-import software.amazon.smithy.traitcodegen.TraitCodegenContext;
-import software.amazon.smithy.traitcodegen.integrations.TraitCodegenIntegration;
-import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
-import software.amazon.smithy.utils.CodeInterceptor;
-import software.amazon.smithy.utils.CodeSection;
+import software.amazon.smithy.codegen.core.Symbol;
+import software.amazon.smithy.codegen.core.SymbolProvider;
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.traits.TraitDefinition;
+import software.amazon.smithy.traitcodegen.SymbolProperties;
+import software.amazon.smithy.traitcodegen.TraitCodegenIntegration;
+import software.amazon.smithy.traitcodegen.TraitCodegenSettings;
+import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.utils.ListUtils;
 
-public final class CoreIntegration implements TraitCodegenIntegration  {
+public class CoreIntegration implements TraitCodegenIntegration {
 
     @Override
     public String name() {
@@ -21,19 +25,55 @@ public final class CoreIntegration implements TraitCodegenIntegration  {
     }
 
     @Override
-    public List<? extends CodeInterceptor<? extends CodeSection, TraitCodegenWriter>> interceptors(
-            TraitCodegenContext codegenContext) {
-        return ListUtils.of(
-                new GeneratedAnnotationInterceptor(),
-                new DeprecatedAnnotationClassInterceptor(),
-                new DeprecatedNoteInterceptor(),
-                new ClassJavaDocInterceptor(),
-                new ExternalDocsInterceptor(),
-                new FromNodeDocsInterceptor(),
-                new BuilderMethodDocsInterceptor(),
-                new BuilderClassSectionDocsInterceptor(),
-                new GetterJavaDocInterceptor(),
-                new EnumVariantJavaDocInterceptor()
-        );
+    public byte priority() {
+        // This integration should be run last, so it picks up the correct
+        // base symbol with all other decorators applied.
+        return -1;
+    }
+
+    @Override
+    public SymbolProvider decorateSymbolProvider(Model model,
+                                                 TraitCodegenSettings settings,
+                                                 SymbolProvider symbolProvider
+    ) {
+        return new SymbolProvider() {
+            @Override
+            public Symbol toSymbol(Shape shape) {
+                if (shape.hasTrait(TraitDefinition.class)) {
+                    return getTraitSymbol(settings, shape, symbolProvider.toSymbol(shape));
+                }
+                return symbolProvider.toSymbol(shape);
+            }
+
+            @Override
+            public String toMemberName(MemberShape shape) {
+                return toMemberNameOrValues(shape, model, symbolProvider);
+            }
+        };
+    }
+
+    private Symbol getTraitSymbol(TraitCodegenSettings settings, Shape shape, Symbol baseSymbol) {
+        final String packageName = settings.packageName();
+        final String packagePath = "./" + packageName.replace(".", "/");
+
+        // Maintain all existing properties, but change the namespace and name of the shape
+        // and add the base symbol as a property. The references need to be set to empty list
+        // to prevent writing as parameterized classes.
+        return baseSymbol.toBuilder()
+                .name(TraitCodegenUtils.getDefaultTraitName(shape))
+                .references(ListUtils.of())
+                .namespace(packageName, ".")
+                .definitionFile(packagePath + "/" + TraitCodegenUtils.getDefaultTraitName(shape) + ".java")
+                .putProperty(SymbolProperties.BASE_SYMBOL, baseSymbol)
+                .build();
+    }
+
+    private static String toMemberNameOrValues(MemberShape member, Model model, SymbolProvider symbolProvider) {
+        Shape containerShape = model.expectShape(member.getContainer());
+        if (containerShape.isMapShape() || containerShape.isListShape()) {
+            return "values";
+        } else {
+            return symbolProvider.toMemberName(member);
+        }
     }
 }

@@ -17,10 +17,10 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
+import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.sections.BuilderClassSection;
 import software.amazon.smithy.traitcodegen.sections.ToBuilderSection;
-import software.amazon.smithy.traitcodegen.utils.ShapeUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
@@ -29,9 +29,9 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 
 public final class BuilderGenerator implements Runnable {
     private static final String VALUES = "values";
-    private static final String ACCESSOR_TEMPLATE = "public Builder $1L($2T $1L) {";
+    private static final String ACCESSOR_TEMPLATE = "public Builder $1L($2B $1L) {";
     private static final String RETURN_THIS = "return this;";
-    private static final String BUILDER_REF_TEMPLATE = "private final BuilderRef<$T> $L = BuilderRef.$L;";
+    private static final String BUILDER_REF_TEMPLATE = "private final BuilderRef<$B> $L = BuilderRef.$L;";
     private static final String BUILDER_METHOD_TEMPLATE = "public static Builder builder() {";
 
     private final TraitCodegenWriter writer;
@@ -57,9 +57,9 @@ public final class BuilderGenerator implements Runnable {
     }
 
     private void writeBuilderClass() {
-        writer.pushState(new BuilderClassSection(baseShape, symbol));
+        writer.pushState(new BuilderClassSection(symbol));
         String builderClassTemplate = "public static final class Builder ";
-        if (ShapeUtils.isTrait(baseShape)) {
+        if (baseShape.hasTrait(TraitDefinition.class)) {
             writer.addImport(AbstractTraitBuilder.class);
             builderClassTemplate += "extends AbstractTraitBuilder<$T, Builder> {";
         } else {
@@ -81,13 +81,13 @@ public final class BuilderGenerator implements Runnable {
     }
 
     private void writeToBuilderMethod() {
-        writer.pushState(new ToBuilderSection(baseShape, symbol));
+        writer.pushState(new ToBuilderSection(symbol));
         writer.addImports(SmithyBuilder.class, ToSmithyBuilder.class);
         writer.override();
         writer.openBlock("public SmithyBuilder<$T> toBuilder() {", "}", symbol, () -> {
             writer.writeInline("return builder()");
             writer.indent();
-            if (ShapeUtils.isTrait(baseShape)) {
+            if (baseShape.hasTrait(TraitDefinition.class)) {
                 writer.write(".sourceLocation(getSourceLocation())");
             }
             writeBasicBody();
@@ -101,7 +101,7 @@ public final class BuilderGenerator implements Runnable {
         Iterator<MemberShape> memberIterator = baseShape.members().iterator();
         while (memberIterator.hasNext()) {
             MemberShape member = memberIterator.next();
-            writer.writeInline(".$1L($1L)", ShapeUtils.toMemberNameOrValues(member, model, symbolProvider));
+            writer.writeInline(".$1L($1L)", symbolProvider.toMemberName(member));
             if (memberIterator.hasNext()) {
                 writer.writeInline("\n");
             } else {
@@ -146,11 +146,11 @@ public final class BuilderGenerator implements Runnable {
             if (builderRefOptional.isPresent()) {
                 writer.addImport(BuilderRef.class);
                 writer.write(BUILDER_REF_TEMPLATE, symbolProvider.toSymbol(shape),
-                        ShapeUtils.toMemberNameOrValues(shape, model, symbolProvider),
+                        symbolProvider.toMemberName(shape),
                         builderRefOptional.orElseThrow(RuntimeException::new));
             } else {
-                writer.write("private $T $L;", symbolProvider.toSymbol(shape),
-                        ShapeUtils.toMemberNameOrValues(shape, model, symbolProvider));
+                writer.write("private $B $L;", symbolProvider.toSymbol(shape),
+                        symbolProvider.toMemberName(shape));
             }
         }
 

@@ -33,8 +33,8 @@ final class EnumTraitGenerator extends TraitGenerator {
     @Override
     protected void writeTraitBody(TraitCodegenWriter writer, GenerateTraitDirective directive) {
         new PropertiesGenerator(writer, directive.shape(), directive.symbolProvider()).run();
-        writeConstructor(writer, directive.traitSymbol());
-        writeConstructorWithSourceLocation(writer, directive.traitSymbol());
+        writeConstructor(writer, directive.symbol());
+        writeConstructorWithSourceLocation(writer, directive.symbol());
         EnumShape shape = directive.shape().asEnumShape().orElseThrow(RuntimeException::new);
         for (String memberKey : shape.getEnumValues().keySet()) {
             writer.openBlock("public boolean is$L() {", "}", getMethodName(memberKey),

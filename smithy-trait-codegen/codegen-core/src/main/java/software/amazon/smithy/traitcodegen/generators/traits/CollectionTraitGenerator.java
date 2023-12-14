@@ -34,13 +34,13 @@ final class CollectionTraitGenerator extends TraitGenerator {
     @Override
     protected void writeTraitBody(TraitCodegenWriter writer, GenerateTraitDirective directive) {
         new PropertiesGenerator(writer, directive.shape(), directive.symbolProvider()).run();
-        new ConstructorWithBuilderGenerator(writer, directive.traitSymbol(), directive.shape(),
+        new ConstructorWithBuilderGenerator(writer, directive.symbol(), directive.shape(),
                 directive.symbolProvider(), directive.model()).run();
         new ToNodeGenerator(writer, directive.shape(), directive.symbolProvider(), directive.model()).run();
-        new FromNodeGenerator(writer, directive.traitSymbol(), directive.shape(), directive.symbolProvider(),
+        new FromNodeGenerator(writer, directive.symbol(), directive.shape(), directive.symbolProvider(),
                 directive.model()).run();
         new GetterGenerator(writer, directive.symbolProvider(), directive.shape(), directive.model()).run();
-        new BuilderGenerator(writer, directive.traitSymbol(), directive.symbolProvider(), directive.shape(),
+        new BuilderGenerator(writer, directive.symbol(), directive.symbolProvider(), directive.shape(),
                 directive.model()).run();
     }
 }

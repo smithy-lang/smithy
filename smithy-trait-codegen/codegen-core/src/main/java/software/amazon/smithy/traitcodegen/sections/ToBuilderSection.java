@@ -6,20 +6,13 @@
 package software.amazon.smithy.traitcodegen.sections;
 
 import software.amazon.smithy.codegen.core.Symbol;
-import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.utils.CodeSection;
 
 public final class ToBuilderSection implements CodeSection {
-    private final Shape shape;
     private final Symbol symbol;
 
-    public ToBuilderSection(Shape shape, Symbol symbol) {
-        this.shape = shape;
+    public ToBuilderSection(Symbol symbol) {
         this.symbol = symbol;
-    }
-
-    public Shape shape() {
-        return shape;
     }
 
     public Symbol symbol() {

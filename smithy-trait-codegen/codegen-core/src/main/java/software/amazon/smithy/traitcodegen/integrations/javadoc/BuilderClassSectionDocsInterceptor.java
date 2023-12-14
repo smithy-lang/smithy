@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.traitcodegen.integrations.core;
+package software.amazon.smithy.traitcodegen.integrations.javadoc;
 
 
 import software.amazon.smithy.traitcodegen.sections.BuilderClassSection;

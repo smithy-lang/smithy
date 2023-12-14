@@ -27,7 +27,7 @@ final class DocumentTraitGenerator extends TraitGenerator {
 
     @Override
     protected void writeTraitBody(TraitCodegenWriter writer, GenerateTraitDirective directive) {
-        writeConstructor(writer, directive.traitSymbol());
+        writeConstructor(writer, directive.symbol());
         writer.newLine();
         new ToNodeGenerator(writer, directive.shape(), directive.symbolProvider(), directive.model()).run();
     }

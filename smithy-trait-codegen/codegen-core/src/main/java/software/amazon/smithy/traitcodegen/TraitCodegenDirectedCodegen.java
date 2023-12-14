@@ -16,19 +16,23 @@ import software.amazon.smithy.codegen.core.directed.GenerateServiceDirective;
 import software.amazon.smithy.codegen.core.directed.GenerateStructureDirective;
 import software.amazon.smithy.codegen.core.directed.GenerateUnionDirective;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.traitcodegen.generators.base.EnumGenerator;
 import software.amazon.smithy.traitcodegen.generators.base.IntEnumGenerator;
 import software.amazon.smithy.traitcodegen.generators.base.StructureGenerator;
 import software.amazon.smithy.traitcodegen.generators.traits.DefaultTraitGeneratorProvider;
-import software.amazon.smithy.traitcodegen.integrations.TraitCodegenIntegration;
-import software.amazon.smithy.traitcodegen.utils.ShapeUtils;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 
+/**
+ * The main entry points for trait code generation.
+ */
+@SmithyUnstableApi
 final class TraitCodegenDirectedCodegen
         implements DirectedCodegen<TraitCodegenContext, TraitCodegenSettings, TraitCodegenIntegration> {
 
     @Override
     public SymbolProvider createSymbolProvider(CreateSymbolProviderDirective<TraitCodegenSettings> directive) {
-        return BaseJavaSymbolProvider.fromDirective(directive);
+        return TraitCodegenSymbolProvider.fromDirective(directive);
     }
 
     @Override
@@ -48,7 +52,7 @@ final class TraitCodegenDirectedCodegen
         }
         // Execute generators for all trait shapes connected to synthetic service
         for (Shape shape : directive.connectedShapes().values()) {
-            if (ShapeUtils.isTrait(shape)) {
+            if (shape.hasTrait(TraitDefinition.class)) {
                 provider.getGenerator(shape).accept(new GenerateTraitDirective(directive.context(), shape));
             }
         }
@@ -61,7 +65,7 @@ final class TraitCodegenDirectedCodegen
 
     @Override
     public void generateStructure(GenerateStructureDirective<TraitCodegenContext, TraitCodegenSettings> directive) {
-        if (!ShapeUtils.isTrait(directive.shape())) {
+        if (!directive.shape().hasTrait(TraitDefinition.class)) {
             new StructureGenerator().accept(directive);
         }
     }
@@ -73,14 +77,14 @@ final class TraitCodegenDirectedCodegen
 
     @Override
     public void generateEnumShape(GenerateEnumDirective<TraitCodegenContext, TraitCodegenSettings> directive) {
-        if (!ShapeUtils.isTrait(directive.shape())) {
+        if (!directive.shape().hasTrait(TraitDefinition.class)) {
             new EnumGenerator().accept(directive);
         }
     }
 
     @Override
     public void generateIntEnumShape(GenerateIntEnumDirective<TraitCodegenContext, TraitCodegenSettings> directive) {
-        if (!ShapeUtils.isTrait(directive.shape())) {
+        if (!directive.shape().hasTrait(TraitDefinition.class)) {
             new IntEnumGenerator().accept(directive);
         }
     }

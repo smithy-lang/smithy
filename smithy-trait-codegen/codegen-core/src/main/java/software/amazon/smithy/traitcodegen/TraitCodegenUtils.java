@@ -3,14 +3,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.traitcodegen.utils;
+package software.amazon.smithy.traitcodegen;
 
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
 
-public interface SymbolUtil {
-    Symbol JAVA_STRING_SYMBOL = SymbolUtil.fromClass(String.class);
+/**
+ * Provides various utility methods for trait code generation.
+ */
+@SmithyUnstableApi
+public final class TraitCodegenUtils {
+    public static final Symbol JAVA_STRING_SYMBOL = TraitCodegenUtils.fromClass(String.class);
+
+    private TraitCodegenUtils() {}
 
     /**
      * Gets a Smithy codegen {@link Symbol} for a Java class.
@@ -18,7 +25,7 @@ public interface SymbolUtil {
      * @param clazz class to get symbol for.
      * @return Symbol representing the provided class.
      */
-    static Symbol fromClass(Class<?> clazz) {
+    public static Symbol fromClass(Class<?> clazz) {
         return Symbol.builder()
                 .name(clazz.getSimpleName())
                 .namespace(clazz.getCanonicalName().replace("." + clazz.getSimpleName(), ""), ".")
@@ -31,7 +38,7 @@ public interface SymbolUtil {
      * @param shape Shape to get name for.
      * @return Default name.
      */
-    static String getDefaultName(Shape shape) {
+    public static String getDefaultName(Shape shape) {
         return StringUtils.capitalize(shape.getId().getName());
     }
 
@@ -41,7 +48,7 @@ public interface SymbolUtil {
      * @param shape Shape to get name for.
      * @return Default name.
      */
-    static String getDefaultTraitName(Shape shape) {
+    public static String getDefaultTraitName(Shape shape) {
         return getDefaultName(shape) + "Trait";
     }
 
@@ -51,8 +58,10 @@ public interface SymbolUtil {
      * @param symbol Symbol to check.
      * @return Returns true if the symbol maps to a Java String.
      */
-    static boolean isJavaString(Symbol symbol) {
-        return JAVA_STRING_SYMBOL.getName().equals(symbol.getName())
-                && JAVA_STRING_SYMBOL.getNamespace().equals(symbol.getNamespace());
+    public static boolean isJavaString(final Symbol symbol) {
+        Symbol baseSymbol = symbol.getProperty(SymbolProperties.BASE_SYMBOL, Symbol.class)
+                .orElse(symbol);
+        return JAVA_STRING_SYMBOL.getName().equals(baseSymbol.getName())
+                && JAVA_STRING_SYMBOL.getNamespace().equals(baseSymbol.getNamespace());
     }
 }

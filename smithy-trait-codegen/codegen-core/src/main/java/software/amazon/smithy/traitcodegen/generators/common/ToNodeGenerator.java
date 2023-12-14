@@ -33,8 +33,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
-import software.amazon.smithy.traitcodegen.utils.ShapeUtils;
-import software.amazon.smithy.traitcodegen.utils.SymbolUtil;
+import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -58,7 +57,7 @@ public final class ToNodeGenerator implements Runnable {
     public void run() {
         writer.addImport(Node.class);
         writer.override();
-        writer.openBlock(ShapeUtils.isTrait(shape) ? CREATE_NODE_METHOD : TO_NODE_METHOD, "}",
+        writer.openBlock(shape.hasTrait(TraitDefinition.class) ? CREATE_NODE_METHOD : TO_NODE_METHOD, "}",
                 () -> shape.accept(new CreateNodeBodyGenerator()));
         writer.newLine();
     }
@@ -142,8 +141,8 @@ public final class ToNodeGenerator implements Runnable {
         public Void mapShape(MapShape shape) {
             writer.addImport(ObjectNode.class);
             // If it is a string, string map use the easier syntax
-            if (SymbolUtil.isJavaString(symbolProvider.toSymbol(shape.getKey()))
-                    && SymbolUtil.isJavaString(symbolProvider.toSymbol(shape.getValue()))
+            if (TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape.getKey()))
+                    && TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape.getValue()))
             ) {
                 writer.write("return ObjectNode.fromStringMap(values).toBuilder()")
                         .write(".sourceLocation(getSourceLocation()).build();");

@@ -13,9 +13,9 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
+import software.amazon.smithy.traitcodegen.TraitCodegenIntegration;
 import software.amazon.smithy.traitcodegen.TraitCodegenSettings;
-import software.amazon.smithy.traitcodegen.integrations.TraitCodegenIntegration;
-import software.amazon.smithy.traitcodegen.utils.SymbolUtil;
+import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.utils.ListUtils;
 
 public class UniqueItemDecoratorIntegration implements TraitCodegenIntegration {
@@ -46,7 +46,7 @@ public class UniqueItemDecoratorIntegration implements TraitCodegenIntegration {
 
     private Symbol provideSymbol(Shape shape, SymbolProvider symbolProvider, Model model) {
         if (shape.isListShape() && shape.hasTrait(UniqueItemsTrait.class)) {
-            return SymbolUtil.fromClass(Set.class).toBuilder()
+            return TraitCodegenUtils.fromClass(Set.class).toBuilder()
                     .addReference(symbolProvider.toSymbol(shape.asListShape()
                             .orElseThrow(RuntimeException::new).getMember()))
                     .putProperty(SymbolProperties.BUILDER_REF_INITIALIZER, SET_INITIALIZER)

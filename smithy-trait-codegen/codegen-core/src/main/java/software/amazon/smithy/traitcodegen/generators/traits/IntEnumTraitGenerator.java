@@ -35,8 +35,8 @@ final class IntEnumTraitGenerator extends TraitGenerator {
     @Override
     protected void writeTraitBody(TraitCodegenWriter writer, GenerateTraitDirective directive) {
         new PropertiesGenerator(writer, directive.shape(), directive.symbolProvider()).run();
-        writeConstructor(writer, directive.traitSymbol());
-        writeConstructorWithSourceLocation(writer, directive.traitSymbol());
+        writeConstructor(writer, directive.symbol());
+        writeConstructorWithSourceLocation(writer, directive.symbol());
         new ToNodeGenerator(writer, directive.shape(), directive.symbolProvider(), directive.model()).run();
         new GetterGenerator(writer, directive.symbolProvider(), directive.shape(), directive.model()).run();
         IntEnumShape shape = directive.shape().asIntEnumShape().orElseThrow(() -> new RuntimeException("oops"));

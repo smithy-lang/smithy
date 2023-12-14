@@ -9,9 +9,9 @@ import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.UniqueItemsTrait;
 import software.amazon.smithy.traitcodegen.TraitCodegenContext;
+import software.amazon.smithy.traitcodegen.TraitCodegenIntegration;
+import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.TraitGeneratorProvider;
-import software.amazon.smithy.traitcodegen.integrations.TraitCodegenIntegration;
-import software.amazon.smithy.traitcodegen.utils.SymbolUtil;
 
 /**
  * Handles the special cases related to the use of strings.
@@ -41,7 +41,7 @@ public class StringsIntegration implements TraitCodegenIntegration {
             ) {
                 return new StringListTraitGenerator();
             } else if (shape.isStringShape()
-                    && SymbolUtil.isJavaString(context.symbolProvider().toSymbol(shape))
+                    && TraitCodegenUtils.isJavaString(context.symbolProvider().toSymbol(shape))
             ) {
                 return new StringTraitGenerator();
             }
@@ -51,7 +51,7 @@ public class StringsIntegration implements TraitCodegenIntegration {
     }
 
     private boolean hasJavaStringMember(Shape shape, SymbolProvider symbolProvider) {
-        return SymbolUtil.isJavaString(symbolProvider.toSymbol(
+        return TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(
                 shape.asListShape().orElseThrow(RuntimeException::new).getMember()));
     }
 }

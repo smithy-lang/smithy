@@ -34,7 +34,7 @@ public abstract class TraitGenerator implements Consumer<GenerateTraitDirective>
             imports(writer);
             writer.addImport(ShapeId.class);
             writer.pushState(new ClassSection(directive.shape()));
-            writer.openBlock(getClassDefinition(), "}", directive.traitSymbol(), () -> {
+            writer.openBlock(getClassDefinition(), "}", directive.symbol(), () -> {
                 writer.write(TRAIT_ID_TEMPLATE, directive.shape().getId());
                 writer.newLine();
                 writeTraitBody(writer, directive);
@@ -42,11 +42,11 @@ public abstract class TraitGenerator implements Consumer<GenerateTraitDirective>
             });
             writer.popState();
         });
-        addSpiTraitProvider(directive.context(), directive.traitSymbol());
+        addSpiTraitProvider(directive.context(), directive.symbol());
     }
 
     protected void writeProvider(TraitCodegenWriter writer, GenerateTraitDirective directive) {
-        new ProviderGenerator(writer, directive.shape(), directive.traitSymbol(), directive.symbolProvider()).run();
+        new ProviderGenerator(writer, directive.shape(), directive.symbol(), directive.symbolProvider()).run();
     }
 
     protected abstract void imports(TraitCodegenWriter writer);

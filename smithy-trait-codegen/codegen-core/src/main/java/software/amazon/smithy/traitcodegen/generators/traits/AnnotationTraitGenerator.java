@@ -31,9 +31,9 @@ final class AnnotationTraitGenerator extends TraitGenerator {
 
     @Override
     protected void writeTraitBody(TraitCodegenWriter writer, GenerateTraitDirective directive) {
-        writeConstructor(writer, directive.traitSymbol());
-        writeEmptyConstructor(writer, directive.traitSymbol());
-        writeConstructorWithSourceLocation(writer, directive.traitSymbol());
+        writeConstructor(writer, directive.symbol());
+        writeEmptyConstructor(writer, directive.symbol());
+        writeConstructorWithSourceLocation(writer, directive.symbol());
         new GetterGenerator(writer, directive.symbolProvider(), directive.shape(), directive.model()).run();
     }
 

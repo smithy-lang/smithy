@@ -161,7 +161,7 @@ public final class GetterGenerator implements Runnable {
 
         private void generateValuesGetter(Shape shape) {
             writer.pushState(new GetterSection(shape));
-            writer.openBlock("public $T getValues() {", "}",
+            writer.openBlock("public $B getValues() {", "}",
                     symbolProvider.toSymbol(shape), () -> writer.write("return values;"));
             writer.popState();
             writer.newLine();
@@ -169,7 +169,7 @@ public final class GetterGenerator implements Runnable {
 
         private void generateValueGetter(Shape shape) {
             writer.pushState(new GetterSection(shape));
-            writer.openBlock("public $T getValue() {", "}",
+            writer.openBlock("public $B getValue() {", "}",
                     symbolProvider.toSymbol(shape), () -> writer.write("return value;"));
             writer.popState();
             writer.newLine();

@@ -6,12 +6,14 @@
 package software.amazon.smithy.traitcodegen.writer;
 
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolReference;
 import software.amazon.smithy.codegen.core.SymbolWriter;
+import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenSettings;
-import software.amazon.smithy.traitcodegen.utils.SymbolUtil;
+import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.utils.StringUtils;
 
 public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCodegenImportContainer> {
@@ -28,6 +30,7 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
         this.settings = settings;
 
         putFormatter('T', new JavaTypeFormatter());
+        putFormatter('B', new BaseTypeFormatter());
     }
 
     private static boolean fileMatchesSymbol(String file, Symbol symbol) {
@@ -43,12 +46,12 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
     }
 
     public void addImport(Class<?> clazz) {
-        addImport(SymbolUtil.fromClass(clazz));
+        addImport(TraitCodegenUtils.fromClass(clazz));
     }
 
     public void addImports(Class<?>... clazzes) {
         for (Class<?> clazz : clazzes) {
-            addImport(SymbolUtil.fromClass(clazz));
+            addImport(TraitCodegenUtils.fromClass(clazz));
         }
     }
 
@@ -128,6 +131,27 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
             }
             builder.append(">");
             return builder.toString();
+        }
+    }
+
+    /**
+     * Implements a formatter for {@code $B} that formats the base Java type for a Trait Symbol.
+     */
+    private final class BaseTypeFormatter implements BiFunction<Object, String, String> {
+        private final JavaTypeFormatter javaTypeFormatter = new JavaTypeFormatter();
+
+        @Override
+        public String apply(Object type, String indent) {
+            if (!(type instanceof Symbol)) {
+                throw new IllegalArgumentException("Invalid type provided for $T. Expected a Symbol but found: `"
+                        + type + "`.");
+            }
+            Symbol symbol = (Symbol) type;
+            Optional<Symbol> baseSymbolOptional = symbol.getProperty(SymbolProperties.BASE_SYMBOL, Symbol.class);
+            if (baseSymbolOptional.isPresent()) {
+                return javaTypeFormatter.apply(baseSymbolOptional.get(), indent);
+            }
+            return javaTypeFormatter.apply(symbol, indent);
         }
     }
 }

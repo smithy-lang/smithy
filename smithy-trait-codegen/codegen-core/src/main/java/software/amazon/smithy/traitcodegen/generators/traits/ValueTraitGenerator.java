@@ -31,29 +31,28 @@ final class ValueTraitGenerator extends TraitGenerator {
     @Override
     protected void writeTraitBody(TraitCodegenWriter writer, GenerateTraitDirective directive) {
         new PropertiesGenerator(writer, directive.shape(), directive.symbolProvider()).run();
-        writeConstructor(writer, directive.traitSymbol(), directive.baseSymbol());
-        writeConstructorWithSourceLocation(writer, directive.traitSymbol(), directive.baseSymbol());
+        writeConstructor(writer, directive.symbol());
+        writeConstructorWithSourceLocation(writer, directive.symbol());
         new ToNodeGenerator(writer, directive.shape(), directive.symbolProvider(), directive.model()).run();
         new GetterGenerator(writer, directive.symbolProvider(), directive.shape(), directive.model()).run();
     }
 
-    private void writeConstructorWithSourceLocation(TraitCodegenWriter writer, Symbol traitSymbol, Symbol baseSymbol) {
+    private void writeConstructorWithSourceLocation(TraitCodegenWriter writer, Symbol traitSymbol) {
         writer.addImport(FromSourceLocation.class);
-        writer.openBlock("public $T($T value, FromSourceLocation sourceLocation) {", "}",
-                traitSymbol, baseSymbol, () -> {
+        writer.openBlock("public $1T($1B value, FromSourceLocation sourceLocation) {", "}",
+                traitSymbol, () -> {
                     writer.write("super(ID, sourceLocation);");
                     writer.write("this.value = value;");
                 });
         writer.newLine();
     }
 
-    private void writeConstructor(TraitCodegenWriter writer, Symbol traitSymbol, Symbol baseSymbol) {
+    private void writeConstructor(TraitCodegenWriter writer, Symbol traitSymbol) {
         writer.addImport(SourceLocation.class);
-        writer.openBlock("public $T($T value) {", "}",
-                traitSymbol, baseSymbol, () -> {
-                    writer.write("super(ID, SourceLocation.NONE);");
-                    writer.write("this.value = value;");
-                });
+        writer.openBlock("public $1T($1B value) {", "}", traitSymbol, () -> {
+            writer.write("super(ID, SourceLocation.NONE);");
+            writer.write("this.value = value;");
+        });
         writer.newLine();
     }
 }

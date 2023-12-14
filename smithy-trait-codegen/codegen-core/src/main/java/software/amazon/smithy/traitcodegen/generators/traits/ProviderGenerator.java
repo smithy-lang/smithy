@@ -30,7 +30,6 @@ import software.amazon.smithy.model.traits.AnnotationTrait;
 import software.amazon.smithy.model.traits.StringTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
-import software.amazon.smithy.traitcodegen.sections.ProviderSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
 
@@ -56,9 +55,7 @@ final class ProviderGenerator implements Runnable {
 
     @Override
     public void run() {
-        writer.pushState(new ProviderSection(shape, traitSymbol));
         shape.accept(new ProviderMethodVisitor());
-        writer.popState();
     }
 
     private final class ProviderMethodVisitor extends ShapeVisitor.Default<Void> {
@@ -152,7 +149,8 @@ final class ProviderGenerator implements Runnable {
                 writer.openBlock("public Trait createTrait(ShapeId target, Node value) {", "}",
                         () -> writer.write("return new $T(value.expectNumberNode().getValue().$L, value"
                                         + ".getSourceLocation());",
-                                traitSymbol, traitSymbol.expectProperty(SymbolProperties.VALUE_GETTER)));
+                                traitSymbol,
+                                symbolProvider.toSymbol(shape).expectProperty(SymbolProperties.VALUE_GETTER)));
             });
         }
 

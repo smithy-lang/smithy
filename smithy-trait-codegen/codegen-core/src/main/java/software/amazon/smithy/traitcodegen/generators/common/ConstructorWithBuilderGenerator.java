@@ -14,8 +14,8 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
-import software.amazon.smithy.traitcodegen.utils.ShapeUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.SmithyBuilder;
 
@@ -40,7 +40,7 @@ public final class ConstructorWithBuilderGenerator implements Runnable {
     @Override
     public void run() {
         writer.openBlock(CONSTRUCTOR_TEMPLATE, "}", symbol, () -> {
-            if (ShapeUtils.isTrait(shape)) {
+            if (shape.hasTrait(TraitDefinition.class)) {
                 writer.write("super(ID, builder.getSourceLocation());");
             }
             shape.accept(new InitializerVisitor());
@@ -73,10 +73,10 @@ public final class ConstructorWithBuilderGenerator implements Runnable {
                 if (member.isRequired()) {
                     writer.addImport(SmithyBuilder.class);
                     writer.write("this.$1L = SmithyBuilder.requiredState($1S, $2L);",
-                            ShapeUtils.toMemberNameOrValues(member, model, symbolProvider), getBuilderValue(member));
+                            symbolProvider.toMemberName(member), getBuilderValue(member));
                 } else {
-                    writer.write("this.$L = $L;", ShapeUtils.toMemberNameOrValues(member, model, symbolProvider),
-                            getBuilderValue(member));
+                    writer.write("this.$L = $L;",
+                            symbolProvider.toMemberName(member), getBuilderValue(member));
                 }
             }
             return null;
@@ -84,10 +84,9 @@ public final class ConstructorWithBuilderGenerator implements Runnable {
 
         private String getBuilderValue(MemberShape member) {
             if (symbolProvider.toSymbol(member).getProperty(SymbolProperties.BUILDER_REF_INITIALIZER).isPresent()) {
-                return writer.format("builder.$L.copy()", ShapeUtils.toMemberNameOrValues(member, model,
-                        symbolProvider));
+                return writer.format("builder.$L.copy()", symbolProvider.toMemberName(member));
             } else {
-                return writer.format("builder.$L", ShapeUtils.toMemberNameOrValues(member, model, symbolProvider));
+                return writer.format("builder.$L", symbolProvider.toMemberName(member));
             }
         }
 

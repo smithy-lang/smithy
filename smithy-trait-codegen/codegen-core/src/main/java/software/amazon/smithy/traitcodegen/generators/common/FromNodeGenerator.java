@@ -28,8 +28,8 @@ import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
+import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.sections.FromNodeSection;
-import software.amazon.smithy.traitcodegen.utils.SymbolUtil;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -53,7 +53,7 @@ public final class FromNodeGenerator implements Runnable {
 
     @Override
     public void run() {
-        writer.pushState(new FromNodeSection(shape, symbol));
+        writer.pushState(new FromNodeSection(symbol));
         writer.addImport(Node.class);
         writer.openBlock(FROM_NODE_METHOD_TEMPLATE, "}", symbol, () -> shape.accept(new FromNodeBodyGenerator()));
         writer.popState();
@@ -164,7 +164,7 @@ public final class FromNodeGenerator implements Runnable {
 
         @Override
         public Void stringShape(StringShape shape) {
-            if (SymbolUtil.isJavaString(symbolProvider.toSymbol(shape))) {
+            if (TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape))) {
                 writer.writeInline("${memberPrefix:L}StringMember($1S, builder::$1L)",
                         symbolProvider.toMemberName(member));
             } else {

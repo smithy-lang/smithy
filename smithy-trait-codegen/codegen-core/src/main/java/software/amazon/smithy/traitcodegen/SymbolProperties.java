@@ -22,6 +22,8 @@ public final class SymbolProperties {
     // Provides an initializer for the builder ref
     public static final String BUILDER_REF_INITIALIZER = "builder-ref-initializer";
 
+    public static final String BASE_SYMBOL = "base-symbol";
+
     private SymbolProperties() {
         // No constructor for constants class
     }

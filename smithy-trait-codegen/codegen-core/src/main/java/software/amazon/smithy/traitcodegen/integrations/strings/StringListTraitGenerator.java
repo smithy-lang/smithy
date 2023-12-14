@@ -8,7 +8,6 @@ package software.amazon.smithy.traitcodegen.integrations.strings;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
 import software.amazon.smithy.traitcodegen.generators.traits.TraitGenerator;
@@ -26,8 +25,8 @@ final class StringListTraitGenerator extends TraitGenerator {
     protected void writeProvider(TraitCodegenWriter writer, GenerateTraitDirective directive) {
         writer.addImport(StringListTrait.class);
         writer.openBlock("public static final class Provider extends StringListTrait.Provider<$T> {", "}",
-                directive.traitSymbol(), () -> writer.openBlock("public Provider() {", "}",
-                        () -> writer.write("super(ID, $T::new);", directive.traitSymbol())));
+                directive.symbol(), () -> writer.openBlock("public Provider() {", "}",
+                        () -> writer.write("super(ID, $T::new);", directive.symbol())));
     }
 
     @Override
@@ -42,15 +41,15 @@ final class StringListTraitGenerator extends TraitGenerator {
 
     @Override
     protected void writeTraitBody(TraitCodegenWriter writer, GenerateTraitDirective directive) {
-        writeConstructorWithSourceLocation(writer, directive.traitSymbol(), directive.baseSymbol());
-        writeConstructor(writer, directive.traitSymbol(), directive.baseSymbol());
-        writeToBuilderMethod(writer, directive.shape(), directive.traitSymbol());
+        writeConstructorWithSourceLocation(writer, directive.symbol());
+        writeConstructor(writer, directive.symbol());
+        writeToBuilderMethod(writer, directive.symbol());
         writeBuilderGetter(writer);
-        writeBuilderClass(writer, directive.shape(), directive.traitSymbol());
+        writeBuilderClass(writer, directive.symbol());
     }
 
-    private void writeToBuilderMethod(TraitCodegenWriter writer, Shape shape, Symbol symbol) {
-        writer.pushState(new ToBuilderSection(shape, symbol));
+    private void writeToBuilderMethod(TraitCodegenWriter writer, Symbol symbol) {
+        writer.pushState(new ToBuilderSection(symbol));
         writer.addImports(SmithyBuilder.class, ToSmithyBuilder.class);
         writer.override();
         writer.openBlock("public Builder toBuilder() {", "}",
@@ -65,8 +64,8 @@ final class StringListTraitGenerator extends TraitGenerator {
         writer.newLine();
     }
 
-    private void writeBuilderClass(TraitCodegenWriter writer, Shape shape, Symbol symbol) {
-        writer.pushState(new BuilderClassSection(shape, symbol));
+    private void writeBuilderClass(TraitCodegenWriter writer, Symbol symbol) {
+        writer.pushState(new BuilderClassSection(symbol));
         writer.addImport(StringListTrait.class);
         writer.openBlock("public static final class Builder extends StringListTrait.Builder<$T, Builder> {", "}",
                 symbol, () -> {
@@ -81,17 +80,16 @@ final class StringListTraitGenerator extends TraitGenerator {
     }
 
 
-    private void writeConstructorWithSourceLocation(TraitCodegenWriter writer, Symbol traitSymbol, Symbol baseSymbol) {
+    private void writeConstructorWithSourceLocation(TraitCodegenWriter writer, Symbol traitSymbol) {
         writer.addImport(FromSourceLocation.class);
-        writer.openBlock("public $T($T values, FromSourceLocation sourceLocation) {", "}",
-                traitSymbol, baseSymbol,
-                () -> writer.write("super(ID, values, sourceLocation);"));
+        writer.openBlock("public $1T($1B values, FromSourceLocation sourceLocation) {", "}",
+                traitSymbol, () -> writer.write("super(ID, values, sourceLocation);"));
         writer.newLine();
     }
 
-    private void writeConstructor(TraitCodegenWriter writer, Symbol traitSymbol, Symbol baseSymbol) {
+    private void writeConstructor(TraitCodegenWriter writer, Symbol traitSymbol) {
         writer.addImport(SourceLocation.class);
-        writer.openBlock("public $T($T values) {", "}", traitSymbol, baseSymbol,
+        writer.openBlock("public $1T($1B values) {", "}", traitSymbol,
                 () -> writer.write("super(ID, values, SourceLocation.NONE);"));
         writer.newLine();
     }

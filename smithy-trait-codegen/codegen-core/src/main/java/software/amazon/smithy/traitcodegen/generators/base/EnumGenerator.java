@@ -11,12 +11,12 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.traitcodegen.TraitCodegenContext;
 import software.amazon.smithy.traitcodegen.TraitCodegenSettings;
-import software.amazon.smithy.traitcodegen.utils.SymbolUtil;
+import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 
 public final class EnumGenerator extends AbstractEnumGenerator<GenerateEnumDirective<TraitCodegenContext,
         TraitCodegenSettings>> {
     private static final String VARIANT_TEMPLATE = "$L($S)";
-    private static final Symbol VALUE_TYPE = SymbolUtil.fromClass(String.class);
+    private static final Symbol VALUE_TYPE = TraitCodegenUtils.fromClass(String.class);
 
     @Override
     public void accept(GenerateEnumDirective<TraitCodegenContext, TraitCodegenSettings> directive) {
