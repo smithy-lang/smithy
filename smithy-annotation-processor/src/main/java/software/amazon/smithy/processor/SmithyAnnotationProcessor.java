@@ -12,7 +12,6 @@ import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -113,8 +112,6 @@ public abstract class SmithyAnnotationProcessor<A extends Annotation> extends Ab
                     "Executing processor: " + this.getClass().getSimpleName() + "...");
             SmithyBuildConfig config = createBuildConfig(getAnnotation(elements));
             executeSmithyBuild(config).allArtifacts()
-                    .peek(art -> messager.printMessage(Diagnostic.Kind.NOTE, "GENERATED ARTIFACT: "
-                            + art.toUri()))
                     .filter(path -> path.toString().contains(getPluginName()) && path.toString().contains("source"))
                     .forEach(this::writeArtifact);
         }
@@ -176,13 +173,10 @@ public abstract class SmithyAnnotationProcessor<A extends Annotation> extends Ab
         final String outputPath = pathStr.substring(pathStr.lastIndexOf(getPluginName())
                 + getPluginName().length() + 1);
         try {
-            messager.printMessage(Diagnostic.Kind.NOTE, "writing artifact " + path + " with output path: "
-                    + outputPath);
             // Resources are written to the class output
             if (outputPath.startsWith("META-INF")) {
                 try (Writer writer = filer
-                        .createResource(StandardLocation.CLASS_OUTPUT, "",
-                                Paths.get(outputPath).toUri().toString())
+                        .createResource(StandardLocation.CLASS_OUTPUT, "", convertOutputPath(outputPath))
                         .openWriter()
                 ) {
                     writer.write(IoUtils.readUtf8File(path));
@@ -218,5 +212,10 @@ public abstract class SmithyAnnotationProcessor<A extends Annotation> extends Ab
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    // This is necessary to convert windows paths to a valid URI
+    private String convertOutputPath(String outputPath) {
+        return outputPath.replace(FileSystems.getDefault().getSeparator(), "/");
     }
 }
