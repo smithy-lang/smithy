@@ -113,6 +113,8 @@ public abstract class SmithyAnnotationProcessor<A extends Annotation> extends Ab
                     "Executing processor: " + this.getClass().getSimpleName() + "...");
             SmithyBuildConfig config = createBuildConfig(getAnnotation(elements));
             executeSmithyBuild(config).allArtifacts()
+                    .peek(art -> messager.printMessage(Diagnostic.Kind.NOTE, "GENERATED ARTIFACT: "
+                            + art.toString()))
                     .filter(path -> path.toString().contains(SOURCE_PROJECTION_PATH + getPluginName()))
                     .forEach(this::writeArtifact);
         }
@@ -174,6 +176,8 @@ public abstract class SmithyAnnotationProcessor<A extends Annotation> extends Ab
         final String outputPath = pathStr.substring(pathStr.lastIndexOf(getPluginName())
                 + getPluginName().length() + 1);
         try {
+            messager.printMessage(Diagnostic.Kind.NOTE, "writing artifact " + path + " with output path: "
+                    + outputPath);
             // Resources are written to the class output
             if (outputPath.startsWith("META-INF")) {
                 try (Writer writer = filer
