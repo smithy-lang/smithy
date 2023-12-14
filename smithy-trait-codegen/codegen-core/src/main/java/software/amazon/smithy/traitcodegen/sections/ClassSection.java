@@ -8,6 +8,9 @@ package software.amazon.smithy.traitcodegen.sections;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.utils.CodeSection;
 
+/**
+ * Contains a Java class defining a trait or nested shape.
+ */
 public final class ClassSection implements CodeSection {
     private final Shape shape;
 

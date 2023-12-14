@@ -8,6 +8,9 @@ package software.amazon.smithy.traitcodegen.sections;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.utils.CodeSection;
 
+/**
+ * Contains a {@code FromNode} method definition.
+ */
 public final class FromNodeSection implements CodeSection {
     private final Symbol symbol;
 

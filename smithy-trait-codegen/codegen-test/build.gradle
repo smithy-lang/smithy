@@ -17,6 +17,7 @@ dependencies {
     implementation project(":smithy-model")
 }
 
+tasks["javadoc"].enabled = false
 
 // Add resources to the compile classpath so they are available to the annotation processors
 sourceSets {

@@ -13,6 +13,9 @@ import software.amazon.smithy.traitcodegen.TraitCodegenContext;
 import software.amazon.smithy.traitcodegen.sections.ClassSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
+/**
+ * Consumer that generates a trait class definition from a {@link GenerateTraitDirective}.
+ */
 public abstract class TraitGenerator implements Consumer<GenerateTraitDirective> {
     private static final String PROVIDER_FILE = "META-INF/services/software.amazon.smithy.model.traits.TraitService";
     private static final String TRAIT_ID_TEMPLATE = "public static final ShapeId ID = ShapeId.from($S);";

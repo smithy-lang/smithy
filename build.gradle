@@ -271,10 +271,13 @@ project.afterEvaluate {
         title = "Smithy API ${version}"
         setDestinationDir(file("${project.buildDir}/docs/javadoc/latest"))
         // Build a consolidated javadoc of all subprojects.
-        source(project.subprojects.stream().map({
-            project(it.path).sourceSets.main.allJava
-        }).collect(Collectors.toList()))
+        source(project.subprojects.stream()
+                .filter(p -> !p.name.endsWith("-test"))
+                .map({
+                    project(it.path).sourceSets.main.allJava
+                }).collect(Collectors.toList()))
         classpath = files(project.subprojects.stream()
+                .filter(p -> !p.name.endsWith("-test"))
                 .map({project(it.path).sourceSets.main.compileClasspath})
                 .collect(Collectors.toList()))
     }

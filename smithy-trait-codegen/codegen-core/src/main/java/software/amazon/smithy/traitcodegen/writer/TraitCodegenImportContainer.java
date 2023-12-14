@@ -12,6 +12,9 @@ import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.ImportContainer;
 import software.amazon.smithy.codegen.core.Symbol;
 
+/**
+ * Import container for Java imports.
+ */
 final class TraitCodegenImportContainer implements ImportContainer {
     private static final String JAVA_NAMESPACE_PREFIX = "java.lang";
     private final Set<Symbol> imports = new HashSet<>();

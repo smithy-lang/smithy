@@ -8,6 +8,9 @@ package software.amazon.smithy.traitcodegen.sections;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.utils.CodeSection;
 
+/**
+ * Contains the nested builder class for a trait.
+ */
 public final class BuilderClassSection implements CodeSection {
     private final Symbol symbol;
 

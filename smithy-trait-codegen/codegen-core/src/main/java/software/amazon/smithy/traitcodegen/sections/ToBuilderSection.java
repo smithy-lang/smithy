@@ -8,6 +8,9 @@ package software.amazon.smithy.traitcodegen.sections;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.utils.CodeSection;
 
+/**
+ * Contains a {@code toBuilder} method.
+ */
 public final class ToBuilderSection implements CodeSection {
     private final Symbol symbol;
 

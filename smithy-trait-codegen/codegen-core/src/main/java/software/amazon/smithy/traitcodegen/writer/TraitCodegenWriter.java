@@ -16,6 +16,24 @@ import software.amazon.smithy.traitcodegen.TraitCodegenSettings;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.utils.StringUtils;
 
+
+/**
+ * Writes Java code for trait definitions.
+ *
+ * <p>This writter supports two custom formatters, a Java type formatter '$T' and
+ * a Base type formatter '$B'.
+ * <ul>
+ *     <li>{@link JavaTypeFormatter}|{@code 'T'}: This formatter handles the formatting of
+ *     Java types and also ensures that parameterized types (such as {@code List<String>} are
+ *     written correctly.
+ *
+ *     <li>{@link BaseTypeFormatter}|{@code 'B'}: This formatter allows you to use the base type
+ *     for a trait. For example a String Trait may have a base type of {@code ShapeId}. To write
+ *     this base type simply use the {@code $B} formatter and provide the trait symbol. Note that
+ *     if no base type is found (i.e. type is not a trait) then this formatter behaves exactly the
+ *     same as the {@link JavaTypeFormatter}.
+ * </ul>
+ */
 public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCodegenImportContainer> {
     private static final int MAX_LINE_LENGTH = 120;
 
@@ -72,7 +90,8 @@ public class TraitCodegenWriter extends SymbolWriter<TraitCodegenWriter, TraitCo
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        if (!fileName.startsWith("META-INF/services")) {
+        // Do not add code headers to META-INF files
+        if (!fileName.startsWith("META-INF")) {
             builder.append(getHeader()).append(getNewline());
             builder.append(getPackageHeader()).append(getNewline());
             builder.append(getImportContainer().toString()).append(getNewline());

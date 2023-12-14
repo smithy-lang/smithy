@@ -8,6 +8,9 @@ package software.amazon.smithy.traitcodegen.sections;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.utils.CodeSection;
 
+/**
+ * Contains an enum variant.
+ */
 public final class EnumVariantSection implements CodeSection {
     private final MemberShape memberShape;
 
