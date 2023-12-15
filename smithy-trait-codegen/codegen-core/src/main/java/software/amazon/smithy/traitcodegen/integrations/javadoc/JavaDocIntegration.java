@@ -13,6 +13,9 @@ import software.amazon.smithy.utils.CodeInterceptor;
 import software.amazon.smithy.utils.CodeSection;
 import software.amazon.smithy.utils.ListUtils;
 
+/**
+ * Adds Javadocs to generated Trait classes.
+ */
 public final class JavaDocIntegration implements TraitCodegenIntegration  {
 
     @Override

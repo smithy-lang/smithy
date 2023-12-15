@@ -13,6 +13,13 @@ import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
 import software.amazon.smithy.traitcodegen.generators.traits.TraitGenerator;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
+/**
+ * Generates traits for the special case where the trait is a String trait that can
+ * be represented by a Java String symbol.
+ *
+ * <p>When a String trait is represented by a Java string, the trait can use the
+ * base class {@link StringTrait}.
+ */
 public class StringTraitGenerator extends TraitGenerator {
     private static final String CLASS_TEMPLATE = "public final class $T extends StringTrait {";
 

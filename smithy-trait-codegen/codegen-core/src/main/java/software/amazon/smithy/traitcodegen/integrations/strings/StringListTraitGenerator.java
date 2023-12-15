@@ -17,6 +17,13 @@ import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
+/**
+ * Generates traits for the special case where the list's member is represented by a
+ * java string symbol.
+ *
+ * <p>List Traits with only a member shape that can be represented as a java string
+ * can use the base trait class {@link StringListTrait}.
+ */
 final class StringListTraitGenerator extends TraitGenerator {
     private static final String CLASS_TEMPLATE = "public final class $1T extends StringListTrait implements "
             + "ToSmithyBuilder<$1T> {";

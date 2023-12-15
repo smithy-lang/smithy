@@ -16,8 +16,7 @@ import software.amazon.smithy.traitcodegen.TraitGeneratorProvider;
 /**
  * Handles the special cases related to the use of strings.
  *
- * <p>
- * NOTE: Must be run after all other integrations to ensure any symbol changes
+ * <p>NOTE: Must be run after all other integrations to ensure any symbol changes
  * applied by other integrations are picked up
  */
 public class StringsIntegration implements TraitCodegenIntegration {

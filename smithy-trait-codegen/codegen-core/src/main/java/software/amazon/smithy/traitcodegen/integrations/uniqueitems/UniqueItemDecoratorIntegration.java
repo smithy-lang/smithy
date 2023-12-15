@@ -18,6 +18,12 @@ import software.amazon.smithy.traitcodegen.TraitCodegenSettings;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.utils.ListUtils;
 
+/**
+ * Handles type conversions associated with the use of the {@code UniqueItems} trait.
+ *
+ * <p>Lists shapes and list members with the UniqueItems trait should be represented by
+ * a {@link Set} rather than a list.
+ */
 public class UniqueItemDecoratorIntegration implements TraitCodegenIntegration {
     private static final String SET_INITIALIZER = "forOrderedSet()";
     private static final String INTEGRATION_NAME = "unique-items-integration";
