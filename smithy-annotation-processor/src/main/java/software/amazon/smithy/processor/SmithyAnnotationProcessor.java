@@ -102,12 +102,10 @@ public abstract class SmithyAnnotationProcessor<A extends Annotation> extends Ab
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(getAnnotationClass());
-        if (elements.size() != 1) {
-            if (elements.size() > 1) {
-                messager.printMessage(Diagnostic.Kind.ERROR,
-                        "Only one package can have the " + getAnnotationClass() + " annotation.");
-            }
-        } else {
+        if (elements.size() > 1) {
+            messager.printMessage(Diagnostic.Kind.ERROR,
+                    "Only one package can have the " + getAnnotationClass() + " annotation.");
+        } else if (elements.size() == 1) {
             messager.printMessage(Diagnostic.Kind.NOTE,
                     "Executing processor: " + this.getClass().getSimpleName() + "...");
             SmithyBuildConfig config = createBuildConfig(getAnnotation(elements));
