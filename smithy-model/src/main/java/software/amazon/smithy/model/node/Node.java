@@ -156,6 +156,27 @@ public abstract class Node implements FromSourceLocation, ToNode {
     }
 
     /**
+     * Writes the contents of a Node to a pretty-printed JSON string,
+     * and surrounds the result in backticks.
+     *
+     * @param node Node to write.
+     * @return Returns a string suitable for Markdown rendering.
+     */
+    public static String prettyPrintJsonWithBackticks(Node node) {
+        String prettyPrinted = prettyPrintJson(node);
+        if (prettyPrinted.contains(System.lineSeparator()) || prettyPrinted.contains("\n")) {
+            return System.lineSeparator() + "```" + System.lineSeparator()
+                    + prettyPrinted + System.lineSeparator()
+                    + "```";
+        } else if (prettyPrinted.startsWith("\"") && prettyPrinted.endsWith("\"")) {
+            // for pure strings, replace the quotes with backticks
+            return "`" + prettyPrinted.substring(1, prettyPrinted.length() - 1) + "`";
+        } else {
+            return "`" + prettyPrinted + "`";
+        }
+    }
+
+    /**
      * Writes the contents of a Node to a non-pretty-printed JSON string.
      *
      * @param node Node to write.

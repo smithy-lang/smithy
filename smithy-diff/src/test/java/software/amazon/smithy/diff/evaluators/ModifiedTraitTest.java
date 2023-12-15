@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.hasSize;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -160,9 +161,9 @@ public class ModifiedTraitTest {
                 equalTo(2L));
 
         assertThat(messages, containsInAnyOrder(
-                "Changed trait `smithy.example#b` from \"hello\" to \"hello!\"",
-                "Removed trait `smithy.example#a`. Previous trait value: {}",
-                "Added trait `smithy.example#c` with value \"foo\""
+                "Changed trait `smithy.example#b` from `hello` to `hello!`",
+                "Removed trait `smithy.example#a`. Previous trait value: `{}`",
+                "Added trait `smithy.example#c` with value `foo`"
         ));
     }
 
@@ -186,8 +187,8 @@ public class ModifiedTraitTest {
                 equalTo(2L));
 
         assertThat(messages, containsInAnyOrder(
-                "Added trait contents to `smithy.example#aTrait` at path `/bar` with value \"no\"",
-                "Changed trait contents of `smithy.example#aTrait` at path `/baz/foo` from \"bye\" to \"adios\""
+                "Added trait contents to `smithy.example#aTrait` at path `/bar` with value `no`",
+                "Changed trait contents of `smithy.example#aTrait` at path `/baz/foo` from `bye` to `adios`"
         ));
     }
 
@@ -210,11 +211,13 @@ public class ModifiedTraitTest {
         assertThat(events.stream().filter(e -> !e.getMessage().contains("Removed"))
                 .filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy")).count(), equalTo(2L));
         assertThat(messages, containsInAnyOrder(
-                "Changed trait contents of `smithy.example#aTrait` at path `/foo/1` from \"b\" to \"B\"",
-                "Added trait contents to `smithy.example#aTrait` at path `/foo/3` with value \"4\"",
-                "Removed trait contents from `smithy.example#aTrait` at path `/foo/2`. Removed value: \"3\"",
-                "Removed trait contents from `smithy.example#aTrait` at path `/foo`. Removed value: "
-                + "[\n    \"1\",\n    \"2\",\n    \"3\"\n]"
+                "Changed trait contents of `smithy.example#aTrait` at path `/foo/1` from `b` to `B`",
+                "Added trait contents to `smithy.example#aTrait` at path `/foo/3` with value `4`",
+                "Removed trait contents from `smithy.example#aTrait` at path `/foo/2`. Removed value: `3`",
+                "Removed trait contents from `smithy.example#aTrait` at path `/foo`. Removed value: \n"
+                        + "```\n"
+                        + "[\n    \"1\",\n    \"2\",\n    \"3\"\n]\n"
+                        + "```"
         ));
     }
 
@@ -237,10 +240,14 @@ public class ModifiedTraitTest {
         assertThat(events.stream().filter(e -> !e.getMessage().contains("Removed"))
                 .filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy")).count(), equalTo(2L));
         assertThat(messages, containsInAnyOrder(
-                "Changed trait contents of `smithy.example#aTrait` at path `/foo/1` from \"b\" to \"B\"",
-                "Added trait contents to `smithy.example#aTrait` at path `/foo/3` with value \"4\"",
-                "Removed trait contents from `smithy.example#aTrait` at path `/foo/2`. Removed value: \"3\"",
-                "Removed trait contents from `smithy.example#aTrait` at path `/foo`. Removed value: [\n    \"1\",\n    \"2\",\n    \"3\"\n]"
+                "Changed trait contents of `smithy.example#aTrait` at path `/foo/1` from `b` to `B`",
+                "Added trait contents to `smithy.example#aTrait` at path `/foo/3` with value `4`",
+                "Removed trait contents from `smithy.example#aTrait` at path `/foo/2`. Removed value: `3`",
+                "Removed trait contents from `smithy.example#aTrait` at path `/foo`. "
+                        + "Removed value: \n"
+                        + "```\n"
+                        + "[\n    \"1\",\n    \"2\",\n    \"3\"\n]\n"
+                        + "```"
         ));
     }
 
@@ -263,10 +270,14 @@ public class ModifiedTraitTest {
         assertThat(events.stream().filter(e -> !e.getMessage().contains("Removed"))
                 .filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy")).count(), equalTo(2L));
         assertThat(messages, containsInAnyOrder(
-                "Changed trait contents of `smithy.example#aTrait` at path `/foo/bam` from \"b\" to \"B\"",
-                "Removed trait contents from `smithy.example#aTrait` at path `/foo`. Removed value: {\n    \"baz\": \"1\",\n    \"bam\": \"2\",\n    \"boo\": \"3\"\n}",
-                "Added trait contents to `smithy.example#aTrait` at path `/foo/qux` with value \"4\"",
-                "Removed trait contents from `smithy.example#aTrait` at path `/foo/boo`. Removed value: \"3\""
+                "Changed trait contents of `smithy.example#aTrait` at path `/foo/bam` from `b` to `B`",
+                "Removed trait contents from `smithy.example#aTrait` at path `/foo`. "
+                        + "Removed value: \n"
+                        + "```\n"
+                        + "{\n    \"baz\": \"1\",\n    \"bam\": \"2\",\n    \"boo\": \"3\"\n}\n"
+                        + "```",
+                "Added trait contents to `smithy.example#aTrait` at path `/foo/qux` with value `4`",
+                "Removed trait contents from `smithy.example#aTrait` at path `/foo/boo`. Removed value: `3`"
         ));
     }
 
@@ -287,8 +298,8 @@ public class ModifiedTraitTest {
         assertThat(events.stream().filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy")).count(),
                 equalTo(2L));
         assertThat(messages, containsInAnyOrder(
-                "Changed trait contents of `smithy.example#aTrait` at path `/baz/foo` from \"a\" to \"b\"",
-                "Changed trait contents of `smithy.example#aTrait` at path `/baz/baz` from \"a\" to \"b\""
+                "Changed trait contents of `smithy.example#aTrait` at path `/baz/foo` from `a` to `b`",
+                "Changed trait contents of `smithy.example#aTrait` at path `/baz/baz` from `a` to `b`"
         ));
     }
 
@@ -311,18 +322,18 @@ public class ModifiedTraitTest {
         assertThat(events.stream().filter(e -> e.getMessage().contains("Changed") || e.getMessage().contains("Added"))
                 .filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy")).count(), equalTo(9L));
         assertThat(messages, containsInAnyOrder(
-                "Added trait contents to `smithy.example#aTrait` at path `/a` with value \"a\"",
-                "Removed trait contents from `smithy.example#aTrait` at path `/b`. Removed value: \"a\"",
-                "Changed trait contents of `smithy.example#aTrait` at path `/c` from \"a\" to \"c\"",
-                "Changed trait contents of `smithy.example#aTrait` at path `/d` from \"a\" to \"d\"",
-                "Added trait contents to `smithy.example#aTrait` at path `/e` with value \"a\"",
-                "Removed trait contents from `smithy.example#aTrait` at path `/f`. Removed value: \"a\"",
-                "Changed trait contents of `smithy.example#aTrait` at path `/g` from \"a\" to \"h\"",
-                "Changed trait contents of `smithy.example#aTrait` at path `/h` from \"a\" to \"h\"",
-                "Added trait contents to `smithy.example#aTrait` at path `/i` with value \"a\"",
-                "Removed trait contents from `smithy.example#aTrait` at path `/j`. Removed value: \"a\"",
-                "Changed trait contents of `smithy.example#aTrait` at path `/k` from \"a\" to \"k\"",
-                "Changed trait contents of `smithy.example#aTrait` at path `/l` from \"a\" to \"l\""
+                "Added trait contents to `smithy.example#aTrait` at path `/a` with value `a`",
+                "Removed trait contents from `smithy.example#aTrait` at path `/b`. Removed value: `a`",
+                "Changed trait contents of `smithy.example#aTrait` at path `/c` from `a` to `c`",
+                "Changed trait contents of `smithy.example#aTrait` at path `/d` from `a` to `d`",
+                "Added trait contents to `smithy.example#aTrait` at path `/e` with value `a`",
+                "Removed trait contents from `smithy.example#aTrait` at path `/f`. Removed value: `a`",
+                "Changed trait contents of `smithy.example#aTrait` at path `/g` from `a` to `h`",
+                "Changed trait contents of `smithy.example#aTrait` at path `/h` from `a` to `h`",
+                "Added trait contents to `smithy.example#aTrait` at path `/i` with value `a`",
+                "Removed trait contents from `smithy.example#aTrait` at path `/j`. Removed value: `a`",
+                "Changed trait contents of `smithy.example#aTrait` at path `/k` from `a` to `k`",
+                "Changed trait contents of `smithy.example#aTrait` at path `/l` from `a` to `l`"
         ));
     }
 

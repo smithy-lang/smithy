@@ -214,15 +214,15 @@ public final class TraitBreakingChange extends AbstractDiffEvaluator {
         }
 
         private String createBreakingMessage(TraitDefinition.ChangeType type, String path, Node left, Node right) {
-            String leftPretty = Node.prettyPrintJson(left.toNode());
-            String rightPretty = Node.prettyPrintJson(right.toNode());
+            String leftPretty = Node.prettyPrintJsonWithBackticks(left.toNode());
+            String rightPretty = Node.prettyPrintJsonWithBackticks(right.toNode());
 
             switch (type) {
                 case ADD:
                     if (!path.isEmpty()) {
                         return String.format("Added trait contents to `%s` at path `%s` with value %s",
                                              trait.getId(), path, rightPretty);
-                    } else if (rightPretty.equals("{}")) {
+                    } else if (Node.objectNode().equals(right.toNode())) {
                         return String.format("Added trait `%s`", trait.getId());
                     } else {
                         return String.format("Added trait `%s` with value %s", trait.getId(), rightPretty);
@@ -231,7 +231,7 @@ public final class TraitBreakingChange extends AbstractDiffEvaluator {
                     if (!path.isEmpty()) {
                         return String.format("Removed trait contents from `%s` at path `%s`. Removed value: %s",
                                              trait.getId(), path, leftPretty);
-                    } else if (leftPretty.equals("{}")) {
+                    } else if (Node.objectNode().equals(left.toNode())) {
                         return String.format("Removed trait `%s`", trait.getId());
                     } else {
                         return String.format("Removed trait `%s`. Previous trait value: %s",

@@ -227,7 +227,7 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                 }
 
                 String message;
-                String pretty = Node.prettyPrintJson(right.toNode());
+                String pretty = Node.prettyPrintJsonWithBackticks(right.toNode());
                 if (path.isEmpty()) {
                     message = String.format("Added trait `%s` with value %s", trait, pretty);
                 } else {
@@ -260,7 +260,7 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                     return Collections.emptyList();
                 }
 
-                String pretty = Node.prettyPrintJson(left.toNode());
+                String pretty = Node.prettyPrintJsonWithBackticks(left.toNode());
                 String message;
                 if (path.isEmpty()) {
                     message = String.format("Removed trait `%s`. Previous trait value: %s", trait, pretty);
@@ -294,8 +294,8 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                     return Collections.emptyList();
                 }
 
-                String leftPretty = Node.prettyPrintJson(left.toNode());
-                String rightPretty = Node.prettyPrintJson(right.toNode());
+                String leftPretty = Node.prettyPrintJsonWithBackticks(left.toNode());
+                String rightPretty = Node.prettyPrintJsonWithBackticks(right.toNode());
                 String message;
                 if (path.isEmpty()) {
                     message = String.format("Changed trait `%s` from %s to %s", trait, leftPretty, rightPretty);

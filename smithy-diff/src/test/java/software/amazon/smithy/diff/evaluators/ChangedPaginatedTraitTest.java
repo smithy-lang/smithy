@@ -74,7 +74,7 @@ public class ChangedPaginatedTraitTest {
 
         assertThat(changedTraitEvents.size(), equalTo(1));
         assertThat(changedTraitEvents.get(0).getMessage(),
-                   containsString("Removed trait contents from `smithy.api#paginated` at path `/items`. Removed value: \"things\""));
+                   containsString("Removed trait contents from `smithy.api#paginated` at path `/items`. Removed value: `things`"));
     }
 
     @Test
@@ -91,7 +91,7 @@ public class ChangedPaginatedTraitTest {
 
         assertThat(changedTraitEvents.size(), equalTo(1));
         assertThat(changedTraitEvents.get(0).getMessage(),
-                   containsString("Added trait contents to `smithy.api#paginated` at path `/items` with value \"things\""));
+                   containsString("Added trait contents to `smithy.api#paginated` at path `/items` with value `things`"));
     }
 
     @Test
@@ -108,7 +108,7 @@ public class ChangedPaginatedTraitTest {
 
         assertThat(changedTraitEvents.size(), equalTo(1));
         assertThat(changedTraitEvents.get(0).getMessage(),
-                   containsString("Changed trait contents of `smithy.api#paginated` at path `/items` from \"things\" to \"otherThings\""));
+                   containsString("Changed trait contents of `smithy.api#paginated` at path `/items` from `things` to `otherThings`"));
     }
 
     @Test
@@ -125,7 +125,7 @@ public class ChangedPaginatedTraitTest {
 
         assertThat(changedTraitEvents.size(), equalTo(1));
         assertThat(changedTraitEvents.get(0).getMessage(),
-                   containsString("Removed trait contents from `smithy.api#paginated` at path `/pageSize`. Removed value: \"maxResults\""));
+                   containsString("Removed trait contents from `smithy.api#paginated` at path `/pageSize`. Removed value: `maxResults`"));
     }
 
     @Test
@@ -157,7 +157,7 @@ public class ChangedPaginatedTraitTest {
 
         assertThat(changedTraitEvents.size(), equalTo(1));
         assertThat(changedTraitEvents.get(0).getMessage(),
-                   containsString("Changed trait contents of `smithy.api#paginated` at path `/pageSize` from \"maxResults\" to \"otherMaxResults\""));
+                   containsString("Changed trait contents of `smithy.api#paginated` at path `/pageSize` from `maxResults` to `otherMaxResults`"));
     }
 
     @Test
@@ -173,7 +173,7 @@ public class ChangedPaginatedTraitTest {
 
         assertThat(changedTraitEvents.size(), equalTo(1));
         assertThat(changedTraitEvents.get(0).getMessage(),
-                   containsString("Changed trait contents of `smithy.api#paginated` at path `/inputToken` from \"token\" to \"otherToken\""));
+                   containsString("Changed trait contents of `smithy.api#paginated` at path `/inputToken` from `token` to `otherToken`"));
     }
 
     @Test
@@ -189,6 +189,6 @@ public class ChangedPaginatedTraitTest {
 
         assertThat(changedTraitEvents.size(), equalTo(1));
         assertThat(changedTraitEvents.get(0).getMessage(),
-                   containsString("Changed trait contents of `smithy.api#paginated` at path `/outputToken` from \"token\" to \"otherToken\""));
+                   containsString("Changed trait contents of `smithy.api#paginated` at path `/outputToken` from `token` to `otherToken`"));
     }
 }
