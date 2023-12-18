@@ -36,7 +36,7 @@ jobs:
         if: matrix.java >= 17
         run: ./gradlew :smithy-cli:integ -Plog-tests --stacktrace
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: java-${{ matrix.java }}-${{ matrix.os }}-test-report
@@ -59,7 +59,7 @@ jobs:
     - name: Build docs
       run: cd docs && make html
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: built-docs
         path: docs/build/html
