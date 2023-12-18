@@ -81,7 +81,8 @@ public final class MavenDependencyResolver implements DependencyResolver {
                 throw new DependencyResolverException(exception);
             }
         });
-        commonProxy = getProxy(EnvironmentVariable.PROXY_HOST.get(), EnvironmentVariable.PROXY_CRED.get());
+        commonProxy = getProxy(EnvironmentVariable.SMITHY_PROXY_HOST.get(),
+                EnvironmentVariable.SMITHY_PROXY_CREDENTIALS.get());
         repositorySystem = locator.getService(RepositorySystem.class);
 
         // Sets a default maven local to the default local repo of the user.
@@ -116,36 +117,49 @@ public final class MavenDependencyResolver implements DependencyResolver {
         }
     }
 
-    private static Proxy getProxy(final String hostPort, final String userPass) {
-        if (hostPort != null) {
-            String[] hostSettings = parseProxySettings(hostPort, "PROXY_HOST");
-            String host = hostSettings[0];
-            int port;
-            try {
-                port = Integer.parseInt(hostSettings[1]);
-            } catch (NumberFormatException exc) {
-                throw new DependencyResolverException("Could not parse port string. PROXY_HOST is "
-                        +  EnvironmentVariable.PROXY_HOST.get() + ".");
-            }
-
-            if (userPass != null) {
-                String[] userSettings = parseProxySettings(userPass, "PROXY_CRED");
-                AuthenticationBuilder authBuilder = new AuthenticationBuilder()
-                        .addUsername(userSettings[0])
-                        .addPassword(userSettings[1]);
-                return new Proxy(Proxy.TYPE_HTTP, host, port, authBuilder.build());
-            } else {
-                return new Proxy(Proxy.TYPE_HTTP, host, port);
-            }
+    private void addProxyInfo(MavenRepository repository, RemoteRepository.Builder builder) {
+        if (repository.getProxyHost().isPresent()) {
+            builder.setProxy(
+                    getProxy(repository.getProxyHost().get(), repository.getProxyCredentials().orElse(null))
+            );
+        } else if (commonProxy != null) {
+            builder.setProxy(commonProxy);
         }
-        return null;
     }
 
-    private static String[] parseProxySettings(String value, String settingName) {
+    private static Proxy getProxy(final String hostPort, final String userPass) {
+        if (hostPort == null) {
+            return null;
+        }
+
+        String[] hostSettings = parseProxySettings(hostPort, EnvironmentVariable.SMITHY_PROXY_HOST);
+        String host = hostSettings[0];
+        int port;
+        try {
+            port = Integer.parseInt(hostSettings[1]);
+        } catch (NumberFormatException exc) {
+            throw new DependencyResolverException("Could not parse port string from "
+                    + EnvironmentVariable.SMITHY_PROXY_HOST + ", "
+                    + EnvironmentVariable.SMITHY_PROXY_HOST.get() + ".");
+        }
+
+        if (userPass != null) {
+            String[] userSettings = parseProxySettings(userPass, EnvironmentVariable.SMITHY_PROXY_CREDENTIALS);
+            AuthenticationBuilder authBuilder = new AuthenticationBuilder()
+                    .addUsername(userSettings[0])
+                    .addPassword(userSettings[1]);
+            return new Proxy(Proxy.TYPE_HTTP, host, port, authBuilder.build());
+        } else {
+            return new Proxy(Proxy.TYPE_HTTP, host, port);
+        }
+
+    }
+
+    private static String[] parseProxySettings(String value, EnvironmentVariable settingType) {
         String[] settings = value.split(":");
         if (settings.length != 2) {
             throw new DependencyResolverException("Expected two values separated by ':' for "
-                    + settingName + "but found " + settings.length);
+                    + settingType + " but found " + settings.length);
         }
         return settings;
     }
@@ -161,15 +175,6 @@ public final class MavenDependencyResolver implements DependencyResolver {
                 .addPassword(parts[1])
                 .build()
         );
-    }
-
-    private void addProxyInfo(MavenRepository repository, RemoteRepository.Builder builder) {
-        if (repository.getProxyHost().isPresent()) {
-            builder.setProxy(getProxy(repository.getProxyHost().get(),
-                            repository.getProxyCredentials().orElse(null)));
-        } else if (commonProxy != null) {
-            builder.setProxy(commonProxy);
-        }
     }
 
     @Override

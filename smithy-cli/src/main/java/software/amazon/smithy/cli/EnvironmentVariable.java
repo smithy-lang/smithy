@@ -96,14 +96,14 @@ public enum EnvironmentVariable {
      *
      * <p>Set both the host and port information as a ":" separated string.
      * <pre>
-     * {@code export PROXY=host:port}
+     * {@code export SMITHY_PROXY_HOST=host:port}
      * </pre>
      * <strong>NOTE:</strong> this setting will be used for all repositories
      * defined in the smithy-build maven configuration unless a repo-specific
      * configuration is provided.
      *
      */
-    PROXY_HOST,
+    SMITHY_PROXY_HOST,
 
     /**
      * Used to determine a proxy credentials to use for Maven dependency resolution through
@@ -114,13 +114,13 @@ public enum EnvironmentVariable {
      *
      * <p>Set both the username and password information as a ":" separated string.
      * <pre>
-     * {@code export PROXY_CRED=user:pass}
+     * {@code export SMITHY_PROXY_CREDENTIALS=user:pass}
      * </pre>
      * <strong>NOTE:</strong> this setting will be used for all repositories
      * defined in the smithy-build maven configuration unless a repo-specific
      * configuration is provided.
      */
-    PROXY_CRED;
+    SMITHY_PROXY_CREDENTIALS;
 
     private static final Logger LOGGER = Logger.getLogger(EnvironmentVariable.class.getName());
 

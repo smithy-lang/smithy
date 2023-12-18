@@ -171,7 +171,7 @@ public class MavenResolverTest {
                             .withBody("FAKE JAR CONTENT")
             );
 
-            Map<String, String> envMap = MapUtils.of(EnvironmentVariable.PROXY_HOST.toString(), "localhost:2323");
+            Map<String, String> envMap = MapUtils.of(EnvironmentVariable.SMITHY_PROXY_HOST.toString(), "localhost:2323");
             IntegUtils.runWithEmptyCache("maven-proxy-env", ListUtils.of("validate", "--debug"),
                     envMap, result -> {
                         assertThat(result.getExitCode(), equalTo(0));
