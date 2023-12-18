@@ -94,9 +94,9 @@ public enum EnvironmentVariable {
     /**
      * Used to determine a proxy host to use for Maven dependency resolution.
      *
-     * <p>Set both the host and port information as a ":" separated string.
+     * <p>Set the host, protocol, and port information with a valid url.
      * <pre>
-     * {@code export SMITHY_PROXY_HOST=host:port}
+     * {@code export SMITHY_PROXY_HOST=protocol://host:port}
      * </pre>
      * <strong>NOTE:</strong> this setting will be used for all repositories
      * defined in the smithy-build maven configuration unless a repo-specific
@@ -109,7 +109,7 @@ public enum EnvironmentVariable {
      * Used to determine a proxy credentials to use for Maven dependency resolution through
      * a proxy.
      *
-     * <p>Use this setting in conjunction with the {@link #PROXY_HOST} variable to configure
+     * <p>Use this setting in conjunction with the {@link #SMITHY_PROXY_HOST} variable to configure
      * proxy settings for dependency resolution.
      *
      * <p>Set both the username and password information as a ":" separated string.

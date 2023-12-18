@@ -18,8 +18,10 @@ package software.amazon.smithy.cli.dependencies;
 import static org.eclipse.aether.util.artifact.JavaScopes.COMPILE;
 import static org.eclipse.aether.util.artifact.JavaScopes.RUNTIME;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -127,41 +129,41 @@ public final class MavenDependencyResolver implements DependencyResolver {
         }
     }
 
-    private static Proxy getProxy(final String hostPort, final String userPass) {
-        if (hostPort == null) {
+    private static Proxy getProxy(final String host, final String userPass) {
+        if (host == null) {
             return null;
         }
 
-        String[] hostSettings = parseProxySettings(hostPort, EnvironmentVariable.SMITHY_PROXY_HOST);
-        String host = hostSettings[0];
-        int port;
-        try {
-            port = Integer.parseInt(hostSettings[1]);
-        } catch (NumberFormatException exc) {
-            throw new DependencyResolverException("Could not parse port string from "
-                    + EnvironmentVariable.SMITHY_PROXY_HOST + ", "
-                    + EnvironmentVariable.SMITHY_PROXY_HOST.get() + ".");
-        }
-
+        URL hostUrl = parseHostString(host);
         if (userPass != null) {
-            String[] userSettings = parseProxySettings(userPass, EnvironmentVariable.SMITHY_PROXY_CREDENTIALS);
+            String[] userSettings = parseProxyCredentials(userPass);
             AuthenticationBuilder authBuilder = new AuthenticationBuilder()
                     .addUsername(userSettings[0])
                     .addPassword(userSettings[1]);
-            return new Proxy(Proxy.TYPE_HTTP, host, port, authBuilder.build());
+            return new Proxy(hostUrl.getProtocol(), hostUrl.getHost(), hostUrl.getPort(), authBuilder.build());
         } else {
-            return new Proxy(Proxy.TYPE_HTTP, host, port);
+            return new Proxy(hostUrl.getProtocol(), hostUrl.getHost(), hostUrl.getPort());
         }
 
     }
 
-    private static String[] parseProxySettings(String value, EnvironmentVariable settingType) {
+    private static String[] parseProxyCredentials(String value) {
         String[] settings = value.split(":");
         if (settings.length != 2) {
             throw new DependencyResolverException("Expected two values separated by ':' for "
-                    + settingType + " but found " + settings.length);
+                    + EnvironmentVariable.SMITHY_PROXY_CREDENTIALS + ", but found " + settings.length);
         }
         return settings;
+    }
+
+    private static URL parseHostString(String value) {
+        try {
+            return new URL(value);
+        } catch (MalformedURLException exc) {
+            throw new DependencyResolverException("Expected a valid URL for "
+                + EnvironmentVariable.SMITHY_PROXY_HOST + ". Found " + value
+            );
+        }
     }
 
     private void addUserInfoAuth(URI uri, String userInfo, RemoteRepository.Builder builder) {

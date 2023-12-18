@@ -125,8 +125,6 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
 
         public Builder proxyHost(String proxyHost) {
             this.proxyHost = proxyHost;
-            validateColonSeparatedValue(proxyHost,
-                    "Invalid proxyHost: expected in the format of host:port");
             return this;
         }
 

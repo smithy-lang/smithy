@@ -5,7 +5,7 @@
             {
                 // Use HTTP instead of HTTPS because we're running a mock server during tests
                 "url": "http://localhost:1234/maven/not/there",
-                "proxyHost": "localhost:2323",
+                "proxyHost": "http://localhost:2323",
                 "proxyCredentials": "user:pass"
             }
         ],

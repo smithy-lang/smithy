@@ -13,12 +13,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.mockserver.integration.ClientAndProxy;
 import org.mockserver.integration.ClientAndServer;
-import org.mockserver.mockserver.MockServer;
 import org.mockserver.model.HttpRequest;
 import org.mockserver.model.HttpResponse;
 import software.amazon.smithy.model.node.Node;
@@ -171,7 +169,7 @@ public class MavenResolverTest {
                             .withBody("FAKE JAR CONTENT")
             );
 
-            Map<String, String> envMap = MapUtils.of(EnvironmentVariable.SMITHY_PROXY_HOST.toString(), "localhost:2323");
+            Map<String, String> envMap = MapUtils.of(EnvironmentVariable.SMITHY_PROXY_HOST.toString(), "http://localhost:2323");
             IntegUtils.runWithEmptyCache("maven-proxy-env", ListUtils.of("validate", "--debug"),
                     envMap, result -> {
                         assertThat(result.getExitCode(), equalTo(0));
