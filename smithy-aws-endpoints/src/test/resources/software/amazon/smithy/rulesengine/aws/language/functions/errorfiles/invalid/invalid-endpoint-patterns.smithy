@@ -18,6 +18,10 @@ use aws.endpoints#standardPartitionalEndpoints
             {
                 endpoint: "{invalid}-fips.{region}.{badSuffix}",
                 fips: true
+            },
+            {
+                endpoint: "https://{region}.   invalidurl   {dnsSuffix}",
+                dualStack: true
             }
         ]
     }

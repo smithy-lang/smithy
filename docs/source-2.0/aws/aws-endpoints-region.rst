@@ -419,7 +419,7 @@ The following example specifies a service that has standard regional endpoints e
 Endpoint Pattern
 ----------------
 
-When specifying special case endpoints in
+Endpoint Patterns SHOULD being with a scheme of either `http` or `https`.  When specifying special case endpoints in
 :ref:`StandardRegionalEndpoints <aws.endpoints#standardRegionalEndpoints-trait>` or
 :ref:`StandardPartitionalEndpoints <aws.endpoints#standardPartitionalEndpoints-trait>` you may use
 an endpoint pattern such as ``https://{service}.{region}.{dnsSuffix}`` with the following pattern substitutions:

@@ -5,6 +5,9 @@
 
 package software.amazon.smithy.rulesengine.aws.validators;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -110,8 +113,28 @@ public final class AwsSpecialCaseEndpointValidator extends AbstractValidator {
                     String.format("Endpoint `%s` should start with scheme `http://` or `https://`",
                             endpoint),
                     "InvalidEndpointPatternScheme"));
+        } else if (!isValidURL(endpoint)) {
+            events.add(danger(
+                    serviceShape, location,
+                    String.format("Endpoint `%s` should be a valid URL.",
+                            endpoint),
+                    "InvalidEndpointPatternInvalidURL"));
         }
 
         return events;
+    }
+
+    private boolean isValidURL(String endpointPattern) {
+        String url = endpointPattern
+                .replace("{", "")
+                .replace("}", "");
+        try {
+            new URL(url).toURI();
+            return true;
+        } catch (MalformedURLException e) {
+            return false;
+        } catch (URISyntaxException e) {
+            return false;
+        }
     }
 }
