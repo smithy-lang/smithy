@@ -15,13 +15,13 @@
 
 package software.amazon.smithy.model.transform;
 
-import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -32,8 +32,6 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.TopologicalShapeSort;
 import software.amazon.smithy.model.shapes.AbstractShapeBuilder;
 import software.amazon.smithy.model.shapes.CollectionShape;
-import software.amazon.smithy.model.shapes.ListShape;
-import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -42,7 +40,6 @@ import software.amazon.smithy.model.shapes.SimpleShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.MixinTrait;
-import software.amazon.smithy.utils.OptionalUtils;
 import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SetUtils;
 
@@ -234,34 +231,51 @@ final class ReplaceShapes {
     }
 
     private Set<Shape> getUpdatedContainers(Model model, List<Shape> shouldReplace) {
-        // Account for multiple members being updated on the same container.
-        Map<Shape, List<MemberShape>> containerToMemberMapping = shouldReplace.stream()
-                .flatMap(shape -> OptionalUtils.stream(shape.asMemberShape()))
-                .flatMap(member -> Pair.flatMapStream(
-                        member, m -> findContainerShape(m.getContainer(), model, shouldReplace)))
-                .collect(Collectors.groupingBy(Pair::getRight, mapping(Pair::getLeft, toList())));
-
-        // TODO: This could be made more efficient by building containers only once.
-        return containerToMemberMapping.entrySet().stream()
-                .map(entry -> {
-                    Shape container = entry.getKey();
-                    List<MemberShape> members = entry.getValue();
-                    for (MemberShape member : members) {
-                        container = container.accept(new UpdateContainerVisitor(member)).orElse(container);
+        // Determine which shapes being updated are members, and group them by their container shapes.
+        Map<Shape, List<MemberShape>> containerToMemberMapping = new HashMap<>();
+        for (Shape shape : shouldReplace) {
+            shape.asMemberShape().ifPresent(member -> {
+                findMostUpToDateShape(member.getContainer(), model, shouldReplace).ifPresent(container -> {
+                    // Ignore members that are already a current member of a shape.
+                    if (!isMemberPresent(member, container)) {
+                        containerToMemberMapping.computeIfAbsent(container, c -> new ArrayList<>()).add(member);
                     }
-                    // Only update if changed.
-                    return container.equals(entry.getKey()) ? null : container;
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
+                });
+            });
+        }
+
+        Set<Shape> containersToUpdate = new HashSet<>(containerToMemberMapping.size());
+
+        // Update the containers with members.
+        for (Map.Entry<Shape, List<MemberShape>> entry : containerToMemberMapping.entrySet()) {
+            Shape container = entry.getKey();
+            List<MemberShape> members = entry.getValue();
+            AbstractShapeBuilder<?, ?> builder = Shape.shapeToBuilder(container);
+            for (MemberShape member : members) {
+                builder.addMember(member);
+            }
+            containersToUpdate.add(builder.build());
+        }
+
+        return containersToUpdate;
     }
 
-    private Optional<Shape> findContainerShape(ShapeId shapeId, Model model, List<Shape> shouldReplace) {
+    private static boolean isMemberPresent(MemberShape member, Shape shape) {
+        // Instance equality is preferred here to account for doing things like updating source locations which aren't
+        // part of the equals method of shapes.
+        return shape.getMember(member.getMemberName()).filter(m -> m == member).isPresent();
+    }
+
+    private Optional<Shape> findMostUpToDateShape(ShapeId shapeId, Model model, List<Shape> shouldReplace) {
         // Shapes in the replacement set take precedence over shapes in the previous model.
         // This accounts for newly added shapes and not overwriting changes also made to the
         // container shape.
-        Optional<Shape> result = shouldReplace.stream().filter(shape -> shape.getId().equals(shapeId)).findFirst();
-        return result.isPresent() ? result : model.getShape(shapeId);
+        for (Shape shape : shouldReplace) {
+            if (shape.getId().equals(shapeId)) {
+                return Optional.of(shape);
+            }
+        }
+        return model.getShape(shapeId);
     }
 
     /**
@@ -305,60 +319,6 @@ final class ReplaceShapes {
                 }
             }
             return result;
-        }
-    }
-
-    /**
-     * Updates the container shape of a member when a member changes,
-     * IFF the member differs from what's in the shape.
-     */
-    private static final class UpdateContainerVisitor extends ShapeVisitor.Default<Optional<Shape>> {
-
-        private final MemberShape member;
-
-        UpdateContainerVisitor(MemberShape member) {
-            this.member = member;
-        }
-
-        @Override
-        public Optional<Shape> getDefault(Shape shape) {
-            return Optional.empty();
-        }
-
-        @Override
-        public Optional<Shape> listShape(ListShape shape) {
-            return shape.getMember() == member
-                   ? Optional.empty()
-                   : Optional.of(shape.toBuilder().member(member).build());
-        }
-
-        @Override
-        public Optional<Shape> mapShape(MapShape shape) {
-            if (member.getMemberName().equals("key")) {
-                return shape.getKey() == member
-                       ? Optional.empty()
-                       : Optional.of(shape.toBuilder().key(member).build());
-            } else {
-                return shape.getValue() == member
-                       ? Optional.empty()
-                       : Optional.of(shape.toBuilder().value(member).build());
-            }
-        }
-
-        @Override
-        public Optional<Shape> structureShape(StructureShape shape) {
-            // Replace the existing structure member with the new member.
-            return shape.getMember(member.getMemberName())
-                    .filter(oldMember -> !oldMember.equals(member))
-                    .map(oldMember -> shape.toBuilder().addMember(member).build());
-        }
-
-        @Override
-        public Optional<Shape> unionShape(UnionShape shape) {
-            // Replace the existing union member with the new member.
-            return shape.getMember(member.getMemberName())
-                    .filter(oldMember -> oldMember != member)
-                    .map(oldMember -> shape.toBuilder().addMember(member).build());
         }
     }
 }
