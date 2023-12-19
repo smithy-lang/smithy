@@ -113,7 +113,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         ALLOW_CONSTRAINT_ERRORS,
 
         /**
-         * This setting allows null values to be provided for an optional structure member.
+         * Allows null values to be provided for an optional structure member.
          *
          * <p>By default, null values are not allowed for optional types.
          */
