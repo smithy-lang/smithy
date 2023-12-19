@@ -113,12 +113,14 @@ public final class AwsSpecialCaseEndpointValidator extends AbstractValidator {
                     String.format("Endpoint `%s` should start with scheme `http://` or `https://`",
                             endpoint),
                     "InvalidEndpointPatternScheme"));
-        } else if (!isValidURL(endpoint)) {
-            events.add(danger(
+        }
+
+        if (!isValidURL(endpoint)) {
+            events.add(error(
                     serviceShape, location,
                     String.format("Endpoint `%s` should be a valid URL.",
                             endpoint),
-                    "InvalidEndpointPatternInvalidURL"));
+                    "InvalidEndpointPatternUrl"));
         }
 
         return events;
