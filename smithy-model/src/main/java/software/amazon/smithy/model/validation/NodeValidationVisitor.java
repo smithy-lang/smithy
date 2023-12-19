@@ -16,7 +16,10 @@
 package software.amazon.smithy.model.validation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -53,10 +56,8 @@ import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.validation.node.NodeValidatorPlugin;
 import software.amazon.smithy.model.validation.node.TimestampValidationStrategy;
-import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SmithyBuilder;
-import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Validates {@link Node} values provided for {@link Shape} definitions.
@@ -74,7 +75,6 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
     private final Model model;
     private final TimestampValidationStrategy timestampValidationStrategy;
-    private final boolean allowOptionalNull;
     private String eventId;
     private Node value;
     private ShapeId eventShapeId;
@@ -85,9 +85,8 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
     private NodeValidationVisitor(Builder builder) {
         this.model = SmithyBuilder.requiredState("model", builder.model);
         this.nullableIndex = NullableIndex.of(model);
-        this.validationContext = new NodeValidatorPlugin.Context(model, builder.features.copy());
+        this.validationContext = new NodeValidatorPlugin.Context(model, Feature.enumSet(builder.features));
         this.timestampValidationStrategy = builder.timestampValidationStrategy;
-        this.allowOptionalNull = builder.allowOptionalNull;
         setValue(SmithyBuilder.requiredState("value", builder.value));
         setStartingContext(builder.contextText);
         setValue(builder.value);
@@ -98,7 +97,6 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
     /**
      * Features to use when validating.
      */
-    // TODO Move other features here like allowOptionalNull.
     public enum Feature {
         /**
          * Emit a warning when a range trait is incompatible with a default value of 0.
@@ -109,8 +107,17 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
          */
         RANGE_TRAIT_ZERO_VALUE_WARNING,
 
-        // Lowers severity of constraint trait validations to WARNING.
-        ALLOW_CONSTRAINT_ERRORS;
+        /**
+         * Lowers severity of constraint trait validations to WARNING.
+         */
+        ALLOW_CONSTRAINT_ERRORS,
+
+        /**
+         * Allows null values to be provided for an optional structure member.
+         *
+         * <p>By default, null values are not allowed for optional types.
+         */
+        ALLOW_OPTIONAL_NULLS;
 
         public static Feature fromNode(Node node) {
             return Feature.valueOf(node.expectStringNode().getValue());
@@ -118,6 +125,10 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
         public static Node toNode(Feature feature) {
             return StringNode.from(feature.toString());
+        }
+
+        private static EnumSet<Feature> enumSet(Collection<Feature> features) {
+            return features.isEmpty() ? EnumSet.noneOf(Feature.class) : EnumSet.copyOf(features);
         }
     }
 
@@ -169,7 +180,6 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         builder.model(model);
         builder.startingContext(startingContext.isEmpty() ? segment : (startingContext + "." + segment));
         builder.timestampValidationStrategy(timestampValidationStrategy);
-        builder.allowOptionalNull(allowOptionalNull);
         NodeValidationVisitor visitor = new NodeValidationVisitor(builder);
         // Use the same validation context.
         visitor.validationContext = this.validationContext;
@@ -395,7 +405,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
 
     private List<ValidationEvent> invalidShape(Shape shape, NodeType expectedType) {
         // Nullable shapes allow null values.
-        if (allowOptionalNull && value.isNullNode()) {
+        if (value.isNullNode() && validationContext.hasFeature(Feature.ALLOW_OPTIONAL_NULLS)) {
             // Non-members are nullable. Members are nullable based on context.
             if (!shape.isMemberShape() || shape.asMemberShape().filter(nullableIndex::isMemberNullable).isPresent()) {
                 return Collections.emptyList();
@@ -468,8 +478,7 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
         private Node value;
         private Model model;
         private TimestampValidationStrategy timestampValidationStrategy = TimestampValidationStrategy.FORMAT;
-        private boolean allowOptionalNull;
-        private final BuilderRef<Set<Feature>> features = BuilderRef.forUnorderedSet();
+        private final Set<Feature> features = new HashSet<>();
 
         Builder() {}
 
@@ -550,18 +559,14 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
             return allowOptionalNull(allowBoxedNull);
         }
 
-        /**
-         * Configure how null values are handled when they are provided for
-         * optional types.
-         *
-         * <p>By default, null values are not allowed for optional types.
-         *
-         * @param allowOptionalNull Set to true to allow null values for optional shapes.
-         * @return Returns the builder.
-         */
+        @Deprecated
         public Builder allowOptionalNull(boolean allowOptionalNull) {
-            this.allowOptionalNull = allowOptionalNull;
-            return this;
+            if (allowOptionalNull) {
+                return addFeature(Feature.ALLOW_OPTIONAL_NULLS);
+            } else {
+                features.remove(Feature.ALLOW_OPTIONAL_NULLS);
+                return this;
+            }
         }
 
         /**
@@ -570,9 +575,8 @@ public final class NodeValidationVisitor implements ShapeVisitor<List<Validation
          * @param feature Feature to set.
          * @return Returns the builder.
          */
-        @SmithyInternalApi
         public Builder addFeature(Feature feature) {
-            this.features.get().add(feature);
+            this.features.add(feature);
             return this;
         }
 

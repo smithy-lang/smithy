@@ -160,7 +160,7 @@ abstract class ProtocolTestCaseValidator<T extends Trait> extends AbstractValida
                 .startingContext(traitId + "." + position + contextSuffix)
                 .eventId(getName())
                 .timestampValidationStrategy(TimestampValidationStrategy.EPOCH_SECONDS)
-                .allowOptionalNull(true)
+                .addFeature(NodeValidationVisitor.Feature.ALLOW_OPTIONAL_NULLS)
                 .build();
     }
 
