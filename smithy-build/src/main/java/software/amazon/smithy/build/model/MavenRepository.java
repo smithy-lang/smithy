@@ -27,11 +27,15 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
     private final String url;
     private final String httpCredentials;
     private final String id;
+    private final String proxyHost;
+    private final String proxyCredentials;
 
     public MavenRepository(Builder builder) {
         this.url = SmithyBuilder.requiredState("url", builder.url);
         this.httpCredentials = builder.httpCredentials;
         this.id = builder.id;
+        this.proxyHost = builder.proxyHost;
+        this.proxyCredentials = builder.proxyCredentials;
     }
 
     public static Builder builder() {
@@ -41,10 +45,13 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
     public static MavenRepository fromNode(Node node) {
         Builder builder = builder();
         node.expectObjectNode()
-                .warnIfAdditionalProperties(Arrays.asList("url", "httpCredentials"))
+                .warnIfAdditionalProperties(
+                        Arrays.asList("url", "httpCredentials", "id", "proxyHost", "proxyCredentials"))
                 .expectStringMember("url", builder::url)
                 .getStringMember("httpCredentials", builder::httpCredentials)
-                .getStringMember("id", builder::id);
+                .getStringMember("id", builder::id)
+                .getStringMember("proxyHost", builder::proxyHost)
+                .getStringMember("proxyCredentials", builder::proxyCredentials);
         return builder.build();
     }
 
@@ -58,6 +65,14 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
 
     public Optional<String> getHttpCredentials() {
         return Optional.ofNullable(httpCredentials);
+    }
+
+    public Optional<String> getProxyCredentials() {
+        return Optional.ofNullable(proxyCredentials);
+    }
+
+    public Optional<String> getProxyHost() {
+        return Optional.ofNullable(proxyHost);
     }
 
     @Override
@@ -88,6 +103,8 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
         private String url;
         private String httpCredentials;
         private String id;
+        private String proxyHost;
+        private String proxyCredentials;
 
         private Builder() {}
 
@@ -106,15 +123,32 @@ public final class MavenRepository implements ToSmithyBuilder<MavenRepository> {
             return this;
         }
 
+        public Builder proxyHost(String proxyHost) {
+            this.proxyHost = proxyHost;
+            return this;
+        }
+
+        public Builder proxyCredentials(String proxyCredentials) {
+            this.proxyCredentials = proxyCredentials;
+            validateColonSeparatedValue(proxyCredentials,
+                    "Invalid proxyCredentials: expected in the format of user:pass");
+            return this;
+        }
+
         public Builder httpCredentials(String httpCredentials) {
             this.httpCredentials = httpCredentials;
-            if (httpCredentials != null) {
-                int position = httpCredentials.indexOf(':');
-                if (position < 1 || position == httpCredentials.length() - 1) {
-                    throw new IllegalArgumentException("Invalid httpCredentials: expected in the format of user:pass");
+            validateColonSeparatedValue(httpCredentials,
+                    "Invalid httpCredentials: expected in the format of user:pass");
+            return this;
+        }
+
+        private void validateColonSeparatedValue(String value, String errorMessage) {
+            if (value != null) {
+                int position = value.indexOf(':');
+                if (position < 1 || position == value.length() - 1) {
+                    throw new IllegalArgumentException(errorMessage);
                 }
             }
-            return this;
         }
     }
 }

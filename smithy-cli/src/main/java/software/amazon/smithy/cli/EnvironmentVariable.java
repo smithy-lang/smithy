@@ -89,7 +89,38 @@ public enum EnvironmentVariable {
      *     <li>If not set and the operating system is detected as Windows, colors are disabled.</li>
      * </ul>
      */
-    TERM;
+    TERM,
+
+    /**
+     * Used to determine a proxy host to use for Maven dependency resolution.
+     *
+     * <p>Set the host, protocol, and port information with a valid url.
+     * <pre>
+     * {@code export SMITHY_PROXY_HOST=protocol://host:port}
+     * </pre>
+     * <strong>NOTE:</strong> this setting will be used for all repositories
+     * defined in the smithy-build maven configuration unless a repo-specific
+     * configuration is provided.
+     *
+     */
+    SMITHY_PROXY_HOST,
+
+    /**
+     * Used to determine a proxy credentials to use for Maven dependency resolution through
+     * a proxy.
+     *
+     * <p>Use this setting in conjunction with the {@link #SMITHY_PROXY_HOST} variable to configure
+     * proxy settings for dependency resolution.
+     *
+     * <p>Set both the username and password information as a ":" separated string.
+     * <pre>
+     * {@code export SMITHY_PROXY_CREDENTIALS=user:pass}
+     * </pre>
+     * <strong>NOTE:</strong> this setting will be used for all repositories
+     * defined in the smithy-build maven configuration unless a repo-specific
+     * configuration is provided.
+     */
+    SMITHY_PROXY_CREDENTIALS;
 
     private static final Logger LOGGER = Logger.getLogger(EnvironmentVariable.class.getName());
 

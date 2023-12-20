@@ -18,8 +18,10 @@ package software.amazon.smithy.cli.dependencies;
 import static org.eclipse.aether.util.artifact.JavaScopes.COMPILE;
 import static org.eclipse.aether.util.artifact.JavaScopes.RUNTIME;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +37,7 @@ import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyFilter;
 import org.eclipse.aether.impl.DefaultServiceLocator;
 import org.eclipse.aether.repository.LocalRepository;
+import org.eclipse.aether.repository.Proxy;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.DependencyRequest;
@@ -46,6 +49,7 @@ import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import software.amazon.smithy.build.model.MavenRepository;
+import software.amazon.smithy.cli.EnvironmentVariable;
 
 /**
  * Resolves Maven dependencies for the Smithy CLI using Maven resolvers.
@@ -59,6 +63,7 @@ public final class MavenDependencyResolver implements DependencyResolver {
     private final DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
     private final DependencyFilter filter = DependencyFilterUtils.classpathFilter(RUNTIME, COMPILE);
     private final RepositorySystem repositorySystem;
+    private final Proxy commonProxy;
 
     public MavenDependencyResolver() {
         this(null);
@@ -78,7 +83,8 @@ public final class MavenDependencyResolver implements DependencyResolver {
                 throw new DependencyResolverException(exception);
             }
         });
-
+        commonProxy = getProxy(EnvironmentVariable.SMITHY_PROXY_HOST.get(),
+                EnvironmentVariable.SMITHY_PROXY_CREDENTIALS.get());
         repositorySystem = locator.getService(RepositorySystem.class);
 
         // Sets a default maven local to the default local repo of the user.
@@ -105,10 +111,58 @@ public final class MavenDependencyResolver implements DependencyResolver {
                 addUserInfoAuth(uri, userInfo, builder);
             }
             repository.getHttpCredentials().ifPresent(credentials -> addUserInfoAuth(uri, credentials, builder));
+            addProxyInfo(repository, builder);
             remoteRepositories.add(builder.build());
         } catch (URISyntaxException e) {
             throw new DependencyResolverException("Invalid Maven repository URL: " + repository.getUrl()
                                                   + ": " + e.getMessage());
+        }
+    }
+
+    private void addProxyInfo(MavenRepository repository, RemoteRepository.Builder builder) {
+        if (repository.getProxyHost().isPresent()) {
+            builder.setProxy(
+                    getProxy(repository.getProxyHost().get(), repository.getProxyCredentials().orElse(null))
+            );
+        } else if (commonProxy != null) {
+            builder.setProxy(commonProxy);
+        }
+    }
+
+    private static Proxy getProxy(final String host, final String userPass) {
+        if (host == null) {
+            return null;
+        }
+
+        URL hostUrl = parseHostString(host);
+        if (userPass != null) {
+            String[] userSettings = parseProxyCredentials(userPass);
+            AuthenticationBuilder authBuilder = new AuthenticationBuilder()
+                    .addUsername(userSettings[0])
+                    .addPassword(userSettings[1]);
+            return new Proxy(hostUrl.getProtocol(), hostUrl.getHost(), hostUrl.getPort(), authBuilder.build());
+        } else {
+            return new Proxy(hostUrl.getProtocol(), hostUrl.getHost(), hostUrl.getPort());
+        }
+
+    }
+
+    private static String[] parseProxyCredentials(String value) {
+        String[] settings = value.split(":");
+        if (settings.length != 2) {
+            throw new DependencyResolverException("Expected two values separated by ':' for "
+                    + EnvironmentVariable.SMITHY_PROXY_CREDENTIALS + ", but found " + settings.length);
+        }
+        return settings;
+    }
+
+    private static URL parseHostString(String value) {
+        try {
+            return new URL(value);
+        } catch (MalformedURLException exc) {
+            throw new DependencyResolverException("Expected a valid URL for "
+                + EnvironmentVariable.SMITHY_PROXY_HOST + ". Found " + value
+            );
         }
     }
 

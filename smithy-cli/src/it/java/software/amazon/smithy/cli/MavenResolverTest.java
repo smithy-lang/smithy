@@ -6,13 +6,16 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.mockserver.integration.ClientAndServer.startClientAndServer;
+import static org.mockserver.integration.ClientAndProxy.startClientAndProxy;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Collections;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.mockserver.integration.ClientAndProxy;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.model.HttpRequest;
 import org.mockserver.model.HttpResponse;
@@ -103,6 +106,87 @@ public class MavenResolverTest {
         } finally {
             if (mockServer!=null) {
                 mockServer.stop();
+            }
+        }
+    }
+
+    @Test
+    public void usesProxyConfiguration() {
+        ClientAndServer mockServer = null;
+        ClientAndProxy proxyServer = null;
+        try {
+            mockServer = startClientAndServer(1234);
+            proxyServer = startClientAndProxy(2323);
+
+            HttpRequest request = HttpRequest.request()
+                    .withMethod("GET")
+                    .withPath("/maven/not/there/software/amazon/smithy/smithy-aws-iam-traits/.*\\.jar");
+
+            mockServer.when(request).respond(
+                    HttpResponse
+                            .response()
+                            .withStatusCode(200)
+                            .withBody("FAKE JAR CONTENT")
+            );
+
+            IntegUtils.runWithEmptyCache("maven-proxy", ListUtils.of("validate", "--debug"),
+                    Collections.emptyMap(), result -> {
+                        assertThat(result.getExitCode(), equalTo(0));
+                        assertThat(result.getOutput(), containsString("Resolving Maven dependencies for Smithy CLI"));
+                        assertThat(result.getOutput(),
+                                containsString("Opening connection {}->http://localhost:2323->http://localhost:1234"));
+                        assertThat(result.getOutput(), containsString("Connecting to localhost/127.0.0.1:2323"));
+                    });
+            // Check that expected request was forwarded by the proxy
+            proxyServer.verify(request);
+
+        } finally {
+            if (mockServer != null) {
+                mockServer.stop();
+            }
+            if (proxyServer != null) {
+                proxyServer.stop();
+            }
+        }
+    }
+
+    @Test
+    public void usesProxyConfigurationFromEnv() {
+        ClientAndServer mockServer = null;
+        ClientAndProxy proxyServer = null;
+        try {
+            mockServer = startClientAndServer(1234);
+            proxyServer = startClientAndProxy(2323);
+
+            HttpRequest request = HttpRequest.request()
+                    .withMethod("GET")
+                    .withPath("/maven/not/there/software/amazon/smithy/smithy-aws-iam-traits/.*\\.jar");
+
+            mockServer.when(request).respond(
+                    HttpResponse
+                            .response()
+                            .withStatusCode(200)
+                            .withBody("FAKE JAR CONTENT")
+            );
+
+            Map<String, String> envMap = MapUtils.of(EnvironmentVariable.SMITHY_PROXY_HOST.toString(), "http://localhost:2323");
+            IntegUtils.runWithEmptyCache("maven-proxy-env", ListUtils.of("validate", "--debug"),
+                    envMap, result -> {
+                        assertThat(result.getExitCode(), equalTo(0));
+                        assertThat(result.getOutput(), containsString("Resolving Maven dependencies for Smithy CLI"));
+                        assertThat(result.getOutput(),
+                                containsString("Opening connection {}->http://localhost:2323->http://localhost:1234"));
+                        assertThat(result.getOutput(), containsString("Connecting to localhost/127.0.0.1:2323"));
+                    });
+            // Check that expected request was forwarded by the proxy
+            proxyServer.verify(request);
+
+        } finally {
+            if (mockServer != null) {
+                mockServer.stop();
+            }
+            if (proxyServer != null) {
+                proxyServer.stop();
             }
         }
     }
