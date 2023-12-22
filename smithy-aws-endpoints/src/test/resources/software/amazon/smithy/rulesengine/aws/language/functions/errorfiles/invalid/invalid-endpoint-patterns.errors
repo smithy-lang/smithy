@@ -1,0 +1,10 @@
+[WARNING] example#Service1: This shape applies a trait that is unstable: aws.endpoints#standardRegionalEndpoints | UnstableTrait.aws.endpoints#standardRegionalEndpoints
+[DANGER] example#Service1: Endpoint `https://myservice.{invalid}.{dnsSuffix}` contains unsupported patterns: {invalid} | AwsSpecialCaseEndpoint.UnsupportedEndpointPattern
+[DANGER] example#Service1: Endpoint `{invalid}-fips.{region}.{badSuffix}` contains unsupported patterns: {invalid}, {badSuffix} | AwsSpecialCaseEndpoint.UnsupportedEndpointPattern
+[DANGER] example#Service1: Endpoint `{invalid}-fips.{region}.{badSuffix}` should start with scheme `http://` or `https://` | AwsSpecialCaseEndpoint.InvalidEndpointPatternScheme
+[ERROR] example#Service1: Endpoint `{invalid}-fips.{region}.{badSuffix}` should be a valid URL. | AwsSpecialCaseEndpoint.InvalidEndpointPatternUrl
+[ERROR] example#Service1: Endpoint `https://{region}.   invalidurl   {dnsSuffix}` should be a valid URL. | AwsSpecialCaseEndpoint.InvalidEndpointPatternUrl
+[WARNING] example#Service2: This shape applies a trait that is unstable: aws.endpoints#standardPartitionalEndpoints | UnstableTrait.aws.endpoints#standardPartitionalEndpoints
+[DANGER] example#Service2: Endpoint `myservice.{invalid}.{dnsSuffix}` should start with scheme `http://` or `https://` | AwsSpecialCaseEndpoint.InvalidEndpointPatternScheme
+[DANGER] example#Service2: Endpoint `myservice.{invalid}.{dnsSuffix}` contains unsupported patterns: {invalid} | AwsSpecialCaseEndpoint.UnsupportedEndpointPattern
+[ERROR] example#Service2: Endpoint `myservice.{invalid}.{dnsSuffix}` should be a valid URL. | AwsSpecialCaseEndpoint.InvalidEndpointPatternUrl

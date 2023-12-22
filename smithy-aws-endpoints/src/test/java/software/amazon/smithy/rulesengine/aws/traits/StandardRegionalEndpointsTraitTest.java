@@ -35,12 +35,12 @@ class StandardRegionalEndpointsTraitTest {
         List<PartitionSpecialCase> partitionSpecialCases = trait.getPartitionSpecialCases().get("aws-us-gov");
 
         PartitionSpecialCase partitionSpecialCase1 = partitionSpecialCases.get(0);
-        assertEquals(partitionSpecialCase1.getEndpoint(), "myservice.{region}.{dnsSuffix}");
+        assertEquals(partitionSpecialCase1.getEndpoint(), "https://myservice.{region}.{dnsSuffix}");
         assertEquals(partitionSpecialCase1.getFips(), true);
         assertNull(partitionSpecialCase1.getDualStack());
 
         PartitionSpecialCase partitionSpecialCase2 = partitionSpecialCases.get(1);
-        assertEquals(partitionSpecialCase2.getEndpoint(), "myservice.global.amazonaws.com");
+        assertEquals(partitionSpecialCase2.getEndpoint(), "https://myservice.global.amazonaws.com");
         assertEquals(partitionSpecialCase2.getDualStack(), true);
         assertNull(partitionSpecialCase2.getFips());
 
