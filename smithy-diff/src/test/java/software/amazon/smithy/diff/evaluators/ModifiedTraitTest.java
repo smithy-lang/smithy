@@ -203,7 +203,9 @@ public class ModifiedTraitTest {
                 .assemble()
                 .unwrap();
         List<ValidationEvent> events = TestHelper.findEvents(ModelDiff.compare(modelA, modelB), "ModifiedTrait");
-        List<String> messages = events.stream().map(ValidationEvent::getMessage).collect(Collectors.toList());
+        List<String> messages = events.stream().map(ValidationEvent::getMessage)
+                .map(message -> message.replaceAll("\r\n", "\n")) // normalize line separators
+                .collect(Collectors.toList());
 
         assertThat(events, hasSize(4));
         assertThat(events.stream().filter(e -> e.getMessage().contains("Removed"))
@@ -232,7 +234,9 @@ public class ModifiedTraitTest {
                 .assemble()
                 .unwrap();
         List<ValidationEvent> events = TestHelper.findEvents(ModelDiff.compare(modelA, modelB), "ModifiedTrait");
-        List<String> messages = events.stream().map(ValidationEvent::getMessage).collect(Collectors.toList());
+        List<String> messages = events.stream().map(ValidationEvent::getMessage)
+                .map(message -> message.replaceAll("\r\n", "\n")) // normalize line separators
+                .collect(Collectors.toList());
 
         assertThat(events, hasSize(4));
         assertThat(events.stream().filter(e -> e.getMessage().contains("Removed"))
@@ -262,7 +266,9 @@ public class ModifiedTraitTest {
                 .assemble()
                 .unwrap();
         List<ValidationEvent> events = TestHelper.findEvents(ModelDiff.compare(modelA, modelB), "ModifiedTrait");
-        List<String> messages = events.stream().map(ValidationEvent::getMessage).collect(Collectors.toList());
+        List<String> messages = events.stream().map(ValidationEvent::getMessage)
+                .map(message -> message.replaceAll("\r\n", "\n")) // normalize line separators
+                .collect(Collectors.toList());
 
         assertThat(events, hasSize(4));
         assertThat(events.stream().filter(e -> e.getMessage().contains("Removed"))
