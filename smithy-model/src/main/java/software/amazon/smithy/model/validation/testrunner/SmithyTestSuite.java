@@ -66,13 +66,13 @@ public final class SmithyTestSuite {
      * of the given {@code contextClass}, and that model discovery should be
      * used using the given {@code contextClass}.
      *
-     * <p>Each returns {@code Object[]} contains the filename of the test as
+     * <p>Each returned {@code Object[]} contains the filename of the test as
      * the first argument, followed by a {@code Callable<SmithyTestCase.Result>}
      * as the second argument. All a parameterized test needs to do is call
      * {@code call} on the provided {@code Callable} to execute the test and
      * fail if the test case is invalid.
      *
-     * <p>For example, the following can used as a unit test:
+     * <p>For example, the following can be used as a unit test:
      *
      * <pre>{@code
      * import java.util.concurrent.Callable;
@@ -107,7 +107,49 @@ public final class SmithyTestSuite {
                 .parameterizedTestSource();
     }
 
-    private Stream<Object[]> parameterizedTestSource() {
+    /**
+     * Factory method used to create a JUnit 5 {@code ParameterizedTest}
+     * {@code MethodSource}.
+     *
+     * <p>Test cases need to be added to the test suite before calling this,
+     * for example by using {@link #addTestCasesFromDirectory(Path)}.
+     *
+     * <p>Each returned {@code Object[]} contains the filename of the test as
+     * the first argument, followed by a {@code Callable<SmithyTestCase.Result>}
+     * as the second argument. All a parameterized test needs to do is call
+     * {@code call} on the provided {@code Callable} to execute the test and
+     * fail if the test case is invalid.
+     *
+     * <p>For example, the following can be used as a unit test:
+     *
+     * <pre>{@code
+     * import java.util.concurrent.Callable;
+     * import java.util.stream.Stream;
+     * import org.junit.jupiter.params.ParameterizedTest;
+     * import org.junit.jupiter.params.provider.MethodSource;
+     * import software.amazon.smithy.model.validation.testrunner.SmithyTestCase;
+     * import software.amazon.smithy.model.validation.testrunner.SmithyTestSuite;
+     *
+     * public class TestRunnerTest {
+     *     \@ParameterizedTest(name = "\{0\}")
+     *     \@MethodSource("source")
+     *     public void testRunner(String filename, Callable&lt;SmithyTestCase.Result&gt; callable) throws Exception {
+     *         callable.call();
+     *     }
+     *
+     *     public static Stream&lt;?&gt; source() {
+     *         ModelAssembler assembler = Model.assembler(TestRunnerTest.class.getClassLoader());
+     *         return SmithyTestSuite.runner()
+     *                 .setModelAssemblerFactory(assembler::copy)
+     *                 .addTestCasesFromUrl(TestRunnerTest.class.getResource("errorfiles"))
+     *                 .parameterizedTestSource();
+     *     }
+     * }
+     * }</pre>
+     *
+     * @return Returns the Stream that should be used as a JUnit 5 {@code MethodSource} return value.
+     */
+    public Stream<Object[]> parameterizedTestSource() {
         return cases.stream().map(testCase -> {
             Callable<SmithyTestCase.Result> callable = createTestCaseCallable(testCase);
             Callable<SmithyTestCase.Result> wrappedCallable = () -> callable.call().unwrap();
