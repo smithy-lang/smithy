@@ -62,7 +62,7 @@ public class RemovedShapeTest {
     }
 
     @Test
-    public void emitsNotesForScalarShapes() {
+    public void emitsWarningsForScalarShapes() {
         Shape[] scalarShapes = new Shape[] {
                 IntegerShape.builder().id("foo.baz#BazOne").build(),
                 BigDecimalShape.builder().id("foo.baz#BazTwo").build(),
@@ -81,9 +81,9 @@ public class RemovedShapeTest {
         Model modelB = Model.assembler().assemble().unwrap();
         List<ValidationEvent> events = ModelDiff.compare(modelA, modelB);
 
-        assertThat(TestHelper.findEvents(events, "RemovedShape").size(), equalTo(12));
-        assertThat("Scalar removals should be NOTE severity",
-                events.stream().allMatch(event -> Severity.NOTE.equals(event.getSeverity())));
+        assertThat(TestHelper.findEvents(events, "RemovedShape.ScalarShape").size(), equalTo(12));
+        assertThat("Scalar removals should be WARNING severity",
+                events.stream().allMatch(event -> Severity.WARNING.equals(event.getSeverity())));
     }
 
     @Test
