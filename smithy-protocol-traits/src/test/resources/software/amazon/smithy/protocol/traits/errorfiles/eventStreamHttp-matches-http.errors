@@ -1,0 +1,3 @@
+[ERROR] smithy.example#InvalidService1: The following values of the `eventStreamHttp` property do not also appear in the `http` property of the smithy.protocols#rpcv2Cbor protocol trait: [http/1.1] | Rpcv2CborTrait
+[ERROR] smithy.example#InvalidService2: The following values of the `eventStreamHttp` property do not also appear in the `http` property of the smithy.protocols#rpcv2Cbor protocol trait: [http/1.1] | Rpcv2CborTrait
+[ERROR] smithy.example#InvalidService3: The following values of the `eventStreamHttp` property do not also appear in the `http` property of the smithy.protocols#rpcv2Cbor protocol trait: [http/1.1, h2c] | Rpcv2CborTrait
