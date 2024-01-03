@@ -115,7 +115,7 @@ public final class AwsSpecialCaseEndpointValidator extends AbstractValidator {
                     "InvalidEndpointPatternScheme"));
         }
 
-        if (!isValidURL(endpoint)) {
+        if (!isValidUrl(endpoint)) {
             events.add(error(
                     serviceShape, location,
                     String.format("Endpoint `%s` should be a valid URL.",
@@ -126,16 +126,14 @@ public final class AwsSpecialCaseEndpointValidator extends AbstractValidator {
         return events;
     }
 
-    private boolean isValidURL(String endpointPattern) {
+    private boolean isValidUrl(String endpointPattern) {
         String url = endpointPattern
                 .replace("{", "")
                 .replace("}", "");
         try {
             new URL(url).toURI();
             return true;
-        } catch (MalformedURLException e) {
-            return false;
-        } catch (URISyntaxException e) {
+        } catch (MalformedURLException | URISyntaxException e) {
             return false;
         }
     }
