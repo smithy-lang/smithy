@@ -14,7 +14,7 @@ use smithy.test#httpResponseTests
     cloudFormationName: "JsonProtocol",
     cloudTrailEventSource: "jsonprotocol.amazonaws.com",
 )
-@sigv4(name: "foo")
+@sigv4(name: "jsonprotocol")
 @awsJson1_1
 @title("Sample Json 1.1 Protocol Service")
 service JsonProtocol {
