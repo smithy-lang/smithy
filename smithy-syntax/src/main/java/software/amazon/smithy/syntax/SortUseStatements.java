@@ -172,22 +172,16 @@ final class SortUseStatements implements Function<TokenTree, TokenTree> {
 
             if (lineComment != null) {
                 br.appendChild(sp);
-                // Modify the position of the comment so that the formatter knows it's a trailing line comment.
-                CapturedToken updatedLineComment = lineComment.getTree()
-                        .tokens()
-                        .findFirst()
-                        .get()
-                        .toBuilder()
-                        // Set the line and column to zero so the formatter knows it's on the same line as the
-                        // statement, making it an end-of-line comment.
-                        .startLine(0)
-                        .endLine(0)
-                        .build();
-                TokenTree commentTree = TokenTree.of(TreeType.COMMENT);
-                commentTree.appendChild(TokenTree.of(updatedLineComment));
-                br.appendChild(commentTree);
+                br.appendChild(lineComment.getTree());
             } else {
-                br.appendChild(TokenTree.of(CapturedToken.builder().token(IdlToken.NEWLINE).lexeme("\n").build()));
+                br.appendChild(TokenTree.of(CapturedToken.builder()
+                        .token(IdlToken.NEWLINE)
+                        .lexeme("\n")
+                        // Set the start line to be the start line of the use statement
+                        // so the formatter  knows it's a line comment.
+                        .startLine(id.getStartLine())
+                        .endLine(id.getStartLine() + 1)
+                        .build()));
             }
 
             TokenTree ws = TokenTree.of(TreeType.WS);
