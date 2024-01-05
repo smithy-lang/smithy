@@ -18,6 +18,7 @@
 
 ### Bug Fixes
 
+* Fixed an issue where `@iamAction` wasn't reflected in CFN resource schema creation. ([#2091](https://github.com/smithy-lang/smithy/pull/2091)) 
 * Fixed tree node start and end locations. ([#2084](https://github.com/smithy-lang/smithy/pull/2084))
 * Fixed several minor build warnings. ([2089](https://github.com/smithy-lang/smithy/pull/2089))
 * Fixed protocol test service signing name for `awsJson1_1` protocol. ([#2089](https://github.com/smithy-lang/smithy/pull/2089))

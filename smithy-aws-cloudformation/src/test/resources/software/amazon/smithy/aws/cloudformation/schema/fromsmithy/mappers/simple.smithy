@@ -3,6 +3,7 @@ $version: "2.0"
 namespace smithy.example
 
 use aws.cloudformation#cfnResource
+use aws.iam#iamAction
 
 service TestService {
     version: "2020-07-02",
@@ -56,6 +57,7 @@ structure CreateFooResponse {
 }
 
 @readonly
+@iamAction(requiredActions: ["otherservice:DescribeThing"])
 operation GetFooOperation {
     input: GetFooRequest,
     output: GetFooResponse,
