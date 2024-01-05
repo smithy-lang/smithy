@@ -22,6 +22,7 @@ import software.amazon.smithy.aws.cloudformation.schema.fromsmithy.CfnMapper;
 import software.amazon.smithy.aws.cloudformation.schema.fromsmithy.Context;
 import software.amazon.smithy.aws.cloudformation.schema.model.Handler;
 import software.amazon.smithy.aws.cloudformation.schema.model.ResourceSchema;
+import software.amazon.smithy.aws.iam.traits.IamActionTrait;
 import software.amazon.smithy.aws.iam.traits.RequiredActionsTrait;
 import software.amazon.smithy.aws.traits.ServiceTrait;
 import software.amazon.smithy.model.Model;
@@ -30,6 +31,7 @@ import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.NoReplaceTrait;
+import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
@@ -112,9 +114,11 @@ public final class HandlerPermissionMapper implements CfnMapper {
         permissionsEntries.add(operationActionName);
 
         // Add all the other required actions for the operation.
-        operation.getTrait(RequiredActionsTrait.class)
-                .map(RequiredActionsTrait::getValues)
-                .map(permissionsEntries::addAll);
+        permissionsEntries.addAll(operation.getTrait(IamActionTrait.class)
+                .map(IamActionTrait::getRequiredActions)
+                .orElseGet(() -> operation.getTrait(RequiredActionsTrait.class)
+                        .map(RequiredActionsTrait::getValues)
+                        .orElse(ListUtils.of())));
         return permissionsEntries;
     }
 }

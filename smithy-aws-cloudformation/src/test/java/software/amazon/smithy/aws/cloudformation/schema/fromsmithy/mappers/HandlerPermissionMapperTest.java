@@ -58,7 +58,7 @@ public final class HandlerPermissionMapperTest {
                 containsInAnyOrder("testservice:CreateFooOperation", "otherservice:DescribeDependencyComponent"));
         assertThat(handlersDefined.get("read").expectObjectNode()
                            .expectArrayMember("permissions").getElementsAs(StringNode::getValue),
-                contains("testservice:GetFooOperation"));
+                containsInAnyOrder("testservice:GetFooOperation", "otherservice:DescribeThing"));
         assertThat(handlersDefined.get("update").expectObjectNode()
                            .expectArrayMember("permissions").getElementsAs(StringNode::getValue),
                 contains("testservice:UpdateFooOperation"));
