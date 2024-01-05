@@ -43,7 +43,8 @@ service AmazonS3 {
     operations: [
         ListObjectsV2,
         GetBucketLocation,
-        DeleteObjectTagging
+        DeleteObjectTagging,
+        GetObject
     ],
 }
 
@@ -364,7 +365,6 @@ operation GetBucketLocation {
     output: GetBucketLocationOutput,
 }
 
-
 structure CommonPrefix {
     Prefix: Prefix,
 }
@@ -378,6 +378,42 @@ structure GetBucketLocationRequest {
 @xmlName("LocationConstraint")
 structure GetBucketLocationOutput {
     LocationConstraint: BucketLocationConstraint,
+}
+
+@httpResponseTests([{
+            id: "GetObjectInvalidExpires",
+            documentation: """
+                S3 clients should not fail the request with invalid expires.
+                GA SDKs should verify the value in ExpiresString param and
+                new SDKs should verifiy the value in Expires param
+            """,
+            code: 200,
+            headers: {
+                "Expires": "foobar1234"
+            },
+            body: "",
+            protocol: restXml
+            }])
+@http(uri: "/{Bucket}/{Key+}", method: "GET")
+@s3UnwrappedXmlOutput
+operation GetObject {
+    input: GetObjectRequest,
+    output: GetObjectOutput,
+}
+
+structure GetObjectRequest {
+    @httpLabel
+    @required
+    Bucket: BucketName,
+
+    @httpLabel
+    @required
+    Key: KeyName,
+}
+
+structure GetObjectOutput {
+    @httpHeader("Expires")
+    Expires: Expires
 }
 
 structure ListObjectsV2Request {
@@ -515,9 +551,13 @@ string AccountId
 
 string BucketName
 
+string KeyName
+
 string Delimiter
 
 string DisplayName
+
+string Expires
 
 enum EncodingType {
     @suppress(["EnumShape"])
