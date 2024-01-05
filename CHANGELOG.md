@@ -1,5 +1,33 @@
 # Smithy Changelog
 
+## 1.43.0 (2024-01-05)
+
+### Features
+
+* Updated `RemovedShape` diff event severity from `ERROR` to `WARNING` for scalar shapes. ([#2037](https://github.com/smithy-lang/smithy/pull/2037))
+* Made `parameterizedTestSource` public, allowing users to use a customized suite as a source for JUnit parameterized tests. ([#2087](https://github.com/smithy-lang/smithy/pull/2087))
+* Refactored `ReplaceShapes` transform to improve efficiency. ([#2082](https://github.com/smithy-lang/smithy/pull/2082))
+* Added validation for endpoint patterns used by `standardRegionalEndpoints` and `standardPartitionalEndpoints`. ([#2069](https://github.com/smithy-lang/smithy/pull/2069))
+* Added support for CLI dependency resolution via proxy. ([#2076](https://github.com/smithy-lang/smithy/pull/2076))
+* Improved efficiency of `ReplaceShapes` transform by only building container shapes once when multiple members are changed. ([#2081](https://github.com/smithy-lang/smithy/pull/2081))
+* Moved `allowOptionalNull` to `NodeValidationVisitor.Feature`. ([#2080](https://github.com/smithy-lang/smithy/pull/2080))
+* Added rules engine built-in for `AccountIdEndpointMode`. ([#2065](https://github.com/smithy-lang/smithy/pull/2065))
+* Added [JReleaser](https://jreleaser.org/) config. ([#2059](https://github.com/smithy-lang/smithy/pull/2059))
+* Added ability to find all operations for which a shape is used as an input, output, or error. ([#2064](https://github.com/smithy-lang/smithy/pull/2064))
+* Split InputOutput shapes into separate request and response shapes for `restXml` protocol tests. ([#2063](https://github.com/smithy-lang/smithy/pull/2063))
+
+### Bug Fixes
+
+* Fixed tree node start and end locations. ([#2084](https://github.com/smithy-lang/smithy/pull/2084))
+* Fixed several minor build warnings. ([2089](https://github.com/smithy-lang/smithy/pull/2089))
+* Fixed protocol test service signing name for `awsJson1_1` protocol. ([#2089](https://github.com/smithy-lang/smithy/pull/2089))
+* Updated member removal for `ReplaceShapes` transform to ensure enum and intEnum members are correctly removed. ([#2082](https://github.com/smithy-lang/smithy/pull/2082))
+* Corrected erroneous outer tags in `restXml` protocol tests ([#2071](https://github.com/smithy-lang/smithy/pull/2071))
+
+### Documentation
+
+*  Added documentation for configuring CLI dependency resolution via proxy. ([#2083](https://github.com/smithy-lang/smithy/pull/2083))
+
 ## 1.42.0 (2023-12-07)
 
 ### Features
