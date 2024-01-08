@@ -276,6 +276,19 @@ the following configuration:
             Credentials SHOULD NOT be defined statically in a smithy-build.json
             file. Instead, use :ref:`environment variables <build_envars>` to
             keep credentials out of source control.
+    * - proxyHost
+      - ``string``
+      - The URL of the proxy to configure for this repository (for example, ``http://proxy.maven.apache.org:8080``).
+    * - proxyCredentials
+      - ``string``
+      - HTTP credentials to use with the proxy for the repository.
+        Credentials are provided in the form of "username:password".
+
+        .. warning::
+
+            Credentials SHOULD NOT be defined statically in a smithy-build.json
+            file. Instead, use :ref:`environment variables <build_envars>` to
+            keep credentials out of source control.
 
 .. code-block:: json
 
@@ -285,7 +298,9 @@ the following configuration:
             "repositories": [
                 {
                     "url": "https://my_domain-111122223333.d.codeartifact.region.amazonaws.com/maven/my_repo/",
-                    "httpCredentials": "aws:${CODEARTIFACT_AUTH_TOKEN}"
+                    "httpCredentials": "aws:${CODEARTIFACT_AUTH_TOKEN}",
+                    "proxyHost": "http://localhost:8080",
+                    "proxyCredentials": "user:${PROXY_AUTH_TOKEN}"
                 }
             ],
             "dependencies": [
@@ -323,6 +338,33 @@ variable, no default repositories are assumed when resolving the
 
     Repositories defined in ``SMITHY_MAVEN_REPOS`` take precedence over
     repositories defined through smithy-build.json configuration.
+
+Proxy environment variables
+---------------------------
+
+When using the Smithy CLI, the ``SMITHY_PROXY_HOST`` and ``SMITHY_PROXY_CREDENTIALS`` environment variables can be used
+to configure a proxy to use for dependency resolution. Setting these environment variables will configure a common
+proxy configuration for all repositories.
+
+.. important::
+
+    If a :ref:`Maven Repository <maven-repositories>` definition provides a proxy configuration, that configuration will
+    override the proxy configuration defined by the ``SMITHY_PROXY_HOST`` and ``SMITHY_PROXY_CREDENTIALS``
+    environment variables.
+
+The ``SMITHY_PROXY_HOST`` environment variable is a URL:
+
+.. code-block::
+
+    SMITHY_PROXY_HOST='http://localhost:8080'
+
+The ``SMITHY_PROXY_CREDENTIALS`` environment variable is a colon-delimited value (``:``) containing both the
+username and password to use for authenticating to the proxy configured by the ``SMITHY_PROXY_HOST`` environment
+variable:
+
+.. code-block::
+
+    SMITHY_PROXY_CREDENTIALS='user:$PROXY_PASSWORD'
 
 
 .. _projections:

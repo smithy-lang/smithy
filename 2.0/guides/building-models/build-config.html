@@ -423,7 +423,7 @@ validators, transforms, and other extensions.</td>
 <span class="w">    </span><span class="nt">&quot;imports&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;foo.json&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;some/directory&quot;</span><span class="p">],</span>
 <span class="w">    </span><span class="nt">&quot;maven&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.42.0&quot;</span>
+<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.43.0&quot;</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;projections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -640,6 +640,22 @@ keep credentials out of source control.</p>
 </div>
 </td>
 </tr>
+<tr class="row-even"><td>proxyHost</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td>The URL of the proxy to configure for this repository (for example, <code class="docutils literal notranslate"><span class="pre">http://proxy.maven.apache.org:8080</span></code>).</td>
+</tr>
+<tr class="row-odd"><td>proxyCredentials</td>
+<td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
+<td><p class="first">HTTP credentials to use with the proxy for the repository.
+Credentials are provided in the form of &quot;username:password&quot;.</p>
+<div class="last admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Credentials SHOULD NOT be defined statically in a smithy-build.json
+file. Instead, use <a class="reference internal" href="#build-envars"><span class="std std-ref">environment variables</span></a> to
+keep credentials out of source control.</p>
+</div>
+</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -649,11 +665,13 @@ keep credentials out of source control.</p>
 <span class="w">        </span><span class="nt">&quot;repositories&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">            </span><span class="p">{</span>
 <span class="w">                </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://my_domain-111122223333.d.codeartifact.region.amazonaws.com/maven/my_repo/&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;httpCredentials&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aws:${CODEARTIFACT_AUTH_TOKEN}&quot;</span>
+<span class="w">                </span><span class="nt">&quot;httpCredentials&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aws:${CODEARTIFACT_AUTH_TOKEN}&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;proxyHost&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://localhost:8080&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;proxyCredentials&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user:${PROXY_AUTH_TOKEN}&quot;</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">],</span>
 <span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.42.0&quot;</span>
+<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-traits:1.43.0&quot;</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -680,6 +698,28 @@ variable, no default repositories are assumed when resolving the
 <p class="first admonition-title">Important</p>
 <p class="last">Repositories defined in <code class="docutils literal notranslate"><span class="pre">SMITHY_MAVEN_REPOS</span></code> take precedence over
 repositories defined through smithy-build.json configuration.</p>
+</div>
+</div>
+<div class="section" id="proxy-environment-variables">
+<h3>Proxy environment variables<a class="headerlink" href="#proxy-environment-variables" title="Permalink to this headline">#</a></h3>
+<p>When using the Smithy CLI, the <code class="docutils literal notranslate"><span class="pre">SMITHY_PROXY_HOST</span></code> and <code class="docutils literal notranslate"><span class="pre">SMITHY_PROXY_CREDENTIALS</span></code> environment variables can be used
+to configure a proxy to use for dependency resolution. Setting these environment variables will configure a common
+proxy configuration for all repositories.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">If a <a class="reference internal" href="#maven-repositories"><span class="std std-ref">Maven Repository</span></a> definition provides a proxy configuration, that configuration will
+override the proxy configuration defined by the <code class="docutils literal notranslate"><span class="pre">SMITHY_PROXY_HOST</span></code> and <code class="docutils literal notranslate"><span class="pre">SMITHY_PROXY_CREDENTIALS</span></code>
+environment variables.</p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">SMITHY_PROXY_HOST</span></code> environment variable is a URL:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SMITHY_PROXY_HOST</span><span class="o">=</span><span class="s1">&#39;http://localhost:8080&#39;</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">SMITHY_PROXY_CREDENTIALS</span></code> environment variable is a colon-delimited value (<code class="docutils literal notranslate"><span class="pre">:</span></code>) containing both the
+username and password to use for authenticating to the proxy configured by the <code class="docutils literal notranslate"><span class="pre">SMITHY_PROXY_HOST</span></code> environment
+variable:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SMITHY_PROXY_CREDENTIALS</span><span class="o">=</span><span class="s1">&#39;user:$PROXY_PASSWORD&#39;</span>
+</pre></div>
 </div>
 </div>
 </div>
@@ -2445,6 +2485,7 @@ cat<span class="w"> </span>&gt;&gt;<span class="w"> </span>copy-model.json
 </li>
 <li><a class="reference internal" href="#maven-repositories">Maven Repositories</a></li>
 <li><a class="reference internal" href="#smithy-maven-repos-environment-variable">SMITHY_MAVEN_REPOS environment variable</a></li>
+<li><a class="reference internal" href="#proxy-environment-variables">Proxy environment variables</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#projections">Projections</a><ul>

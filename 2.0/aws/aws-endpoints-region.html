@@ -425,10 +425,10 @@ can also support configuration settings.</p>
 that indicates that a service's endpoints should be resolved using the standard AWS regional
 patterns:</p>
 <ul class="simple">
-<li>Default: <code class="docutils literal notranslate"><span class="pre">{service}.{region}.{dnsSuffix}</span></code></li>
-<li>Fips: <code class="docutils literal notranslate"><span class="pre">{service}-fips.{region}.{dnsSuffix}</span></code></li>
-<li>Dualstack: <code class="docutils literal notranslate"><span class="pre">{service}.{region}.{dualStackDnsSuffix}</span></code></li>
-<li>Fips/Dualstack: <code class="docutils literal notranslate"><span class="pre">{service}-fips.{region}.{dualStackDnsSuffix}</span></code></li>
+<li>Default: <code class="docutils literal notranslate"><span class="pre">https://{service}.{region}.{dnsSuffix}</span></code></li>
+<li>Fips: <code class="docutils literal notranslate"><span class="pre">https://{service}-fips.{region}.{dnsSuffix}</span></code></li>
+<li>Dualstack: <code class="docutils literal notranslate"><span class="pre">https://{service}.{region}.{dualStackDnsSuffix}</span></code></li>
+<li>Fips/Dualstack: <code class="docutils literal notranslate"><span class="pre">https://{service}-fips.{region}.{dualStackDnsSuffix}</span></code></li>
 </ul>
 </dd>
 <dt>Trait selector</dt><dd><code class="docutils literal notranslate"><span class="pre">service</span></code></dd>
@@ -489,7 +489,7 @@ FIPS endpoints in US GovCloud:</p>
 <span class="w">    </span><span class="py">partitionSpecialCases</span><span class="p">:</span><span class="w"> </span>{
 <span class="w">        </span><span class="vc">aws-us-gov</span><span class="p">:</span><span class="w"> </span>[
 <span class="w">            </span>{
-<span class="w">                </span><span class="py">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice.{region}.{dnsSuffix}&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="py">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://myservice.{region}.{dnsSuffix}&quot;</span><span class="p">,</span>
 <span class="w">                </span><span class="py">fips</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
 <span class="w">            </span>}
 <span class="w">        </span>]
@@ -520,7 +520,7 @@ in the given partition. A PartitionSpecialCase object contains the following pro
 <tbody valign="top">
 <tr class="row-even"><td>endpoint</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td><strong>Required</strong>. The special-cased endpoint template.</td>
+<td><strong>Required</strong>. The special-cased <a class="reference internal" href="#aws-endpoints-endpoint-pattern"><span class="std std-ref">endpoint pattern</span></a></td>
 </tr>
 <tr class="row-odd"><td>dualStack</td>
 <td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
@@ -553,7 +553,7 @@ in the given partition. A PartitionSpecialCase object contains the following pro
 <tbody valign="top">
 <tr class="row-even"><td>endpoint</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td><strong>Required</strong>. The special-cased endpoint template.</td>
+<td><strong>Required</strong>. The special-cased <a class="reference internal" href="#aws-endpoints-endpoint-pattern"><span class="std std-ref">endpoint pattern</span></a>.</td>
 </tr>
 <tr class="row-odd"><td>dualStack</td>
 <td><code class="docutils literal notranslate"><span class="pre">boolean</span></code></td>
@@ -599,8 +599,8 @@ and a single endpoint should be resolved per partition.</dd>
 <tr class="row-even"><td>endpointPatternType</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
 <td><strong>Required</strong> The pattern type to use for the partition endpoint.  This value can be set to <code class="docutils literal notranslate"><span class="pre">service_dnsSuffix</span></code> to
-use the <code class="docutils literal notranslate"><span class="pre">{service}.{dnsSuffix}</span></code> pattern or <code class="docutils literal notranslate"><span class="pre">service_region_dnsSuffix</span></code> to use
-<code class="docutils literal notranslate"><span class="pre">{service}.{region}.{dnsSuffix}</span></code>.</td>
+use the <code class="docutils literal notranslate"><span class="pre">https://{service}.{dnsSuffix}</span></code> pattern or <code class="docutils literal notranslate"><span class="pre">service_region_dnsSuffix</span></code> to use
+<code class="docutils literal notranslate"><span class="pre">https://{service}.{region}.{dnsSuffix}</span></code>.</td>
 </tr>
 <tr class="row-odd"><td>partitionEndpointSpecialCases</td>
 <td><code class="docutils literal notranslate"><span class="pre">map</span></code> of partition to <a class="reference internal" href="#partitionendpointspecialcase-object">PartitionEndpointSpecialCase object</a></td>
@@ -618,8 +618,8 @@ service's standard patterns or are located in a region other than the partition'
 That single endpoint is located in the partition's <code class="docutils literal notranslate"><span class="pre">defaultGlobalRegion</span></code>. Partitional
 services should follow one of two standard patterns:</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">service_dnsSuffix</span></code>: <code class="docutils literal notranslate"><span class="pre">{service}.{dnsSuffix}</span></code></li>
-<li><code class="docutils literal notranslate"><span class="pre">service_region_dnsSuffix</span></code>: <code class="docutils literal notranslate"><span class="pre">{service}.{region}.{dnsSuffix}</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">service_dnsSuffix</span></code>: <code class="docutils literal notranslate"><span class="pre">https://{service}.{dnsSuffix}</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">service_region_dnsSuffix</span></code>: <code class="docutils literal notranslate"><span class="pre">https://{service}.{region}.{dnsSuffix}</span></code></li>
 </ul>
 <p>The following example defines a partitional service that uses <code class="docutils literal notranslate"><span class="pre">{service}.{dnsSuffix}</span></code>:</p>
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="kd">$version</span><span class="nd">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span>
@@ -640,7 +640,7 @@ the <code class="docutils literal notranslate"><span class="pre">aws</span></cod
 <div class="highlight-smithy notranslate"><div class="highlight"><pre><span></span><span class="nt">@standardPartitionalEndpoints</span>(
 <span class="w">    </span><span class="py">endpointPatternType</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;service_dnsSuffix&quot;</span><span class="p">,</span>
 <span class="w">    </span><span class="py">partitionEndpointSpecialCases</span><span class="p">:</span><span class="w"> </span>{
-<span class="w">        </span><span class="py">aws</span><span class="p">:</span><span class="w"> </span>[{<span class="py">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;myservice.global.amazonaws.com&quot;</span>}]<span class="p">,</span>
+<span class="w">        </span><span class="py">aws</span><span class="p">:</span><span class="w"> </span>[{<span class="py">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://myservice.global.amazonaws.com&quot;</span>}]<span class="p">,</span>
 <span class="w">        </span><span class="vc">aws-cn</span><span class="p">:</span><span class="w"> </span>[{<span class="py">region</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cn-north-1&quot;</span>}]
 <span class="w">    </span>}
 )
@@ -668,7 +668,7 @@ the <code class="docutils literal notranslate"><span class="pre">aws</span></cod
 <tbody valign="top">
 <tr class="row-even"><td>endpoint</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
-<td>The special-cased endpoint template.</td>
+<td>The special-cased <a class="reference internal" href="#aws-endpoints-endpoint-pattern"><span class="std std-ref">endpoint pattern</span></a>.</td>
 </tr>
 <tr class="row-odd"><td>region</td>
 <td><code class="docutils literal notranslate"><span class="pre">string</span></code></td>
@@ -735,6 +735,40 @@ The following example specifies a service that has standard regional endpoints e
 <span class="w">    </span><span class="py">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-02&quot;</span>
 }
 </pre></div>
+</div>
+</div>
+<div class="section" id="endpoint-pattern">
+<span id="aws-endpoints-endpoint-pattern"></span><h2>Endpoint Pattern<a class="headerlink" href="#endpoint-pattern" title="Permalink to this headline">#</a></h2>
+<p>Endpoint Patterns SHOULD begin with a scheme of either <cite>http</cite> or <cite>https</cite>.  When specifying special case endpoints in
+<a class="reference internal" href="#aws-endpoints-standardregionalendpoints-trait"><span class="std std-ref">StandardRegionalEndpoints</span></a> or
+<a class="reference internal" href="#aws-endpoints-standardpartitionalendpoints-trait"><span class="std std-ref">StandardPartitionalEndpoints</span></a> you may use
+an endpoint pattern such as <code class="docutils literal notranslate"><span class="pre">https://{service}.{region}.{dnsSuffix}</span></code> with the following pattern substitutions:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table border="1" class="colwidths-given docutils align-default">
+<colgroup>
+<col width="14%" />
+<col width="86%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Pattern</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">{region}</span></code></td>
+<td>The region from the <a class="reference internal" href="rules-engine/built-ins.html#rules-engine-aws-built-ins-region"><span class="std std-ref">AWS::Region built-in</span></a>.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">{service}</span></code></td>
+<td>The endpoint prefix from the <a class="reference internal" href="aws-core.html#service-endpoint-prefix"><span class="std std-ref">service's endpointPrefix</span></a>.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">{dnsSuffix}</span></code></td>
+<td>The dns suffix from the <a class="reference internal" href="rules-engine/library-functions.html#rules-engine-aws-library-awspartition-partition"><span class="std std-ref">resolved partition's properties</span></a>.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">{dualStackDnsSuffix}</span></code></td>
+<td>The dualStack dns suffix from the <a class="reference internal" href="rules-engine/library-functions.html#rules-engine-aws-library-awspartition-partition"><span class="std std-ref">resolved partition's properties</span></a>.</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -815,6 +849,7 @@ The following example specifies a service that has standard regional endpoints e
 </li>
 <li><a class="reference internal" href="#aws-endpoints-dualstackonlyendpoints-trait"><code class="docutils literal notranslate"><span class="pre">aws.endpoints#dualStackOnlyEndpoints</span></code> trait</a></li>
 <li><a class="reference internal" href="#aws-endpoints-rulesbasedendpoints-trait"><code class="docutils literal notranslate"><span class="pre">aws.endpoints#rulesBasedEndpoints</span></code> trait</a></li>
+<li><a class="reference internal" href="#endpoint-pattern">Endpoint Pattern</a></li>
 </ul>
 </li>
 </ul>

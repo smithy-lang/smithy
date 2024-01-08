@@ -347,7 +347,7 @@ to a Smithy project:</p>
 <input checked="True" class="tab-input" id="tab-set--0-input--1" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--1">Gradle</label><div class="tab-content docutils container">
 <div class="highlight-kotlin notranslate"><div class="highlight"><pre><span></span><span class="n">dependencies</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="p">...</span>
-<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-endpoints:1.42.0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="s">&quot;software.amazon.smithy:smithy-aws-endpoints:1.43.0&quot;</span><span class="p">)</span>
 <span class="w">    </span><span class="p">...</span>
 <span class="p">}</span>
 </pre></div>
@@ -357,7 +357,7 @@ to a Smithy project:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;maven&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-endpoints:1.42.0&quot;</span>
+<span class="w">            </span><span class="s2">&quot;software.amazon.smithy:smithy-aws-endpoints:1.43.0&quot;</span>
 <span class="w">        </span><span class="p">]</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
@@ -392,6 +392,13 @@ to <code class="docutils literal notranslate"><span class="pre">false</span></co
 <span id="rules-engine-aws-built-ins-account-id"></span><h2><code class="docutils literal notranslate"><span class="pre">AWS::Auth::AccountId</span></code> built-in<a class="headerlink" href="#aws-auth-accountid-built-in" title="Permalink to this headline">#</a></h2>
 <dl class="docutils">
 <dt>Description</dt><dd>The AWS AccountId.</dd>
+<dt>Type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
+</dl>
+</div>
+<div class="section" id="aws-auth-accountidendpointmode-built-in">
+<span id="rules-engine-aws-built-ins-account-id-endpoint-mode"></span><h2><code class="docutils literal notranslate"><span class="pre">AWS::Auth::AccountIdEndpointMode</span></code> built-in<a class="headerlink" href="#aws-auth-accountidendpointmode-built-in" title="Permalink to this headline">#</a></h2>
+<dl class="docutils">
+<dt>Description</dt><dd>The AccountId Endpoint Mode.</dd>
 <dt>Type</dt><dd><code class="docutils literal notranslate"><span class="pre">string</span></code></dd>
 </dl>
 </div>
@@ -538,6 +545,7 @@ regional <code class="docutils literal notranslate"><span class="pre">us-east-1<
 <li><a class="reference internal" href="#aws-usedualstack-built-in"><code class="docutils literal notranslate"><span class="pre">AWS::UseDualStack</span></code> built-in</a></li>
 <li><a class="reference internal" href="#aws-usefips-built-in"><code class="docutils literal notranslate"><span class="pre">AWS::UseFIPS</span></code> built-in</a></li>
 <li><a class="reference internal" href="#aws-auth-accountid-built-in"><code class="docutils literal notranslate"><span class="pre">AWS::Auth::AccountId</span></code> built-in</a></li>
+<li><a class="reference internal" href="#aws-auth-accountidendpointmode-built-in"><code class="docutils literal notranslate"><span class="pre">AWS::Auth::AccountIdEndpointMode</span></code> built-in</a></li>
 <li><a class="reference internal" href="#aws-auth-credentialscope-built-in"><code class="docutils literal notranslate"><span class="pre">AWS::Auth::CredentialScope</span></code> built-in</a></li>
 <li><a class="reference internal" href="#aws-s3-accelerate-built-in"><code class="docutils literal notranslate"><span class="pre">AWS::S3::Accelerate</span></code> built-in</a></li>
 <li><a class="reference internal" href="#aws-s3-disablemultiregionaccesspoints-built-in"><code class="docutils literal notranslate"><span class="pre">AWS::S3::DisableMultiRegionAccessPoints</span></code> built-in</a></li>

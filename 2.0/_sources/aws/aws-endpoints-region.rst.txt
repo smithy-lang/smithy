@@ -124,10 +124,10 @@ Summary
     that indicates that a service's endpoints should be resolved using the standard AWS regional
     patterns:
 
-    - Default: ``{service}.{region}.{dnsSuffix}``
-    - Fips: ``{service}-fips.{region}.{dnsSuffix}``
-    - Dualstack: ``{service}.{region}.{dualStackDnsSuffix}``
-    - Fips/Dualstack: ``{service}-fips.{region}.{dualStackDnsSuffix}``
+    - Default: ``https://{service}.{region}.{dnsSuffix}``
+    - Fips: ``https://{service}-fips.{region}.{dnsSuffix}``
+    - Dualstack: ``https://{service}.{region}.{dualStackDnsSuffix}``
+    - Fips/Dualstack: ``https://{service}-fips.{region}.{dualStackDnsSuffix}``
 
 Trait selector
     ``service``
@@ -184,7 +184,7 @@ FIPS endpoints in US GovCloud:
         partitionSpecialCases: {
             aws-us-gov: [
                 {
-                    endpoint: "myservice.{region}.{dnsSuffix}",
+                    endpoint: "https://myservice.{region}.{dnsSuffix}",
                     fips: true
                 }
             ]
@@ -209,7 +209,7 @@ in the given partition. A PartitionSpecialCase object contains the following pro
       - Description
     * - endpoint
       - ``string``
-      - **Required**. The special-cased endpoint template.
+      - **Required**. The special-cased :ref:`endpoint pattern <aws.endpoints#endpoint-pattern>`
     * - dualStack
       - ``boolean``
       - When ``true`` the special case will apply to dualstack endpoint variants.
@@ -232,7 +232,7 @@ A ``RegionSpecialCase`` object contains the following properties:
       - Description
     * - endpoint
       - ``string``
-      - **Required**. The special-cased endpoint template.
+      - **Required**. The special-cased :ref:`endpoint pattern <aws.endpoints#endpoint-pattern>`.
     * - dualStack
       - ``boolean``
       - When ``true`` the special case will apply to dualstack endpoint variants.
@@ -270,8 +270,8 @@ Trait value
     * - endpointPatternType
       - ``string``
       - **Required** The pattern type to use for the partition endpoint.  This value can be set to ``service_dnsSuffix`` to
-        use the ``{service}.{dnsSuffix}`` pattern or ``service_region_dnsSuffix`` to use
-        ``{service}.{region}.{dnsSuffix}``.
+        use the ``https://{service}.{dnsSuffix}`` pattern or ``service_region_dnsSuffix`` to use
+        ``https://{service}.{region}.{dnsSuffix}``.
     * - partitionEndpointSpecialCases
       - ``map`` of partition to `PartitionEndpointSpecialCase object`_
       - A map of partition to partition endpoint special cases - partitions that do not follow the
@@ -285,8 +285,8 @@ Partitional services (also known as "global" services) resolve a single endpoint
 That single endpoint is located in the partition's ``defaultGlobalRegion``. Partitional
 services should follow one of two standard patterns:
 
-- ``service_dnsSuffix``: ``{service}.{dnsSuffix}``
-- ``service_region_dnsSuffix``: ``{service}.{region}.{dnsSuffix}``
+- ``service_dnsSuffix``: ``https://{service}.{dnsSuffix}``
+- ``service_region_dnsSuffix``: ``https://{service}.{region}.{dnsSuffix}``
 
 The following example defines a partitional service that uses ``{service}.{dnsSuffix}``:
 
@@ -312,7 +312,7 @@ the ``aws`` partition and uses a non-standard global region in the ``aws-cn`` pa
     @standardPartitionalEndpoints(
         endpointPatternType: "service_dnsSuffix",
         partitionEndpointSpecialCases: {
-            aws: [{endpoint: "myservice.global.amazonaws.com"}],
+            aws: [{endpoint: "https://myservice.global.amazonaws.com"}],
             aws-cn: [{region: "cn-north-1"}]
         }
     )
@@ -334,7 +334,7 @@ A ``PartitionEndpointSpecialCase`` object contains the following properties:
       - Description
     * - endpoint
       - ``string``
-      - The special-cased endpoint template.
+      - The special-cased :ref:`endpoint pattern <aws.endpoints#endpoint-pattern>`.
     * - region
       - ``string``
       - Override the ``defaultGlobalRegion`` used in this partition.
@@ -412,3 +412,30 @@ The following example specifies a service that has standard regional endpoints e
      service MyService {
          version: "2020-04-02"
      }
+
+.. _aws.endpoints#endpoint-pattern:
+
+----------------
+Endpoint Pattern
+----------------
+
+Endpoint Patterns SHOULD begin with a scheme of either `http` or `https`.  When specifying special case endpoints in
+:ref:`StandardRegionalEndpoints <aws.endpoints#standardRegionalEndpoints-trait>` or
+:ref:`StandardPartitionalEndpoints <aws.endpoints#standardPartitionalEndpoints-trait>` you may use
+an endpoint pattern such as ``https://{service}.{region}.{dnsSuffix}`` with the following pattern substitutions:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 10 60
+
+    * - Pattern
+      - Description
+    * - ``{region}``
+      - The region from the :ref:`AWS::Region built-in <rules-engine-aws-built-ins-region>`.
+    * - ``{service}``
+      - The endpoint prefix from the :ref:`service's endpointPrefix <service-endpoint-prefix>`.
+    * - ``{dnsSuffix}``
+      - The dns suffix from the :ref:`resolved partition's properties <rules-engine-aws-library-awsPartition-Partition>`.
+    * - ``{dualStackDnsSuffix}``
+      - The dualStack dns suffix from the :ref:`resolved partition's properties <rules-engine-aws-library-awsPartition-Partition>`.
+
