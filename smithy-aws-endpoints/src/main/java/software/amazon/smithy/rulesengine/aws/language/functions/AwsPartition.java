@@ -5,6 +5,7 @@
 
 package software.amazon.smithy.rulesengine.aws.language.functions;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -24,6 +25,7 @@ import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.FunctionNode;
 import software.amazon.smithy.rulesengine.language.syntax.expressions.functions.LibraryFunction;
 import software.amazon.smithy.utils.MapUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -41,22 +43,44 @@ public final class AwsPartition extends LibraryFunction {
     public static final Identifier INFERRED = Identifier.of("inferred");
 
     private static final Definition DEFINITION = new Definition();
-    private static final List<Partition> PARTITIONS;
+
+    // The following are mutable to allow for overriding the contents
+    // of the PARTITIONS list for test use cases. They MUST NOT have
+    // contents exposed directly, only through copies as is done in
+    // the `evaluate` method below.
+    private static final List<Partition> PARTITIONS = new ArrayList<>();
     private static final Map<String, Partition> REGION_MAP = new HashMap<>();
 
     static {
-        PARTITIONS = Partitions.fromNode(Node.parse(Partitions.class.getResourceAsStream("partitions.json")))
-                .getPartitions();
+        PARTITIONS.addAll(Partitions.fromNode(
+                        Node.parse(Partitions.class.getResourceAsStream("partitions.json")))
+                .getPartitions());
+        initializeRegionMap();
+    }
 
+    private AwsPartition(FunctionNode functionNode) {
+        super(DEFINITION, functionNode);
+    }
+
+    /**
+     * Overrides the partitions provided by default.
+     *
+     * @param partitions A list of partitions to set.
+     */
+    @SmithyInternalApi
+    public static void overridePartitions(Partitions partitions) {
+        PARTITIONS.clear();
+        PARTITIONS.addAll(partitions.getPartitions());
+        initializeRegionMap();
+    }
+
+    private static void initializeRegionMap() {
+        REGION_MAP.clear();
         for (Partition partition : PARTITIONS) {
             for (String region : partition.getRegions().keySet()) {
                 REGION_MAP.put(region, partition);
             }
         }
-    }
-
-    private AwsPartition(FunctionNode functionNode) {
-        super(DEFINITION, functionNode);
     }
 
     /**
