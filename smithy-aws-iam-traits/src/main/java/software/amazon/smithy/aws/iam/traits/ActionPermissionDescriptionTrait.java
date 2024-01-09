@@ -20,8 +20,11 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.StringTrait;
 
 /**
- * Defines the description of what providing access to an operation entails.
+ * Use the {@code @iamAction} trait's {@code documentation} property instead.
+ *
+ * @deprecated As of release 1.44.0, replaced by {@link IamActionTrait#resolveActionDocumentation}.
  */
+@Deprecated
 public final class ActionPermissionDescriptionTrait extends StringTrait {
     public static final ShapeId ID = ShapeId.from("aws.iam#actionPermissionDescription");
 

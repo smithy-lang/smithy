@@ -28,6 +28,7 @@ import software.amazon.smithy.model.traits.TraitFactory;
 
 public class ActionPermissionDescriptionTraitTest {
     @Test
+    @SuppressWarnings("deprecation")
     public void createsTrait() {
         Node node = Node.from("Foo baz bar");
         TraitFactory provider = TraitFactory.createServiceFactory();

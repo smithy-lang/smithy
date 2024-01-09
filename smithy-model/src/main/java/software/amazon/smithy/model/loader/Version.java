@@ -171,7 +171,7 @@ enum Version {
         }
 
         @Override
-        @SuppressWarnings("deprecated")
+        @SuppressWarnings("deprecation")
         ValidationEvent validateVersionedTrait(ShapeId target, ShapeId traitId, Node value) {
             if (traitId.equals(BoxTrait.ID)) {
                 return ValidationEvent.builder()
