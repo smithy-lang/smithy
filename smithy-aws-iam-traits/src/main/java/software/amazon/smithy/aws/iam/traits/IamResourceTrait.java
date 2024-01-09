@@ -18,6 +18,7 @@ package software.amazon.smithy.aws.iam.traits;
 import java.util.Optional;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.NodeMapper;
+import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.model.traits.AbstractTraitBuilder;
@@ -50,6 +51,26 @@ public final class IamResourceTrait extends AbstractTrait
      */
     public Optional<String> getName() {
         return Optional.ofNullable(name);
+    }
+
+
+
+    /**
+     * Resolves the IAM resource name for the given resource. Uses the following
+     * resolution order:
+     *
+     * <ol>
+     *     <li>Value of the {@code @iamResource} trait's {@code name} property</li>
+     *     <li>The resource's name</li>
+     * </ol>
+     *
+     * @param resource the resource to resolve a name for.
+     * @return The resolved resource name.
+     */
+    public static String resolveResourceName(ResourceShape resource) {
+        return resource.getTrait(IamResourceTrait.class)
+                .flatMap(IamResourceTrait::getName)
+                .orElse(resource.getId().getName());
     }
 
     /**

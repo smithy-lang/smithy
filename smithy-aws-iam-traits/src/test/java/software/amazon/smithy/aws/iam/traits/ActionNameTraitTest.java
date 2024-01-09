@@ -5,16 +5,17 @@
 
 package software.amazon.smithy.aws.iam.traits;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
 public class ActionNameTraitTest {
     @Test
+    @SuppressWarnings("deprecation")
     public void loadsFromModel() {
         Model result = Model.assembler()
                 .discoverModels(getClass().getClassLoader())
