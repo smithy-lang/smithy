@@ -7,7 +7,9 @@ package software.amazon.smithy.rulesengine.aws.traits;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.KnowledgeIndex;
 import software.amazon.smithy.model.shapes.ServiceShape;
@@ -22,6 +24,7 @@ import software.amazon.smithy.model.traits.Trait;
  * Endpoint modifier traits are traits that are marked by {@link EndpointModifierTrait}
  */
 public final class EndpointModifierIndex implements KnowledgeIndex {
+    private static final Logger LOGGER = Logger.getLogger(EndpointModifierIndex.class.getName());
 
     private final Map<ShapeId, Map<ShapeId, Trait>> endpointModifierTraits = new HashMap<>();
 
@@ -29,8 +32,14 @@ public final class EndpointModifierIndex implements KnowledgeIndex {
         for (ServiceShape serviceShape : model.getServiceShapes()) {
             Map<ShapeId, Trait> result = new TreeMap<>();
             for (Trait trait : serviceShape.getAllTraits().values()) {
-                Shape traitShape = model.expectShape(trait.toShapeId());
-                if (traitShape.hasTrait(EndpointModifierTrait.ID)) {
+                Optional<Shape> traitShape = model.getShape(trait.toShapeId());
+                if (!traitShape.isPresent()) {
+                    LOGGER.warning(String.format(
+                        "`%s` trait found in service `%s`, but the trait definition is missing",
+                            trait.toShapeId(), serviceShape.toShapeId()));
+                    continue;
+                }
+                if (traitShape.get().hasTrait(EndpointModifierTrait.ID)) {
                     result.put(trait.toShapeId(), trait);
                 }
             }
