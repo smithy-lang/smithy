@@ -1,6 +1,6 @@
-=============
-Model linters
-=============
+==============
+Linting Models
+==============
 
 This guide describes how to apply optional linters to a Smithy model.
 

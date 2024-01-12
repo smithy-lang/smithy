@@ -1,8 +1,8 @@
 .. _smithy-build:
 
-============
-smithy-build
-============
+=================
+smithy-build.json
+=================
 
 Building a Smithy model requires constructing a configuration file,
 ``smithy-build.json``. This file is used to describe how a model is created

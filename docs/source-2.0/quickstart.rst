@@ -495,13 +495,18 @@ That's it! We just created a simple, read-only, ``Weather`` service.
 5. Follow the :ref:`Using Code Generation Guide <using-code-generation>`
    to generate code for the ``Weather`` service.
 
-There's plenty more to explore in Smithy. The
-:ref:`Smithy specification <smithy-specification>` can teach you everything you
-need to know about Smithy models. :ref:`Building Smithy Models <building-models>`
-can teach you more about the build process, including how to use
-transformations, projections, plugins, and more. For more sample build
-configurations, see the `examples directory`_ of the Smithy Gradle plugin
-repository.
+There's plenty more to explore in Smithy.
+
+* The :ref:`Smithy specification <smithy-specification>` can teach you
+  everything you need to know about Smithy models.
+* :ref:`The Smithy CLI <smithy-cli>` is the easiest way to do interesting
+  things with Smithy models like code generation, creating different
+  versions of a model for different audiences, and more.
+* The `Smithy Examples <https://github.com/smithy-lang/smithy-examples>`_
+  repo on GitHub provides various example models and package layouts that
+  show how to use tools like the Smithy CLI or
+  :ref:`Gradle plugin <smithy-gradle-plugin>`.
+
 
 Complete example
 ================
