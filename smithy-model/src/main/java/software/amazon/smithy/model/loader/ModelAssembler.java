@@ -574,10 +574,11 @@ public final class ModelAssembler {
 
         try {
             List<ValidationEvent> mergedEvents = ModelValidator.builder()
-                    .validators(validators)
+                    .addValidators(validators)
                     .validatorFactory(validatorFactory, decorator)
                     .eventListener(validationEventListener)
                     .includeEvents(events)
+                    .legacyValidationMode((boolean) properties.getOrDefault("LEGACY_VALIDATION_MODE", false))
                     .build()
                     .validate(transformed);
             return new ValidatedResult<>(transformed, mergedEvents);

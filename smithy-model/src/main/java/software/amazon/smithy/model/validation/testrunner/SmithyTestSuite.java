@@ -25,21 +25,30 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
+import software.amazon.smithy.model.validation.Severity;
+import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.ValidationUtils;
+import software.amazon.smithy.model.validation.Validator;
 
 /**
  * Runs test cases against a directory of models and error files.
  */
 public final class SmithyTestSuite {
+
+    private static final Logger LOGGER = Logger.getLogger(SmithyTestSuite.class.getName());
     private static final String DEFAULT_TEST_CASE_LOCATION = "errorfiles";
 
     private final List<SmithyTestCase> cases = new ArrayList<>();
@@ -247,11 +256,58 @@ public final class SmithyTestSuite {
     }
 
     private Callable<SmithyTestCase.Result> createTestCaseCallable(SmithyTestCase testCase) {
+        boolean useLegacyValidationMode = isLegacyValidationRequired(testCase);
         return () -> {
             ModelAssembler assembler = modelAssemblerFactory.get();
             assembler.addImport(testCase.getModelLocation());
+            if (useLegacyValidationMode) {
+                assembler.putProperty("LEGACY_VALIDATION_MODE", true);
+            }
             return testCase.createResult(assembler.assemble());
         };
+    }
+
+    // We introduced the concept of "critical" validation events after many errorfiles were created that relied
+    // on all validators being run, including validators now considered critical that prevent further validation.
+    // If we didn't account for that here, the addition of "critical" validators would have been a breaking change.
+    // To make it backward compatible, we preemptively detect if the errorfiles contains both critical and
+    // non-critical validation event assertions, and if so, we run validation using an internal-only validation
+    // mode that doesn't fail after critical validators report errors.
+    private boolean isLegacyValidationRequired(SmithyTestCase testCase) {
+        Set<String> criticalEvents = new TreeSet<>();
+        Set<String> nonCriticalEvents = new TreeSet<>();
+
+        for (ValidationEvent event : testCase.getExpectedEvents()) {
+            if (isCriticalValidationEvent(event)) {
+                criticalEvents.add(event.getId());
+            } else {
+                nonCriticalEvents.add(event.getId());
+            }
+        }
+
+        if (!criticalEvents.isEmpty() && !nonCriticalEvents.isEmpty()) {
+            LOGGER.warning(String.format("Test suite `%s` relies on the emission of non-critical validation events "
+                                         + "after critical validation events were emitted. This test case should be "
+                                         + "refactored so that critical validation events are tested using separate "
+                                         + "test cases from non-critical events. Critical events: %s. Non-critical "
+                                         + "events: %s",
+                                         testCase.getModelLocation(),
+                                         criticalEvents,
+                                         nonCriticalEvents));
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean isCriticalValidationEvent(ValidationEvent event) {
+        if (ValidationUtils.isCriticalEvent(event.getId())) {
+            return true;
+        }
+
+        // In addition to the method to the check based on Validator classes, MODEL validation event IDs marked as
+        // ERROR that go along with non-critical events requires legacy validation.
+        return event.getId().equals(Validator.MODEL_ERROR) && event.getSeverity() == Severity.ERROR;
     }
 
     /**
