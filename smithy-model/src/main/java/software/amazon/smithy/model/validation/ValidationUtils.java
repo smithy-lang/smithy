@@ -26,20 +26,95 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ToShapeId;
+import software.amazon.smithy.model.validation.validators.DefaultTraitValidator;
+import software.amazon.smithy.model.validation.validators.EnumShapeValidator;
+import software.amazon.smithy.model.validation.validators.ExclusiveStructureMemberTraitValidator;
+import software.amazon.smithy.model.validation.validators.ResourceCycleValidator;
+import software.amazon.smithy.model.validation.validators.ShapeIdConflictValidator;
+import software.amazon.smithy.model.validation.validators.SingleOperationBindingValidator;
+import software.amazon.smithy.model.validation.validators.SingleResourceBindingValidator;
+import software.amazon.smithy.model.validation.validators.TargetValidator;
+import software.amazon.smithy.model.validation.validators.TraitConflictValidator;
+import software.amazon.smithy.model.validation.validators.TraitTargetValidator;
+import software.amazon.smithy.model.validation.validators.TraitValueValidator;
+import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Utility methods used when validating.
  */
 public final class ValidationUtils {
+
+    // Critical validators must emit validation events with names that match their class name (Name in NameValidator).
+    private static final Set<Class<? extends Validator>> CRITICAL_VALIDATORS = SetUtils.of(
+            // These validators should run before even any other validators. These validators are considered
+            // correctness validators that ensure relationships are valid and to shapes that can be found and that
+            // the model has no cycles.
+            TargetValidator.class,
+            ResourceCycleValidator.class,
+
+            // This validator is considered critical because it ensures an enum shape itself is valid.
+            EnumShapeValidator.class,
+
+            // Ensure that traits are valid, according to the model, before other validators are run.
+            ExclusiveStructureMemberTraitValidator.class,
+            TraitTargetValidator.class,
+            TraitValueValidator.class,
+            TraitConflictValidator.class,
+
+            // Defaults need to be valid.
+            DefaultTraitValidator.class,
+
+            // Ensure the semantic model adheres to the requirements of shape IDs and service shape uniqueness.
+            ShapeIdConflictValidator.class,
+            SingleOperationBindingValidator.class,
+            SingleResourceBindingValidator.class
+    );
+
     private static final Pattern CAMEL_WORD_SPLITTER = Pattern.compile("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
 
     private ValidationUtils() {}
+
+    /**
+     * Checks if the given validator class is a critical validator that should be applied before other downstream
+     * validators are applied.
+     *
+     * @param validator Validator class to check.
+     * @return Returns true if the given validator is considered a critical validator.
+     */
+    @SmithyInternalApi
+    public static boolean isCriticalValidator(Class<? extends Validator> validator) {
+        return CRITICAL_VALIDATORS.contains(validator);
+    }
+
+    /**
+     * Checks if the given validation event was emitted by a critical validator.
+     *
+     * @param eventId Event ID to check if it's a critical validation event.
+     * @return Returns true if the given event was emitted from a critical validator.
+     */
+    @SmithyInternalApi
+    public static boolean isCriticalEvent(String eventId) {
+        int slice = eventId.indexOf(".");
+        if (slice > 0) {
+            eventId = eventId.substring(0, slice);
+        }
+
+        for (Class<?> c : CRITICAL_VALIDATORS) {
+            if (c.getSimpleName().replace("Validator", "").equals(eventId)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     /**
      * Splits a camelCase word into a list of words.

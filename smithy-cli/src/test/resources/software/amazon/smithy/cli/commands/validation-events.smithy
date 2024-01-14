@@ -46,5 +46,7 @@ string Warning
 
 string Danger
 
-@required // this trait is invalid and causes an error.
-string Error
+// The uri will trigger an ERROR.
+@http(method: "GET", uri: "/hi/{missingLabel}")
+@readonly
+operation Error {}

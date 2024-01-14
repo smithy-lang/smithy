@@ -1,0 +1,26 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "ns.foo#SomeService": {
+            "type": "service",
+            "version": "2018-03-17",
+            "traits": {
+                "aws.auth#sigv4": {
+                    "name": "someservice"
+                },
+                "aws.apigateway#authorizers": {
+                    "ns.foo#invalidAuth": {
+                        "scheme": "ns.foo#invalidAuth"
+                    }
+                }
+            }
+        },
+        "ns.foo#invalidAuth": {
+            "type": "structure",
+            "traits": {
+                "smithy.api#trait": {},
+                "smithy.api#authDefinition": {}
+            }
+        }
+    }
+}
