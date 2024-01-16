@@ -99,9 +99,7 @@ public final class ValidationUtils {
     public static String tickedPrettyPrintedNode(Node node) {
         String prettyPrinted = Node.prettyPrintJson(node);
         if (prettyPrinted.contains(System.lineSeparator()) || prettyPrinted.contains("\n")) {
-            return System.lineSeparator() + "```" + System.lineSeparator()
-                    + prettyPrinted + System.lineSeparator()
-                    + "```";
+            return String.format("%n```%n%s%n```%n", prettyPrinted);
         } else if (prettyPrinted.startsWith("\"") && prettyPrinted.endsWith("\"")) {
             // for pure strings, replace the quotes with backticks
             return "`" + prettyPrinted.substring(1, prettyPrinted.length() - 1) + "`";

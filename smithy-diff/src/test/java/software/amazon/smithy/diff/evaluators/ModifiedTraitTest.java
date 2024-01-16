@@ -25,7 +25,6 @@ import static org.hamcrest.Matchers.hasSize;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -203,9 +202,7 @@ public class ModifiedTraitTest {
                 .assemble()
                 .unwrap();
         List<ValidationEvent> events = TestHelper.findEvents(ModelDiff.compare(modelA, modelB), "ModifiedTrait");
-        List<String> messages = events.stream().map(ValidationEvent::getMessage)
-                .map(message -> message.replaceAll("\r\n", "\n")) // normalize line separators
-                .collect(Collectors.toList());
+        List<String> messages = events.stream().map(ValidationEvent::getMessage).collect(Collectors.toList());
 
         assertThat(events, hasSize(4));
         assertThat(events.stream().filter(e -> e.getMessage().contains("Removed"))
@@ -216,10 +213,14 @@ public class ModifiedTraitTest {
                 "Changed trait contents of `smithy.example#aTrait` at path `/foo/1` from `b` to `B`",
                 "Added trait contents to `smithy.example#aTrait` at path `/foo/3` with value `4`",
                 "Removed trait contents from `smithy.example#aTrait` at path `/foo/2`. Removed value: `3`",
-                "Removed trait contents from `smithy.example#aTrait` at path `/foo`. Removed value: \n"
-                        + "```\n"
-                        + "[\n    \"1\",\n    \"2\",\n    \"3\"\n]\n"
-                        + "```"
+                String.format("Removed trait contents from `smithy.example#aTrait` at path `/foo`. Removed value: %n"
+                        + "```%n"
+                        + "[%n"
+                        + "    \"1\",%n"
+                        + "    \"2\",%n"
+                        + "    \"3\"%n"
+                        + "]%n"
+                        + "```%n")
         ));
     }
 
@@ -234,9 +235,7 @@ public class ModifiedTraitTest {
                 .assemble()
                 .unwrap();
         List<ValidationEvent> events = TestHelper.findEvents(ModelDiff.compare(modelA, modelB), "ModifiedTrait");
-        List<String> messages = events.stream().map(ValidationEvent::getMessage)
-                .map(message -> message.replaceAll("\r\n", "\n")) // normalize line separators
-                .collect(Collectors.toList());
+        List<String> messages = events.stream().map(ValidationEvent::getMessage).collect(Collectors.toList());
 
         assertThat(events, hasSize(4));
         assertThat(events.stream().filter(e -> e.getMessage().contains("Removed"))
@@ -247,11 +246,15 @@ public class ModifiedTraitTest {
                 "Changed trait contents of `smithy.example#aTrait` at path `/foo/1` from `b` to `B`",
                 "Added trait contents to `smithy.example#aTrait` at path `/foo/3` with value `4`",
                 "Removed trait contents from `smithy.example#aTrait` at path `/foo/2`. Removed value: `3`",
-                "Removed trait contents from `smithy.example#aTrait` at path `/foo`. "
-                        + "Removed value: \n"
-                        + "```\n"
-                        + "[\n    \"1\",\n    \"2\",\n    \"3\"\n]\n"
-                        + "```"
+                String.format("Removed trait contents from `smithy.example#aTrait` at path `/foo`. "
+                        + "Removed value: %n"
+                        + "```%n"
+                        + "[%n"
+                        + "    \"1\",%n"
+                        + "    \"2\",%n"
+                        + "    \"3\"%n"
+                        + "]%n"
+                        + "```%n")
         ));
     }
 
@@ -266,9 +269,7 @@ public class ModifiedTraitTest {
                 .assemble()
                 .unwrap();
         List<ValidationEvent> events = TestHelper.findEvents(ModelDiff.compare(modelA, modelB), "ModifiedTrait");
-        List<String> messages = events.stream().map(ValidationEvent::getMessage)
-                .map(message -> message.replaceAll("\r\n", "\n")) // normalize line separators
-                .collect(Collectors.toList());
+        List<String> messages = events.stream().map(ValidationEvent::getMessage).collect(Collectors.toList());
 
         assertThat(events, hasSize(4));
         assertThat(events.stream().filter(e -> e.getMessage().contains("Removed"))
@@ -277,11 +278,15 @@ public class ModifiedTraitTest {
                 .filter(e -> e.getSourceLocation().getFilename().endsWith("b.smithy")).count(), equalTo(2L));
         assertThat(messages, containsInAnyOrder(
                 "Changed trait contents of `smithy.example#aTrait` at path `/foo/bam` from `b` to `B`",
-                "Removed trait contents from `smithy.example#aTrait` at path `/foo`. "
-                        + "Removed value: \n"
-                        + "```\n"
-                        + "{\n    \"baz\": \"1\",\n    \"bam\": \"2\",\n    \"boo\": \"3\"\n}\n"
-                        + "```",
+                String.format("Removed trait contents from `smithy.example#aTrait` at path `/foo`. "
+                        + "Removed value: %n"
+                        + "```%n"
+                        + "{%n"
+                        + "    \"baz\": \"1\",%n"
+                        + "    \"bam\": \"2\",%n"
+                        + "    \"boo\": \"3\"%n"
+                        + "}%n"
+                        + "```%n"),
                 "Added trait contents to `smithy.example#aTrait` at path `/foo/qux` with value `4`",
                 "Removed trait contents from `smithy.example#aTrait` at path `/foo/boo`. Removed value: `3`"
         ));
