@@ -1,4 +1,4 @@
-sphinx>=4.2.0,<4.3.0
+sphinx>=5.0.0
 pygments==2.15.0
 furo==2022.6.21
 
@@ -7,6 +7,6 @@ sphinx-inline-tabs==2022.1.2b11
 Sphinx-Substitution-Extensions==2022.2.16
 
 # Use by old docs.
-sphinx-tabs==3.2.0
+sphinx-tabs>=3.4.4
 
 sphinx_copybutton==0.5.0
