@@ -32,14 +32,14 @@ public class FormatCommandTest {
         IntegUtils.run("bad-formatting", ListUtils.of("format", "model/other.smithy"), result -> {
             assertThat(result.getExitCode(), equalTo(0));
 
-            String model = result.getFile("model/other.smithy").replace("\r\n", "\n");
-            assertThat(model, equalTo("$version: \"2.0\"\n"
-                                      + "\n"
-                                      + "namespace smithy.example\n"
-                                      + "\n"
-                                      + "string MyString\n"
-                                      + "\n"
-                                      + "string MyString2\n"));
+            String model = result.getFile("model/other.smithy");
+            assertThat(model, equalTo(String.format("$version: \"2.0\"%n"
+                                      + "%n"
+                                      + "namespace smithy.example%n"
+                                      + "%n"
+                                      + "string MyString%n"
+                                      + "%n"
+                                      + "string MyString2%n")));
         });
     }
 
@@ -48,24 +48,24 @@ public class FormatCommandTest {
         IntegUtils.run("bad-formatting", ListUtils.of("format", "model"), result -> {
             assertThat(result.getExitCode(), equalTo(0));
 
-            String main = result.getFile("model/main.smithy").replace("\r\n", "\n");
-            assertThat(main, equalTo("$version: \"2.0\"\n"
-                                     + "\n"
-                                     + "metadata this_is_a_long_string = {\n"
-                                     + "    this_is_a_long_string1: \"a\"\n"
-                                     + "    this_is_a_long_string2: \"b\"\n"
-                                     + "    this_is_a_long_string3: \"c\"\n"
-                                     + "    this_is_a_long_string4: \"d\"\n"
-                                     + "}\n"));
+            String main = result.getFile("model/main.smithy");
+            assertThat(main, equalTo(String.format("$version: \"2.0\"%n"
+                                     + "%n"
+                                     + "metadata this_is_a_long_string = {%n"
+                                     + "    this_is_a_long_string1: \"a\"%n"
+                                     + "    this_is_a_long_string2: \"b\"%n"
+                                     + "    this_is_a_long_string3: \"c\"%n"
+                                     + "    this_is_a_long_string4: \"d\"%n"
+                                     + "}%n")));
 
-            String other = result.getFile("model/other.smithy").replace("\r\n", "\n");
-            assertThat(other, equalTo("$version: \"2.0\"\n"
-                                      + "\n"
-                                      + "namespace smithy.example\n"
-                                      + "\n"
-                                      + "string MyString\n"
-                                      + "\n"
-                                      + "string MyString2\n"));
+            String other = result.getFile("model/other.smithy");
+            assertThat(other, equalTo(String.format("$version: \"2.0\"%n"
+                                      + "%n"
+                                      + "namespace smithy.example%n"
+                                      + "%n"
+                                      + "string MyString%n"
+                                      + "%n"
+                                      + "string MyString2%n")));
         });
     }
 }

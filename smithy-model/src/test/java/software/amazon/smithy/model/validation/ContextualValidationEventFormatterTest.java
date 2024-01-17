@@ -31,17 +31,15 @@ public class ContextualValidationEventFormatterTest {
                 .build();
 
         String format = new ContextualValidationEventFormatter().format(event);
-        // Normalize line endings for Windows.
-        format = format.replace("\r\n", "\n");
 
         assertThat(format, startsWith("ERROR: example.smithy#Foo (foo)"));
-        assertThat(format, containsString("\n     @ "));
-        assertThat(format, endsWith(
-                "\n     |"
-                + "\n   3 | structure Foo {"
-                + "\n     | ^"
-                + "\n     = This is the message"
-                + "\n"));
+        assertThat(format, containsString(String.format("%n     @ ")));
+        assertThat(format, endsWith(String.format(
+                "%n     |"
+                + "%n   3 | structure Foo {"
+                + "%n     | ^"
+                + "%n     = This is the message"
+                + "%n")));
     }
 
     @Test
@@ -54,12 +52,11 @@ public class ContextualValidationEventFormatterTest {
                 .build();
 
         String format = new ContextualValidationEventFormatter().format(event);
-        // Normalize line endings for Windows.
-        format = format.replace("\r\n", "\n");
 
-        assertThat(format, equalTo(
+        assertThat(format, equalTo(String.format(
                 "ERROR: - (foo)"
-                + "\n     = This is the message"
-                + "\n"));
+                + "%n     = This is the message"
+                + "%n")
+        ));
     }
 }

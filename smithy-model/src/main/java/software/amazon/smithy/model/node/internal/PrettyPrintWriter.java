@@ -95,7 +95,7 @@ final class PrettyPrintWriter extends JsonWriter {
         if (indentString == null) {
             return false;
         }
-        writer.write('\n');
+        writer.write(System.lineSeparator());
         for (int i = 0; i < indent; i++) {
             writer.write(indentString);
         }
