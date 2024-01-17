@@ -27,6 +27,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.neighbor.UnreferencedShapes;
@@ -51,7 +52,10 @@ public final class ModelTransformer {
     private final List<ModelTransformerPlugin> plugins;
 
     private ModelTransformer(List<ModelTransformerPlugin> plugins) {
-        this.plugins = ListUtils.copyOf(plugins);
+        List<ModelTransformerPlugin> copy = ListUtils.copyOf(plugins).stream()
+                .sorted(Comparator.comparingInt(ModelTransformerPlugin::order))
+                .collect(Collectors.toList());
+        this.plugins = ListUtils.copyOf(copy);
     }
 
     /**

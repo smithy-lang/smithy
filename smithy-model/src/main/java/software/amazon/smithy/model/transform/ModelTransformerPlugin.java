@@ -38,4 +38,17 @@ public interface ModelTransformerPlugin {
     default Model onRemove(ModelTransformer transformer, Collection<Shape> removed, Model model) {
         return model;
     }
+
+    /**
+     * Defines the sort order of the plugin, a value from -128 to 127.
+     *
+     * <p>Plugins are applied according to this sort order. Lower values
+     * are executed before higher values (for example, -128 comes before 0,
+     * 0 comes before 127). Plugins default to 0.
+     *
+     * @return Returns the sort order, defaulting to 0.
+     */
+    default byte order() {
+        return 0;
+    }
 }
