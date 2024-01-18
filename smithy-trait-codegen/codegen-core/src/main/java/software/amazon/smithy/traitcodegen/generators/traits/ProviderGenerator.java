@@ -8,7 +8,6 @@ package software.amazon.smithy.traitcodegen.generators.traits;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.node.NodeMapper;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
@@ -201,14 +200,14 @@ final class ProviderGenerator implements Runnable {
         }
 
         private void generateAbstractTraitProvider() {
-            writer.addImports(Trait.class, Node.class, NodeMapper.class);
+            writer.addImports(Trait.class, Node.class);
             writer.openBlock("public static final class Provider extends AbstractTrait.Provider {", "}", () -> {
                 generateProviderConstructor();
                 writer.newLine();
 
                 writer.override();
                 writer.openBlock("public Trait createTrait(ShapeId target, Node value) {", "}", () -> {
-                    writer.write("$1T result = new NodeMapper().deserialize(value, $1T.class);", traitSymbol);
+                    writer.write("$1T result = $1T.fromNode(value);", traitSymbol);
                     writer.write("result.setNodeCache(value);");
                     writer.write("return result;");
                 });

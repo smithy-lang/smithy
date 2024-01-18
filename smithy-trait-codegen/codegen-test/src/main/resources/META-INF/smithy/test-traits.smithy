@@ -197,8 +197,8 @@ string DeprecatedStringTrait
 // ==================
 //  Deprecation tests
 // ==================
-// The following traits check to make sure that Strings are converted to ShapeIds
-// when an @IdRef trait is added to a string
+/// The following traits check to make sure that Strings are converted to ShapeIds
+/// when an @IdRef trait is added to a string
 @trait
 @idRef
 string IdRefString
