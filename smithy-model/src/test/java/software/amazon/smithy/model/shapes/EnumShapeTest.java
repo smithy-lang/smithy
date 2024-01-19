@@ -499,4 +499,23 @@ public class EnumShapeTest {
         assertFalse(EnumShape.canConvertToEnum(string, false));
         assertFalse(EnumShape.canConvertToEnum(string, true));
     }
+
+    @Test
+    public void syntheticEnumSupportsInternal() {
+        EnumShape shape = EnumShape.builder()
+                .id("com.example#InternalEnum")
+                .addMember("withoutTag", "foo", builder -> {
+                    builder.addTrait(new InternalTrait());
+                })
+                .addMember("withTag", "bar", builder -> {
+                    builder.addTrait(new InternalTrait());
+                    builder.addTrait(TagsTrait.builder().addValue("internal").build());
+                })
+                .build();
+
+        SyntheticEnumTrait trait = shape.expectTrait(SyntheticEnumTrait.class);
+        for (EnumDefinition definition : trait.getValues()) {
+            assertEquals(ListUtils.of("internal"), definition.getTags());
+        }
+    }
 }
