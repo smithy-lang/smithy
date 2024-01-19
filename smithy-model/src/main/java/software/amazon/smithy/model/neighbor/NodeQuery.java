@@ -8,6 +8,7 @@ package software.amazon.smithy.model.neighbor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.utils.ListUtils;
 
@@ -23,16 +24,16 @@ final class NodeQuery {
     }
 
     NodeQuery self() {
-        queries.add(ListUtils::of);
+        queries.add(Stream::of);
         return this;
     }
 
     NodeQuery member(String name) {
         queries.add(node -> {
             if (node == null || !node.isObjectNode()) {
-                return ListUtils.of();
+                return Stream.empty();
             }
-            return node.expectObjectNode().getMember(name).map(ListUtils::of).orElse(ListUtils.of());
+            return node.expectObjectNode().getMember(name).map(Stream::of).orElse(Stream.empty());
         });
         return this;
     }
@@ -40,9 +41,9 @@ final class NodeQuery {
     NodeQuery anyMember() {
         queries.add(node -> {
             if (node == null || !node.isObjectNode()) {
-                return ListUtils.of();
+                return Stream.empty();
             }
-            return ListUtils.copyOf(node.expectObjectNode().getMembers().values());
+            return node.expectObjectNode().getMembers().values().stream();
         });
         return this;
     }
@@ -50,9 +51,9 @@ final class NodeQuery {
     NodeQuery anyElement() {
         queries.add(node -> {
             if (node == null || !node.isArrayNode()) {
-                return ListUtils.of();
+                return Stream.empty();
             }
-            return node.expectArrayNode().getElements();
+            return node.expectArrayNode().getElements().stream();
         });
         return this;
     }
@@ -62,15 +63,15 @@ final class NodeQuery {
             return ListUtils.of();
         }
 
-        List<Node> previousResult = ListUtils.of(node);
+        Stream<Node> previousResult = Stream.of(node);
         for (Query query : queries) {
-            previousResult = previousResult.stream().flatMap(n -> query.run(n).stream()).collect(Collectors.toList());
+            previousResult = previousResult.flatMap(query::run);
         }
-        return previousResult;
+        return previousResult.collect(Collectors.toList());
     }
 
     @FunctionalInterface
     interface Query {
-        List<Node> run(Node node);
+        Stream<Node> run(Node node);
     }
 }

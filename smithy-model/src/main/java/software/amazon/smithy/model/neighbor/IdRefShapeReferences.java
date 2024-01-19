@@ -21,13 +21,14 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 
 /**
- * Finds shapes referenced by an {@link IdRefTrait} from within a trait
- * value.
+ * Finds all shapes referenced by {@link IdRefTrait} from within trait
+ * values.
  *
  * <p>This works by finding all paths from {@link TraitDefinition} shapes
  * to shapes with {@link IdRefTrait}, then using those paths to search
  * the node values of each application of the trait to extract the {@link ShapeId}
- * value.
+ * value. Because we don't have a fixed set of traits known to potentially have
+ * idRef members, this has to be done dynamically.
  */
 final class IdRefShapeReferences {
     private static final Selector WITH_ID_REF = Selector.parse("[trait|idRef]");
@@ -50,7 +51,7 @@ final class IdRefShapeReferences {
             List<PathFinder.Path> paths = finder.search(traitDef, WITH_ID_REF);
             if (!paths.isEmpty()) {
                 for (PathFinder.Path path : paths) {
-                    NodeQuery query = toNodeQuery(path);
+                    NodeQuery query = buildNodeQuery(path);
                     addReferences(traitDef, query, connected);
                 }
             }
@@ -71,7 +72,7 @@ final class IdRefShapeReferences {
                 });
     }
 
-    private static NodeQuery toNodeQuery(PathFinder.Path path) {
+    private static NodeQuery buildNodeQuery(PathFinder.Path path) {
         NodeQuery query = new NodeQuery();
         // The path goes from trait definition -> shape with idRef
         for (Relationship relationship : path) {
