@@ -58,6 +58,16 @@ final class NodeQuery {
         return this;
     }
 
+    NodeQuery anyMemberName() {
+        queries.add(node -> {
+            if (node == null || !node.isObjectNode()) {
+                return Stream.empty();
+            }
+            return node.expectObjectNode().getMembers().keySet().stream();
+        });
+        return this;
+    }
+
     List<Node> execute(Node node) {
         if (queries.isEmpty()) {
             return ListUtils.of();
@@ -72,6 +82,6 @@ final class NodeQuery {
 
     @FunctionalInterface
     interface Query {
-        Stream<Node> run(Node node);
+        Stream<? extends Node> run(Node node);
     }
 }

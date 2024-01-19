@@ -80,11 +80,8 @@ final class IdRefShapeReferences {
                 break;
             }
             switch (relationship.getRelationshipType()) {
-                case MEMBER_TARGET:
                 case MAP_KEY:
-                case TRAIT:
-                case MIXIN:
-                default:
+                    query.anyMemberName();
                     break;
                 case MAP_VALUE:
                     query.anyMember();
@@ -97,6 +94,9 @@ final class IdRefShapeReferences {
                 case STRUCTURE_MEMBER:
                     MemberShape member = (MemberShape) relationship.getNeighborShape().get();
                     query.member(member.getMemberName());
+                    break;
+                default:
+                    // Other relationship types don't produce meaningful edges to search the node.
                     break;
             }
         }

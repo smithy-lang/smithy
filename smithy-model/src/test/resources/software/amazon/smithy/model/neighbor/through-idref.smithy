@@ -19,13 +19,14 @@ operation GetFoo {
         eight: Eight
         nine: Nine
         ten: Ten
+        eleven: Eleven
     }
 }
 
 // --
 @trait
 structure withIdRefOnMember {
-    @idRef(failWhenMissing: true, selector: "*")
+    @idRef(failWhenMissing: true)
     ref: String
 }
 
@@ -40,7 +41,7 @@ structure withIdRefOnMemberTarget {
     ref: OnTarget
 }
 
-@idRef(failWhenMissing: true, selector: "*")
+@idRef(failWhenMissing: true)
 string OnTarget
 
 @withIdRefOnMemberTarget(ref: Ref2)
@@ -55,7 +56,7 @@ structure withIdRefOnNestedStructureMember {
 }
 
 structure Nested {
-    @idRef(failWhenMissing: true, selector: "*")
+    @idRef(failWhenMissing: true)
     member: String
 }
 
@@ -75,7 +76,7 @@ list withIdRefOnListMemberTarget {
     member: OnListMemberTarget
 }
 
-@idRef(failWhenMissing: true, selector: "*")
+@idRef(failWhenMissing: true)
 string OnListMemberTarget
 
 @withIdRefOnListMemberTarget([
@@ -87,7 +88,7 @@ structure Ref4 {}
 
 // --
 @trait
-@idRef(failWhenMissing: true, selector: "*")
+@idRef(failWhenMissing: true)
 string withIdRefOnSelf
 
 @withIdRefOnSelf(Ref5)
@@ -126,7 +127,7 @@ structure withIdRefThroughMixin with [ThroughMixin] {}
 
 @mixin
 structure ThroughMixin {
-    @idRef(failWhenMissing: true, selector: "*")
+    @idRef(failWhenMissing: true)
     ref: String
 }
 
@@ -142,7 +143,7 @@ map withIdRefOnMapValue {
     value: OnMap
 }
 
-@idRef(failWhenMissing: true, selector: "*")
+@idRef(failWhenMissing: true)
 string OnMap
 
 @withIdRefOnMapValue({
@@ -169,18 +170,15 @@ structure Ten {}
 structure Ref10 {}
 
 // --
-// NOTE: This actually doesn't work because map key of 'Ref11' it says isn't a valid
-// shape id.
+@trait
+map withIdRefOnMapKey {
+    key: OnMap
+    value: String
+}
 
-//@trait
-//map withIdRefOnMapKey {
-//    key: OnMap
-//    value: String
-//}
+@withIdRefOnMapKey({
+    "com.foo#Ref11": "foo"
+})
+structure Eleven {}
 
-//@withIdRefOnMapKey({
-//    Ref11: "foo"
-//})
-//structure Eleven {}
-
-//structure Ref11 {}
+structure Ref11 {}
