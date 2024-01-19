@@ -290,9 +290,12 @@ public final class EnumShape extends StringShape {
         member.getTrait(DocumentationTrait.class).ifPresent(docTrait -> builder.documentation(docTrait.getValue()));
         member.getTrait(DeprecatedTrait.class).ifPresent(deprecatedTrait -> builder.deprecated(true));
 
-        Optional<List<String>> tags = member.getTrait(TagsTrait.class).map(StringListTrait::getValues);
-        tags.ifPresent(builder::tags);
-        if (member.hasTrait(InternalTrait.class) && !tags.map(t -> t.contains("internal")).orElse(false)) {
+        List<String> tags = member.getTrait(TagsTrait.class)
+                .map(StringListTrait::getValues)
+                .orElse(Collections.emptyList());
+
+        builder.tags(tags);
+        if (member.hasTrait(InternalTrait.class) && !tags.contains("internal")) {
             builder.addTag("internal");
         }
         return builder.build();
