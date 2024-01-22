@@ -26,8 +26,10 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ResourceShape;
 import software.amazon.smithy.model.shapes.SetShape;
+import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.IdRefTrait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
@@ -214,7 +216,37 @@ public enum RelationshipType {
      * Relationship that exists between a structure or union and a mixin applied
      * to the shape.
      */
-    MIXIN("mixin", RelationshipDirection.DIRECTED);
+    MIXIN("mixin", RelationshipDirection.DIRECTED),
+
+    /**
+     * Relationships that exist between a shape and another shape referenced by an
+     * {@link IdRefTrait}.
+     *
+     * <p>This relationship is formed by applying a trait with a value containing a
+     * reference to another {@link ShapeId}. For
+     * example:
+     * <pre>
+     * {@code
+     * @trait
+     * structure myRef {
+     *     @idRef
+     *     shape: String
+     * }
+     *
+     * // @myRef trait applied, and the value references the shape `Referenced`
+     * @myRef(shape: Referenced)
+     * structure WithMyRef {}
+     *
+     * string Referenced
+     * }
+     * </pre>
+     *
+     * <p>This kind of relationship is not returned by default from a
+     * {@link NeighborProvider}. You must explicitly wrap a {@link NeighborProvider}
+     * with {@link NeighborProvider#withIdRefRelationships(Model, NeighborProvider)}
+     * in order to yield idRef relationships.
+     */
+    ID_REF(null, RelationshipDirection.DIRECTED);
 
     private String selectorLabel;
     private RelationshipDirection direction;

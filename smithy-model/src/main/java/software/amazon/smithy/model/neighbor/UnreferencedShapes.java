@@ -22,13 +22,14 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NeighborProviderIndex;
 import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.utils.FunctionalUtils;
 
 /**
  * Finds shapes that are not connected to a service shape, are not trait
- * definitions, and are not referenced by trait definitions.
+ * definitions, are not referenced by trait definitions, and are not
+ * referenced in trait values through
+ * {@link software.amazon.smithy.model.traits.IdRefTrait}.
  *
  * <p>Prelude shapes are never considered unreferenced.
  */
@@ -54,7 +55,7 @@ public final class UnreferencedShapes {
      * @return Returns the unreferenced shapes.
      */
     public Set<Shape> compute(Model model) {
-        Walker shapeWalker = new Walker(NeighborProviderIndex.of(model).getProvider());
+        Walker shapeWalker = new Walker(NeighborProviderIndex.of(model).getProviderWithIdRefRelationships());
 
         // Find all shapes connected to any service shape.
         Set<Shape> connected = new HashSet<>();
@@ -65,12 +66,6 @@ public final class UnreferencedShapes {
         // Don't remove shapes that are traits or connected to traits.
         for (Shape trait : model.getShapesWithTrait(TraitDefinition.class)) {
             connected.addAll(shapeWalker.walkShapes(trait));
-        }
-
-        for (ShapeId referencedThroughIdRef : new IdRefShapeReferences(model).compute(connected)) {
-            // Referenced shapes may not exist in the model, but we don't want to throw.
-            model.getShape(referencedThroughIdRef)
-                    .ifPresent(shape -> connected.addAll(shapeWalker.walkShapes(shape)));
         }
 
         // Any shape that wasn't identified as connected to a service is considered unreferenced.

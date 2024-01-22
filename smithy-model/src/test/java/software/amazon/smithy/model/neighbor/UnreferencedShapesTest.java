@@ -84,7 +84,7 @@ public class UnreferencedShapesTest {
     @Test
     public void checksShapeReferencesThroughIdRef() {
         Model m = Model.assembler()
-                .addImport(getClass().getResource("through-idref.smithy"))
+                .addImport(getClass().getResource("idref-neighbors.smithy"))
                 .assemble()
                 .unwrap();
 
@@ -93,16 +93,17 @@ public class UnreferencedShapesTest {
     }
 
     @Test
-    public void doesNotCheckShapeReferencesThroughIdRefOnUnconnectedTraits() {
+    public void doesNotCheckShapeReferencesThroughIdRefOnUnconnectedShapes() {
         Model m = Model.assembler()
-                .addImport(getClass().getResource("through-idref-unconnected.smithy"))
+                .addImport(getClass().getResource("idref-neighbors-unconnected.smithy"))
                 .assemble()
                 .unwrap();
 
         Set<ShapeId> ids = new UnreferencedShapes().compute(m).stream().map(Shape::getId).collect(Collectors.toSet());
         assertThat(ids, containsInAnyOrder(
                 ShapeId.from("com.foo#WithTrait"),
-                ShapeId.from("com.foo#Referenced")
+                ShapeId.from("com.foo#Referenced"),
+                ShapeId.from("com.foo#Unconnected")
         ));
     }
 }

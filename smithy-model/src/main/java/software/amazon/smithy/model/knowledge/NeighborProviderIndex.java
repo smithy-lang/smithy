@@ -32,6 +32,7 @@ public final class NeighborProviderIndex implements KnowledgeIndex {
     private volatile NeighborProvider reversed;
     private volatile NeighborProvider providerWithTraits;
     private volatile NeighborProvider reversedWithTraits;
+    private volatile NeighborProvider providerWithIdRefs;
 
     public NeighborProviderIndex(Model model) {
         provider = NeighborProvider.precomputed(model);
@@ -69,6 +70,28 @@ public final class NeighborProviderIndex implements KnowledgeIndex {
                 if (result == null) {
                     providerWithTraits = result = NeighborProvider.cached(
                             NeighborProvider.withTraitRelationships(model, provider));
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Gets the neighbor provider that includes idRef relationships.
+     *
+     * @return Returns the provider.
+     */
+    public NeighborProvider getProviderWithIdRefRelationships() {
+        NeighborProvider result = providerWithIdRefs;
+
+        if (result == null) {
+            Model model = getOrThrowModel();
+            synchronized (this) {
+                result = providerWithIdRefs;
+                if (result == null) {
+                    providerWithIdRefs = result = NeighborProvider.cached(
+                            NeighborProvider.withIdRefRelationships(model, provider));
                 }
             }
         }

@@ -5,8 +5,10 @@
 
 package software.amazon.smithy.model.neighbor;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
@@ -21,8 +23,7 @@ import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.model.traits.TraitDefinition;
 
 /**
- * Finds all shapes referenced by {@link IdRefTrait} from within trait
- * values.
+ * Finds all {@link RelationshipType#ID_REF} relationships in a model.
  *
  * <p>This works by finding all paths from {@link TraitDefinition} shapes
  * to shapes with {@link IdRefTrait}, then using those paths to search
@@ -30,46 +31,47 @@ import software.amazon.smithy.model.traits.TraitDefinition;
  * value. Because we don't have a fixed set of traits known to potentially have
  * idRef members, this has to be done dynamically.
  */
-final class IdRefShapeReferences {
+final class IdRefShapeRelationships {
     private static final Selector WITH_ID_REF = Selector.parse("[trait|idRef]");
     private final Model model;
-    private final Set<ShapeId> found = new HashSet<>();
+    private final Map<ShapeId, Set<Relationship>> relationships = new HashMap<>();
 
-    IdRefShapeReferences(Model model) {
+    IdRefShapeRelationships(Model model) {
         this.model = model;
     }
 
-    Set<ShapeId> compute(Set<Shape> connected) {
+    Map<ShapeId, Set<Relationship>> getRelationships() {
         PathFinder finder = PathFinder.create(model);
         for (Shape traitDef : model.getShapesWithTrait(TraitDefinition.class)) {
             if (traitDef.hasTrait(IdRefTrait.class)) {
                 // PathFinder doesn't handle the case where the trait def has the idRef
                 NodeQuery query = new NodeQuery().self();
-                addReferences(traitDef, query, connected);
+                addRelationships(traitDef, query);
                 continue;
             }
             List<PathFinder.Path> paths = finder.search(traitDef, WITH_ID_REF);
             if (!paths.isEmpty()) {
                 for (PathFinder.Path path : paths) {
                     NodeQuery query = buildNodeQuery(path);
-                    addReferences(traitDef, query, connected);
+                    addRelationships(traitDef, query);
                 }
             }
         }
-        return found;
+        return relationships;
     }
 
-    private void addReferences(Shape traitDef, NodeQuery query, Set<Shape> connected) {
-        model.getShapesWithTrait(traitDef.getId()).stream()
-                .filter(connected::contains)
-                .forEach(shape -> {
-                    Trait trait = shape.findTrait(traitDef.getId()).get(); // We already know the shape has the trait.
-                    Node node = trait.toNode();
-                    query.execute(node).forEach(n ->
-                            // Invalid shape ids are handled by the idRef trait validator, so ignore them here.
-                            n.asStringNode().flatMap(StringNode::asShapeId).ifPresent(found::add)
-                    );
-                });
+    private void addRelationships(Shape traitDef, NodeQuery query) {
+        model.getShapesWithTrait(traitDef.getId()).forEach(shape -> {
+            Trait trait = shape.findTrait(traitDef.getId()).get(); // We already know the shape has the trait.
+            Node node = trait.toNode();
+            // Invalid shape ids are handled by the idRef trait validator, so ignore them here.
+            query.execute(node).forEach(n -> n.asStringNode()
+                    .flatMap(StringNode::asShapeId)
+                    .flatMap(model::getShape)
+                    .map(referenced -> Relationship.create(shape, RelationshipType.ID_REF, referenced))
+                    .ifPresent(rel -> relationships
+                            .computeIfAbsent(rel.getShape().getId(), id -> new HashSet<>()).add(rel)));
+        });
     }
 
     private static NodeQuery buildNodeQuery(PathFinder.Path path) {

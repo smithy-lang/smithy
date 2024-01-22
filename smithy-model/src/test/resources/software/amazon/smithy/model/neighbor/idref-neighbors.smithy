@@ -20,6 +20,9 @@ operation GetFoo {
         nine: Nine
         ten: Ten
         eleven: Eleven
+        twelve: Twelve
+        thirteen: Thirteen
+        fourteen: Fourteen
     }
 }
 
@@ -182,3 +185,36 @@ map withIdRefOnMapKey {
 structure Eleven {}
 
 structure Ref11 {}
+
+// --
+@trait
+@idRef(failWhenMissing: true)
+string ref
+
+@ref(Ref12)
+structure Twelve {}
+
+structure Ref12 {
+    connectedToRef13: ConnectedToRef13
+}
+
+structure ConnectedToRef13 {
+    ref13: Ref13
+}
+
+@ref(Ref13)
+structure Thirteen {}
+
+structure Ref13 {
+    connectedToRef14: ConnectedToRef14
+}
+
+structure ConnectedToRef14 {
+    ref14: Ref14
+}
+
+@ref(Ref14)
+structure Fourteen {}
+
+string Ref14
+
