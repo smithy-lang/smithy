@@ -89,6 +89,7 @@ public class UnreferencedShapesTest {
                 .unwrap();
 
         Set<Shape> shapes = new UnreferencedShapes().compute(m);
+
         assertThat(shapes, empty());
     }
 
@@ -100,6 +101,7 @@ public class UnreferencedShapesTest {
                 .unwrap();
 
         Set<ShapeId> ids = new UnreferencedShapes().compute(m).stream().map(Shape::getId).collect(Collectors.toSet());
+
         assertThat(ids, containsInAnyOrder(
                 ShapeId.from("com.foo#WithTrait"),
                 ShapeId.from("com.foo#Referenced"),

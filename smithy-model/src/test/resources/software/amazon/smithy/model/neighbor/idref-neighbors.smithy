@@ -23,6 +23,7 @@ operation GetFoo {
         twelve: Twelve
         thirteen: Thirteen
         fourteen: Fourteen
+        fifteen: Fifteen
     }
 }
 
@@ -218,3 +219,18 @@ structure Fourteen {}
 
 string Ref14
 
+// --
+@trait
+structure withIdRefOnEnum {
+    refEnum: RefEnum
+}
+
+@idRef(failWhenMissing: true)
+enum RefEnum {
+    REF15 = "com.foo#Ref15"
+}
+
+@withIdRefOnEnum(refEnum: "com.foo#Ref15")
+structure Fifteen {}
+
+structure Ref15 {}

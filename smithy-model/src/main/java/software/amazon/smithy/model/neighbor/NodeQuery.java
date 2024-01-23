@@ -18,13 +18,36 @@ import software.amazon.smithy.utils.ListUtils;
  * and the results are aggregated.
  */
 final class NodeQuery {
+    private static final Query SELF = Stream::of;
+
+    private static final Query ANY_MEMBER = (node) -> {
+        if (node == null || !node.isObjectNode()) {
+            return Stream.empty();
+        }
+        return node.expectObjectNode().getMembers().values().stream();
+    };
+
+    private static final Query ANY_ELEMENT = (node) -> {
+        if (node == null || !node.isArrayNode()) {
+            return Stream.empty();
+        }
+        return node.expectArrayNode().getElements().stream();
+    };
+
+    private static final Query ANY_MEMBER_NAME = (node) -> {
+        if (node == null || !node.isObjectNode()) {
+            return Stream.empty();
+        }
+        return node.expectObjectNode().getMembers().keySet().stream();
+    };
+
     private final List<Query> queries = new ArrayList<>();
 
     NodeQuery() {
     }
 
     NodeQuery self() {
-        queries.add(Stream::of);
+        queries.add(SELF);
         return this;
     }
 
@@ -39,32 +62,17 @@ final class NodeQuery {
     }
 
     NodeQuery anyMember() {
-        queries.add(node -> {
-            if (node == null || !node.isObjectNode()) {
-                return Stream.empty();
-            }
-            return node.expectObjectNode().getMembers().values().stream();
-        });
+        queries.add(ANY_MEMBER);
         return this;
     }
 
     NodeQuery anyElement() {
-        queries.add(node -> {
-            if (node == null || !node.isArrayNode()) {
-                return Stream.empty();
-            }
-            return node.expectArrayNode().getElements().stream();
-        });
+        queries.add(ANY_ELEMENT);
         return this;
     }
 
     NodeQuery anyMemberName() {
-        queries.add(node -> {
-            if (node == null || !node.isObjectNode()) {
-                return Stream.empty();
-            }
-            return node.expectObjectNode().getMembers().keySet().stream();
-        });
+        queries.add(ANY_MEMBER_NAME);
         return this;
     }
 

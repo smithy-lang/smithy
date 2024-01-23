@@ -97,18 +97,14 @@ public class NeighborProviderTest {
         List<Relationship> relationships = provider.getNeighbors(shape).stream()
                 .filter(relationship -> relationship.getRelationshipType().equals(RelationshipType.ID_REF))
                 .collect(Collectors.toList());
-
-        assertThat(relationships, containsInAnyOrder(
-                equalTo(Relationship.create(shape, RelationshipType.ID_REF, ref))));
-
         Shape shape1 = model.expectShape(ShapeId.from("com.foo#refStruct$other"));
         Shape ref1 = model.expectShape(ShapeId.from("com.foo#ReferencedInTraitDef"));
         List<Relationship> relationships1 = provider.getNeighbors(shape1).stream()
                 .filter(relationship -> relationship.getRelationshipType().equals(RelationshipType.ID_REF))
                 .collect(Collectors.toList());
 
-        assertThat(relationships1, containsInAnyOrder(
-                equalTo(Relationship.create(shape1, RelationshipType.ID_REF, ref1))));
+        assertThat(relationships, containsInAnyOrder(Relationship.create(shape, RelationshipType.ID_REF, ref)));
+        assertThat(relationships1, containsInAnyOrder(Relationship.create(shape1, RelationshipType.ID_REF, ref1)));
     }
 
     @Test
@@ -125,17 +121,13 @@ public class NeighborProviderTest {
         List<Relationship> relationships = provider.getNeighbors(shape).stream()
                 .filter(relationship -> relationship.getRelationshipType().equals(RelationshipType.ID_REF))
                 .collect(Collectors.toList());
-
-        assertThat(relationships, containsInAnyOrder(
-                Relationship.create(shape, RelationshipType.ID_REF, ref)));
-
         Shape shape1 = model.expectShape(ShapeId.from("com.foo#ConnectedThroughReferenced"));
         Shape ref1 = model.expectShape(ShapeId.from("com.foo#AnotherReferenced"));
         List<Relationship> relationships1 = provider.getNeighbors(shape1).stream()
                 .filter(relationship -> relationship.getRelationshipType().equals(RelationshipType.ID_REF))
                 .collect(Collectors.toList());
 
-        assertThat(relationships1, containsInAnyOrder(
-                Relationship.create(shape1, RelationshipType.ID_REF, ref1)));
+        assertThat(relationships, containsInAnyOrder(Relationship.create(shape, RelationshipType.ID_REF, ref)));
+        assertThat(relationships1, containsInAnyOrder(Relationship.create(shape1, RelationshipType.ID_REF, ref1)));
     }
 }
