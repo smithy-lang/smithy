@@ -5,12 +5,12 @@
 
 package software.amazon.smithy.model.neighbor;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Queue;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.utils.ListUtils;
 
 /**
  * Searches {@link Node}s to find matching children. Each search
@@ -18,27 +18,27 @@ import software.amazon.smithy.utils.ListUtils;
  * and the results are aggregated.
  */
 final class NodeQuery {
-    private static final Query SELF = Stream::of;
+    private static final Query SELF = (node, result) -> result.add(node);
 
-    private static final Query ANY_MEMBER = (node) -> {
+    private static final Query ANY_MEMBER = (node, result) -> {
         if (node == null || !node.isObjectNode()) {
-            return Stream.empty();
+            return;
         }
-        return node.expectObjectNode().getMembers().values().stream();
+        result.addAll(node.expectObjectNode().getMembers().values());
     };
 
-    private static final Query ANY_ELEMENT = (node) -> {
+    private static final Query ANY_ELEMENT = (node, result) -> {
         if (node == null || !node.isArrayNode()) {
-            return Stream.empty();
+            return;
         }
-        return node.expectArrayNode().getElements().stream();
+        result.addAll(node.expectArrayNode().getElements());
     };
 
-    private static final Query ANY_MEMBER_NAME = (node) -> {
+    private static final Query ANY_MEMBER_NAME = (node, result) -> {
         if (node == null || !node.isObjectNode()) {
-            return Stream.empty();
+            return;
         }
-        return node.expectObjectNode().getMembers().keySet().stream();
+        result.addAll(node.expectObjectNode().getMembers().keySet());
     };
 
     private final List<Query> queries = new ArrayList<>();
@@ -52,11 +52,11 @@ final class NodeQuery {
     }
 
     NodeQuery member(String name) {
-        queries.add(node -> {
+        queries.add((node, result) -> {
             if (node == null || !node.isObjectNode()) {
-                return Stream.empty();
+                return;
             }
-            return node.expectObjectNode().getMember(name).map(Stream::of).orElse(Stream.empty());
+            node.expectObjectNode().getMember(name).ifPresent(result::add);
         });
         return this;
     }
@@ -76,20 +76,27 @@ final class NodeQuery {
         return this;
     }
 
-    List<Node> execute(Node node) {
+    Collection<Node> execute(Node node) {
+        Queue<Node> previousResult = new ArrayDeque<>();
+
         if (queries.isEmpty()) {
-            return ListUtils.of();
+            return previousResult;
         }
 
-        Stream<Node> previousResult = Stream.of(node);
+        previousResult.add(node);
         for (Query query : queries) {
-            previousResult = previousResult.flatMap(query::run);
+            // Each time a query runs, it adds to the queue, but we only want it to
+            // run on the nodes added by the previous query.
+            for (int i = previousResult.size(); i > 0; i--) {
+                query.run(previousResult.poll(), previousResult);
+            }
         }
-        return previousResult.collect(Collectors.toList());
+
+        return previousResult;
     }
 
     @FunctionalInterface
     interface Query {
-        Stream<? extends Node> run(Node node);
+        void run(Node node, Queue<Node> result);
     }
 }

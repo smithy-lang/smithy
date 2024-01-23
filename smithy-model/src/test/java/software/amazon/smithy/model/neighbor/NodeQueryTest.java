@@ -4,7 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 
-import java.util.List;
+import java.util.Collection;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.StringNode;
@@ -14,7 +14,7 @@ public class NodeQueryTest {
     public void noQueriesGivesNoResults() {
         Node node = Node.from("{}");
 
-        List<Node> result = new NodeQuery().execute(node);
+        Collection<Node> result = new NodeQuery().execute(node);
 
         assertThat(result, hasSize(0));
     }
@@ -23,7 +23,7 @@ public class NodeQueryTest {
     public void self() {
         Node node = Node.from("{}");
 
-        List<Node> result = new NodeQuery().self().execute(node);
+        Collection<Node> result = new NodeQuery().self().execute(node);
 
         assertThat(result, containsInAnyOrder(node));
     }
@@ -32,7 +32,7 @@ public class NodeQueryTest {
     public void selfCanBeAppliedMultipleTimes() {
         Node node = Node.from("{}");
 
-        List<Node> result = new NodeQuery().self().self().self().execute(node);
+        Collection<Node> result = new NodeQuery().self().self().self().execute(node);
 
         assertThat(result, containsInAnyOrder(node));
     }
@@ -42,7 +42,7 @@ public class NodeQueryTest {
         Node member = StringNode.from("bar");
         Node node = Node.objectNode().withMember("foo", member);
 
-        List<Node> result = new NodeQuery().member("foo").execute(node);
+        Collection<Node> result = new NodeQuery().member("foo").execute(node);
 
         assertThat(result, containsInAnyOrder(member));
     }
@@ -53,7 +53,7 @@ public class NodeQueryTest {
         Node member2 = StringNode.from("member-two");
         Node node = Node.objectNode().withMember("one", member1).withMember("two", member2);
 
-        List<Node> result = new NodeQuery().anyMember().execute(node);
+        Collection<Node> result = new NodeQuery().anyMember().execute(node);
 
         assertThat(result, containsInAnyOrder(member1, member2));
     }
@@ -64,7 +64,7 @@ public class NodeQueryTest {
         Node element2 = StringNode.from("element-two");
         Node node = Node.arrayNode(element1, element2);
 
-        List<Node> result = new NodeQuery().anyElement().execute(node);
+        Collection<Node> result = new NodeQuery().anyElement().execute(node);
 
         assertThat(result, containsInAnyOrder(element1, element2));
     }
@@ -77,7 +77,7 @@ public class NodeQueryTest {
         Node member2 = StringNode.from("member-two");
         Node node = Node.objectNode().withMember(key1, member1).withMember(key2, member2);
 
-        List<Node> result = new NodeQuery().anyMemberName().execute(node);
+        Collection<Node> result = new NodeQuery().anyMemberName().execute(node);
 
         assertThat(result, containsInAnyOrder(key1, key2));
     }
@@ -86,7 +86,7 @@ public class NodeQueryTest {
     public void memberGivesNoResultsOnNonObjectNode() {
         Node node = Node.from("[{\"foo\": 0}]");
 
-        List<Node> result = new NodeQuery().member("foo").execute(node);
+        Collection<Node> result = new NodeQuery().member("foo").execute(node);
 
         assertThat(result, hasSize(0));
     }
@@ -95,7 +95,7 @@ public class NodeQueryTest {
     public void memberGivesNoResultsIfMemberNameNotFound() {
         Node node = Node.from("{\"a\": 0, \"b\": 0}");
 
-        List<Node> result = new NodeQuery().member("foo").execute(node);
+        Collection<Node> result = new NodeQuery().member("foo").execute(node);
 
         assertThat(result, hasSize(0));
     }
@@ -104,7 +104,7 @@ public class NodeQueryTest {
     public void anyMemberGivesNoResultsOnNonObjectNode() {
         Node node = Node.from("[{\"foo\": 0}]");
 
-        List<Node> result = new NodeQuery().anyMember().execute(node);
+        Collection<Node> result = new NodeQuery().anyMember().execute(node);
 
         assertThat(result, hasSize(0));
     }
@@ -113,7 +113,7 @@ public class NodeQueryTest {
     public void anyMemberGivesNoResultsOnEmptyObjectNode() {
         Node node = Node.from("{}");
 
-        List<Node> result = new NodeQuery().anyMember().execute(node);
+        Collection<Node> result = new NodeQuery().anyMember().execute(node);
 
         assertThat(result, hasSize(0));
     }
@@ -122,7 +122,7 @@ public class NodeQueryTest {
     public void anyElementGivesNoResultsOnNonArrayNode() {
         Node node = Node.from("{\"foo\": [0]}");
 
-        List<Node> result = new NodeQuery().anyElement().execute(node);
+        Collection<Node> result = new NodeQuery().anyElement().execute(node);
 
         assertThat(result, hasSize(0));
     }
@@ -131,7 +131,7 @@ public class NodeQueryTest {
     public void anyElementGivesNoResultsOnEmptyArrayNode() {
         Node node = Node.from("[]");
 
-        List<Node> result = new NodeQuery().anyElement().execute(node);
+        Collection<Node> result = new NodeQuery().anyElement().execute(node);
 
         assertThat(result, hasSize(0));
     }
@@ -140,7 +140,7 @@ public class NodeQueryTest {
     public void anyMemberNameGivesNoResultsOnNonObjectNode() {
         Node node = Node.from("1");
 
-        List<Node> result = new NodeQuery().anyMemberName().execute(node);
+        Collection<Node> result = new NodeQuery().anyMemberName().execute(node);
 
         assertThat(result, hasSize(0));
     }
@@ -149,7 +149,7 @@ public class NodeQueryTest {
     public void anyMemberNameGivesNoResultsOnEmptyObject() {
         Node node = Node.from("{}");
 
-        List<Node> result = new NodeQuery().anyMemberName().execute(node);
+        Collection<Node> result = new NodeQuery().anyMemberName().execute(node);
 
         assertThat(result, hasSize(0));
     }
@@ -165,7 +165,7 @@ public class NodeQueryTest {
                 .withMember("arr3", Node.arrayNode(element3)));
         Node node = Node.arrayNode(obj, obj);
 
-        List<Node> result = new NodeQuery()
+        Collection<Node> result = new NodeQuery()
                 .anyElement()
                 .member("foo")
                 .anyMember()

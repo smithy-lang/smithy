@@ -33,6 +33,7 @@ import software.amazon.smithy.model.traits.TraitDefinition;
  */
 final class IdRefShapeRelationships {
     private static final Selector WITH_ID_REF = Selector.parse("[trait|idRef]");
+
     private final Model model;
     private final Map<ShapeId, Set<Relationship>> relationships = new HashMap<>();
 
