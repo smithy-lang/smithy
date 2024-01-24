@@ -57,7 +57,6 @@ public final class ConstructorWithBuilderGenerator implements Runnable {
         writer.newLine();
     }
 
-    // TODO: Add support for defaults?
     /**
      * Generates the actual field initialization statements for each member of a shape.
      */

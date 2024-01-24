@@ -5,6 +5,9 @@
 
 package software.amazon.smithy.traitcodegen;
 
+import software.amazon.smithy.utils.SmithyInternalApi;
+
+@SmithyInternalApi
 public final class SymbolProperties {
     public static final String VALUE_GETTER = "value-getter";
 

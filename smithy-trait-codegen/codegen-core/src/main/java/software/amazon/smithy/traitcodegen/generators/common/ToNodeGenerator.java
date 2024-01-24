@@ -38,7 +38,6 @@ import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
-// TODO: Do not serialize empty lists/maps
 /**
  * Generates methods to serialize a Java class to a smithy {@code Node}.
  * <p>
