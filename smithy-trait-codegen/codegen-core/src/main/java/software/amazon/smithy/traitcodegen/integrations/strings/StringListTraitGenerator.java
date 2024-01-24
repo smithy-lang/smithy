@@ -10,6 +10,7 @@ import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.StringListTrait;
 import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
+import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.generators.traits.TraitGenerator;
 import software.amazon.smithy.traitcodegen.sections.BuilderClassSection;
 import software.amazon.smithy.traitcodegen.sections.ToBuilderSection;
@@ -25,9 +26,6 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * can use the base trait class {@link StringListTrait}.
  */
 final class StringListTraitGenerator extends TraitGenerator {
-    private static final String CLASS_TEMPLATE = "public final class $1T extends StringListTrait implements "
-            + "ToSmithyBuilder<$1T> {";
-
     @Override
     protected void writeProvider(TraitCodegenWriter writer, GenerateTraitDirective directive) {
         writer.addImport(StringListTrait.class);
@@ -37,13 +35,13 @@ final class StringListTraitGenerator extends TraitGenerator {
     }
 
     @Override
-    protected void imports(TraitCodegenWriter writer) {
-        writer.addImport(StringListTrait.class);
+    protected Symbol getBaseClass() {
+        return TraitCodegenUtils.fromClass(StringListTrait.class);
     }
 
     @Override
-    protected String getClassDefinition() {
-        return CLASS_TEMPLATE;
+    protected boolean implementsToSmithyBuilder() {
+        return true;
     }
 
     @Override

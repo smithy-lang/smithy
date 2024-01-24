@@ -8,26 +8,18 @@ package software.amazon.smithy.traitcodegen.generators.traits;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
-import software.amazon.smithy.model.traits.AbstractTrait;
 import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
 import software.amazon.smithy.traitcodegen.generators.common.GetterGenerator;
 import software.amazon.smithy.traitcodegen.generators.common.PropertiesGenerator;
 import software.amazon.smithy.traitcodegen.generators.common.ToNodeGenerator;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
+/**
+ * Generates a Value trait.
+ * <p>
+ * A value trait is a trait that has only one property "value".
+ */
 final class ValueTraitGenerator extends TraitGenerator {
-    private static final String CLASS_TEMPLATE = "public final class $T extends AbstractTrait {";
-
-    @Override
-    protected void imports(TraitCodegenWriter writer) {
-        writer.addImport(AbstractTrait.class);
-    }
-
-    @Override
-    protected String getClassDefinition() {
-        return CLASS_TEMPLATE;
-    }
-
     @Override
     protected void writeTraitBody(TraitCodegenWriter writer, GenerateTraitDirective directive) {
         new PropertiesGenerator(writer, directive.shape(), directive.symbolProvider()).run();

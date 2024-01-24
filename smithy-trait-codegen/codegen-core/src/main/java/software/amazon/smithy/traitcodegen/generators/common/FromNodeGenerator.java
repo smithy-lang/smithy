@@ -31,8 +31,13 @@ import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.sections.FromNodeSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
+import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
+/**
+ * Generates the {@code fromNode} method to deserialize a smithy node into an instance of a Java class.
+ */
+@SmithyInternalApi
 public final class FromNodeGenerator implements Runnable {
     private static final String FROM_NODE_METHOD_TEMPLATE = "public static $T fromNode(Node node) {";
 
@@ -60,6 +65,9 @@ public final class FromNodeGenerator implements Runnable {
         writer.newLine();
     }
 
+    /**
+     * Generates the mapping from a node member to a builder field.
+     */
     private static final class MemberGenerator extends ShapeVisitor.Default<Void> {
         private final MemberShape member;
         private final TraitCodegenWriter writer;

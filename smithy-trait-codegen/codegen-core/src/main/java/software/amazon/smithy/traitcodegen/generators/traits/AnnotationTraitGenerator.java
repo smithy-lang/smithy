@@ -11,22 +11,18 @@ import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.traits.AnnotationTrait;
 import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
+import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.generators.common.GetterGenerator;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.MapUtils;
 
-
+/**
+ * Generates an Annotation Trait, a structure trait with no body.
+ */
 final class AnnotationTraitGenerator extends TraitGenerator {
-    private static final String CLASS_TEMPLATE = "public final class $T extends AnnotationTrait {";
-
     @Override
-    protected void imports(TraitCodegenWriter writer) {
-        writer.addImport(AnnotationTrait.class);
-    }
-
-    @Override
-    protected String getClassDefinition() {
-        return CLASS_TEMPLATE;
+    protected Symbol getBaseClass() {
+        return TraitCodegenUtils.fromClass(AnnotationTrait.class);
     }
 
     @Override

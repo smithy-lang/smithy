@@ -23,7 +23,17 @@ import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.traitcodegen.TraitGeneratorProvider;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
+/**
+ * Provides the {@link TraitGenerator} to use given a Smithy shape with a {@code @trait} trait definition trait.
+ * <p>
+ * This class can be decorated with the
+ * {@link software.amazon.smithy.traitcodegen.TraitCodegenIntegration#decorateGeneratorProvider}
+ * method to provide a different trait generator implementation. Trait generator decoration can be used to handle
+ * special cases of trait generation such as including additional functionality or using a new base class for the trait.
+ */
+@SmithyInternalApi
 public final class DefaultTraitGeneratorProvider extends ShapeVisitor.Default<TraitGenerator>
         implements TraitGeneratorProvider {
     @Override
@@ -110,6 +120,8 @@ public final class DefaultTraitGeneratorProvider extends ShapeVisitor.Default<Tr
 
     @Override
     public TraitGenerator structureShape(StructureShape shape) {
+        // Annotation (empty structure) traits inherit from a different base class than other
+        // structure traits, so they need a custom generator.
         if (shape.getAllMembers().isEmpty()) {
             return new AnnotationTraitGenerator();
         }

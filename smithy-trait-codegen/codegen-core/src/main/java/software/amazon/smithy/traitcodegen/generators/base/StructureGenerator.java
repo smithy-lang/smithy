@@ -19,7 +19,12 @@ import software.amazon.smithy.traitcodegen.generators.common.PropertiesGenerator
 import software.amazon.smithy.traitcodegen.generators.common.ToNodeGenerator;
 import software.amazon.smithy.traitcodegen.sections.ClassSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
+/**
+ * Generates a Java class from a Smithy {@code StructureShape}.
+ */
+@SmithyInternalApi
 public class StructureGenerator implements Consumer<GenerateStructureDirective<TraitCodegenContext,
         TraitCodegenSettings>> {
     private static final String BASE_CLASS_TEMPLATE_STRING = "public final class $1T implements ToNode, "
@@ -33,7 +38,7 @@ public class StructureGenerator implements Consumer<GenerateStructureDirective<T
                     .openBlock(BASE_CLASS_TEMPLATE_STRING, "}", directive.symbol(), () -> {
                         new PropertiesGenerator(writer, directive.shape(), directive.symbolProvider()).run();
                         new ConstructorWithBuilderGenerator(writer, directive.symbol(), directive.shape(),
-                                directive.symbolProvider(), directive.model()).run();
+                                directive.symbolProvider()).run();
                         new ToNodeGenerator(writer, directive.shape(), directive.symbolProvider(),
                                 directive.model()).run();
                         new FromNodeGenerator(writer, directive.symbol(), directive.shape(),

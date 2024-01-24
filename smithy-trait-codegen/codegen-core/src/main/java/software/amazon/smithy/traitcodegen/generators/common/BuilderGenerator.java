@@ -24,9 +24,17 @@ import software.amazon.smithy.traitcodegen.sections.ToBuilderSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
+import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
+/**
+ * Generates a static builder for a Java class.
+ * <p>
+ * In addition to the static builder class, this generator will create
+ * {@code builder()} and {@code toBuilder()} methods for the target class.
+ */
+@SmithyInternalApi
 public final class BuilderGenerator implements Runnable {
     private static final String VALUES = "values";
     private static final String ACCESSOR_TEMPLATE = "public Builder $1L($2B $1L) {";

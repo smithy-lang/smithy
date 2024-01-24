@@ -29,7 +29,12 @@ import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.traitcodegen.sections.EnumVariantSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.SetUtils;
+import software.amazon.smithy.utils.SmithyInternalApi;
 
+/**
+ * Generates properties for a Java class from Smithy shape members.
+ */
+@SmithyInternalApi
 public final class PropertiesGenerator implements Runnable {
     private final TraitCodegenWriter writer;
     private final Shape shape;

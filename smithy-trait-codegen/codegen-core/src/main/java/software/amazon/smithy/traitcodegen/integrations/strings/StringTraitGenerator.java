@@ -10,6 +10,7 @@ import software.amazon.smithy.model.FromSourceLocation;
 import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.traits.StringTrait;
 import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
+import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.generators.traits.TraitGenerator;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
@@ -21,18 +22,6 @@ import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
  * base class {@link StringTrait}.
  */
 public class StringTraitGenerator extends TraitGenerator {
-    private static final String CLASS_TEMPLATE = "public final class $T extends StringTrait {";
-
-    @Override
-    protected void imports(TraitCodegenWriter writer) {
-        writer.addImport(StringTrait.class);
-    }
-
-    @Override
-    protected String getClassDefinition() {
-        return CLASS_TEMPLATE;
-    }
-
     @Override
     protected void writeTraitBody(TraitCodegenWriter writer, GenerateTraitDirective directive) {
         writeConstructor(writer, directive.symbol());
@@ -45,6 +34,11 @@ public class StringTraitGenerator extends TraitGenerator {
         writer.openBlock("public static final class Provider extends StringTrait.Provider<$T> {", "}",
                 directive.symbol(), () -> writer.openBlock("public Provider() {", "}",
                         () -> writer.write("super(ID, $T::new);", directive.symbol())));
+    }
+
+    @Override
+    protected Symbol getBaseClass() {
+        return TraitCodegenUtils.fromClass(StringTrait.class);
     }
 
     private void writeConstructorWithSourceLocation(TraitCodegenWriter writer, Symbol symbol) {

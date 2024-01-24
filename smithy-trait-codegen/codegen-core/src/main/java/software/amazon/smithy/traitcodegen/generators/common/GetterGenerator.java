@@ -27,8 +27,15 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.traitcodegen.sections.GetterSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
+import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
+/**
+ * Generates getter methods for each shape member.
+ * <p>
+ * Optional member getters will return the member type wrapped in an {@code Optional<T>}.
+ */
+@SmithyInternalApi
 public final class GetterGenerator implements Runnable {
     private static final EnumSet<ShapeType> NO_OPTIONAL_WRAPPING_TYPES = EnumSet.of(ShapeType.MAP, ShapeType.LIST);
     private final TraitCodegenWriter writer;
@@ -129,6 +136,8 @@ public final class GetterGenerator implements Runnable {
         @Override
         public Void structureShape(StructureShape shape) {
             for (MemberShape member : shape.members()) {
+                // If the member is required or the type does not require an optional wrapper (such as a list or map)
+                // then do not wrap return in an Optional
                 if (member.isRequired()
                         || NO_OPTIONAL_WRAPPING_TYPES.contains(model.expectShape(member.getTarget()).getType())) {
                     generateNonOptionalGetter(member);

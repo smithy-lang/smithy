@@ -13,21 +13,18 @@ import software.amazon.smithy.model.SourceLocation;
 import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.traits.StringTrait;
 import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
+import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.generators.common.PropertiesGenerator;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.StringUtils;
 
+/**
+ * Generates a Java class representation of a Smithy {@code EnumShape} trait.
+ */
 final class EnumTraitGenerator extends TraitGenerator {
-    private static final String CLASS_TEMPLATE = "public final class $T extends StringTrait {";
-
     @Override
-    protected void imports(TraitCodegenWriter writer) {
-        writer.addImport(StringTrait.class);
-    }
-
-    @Override
-    protected String getClassDefinition() {
-        return CLASS_TEMPLATE;
+    protected Symbol getBaseClass() {
+        return TraitCodegenUtils.fromClass(StringTrait.class);
     }
 
     @Override

@@ -35,8 +35,19 @@ import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
+import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
+// TODO: Do not serialize empty lists/maps
+/**
+ * Generates methods to serialize a Java class to a smithy {@code Node}.
+ * <p>
+ * If the shape this generator is targeting is a trait then the serialization method is
+ * called {@code createNode()}, otherwise the method generated is called {@code toNode()}.
+ * This is because Trait classes inherit from {@link software.amazon.smithy.model.traits.AbstractTrait}
+ * which requires that they override {@code createNode()} for serialization.
+ */
+@SmithyInternalApi
 public final class ToNodeGenerator implements Runnable {
     private static final String CREATE_NODE_METHOD = "protected Node createNode() {";
     private static final String TO_NODE_METHOD = "public Node toNode() {";
