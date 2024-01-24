@@ -668,6 +668,7 @@ final class IdlModelLoader {
         tokenizer.expect(IdlToken.LBRACE);
         tokenizer.next();
         tokenizer.skipWs();
+        Set<String> parsedMemberNames = new HashSet<>();
 
         while (tokenizer.getCurrentToken() != IdlToken.EOF && tokenizer.getCurrentToken() != IdlToken.RBRACE) {
             List<IdlTraitParser.Result> memberTraits = IdlTraitParser
@@ -675,6 +676,10 @@ final class IdlModelLoader {
             SourceLocation memberLocation = tokenizer.getCurrentTokenLocation();
             tokenizer.expect(IdlToken.IDENTIFIER);
             String memberName = internString(tokenizer.getCurrentTokenLexeme());
+
+            if (!parsedMemberNames.add(memberName)) {
+                throw syntax(id, "Found conflicting member name, `" + memberName + "`");
+            }
 
             MemberShape.Builder memberBuilder = MemberShape.builder()
                     .id(id.withMember(memberName))
