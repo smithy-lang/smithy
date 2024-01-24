@@ -42,6 +42,7 @@ import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 import software.amazon.smithy.model.traits.synthetic.SyntheticEnumTrait;
 import software.amazon.smithy.model.validation.Severity;
 import software.amazon.smithy.model.validation.ValidationEvent;
+import software.amazon.smithy.model.validation.ValidationUtils;
 import software.amazon.smithy.utils.ListUtils;
 import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.StringUtils;
@@ -227,7 +228,7 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                 }
 
                 String message;
-                String pretty = Node.prettyPrintJson(right.toNode());
+                String pretty = ValidationUtils.tickedPrettyPrintedNode(right);
                 if (path.isEmpty()) {
                     message = String.format("Added trait `%s` with value %s", trait, pretty);
                 } else {
@@ -260,7 +261,7 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                     return Collections.emptyList();
                 }
 
-                String pretty = Node.prettyPrintJson(left.toNode());
+                String pretty = ValidationUtils.tickedPrettyPrintedNode(left);
                 String message;
                 if (path.isEmpty()) {
                     message = String.format("Removed trait `%s`. Previous trait value: %s", trait, pretty);
@@ -294,8 +295,8 @@ public final class ModifiedTrait extends AbstractDiffEvaluator {
                     return Collections.emptyList();
                 }
 
-                String leftPretty = Node.prettyPrintJson(left.toNode());
-                String rightPretty = Node.prettyPrintJson(right.toNode());
+                String leftPretty = ValidationUtils.tickedPrettyPrintedNode(left);
+                String rightPretty = ValidationUtils.tickedPrettyPrintedNode(right);
                 String message;
                 if (path.isEmpty()) {
                     message = String.format("Changed trait `%s` from %s to %s", trait, leftPretty, rightPretty);

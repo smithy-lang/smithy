@@ -31,6 +31,7 @@ import java.util.StringJoiner;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ToShapeId;
 import software.amazon.smithy.model.validation.validators.DefaultTraitValidator;
@@ -162,6 +163,24 @@ public final class ValidationUtils {
 
     public static String tickedList(Stream<?> values) {
         return values.map(Object::toString).sorted().collect(Collectors.joining("`, `", "`", "`"));
+    }
+
+    /**
+     * Writes the contents of a Node to a pretty-printed JSON string surrounded in backticks.
+     *
+     * @param node Node to write.
+     * @return Returns a string suitable for Markdown rendering.
+     */
+    public static String tickedPrettyPrintedNode(Node node) {
+        String prettyPrinted = Node.prettyPrintJson(node);
+        if (prettyPrinted.contains(System.lineSeparator()) || prettyPrinted.contains("\n")) {
+            return String.format("%n```%n%s%n```%n", prettyPrinted);
+        } else if (prettyPrinted.startsWith("\"") && prettyPrinted.endsWith("\"")) {
+            // for pure strings, replace the quotes with backticks
+            return "`" + prettyPrinted.substring(1, prettyPrinted.length() - 1) + "`";
+        } else {
+            return "`" + prettyPrinted + "`";
+        }
     }
 
     @Deprecated
