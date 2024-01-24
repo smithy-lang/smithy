@@ -16,11 +16,13 @@
 package software.amazon.smithy.build.transforms;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.anEmptyMap;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.not;
 
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -31,7 +33,11 @@ import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.node.ExpectationNotMetException;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.validation.ValidatedResult;
+import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.utils.FunctionalUtils;
 
 public class FlattenNamespacesTest {
@@ -141,6 +147,52 @@ public class FlattenNamespacesTest {
                 "ns.qux#FooWidget"));
         assertThat(ids, not(containsInAnyOrder("ns.foo#MyService", "ns.foo#GetSomething", "ns.foo#GetSomethingOutput",
                 "ns.bar#Widget", "foo.example#Widget")));
+    }
+
+    @Test
+    public void removesServiceRenames() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("flatten-namespaces-with-renames.json"))
+                .assemble()
+                .unwrap();
+        TransformContext context = TransformContext.builder()
+                .model(model)
+                .settings(Node.objectNode()
+                        .withMember("namespace", "ns.qux")
+                        .withMember("service", "ns.foo#MyService"))
+                .build();
+
+        Model result = new FlattenNamespaces().transform(context);
+        ShapeId transformedServiceId = ShapeId.from("ns.qux#MyService");
+
+        assertThat(result.getShape(transformedServiceId), not(Optional.empty()));
+        assertThat(result.expectShape(transformedServiceId, ServiceShape.class).getRename(), anEmptyMap());
+    }
+
+    @Test
+    public void serviceShapeIsValidAfterTransform() {
+        Model model = Model.assembler()
+                .addImport(getClass().getResource("flatten-namespaces-with-renames.json"))
+                .assemble()
+                .unwrap();
+        TransformContext context = TransformContext.builder()
+                .model(model)
+                .settings(Node.objectNode()
+                        .withMember("namespace", "ns.qux")
+                        .withMember("service", "ns.foo#MyService"))
+                .build();
+
+        Model result = new FlattenNamespaces().transform(context);
+        ValidatedResult<Model> validatedResult = Model.assembler()
+                .addModel(result)
+                .assemble();
+        List<ShapeId> validationEventShapeIds = validatedResult.getValidationEvents().stream()
+                .map(ValidationEvent::getShapeId)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+
+        assertThat(validationEventShapeIds, not(containsInAnyOrder(ShapeId.from("ns.qux#MyService"))));
     }
 
     @Test
