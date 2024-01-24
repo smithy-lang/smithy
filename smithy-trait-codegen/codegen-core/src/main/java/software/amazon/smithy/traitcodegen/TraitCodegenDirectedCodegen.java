@@ -5,6 +5,9 @@
 
 package software.amazon.smithy.traitcodegen;
 
+import static software.amazon.smithy.traitcodegen.generators.base.EnumGenerator.IntEnumGenerator;
+import static software.amazon.smithy.traitcodegen.generators.base.EnumGenerator.StringEnumGenerator;
+
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.directed.CreateContextDirective;
 import software.amazon.smithy.codegen.core.directed.CreateSymbolProviderDirective;
@@ -17,8 +20,6 @@ import software.amazon.smithy.codegen.core.directed.GenerateStructureDirective;
 import software.amazon.smithy.codegen.core.directed.GenerateUnionDirective;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.TraitDefinition;
-import software.amazon.smithy.traitcodegen.generators.base.EnumGenerator;
-import software.amazon.smithy.traitcodegen.generators.base.IntEnumGenerator;
 import software.amazon.smithy.traitcodegen.generators.base.StructureGenerator;
 import software.amazon.smithy.traitcodegen.generators.traits.DefaultTraitGeneratorProvider;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -78,7 +79,7 @@ final class TraitCodegenDirectedCodegen
     @Override
     public void generateEnumShape(GenerateEnumDirective<TraitCodegenContext, TraitCodegenSettings> directive) {
         if (!directive.shape().hasTrait(TraitDefinition.class)) {
-            new EnumGenerator().accept(directive);
+            new StringEnumGenerator().accept(directive);
         }
     }
 
