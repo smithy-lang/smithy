@@ -1,3 +1,2 @@
-[NOTE] smithy.example#AdditionalSchemasDeconflictedProperties: The structure shape is not connected to from any service shape. | UnreferencedShape
 [WARNING] smithy.example#CreateAdditionalSchemasDeconflictedResourceRequest$bar: This shape applies a trait that is unstable: aws.cloudformation#cfnExcludeProperty | UnstableTrait
 [WARNING] smithy.example#AdditionalSchemasDeconflictedResource: This shape applies a trait that is unstable: aws.cloudformation#cfnResource | UnstableTrait

@@ -26,6 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.model.traits.IdRefTrait;
 import software.amazon.smithy.utils.ListUtils;
 
 /**
@@ -87,6 +88,29 @@ public interface NeighborProvider {
                 relationships.add(traitRel);
             }
 
+            return relationships;
+        };
+    }
+
+    /**
+     * Creates a NeighborProvider that includes {@link RelationshipType#ID_REF}
+     * relationships.
+     *
+     * @param model Model to use to look up shapes referenced by {@link IdRefTrait}.
+     * @param neighborProvider Provider to wrap.
+     * @return Returns the created neighbor provider.
+     */
+    static NeighborProvider withIdRefRelationships(Model model, NeighborProvider neighborProvider) {
+        Map<ShapeId, Set<Relationship>> idRefRelationships = new IdRefShapeRelationships(model).getRelationships();
+        return shape -> {
+            List<Relationship> relationships = neighborProvider.getNeighbors(shape);
+
+            if (!idRefRelationships.containsKey(shape.getId())) {
+                return relationships;
+            }
+
+            relationships = new ArrayList<>(relationships);
+            relationships.addAll(idRefRelationships.get(shape.getId()));
             return relationships;
         };
     }
