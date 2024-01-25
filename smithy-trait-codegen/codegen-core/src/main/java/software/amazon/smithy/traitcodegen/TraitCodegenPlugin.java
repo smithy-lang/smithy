@@ -54,7 +54,6 @@ public final class TraitCodegenPlugin implements SmithyBuildPlugin {
         runner.model(transform(context.getModel(), settings));
         runner.settings(settings);
         runner.service(SYNTHETIC_SERVICE_ID);
-        runner.performDefaultCodegenTransforms();
         LOGGER.info("Plugin Initialized. Executing Trait Codegen Plugin.");
         runner.run();
         LOGGER.info("Trait Codegen plugin executed successfully.");

@@ -208,39 +208,19 @@ public final class BuilderGenerator implements Runnable {
 
         @Override
         protected Void getDefault(Shape shape) {
-            writeStandardAccessors(shape);
-            return null;
-        }
-
-        @Override
-        public Void listShape(ListShape shape) {
-            writeListAccessors(shape);
-            return null;
-        }
-
-        @Override
-        public Void mapShape(MapShape shape) {
-            writeMapAccessors(shape);
-            return null;
-        }
-
-        @Override
-        public Void memberShape(MemberShape shape) {
-            return model.expectShape(shape.getTarget()).accept(this);
-        }
-
-        private void writeStandardAccessors(Shape shape) {
             writer.openBlock(ACCESSOR_TEMPLATE, "}",
                     memberName, symbolProvider.toSymbol(shape), () -> {
                         writer.write("this.$1L = $1L;", memberName);
                         writer.write(RETURN_THIS);
                     });
             writer.newLine();
+            return null;
         }
 
-        private void writeListAccessors(ListShape listShape) {
+        @Override
+        public Void listShape(ListShape shape) {
             writer.openBlock(ACCESSOR_TEMPLATE, "}",
-                    memberName, symbolProvider.toSymbol(listShape), () -> {
+                    memberName, symbolProvider.toSymbol(shape), () -> {
                         writer.write("clear$L();", StringUtils.capitalize(memberName));
                         writer.write("this.$1L.get().addAll($1L);", memberName);
                         writer.write(RETURN_THIS);
@@ -257,7 +237,7 @@ public final class BuilderGenerator implements Runnable {
 
             // Set one
             writer.openBlock("public Builder add$LItem($T $LItem) {", "}",
-                    StringUtils.capitalize(memberName), symbolProvider.toSymbol(listShape.getMember()), memberName,
+                    StringUtils.capitalize(memberName), symbolProvider.toSymbol(shape.getMember()), memberName,
                     () -> {
                         writer.write("$1L.get().add($1LItem);", memberName);
                         writer.write(RETURN_THIS);
@@ -266,17 +246,19 @@ public final class BuilderGenerator implements Runnable {
 
             // Remove one
             writer.openBlock("public Builder remove$LItem($T $LItem) {", "}",
-                    StringUtils.capitalize(memberName), symbolProvider.toSymbol(listShape.getMember()), memberName,
+                    StringUtils.capitalize(memberName), symbolProvider.toSymbol(shape.getMember()), memberName,
                     () -> {
                         writer.write("$1L.get().remove($1LItem);", memberName);
                         writer.write(RETURN_THIS);
                     });
+            return null;
         }
 
-        private void writeMapAccessors(MapShape mapShape) {
+        @Override
+        public Void mapShape(MapShape shape) {
             // Set all
             writer.openBlock(ACCESSOR_TEMPLATE, "}",
-                    memberName, symbolProvider.toSymbol(mapShape), () -> {
+                    memberName, symbolProvider.toSymbol(shape), () -> {
                         writer.write("clear$L();", StringUtils.capitalize(memberName));
                         writer.write("this.$1L.get().putAll($1L);", memberName);
                         writer.write(RETURN_THIS);
@@ -291,8 +273,8 @@ public final class BuilderGenerator implements Runnable {
             writer.newLine();
 
             // Set one
-            MemberShape keyShape = mapShape.getKey();
-            MemberShape valueShape = mapShape.getValue();
+            MemberShape keyShape = shape.getKey();
+            MemberShape valueShape = shape.getValue();
             writer.openBlock("public Builder put$L($T key, $T value) {", "}",
                     StringUtils.capitalize(memberName), symbolProvider.toSymbol(keyShape),
                     symbolProvider.toSymbol(valueShape), () -> {
@@ -308,6 +290,12 @@ public final class BuilderGenerator implements Runnable {
                         writer.write(RETURN_THIS);
                     });
             writer.newLine();
+            return null;
+        }
+
+        @Override
+        public Void memberShape(MemberShape shape) {
+            return model.expectShape(shape.getTarget()).accept(this);
         }
     }
 }

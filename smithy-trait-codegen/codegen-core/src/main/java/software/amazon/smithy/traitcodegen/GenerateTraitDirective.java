@@ -37,7 +37,7 @@ public final class GenerateTraitDirective {
     }
 
     public Symbol symbol() {
-        return  symbol;
+        return symbol;
     }
 
     public SymbolProvider symbolProvider() {

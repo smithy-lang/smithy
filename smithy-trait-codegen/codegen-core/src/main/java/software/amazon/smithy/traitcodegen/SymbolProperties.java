@@ -9,7 +9,9 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
 public final class SymbolProperties {
-    public static final String VALUE_GETTER = "value-getter";
+    // Provides the correct method to map value from a member to a builder value
+    // This should be a string template accepting the member name as the only argument
+    public static final String MEMBER_MAPPER = "member-mapper";
 
     // Provides the lambda method call to map the shape to a node
     public static final String TO_NODE_MAPPER = "to-node-mapper";

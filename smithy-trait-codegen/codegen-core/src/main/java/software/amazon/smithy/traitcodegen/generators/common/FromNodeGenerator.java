@@ -10,21 +10,13 @@ import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.shapes.BigDecimalShape;
-import software.amazon.smithy.model.shapes.BooleanShape;
-import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.EnumShape;
-import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.IntEnumShape;
-import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
-import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
-import software.amazon.smithy.model.shapes.NumberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
-import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
@@ -80,7 +72,6 @@ public final class FromNodeGenerator implements Runnable {
             this.writer = writer;
             this.model = model;
             this.symbolProvider = symbolProvider;
-            this.writer.putContext("memberPrefix", member.isRequired() ? ".expect" : ".get");
         }
 
 
@@ -91,59 +82,19 @@ public final class FromNodeGenerator implements Runnable {
 
         @Override
         protected Void getDefault(Shape shape) {
-            return null;
-        }
-
-        @Override
-        public Void booleanShape(BooleanShape shape) {
-            writer.writeInline("${memberPrefix:L}BooleanMember($1S, builder::$1L)",
-                    symbolProvider.toMemberName(member));
+            writer.writeInline(getMemberPrefix()
+                            + symbolProvider.toSymbol(shape).expectProperty(SymbolProperties.MEMBER_MAPPER),
+                    symbolProvider.toMemberName(member)
+            );
             return null;
         }
 
         @Override
         public Void listShape(ListShape shape) {
-            writer.writeInline("${memberPrefix:L}ArrayMember($S, n -> "
+            writer.writeInline(getMemberPrefix() + "ArrayMember($S, n -> "
                     + symbolProvider.toSymbol(shape.getMember()).expectProperty(SymbolProperties.FROM_NODE_MAPPER,
                     String.class)
                     + ", builder::$L)", symbolProvider.toMemberName(member), "n", symbolProvider.toMemberName(member));
-            return null;
-        }
-
-        @Override
-        public Void shortShape(ShortShape shape) {
-            generateNumberMember(shape);
-            return null;
-        }
-
-        @Override
-        public Void integerShape(IntegerShape shape) {
-            generateNumberMember(shape);
-            return null;
-        }
-
-        @Override
-        public Void longShape(LongShape shape) {
-            generateNumberMember(shape);
-            return null;
-        }
-
-        @Override
-        public Void floatShape(FloatShape shape) {
-            generateNumberMember(shape);
-            return null;
-        }
-
-        @Override
-        public Void doubleShape(DoubleShape shape) {
-            generateNumberMember(shape);
-            return null;
-        }
-
-        @Override
-        public Void bigDecimalShape(BigDecimalShape shape) {
-            writer.writeInline("${memberPrefix:L}Member($1S, n -> n.expectNumberNode().asBigDecimal().get(), "
-                    + "builder::$1L)", symbolProvider.toMemberName(member));
             return null;
         }
 
@@ -156,7 +107,8 @@ public final class FromNodeGenerator implements Runnable {
                     symbolProvider.toSymbol(shape.getValue()).expectProperty(SymbolProperties.FROM_NODE_MAPPER,
                             String.class);
             writer.disableNewlines();
-            writer.openBlock("${memberPrefix:L}ObjectMember($S, o -> o.getMembers().forEach((k, v) -> {\n", "}))",
+            writer.openBlock(getMemberPrefix()
+                            + "ObjectMember($S, o -> o.getMembers().forEach((k, v) -> {\n", "}))",
                     symbolProvider.toMemberName(member),
                     () -> writer.write("builder.put$L(" + keyMapper + ", " + valueMapper + ");\n",
                             StringUtils.capitalize(symbolProvider.toMemberName(member)), "k", "v"));
@@ -164,16 +116,10 @@ public final class FromNodeGenerator implements Runnable {
             return null;
         }
 
-        private void generateNumberMember(NumberShape shape) {
-            writer.writeInline("${memberPrefix:L}NumberMember($1S, n -> builder.$1L(n.$2L))",
-                    symbolProvider.toMemberName(member),
-                    symbolProvider.toSymbol(shape).expectProperty(SymbolProperties.VALUE_GETTER));
-        }
-
         @Override
         public Void stringShape(StringShape shape) {
             if (TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape))) {
-                writer.writeInline("${memberPrefix:L}StringMember($1S, builder::$1L)",
+                writer.writeInline(getMemberPrefix() + "StringMember($1S, builder::$1L)",
                         symbolProvider.toMemberName(member));
             } else {
                 generateGenericMember(shape);
@@ -188,9 +134,13 @@ public final class FromNodeGenerator implements Runnable {
         }
 
         private void generateGenericMember(Shape shape) {
-            writer.writeInline("${memberPrefix:L}Member($S, n -> "
+            writer.writeInline(getMemberPrefix() + "Member($S, n -> "
                     + symbolProvider.toSymbol(shape).expectProperty(SymbolProperties.FROM_NODE_MAPPER, String.class)
                     + ", builder::$L)", symbolProvider.toMemberName(member), "n", symbolProvider.toMemberName(member));
+        }
+
+        private String getMemberPrefix() {
+            return member.isRequired() ? ".expect" : ".get";
         }
     }
 
