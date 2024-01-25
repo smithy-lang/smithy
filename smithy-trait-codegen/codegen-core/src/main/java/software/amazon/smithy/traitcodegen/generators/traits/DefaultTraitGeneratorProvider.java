@@ -6,6 +6,7 @@
 package software.amazon.smithy.traitcodegen.generators.traits;
 
 import software.amazon.smithy.model.shapes.BigDecimalShape;
+import software.amazon.smithy.model.shapes.BigIntegerShape;
 import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
@@ -105,6 +106,11 @@ public final class DefaultTraitGeneratorProvider extends ShapeVisitor.Default<Tr
 
     @Override
     public TraitGenerator doubleShape(DoubleShape shape) {
+        return new ValueTraitGenerator();
+    }
+
+    @Override
+    public TraitGenerator bigIntegerShape(BigIntegerShape shape) {
         return new ValueTraitGenerator();
     }
 

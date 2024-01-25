@@ -6,6 +6,7 @@ import com.example.traits.NestedA;
 import com.example.traits.NestedB;
 import com.example.traits.StructureTraitTrait;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Objects;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
@@ -38,6 +39,7 @@ class StructureTraitTest {
                 ).fieldD(ListUtils.of("a", "b", "c"))
                 .fieldE(MapUtils.of("a", "one", "b", "two"))
                 .fieldF(new BigDecimal("100.01"))
+                .fieldG(new BigInteger("100"))
                 .build();
         assertEquals(expectedTrait, trait);
     }

@@ -15,7 +15,8 @@ namespace test.smithy.traitcodegen
         a: "one"
         b: "two"
     }
-    fieldF: 100.01
+    fieldF: 100.01,
+    fieldG: 100
 )
 structure myStruct {
 }

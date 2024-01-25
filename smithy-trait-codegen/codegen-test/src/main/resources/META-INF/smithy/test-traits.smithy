@@ -34,6 +34,9 @@ byte HttpCodeByte
 @trait
 bigDecimal HttpCodeBigDecimal
 
+@trait
+bigInteger HttpCodeBigInteger
+
 // ===========
 // List traits
 // ===========
@@ -125,6 +128,8 @@ structure structureTrait {
     fieldE: MyMap
 
     fieldF: BigDecimal
+
+    fieldG: BigInteger
 }
 
 @private

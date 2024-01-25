@@ -132,7 +132,8 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
     @Override
     public Symbol bigIntegerShape(BigIntegerShape shape) {
         return simpleShapeSymbolFrom(BigInteger.class).toBuilder()
-                .putProperty(SymbolProperties.FROM_NODE_MAPPER, "$L.expectNumberNode().asBigDecimal().get()")
+                .putProperty(SymbolProperties.FROM_NODE_MAPPER,
+                        "$L.expectNumberNode().asBigDecimal().get().toBigInteger()")
                 .putProperty(SymbolProperties.MEMBER_MAPPER, "Member($1S, n -> "
                         + "n.expectNumberNode().asBigDecimal().get().toBigInteger(), builder::$1L)")
                 .build();
