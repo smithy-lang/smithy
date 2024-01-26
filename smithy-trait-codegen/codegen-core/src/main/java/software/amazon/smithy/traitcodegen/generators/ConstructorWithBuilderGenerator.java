@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.traitcodegen.generators.common;
+package software.amazon.smithy.traitcodegen.generators;
 
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -17,15 +17,13 @@ import software.amazon.smithy.model.traits.TraitDefinition;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.SmithyBuilder;
-import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Generates a constructor that takes in a static builder class as input.
  * <p>
  * Static builders should be created using the {@link BuilderGenerator} generator.
  */
-@SmithyInternalApi
-public final class ConstructorWithBuilderGenerator implements Runnable {
+final class ConstructorWithBuilderGenerator implements Runnable {
     private static final String CONSTRUCTOR_TEMPLATE = "private $T(Builder builder) {";
 
     private final TraitCodegenWriter writer;
@@ -33,7 +31,7 @@ public final class ConstructorWithBuilderGenerator implements Runnable {
     private final Shape shape;
     private final SymbolProvider symbolProvider;
 
-    public ConstructorWithBuilderGenerator(TraitCodegenWriter writer,
+    ConstructorWithBuilderGenerator(TraitCodegenWriter writer,
                                            Symbol symbol,
                                            Shape shape,
                                            SymbolProvider symbolProvider

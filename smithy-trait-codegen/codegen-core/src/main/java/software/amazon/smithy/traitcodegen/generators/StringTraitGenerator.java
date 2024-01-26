@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.traitcodegen.generators.traits;
+package software.amazon.smithy.traitcodegen.generators;
 
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.model.FromSourceLocation;
@@ -20,7 +20,7 @@ import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
  * <p>When a String trait is represented by a Java string, the trait can use the
  * base class {@link StringTrait}.
  */
-public class StringTraitGenerator extends TraitGenerator {
+final class StringTraitGenerator extends TraitGenerator {
     @Override
     protected void writeTraitBody(TraitCodegenWriter writer, GenerateTraitDirective directive) {
         writeConstructor(writer, directive.symbol());

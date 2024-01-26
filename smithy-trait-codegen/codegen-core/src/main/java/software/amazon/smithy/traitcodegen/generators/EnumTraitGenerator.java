@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.traitcodegen.generators.traits;
+package software.amazon.smithy.traitcodegen.generators;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -14,7 +14,6 @@ import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.traits.StringTrait;
 import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
-import software.amazon.smithy.traitcodegen.generators.common.PropertiesGenerator;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.StringUtils;
 

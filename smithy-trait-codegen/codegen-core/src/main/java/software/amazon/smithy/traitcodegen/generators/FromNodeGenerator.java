@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.traitcodegen.generators.common;
+package software.amazon.smithy.traitcodegen.generators;
 
 import java.util.Iterator;
 import software.amazon.smithy.codegen.core.Symbol;
@@ -23,14 +23,12 @@ import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.sections.FromNodeSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
-import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Generates the {@code fromNode} method to deserialize a smithy node into an instance of a Java class.
  */
-@SmithyInternalApi
-public final class FromNodeGenerator implements Runnable {
+final class FromNodeGenerator implements Runnable {
     private static final String FROM_NODE_METHOD_TEMPLATE = "public static $T fromNode(Node node) {";
 
     private final TraitCodegenWriter writer;
@@ -39,7 +37,7 @@ public final class FromNodeGenerator implements Runnable {
     private final SymbolProvider symbolProvider;
     private final Model model;
 
-    public FromNodeGenerator(TraitCodegenWriter writer, Symbol symbol, Shape shape, SymbolProvider symbolProvider,
+    FromNodeGenerator(TraitCodegenWriter writer, Symbol symbol, Shape shape, SymbolProvider symbolProvider,
                              Model model) {
         this.writer = writer;
         this.symbol = symbol;

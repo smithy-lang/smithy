@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.traitcodegen.generators.common;
+package software.amazon.smithy.traitcodegen.generators;
 
 import java.util.Map;
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -28,18 +28,16 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.traitcodegen.sections.EnumVariantSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
-import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Generates properties for a Java class from Smithy shape members.
  */
-@SmithyInternalApi
-public final class PropertiesGenerator implements Runnable {
+final class PropertiesGenerator implements Runnable {
     private final TraitCodegenWriter writer;
     private final Shape shape;
     private final SymbolProvider symbolProvider;
 
-    public PropertiesGenerator(TraitCodegenWriter writer, Shape shape, SymbolProvider symbolProvider) {
+    PropertiesGenerator(TraitCodegenWriter writer, Shape shape, SymbolProvider symbolProvider) {
         this.writer = writer;
         this.shape = shape;
         this.symbolProvider = symbolProvider;

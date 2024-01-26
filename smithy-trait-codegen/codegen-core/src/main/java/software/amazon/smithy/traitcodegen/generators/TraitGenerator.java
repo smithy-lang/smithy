@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.traitcodegen.generators.traits;
+package software.amazon.smithy.traitcodegen.generators;
 
 import java.util.function.Consumer;
 import software.amazon.smithy.codegen.core.Symbol;
@@ -19,7 +19,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
 /**
  * Consumer that generates a trait class definition from a {@link GenerateTraitDirective}.
  */
-public abstract class TraitGenerator implements Consumer<GenerateTraitDirective> {
+abstract class TraitGenerator implements Consumer<GenerateTraitDirective> {
     private static final String CLASS_TEMPLATE = "public final class $1T extends $baseClass:T"
             + "${?implementsToBuilder} implements ToSmithyBuilder<$1T>${/implementsToBuilder} {";
     private static final String PROVIDER_FILE = "META-INF/services/software.amazon.smithy.model.traits.TraitService";

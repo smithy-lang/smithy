@@ -24,8 +24,7 @@ import software.amazon.smithy.model.neighbor.Walker;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.TraitDefinition;
-import software.amazon.smithy.traitcodegen.generators.nested.DefaultNestedShapeGeneratorProvider;
-import software.amazon.smithy.traitcodegen.generators.traits.DefaultTraitGeneratorProvider;
+import software.amazon.smithy.traitcodegen.generators.ShapeGenerator;
 import software.amazon.smithy.traitcodegen.integrations.TraitCodegenIntegration;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.CodeInterceptor;
@@ -41,7 +40,6 @@ final class TraitCodegen {
 
     private List<TraitCodegenIntegration> integrations;
     private TraitCodegenContext codegenContext;
-    private GeneratorProvider generatorProvider;
 
     private TraitCodegen(Model model,
                          TraitCodegenSettings settings,
@@ -67,18 +65,16 @@ final class TraitCodegen {
         Model codegenModel = removeTraitsWithTags(model, settings.excludeTags());
         codegenContext = new TraitCodegenContext(codegenModel, settings, symbolProvider, fileManifest, integrations);
         registerInterceptors(codegenContext);
-        generatorProvider = createTraitGeneratorProvider();
         LOGGER.info("Trait codegen plugin Initialized.");
     }
 
 
     public void run() {
-        // Generate traits
         // Find all trait definition shapes excluding traits in the prelude.
         LOGGER.info("Generating trait classes.");
         Set<Shape> traitClosure = getTraitClosure(model);
         for (Shape trait : traitClosure) {
-            generatorProvider.getGenerator(trait).accept(new GenerateTraitDirective(codegenContext, trait));
+            new ShapeGenerator().accept(new GenerateTraitDirective(codegenContext, trait));
         }
 
         LOGGER.info("Flushing writers");
@@ -127,16 +123,6 @@ final class TraitCodegen {
         traitClosure.addAll(nested);
 
         return traitClosure;
-    }
-
-    private GeneratorProvider createTraitGeneratorProvider() {
-        return (shape) -> {
-            if (shape.hasTrait(TraitDefinition.class)) {
-                return new DefaultTraitGeneratorProvider(createSymbolProvider()).getGenerator(shape);
-            } else {
-                return new DefaultNestedShapeGeneratorProvider().getGenerator(shape);
-            }
-        };
     }
 
     private static Model removeTraitsWithTags(Model model, List<String> tags) {

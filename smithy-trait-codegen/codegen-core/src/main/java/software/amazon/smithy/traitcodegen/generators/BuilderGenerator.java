@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.traitcodegen.generators.common;
+package software.amazon.smithy.traitcodegen.generators;
 
 import java.util.Iterator;
 import java.util.Optional;
@@ -24,7 +24,6 @@ import software.amazon.smithy.traitcodegen.sections.ToBuilderSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.BuilderRef;
 import software.amazon.smithy.utils.SmithyBuilder;
-import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 import software.amazon.smithy.utils.ToSmithyBuilder;
 
@@ -34,8 +33,7 @@ import software.amazon.smithy.utils.ToSmithyBuilder;
  * In addition to the static builder class, this generator will create
  * {@code builder()} and {@code toBuilder()} methods for the target class.
  */
-@SmithyInternalApi
-public final class BuilderGenerator implements Runnable {
+final class BuilderGenerator implements Runnable {
     private static final String VALUES = "values";
     private static final String ACCESSOR_TEMPLATE = "public Builder $1L($2B $1L) {";
     private static final String RETURN_THIS = "return this;";
@@ -48,7 +46,7 @@ public final class BuilderGenerator implements Runnable {
     private final Shape baseShape;
     private final Model model;
 
-    public BuilderGenerator(TraitCodegenWriter writer, Symbol symbol, SymbolProvider symbolProvider, Shape baseShape,
+    BuilderGenerator(TraitCodegenWriter writer, Symbol symbol, SymbolProvider symbolProvider, Shape baseShape,
                             Model model) {
         this.writer = writer;
         this.symbol = symbol;

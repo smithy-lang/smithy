@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.traitcodegen.generators.common;
+package software.amazon.smithy.traitcodegen.generators;
 
 import java.util.EnumSet;
 import java.util.Optional;
@@ -28,7 +28,6 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.traitcodegen.sections.GetterSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
-import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
 /**
@@ -36,15 +35,14 @@ import software.amazon.smithy.utils.StringUtils;
  * <p>
  * Optional member getters will return the member type wrapped in an {@code Optional<T>}.
  */
-@SmithyInternalApi
-public final class GetterGenerator implements Runnable {
+final class GetterGenerator implements Runnable {
     private static final EnumSet<ShapeType> NO_OPTIONAL_WRAPPING_TYPES = EnumSet.of(ShapeType.MAP, ShapeType.LIST);
     private final TraitCodegenWriter writer;
     private final SymbolProvider symbolProvider;
     private final Shape shape;
     private final Model model;
 
-    public GetterGenerator(TraitCodegenWriter writer, SymbolProvider symbolProvider, Shape shape, Model model) {
+    GetterGenerator(TraitCodegenWriter writer, SymbolProvider symbolProvider, Shape shape, Model model) {
         this.writer = writer;
         this.symbolProvider = symbolProvider;
         this.shape = shape;

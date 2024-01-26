@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.traitcodegen.generators.common;
+package software.amazon.smithy.traitcodegen.generators;
 
 import java.util.AbstractMap;
 import java.util.Map;
@@ -37,7 +37,6 @@ import software.amazon.smithy.traitcodegen.SymbolProperties;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.Pair;
-import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
 /**
@@ -48,8 +47,7 @@ import software.amazon.smithy.utils.StringUtils;
  * This is because Trait classes inherit from {@link software.amazon.smithy.model.traits.AbstractTrait}
  * which requires that they override {@code createNode()} for serialization.
  */
-@SmithyInternalApi
-public final class ToNodeGenerator implements Runnable {
+final class ToNodeGenerator implements Runnable {
     private static final String CREATE_NODE_METHOD = "protected Node createNode() {";
     private static final String TO_NODE_METHOD = "public Node toNode() {";
 
@@ -58,7 +56,7 @@ public final class ToNodeGenerator implements Runnable {
     private final SymbolProvider symbolProvider;
     private final Model model;
 
-    public ToNodeGenerator(TraitCodegenWriter writer, Shape shape, SymbolProvider symbolProvider, Model model) {
+    ToNodeGenerator(TraitCodegenWriter writer, Shape shape, SymbolProvider symbolProvider, Model model) {
         this.writer = writer;
         this.shape = shape;
         this.symbolProvider = symbolProvider;

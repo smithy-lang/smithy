@@ -3,25 +3,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.traitcodegen.generators.nested;
+package software.amazon.smithy.traitcodegen.generators;
 
 import java.util.function.Consumer;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.model.node.ToNode;
 import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
-import software.amazon.smithy.traitcodegen.generators.common.BuilderGenerator;
-import software.amazon.smithy.traitcodegen.generators.common.ConstructorWithBuilderGenerator;
-import software.amazon.smithy.traitcodegen.generators.common.FromNodeGenerator;
-import software.amazon.smithy.traitcodegen.generators.common.GetterGenerator;
-import software.amazon.smithy.traitcodegen.generators.common.PropertiesGenerator;
-import software.amazon.smithy.traitcodegen.generators.common.ToNodeGenerator;
 import software.amazon.smithy.traitcodegen.sections.ClassSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
 /**
  * Generates a Java class from a Smithy {@code StructureShape}.
  */
-class StructureGenerator implements Consumer<GenerateTraitDirective> {
+final class StructureShapeGenerator implements Consumer<GenerateTraitDirective> {
     private static final String BASE_CLASS_TEMPLATE_STRING = "public final class $1T implements ToNode, "
             + "ToSmithyBuilder<$1T> {";
 

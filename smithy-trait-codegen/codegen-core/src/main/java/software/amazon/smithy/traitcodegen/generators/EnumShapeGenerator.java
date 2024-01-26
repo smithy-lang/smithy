@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.traitcodegen.generators.nested;
+package software.amazon.smithy.traitcodegen.generators;
 
 import java.util.Iterator;
 import java.util.function.Consumer;
@@ -15,7 +15,6 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
-import software.amazon.smithy.traitcodegen.generators.common.FromNodeGenerator;
 import software.amazon.smithy.traitcodegen.sections.ClassSection;
 import software.amazon.smithy.traitcodegen.sections.EnumVariantSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
@@ -25,19 +24,18 @@ import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
  * <p>
  * The two public implementations provided by this base class are:
  * <ul>
- *     <li>{@link StringEnumGenerator} - Generates a java enum from a Smithy
+ *     <li>{@link StringEnumShapeGenerator} - Generates a java enum from a Smithy
  *     {@link software.amazon.smithy.model.shapes.EnumShape}.</li>
- *     <li>{@link IntEnumGenerator} - Generates a java enum from a Smithy
+ *     <li>{@link IntEnumShapeGenerator} - Generates a java enum from a Smithy
  *     {@link software.amazon.smithy.model.shapes.IntEnumShape}.</li>
  * </ul>
  *
- * @param <D> The ShapeDirective to use when generating the enum class.
  */
-abstract class EnumGenerator implements Consumer<GenerateTraitDirective> {
+abstract class EnumShapeGenerator implements Consumer<GenerateTraitDirective> {
     private static final String VALUE_FIELD_TEMPLATE = "private final $T value;";
 
     // Private constructor to make abstract class effectively sealed.
-    private EnumGenerator() {}
+    private EnumShapeGenerator() {}
 
     @Override
     public void accept(GenerateTraitDirective directive) {
@@ -105,7 +103,7 @@ abstract class EnumGenerator implements Consumer<GenerateTraitDirective> {
     /**
      * Generates a Java Enum class from a smithy {@link software.amazon.smithy.model.shapes.EnumShape}.
      */
-    public static final class StringEnumGenerator extends EnumGenerator {
+    public static final class StringEnumShapeGenerator extends EnumShapeGenerator {
         @Override
         String getVariantTemplate() {
             return "$L($S)";
@@ -125,7 +123,7 @@ abstract class EnumGenerator implements Consumer<GenerateTraitDirective> {
     /**
      * Generates a Java Enum class from a smithy {@link software.amazon.smithy.model.shapes.IntEnumShape}.
      */
-    public static final class IntEnumGenerator extends EnumGenerator {
+    public static final class IntEnumShapeGenerator extends EnumShapeGenerator {
         @Override
         String getVariantTemplate() {
             return "$L($L)";

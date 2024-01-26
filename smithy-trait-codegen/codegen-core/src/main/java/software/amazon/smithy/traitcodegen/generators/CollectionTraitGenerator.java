@@ -3,15 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.traitcodegen.generators.traits;
+package software.amazon.smithy.traitcodegen.generators;
 
 import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
-import software.amazon.smithy.traitcodegen.generators.common.BuilderGenerator;
-import software.amazon.smithy.traitcodegen.generators.common.ConstructorWithBuilderGenerator;
-import software.amazon.smithy.traitcodegen.generators.common.FromNodeGenerator;
-import software.amazon.smithy.traitcodegen.generators.common.GetterGenerator;
-import software.amazon.smithy.traitcodegen.generators.common.PropertiesGenerator;
-import software.amazon.smithy.traitcodegen.generators.common.ToNodeGenerator;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
 /**
