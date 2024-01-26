@@ -96,26 +96,27 @@ public final class BuilderGenerator implements Runnable {
             writer.writeInline("return builder()");
             writer.indent();
             if (baseShape.hasTrait(TraitDefinition.class)) {
-                writer.write(".sourceLocation(getSourceLocation())");
+                writer.writeInline(".sourceLocation(getSourceLocation())");
             }
-            writeBasicBody();
+            if (baseShape.members().isEmpty()) {
+                writer.writeInline(";");
+            }
+            writer.newLine();
+            // Set all builder properties for any members in the shape
+            Iterator<MemberShape> memberIterator = baseShape.members().iterator();
+            while (memberIterator.hasNext()) {
+                MemberShape member = memberIterator.next();
+                writer.writeInline(".$1L($1L)", symbolProvider.toMemberName(member));
+                if (memberIterator.hasNext()) {
+                    writer.writeInline("\n");
+                } else {
+                    writer.writeInline(";\n");
+                }
+            }
             writer.dedent();
         });
         writer.popState();
         writer.newLine();
-    }
-
-    private void writeBasicBody() {
-        Iterator<MemberShape> memberIterator = baseShape.members().iterator();
-        while (memberIterator.hasNext()) {
-            MemberShape member = memberIterator.next();
-            writer.writeInline(".$1L($1L)", symbolProvider.toMemberName(member));
-            if (memberIterator.hasNext()) {
-                writer.writeInline("\n");
-            } else {
-                writer.writeInline(";\n");
-            }
-        }
     }
 
     private void writeBuilderMethod() {

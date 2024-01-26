@@ -16,10 +16,10 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.traits.AnnotationTrait;
 import software.amazon.smithy.model.traits.StringTrait;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
+import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
 
@@ -93,17 +93,16 @@ final class ProviderGenerator implements Runnable {
 
         @Override
         public Void enumShape(EnumShape shape) {
-            generateSimpleProvider(StringTrait.class);
+            writer.openBlock("public static final class Provider extends $T.Provider<$T> {", "}",
+                    TraitCodegenUtils.fromClass(StringTrait.class),
+                    traitSymbol, () -> writer.openBlock(PROVIDER_METHOD, "}",
+                            () -> writer.write("super(ID, $T::new);", traitSymbol)));
             return null;
         }
 
         @Override
         public Void structureShape(StructureShape shape) {
-            if (shape.members().isEmpty()) {
-                generateSimpleProvider(AnnotationTrait.class);
-            } else {
-                generateAbstractTraitProvider();
-            }
+            generateAbstractTraitProvider();
             return null;
         }
 
@@ -123,13 +122,6 @@ final class ProviderGenerator implements Runnable {
 
         private void generateProviderConstructor() {
             writer.openBlock(PROVIDER_METHOD, "}", () -> writer.write("super(ID);")).newLine();
-        }
-
-        private void generateSimpleProvider(Class<?> traitClass) {
-            writer.addImport(traitClass);
-            writer.openBlock("public static final class Provider extends $L.Provider<$T> {", "}",
-                    traitClass.getSimpleName(), traitSymbol, () -> writer.openBlock(PROVIDER_METHOD, "}",
-                            () -> writer.write("super(ID, $T::new);", traitSymbol)));
         }
     }
 }

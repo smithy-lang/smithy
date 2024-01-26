@@ -1,0 +1,2 @@
+[WARNING] test.smithy.traitcodegen#myStruct: Error validating trait `test.smithy.traitcodegen#structureTrait`: Invalid structure member `extraA` found for `test.smithy.traitcodegen#structureTrait` | TraitValue.test.smithy.traitcodegen#structureTrait.extraA
+[WARNING] test.smithy.traitcodegen#myStruct: Error validating trait `test.smithy.traitcodegen#structureTrait`: Invalid structure member `extraB` found for `test.smithy.traitcodegen#structureTrait` | TraitValue.test.smithy.traitcodegen#structureTrait.extraB

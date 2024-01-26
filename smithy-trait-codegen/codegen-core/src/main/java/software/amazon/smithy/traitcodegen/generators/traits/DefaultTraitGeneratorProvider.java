@@ -128,9 +128,6 @@ public final class DefaultTraitGeneratorProvider extends ShapeVisitor.Default<Tr
     public TraitGenerator structureShape(StructureShape shape) {
         // Annotation (empty structure) traits inherit from a different base class than other
         // structure traits, so they need a custom generator.
-        if (shape.getAllMembers().isEmpty()) {
-            return new AnnotationTraitGenerator();
-        }
         return new CollectionTraitGenerator();
     }
 }
