@@ -10,8 +10,8 @@ import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.CodegenContext;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.WriterDelegator;
-import software.amazon.smithy.codegen.core.directed.CreateContextDirective;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.traitcodegen.integrations.TraitCodegenIntegration;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 
 /**
@@ -26,8 +26,7 @@ public final class TraitCodegenContext implements CodegenContext<TraitCodegenSet
     private final List<TraitCodegenIntegration> integrations;
     private final WriterDelegator<TraitCodegenWriter> writerDelegator;
 
-
-    private TraitCodegenContext(Model model,
+    TraitCodegenContext(Model model,
                                 TraitCodegenSettings settings,
                                 SymbolProvider symbolProvider,
                                 FileManifest fileManifest,
@@ -40,24 +39,6 @@ public final class TraitCodegenContext implements CodegenContext<TraitCodegenSet
         this.integrations = integrations;
         this.writerDelegator = new WriterDelegator<>(fileManifest, symbolProvider,
                 (filename, namespace) -> new TraitCodegenWriter(filename, namespace, settings));
-    }
-
-    /**
-     * Loads the code generation context from the {@link CreateContextDirective}.
-     *
-     * @param directive CreateContextDirective to load context from
-     * @return context loaded from directive
-     */
-    public static TraitCodegenContext fromDirective(
-            CreateContextDirective<TraitCodegenSettings, TraitCodegenIntegration> directive
-    ) {
-        return new TraitCodegenContext(
-                directive.model(),
-                directive.settings(),
-                directive.symbolProvider(),
-                directive.fileManifest(),
-                directive.integrations()
-        );
     }
 
     @Override

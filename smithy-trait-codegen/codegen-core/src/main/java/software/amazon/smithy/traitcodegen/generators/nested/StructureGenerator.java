@@ -3,14 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package software.amazon.smithy.traitcodegen.generators.base;
+package software.amazon.smithy.traitcodegen.generators.nested;
 
 import java.util.function.Consumer;
 import software.amazon.smithy.codegen.core.Symbol;
-import software.amazon.smithy.codegen.core.directed.GenerateStructureDirective;
 import software.amazon.smithy.model.node.ToNode;
-import software.amazon.smithy.traitcodegen.TraitCodegenContext;
-import software.amazon.smithy.traitcodegen.TraitCodegenSettings;
+import software.amazon.smithy.traitcodegen.GenerateTraitDirective;
 import software.amazon.smithy.traitcodegen.generators.common.BuilderGenerator;
 import software.amazon.smithy.traitcodegen.generators.common.ConstructorWithBuilderGenerator;
 import software.amazon.smithy.traitcodegen.generators.common.FromNodeGenerator;
@@ -19,19 +17,16 @@ import software.amazon.smithy.traitcodegen.generators.common.PropertiesGenerator
 import software.amazon.smithy.traitcodegen.generators.common.ToNodeGenerator;
 import software.amazon.smithy.traitcodegen.sections.ClassSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
-import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Generates a Java class from a Smithy {@code StructureShape}.
  */
-@SmithyInternalApi
-public class StructureGenerator implements Consumer<GenerateStructureDirective<TraitCodegenContext,
-        TraitCodegenSettings>> {
+class StructureGenerator implements Consumer<GenerateTraitDirective> {
     private static final String BASE_CLASS_TEMPLATE_STRING = "public final class $1T implements ToNode, "
             + "ToSmithyBuilder<$1T> {";
 
     @Override
-    public void accept(GenerateStructureDirective<TraitCodegenContext, TraitCodegenSettings> directive) {
+    public void accept(GenerateTraitDirective directive) {
         directive.context().writerDelegator().useShapeWriter(directive.shape(), writer -> {
             writer.addImport(ToNode.class);
             writer.pushState(new ClassSection(directive.shape()))

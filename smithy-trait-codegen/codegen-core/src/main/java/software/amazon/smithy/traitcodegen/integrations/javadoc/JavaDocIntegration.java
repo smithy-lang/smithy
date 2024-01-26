@@ -7,7 +7,7 @@ package software.amazon.smithy.traitcodegen.integrations.javadoc;
 
 import java.util.List;
 import software.amazon.smithy.traitcodegen.TraitCodegenContext;
-import software.amazon.smithy.traitcodegen.TraitCodegenIntegration;
+import software.amazon.smithy.traitcodegen.integrations.TraitCodegenIntegration;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
 import software.amazon.smithy.utils.CodeInterceptor;
 import software.amazon.smithy.utils.CodeSection;

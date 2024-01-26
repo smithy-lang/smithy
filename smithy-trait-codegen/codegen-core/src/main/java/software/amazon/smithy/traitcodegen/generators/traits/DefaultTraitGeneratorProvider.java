@@ -5,6 +5,7 @@
 
 package software.amazon.smithy.traitcodegen.generators.traits;
 
+import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
 import software.amazon.smithy.model.shapes.BooleanShape;
@@ -23,20 +24,23 @@ import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.traitcodegen.TraitGeneratorProvider;
+import software.amazon.smithy.model.traits.UniqueItemsTrait;
+import software.amazon.smithy.traitcodegen.GeneratorProvider;
+import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Provides the {@link TraitGenerator} to use given a Smithy shape with a {@code @trait} trait definition trait.
- * <p>
- * This class can be decorated with the
- * {@link software.amazon.smithy.traitcodegen.TraitCodegenIntegration#decorateGeneratorProvider}
- * method to provide a different trait generator implementation. Trait generator decoration can be used to handle
- * special cases of trait generation such as including additional functionality or using a new base class for the trait.
  */
 @SmithyInternalApi
 public final class DefaultTraitGeneratorProvider extends ShapeVisitor.Default<TraitGenerator>
-        implements TraitGeneratorProvider {
+        implements GeneratorProvider {
+    private final SymbolProvider symbolProvider;
+
+    public DefaultTraitGeneratorProvider(SymbolProvider symbolProvider) {
+        this.symbolProvider = symbolProvider;
+    }
+
     @Override
     public TraitGenerator getGenerator(Shape shape) {
         return shape.accept(this);
@@ -61,6 +65,11 @@ public final class DefaultTraitGeneratorProvider extends ShapeVisitor.Default<Tr
 
     @Override
     public TraitGenerator stringShape(StringShape shape) {
+        // If the shape type resolves is a simple java string we can have the
+        // resulting trait inherit from the StringTrait base class, simplifying the generated code.
+        if (TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape))) {
+          return new StringTraitGenerator();
+        }
         return new ValueTraitGenerator();
     }
 
@@ -71,6 +80,13 @@ public final class DefaultTraitGeneratorProvider extends ShapeVisitor.Default<Tr
 
     @Override
     public TraitGenerator listShape(ListShape shape) {
+        // If the shape is a list shape with only string members we want it to inherit from
+        // the StringListShape base class rather than use the default collection trait generator
+        if (!shape.hasTrait(UniqueItemsTrait.class)
+            && TraitCodegenUtils.isJavaString(symbolProvider.toSymbol(shape.getMember()))
+        ) {
+            return new StringListTraitGenerator();
+        }
         return new CollectionTraitGenerator();
     }
 

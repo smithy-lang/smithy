@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
-import software.amazon.smithy.codegen.core.directed.CreateSymbolProviderDirective;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.Node;
 import software.amazon.smithy.model.node.ObjectNode;
@@ -47,14 +46,10 @@ final class TraitCodegenSymbolProvider extends ShapeVisitor.Default<Symbol> impl
     private final String packagePath;
     private final Model model;
 
-    private TraitCodegenSymbolProvider(TraitCodegenSettings settings, Model model) {
+    TraitCodegenSymbolProvider(TraitCodegenSettings settings, Model model) {
         this.packageName = settings.packageName();
         this.packagePath = "./" + packageName.replace(".", "/");
         this.model = model;
-    }
-
-    public static SymbolProvider fromDirective(CreateSymbolProviderDirective<TraitCodegenSettings> directive) {
-        return new TraitCodegenSymbolProvider(directive.settings(), directive.model());
     }
 
     @Override

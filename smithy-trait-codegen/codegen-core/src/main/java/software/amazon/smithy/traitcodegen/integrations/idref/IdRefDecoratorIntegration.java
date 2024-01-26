@@ -15,9 +15,9 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.IdRefTrait;
 import software.amazon.smithy.traitcodegen.SymbolProperties;
-import software.amazon.smithy.traitcodegen.TraitCodegenIntegration;
 import software.amazon.smithy.traitcodegen.TraitCodegenSettings;
 import software.amazon.smithy.traitcodegen.TraitCodegenUtils;
+import software.amazon.smithy.traitcodegen.integrations.TraitCodegenIntegration;
 import software.amazon.smithy.utils.ListUtils;
 
 /**
