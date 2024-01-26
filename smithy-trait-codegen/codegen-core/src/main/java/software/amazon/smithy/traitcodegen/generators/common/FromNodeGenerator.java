@@ -205,8 +205,7 @@ public final class FromNodeGenerator implements Runnable {
             // If the shape has no members (i.e. is an annotation trait) then there will be no member setters and we
             // need to terminate the line.
             writer.putContext("isEmpty", shape.members().isEmpty());
-            writer.write("node.expectObjectNode()"
-                    + ".warnIfAdditionalProperties(PROPERTIES)${?isEmpty};${/isEmpty}");
+            writer.write("node.expectObjectNode()${?isEmpty};${/isEmpty}");
             writer.indent();
             Iterator<MemberShape> memberIterator = shape.members().iterator();
             while (memberIterator.hasNext()) {

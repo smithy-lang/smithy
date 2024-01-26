@@ -6,7 +6,6 @@
 package software.amazon.smithy.traitcodegen.generators.common;
 
 import java.util.Map;
-import java.util.Set;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
 import software.amazon.smithy.model.shapes.BigIntegerShape;
@@ -29,7 +28,6 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.EnumValueTrait;
 import software.amazon.smithy.traitcodegen.sections.EnumVariantSection;
 import software.amazon.smithy.traitcodegen.writer.TraitCodegenWriter;
-import software.amazon.smithy.utils.SetUtils;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
@@ -161,15 +159,9 @@ public final class PropertiesGenerator implements Runnable {
 
         @Override
         public Void structureShape(StructureShape shape) {
-            writer.addImports(Set.class, SetUtils.class);
-            writer.putContext("properties", shape.getAllMembers());
-            writer.openBlock("private static final Set<String> PROPERTIES = SetUtils.of(", ");",
-                    () -> writer.write("${#properties}${key:S}${^key.last}, ${/key.last}${/properties}"));
-
             for (MemberShape member : shape.members()) {
                 writer.write(PROPERTY_TEMPLATE, symbolProvider.toSymbol(member), symbolProvider.toMemberName(member));
             }
-
             return null;
         }
 
