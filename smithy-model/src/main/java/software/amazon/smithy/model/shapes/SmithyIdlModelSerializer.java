@@ -532,9 +532,13 @@ public final class SmithyIdlModelSerializer {
 
         private void serializeDocumentation(String documentation) {
             // The documentation trait has a special syntax, which we always want to use.
-            codeWriter.setNewlinePrefix("/// ")
+            codeWriter
+                    .pushState()
+                    // See https://github.com/smithy-lang/smithy/issues/2115
+                    .trimTrailingSpaces(false)
+                    .setNewlinePrefix("/// ")
                     .write(documentation.replace("$", "$$"))
-                    .setNewlinePrefix("");
+                    .popState();
         }
 
         private void serializeTrait(Trait trait) {
