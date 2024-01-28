@@ -3,13 +3,16 @@ $version: "2.0"
 namespace aws.protocoltests.restjson
 
 use aws.api#service
+use aws.auth#sigv4
 use aws.protocols#restJson1
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
 /// A REST JSON service that sends JSON requests and responses.
 @service(sdkId: "Rest Json Protocol")
+@sigv4(name: "restjson")
 @restJson1
+@title("Sample Rest Json Protocol Service")
 service RestJson {
     version: "2019-12-16",
     // Ensure that generators are able to handle renames.

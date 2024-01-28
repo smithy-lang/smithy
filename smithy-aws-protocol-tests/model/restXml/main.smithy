@@ -3,13 +3,16 @@ $version: "2.0"
 namespace aws.protocoltests.restxml
 
 use aws.api#service
+use aws.auth#sigv4
 use aws.protocols#restXml
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
 /// A REST XML service that sends XML requests and responses.
 @service(sdkId: "Rest Xml Protocol")
+@sigv4(name: "restxml")
 @restXml
+@title("Sample Rest Xml Protocol Service")
 service RestXml {
     version: "2019-12-16",
     operations: [
