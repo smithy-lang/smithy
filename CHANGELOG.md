@@ -1,5 +1,35 @@
 # Smithy Changelog
 
+## 1.44.0 (2024-01-25)
+
+### Features
+
+* Add AWS smoke test model package. ([#2113](https://github.com/smithy-lang/smithy/pull/2113))
+* Add more traits to protocol test services ([#2117](https://github.com/smithy-lang/smithy/pull/2117))
+* Enable custom inline suffixes in IDL serializer ([#2121](https://github.com/smithy-lang/smithy/pull/2121))
+* Keep trailing doc comment spaces in IDL serializer ([#2116](https://github.com/smithy-lang/smithy/pull/2116))
+* Expand protocol tests for default values. ([#2049](https://github.com/smithy-lang/smithy/pull/2049))
+* Add protocol tests for 0/false in query params. ([#2070](https://github.com/smithy-lang/smithy/pull/2070))
+* Change line break formatting in brackets. ([#2072](https://github.com/smithy-lang/smithy/pull/2072))
+* Add backticks to diff messages for trait changes. ([#2075](https://github.com/smithy-lang/smithy/pull/2075))
+* Support internal trait when building synthetic enum trait. ([#2106](https://github.com/smithy-lang/smithy/pull/2106))
+* Add "critical" validation phase to validation. ([#2098](https://github.com/smithy-lang/smithy/pull/2098))
+* Deprecated IAM Action traits that are now formally superseded by `@iamAction`. ([#2095](https://github.com/smithy-lang/smithy/pull/2095))
+* Added ability to override AWS endpoints partitions when needed. ([#2092](https://github.com/smithy-lang/smithy/pull/2092))
+
+### Bug Fixes
+
+* Fail when duplicate members are found in enum/intEnum shapes. ([#2112](https://github.com/smithy-lang/smithy/pull/2112))
+* Check references via idRef when looking for unreferenced shapes. ([#2105](https://github.com/smithy-lang/smithy/pull/2105))
+* Remove service renames after flattening namespaces. ([#2109](https://github.com/smithy-lang/smithy/pull/2109))
+* Fixed issue where endpoint modifier traits without a valid shape definition were being indexed. ([#2096](https://github.com/smithy-lang/smithy/pull/2096))
+
+### Documentation
+
+* Upgrade sphinx for docs. ([#2100](https://github.com/smithy-lang/smithy/pull/2100))
+* Updated several of the guide sections and tidied up the layout. ([#2097](https://github.com/smithy-lang/smithy/pull/2097))
+
+
 ## 1.43.0 (2024-01-05)
 
 ### Features
