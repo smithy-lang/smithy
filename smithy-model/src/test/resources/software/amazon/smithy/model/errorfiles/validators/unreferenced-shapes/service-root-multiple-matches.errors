@@ -1,0 +1,2 @@
+[NOTE] smithy.example#Baz: This shape is unreferenced. It has no modeled connections to shapes that match the following selector: `service` | UnreferencedShape
+[NOTE] smithy.example#Bam: This shape is unreferenced. It has no modeled connections to shapes that match the following selector: `service` | UnreferencedShape

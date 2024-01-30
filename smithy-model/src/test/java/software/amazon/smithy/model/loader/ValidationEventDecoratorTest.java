@@ -17,20 +17,16 @@ package software.amazon.smithy.model.loader;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.validation.NodeValidationVisitorTest;
 import software.amazon.smithy.model.validation.ValidatedResult;
 import software.amazon.smithy.model.validation.ValidationEvent;
 import software.amazon.smithy.model.validation.ValidationEventDecorator;
@@ -40,23 +36,19 @@ import software.amazon.smithy.utils.SetUtils;
 
 public class ValidationEventDecoratorTest {
 
-    static final String HINT = "Consider connecting this structure to a service";
-    static final String UNREFERENCED_SHAPE_EVENT_ID = "UnreferencedShape";
-    static final Set<ShapeId> STRUCT_SHAPE_IDS = SetUtils.of(ShapeId.from("ns.foo#Structure"),
-                                                             ShapeId.from("ns.foo#Structure2"),
-                                                             ShapeId.from("ns.foo#Structure3"),
-                                                             ShapeId.from("ns.foo#Structure4"));
+    static final String HINT = "We had to deprecate this";
+    static final String SHAPE_EVENT_ID = "DeprecatedShape";
+    static final Set<ShapeId> MATCHING_SHAPE_IDS = SetUtils.of(ShapeId.from("smithy.example#Foo$a"));
 
     @Test
     public void canDecorateValidationEvents() {
         ValidatedResult<Model> result = Model.assembler()
-                                             .addImport(NodeValidationVisitorTest.class.getResource("node-validator"
-                                                                                                    + ".json"))
-                                             .validatorFactory(testFactory(new DummyHintValidationEventDecorator()))
-                                             .assemble();
+                .addImport(getClass().getResource("validation-event-decorator-test.smithy"))
+                .validatorFactory(testFactory(new TestValidationEventDecorator()))
+                .assemble();
         for (ValidationEvent event : result.getValidationEvents()) {
             ShapeId eventShapeId = event.getShapeId().orElse(null);
-            if (STRUCT_SHAPE_IDS.contains(eventShapeId)) {
+            if (MATCHING_SHAPE_IDS.contains(eventShapeId)) {
                 assertThat(event.getHint().isPresent(), equalTo(true));
                 assertThat(event.getHint().get(), equalTo(HINT));
             } else {
@@ -69,10 +61,9 @@ public class ValidationEventDecoratorTest {
     public void exceptionsAreNotCaughtWhenDecoratorsThrow() {
         assertThrows(RuntimeException.class, () -> {
             Model.assembler()
-                 .addImport(NodeValidationVisitorTest.class.getResource("node-validator"
-                                                                        + ".json"))
-                 .validatorFactory(testFactory(new ThrowingValidationEventDecorator()))
-                 .assemble();
+                    .addImport(getClass().getResource("validation-event-decorator-test.smithy"))
+                    .validatorFactory(testFactory(new ThrowingValidationEventDecorator()))
+                    .assemble();
         });
     }
 
@@ -96,11 +87,11 @@ public class ValidationEventDecoratorTest {
         };
     }
 
-    static class DummyHintValidationEventDecorator implements ValidationEventDecorator {
-
+    static class TestValidationEventDecorator implements ValidationEventDecorator {
         @Override
         public boolean canDecorate(ValidationEvent ev) {
-            return ev.containsId(UNREFERENCED_SHAPE_EVENT_ID) && ev.getMessage().contains("The structure ");
+            System.out.println(ev);
+            return ev.containsId(SHAPE_EVENT_ID);
         }
 
         @Override
@@ -110,15 +101,14 @@ public class ValidationEventDecoratorTest {
     }
 
     static class ThrowingValidationEventDecorator implements ValidationEventDecorator {
-
         @Override
         public boolean canDecorate(ValidationEvent ev) {
-            return ev.containsId(UNREFERENCED_SHAPE_EVENT_ID) && ev.getMessage().contains("The structure ");
+            return ev.containsId(SHAPE_EVENT_ID);
         }
 
         @Override
         public ValidationEvent decorate(ValidationEvent ev) {
-            throw new RuntimeException("ups");
+            throw new RuntimeException("oops!");
         }
     }
 }
