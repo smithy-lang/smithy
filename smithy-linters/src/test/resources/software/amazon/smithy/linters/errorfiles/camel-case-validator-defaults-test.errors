@@ -38,6 +38,3 @@
 [DANGER] ns.baz#lowerStructureTrait$UpperCamelCase: Member shape member name, `UpperCamelCase`, is not lower camel case; members in the ns.baz namespace must all use lower camel case. | DefaultCamelCase
 [DANGER] ns.foo#Structure$lowerCamelCase: Member shape member name, `lowerCamelCase`, is not upper camel case; members in the MyService must all use upper camel case. | DefaultCamelCase
 [DANGER] ns.foo#Structure$snake_case: Member shape member name, `snake_case`, is not upper camel case; members in the MyService must all use upper camel case. | DefaultCamelCase
-
-[NOTE] ns.foo#Enum: The enum shape is not connected to from any service shape. | UnreferencedShape
-[NOTE] ns.foo#IntEnum: The intEnum shape is not connected to from any service shape. | UnreferencedShape
