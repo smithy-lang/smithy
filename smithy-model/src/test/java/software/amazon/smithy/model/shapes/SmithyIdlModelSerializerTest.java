@@ -22,12 +22,14 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.loader.ModelAssembler;
 import software.amazon.smithy.model.node.StringNode;
 import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 import software.amazon.smithy.utils.IoUtils;
+import software.amazon.smithy.utils.MapUtils;
 
 public class SmithyIdlModelSerializerTest {
     @TestFactory
@@ -276,5 +278,32 @@ public class SmithyIdlModelSerializerTest {
         String modelResult = reserialized.values().iterator().next().replace("\r\n", "\n");
 
         assertThat(modelResult, equalTo(IoUtils.readUtf8Url(resource).replace("\r\n", "\n")));
+    }
+
+    @Test
+    public void canInferInlineSuffixes() {
+        Map<Path, URL> resources = MapUtils.of(
+                Paths.get("default.smithy"), getClass().getResource("idl-serialization/inferred-io/default.smithy"),
+                Paths.get("main.smithy"), getClass().getResource("idl-serialization/inferred-io/main.smithy"),
+                Paths.get("mixed.smithy"), getClass().getResource("idl-serialization/inferred-io/mixed.smithy"),
+                Paths.get("shared.smithy"), getClass().getResource("idl-serialization/inferred-io/shared.smithy")
+        );
+        ModelAssembler assembler = Model.assembler();
+        resources.values().forEach(assembler::addImport);
+        Model model = assembler.assemble().unwrap();
+
+        Map<Path, String> reserialized = SmithyIdlModelSerializer.builder()
+                .shapePlacer(s -> Paths.get(s.getSourceLocation().getFilename()).getFileName())
+                .inferInlineIOSuffixes(true)
+                .build()
+                .serialize(model);
+
+        assertThat(reserialized.size(), equalTo(resources.size()));
+        for (Map.Entry<Path, String> entry : reserialized.entrySet()) {
+            Path path = entry.getKey();
+            String actual = entry.getValue().replace("\r\n", "\n");
+            String expected = IoUtils.readUtf8Url(resources.get(path)).replace("\r\n", "\n");
+            assertThat(actual, equalTo(expected));
+        }
     }
 }
