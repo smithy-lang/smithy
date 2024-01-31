@@ -61,12 +61,17 @@ import software.amazon.smithy.utils.StringUtils;
  * Serializes a {@link Model} into a set of Smithy IDL files.
  */
 public final class SmithyIdlModelSerializer {
+    private static final String DEFAULT_INLINE_INPUT_SUFFIX = "Input";
+    private static final String DEFAULT_INLINE_OUTPUT_SUFFIX = "Output";
+
     private final Predicate<String> metadataFilter;
     private final Predicate<Shape> shapeFilter;
     private final Predicate<Trait> traitFilter;
     private final Function<Shape, Path> shapePlacer;
     private final Path basePath;
     private final SmithyIdlComponentOrder componentOrder;
+    private final String inlineInputSuffix;
+    private final String inlineOutputSuffix;
 
     /**
      * Trait serialization features.
@@ -113,6 +118,8 @@ public final class SmithyIdlModelSerializer {
             this.shapePlacer = builder.shapePlacer;
         }
         this.componentOrder = builder.componentOrder;
+        this.inlineInputSuffix = builder.inlineInputSuffix;
+        this.inlineOutputSuffix = builder.inlineOutputSuffix;
     }
 
     /**
@@ -182,14 +189,14 @@ public final class SmithyIdlModelSerializer {
             if (!operation.getInputShape().equals(UnitTypeTrait.UNIT)) {
                 Shape inputShape = fullModel.expectShape(operation.getInputShape());
                 if (shapes.contains(inputShape) && inputShape.hasTrait(InputTrait.ID)
-                        && operation.getInputShape().getName().equals(operation.getId().getName() + "Input")) {
+                        && inputShape.getId().getName().equals(operation.getId().getName() + inlineInputSuffix)) {
                     inlineableShapes.add(operation.getInputShape());
                 }
             }
             if (!operation.getOutputShape().equals(UnitTypeTrait.UNIT)) {
                 Shape outputShape = fullModel.expectShape(operation.getOutputShape());
                 if (shapes.contains(outputShape) && outputShape.hasTrait(OutputTrait.ID)
-                        && operation.getOutputShape().getName().equals(operation.getId().getName() + "Output")) {
+                        && outputShape.getId().getName().equals(operation.getId().getName() + inlineOutputSuffix)) {
                     inlineableShapes.add(operation.getOutputShape());
                 }
             }
@@ -201,7 +208,17 @@ public final class SmithyIdlModelSerializer {
         SmithyCodeWriter codeWriter = new SmithyCodeWriter(null, fullModel);
         NodeSerializer nodeSerializer = new NodeSerializer(codeWriter, fullModel);
 
-        codeWriter.write("$$version: \"$L\"", Model.MODEL_VERSION).write("");
+        codeWriter.write("$$version: \"$L\"", Model.MODEL_VERSION);
+
+        if (!inlineInputSuffix.equals(DEFAULT_INLINE_INPUT_SUFFIX)) {
+            codeWriter.write("$$operationInputSuffix: $S", inlineInputSuffix);
+        }
+
+        if (!inlineOutputSuffix.equals(DEFAULT_INLINE_OUTPUT_SUFFIX)) {
+            codeWriter.write("$$operationOutputSuffix: $S", inlineOutputSuffix);
+        }
+
+        codeWriter.write("");
 
         Comparator<Map.Entry<String, Node>> comparator = componentOrder.metadataComparator();
 
@@ -260,6 +277,8 @@ public final class SmithyIdlModelSerializer {
         private Path basePath = null;
         private boolean serializePrelude = false;
         private SmithyIdlComponentOrder componentOrder = SmithyIdlComponentOrder.PREFERRED;
+        private String inlineInputSuffix = DEFAULT_INLINE_INPUT_SUFFIX;
+        private String inlineOutputSuffix = DEFAULT_INLINE_OUTPUT_SUFFIX;
 
         public Builder() {}
 
@@ -347,6 +366,34 @@ public final class SmithyIdlModelSerializer {
          */
         public Builder componentOrder(SmithyIdlComponentOrder componentOrder) {
             this.componentOrder = Objects.requireNonNull(componentOrder);
+            return this;
+        }
+
+        /**
+         * Defines what suffixes are checked on operation input shapes to determine whether
+         * inline syntax should be used.
+         *
+         * <p>This will also set the "operationInputSuffix" control statement.
+         *
+         * @param inlineInputSuffix The suffix to use for inline operation input.
+         * @return Returns the builder.
+         */
+        public Builder inlineInputSuffix(String inlineInputSuffix) {
+            this.inlineInputSuffix = inlineInputSuffix;
+            return this;
+        }
+
+        /**
+         * Defines what suffixes are checked on operation output shapes to determine whether
+         * inline syntax should be used.
+         *
+         * <p>This will also set the "operationOutputSuffix" control statement.
+         *
+         * @param inlineOutputSuffix The suffix to use for inline operation output.
+         * @return Returns the builder.
+         */
+        public Builder inlineOutputSuffix(String inlineOutputSuffix) {
+            this.inlineOutputSuffix = inlineOutputSuffix;
             return this;
         }
 
