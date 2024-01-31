@@ -54,6 +54,7 @@ import software.amazon.smithy.utils.AbstractCodeWriter;
 import software.amazon.smithy.utils.CodeWriter;
 import software.amazon.smithy.utils.FunctionalUtils;
 import software.amazon.smithy.utils.ListUtils;
+import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SmithyBuilder;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -72,6 +73,7 @@ public final class SmithyIdlModelSerializer {
     private final SmithyIdlComponentOrder componentOrder;
     private final String inlineInputSuffix;
     private final String inlineOutputSuffix;
+    private final boolean inferInlineIOSuffixes;
 
     /**
      * Trait serialization features.
@@ -120,6 +122,7 @@ public final class SmithyIdlModelSerializer {
         this.componentOrder = builder.componentOrder;
         this.inlineInputSuffix = builder.inlineInputSuffix;
         this.inlineOutputSuffix = builder.inlineOutputSuffix;
+        this.inferInlineIOSuffixes = builder.inferInlineIOSuffixes;
     }
 
     /**
@@ -148,7 +151,8 @@ public final class SmithyIdlModelSerializer {
             if (basePath != null) {
                 path = basePath.resolve(path);
             }
-            return Collections.singletonMap(path, serializeHeader(model, null));
+            return Collections.singletonMap(path, serializeHeader(
+                    model, null, Collections.emptySet(), inlineInputSuffix, inlineOutputSuffix));
         }
         return result;
     }
@@ -166,7 +170,9 @@ public final class SmithyIdlModelSerializer {
         SmithyCodeWriter codeWriter = new SmithyCodeWriter(namespace, fullModel);
         NodeSerializer nodeSerializer = new NodeSerializer(codeWriter, fullModel);
 
-        Set<ShapeId> inlineableShapes = getInlineableShapes(fullModel, shapes);
+        Pair<String, String> inlineSuffixes = determineInlineSuffixes(fullModel, shapes);
+        Set<ShapeId> inlineableShapes = getInlineableShapes(
+                fullModel, shapes, inlineSuffixes.getLeft(), inlineSuffixes.getRight());
         ShapeSerializer shapeSerializer = new ShapeSerializer(
                 codeWriter, nodeSerializer, traitFilter, fullModel, inlineableShapes, componentOrder);
         Comparator<Shape> comparator = componentOrder.shapeComparator();
@@ -176,10 +182,17 @@ public final class SmithyIdlModelSerializer {
                 .sorted(comparator)
                 .forEach(shape -> shape.accept(shapeSerializer));
 
-        return serializeHeader(fullModel, namespace) + codeWriter.toString();
+        String header = serializeHeader(
+                fullModel, namespace, shapes, inlineSuffixes.getLeft(), inlineSuffixes.getRight());
+        return header + codeWriter.toString();
     }
 
-    private Set<ShapeId> getInlineableShapes(Model fullModel, Collection<Shape> shapes) {
+    private Set<ShapeId> getInlineableShapes(
+            Model fullModel,
+            Collection<Shape> shapes,
+            String inputSuffix,
+            String outputSuffix
+    ) {
         Set<ShapeId> inlineableShapes = new HashSet<>();
         for (Shape shape : shapes) {
             if (!shape.isOperationShape()) {
@@ -189,14 +202,14 @@ public final class SmithyIdlModelSerializer {
             if (!operation.getInputShape().equals(UnitTypeTrait.UNIT)) {
                 Shape inputShape = fullModel.expectShape(operation.getInputShape());
                 if (shapes.contains(inputShape) && inputShape.hasTrait(InputTrait.ID)
-                        && inputShape.getId().getName().equals(operation.getId().getName() + inlineInputSuffix)) {
+                        && inputShape.getId().getName().equals(operation.getId().getName() + inputSuffix)) {
                     inlineableShapes.add(operation.getInputShape());
                 }
             }
             if (!operation.getOutputShape().equals(UnitTypeTrait.UNIT)) {
                 Shape outputShape = fullModel.expectShape(operation.getOutputShape());
                 if (shapes.contains(outputShape) && outputShape.hasTrait(OutputTrait.ID)
-                        && outputShape.getId().getName().equals(operation.getId().getName() + inlineOutputSuffix)) {
+                        && outputShape.getId().getName().equals(operation.getId().getName() + outputSuffix)) {
                     inlineableShapes.add(operation.getOutputShape());
                 }
             }
@@ -204,18 +217,55 @@ public final class SmithyIdlModelSerializer {
         return inlineableShapes;
     }
 
-    private String serializeHeader(Model fullModel, String namespace) {
+    private Pair<String, String> determineInlineSuffixes(Model fullModel, Collection<Shape> shapes) {
+        if (!inferInlineIOSuffixes) {
+            return Pair.of(inlineInputSuffix, inlineOutputSuffix);
+        }
+
+        Set<String> inputSuffixes = new HashSet<>();
+        Set<String> outputSuffixes = new HashSet<>();
+        for (Shape shape : shapes) {
+            if (!shape.isOperationShape()) {
+                continue;
+            }
+            OperationShape operation = shape.asOperationShape().get();
+
+            StructureShape input = fullModel.expectShape(operation.getInputShape(), StructureShape.class);
+            StructureShape output = fullModel.expectShape(operation.getOutputShape(), StructureShape.class);
+
+            if (shapes.contains(input) && input.getId().getName().startsWith(operation.getId().getName())) {
+                inputSuffixes.add(input.getId().getName().substring(operation.getId().getName().length()));
+            }
+
+            if (shapes.contains(output) && output.getId().getName().startsWith(operation.getId().getName())) {
+                outputSuffixes.add(output.getId().getName().substring(operation.getId().getName().length()));
+            }
+        }
+        String inputSuffix = inputSuffixes.size() == 1 ? inputSuffixes.iterator().next() : inlineInputSuffix;
+        String outputSuffix = outputSuffixes.size() == 1 ? outputSuffixes.iterator().next() : inlineOutputSuffix;
+        return Pair.of(inputSuffix, outputSuffix);
+    }
+
+    private String serializeHeader(
+            Model fullModel,
+            String namespace,
+            Collection<Shape> shapes,
+            String inputSuffix,
+            String outputSuffix
+    ) {
         SmithyCodeWriter codeWriter = new SmithyCodeWriter(null, fullModel);
         NodeSerializer nodeSerializer = new NodeSerializer(codeWriter, fullModel);
 
         codeWriter.write("$$version: \"$L\"", Model.MODEL_VERSION);
 
-        if (!inlineInputSuffix.equals(DEFAULT_INLINE_INPUT_SUFFIX)) {
-            codeWriter.write("$$operationInputSuffix: $S", inlineInputSuffix);
-        }
+        if (shapes.stream().anyMatch(Shape::isOperationShape)) {
+            if (!inputSuffix.equals(DEFAULT_INLINE_INPUT_SUFFIX)) {
+                codeWriter.write("$$operationInputSuffix: $S", inputSuffix);
+            }
 
-        if (!inlineOutputSuffix.equals(DEFAULT_INLINE_OUTPUT_SUFFIX)) {
-            codeWriter.write("$$operationOutputSuffix: $S", inlineOutputSuffix);
+            if (!outputSuffix.equals(DEFAULT_INLINE_OUTPUT_SUFFIX)) {
+                codeWriter.write("$$operationOutputSuffix: $S", outputSuffix);
+            }
         }
 
         codeWriter.write("");
@@ -279,6 +329,7 @@ public final class SmithyIdlModelSerializer {
         private SmithyIdlComponentOrder componentOrder = SmithyIdlComponentOrder.PREFERRED;
         private String inlineInputSuffix = DEFAULT_INLINE_INPUT_SUFFIX;
         private String inlineOutputSuffix = DEFAULT_INLINE_OUTPUT_SUFFIX;
+        private boolean inferInlineIOSuffixes = false;
 
         public Builder() {}
 
@@ -394,6 +445,23 @@ public final class SmithyIdlModelSerializer {
          */
         public Builder inlineOutputSuffix(String inlineOutputSuffix) {
             this.inlineOutputSuffix = inlineOutputSuffix;
+            return this;
+        }
+
+        /**
+         * Determines whether the inline IO suffixes should be automatically determined.
+         *
+         * <p>If true, this will determine any shared IO suffixes for each file. Only the
+         * shapes present within each file will impact what that file's suffixes will be.
+         *
+         * <p>The suffixes set by {@link #inlineInputSuffix(String)} and {@link #inlineOutputSuffix(String)}
+         * will be the default values.
+         *
+         * @param shouldInferInlineIOSuffixes Whether inline IO suffixes should be inferred for each file.
+         * @return Returns the builder.
+         */
+        public Builder inferInlineIOSuffixes(boolean shouldInferInlineIOSuffixes) {
+            this.inferInlineIOSuffixes = shouldInferInlineIOSuffixes;
             return this;
         }
 
